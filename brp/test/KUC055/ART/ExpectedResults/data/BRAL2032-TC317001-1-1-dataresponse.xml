@@ -1,9 +1,0 @@
-<Results>
-    <ResultSet fetchSize="0">
-        <Row rowNumber="1">
-            <ID>*</ID>
-            <CODE>W</CODE>
-            <NAAM>Woonadres</NAAM>
-        </Row>
-    </ResultSet>
-</Results>

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jboss-web>
-	<context-root>/Quickstart_webservice_producer_esb</context-root>
-</jboss-web>
-

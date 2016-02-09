@@ -1,13 +1,13 @@
-<zoekPersoonAntwoord xmlns="http://www.moderniseringgba.nl/Migratie/0001">
+<zoekPersoonAntwoord xmlns="http://www.bzk.nl/migratiebrp/Migratie/0001">
 	<status>Ok</status>
 	<gevondenPersonen>
 		<gevondenPersoon>
 			<aNummer>6327595297</aNummer>
-			<bijhoudingsgemeente>0600</bijhoudingsgemeente>
+			<bijhouding>0600</bijhouding>
 		</gevondenPersoon>		
 		<gevondenPersoon>
 			<aNummer>5858980129</aNummer>
-			<bijhoudingsgemeente>0600</bijhoudingsgemeente>
+			<bijhouding>0600</bijhouding>
 		</gevondenPersoon>
 	</gevondenPersonen>
 </zoekPersoonAntwoord>

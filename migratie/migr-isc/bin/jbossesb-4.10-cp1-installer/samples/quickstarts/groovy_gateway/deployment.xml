@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<jbossesb-deployment>
-  <jmsQueue>quickstart_groovy_gateway_ESB</jmsQueue>
-  <jmsQueue>quickstart_groovy_gateway_ESB_reply</jmsQueue>
-</jbossesb-deployment>

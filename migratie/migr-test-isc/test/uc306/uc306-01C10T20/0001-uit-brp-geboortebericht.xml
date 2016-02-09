@@ -4,9 +4,9 @@
 <!-- wanneer de XSD voor dit bericht is gebaseerd op de BRP XSD's.                       -->
 
 <geboorteVerzoek
-   xmlns="http://www.moderniseringgba.nl/Migratie/0001"
+   xmlns="http://www.bzk.nl/migratiebrp/Migratie/0001"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://www.moderniseringgba.nl/Migratie/0001 ../../main/resources/xsd/BRP_Berichten.xsd"
+   xsi:schemaLocation="http://www.bzk.nl/migratiebrp/Migratie/0001 ../../main/resources/xsd/BRP_Berichten.xsd"
    xmlns:brp="http://www.bprbzk.nl/BRP/0001">
    <iscGemeenten>
        <brpGemeente>0600</brpGemeente>
@@ -36,7 +36,7 @@
                <brp:geboorte>
                   <brp:datum>20121101</brp:datum>
                   <brp:woonplaatsCode>0600</brp:woonplaatsCode>
-                  <brp:landCode>6030</brp:landCode>
+                  <brp:landOfGebiedCode>6030</brp:landOfGebiedCode>
                </brp:geboorte>
                <brp:voornamen>
                   <brp:voornaam>
@@ -81,12 +81,12 @@
                   <brp:voornamen>Liza Maria</brp:voornamen>
                   <brp:voorvoegsel>de</brp:voorvoegsel>
                   <brp:scheidingsteken> </brp:scheidingsteken>
-                  <brp:geslachtsnaam>Boer</brp:geslachtsnaam>
+                  <brp:geslachtsnaamstam>Boer</brp:geslachtsnaamstam>
                </brp:samengesteldeNaam>
                <brp:geboorte>
                   <brp:datum>19901001</brp:datum>
                   <brp:woonplaatsCode>0599</brp:woonplaatsCode>
-                  <brp:landCode>6030</brp:landCode>
+                  <brp:landOfGebiedCode>6030</brp:landOfGebiedCode>
                </brp:geboorte>
             </brp:persoon>
             <brp:ouderschap>
@@ -107,12 +107,12 @@
                   <brp:voornamen>Karel Gerard</brp:voornamen>
                   <brp:voorvoegsel>van</brp:voorvoegsel>
                   <brp:scheidingsteken> </brp:scheidingsteken>
-                  <brp:geslachtsnaam>Kooten</brp:geslachtsnaam>
+                  <brp:geslachtsnaamstam>Kooten</brp:geslachtsnaamstam>
                </brp:samengesteldeNaam>
                <brp:geboorte>
                   <brp:datum>19890101</brp:datum>
                   <brp:woonplaatsCode>0599</brp:woonplaatsCode>
-                  <brp:landCode>6030</brp:landCode>
+                  <brp:landOfGebiedCode>6030</brp:landOfGebiedCode>
                </brp:geboorte>
             </brp:persoon>
             <brp:ouderschap>

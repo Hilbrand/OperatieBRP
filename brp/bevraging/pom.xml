@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-    <!-- 03/11/2011 Bahui: Generate with: >mvn clean eclipse:clean eclipse:eclipse generate-sources then refresh and clean 
-        all eclipse projects -->
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
+        <artifactId>brp-parent</artifactId>
         <groupId>nl.bzk.brp</groupId>
-        <artifactId>root-pom</artifactId>
-        <version>0.1.14</version>
+        <version>96-SNAPSHOT</version>
+        <relativePath>../brp-parent</relativePath>
     </parent>
 
     <groupId>nl.bzk.brp.bevraging</groupId>
-    <artifactId>parent</artifactId>
-    <version>0.3.2-SNAPSHOT</version>
-    <name>Bevraging Service BRP - Top-level POM</name>
-    <description>
-	    Top level pom en dus parent project van de BRP Bevraging Service.
-    </description>
+    <artifactId>brp-bevraging</artifactId>
     <packaging>pom</packaging>
 
+    <name>BRP Bevraging</name>
+    <description>De BRP Bevraging Service voor zowel Bijhouding als Levering.</description>
+
     <modules>
-        <module>dataaccess</module>
         <module>business</module>
         <module>webservice</module>
     </modules>
@@ -30,40 +24,142 @@
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <built.on>${maven.build.timestamp}</built.on>
         <sonar.exclusions>**/package-info.java</sonar.exclusions>
-        <!-- De default JDBC properties bedoeld voor lokaal ontwikkelen met een lokale PostgreSQL database. Voor Unit Testen 
-            in de Continuous Integration omgeving is er een "ci" profile. -->
+
+        <!-- De default JDBC properties bedoeld voor lokaal ontwikkelen met een lokale PostgreSQL database. Voor Unit Testen
+            in de Continuous Integration omgeving zijn er "ci" profiles. -->
         <maven.jdbc.driverClassName>org.postgresql.Driver</maven.jdbc.driverClassName>
         <maven.jdbc.url>jdbc:postgresql://localhost/brp</maven.jdbc.url>
         <maven.jdbc.username>brp</maven.jdbc.username>
         <maven.jdbc.password>brp</maven.jdbc.password>
+        <!-- speciale database connectie voor archivering/logging en protocollering -->
+        <maven.jdbc.archivering.driverClassName>org.postgresql.Driver</maven.jdbc.archivering.driverClassName>
+        <maven.jdbc.archivering.url>jdbc:postgresql://localhost/brp</maven.jdbc.archivering.url>
+        <maven.jdbc.archivering.username>brp</maven.jdbc.archivering.username>
+        <maven.jdbc.archivering.password>brp</maven.jdbc.archivering.password>
+        <!-- security -->
+        <maven.security.privatekey.alias>serverkey</maven.security.privatekey.alias>
+        <maven.security.privatekey.password>serverkeypassword</maven.security.privatekey.password>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>nl.bzk.brp.bmr</groupId>
-                <artifactId>domein</artifactId>
-                <version>0.0.4</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>nl.bzk.brp.algemeen.model</groupId>
+            <artifactId>brp-algemeen-model-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.bzk.brp.algemeen.util</groupId>
+            <artifactId>brp-algemeen-util-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.bzk.brp.algemeen.model</groupId>
+            <artifactId>brp-algemeen-model-model</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
 
+                <!-- ermul: Toegevoegd om makkelijker te kunnen debuggen. Kan verwijderd worden indien niet meer nodig
+                of ongewenst ivm performance / obfuscation. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-eclipse-plugin</artifactId>
-                    <version>2.8</version>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.5.1</version>
                     <configuration>
-                        <projectNameTemplate>${project.artifactId}</projectNameTemplate>
+                        <optimize>true</optimize>
+                        <showWarnings>true</showWarnings>
+                        <encoding>UTF-8</encoding>
+                        <debug>true</debug>
                     </configuration>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.3</version>
                 </plugin>
 
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <optimize>true</optimize>
+                    <showWarnings>true</showWarnings>
+                    <encoding>UTF-8</encoding>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xms512m -Xmx1024m -XX:MaxPermSize=1024m -XX:PermSize=256m</argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <debug>true</debug>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!--properties voor test uitpakken-->
+                    <execution>
+                        <id>unpack-test-properties</id>
+                        <phase>generate-test-resources</phase>
+                    </execution>
+                    <!--properties voor docker uitpakken-->
+                    <execution>
+                        <id>unpack-docker-properties</id>
+                        <phase>generate-test-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!--properties voor test uitpakken filteren zodat ze gevuld worden -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filter-test-properties</id>
+                        <phase>process-test-resources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
+
+    <scm>
+        <connection>scm:svn:https://www.modernodam.nl/svn/brp-code/trunk/bevraging</connection>
+        <developerConnection>scm:svn:https://www.modernodam.nl/svn/brp-code/trunk/bevraging</developerConnection>
+    </scm>
 
     <profiles>
 
@@ -71,53 +167,55 @@
             <id>ci</id>
             <activation>
                 <property>
-                    <name>ci.build</name>
+                    <name>db.postgresql</name>
                 </property>
             </activation>
             <properties>
                 <maven.jdbc.driverClassName>org.postgresql.Driver</maven.jdbc.driverClassName>
-                <maven.jdbc.url>jdbc:postgresql://fac-db05.modernodam.nl/brp</maven.jdbc.url>
-                <maven.jdbc.username>jenkins</maven.jdbc.username>
-                <maven.jdbc.password>95thvef288ckf43re</maven.jdbc.password>
+                <maven.jdbc.url>jdbc:postgresql://${jenkins.postgresql.host}/brp_bevraging</maven.jdbc.url>
             </properties>
         </profile>
 
         <profile>
-            <id>test</id>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>inmemory</id>
+            <activation>
+                <property><name>db.inmemory</name></property>
+            </activation>
             <properties>
-                <maven.jdbc.driverClassName>org.postgresql.Driver</maven.jdbc.driverClassName>
-                <maven.jdbc.url>jdbc:postgresql://btst-db/brp</maven.jdbc.url>
+                <maven.jdbc.archivering.driverClassName>org.hsqldb.jdbc.JDBCDriver</maven.jdbc.archivering.driverClassName>
+                <maven.jdbc.archivering.url>jdbc:hsqldb:file:${project.build.directory}/db;shutdown=true;</maven.jdbc.archivering.url>
+                <maven.jdbc.archivering.username>brp</maven.jdbc.archivering.username>
+                <maven.jdbc.archivering.password>brp</maven.jdbc.archivering.password>
+
+                <maven.jdbc.driverClassName>org.hsqldb.jdbc.JDBCDriver</maven.jdbc.driverClassName>
+                <maven.jdbc.url>jdbc:hsqldb:file:${project.build.directory}/db;shutdown=true;</maven.jdbc.url>
                 <maven.jdbc.username>brp</maven.jdbc.username>
                 <maven.jdbc.password>brp</maven.jdbc.password>
+                <maven.jdbc.pool.maxActive>100</maven.jdbc.pool.maxActive>
             </properties>
         </profile>
 
     </profiles>
 
-    <scm>
-        <connection>scm:svn:https://www.modernodam.nl/svn/brp-code/bevraging/trunk</connection>
-    </scm>
-
-    <repositories>
-
-        <repository>
-            <id>libs-release-brp</id>
-            <name>mGBA Artifactory-releases voor BRP</name>
-            <url>https://www.modernodam.nl/artifactory/libs-release-brp</url>
-        </repository>
-
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </snapshots>
-            <id>libs-snapshot-brp</id>
-            <name>mGBA Artifactory-snapshots voor BRP</name>
-            <url>https://www.modernodam.nl/artifactory/libs-snapshot-brp</url>
-        </repository>
-
-    </repositories>
-
 </project>
-

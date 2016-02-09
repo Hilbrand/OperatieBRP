@@ -1,7 +1,10 @@
 <web-app>
+    <listener>
+        <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+    </listener>
 	<filter>
 		<filter-name>securityFilter</filter-name>
-		<filter-class>org.apache.shiro.web.servlet.IniShiroFilter
+        <filter-class>org.apache.shiro.web.servlet.ShiroFilter
 		</filter-class>
 		<!-- no init-param means load the INI config from classpath:shiro.ini -->
 	</filter>
@@ -39,6 +42,10 @@
 		<servlet-name>default</servlet-name>
 		<url-pattern>/js/*</url-pattern>
 	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/images/*</url-pattern>
+    </servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>/templates/*</url-pattern>

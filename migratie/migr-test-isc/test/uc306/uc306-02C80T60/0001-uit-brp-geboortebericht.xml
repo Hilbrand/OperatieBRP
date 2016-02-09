@@ -4,9 +4,9 @@
 <!-- wanneer de XSD voor dit bericht is gebaseerd op de BRP XSD's.                       -->
 
 <geboorteVerzoek
-   xmlns="http://www.moderniseringgba.nl/Migratie/0001"
+   xmlns="http://www.bzk.nl/migratiebrp/Migratie/0001"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://www.moderniseringgba.nl/Migratie/0001 ../../main/resources/xsd/BRP_Berichten.xsd"
+   xsi:schemaLocation="http://www.bzk.nl/migratiebrp/Migratie/0001 ../../main/resources/xsd/BRP_Berichten.xsd"
    xmlns:brp="http://www.bprbzk.nl/BRP/0001">
    <iscGemeenten>
        <lo3Gemeente>0599</lo3Gemeente>
@@ -37,7 +37,7 @@
                <brp:geboorte>
                   <brp:datum>20121101</brp:datum>
                   <brp:woonplaatsCode>0600</brp:woonplaatsCode>
-                  <brp:landCode>6030</brp:landCode>
+                  <brp:landOfGebiedCode>6030</brp:landOfGebiedCode>
                </brp:geboorte>
                <brp:voornamen>
                   <brp:voornaam>
@@ -78,12 +78,12 @@
                   <brp:voornamen>Norah</brp:voornamen>
                   <brp:voorvoegsel></brp:voorvoegsel>
                   <brp:scheidingsteken> </brp:scheidingsteken>
-                  <brp:geslachtsnaam>MacGready</brp:geslachtsnaam>
+                  <brp:geslachtsnaamstam>MacGready</brp:geslachtsnaamstam>
                </brp:samengesteldeNaam>
                <brp:geboorte>
                   <brp:datum>19901001</brp:datum>
                   <brp:woonplaatsCode>0599</brp:woonplaatsCode>
-                  <brp:landCode>6030</brp:landCode>
+                  <brp:landOfGebiedCode>6030</brp:landOfGebiedCode>
                </brp:geboorte>
             </brp:persoon>
             <brp:ouderschap>
@@ -104,12 +104,12 @@
                   <brp:voornamen>James</brp:voornamen>
                   <brp:voorvoegsel>de</brp:voorvoegsel>
                   <brp:scheidingsteken> </brp:scheidingsteken>
-                  <brp:geslachtsnaam>Nieuwe</brp:geslachtsnaam>
+                  <brp:geslachtsnaamstam>Nieuwe</brp:geslachtsnaamstam>
                </brp:samengesteldeNaam>
                <brp:geboorte>
                   <brp:datum>19890101</brp:datum>
                   <brp:woonplaatsCode>0599</brp:woonplaatsCode>
-                  <brp:landCode>6030</brp:landCode>
+                  <brp:landOfGebiedCode>6030</brp:landOfGebiedCode>
                </brp:geboorte>
             </brp:persoon>
             <brp:ouderschap>

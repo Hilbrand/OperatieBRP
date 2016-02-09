@@ -1,1 +1,1 @@
-mvn clean install -Dtest=no -DfailIfNoTests=false -P!ggo
+mvn clean install -Dtest=donotexecute -DfailIfNoTests=false %*

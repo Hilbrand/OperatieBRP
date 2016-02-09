@@ -1,135 +1,94 @@
 BrpActie = {
-		maakTabelRegelActies : function($table, titel, voorkomen, volgNr, aNummer) {
+		maakTabelRegelActies : function($regel, ggoBrpVoorkomen) {
 			//add actie links
-			var $actieRegels = $('<td>');			
-			if (voorkomen.actieInhoud != null && $.isPlainObject(voorkomen.actieInhoud)) {
-				var popupParam = {aNummer:aNummer, groep:titel, volgNr:volgNr, actie:"actieInhoud", sectie:null};
-				popupParam.sectie = this.maakActieTabel("Actie inhoud", voorkomen.actieInhoud, popupParam);
-				var brpActieId = ViewerUtils.bepaalBrpActieId(popupParam);
-				$actieRegels.append('<a title="actie inhoud" href="#' + brpActieId + '">actie inhoud</a>   ');			
-				$actieRegels.find('a[href="#' + brpActieId + '"]').on('click', null, popupParam, Overzicht.plaatsPopup.bind(Overzicht));
+			if (ggoBrpVoorkomen.actieInhoud != null && $.isPlainObject(ggoBrpVoorkomen.actieInhoud)) {
+				var popupParam = {key:ggoBrpVoorkomen, subkey:"actieInhoud", sectie:null};
+				var actieTitel = "Actie inhoud";
+				popupParam.sectie = this.maakActieTabel(actieTitel, ggoBrpVoorkomen.actieInhoud, popupParam);
+				var popupId = ViewerUtils.bepaalBrpPopupId(popupParam);
+				$regel.find('.Acties_inhoud').parent().append('<td class="Acties_inhoud"><a class="actie" title="actie inhoud" href="#' + popupId + '">' + actieTitel + '</a></td>');			
+				$regel.find('a[href="#' + popupId + '"]').on('click', null, popupParam, Overzicht.plaatsPopup.bind(Overzicht));
 			}
-			if (voorkomen.actieVerval != null && $.isPlainObject(voorkomen.actieVerval)) {
-				var popupParam = {aNummer:aNummer, groep:titel, volgNr:volgNr, actie:"actieVerval", sectie:null};
-				popupParam.sectie = this.maakActieTabel("Actie verval", voorkomen.actieVerval, popupParam);
-				var brpActieId = ViewerUtils.bepaalBrpActieId(popupParam);
-				$actieRegels.append('<a title="actie verval" href="#' + brpActieId + '">actie verval</a>   ');			
-				$actieRegels.find('a[href="#' + brpActieId + '"]').on('click', null, popupParam, Overzicht.plaatsPopup.bind(Overzicht));
+			if (ggoBrpVoorkomen.actieVerval != null && $.isPlainObject(ggoBrpVoorkomen.actieVerval)) {
+				var popupParam = {key:ggoBrpVoorkomen, subkey:"actieVerval", sectie:null};
+				var actieTitel = "Actie verval";
+				popupParam.sectie = this.maakActieTabel(actieTitel, ggoBrpVoorkomen.actieVerval, popupParam);
+				var popupId = ViewerUtils.bepaalBrpPopupId(popupParam);
+				$regel.find('.Acties_verval').parent().append('<td class="Acties_verval"><a class="actie" title="actie verval" href="#' + popupId + '">' + actieTitel + '</a></td>');			
+				$regel.find('a[href="#' + popupId + '"]').on('click', null, popupParam, Overzicht.plaatsPopup.bind(Overzicht));
 			}
-			if (voorkomen.actieGeldigheid != null && $.isPlainObject(voorkomen.actieGeldigheid)) {
-				var popupParam = {aNummer:aNummer, groep:titel, volgNr:volgNr, actie:"actieGeldigheid", sectie:null};
-				popupParam.sectie = this.maakActieTabel("Actie geldigheid", voorkomen.actieGeldigheid, popupParam);
-				var brpActieId = ViewerUtils.bepaalBrpActieId(popupParam);
-				$actieRegels.append('<a title="actie geldigheid" href="#' + brpActieId + '">actie geldigheid</a>   ');			
-				$actieRegels.find('a[href="#' + brpActieId + '"]').on('click', null, popupParam, Overzicht.plaatsPopup.bind(Overzicht));
+			if (ggoBrpVoorkomen.actieGeldigheid != null && $.isPlainObject(ggoBrpVoorkomen.actieGeldigheid)) {
+				var popupParam = {key:ggoBrpVoorkomen, subkey:"actieGeldigheid", sectie:null};
+				var actieTitel = "Actie aanpassing geldigheid";
+				popupParam.sectie = this.maakActieTabel(actieTitel, ggoBrpVoorkomen.actieGeldigheid, popupParam);
+				var popupId = ViewerUtils.bepaalBrpPopupId(popupParam);
+				$regel.find('.Acties_aanpassingGeldigheid').parent().append('<td class="Acties_aanpassingGeldigheid"><a class="actie" title="actie geldigheid" href="#' + popupId + '">' + actieTitel + '</a></td>');			
+				$regel.find('a[href="#' + popupId + '"]').on('click', null, popupParam, Overzicht.plaatsPopup.bind(Overzicht));
 			}
-			$actieRegels.append('</td>');
-			return $actieRegels
+			if ($regel.find('.actie').length == 0) {
+				//geen acties toegevoegd, dan maar wel een td invoegen
+				$regel.find('.Acties_inhoud').parent().append('<td>&nbsp;</td>');
+			}
 		},
 		
 		maakActieTabel : function (titel, brpActie, popupParam) {			
-					
-			var $sectieActieData = this.maakActieDataSectie(titel, brpActie);
-			var $sectieActieDocumenten = $(_.template(overzichtTemplate, {type: 'supersectie', classes : "gesloten", titel: "Documenten"}));
-			for (var i in brpActie.documentStapels) {
-				this.maakActieDocSectie($sectieActieDocumenten, "Document", brpActie.documentStapels[i]);
-			}
+			//popup div
+			var popupId = ViewerUtils.bepaalBrpPopupId(popupParam);
+			var actieTitel = titel + " bij: " + popupParam.key.label;
+			var $brpActiePopupDiv = $(_.template(brpPopupTemplate, 
+					{popupId: popupId, popupTitel : actieTitel}));
 			
-			var brpActieId = ViewerUtils.bepaalBrpActieId(popupParam);
-			var $brpActiePopupDiv = $(_.template(brpActieTemplate, 
-					{brpActieId: brpActieId, aNummer : popupParam.aNummer, groep: popupParam.groep}));
-			$brpActiePopupDiv.append($sectieActieData);
-			$brpActiePopupDiv.append($sectieActieDocumenten);
+			var $actiecontent = $brpActiePopupDiv.find('.popupcontent');
+			
+			//actie			
+			$actiecontent.append(this.maakActieDataSectie(titel, brpActie.inhoud));
+			
+			//administratieve handeling
+			$actiecontent.append(this.maakActieDataSectie("Administratieve handeling", brpActie.administratieveHandeling));
+			//actie / bron
+			for (var i in brpActie.actieBronnen) {
+				var actieBron = brpActie.actieBronnen[i];
+				$actiecontent.append(this.maakActieDataSectie("Actie / Bron", actieBron));
+			}
+
+			//documenten
+			for (var i in brpActie.documenten) {
+				var document = brpActie.documenten[i];
+				for (var j in document.voorkomens) {
+					$actiecontent.append(this.maakActieDataSectie("Document", document.voorkomens[j].inhoud));
+				}
+			}
 			
 			return $brpActiePopupDiv;
 		},
 		
-		maakActieTabelHeader: function($table, keys) {
-			var regel = '<tr class="header">';
-			for (var i in keys) {
-				var label = ViewerUtils.maakNaamUitKey(keys[i]);
-				regel = regel + _.template(thTemplate, {clss: keys[i], code: label});
-			}			
-			$table.append(regel + '</tr>\r\n');
-		},
-		
-		maakActieDataSectie : function (titel, brpActie) {
-			var $sectieActie = $(_.template(overzichtTemplate, {type: 'sectie', classes: "gesloten", titel : titel }));
+		maakActieDataSectie : function (titel, inhoud) {
+			var $sectieActie = $(_.template(categorieTemplate, {type: 'supersectie', titel : titel }));
 			var $tableActie = $('<table summary="' + titel + '" />');
 			$sectieActie.find('.inhoud').append($tableActie);
-			
-			//keys
-			var keys = [];
-			for (var key in brpActie) {
-				if (!key.match(/id|sortering|documentStapels|lo3Herkomst/) && 
-						$.inArray(key, keys) == -1 && 
-						!empty(brpActie[key])) {
-					keys.push(key);
-				}
-			}
-			//header
-			this.maakActieTabelHeader($tableActie, keys);
+
 			//data
-			var regelActie = '<tr">';
-			for (var i in keys) {
-				var key = keys[i];
-				var val = brpActie[key];
-
-				val = ViewerUtils.gebruikVeldBijMatch(/soortActieCode/, 'code', key, val);
-				val = ViewerUtils.gebruikVeldBijMatch(/verdragCode/, 'omschrijving', key, val);
-				val = ViewerUtils.gebruikVeldBijMatchCustom(key, val, val);
+			var regelActie = '';
+			for (var key in inhoud) {
+			    regelActie = regelActie + '<tr class="headers">';
+				var val = inhoud[key];
 				
-				if (val == null || val == undefined) val = "";
+				//header
+                var title = key;
+                regelActie = regelActie + _.template(thTemplate, {label: title});
 				
 				var title = val;
 				val = _.escape(val);
-				regelActie = regelActie + _.template(tdTemplate, {key: key, title: title, val: val});
+				if (key == 'Geldigheid' || key == 'Registratie - verval') {
+					var datum = val.split(' - ');
+					regelActie += _.template(tdDatumTemplate, {datumVan: datum[0], datumTot: datum[1]});
+				} else {
+					regelActie += _.template(tdTemplate, {title: title, val: val});				
+				}				
+				regelActie = regelActie +  '</tr>\r\n';
 			}
-			var $regelActie = $(regelActie + '</tr>\r\n');
+			var $regelActie = $(regelActie);
 			$tableActie.append($regelActie);
-			
 			return $sectieActie;
-		},
-		
-		maakActieDocSectie : function($sectie, titel, stapel) {
-			if (stapel != null) {
-				var voorkomens = stapel.groepen;
-
-				var $sectieDoc = $(_.template(overzichtTemplate, {type: 'sectie', classes: "gesloten", titel : titel }));
-				var $tableDoc = $('<table summary="' + titel + '" />');
-				$sectieDoc.find('.inhoud').append($tableDoc);
-
-				var keys = BrpPersoonslijst.vindGebruikteVelden(stapel.groepen);
-
-				for (var i = voorkomens.length -1; i >= 0; i--) {
-					this.maakActieTabelHeader($tableDoc, keys);
-					this.maakActieDocTabelRegel($tableDoc, keys, voorkomens[i]);
-				}
-
-				$sectie.find('.supersectie.inhoud').append($sectieDoc);
-			}
-		},
-		
-		maakActieDocTabelRegel : function($table, keys, voorkomen) {
-			var regel = '<tr>';
-			for (var i in keys) {
-				var key = keys[i];
-				var val = voorkomen.inhoud[key];
-				if (val == null) {
-					val = voorkomen.historie[key];
-					val = ViewerUtils.gebruikVeldBijMatchCustom(key, val, voorkomen.historie);
-				} else {				
-					val = ViewerUtils.gebruikVeldBijMatch(/soortDocumentCode/, 'code', key, val);				
-					val = ViewerUtils.gebruikVeldBijMatchCustom(key, val, val);
-				}
-				
-				if (empty(val)) val = "";
-				
-				var title = val;
-				val = _.escape(val);
-				regel = regel + _.template(tdTemplate, {key: keys[i], title: title, val: val});
-			}
-			var $regel = $(regel + '</tr>\r\n');			
-			$table.append($regel);
-		},
+		}
 };

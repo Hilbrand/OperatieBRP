@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mvVerhuizingVerzoek xmlns="http://www.moderniseringgba.nl/Migratie/0001">
+<mvVerhuizingVerzoek xmlns="http://www.bzk.nl/migratiebrp/Migratie/0001">
     <iscGemeenten>
         <lo3Gemeente>0599</lo3Gemeente>
         <brpGemeente>0600</brpGemeente>
@@ -10,7 +10,7 @@
     <huidigeGemeente>0599</huidigeGemeente>
     <nieuweGemeente>0600</nieuweGemeente>
     <datumInschrijving>20120921</datumInschrijving>
-    <adresseerbaarObject>6543210987654321</adresseerbaarObject>
+    <identificatiecodeAdresseerbaarObject>6543210987654321</identificatiecodeAdresseerbaarObject>
     <idNummeraanduiding>1234567890123456</idNummeraanduiding>
     <naamOpenbareRuimte>naamOpenbareRuimte</naamOpenbareRuimte>
     <afgekorteNaamOpenbareRuimte>NOR</afgekorteNaamOpenbareRuimte>

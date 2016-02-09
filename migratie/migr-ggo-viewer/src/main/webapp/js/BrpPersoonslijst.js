@@ -1,171 +1,236 @@
 BrpPersoonslijst =
 {
-	maakBrpPersoonslijst : function(brpPersoonslijst) {
-		if (!brpPersoonslijst) return null;
+	maakBrpPersoonslijst : function(ggoBrpPL, foutRegels, metTerugconversie) {
+		var $overzicht;
 
-		var aNummer = brpPersoonslijst.actueelAdministratienummer;
-		var $overzicht = $(_.template(overzichtTemplate, {type: 'overzicht', classes : "gesloten", titel: "BRP"}));
+		if (metTerugconversie) {
+			$overzicht = $(_.template(categorieTemplate, {type: 'overzicht', classes: 'getabd', titel: "BRP-PL", info: "GBA-PL (terugconversie)"}));
+			$overzicht.find('.titeltekst').on('click', null, $overzicht, Overzicht.nullEvent.bind(Overzicht));;
+			$overzicht.find('.info').on('click', null, $overzicht, Overzicht.toggleTerugconversie.bind(Overzicht));;
+		} else {
+			$overzicht = $(_.template(categorieTemplate, {type: 'overzicht', titel: "BRP-PL"}));
+		}
+
 		var $secties = $overzicht.find('.inhoud');
 
-		// Indelen in supersecties is hier naar eigen inzicht gedaan
+		ViewerUtils.schrijfFoutRegels($secties, foutRegels, 'BRP');
 
-		var $persoonSectie = this.maakSupersectie($secties, "Persoon");
-		this.maakTabel($persoonSectie, "Identificatienummer", brpPersoonslijst.identificatienummerStapel, aNummer);
-		this.maakTabel($persoonSectie, "Aanschrijving", brpPersoonslijst.aanschrijvingStapel, aNummer);
-		this.maakTabel($persoonSectie, "Samengestelde naam", brpPersoonslijst.samengesteldeNaamStapel, aNummer);
-
-		for (var i in brpPersoonslijst.voornaamStapels) {
-			this.maakTabel($persoonSectie, "Voornaam", brpPersoonslijst.voornaamStapels[i], aNummer);
+		if (ggoBrpPL) {
+		    this.maakTabel($secties, ggoBrpPL);
 		}
-
-		for (var i in brpPersoonslijst.geslachtsnaamcomponentStapels) {
-			this.maakTabel($persoonSectie, "Geslachtsnaam", brpPersoonslijst.geslachtsnaamcomponentStapels[i], aNummer);
-		}
-
-		this.maakTabel($persoonSectie, "Adres", brpPersoonslijst.adresStapel, aNummer);
-		this.maakTabel($persoonSectie, "Geslachtsaanduiding", brpPersoonslijst.geslachtsaanduidingStapel, aNummer);
-		this.maakTabel($persoonSectie, "Geboorte", brpPersoonslijst.geboorteStapel, aNummer);
-		this.maakTabel($persoonSectie, "Overlijden", brpPersoonslijst.overlijdenStapel, aNummer);
-
-		var $nationaliteitSectie = this.maakSupersectie($secties, "Nationaliteit");
-		for (var i in brpPersoonslijst.nationaliteitStapels) {
-			this.maakTabel($nationaliteitSectie, "Nationaliteit", brpPersoonslijst.nationaliteitStapels[i], aNummer);
-		}
-
-		this.maakTabel($nationaliteitSectie, "Verblijfsrecht", brpPersoonslijst.verblijfsrechtStapel, aNummer);
-		this.maakTabel($nationaliteitSectie, "Immigratie", brpPersoonslijst.immigratieStapel, aNummer);
-		this.maakTabel($nationaliteitSectie, "Uitsluiting Nederlands kiesrecht", brpPersoonslijst.uitsluitingNederlandsKiesrechtStapel, aNummer);
-		this.maakTabel($nationaliteitSectie, "Europese verkiezingen", brpPersoonslijst.europeseVerkiezingenStapel, aNummer);
-
-		var $reisdocumentSectie = this.maakSupersectie($secties, "Reisdocument");        
-		for (var i in brpPersoonslijst.reisdocumentStapels) {
-            this.maakTabel($reisdocumentSectie, "Reisdocument", brpPersoonslijst.reisdocumentStapels[i], aNummer);
-        }
-        
-		var $bijhoudingSectie = this.maakSupersectie($secties, "Bijhouding");
-		this.maakTabel($bijhoudingSectie, "Bijhoudingsgemeente", brpPersoonslijst.bijhoudingsgemeenteStapel, aNummer);
-		this.maakTabel($bijhoudingSectie, "Bijhoudingsverantwoordelijkheid", brpPersoonslijst.bijhoudingsverantwoordelijkheidStapel, aNummer);
-		this.maakTabel($bijhoudingSectie, "Inschrijving", brpPersoonslijst.inschrijvingStapel, aNummer);
-		this.maakTabel($bijhoudingSectie, "Persoonskaart", brpPersoonslijst.persoonskaartStapel, aNummer);
-		this.maakTabel($bijhoudingSectie, "Afgeleid Administratief", brpPersoonslijst.afgeleidAdministratiefStapel, aNummer);
-		this.maakTabel($bijhoudingSectie, "Opschorting", brpPersoonslijst.opschortingStapel, aNummer);
-
-		var $indicatiesSectie = this.maakSupersectie($secties, "Indicaties");
-		this.maakTabel($indicatiesSectie, "Geprivilegieerde indicatie", brpPersoonslijst.geprivilegieerdeIndicatieStapel, aNummer);
-		this.maakTabel($indicatiesSectie, "Statenloos", brpPersoonslijst.statenloosIndicatieStapel, aNummer);
-		this.maakTabel($indicatiesSectie, "Behandeld als Nederlander", brpPersoonslijst.behandeldAlsNederlanderIndicatieStapel, aNummer);
-		this.maakTabel($indicatiesSectie, "Vastgesteld niet-Nederlander", brpPersoonslijst.vastgesteldNietNederlanderIndicatieStapel, aNummer);
-		this.maakTabel($indicatiesSectie, "Bezit buitenlands reisdocument", brpPersoonslijst.bezitBuitenlandsReisdocumentIndicatieStapel, aNummer);
-		this.maakTabel($indicatiesSectie, "Onder curatele", brpPersoonslijst.onderCurateleIndicatieStapel, aNummer);
-		this.maakTabel($indicatiesSectie, "Derde heeft gezag", brpPersoonslijst.derdeHeeftGezagIndicatieStapel, aNummer);
-		this.maakTabel($indicatiesSectie, "Belemmering verstrekking reisdocument", brpPersoonslijst.belemmeringVerstrekkingReisdocumentIndicatieStapel, aNummer);
-		this.maakTabel($indicatiesSectie, "Verstrekkingsbeperking", brpPersoonslijst.verstrekkingsbeperkingStapel, aNummer);
-		
 		
 		return $overzicht;
 	},
-
-	maakSupersectie : function ($el, titel) {
-		var $supersectie = $(_.template(overzichtTemplate, {type: 'supersectie', classes: "gesloten", titel : titel}));
-		$el.append($supersectie);
-
-		return $supersectie.find('.inhoud');
+	
+	maakTabel : function($el, ggoBrpPL) {
+		for (var i in ggoBrpPL) {
+	    	var ggoStapel = ggoBrpPL[i];
+	    	var herkomstClassStapel = [];
+	    	// Huwelijk / Geregistreerd Partnerschap / Familierechtelijke betrekking
+    		if (ggoStapel.label == 'H' || ggoStapel.label == 'G' || ggoStapel.label == 'F') {
+    			this.maakRelatie(ggoStapel, herkomstClassStapel, $el);
+    		} else if (ggoStapel.label == 'Administratieve handeling') {
+    			this.maakAdministratieveHandeling(ggoStapel, herkomstClassStapel, $el);
+			} else {
+    			this.maakReguliereStapel(ggoStapel, herkomstClassStapel, $el);
+    		}
+		}
 	},
 
-	maakTabel : function($el, titel, stapel, aNummer) {
-		if (stapel != null) {
-			var voorkomens = stapel.groepen;
+	maakReguliereStapel : function(ggoStapel, herkomstClassStapel, $el) {
+    	var stapelTitel = ggoStapel.label + (ggoStapel.omschrijving ? " - " + ggoStapel.omschrijving : "");
+    	var $stapelSectie = ViewerUtils.maakSupersectie($el, stapelTitel).find('.inhoud');
+    	var $stapelSectieCheckbox = $stapelSectie.parent().find('.checkbox');
+    	
+    	for (var j in ggoStapel.voorkomens) {
+	    	this.maakVoorkomen(ggoStapel.voorkomens[j], herkomstClassStapel, $stapelSectie);
+    	}
 
-			for (var i = voorkomens.length -1; i >= 0; i--) {
-    			var $sectie = $(_.template(overzichtTemplate, {type: 'sectie', classes: "gesloten", titel : titel }));
-    			var $table = $('<table summary="' + titel + '" />');
-    			$sectie.find('.inhoud').append($table);
-    			var keys = this.vindGebruikteVelden(stapel.groepen);
-				var herkomstClass = ViewerUtils.bepaalHerkomstClass(voorkomens[i], aNummer);
-				this.maakTabelHeader($table, keys, herkomstClass);
-				var $actieRegels = BrpActie.maakTabelRegelActies($table, titel, voorkomens[i], i, aNummer);
-				this.maakTabelRegel($table, keys, voorkomens[i], $actieRegels, herkomstClass);
-                $el.append($sectie);
+    	$stapelSectieCheckbox.on('click', null, herkomstClassStapel.join(" "), Overzicht.relateer.bind(Overzicht));
+	},
+
+	maakAdministratieveHandeling : function(ggoStapel, herkomstClassStapel, $el) {
+    	for (var j in ggoStapel.voorkomens) {
+	    	$ah = this.maakVoorkomen(ggoStapel.voorkomens[j], herkomstClassStapel, $el, true);
+	    	this.maakBetrokkenVoorkomens(ggoStapel.voorkomens[j], herkomstClassStapel, $ah.find('.inhoud'));
+    	}
+	},
+
+	maakRelatie : function(ggoStapel, herkomstClassStapel, $el) {
+		for (var i in ggoStapel.voorkomens) {
+			var voorkomen = ggoStapel.voorkomens[i];
+
+			for (var j in voorkomen.betrokkenheden) {
+				var betrokkenheid = voorkomen.betrokkenheden[j];
+
+				var stapelTitel = betrokkenheid.label;
+				var $stapelSectie = ViewerUtils.maakSupersectie($el, stapelTitel, '<a href="#">Alle voorkomens</a>');
+		    	var $stapelSectieInhoud = $stapelSectie.find('.inhoud');
+		    	Ist.maakIst($stapelSectie, voorkomen, betrokkenheid.label, j);
+
+		        var $table = $('<table summary="' + stapelTitel + '" />');
+		        $stapelSectieInhoud.append($table);
+
+	            //herkomst + toevoegen voorkomen (komt pas na maakTabelRegels hieronder)
+		        var bherkomst = [];
+		        for (var x in betrokkenheid.stapels) {
+		        	var bstapel = betrokkenheid.stapels[x];
+		        	for (var y in bstapel.voorkomens) {
+		        		var bvoorkomen = bstapel.voorkomens[y];
+		        		this.maakVoorkomen(bvoorkomen, bherkomst, $stapelSectieInhoud);
+		        	}
+		        }
+
+				if (voorkomen.relatieInhoud) {
+					for (var x in voorkomen.relatieInhoud.voorkomens) {
+						this.maakVoorkomen(voorkomen.relatieInhoud.voorkomens[x], bherkomst, $stapelSectieInhoud);
+					}
+				}
+
+				if (voorkomen.relatieAfgeleidAdministratief) {
+					console.log(voorkomen.relatieAfgeleidAdministratief);
+					for (var x in voorkomen.relatieAfgeleidAdministratief.voorkomens) {
+						this.maakVoorkomen(voorkomen.relatieAfgeleidAdministratief.voorkomens[x], bherkomst, $stapelSectieInhoud);
+					}
+				}
+
+//		        this.maakTabelRegels($table, bherkomst.join(" "), betrokkenheid, betrokkenheid.inhoud, true);
+		    	$stapelSectieInhoud.parent().find('.checkbox').first().on('click', null, bherkomst.join(" "), Overzicht.relateer.bind(Overzicht));
+		        herkomstClassStapel.push(bherkomst);
 			}
 		}
 	},
 
-	vindGebruikteVelden: function(voorkomens) {
-		var keys = [];
-		for (var i in voorkomens) {
-			for (var key in voorkomens[i].inhoud) {
-				if ($.inArray(key, keys) == -1 && !empty(voorkomens[i].inhoud[key])) keys.push(key);
-			}
-			if ((!empty(voorkomens[i].historie.nullHistorie ? null : voorkomens[i].historie['datumAanvangGeldigheid'])
-			        || !empty(voorkomens[i].historie.nullHistorie ? null : voorkomens[i].historie['datumEindeGeldigheid']))
-			        && $.inArray('geldigheid', keys) == -1
-			        //FIXME in conversie? Omdat er een 0 in het lo3 model gestopt wordt (cat 07) komt die ook 
-                    //in het brp model. Terwijl geldigheid daar niet van toepassing is!
-                    && (voorkomens[i].actieInhoud == null
-                            || !$.isPlainObject(voorkomens[i].actieInhoud)
-                            || voorkomens[i].actieInhoud.lo3Herkomst == null
-                            || !$.isPlainObject(voorkomens[i].actieInhoud.lo3Herkomst)
-                            || !(voorkomens[i].actieInhoud.lo3Herkomst.categorie == 'CATEGORIE_07'))) {
-			    keys.push('geldigheid');
-			}
-		}
-		// Altijd registratie data tonen, zit in voorkomens[i].historie
-		keys.push('registratie');
+	maakVoorkomen : function(ggoBrpVoorkomen, herkomstClassStapel, $stapelSectie, isAh) {
+        if (ggoBrpVoorkomen != null && ggoBrpVoorkomen.inhoud != null) {
+            var classes = ggoBrpVoorkomen.vervallen ? " vervallen" : "";
 
-		return keys;
-	},
-
-	maakTabelHeader: function($table, keys, herkomstClass) {
-		var regel = '<tr class="header ' + herkomstClass + '">';
-
-		for (var i in keys) {
-			var clss =keys[i];
-			var title = ViewerUtils.maakNaamUitKey(keys[i]);
-			regel = regel + _.template(thTemplate, {clss: clss, code: title});
-		}
-		// Altijd acties kolom tonen
-		regel = regel + _.template(thTemplate, {clss: 'acties', code: 'acties'});
-		
-		$table.append(regel + '</tr>\r\n');
+            var sectieTitel = '<span class="code">' + ggoBrpVoorkomen.label + '</span>';
+            var type = 'sectie';
+            if (isAh) {
+            	type = 'supersectie regulier';
+            	sectieTitel = ggoBrpVoorkomen.label;
+            }
+            var $sectie = $(_.template(categorieTemplate, {type: type, classes: "gesloten" + classes, titel : sectieTitel, info : ggoBrpVoorkomen.datumAanvangGeldigheid }));
+            var $table = $('<table summary="' + ggoBrpVoorkomen.label + '" />');
+            $sectie.find('.inhoud').append($table);
+            
+            //herkomst
+            var herkomstClass = ViewerUtils.bepaalHerkomstClassName(ggoBrpVoorkomen, ggoBrpVoorkomen.aNummer);
+    		$sectie.find('.checkbox').on('click', null, herkomstClass, Overzicht.relateer.bind(Overzicht));
+    		herkomstClassStapel.push(herkomstClass);
+    		
+    		//data rows
+            this.maakTabelRegels($table, herkomstClass, ggoBrpVoorkomen, ggoBrpVoorkomen.inhoud, false, isAh);
+            
+            $stapelSectie.append($sectie);
+            return $sectie;
+        }
+        
+        return null;
 	},
 	
-	maakTabelRegel : function($table, keys, voorkomen, $actieRegels, herkomstClass) {
-		var regel = '<tr class="' + herkomstClass + '">';
+	maakBetrokkenVoorkomens : function(ggoBrpVoorkomen, herkomstClassStapel, $stapelSectie) {
+        if (ggoBrpVoorkomen.betrokkenVoorkomens != null) {
+            var classes = ggoBrpVoorkomen.vervallen ? " vervallen" : "";
 
-		for (var i in keys) {
-			var key = keys[i];
-			var val = voorkomen.inhoud[key];
-			if (val == null) val = voorkomen.historie[key];
+            var sectieTitel = '<span class="code">Betrokken voorkomens</span>';
 
-			// Match de uitzonderingen eerst. Daarna falen de algemenere matches vanzelf omdat 'val' al een waarde heeft.
-			val = ViewerUtils.gebruikVeldBijMatch(/gemeenteCode|gemeentePKCode/, 'formattedStringCode', key, val);
-			var tempVal = ViewerUtils.gebruikVeldBijMatch(/Code|redenEinde|redenOntbreken|^soort$|autoriteitVanAfgifte|landVanwaarIngeschreven/, 'code', key, val);
-			//!! Commentaar hierboven, zou mooi zijn maar helaas gebeurt dat niet, dus toch checken op undefined.!!
-			//!! Volgorde van de gebruikVeldBijMatch regels is belangrijk!.
-	        if(typeof tempVal == 'undefined') {
-	            val = ViewerUtils.gebruikVeldBijMatch(/Code/, 'naam', key, val); // sommige codes gebruiken helaas 'naam' ipv 'code'
-	        }
-	        else {
-	            val = tempVal;
-	        }
-			
-			val = ViewerUtils.gebruikVeldBijMatchCustom(key, val, voorkomen.historie);
-			val = ViewerUtils.maakWaardeOpBijLeegOfBoolean(val);
+            var $sectie = $(_.template(categorieTemplate, {type: 'sectie', classes: "gesloten" + classes, titel : sectieTitel }));
+            var $table = $('<table summary="Betrokken voorkomens" />');
+            $sectie.find('.inhoud').append($table);
+            
+            //herkomst
+            var herkomstClass = ViewerUtils.bepaalHerkomstClassName(ggoBrpVoorkomen, ggoBrpVoorkomen.aNummer);
+    		$sectie.find('.checkbox').on('click', null, herkomstClass, Overzicht.relateer.bind(Overzicht));
+    		herkomstClassStapel.push(herkomstClass);
 
+    		//data rows
+            this.maakTabelRegels($table, herkomstClass, ggoBrpVoorkomen, ggoBrpVoorkomen.betrokkenVoorkomens, false, false);
+            
+            $stapelSectie.append($sectie);
+        }
+	},
+
+	maakTabelRegels : function ($table, herkomstClass, ggoBrpVoorkomen, inhoud, isRelatieStapel, isAh) {
+		var classes = herkomstClass + ' brp';
+
+		if (isRelatieStapel || isAh) {
+			classes = 'nivo1 ' + classes;
+		}
+
+		var regel = "";
+	    for (var key in inhoud) {
+		    regel += '<tr class="headers ' +classes + '">';
+			var val = inhoud[key];
+
+			// Voor betrokken voorkomens bij admin handeling (deze is geen map maar een list string)
+			if (!isNaN(parseInt(key))) {
+				var splitted = val.split(" - ");
+				key = splitted[0];
+				val = splitted[1];
+			}
+
+			//header
+            regel = regel + _.template(thTemplate, {code: key});
+            
+            //data
 			var title = val;
 			val = _.escape(val);
-			if (key == 'administratienummer') val = '<a href="#' + val + '">' + val +'</a>';
-			regel = regel + _.template(tdTemplate, {key: key, title: title, val: val});
+			if (key == 'Geldigheid' || key == 'Registratie - verval') {
+				var datum = val.split(' - ');
+				regel += _.template(tdDatumTemplate, {datumVan: datum[0], datumTot: datum[1]});
+			} else {
+				regel += _.template(tdTemplate, {title: title, val: val});				
+			}
+			regel += '</tr>';
 		}
-		var $regel = $(regel + '</tr>\r\n');
-		
-		//bind link aNr
+	    
+	    // extra headers
+	    if (isRelatieStapel) {
+	    	// lege header
+	    	regel += this.maakActieOfRelatieRegel(classes, 'Relatie_meer', '\xA0'); // non-breaking space
+	    } else { 
+	    	// actie inhoud
+	    	if (ggoBrpVoorkomen.actieInhoud) {
+	    		regel += this.maakActieOfRelatieRegel(classes, 'Acties_inhoud', 'Acties');
+	    	}
+	    	// overige acties
+	    	if (ggoBrpVoorkomen.actieVerval) {
+		    	regel += this.maakActieOfRelatieRegel(classes, 'Acties_verval', '\xA0');
+	    	}
+	    	if (ggoBrpVoorkomen.actieGeldigheid) {
+		    	regel += this.maakActieOfRelatieRegel(classes, 'Acties_aanpassingGeldigheid', '\xA0');
+	    	}
+	    }
+	    
+	    if (ggoBrpVoorkomen.onderzoeken) {
+    		var titel = 'Onderzoeken';
+	    	for (var i in ggoBrpVoorkomen.onderzoeken) {
+	    		regel += this.maakActieOfRelatieRegel(classes, 'Onderzoeken_' + i, titel);
+	    		titel = '\xA0'; // non-breaking space
+	    	}
+	    }
+	    
+        // aNr click
+		var $regel = $(regel);
 		$regel.find('a').on('click', null, null, Overzicht.relateerPersonen.bind(Overzicht));
-		//bind whole row
-		$regel.find('td').on('click', null, herkomstClass, Overzicht.relateer.bind(Overzicht));
-		//add acties
-		$regel.append($actieRegels);
 		
+		// maak link en popup
+		if (isRelatieStapel) {
+			BrpRelatie.maakTabelRegel($regel, ggoBrpVoorkomen);
+		} else {
+			BrpActie.maakTabelRegelActies($regel, ggoBrpVoorkomen);
+		}
+
+		BrpOnderzoek.maakTabelRegelOnderzoeken($regel, ggoBrpVoorkomen);
+
 		$table.append($regel);
+	},
+	
+	maakActieOfRelatieRegel : function (classes, clss, code) {
+		var regel = '<tr class="headers ' + classes + '">';
+		regel += _.template(thTemplate, {clss: clss, code: code}); // non-breaking space
+		return regel + '</tr>';
 	}
-}
+};

@@ -3,28 +3,32 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>nl.moderniseringgba.migratie</groupId>
+		<groupId>nl.bzk.migratiebrp</groupId>
 		<artifactId>migr-conversie</artifactId>
-		<version>0.0.33</version>
+		<version>3.2.108-SNAPSHOT</version>
 		<relativePath>../migr-conversie</relativePath>
 	</parent>
-	<groupId>nl.moderniseringgba.migratie.conversie</groupId>
+	<groupId>nl.bzk.migratiebrp.conversie</groupId>
 	<artifactId>migr-conversie-regels</artifactId>
 	<name>Migr - Conversie - Conversieregels</name>
 	
 	<dependencies>
 		<!-- Project -->
 		<dependency>
-			<groupId>nl.moderniseringgba.migratie</groupId>
-			<artifactId>migr-utils</artifactId>
+			<groupId>nl.bzk.migratiebrp.util</groupId>
+			<artifactId>migr-util-common</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>nl.bzk.migratiebrp.util</groupId>
+            <artifactId>migr-util-gbav</artifactId>
+        </dependency>
 		<dependency>
-			<groupId>nl.moderniseringgba.migratie.conversie</groupId>
+			<groupId>nl.bzk.migratiebrp.conversie</groupId>
 			<artifactId>migr-conversie-model</artifactId>
 		</dependency>
-	<dependency>
-			<groupId>nl.moderniseringgba.migratie.isc</groupId>
-			<artifactId>migr-isc-excel</artifactId>
+	   <dependency>
+			<groupId>nl.bzk.migratiebrp.util</groupId>
+			<artifactId>migr-util-excel</artifactId>
 			<scope>test</scope>
 		</dependency>		
 		
@@ -55,24 +59,10 @@
 		<!-- TEST -->
 		
 		<dependency>
-			<groupId>nl.moderniseringgba.migratie.conversie</groupId>
+			<groupId>nl.bzk.migratiebrp.conversie</groupId>
 			<artifactId>migr-conversie-model</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		
-		<!-- junit -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>		
-        <!-- mockito -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.0-rc1</version>
-            <scope>test</scope>
-        </dependency>       
 	</dependencies>
 </project>

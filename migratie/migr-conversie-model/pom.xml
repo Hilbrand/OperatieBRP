@@ -3,20 +3,20 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>nl.moderniseringgba.migratie</groupId>
+        <groupId>nl.bzk.migratiebrp</groupId>
         <artifactId>migr-conversie</artifactId>
-        <version>0.0.33</version>
+        <version>3.2.108-SNAPSHOT</version>
         <relativePath>../migr-conversie</relativePath>
     </parent>
-    <groupId>nl.moderniseringgba.migratie.conversie</groupId>
+    <groupId>nl.bzk.migratiebrp.conversie</groupId>
     <artifactId>migr-conversie-model</artifactId>
     <name>Migr - Conversie - Model</name>
 
     <dependencies>
         <!-- Project -->
         <dependency>
-            <groupId>nl.moderniseringgba.migratie</groupId>
-            <artifactId>migr-utils</artifactId>
+            <groupId>nl.bzk.migratiebrp.util</groupId>
+            <artifactId>migr-util-common</artifactId>
         </dependency>
 
         <!-- XML serialization and configuration framework for Java -->
@@ -35,13 +35,6 @@
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
-        </dependency>
-
-        <!-- junit -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

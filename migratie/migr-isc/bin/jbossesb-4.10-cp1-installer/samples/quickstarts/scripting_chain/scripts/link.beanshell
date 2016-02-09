@@ -1,4 +1,0 @@
-// BeanShell script: link.beanshell
-chain = payloadProxy.getPayload(message) + "~(beanshell)";
-logger.info(config.getAttribute("action") + ": " + chain);
-payloadProxy.setPayload(message, chain);

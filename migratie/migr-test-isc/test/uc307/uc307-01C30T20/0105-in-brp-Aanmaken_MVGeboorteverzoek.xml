@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:mvGeboorteVerzoek xmlns:ns2="http://www.moderniseringgba.nl/Migratie/0001" xmlns:ns1="http://www.bprbzk.nl/BRP/0001">
+<ns2:mvGeboorteVerzoek xmlns:ns2="http://www.bzk.nl/migratiebrp/Migratie/0001" xmlns:ns1="http://www.bprbzk.nl/BRP/0001">
 	<ns2:iscGemeenten>
 		<ns2:lo3Gemeente>0599</ns2:lo3Gemeente>
 		<ns2:brpGemeente>0600</ns2:brpGemeente>
@@ -14,7 +14,7 @@
 					<ns1:geboorte>
 						<ns1:datum>20130129</ns1:datum>
 						<ns1:woonplaatsCode>0321</ns1:woonplaatsCode>
-						<ns1:landCode>6030</ns1:landCode>
+						<ns1:landOfGebiedCode>6030</ns1:landOfGebiedCode>
 					</ns1:geboorte>
 					<ns1:voornamen>
 						<ns1:voornaam>
@@ -45,12 +45,12 @@
 						<ns1:voorvoegsel></ns1:voorvoegsel>
 						<ns1:scheidingsteken/>
 						<ns1:adellijkeTitelCode></ns1:adellijkeTitelCode>
-						<ns1:geslachtsnaam>Avonden</ns1:geslachtsnaam>
+						<ns1:geslachtsnaamstam>Avonden</ns1:geslachtsnaamstam>
 					</ns1:samengesteldeNaam>
 					<ns1:geboorte>
 						<ns1:datum>19881122</ns1:datum>
 						<ns1:woonplaatsCode>0344</ns1:woonplaatsCode>
-						<ns1:landCode>6030</ns1:landCode>
+						<ns1:landOfGebiedCode>6030</ns1:landOfGebiedCode>
 					</ns1:geboorte>
 				</ns1:persoon>
 				<ns1:ouderschap>

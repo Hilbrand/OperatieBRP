@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<brp:verhuizingVerzoek xmlns:brp="http://www.moderniseringgba.nl/Migratie/0001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.moderniseringgba.nl/Migratie/0001 ../../../../../../../../../main/resources/xsd/Migratie_Berichten.xsd ">
+<brp:verhuizingVerzoek xmlns:brp="http://www.bzk.nl/migratiebrp/Migratie/0001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.bzk.nl/migratiebrp/Migratie/0001 ../../../../../../../../../main/resources/xsd/Migratie_Berichten.xsd ">
    <brp:iscGemeenten>
        <brp:lo3Gemeente>0399</brp:lo3Gemeente>
        <brp:brpGemeente>0499</brp:brpGemeente>
@@ -10,7 +10,7 @@
   <brp:huidigeGemeente>0399</brp:huidigeGemeente>
   <brp:nieuweGemeente>0499</brp:nieuweGemeente>
   <brp:datumInschrijving>20120921</brp:datumInschrijving>
-  <brp:adresseerbaarObject>adresseerbaarObject-1234</brp:adresseerbaarObject>
+  <brp:identificatiecodeAdresseerbaarObject>adresseerbaarObject-1234</brp:identificatiecodeAdresseerbaarObject>
   <brp:idNummeraanduiding>idNummeraanduiding-1234</brp:idNummeraanduiding>
   <brp:naamOpenbareRuimte>naamOpenbareRuimte</brp:naamOpenbareRuimte>
   <brp:afgekorteNaamOpenbareRuimte>NOR</brp:afgekorteNaamOpenbareRuimte>

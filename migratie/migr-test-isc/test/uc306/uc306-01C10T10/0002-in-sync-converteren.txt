@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><converteerNaarLo3Verzoek xmlns="http://www.moderniseringgba.nl/SYNC/0001"><brpPersoonslijst xmlns="" xmlns:ns2="http://www.moderniseringgba.nl/SYNC/0001">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><converteerNaarLo3Verzoek xmlns="http://www.bzk.nl/migratiebrp/SYNC/0001"><brpPersoonslijst xmlns="" xmlns:ns2="http://www.bzk.nl/migratiebrp/SYNC/0001">
    <geboorteStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeboorteInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud">
             <geboortedatum>20121101</geboortedatum>
             <plaatsCode>0600</plaatsCode>
-            <landCode>6030</landCode>
+            <landOfGebiedCode>6030</landOfGebiedCode>
          </inhoud>
          <historie>
             <datumAanvangGeldigheid>20121101</datumAanvangGeldigheid>
@@ -19,7 +19,7 @@
             <documentStapels>
                <brpStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                         <omschrijving>Geboorteakte</omschrijving>
                         <aktenummer>1 A1234</aktenummer>
                         <partijCode>
@@ -40,7 +40,7 @@
    </geboorteStapel>
    <geslachtsaanduidingStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
             <geslachtsaanduiding>MAN</geslachtsaanduiding>
          </inhoud>
          <historie>
@@ -53,10 +53,10 @@
    <geslachtsnaamcomponentStapels class="java.util.ArrayList">
       <geslachtsnaamcomponentStapel>
          <brpGroep>
-            <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud">
+            <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud">
                <voorvoegsel>van</voorvoegsel>
                <scheidingsteken> </scheidingsteken>
-               <naam>Haren</naam>
+               <stam>Haren</stam>
                <volgnummer>1</volgnummer>
             </inhoud>
             <historie>
@@ -75,10 +75,10 @@
             <betrokkenheid>
                <geboorteStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeboorteInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud">
                         <geboortedatum>19901001</geboortedatum>
                         <plaatsCode>0599</plaatsCode>
-                        <landCode>6030</landCode>
+                        <landOfGebiedCode>6030</landOfGebiedCode>
                      </inhoud>
                      <historie>
                         <datumAanvangGeldigheid>20121101</datumAanvangGeldigheid>
@@ -89,7 +89,7 @@
                </geboorteStapel>
                <geslachtsaanduidingStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
                         <geslachtsaanduiding>VROUW</geslachtsaanduiding>
                      </inhoud>
                      <historie>
@@ -101,11 +101,11 @@
                </geslachtsaanduidingStapel>
                <samengesteldeNaamStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
                         <voornamen>Gina Jennifer</voornamen>
                         <voorvoegsel>van</voorvoegsel>
                         <scheidingsteken> </scheidingsteken>
-                        <geslachtsnaam>Lloyds</geslachtsnaam>
+                        <geslachtsnaamstam>Lloyds</geslachtsnaamstam>
                         <indicatieNamenreeks>false</indicatieNamenreeks>
                         <indicatieAfgeleid>false</indicatieAfgeleid>
                      </inhoud>
@@ -119,7 +119,7 @@
                <rol>OUDER</rol>
                <ouderStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpOuderInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
                         <heeftIndicatie>true</heeftIndicatie>
                         <datumAanvang>20121101</datumAanvang>
                      </inhoud>
@@ -132,7 +132,7 @@
                </ouderStapel>
                <identificatienummerStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
                         <burgerservicenummer>375174217</burgerservicenummer>
                      </inhoud>
                      <historie>
@@ -146,10 +146,10 @@
             <betrokkenheid>
                <geboorteStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeboorteInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud">
                         <geboortedatum>19890101</geboortedatum>
                         <plaatsCode>0599</plaatsCode>
-                        <landCode>6030</landCode>
+                        <landOfGebiedCode>6030</landOfGebiedCode>
                      </inhoud>
                      <historie>
                         <datumAanvangGeldigheid>20121101</datumAanvangGeldigheid>
@@ -160,7 +160,7 @@
                </geboorteStapel>
                <geslachtsaanduidingStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
                         <geslachtsaanduiding>MAN</geslachtsaanduiding>
                      </inhoud>
                      <historie>
@@ -172,11 +172,11 @@
                </geslachtsaanduidingStapel>
                <samengesteldeNaamStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
                         <voornamen>Hans Herman</voornamen>
                         <voorvoegsel>van</voorvoegsel>
                         <scheidingsteken> </scheidingsteken>
-                        <geslachtsnaam>Haren</geslachtsnaam>
+                        <geslachtsnaamstam>Haren</geslachtsnaamstam>
                         <indicatieNamenreeks>false</indicatieNamenreeks>
                         <indicatieAfgeleid>false</indicatieAfgeleid>
                      </inhoud>
@@ -190,7 +190,7 @@
                <rol>OUDER</rol>
                <ouderStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpOuderInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
                         <heeftIndicatie>false</heeftIndicatie>
                         <datumAanvang>20121101</datumAanvang>
                      </inhoud>
@@ -203,7 +203,7 @@
                </ouderStapel>
                <identificatienummerStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
                         <burgerservicenummer>547565161</burgerservicenummer>
                      </inhoud>
                      <historie>
@@ -222,7 +222,7 @@
    <voornaamStapels class="java.util.ArrayList">
       <voornaamStapel>
          <brpGroep>
-            <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpVoornaamInhoud">
+            <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud">
                <voornaam>Maarten</voornaam>
                <volgnummer>1</volgnummer>
             </inhoud>
@@ -233,7 +233,7 @@
             <actieInhoud ref="{decimal:1}"/>
          </brpGroep>
          <brpGroep>
-            <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpVoornaamInhoud">
+            <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud">
                <voornaam>Jan</voornaam>
                <volgnummer>2</volgnummer>
             </inhoud>

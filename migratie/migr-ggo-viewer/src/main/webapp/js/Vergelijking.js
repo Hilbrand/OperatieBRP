@@ -1,102 +1,85 @@
 Vergelijking =
 {
-	maakVergelijking : function(vergelijking, aNummer) {
+	maakVergelijking : function(vergelijking, persoonId, foutRegels) {
 		if (!vergelijking) return null;
-
-		var leeg = true;
-
-		for (var i in vergelijking) {
-			if (vergelijking[i].type != 'IDENTICAL') leeg = false;
-		}
+		if (vergelijking.length == 0) return null;
 		
-		if (leeg) return null;
-
-		var $overzicht = $(_.template(overzichtTemplate, {type: 'overzicht', aNummer : aNummer, titel: "Vergelijking"}));
+		var $overzicht = $(_.template(categorieTemplate, {type: 'overzicht', classes: 'verschillen', titel: "Verschillen bij terugconversie (GBA > BRP > GBA)"}));
 	
-		var $sectie = $('<div class="sectie table-sectie"><table summary="Vergelijking" /></div>');
+		var $sectie = $('<div class="sectie table-sectie"></div>');
+		ViewerUtils.schrijfFoutRegels($sectie, foutRegels, "VERGELIJKING");
+		$sectie.append('<table summary="Verschillen" id="vergelijkingtable_' + persoonId +'" />');
+
 		$overzicht.find('.inhoud').append($sectie);
 		var $table = $sectie.find('table');
-
+		
+		var $header = $(_.template(trVergelijkingHeaderTemplate, {}));
+        $table.append($header);
+        
+        $table.append('<tbody>');
 		for (var i in vergelijking) {
-			var type = vergelijking[i].type.toLowerCase();
-
-			if (type == 'identical') continue;
-
-			var catNr = vergelijking[i].categorie;
-
-			if (catNr < 10) {
-				catNr = "0" + catNr;
-			}
-
-			var oldHerkomst = [];
-			var newHerkomst = [];
-			var elements = [];
-
-			for (var j in vergelijking[i].voorkomenMatches) {
-				if (!empty(vergelijking[i].voorkomenMatches[j].oldVoorkomen)) {
-					oldHerkomst.push (this.bepaalHerkomstClassName(vergelijking[i].voorkomenMatches[j].oldVoorkomen, aNummer));
-				}
-				if (!empty(vergelijking[i].voorkomenMatches[j].newVoorkomen)) {
-					newHerkomst.push (this.bepaalHerkomstClassName(vergelijking[i].voorkomenMatches[j].newVoorkomen, aNummer));
-				}
-				
-				elements = elements.concat(vergelijking[i].voorkomenMatches[j].elements);
-			}
-
-			var formattedElements = [];
-			for (var j in elements) {
-				var el = elements[j] > 999 ? "" + elements[j] : "0" + elements[j];
-				
-				formattedElements.push(catNr + "." + el.substr(0,2) + "." + el.substr(2,4));
-			}
-
-			var inhoud = formattedElements.join(", ");
-			var herkomst = { oldHerkomst : oldHerkomst.join(" "), newHerkomst : newHerkomst.join(" ")};
-
-			ViewerUtils.addLineToTable($table, {thClass: type, th : type, tdClass: oldHerkomst.concat(newHerkomst).join(" "), td: inhoud}, this.relateer.bind(this), herkomst);
+			var oudeHerkomst = this.converteerHerkomsten(vergelijking[i].oudeHerkomsten, persoonId);
+			var nieuweHerkomst = this.converteerHerkomsten(vergelijking[i].nieuweHerkomsten, persoonId);
+			
+			var herkomst = { oldHerkomst : oudeHerkomst, newHerkomst : nieuweHerkomst};
+			var herkomstClass = oudeHerkomst.concat(" ", nieuweHerkomst);
+			var categorie = vergelijking[i].categorie;
+			var type = vergelijking[i].type;
+			var omschrijving = vergelijking[i].inhoud;
+			
+			var $row = $(_.template(trVergelijkingTemplate, {tdCategorie : categorie, tdType : type, trClass: herkomstClass, tdOms: omschrijving}));
+			$row.find('.checkbox').on('click', null, herkomst, this.relateer.bind(this));
+			$table.append($row);			
 		}
+		$table.append('</tbody>');
 		
 		return $overzicht;
 	},
 
-	bepaalHerkomstClassName : function (voorkomen, aNummer) {
-		var catNr = voorkomen.categorieNr;
-		if (catNr > 50) {
-			catNr = catNr - 50;
-		}
-
-		if (catNr < 10) {
-			catNr = "0" + catNr;
-		}
-
-		return aNummer + '_' + catNr + '_' + voorkomen.stapelNr + '_' + voorkomen.volgNr;
-	},
-	
 	relateer : function (event) {
-		var lo3Classes = '.lo3.' + event.data.oldHerkomst.replace (/ /g, ', .lo3.');
-		var terugconversieClasses = '.terugconversie.' + event.data.newHerkomst.replace (/ /g, ', .terugconversie.');
-		var vergelijkClasses = '.vergelijk.' + event.data.newHerkomst.replace (/ /g, ', .vergelijk.');
+		var herkomstClasses = [];
+		var oldHerkomst = event.data.oldHerkomst;
+		var newHerkomst = event.data.newHerkomst;
+		
+		if (!!oldHerkomst) {
+			herkomstClasses.push('.lo3.' + oldHerkomst.replace (/ /g, ', .lo3.'));			
+			herkomstClasses.push('.terugconversie.' + oldHerkomst.replace (/ /g, ', .terugconversie.'));
+			herkomstClasses.push('.vergelijk.' + oldHerkomst.replace (/ /g, ', .vergelijk.'));
+			herkomstClasses.push('.meldingen.' + oldHerkomst.replace (/ /g, ', .meldingen.'));
+			herkomstClasses.push('.brp.' + oldHerkomst.replace (/ /g, ', .brp.'))
+		} else if (!!newHerkomst) {
+			herkomstClasses.push('.terugconversie.' + newHerkomst.replace (/ /g, ', .terugconversie.'));
+			herkomstClasses.push('.vergelijk.' + newHerkomst.replace (/ /g, ', .vergelijk.'));
+			herkomstClasses.push('.meldingen.' + newHerkomst.replace (/ /g, ', .meldingen.'));
+			herkomstClasses.push('.brp.' + newHerkomst.replace (/ /g, ', .brp.'))
+		}
 
-		var $classes = $(lo3Classes + ', ' + terugconversieClasses + ', ' + vergelijkClasses);
+		var $classes = $(herkomstClasses.join(", "));
+        var $target = $(event.target);
 
-		$('.highlight').removeClass('highlight');
+		//highlight rows
+		ViewerUtils.highlight($classes, $target);
+		
+		//show terugconversie tab
+		if ($target.parents('.persoon').find('.teruggeconverteerdColumn').is(":hidden") && ViewerUtils.isHighlighted($target)) {
+			Overzicht.toggleTerugconversie(event);
+		}
+	},
 
-		$classes.addClass('highlight');
-		$classes.parents('.supersectie-inhoud').prev().addClass('highlight');
-		$classes.parents('.sectie-inhoud').prev().addClass('highlight');
-
-		$target = $(event.target);
-		$target.addClass('highlight');
-		$target.parents('.supersectie-inhoud').prev().addClass('highlight');
-		$target.parents('.sectie-inhoud').prev().addClass('highlight');
-
-		$target.parents('.persoon').find('.overzicht').addClass('gesloten');
-		$target.parents('.persoon').find('.supersectie').addClass('gesloten');
-		$target.parents('.persoon').find('.sectie').addClass('gesloten');
-
-		$target.parents('.overzicht').removeClass('gesloten');
-		$classes.parents('.overzicht').removeClass('gesloten');
-		$classes.parents('.supersectie').removeClass('gesloten');
-		$classes.parents('.sectie').removeClass('gesloten');
+	
+	converteerHerkomsten : function (herkomsten, persoonId) {
+		var herkomstenString = "";		
+		for (var i in herkomsten) {
+			var herkomst = herkomsten[i];
+			if ("null" == herkomst.substr(0, 4)) {
+				//replace it with persoonId
+				herkomst = herkomst.replace("null", persoonId);			
+			}
+			herkomstenString = herkomstenString.concat(herkomst, " ");
+		}		
+		//trim it
+		herkomstenString = herkomstenString.replace(/^\s+|\s+$/g, '');
+		
+		return herkomstenString;
 	}
-}
+};

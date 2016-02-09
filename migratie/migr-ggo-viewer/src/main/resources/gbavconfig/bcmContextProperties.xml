@@ -21,7 +21,7 @@
         <property name="properties">
             <props>
                 <prop key="bcmEnabled">${ggoviewer.bcm.enabled}</prop>
-                    <prop key="bcmDescriptionsPath">${ba.bcm.descriptions.path}</prop>
+                <prop key="bcmDescriptionsPath">${ba.bcm.descriptions.path}</prop>
             </props>
         </property>
     </bean>

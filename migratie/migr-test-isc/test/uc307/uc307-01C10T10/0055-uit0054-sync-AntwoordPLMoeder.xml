@@ -1,4 +1,4 @@
-<leesUitBrpAntwoord xmlns="http://www.moderniseringgba.nl/SYNC/0001">
+<leesUitBrpAntwoord xmlns="http://www.bzk.nl/migratiebrp/SYNC/0001">
 	<status>Ok</status>
 	<brpPl>
 		<brpPersoonslijst xmlns="">
@@ -9,7 +9,7 @@
 						<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpInschrijvingInhoud">
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpInschrijvingInhoud">
 						<datumInschrijving>19870304</datumInschrijving>
 						<versienummer>1</versienummer>
 					</inhoud>
@@ -25,7 +25,7 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
 										<partijCode>
 											<gemeenteCode>1901</gemeenteCode>
 										</partijCode>
@@ -45,27 +45,25 @@
 				</brpGroep>
 			</inschrijvingStapel>
 			<reisdocumentStapels class="java.util.ArrayList" />
-			<aanschrijvingStapel>
+			<naamgebruikStapel>
 				<brpGroep>
 					<historie>
 						<datumAanvangGeldigheid>19870304</datumAanvangGeldigheid>
 						<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpAanschrijvingInhoud">
-						<wijzeGebruikGeslachtsnaamCode>E</wijzeGebruikGeslachtsnaamCode>
-						<indicatieAanschrijvenMetTitels>true
-						</indicatieAanschrijvenMetTitels>
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNaamgebruikInhoud">
+						<naamgebruikCode>E</naamgebruikCode>
 						<indicatieAfgeleid>true</indicatieAfgeleid>
 						<adellijkeTitelCode>B</adellijkeTitelCode>
 						<voornamen>Jani</voornamen>
 						<voorvoegsel>Uit</voorvoegsel>
 						<scheidingsteken/>
-						<geslachtsnaam>Laren</geslachtsnaam>
+						<geslachtsnaamstam>Laren</geslachtsnaamstam>
 					</inhoud>
 					<actieInhoud ref="1" />
 				</brpGroep>
-			</aanschrijvingStapel>
+			</naamgebruikStapel>
 			<adresStapel>
 				<brpGroep>
 					<historie>
@@ -73,7 +71,7 @@
 						<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpAdresInhoud">
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud">
 						<functieAdresCode>W</functieAdresCode>
 						<redenWijzigingAdresCode>P</redenWijzigingAdresCode>
 						<aangeverAdreshoudingCode>G</aangeverAdreshoudingCode>
@@ -83,7 +81,7 @@
 						<gemeentedeel>1901</gemeentedeel>
 						<huisnummer>15</huisnummer>
 						<postcode>3701 HA</postcode>
-						<landCode>6030</landCode>
+						<landOfGebiedCode>6030</landOfGebiedCode>
 					</inhoud>
 					<actieInhoud id="5">
 						<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
@@ -104,7 +102,7 @@
 						<datumTijdRegistratie>19840204000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpAfgeleidAdministratiefInhoud">
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAfgeleidAdministratiefInhoud">
 						<laatsteWijziging>19840204000000000</laatsteWijziging>
 					</inhoud>
 					<actieInhoud id="4">
@@ -120,31 +118,31 @@
 					</actieInhoud>
 				</brpGroep>
 			</afgeleidAdministratiefStapel>
-			<bijhoudingsgemeenteStapel>
+			<bijhoudingStapel>
 				<brpGroep>
 					<historie>
 						<datumAanvangGeldigheid>19870304</datumAanvangGeldigheid>
 						<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpBijhoudingsgemeenteInhoud">
-						<bijhoudingsgemeenteCode>1901</bijhoudingsgemeenteCode>
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud">
+						<bijhoudingspartijCode>1901</bijhoudingspartijCode>
 						<datumInschrijvingInGemeente>19870304</datumInschrijvingInGemeente>
 						<onverwerktDocumentAanwezig>false</onverwerktDocumentAanwezig>
 					</inhoud>
 					<actieInhoud ref="5" />
 				</brpGroep>
-			</bijhoudingsgemeenteStapel>
+			</bijhoudingStapel>
 			<geboorteStapel>
 				<brpGroep>
 					<historie>
 						<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeboorteInhoud">
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud">
 						<geboortedatum>19870304</geboortedatum>
 						<gemeenteCode>0355</gemeenteCode>
-						<landCode>6030</landCode>
+						<landOfGebiedCode>6030</landOfGebiedCode>
 					</inhoud>
 					<actieInhoud ref="1" />
 				</brpGroep>
@@ -156,7 +154,7 @@
 						<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
 						<geslachtsaanduiding>VROUW</geslachtsaanduiding>
 					</inhoud>
 					<actieInhoud ref="1" />
@@ -169,7 +167,7 @@
 						<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
 						<administratienummer>1710690785</administratienummer>
 						<burgerservicenummer>596179017</burgerservicenummer>
 					</inhoud>
@@ -183,7 +181,7 @@
 						<datumTijdRegistratie>19840204000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpPersoonskaartInhoud">
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoud">
 						<indicatiePKVolledigGeconverteerd>false
 						</indicatiePKVolledigGeconverteerd>
 					</inhoud>
@@ -202,10 +200,10 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeboorteInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud">
 										<geboortedatum>19550430</geboortedatum>
 										<gemeenteCode>1900</gemeenteCode>
-										<landCode>6030</landCode>
+										<landOfGebiedCode>6030</landOfGebiedCode>
 									</inhoud>
 									<actieInhoud id="2">
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
@@ -219,7 +217,7 @@
 														<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 													</historie>
 													<inhoud
-														class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+														class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
 														<partijCode>
 															<gemeenteCode>1901</gemeenteCode>
 														</partijCode>
@@ -235,10 +233,10 @@
 														<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 													</historie>
 													<inhoud
-														class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+														class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
 														<omschrijving>PL - Ouder 1</omschrijving>
 														<partijCode>
-															<naam>Migratievoorziening</naam>
+															<stam>Migratievoorziening</stam>
 														</partijCode>
 														<soortDocumentCode>Migratievoorziening</soortDocumentCode>
 													</inhoud>
@@ -261,7 +259,7 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
 										<geslachtsaanduiding>VROUW</geslachtsaanduiding>
 									</inhoud>
 									<actieInhoud ref="2" />
@@ -274,9 +272,9 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
 										<voornamen>Jamiel</voornamen>
-										<geslachtsnaam>Smits</geslachtsnaam>
+										<geslachtsnaamstam>Smits</geslachtsnaamstam>
 										<indicatieNamenreeks>false</indicatieNamenreeks>
 										<indicatieAfgeleid>false</indicatieAfgeleid>
 									</inhoud>
@@ -291,7 +289,7 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
 										<administratienummer>9367869729</administratienummer>
 										<burgerservicenummer>629668905</burgerservicenummer>
 									</inhoud>
@@ -305,7 +303,7 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpOuderInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
 										<heeftIndicatie>true</heeftIndicatie>
 										<datumAanvang>19870304</datumAanvang>
 									</inhoud>
@@ -320,10 +318,10 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeboorteInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud">
 										<geboortedatum>19510101</geboortedatum>
 										<gemeenteCode>1901</gemeenteCode>
-										<landCode>6030</landCode>
+										<landOfGebiedCode>6030</landOfGebiedCode>
 									</inhoud>
 									<actieInhoud id="3">
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
@@ -337,7 +335,7 @@
 														<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 													</historie>
 													<inhoud
-														class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+														class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
 														<partijCode>
 															<gemeenteCode>1901</gemeenteCode>
 														</partijCode>
@@ -353,10 +351,10 @@
 														<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 													</historie>
 													<inhoud
-														class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+														class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
 														<omschrijving>PL - Ouder 2</omschrijving>
 														<partijCode>
-															<naam>Migratievoorziening</naam>
+															<stam>Migratievoorziening</stam>
 														</partijCode>
 														<soortDocumentCode>Migratievoorziening</soortDocumentCode>
 													</inhoud>
@@ -379,7 +377,7 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
 										<geslachtsaanduiding>MAN</geslachtsaanduiding>
 									</inhoud>
 									<actieInhoud ref="3" />
@@ -392,11 +390,11 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
 										<voornamen>Willem</voornamen>
 										<voorvoegsel>de</voorvoegsel>
 										<scheidingsteken/>
-										<geslachtsnaam>Vries</geslachtsnaam>
+										<geslachtsnaamstam>Vries</geslachtsnaamstam>
 										<indicatieNamenreeks>false</indicatieNamenreeks>
 										<indicatieAfgeleid>false</indicatieAfgeleid>
 									</inhoud>
@@ -411,7 +409,7 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
 										<administratienummer>1202487857</administratienummer>
 										<burgerservicenummer>459256105</burgerservicenummer>
 									</inhoud>
@@ -425,7 +423,7 @@
 										<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 									</historie>
 									<inhoud
-										class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpOuderInhoud">
+										class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
 										<heeftIndicatie>true</heeftIndicatie>
 										<datumAanvang>19870304</datumAanvang>
 									</inhoud>
@@ -443,12 +441,12 @@
 						<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
 						<voornamen>Jani</voornamen>
 						<voorvoegsel>Uit</voorvoegsel>
 						<scheidingsteken/>
 						<adellijkeTitelCode>B</adellijkeTitelCode>
-						<geslachtsnaam>Laren</geslachtsnaam>
+						<geslachtsnaamstam>Laren</geslachtsnaamstam>
 						<indicatieNamenreeks>false</indicatieNamenreeks>
 						<indicatieAfgeleid>true</indicatieAfgeleid>
 					</inhoud>
@@ -461,8 +459,8 @@
 						<datumTijdRegistratie>19840204000000000</datumTijdRegistratie>
 					</historie>
 					<inhoud
-						class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpVerstrekkingsbeperkingInhoud">
-						<verstrekkingsbeperking>false</verstrekkingsbeperking>
+						class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerstrekkingsbeperkingInhoud">
+						<volledigeVerstrekkingsbeperking>false</volledigeVerstrekkingsbeperking>
 					</inhoud>
 					<actieInhoud ref="4" />
 				</brpGroep>
@@ -475,10 +473,10 @@
 							<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 						</historie>
 						<inhoud
-							class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud">
+							class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud">
 							<voorvoegsel>Uit</voorvoegsel>
 							<scheidingsteken/>
-							<naam>Laren</naam>
+							<stam>Laren</stam>
 							<adellijkeTitelCode>B</adellijkeTitelCode>
 							<volgnummer>1</volgnummer>
 						</inhoud>
@@ -494,7 +492,7 @@
 							<datumTijdRegistratie>19870305000000000</datumTijdRegistratie>
 						</historie>
 						<inhoud
-							class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpVoornaamInhoud">
+							class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud">
 							<voornaam>Jani</voornaam>
 							<volgnummer>1</volgnummer>
 						</inhoud>

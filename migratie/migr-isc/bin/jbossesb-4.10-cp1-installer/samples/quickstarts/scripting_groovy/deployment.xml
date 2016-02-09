@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<jbossesb-deployment>
-  <jmsQueue>quickstart_scripting_groovy_gw</jmsQueue>
-  <jmsQueue>quickstart_scripting_groovy_esb</jmsQueue>
-</jbossesb-deployment>

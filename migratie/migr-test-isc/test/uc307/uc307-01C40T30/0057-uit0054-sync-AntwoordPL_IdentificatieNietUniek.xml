@@ -1,4 +1,4 @@
-<leesUitBrpAntwoord xmlns="http://www.moderniseringgba.nl/SYNC/0001">
+<leesUitBrpAntwoord xmlns="http://www.bzk.nl/migratiebrp/SYNC/0001">
 	<status>Fout</status>
 	<foulmelding>Identificatie niet uniek</foutmelding>
 	<!--<brpPl>
@@ -7,7 +7,7 @@
    <nationaliteitStapels class="java.util.ArrayList"/>
    <inschrijvingStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpInschrijvingInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpInschrijvingInhoud">
             <datumInschrijving>19801120</datumInschrijving>
             <versienummer>1</versienummer>
          </inhoud>
@@ -19,7 +19,7 @@
             <documentStapels>
                <brpStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                         <partijCode>
                            <gemeenteCode>0400</gemeenteCode>
                         </partijCode>
@@ -33,12 +33,12 @@
             </documentStapels>
          </actieInhoud>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_07</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
             </herkomst>
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_01</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
@@ -47,31 +47,30 @@
       </brpGroep>
    </inschrijvingStapel>
    <reisdocumentStapels class="java.util.ArrayList"/>
-   <aanschrijvingStapel>
+   <naamgebruikStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpAanschrijvingInhoud">
-            <wijzeGebruikGeslachtsnaamCode>E</wijzeGebruikGeslachtsnaamCode>
-            <indicatieAanschrijvenMetTitels>true</indicatieAanschrijvenMetTitels>
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNaamgebruikInhoud">
+            <naamgebruikCode>E</naamgebruikCode>
             <indicatieAfgeleid>true</indicatieAfgeleid>
             <adellijkeTitelCode></adellijkeTitelCode>
             <voornamen>Anne</voornamen>
             <voorvoegsel></voorvoegsel>
             <scheidingsteken> </scheidingsteken>
-            <geslachtsnaam>Lak</geslachtsnaam>
+            <geslachtsnaamstam>Lak</geslachtsnaamstam>
          </inhoud>
          <actieInhoud ref="1"/>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_01</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
             </herkomst>
          </herkomst>
       </brpGroep>
-   </aanschrijvingStapel>
+   </naamgebruikStapel>
    <adresStapel>
       <brpGroep>        
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpAdresInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud">
             <functieAdresCode>W</functieAdresCode>
             <redenWijzigingAdresCode>P</redenWijzigingAdresCode>
             <aangeverAdreshoudingCode>G</aangeverAdreshoudingCode>
@@ -81,7 +80,7 @@
             <gemeentedeel>1901</gemeentedeel>
             <huisnummer>2</huisnummer>
             <postcode>3702 BR</postcode>
-            <landCode>6030</landCode>
+            <landOfGebiedCode>6030</landOfGebiedCode>
          </inhoud>
          <actieInhoud id="5">
             <datumTijdRegistratie>19801120000000000</datumTijdRegistratie>
@@ -90,7 +89,7 @@
             <soortActieCode>Conversie GBA</soortActieCode>
          </actieInhoud>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_08</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
@@ -100,7 +99,7 @@
    </adresStapel>
    <afgeleidAdministratiefStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpAfgeleidAdministratiefInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAfgeleidAdministratiefInhoud">
             <laatsteWijziging>19801120000000000</laatsteWijziging>
          </inhoud>
          <actieInhoud id="4">
@@ -110,7 +109,7 @@
             <soortActieCode>Conversie GBA</soortActieCode>
          </actieInhoud>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_07</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
@@ -118,33 +117,33 @@
          </herkomst>
       </brpGroep>
    </afgeleidAdministratiefStapel>
-   <bijhoudingsgemeenteStapel>
+   <bijhoudingStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpBijhoudingsgemeenteInhoud">
-            <bijhoudingsgemeenteCode>1901</bijhoudingsgemeenteCode>
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud">
+            <bijhoudingspartijCode>1901</bijhoudingspartijCode>
             <datumInschrijvingInGemeente>19801120</datumInschrijvingInGemeente>
             <onverwerktDocumentAanwezig>false</onverwerktDocumentAanwezig>
          </inhoud>
          <actieInhoud ref="5"/>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_08</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
             </herkomst>
          </herkomst>
       </brpGroep>
-   </bijhoudingsgemeenteStapel>
+   </bijhoudingStapel>
    <geboorteStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeboorteInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud">
             <geboortedatum>19801120</geboortedatum>
             <gemeenteCode>0400</gemeenteCode>
-            <landCode>6030</landCode>
+            <landOfGebiedCode>6030</landOfGebiedCode>
          </inhoud>
          <actieInhoud ref="1"/>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_01</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
@@ -154,12 +153,12 @@
    </geboorteStapel>
    <geslachtsaanduidingStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
             <geslachtsaanduiding>VROUW</geslachtsaanduiding>
          </inhoud>
          <actieInhoud ref="1"/>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_01</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
@@ -169,13 +168,13 @@
    </geslachtsaanduidingStapel>
    <identificatienummerStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
             <administratienummer>6245394209</administratienummer>
             <burgerservicenummer>496819689</burgerservicenummer>
          </inhoud>
          <actieInhoud ref="1"/>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_01</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
@@ -185,12 +184,12 @@
    </identificatienummerStapel>
    <persoonskaartStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpPersoonskaartInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoud">
             <indicatiePKVolledigGeconverteerd>false</indicatiePKVolledigGeconverteerd>
          </inhoud>
          <actieInhoud ref="4"/>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_07</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
@@ -206,10 +205,10 @@
             <betrokkenheid>
                <geboorteStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeboorteInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud">
                         <geboortedatum>19520202</geboortedatum>
                         <gemeenteCode>0003</gemeenteCode>
-                        <landCode>6030</landCode>
+                        <landOfGebiedCode>6030</landOfGebiedCode>
                      </inhoud>
                      <actieInhoud id="2">
                         <datumTijdRegistratie>19801120000000000</datumTijdRegistratie>
@@ -219,7 +218,7 @@
                         <documentStapels>
                            <brpStapel>
                               <brpGroep>
-                                 <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                                     <partijCode>
                                        <gemeenteCode>0003</gemeenteCode>
                                     </partijCode>
@@ -232,10 +231,10 @@
                            </brpStapel>
                            <brpStapel>
                               <brpGroep>
-                                 <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                                     <omschrijving>PL - Ouder 1</omschrijving>
                                     <partijCode>
-                                       <naam>Migratievoorziening</naam>
+                                       <stam>Migratievoorziening</stam>
                                     </partijCode>
                                     <soortDocumentCode>Migratievoorziening</soortDocumentCode>
                                  </inhoud>
@@ -246,7 +245,7 @@
                         </documentStapels>
                      </actieInhoud>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_02</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -257,12 +256,12 @@
                <geslachtsaanduidingStapel>
                   <brpGroep>
                      <historie>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
                         <geslachtsaanduiding>VROUW</geslachtsaanduiding>
                      </inhoud>
                      <actieInhoud ref="2"/>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_02</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -272,15 +271,15 @@
                </geslachtsaanduidingStapel>
                <samengesteldeNaamStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
                         <voornamen>Nell</voornamen>
-                        <geslachtsnaam>Klop</geslachtsnaam>
+                        <geslachtsnaamstam>Klop</geslachtsnaamstam>
                         <indicatieNamenreeks>false</indicatieNamenreeks>
                         <indicatieAfgeleid>false</indicatieAfgeleid>
                      </inhoud>
                      <actieInhoud ref="2"/>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_02</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -291,13 +290,13 @@
                <rol>OUDER</rol>
                <identificatienummerStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
                         <administratienummer>6856068385</administratienummer>
                         <burgerservicenummer>314882121</burgerservicenummer>
                      </inhoud>
                      <actieInhoud ref="2"/>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_02</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -307,13 +306,13 @@
                </identificatienummerStapel>
                <ouderStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpOuderInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
                         <heeftIndicatie>true</heeftIndicatie>
                         <datumAanvang>19801120</datumAanvang>
                      </inhoud>
                      <actieInhoud ref="2"/>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_02</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -325,10 +324,10 @@
             <betrokkenheid>
                <geboorteStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeboorteInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud">
                         <geboortedatum>19491022</geboortedatum>
                         <gemeenteCode>1987</gemeenteCode>
-                        <landCode>6030</landCode>
+                        <landOfGebiedCode>6030</landOfGebiedCode>
                      </inhoud>
                      <actieInhoud id="3">
                         <datumTijdRegistratie>19801120000000000</datumTijdRegistratie>
@@ -338,7 +337,7 @@
                         <documentStapels>
                            <brpStapel>
                               <brpGroep>
-                                 <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                                     <partijCode>
                                        <gemeenteCode>1987</gemeenteCode>
                                     </partijCode>
@@ -354,10 +353,10 @@
                                  <historie>
                                     <datumTijdRegistratie>19801120000000000</datumTijdRegistratie>
                                  </historie>
-                                 <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                                     <omschrijving>PL - Ouder 2</omschrijving>
                                     <partijCode>
-                                       <naam>Migratievoorziening</naam>
+                                       <stam>Migratievoorziening</stam>
                                     </partijCode>
                                     <soortDocumentCode>Migratievoorziening</soortDocumentCode>
                                  </inhoud>
@@ -368,7 +367,7 @@
                         </documentStapels>
                      </actieInhoud>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_03</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -378,12 +377,12 @@
                </geboorteStapel>
                <geslachtsaanduidingStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud">
                         <geslachtsaanduiding>MAN</geslachtsaanduiding>
                      </inhoud>
                      <actieInhoud ref="3"/>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_03</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -393,17 +392,17 @@
                </geslachtsaanduidingStapel>
                <samengesteldeNaamStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
                         <voornamen>Kor</voornamen>
                         <voorvoegsel></voorvoegsel>
                         <scheidingsteken> </scheidingsteken>
-                        <geslachtsnaam>Lak</geslachtsnaam>
+                        <geslachtsnaamstam>Lak</geslachtsnaamstam>
                         <indicatieNamenreeks>false</indicatieNamenreeks>
                         <indicatieAfgeleid>false</indicatieAfgeleid>
                      </inhoud>
                      <actieInhoud ref="3"/>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_03</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -414,13 +413,13 @@
                <rol>OUDER</rol>
                <identificatienummerStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud">
                         <administratienummer>7304837921</administratienummer>
                         <burgerservicenummer>788036105</burgerservicenummer>
                      </inhoud>
                      <actieInhoud ref="3"/>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_03</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -430,13 +429,13 @@
                </identificatienummerStapel>
                <ouderStapel>
                   <brpGroep>
-                     <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpOuderInhoud">
+                     <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
                         <heeftIndicatie>true</heeftIndicatie>
                         <datumAanvang>19801120</datumAanvang>
                      </inhoud>
                      <actieInhoud ref="3"/>
                      <herkomst class="java.util.HashSet">
-                        <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+                        <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                            <categorie>CATEGORIE_03</categorie>
                            <stapel>0</stapel>
                            <voorkomen>0</voorkomen>
@@ -450,18 +449,18 @@
    </relaties>
    <samengesteldeNaamStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud">
             <voornamen>Anne</voornamen>
             <voorvoegsel></voorvoegsel>
             <scheidingsteken> </scheidingsteken>
             <adellijkeTitelCode></adellijkeTitelCode>
-            <geslachtsnaam>Lak</geslachtsnaam>
+            <geslachtsnaamstam>Lak</geslachtsnaamstam>
             <indicatieNamenreeks>false</indicatieNamenreeks>
             <indicatieAfgeleid>true</indicatieAfgeleid>
          </inhoud>
          <actieInhoud ref="1"/>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_01</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
@@ -471,12 +470,12 @@
    </samengesteldeNaamStapel>
    <verstrekkingsbeperkingStapel>
       <brpGroep>
-         <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpVerstrekkingsbeperkingInhoud">
-            <verstrekkingsbeperking>false</verstrekkingsbeperking>
+         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerstrekkingsbeperkingInhoud">
+            <volledigeVerstrekkingsbeperking>false</volledigeVerstrekkingsbeperking>
          </inhoud>
          <actieInhoud ref="4"/>
          <herkomst class="java.util.HashSet">
-            <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+            <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                <categorie>CATEGORIE_07</categorie>
                <stapel>0</stapel>
                <voorkomen>0</voorkomen>
@@ -491,16 +490,16 @@
                <datumAanvangGeldigheid>19801120</datumAanvangGeldigheid>
                <datumTijdRegistratie>19801120000000000</datumTijdRegistratie>
             </historie>
-            <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud">
+            <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud">
                <voorvoegsel></voorvoegsel>
                <scheidingsteken> </scheidingsteken>
-               <naam>Lak</naam>
+               <stam>Lak</stam>
                <adellijkeTitelCode></adellijkeTitelCode>
                <volgnummer>1</volgnummer>
             </inhoud>
             <actieInhoud ref="1"/>
             <herkomst class="java.util.HashSet">
-               <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+               <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                   <categorie>CATEGORIE_01</categorie>
                   <stapel>0</stapel>
                   <voorkomen>0</voorkomen>
@@ -512,13 +511,13 @@
    <voornaamStapels class="java.util.ArrayList">
       <voornaamStapel>
          <brpGroep>
-            <inhoud class="nl.moderniseringgba.migratie.conversie.model.brp.groep.BrpVoornaamInhoud">
+            <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud">
                <voornaam>Anne</voornaam>
                <volgnummer>1</volgnummer>
             </inhoud>
             <actieInhoud ref="1"/>
             <herkomst class="java.util.HashSet">
-               <herkomst class="nl.moderniseringgba.migratie.conversie.model.herkomst.Lo3Herkomst">
+               <herkomst class="nl.bzk.migratiebrp.conversie.model.lo3.Lo3Herkomst">
                   <categorie>CATEGORIE_01</categorie>
                   <stapel>0</stapel>
                   <voorkomen>0</voorkomen>
