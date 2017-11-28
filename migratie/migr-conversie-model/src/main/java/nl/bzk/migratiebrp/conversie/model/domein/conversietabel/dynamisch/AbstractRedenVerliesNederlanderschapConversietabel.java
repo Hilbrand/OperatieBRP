@@ -9,36 +9,32 @@ package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch;
 import java.util.List;
 import java.util.Map.Entry;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenVerliesNederlandschapCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AbstractAttribuutConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze conversietabel mapt een Lo3AanduidingVerblijfstitelCode op de corresponderen BrpVerblijfsrechtCode en vice
  * versa.
- * 
  */
 public abstract class AbstractRedenVerliesNederlanderschapConversietabel extends
-        AbstractAttribuutConversietabel<Lo3RedenNederlandschapCode, BrpRedenVerliesNederlandschapCode>
-{
+        AbstractAttribuutConversietabel<Lo3RedenNederlandschapCode, BrpRedenVerliesNederlandschapCode> {
 
     /**
      * Maakt een VerblijfsrechtConversietabel object.
-     * 
-     * @param conversieLijst
-     *            de lijst met alle verblijfstitel conversies
+     * @param conversieLijst de lijst met alle verblijfstitel conversies
      */
     public AbstractRedenVerliesNederlanderschapConversietabel(
-        final List<Entry<Lo3RedenNederlandschapCode, BrpRedenVerliesNederlandschapCode>> conversieLijst)
-    {
+            final List<Entry<Lo3RedenNederlandschapCode, BrpRedenVerliesNederlandschapCode>> conversieLijst) {
         super(conversieLijst);
     }
 
     @Override
     protected final Lo3RedenNederlandschapCode voegOnderzoekToeLo3(final Lo3RedenNederlandschapCode input, final Lo3Onderzoek onderzoek) {
         final Lo3RedenNederlandschapCode resultaat;
-        if (nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie.isElementGevuld(input)) {
+        if (Lo3Validatie.isElementGevuld(input)) {
             resultaat = new Lo3RedenNederlandschapCode(input.getWaarde(), onderzoek);
         } else {
             if (onderzoek != null) {
@@ -54,7 +50,7 @@ public abstract class AbstractRedenVerliesNederlanderschapConversietabel extends
     @Override
     protected final BrpRedenVerliesNederlandschapCode voegOnderzoekToeBrp(final BrpRedenVerliesNederlandschapCode input, final Lo3Onderzoek onderzoek) {
         final BrpRedenVerliesNederlandschapCode resultaat;
-        if (Validatie.isAttribuutGevuld(input)) {
+        if (BrpValidatie.isAttribuutGevuld(input)) {
             resultaat = new BrpRedenVerliesNederlandschapCode(input.getWaarde(), onderzoek);
         } else {
             if (onderzoek != null) {

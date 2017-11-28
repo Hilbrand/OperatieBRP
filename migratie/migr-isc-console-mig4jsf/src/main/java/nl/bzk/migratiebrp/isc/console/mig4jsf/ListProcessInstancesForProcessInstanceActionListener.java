@@ -26,11 +26,8 @@ public final class ListProcessInstancesForProcessInstanceActionListener extends 
 
     /**
      * Constructor.
-     *
-     * @param processInstanceExpression
-     *            process instance expression
-     * @param targetExpression
-     *            target expression
+     * @param processInstanceExpression process instance expression
+     * @param targetExpression target expression
      */
     public ListProcessInstancesForProcessInstanceActionListener(final ValueExpression processInstanceExpression, final ValueExpression targetExpression) {
         super("listProcessInstancesForProcessInstance");

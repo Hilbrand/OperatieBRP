@@ -25,9 +25,8 @@
  * <li>CCA07: Conversie inschrijving</li>
  * <li>CCA04: Conversie nationaliteit</li>
  * </ol>
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.model
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 

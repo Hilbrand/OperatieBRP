@@ -6,10 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.repository;
 
+import java.util.Collection;
 import java.util.List;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.Leveringsautorisatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PartijRol;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Leveringsautorisatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PartijRol;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ToegangLeveringsAutorisatie;
 
 /**
  * Repository voor leveringsautorisaties.
@@ -18,11 +19,28 @@ public interface LeveringsautorisatieRepository {
 
     /**
      * Vind alle leveringsautorisaties voor een gegeven partijrol.
-     *
-     * @param partijRol
-     *            de partijrol
+     * @param partijRol de partijrol
      * @return leveringsautorisaties
      */
     List<Leveringsautorisatie> findLeveringsautorisatiesVoorPartij(PartijRol partijRol);
 
+    /**
+     * @param leveringsautorisatie De leveringsautorisatie die opgeslagen moet worden.
+     * @return De opgeslagen leveringsautorisatie.
+     */
+    Leveringsautorisatie saveLeveringsautorisatie(Leveringsautorisatie leveringsautorisatie);
+
+    /**
+     * Geeft alle gba toegang leveringsautorisaties.
+     * @return Alle gba toegang leveringsautorisaties
+     */
+    Collection<Leveringsautorisatie> geefAlleGbaLeveringsautorisaties();
+
+    /**
+     * Geeft de lijst van toegang leveringsautorisaties voor de betreffende partij op de gegeven ingangsdatum.
+     * @param partijRol De partijRol waarvoor de toegang leveringsautorisatie wordt opgehaald.
+     * @param datumIngang De ingangsdatum van de toegang leveringsautorisatie
+     * @return De opgehaalde lijst van toegang leveringsautorisaties
+     */
+    List<ToegangLeveringsAutorisatie> getToegangLeveringsautorisatieByPartijEnDatumIngang(PartijRol partijRol, Integer datumIngang);
 }

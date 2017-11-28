@@ -11,15 +11,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.HistorieUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaRootEntiteitMatch;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaVergelijkerResultaat;
@@ -31,10 +33,13 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.verwerker.IstSta
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 
 /**
- * Matcht, vergelijk en verwerkt de gevonden verschillen tussen 2 {@link DeltaRootEntiteit} objecten van hetzelfde type
- * (bv {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon}.
+ * Matcht, vergelijk en verwerkt de gevonden verschillen tussen 2
+ * {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit} objecten van hetzelfde type (bv
+ * {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon}.
  */
-public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
+final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static Set<DeltaRootEntiteitMatch> matchDeltaRootEntiteiten(final DeltaBepalingContext context) {
         final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches = new IstStapelEnRelatieMatcher().matchIstGegevens(context);
@@ -85,16 +90,16 @@ public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
         new IstStapelVerschilVerwerker().verwerkWijzigingen(istVerschillen, context);
 
         for (final DeltaRootEntiteitMatch match : teVerwerkenDeltaRootEntiteitMatch) {
-            final DeltaRootEntiteit deltaRootEntiteit;
+            final RootEntiteit rootEntiteit;
             final VergelijkerResultaat vergelijkerResultaat = match.getVergelijkerResultaat();
-            if (vergelijkerResultaat != null) {
+            if (vergelijkerResultaat != null && !vergelijkerResultaat.isLeeg()) {
                 if (match.isDeltaRootEntiteitNieuw()) {
-                    deltaRootEntiteit = match.getEigenaarEntiteit();
+                    rootEntiteit = match.getEigenaarEntiteit();
                 } else {
                     // Er zijn wijzigingen op het DeltaRootEntiteit of deze is verwijderd
-                    deltaRootEntiteit = match.getBestaandeDeltaRootEntiteit();
+                    rootEntiteit = match.getBestaandeRootEntiteit();
                 }
-                verwerkVerschillen(deltaRootEntiteit, administratieveHandeling, vergelijkerResultaat);
+                verwerkVerschillen(rootEntiteit, administratieveHandeling, vergelijkerResultaat);
             }
         }
     }
@@ -102,8 +107,12 @@ public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
     private boolean isSchoneAnummerWijziging(final DeltaBepalingContext context) {
         if (context.heeftAlleenPersoonsWijzigingen()) {
             final VergelijkerResultaat vergelijkerResultaat = context.getEigenPersoonMatch().getVergelijkerResultaat();
-            if (vergelijkerResultaat.bevatAlleenAnummerWijzigingen()) {
-                return true;
+            try {
+                if (vergelijkerResultaat.bevatAlleenAnummerWijzigingen(context.getBestaandePersoon())) {
+                    return true;
+                }
+            } catch (ReflectiveOperationException e) {
+                LOGGER.error("Fout tijdens controle schone a-nummer wijziging", e);
             }
         }
         return false;
@@ -111,12 +120,20 @@ public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
 
     private boolean isPersoonslijstAfgevoerd(final DeltaBepalingContext context) {
         final VergelijkerResultaat vergelijkerResultaat = context.getEigenPersoonMatch().getVergelijkerResultaat();
-        final Verschil verschil =
-                vergelijkerResultaat != null ? vergelijkerResultaat.zoekVerschil(new EntiteitSleutel(Persoon.class, Persoon.NADERE_BIJHOUDINGSAARD))
-                                            : null;
-        return verschil != null
-               && verschil.getVerschilType().equals(VerschilType.ELEMENT_AANGEPAST)
-               && NadereBijhoudingsaard.FOUT.getId() == (Short) verschil.getNieuweWaarde();
+        boolean isPersoonlijstAfgevoerd = false;
+        if (vergelijkerResultaat != null) {
+            final List<Verschil> verschillen =
+                    vergelijkerResultaat.zoekVerschillen(new EntiteitSleutel(Persoon.class, Persoon.PERSOON_BIJHOUDING_HISTORIE_SET));
+            for (final Verschil verschil : verschillen) {
+                if (verschil.getSleutel().getDelen().containsKey(EntiteitSleutel.SLEUTELDEEL_BIJHOUDING_CATEGORIE)) {
+                    final NadereBijhoudingsaard nadereBijhoudingsaard =
+                            ((PersoonBijhoudingHistorie) verschil.getNieuweWaarde()).getNadereBijhoudingsaard();
+                    isPersoonlijstAfgevoerd =
+                            VerschilType.RIJ_TOEGEVOEGD.equals(verschil.getVerschilType()) && NadereBijhoudingsaard.FOUT.equals(nadereBijhoudingsaard);
+                }
+            }
+        }
+        return isPersoonlijstAfgevoerd;
     }
 
     /**
@@ -125,10 +142,9 @@ public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
      * wijziging betreft: 8.72.10 is T of W (LO), waarde van de nieuwe entiteit I of B En er zijn verder geen andere
      * wijzigingen anders dan de Persoon of PersoonAdres entiteiten met de velden:
      * "persoonBijhoudingHistorieSet","persoonAdresSet","persoonInschrijvingHistorieSet", dan setten we de
-     * AdministratieveHandeling van de context op {@link SoortAdministratieveHandeling}.GBA_INFRASTRUCTURELE_WIJZIGING
-     *
-     * @param context
-     *            DeltaBepalingContext
+     * AdministratieveHandeling van de context op
+     * {@link nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling}.GBA_INFRASTRUCTURELE_WIJZIGING
+     * @param context DeltaBepalingContext
      */
     private boolean isInfrastructureleAdministratieveHandeling(final DeltaBepalingContext context) {
         if (context.isBijhoudingActueel() && context.heeftAlleenPersoonsWijzigingen()) {
@@ -137,9 +153,8 @@ public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
             final VergelijkerResultaat vergelijkerResultaat = match.getVergelijkerResultaat();
 
             if (isInhoudelijkEenInfraWijziging(match)
-                && vergelijkerResultaat.bevatAlleenInfrastructureleWijzigingen()
-                && isNieuwAdresGroepOpgenomen(vergelijkerResultaat))
-            {
+                    && vergelijkerResultaat.bevatAlleenInfrastructureleWijzigingen()
+                    && isNieuwAdresGroepOpgenomen(vergelijkerResultaat)) {
                 return true;
             }
         }
@@ -148,9 +163,8 @@ public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
 
     private boolean isNieuwAdresGroepOpgenomen(final VergelijkerResultaat vergelijkerResultaat) {
         final List<Verschil> adresVerschillen =
-                vergelijkerResultaat.zoekVerschillen(new EntiteitSleutel(PersoonAdres.class, "persoonAdresHistorieSet", new EntiteitSleutel(
-                    Persoon.class,
-                    "persoonAdresSet")));
+                vergelijkerResultaat.zoekVerschillen(
+                        new EntiteitSleutel(PersoonAdres.class, "persoonAdresHistorieSet", new EntiteitSleutel(Persoon.class, "persoonAdresSet")));
 
         boolean result = !adresVerschillen.isEmpty();
         final Iterator<Verschil> iterator = adresVerschillen.iterator();
@@ -161,11 +175,11 @@ public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
     }
 
     private boolean isInhoudelijkEenInfraWijziging(final DeltaRootEntiteitMatch match) {
-        final Set<PersoonAdres> persoonAdresSet = ((Persoon) match.getNieuweDeltaRootEntiteit()).getPersoonAdresSet();
+        final Set<PersoonAdres> persoonAdresSet = ((Persoon) match.getNieuweRootEntiteit()).getPersoonAdresSet();
         if (!persoonAdresSet.isEmpty()) {
             // Er is altijd maar 1 adres vanuit GBA geconverteerd
             final PersoonAdres pAdres = persoonAdresSet.iterator().next();
-            final PersoonAdresHistorie actueelAdres = HistorieUtil.getActueelHistorieVoorkomen(pAdres.getPersoonAdresHistorieSet());
+            final PersoonAdresHistorie actueelAdres = FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(pAdres.getPersoonAdresHistorieSet());
             final char redenWijzigingCode = actueelAdres.getRedenWijziging().getCode();
             return 'I' == redenWijzigingCode || 'B' == redenWijzigingCode;
         }
@@ -175,10 +189,10 @@ public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
     /**
      * Filtert de verschillen die betrekking hebben op de IST uit de meegegeven map. Er wordt gekeken of de entiteit
      * match een Stapel is.
-     *
-     * @param teVerwerkenDeltaRootEntiteitMatches
-     *            map met daarin per {@link DeltaRootEntiteitMatch} een lijst van verschillen
-     * @return een {@link VergelijkerResultaat} met daarin de verschillen die betrekking hebben op de IST-stapels.
+     * @param teVerwerkenDeltaRootEntiteitMatches map met daarin per {@link nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaRootEntiteitMatch} een
+     * lijst van verschillen
+     * @return een {@link nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat} met daarin de verschillen die betrekking hebben op de
+     * IST-stapels.
      */
 
     private VergelijkerResultaat filterIstVerschillen(final Collection<DeltaRootEntiteitMatch> teVerwerkenDeltaRootEntiteitMatches) {
@@ -188,9 +202,7 @@ public final class DeltaRootEntiteitenProces extends AbstractDeltaProces {
         while (matchesIterator.hasNext()) {
             final DeltaRootEntiteitMatch match = matchesIterator.next();
             if (match.isIstStapel()) {
-                for (final Verschil verschil : match.getVergelijkerResultaat().getVerschillen()) {
-                    result.voegToeOfVervangVerschil(verschil);
-                }
+                match.getVergelijkerResultaat().getVerschillen().forEach(result::voegToeOfVervangVerschil);
                 matchesIterator.remove();
             }
         }

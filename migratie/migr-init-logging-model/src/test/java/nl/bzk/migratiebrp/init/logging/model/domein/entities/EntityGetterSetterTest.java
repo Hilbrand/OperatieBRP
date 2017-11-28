@@ -15,7 +15,7 @@ public class EntityGetterSetterTest {
     public void test() throws ReflectiveOperationException {
         new GetterSetterTester().testEntities("nl.bzk.migratiebrp.init.logging.model.domein.entities");
 
-        new GetterSetterTester().test(new InitVullingAfnemersindicatieRegelPk());
+        new GetterSetterTester().test(new InitVullingAfnemersindicatieStapelPk());
     }
 
 }

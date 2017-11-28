@@ -28,22 +28,16 @@ public final class JmxServerActionListener implements ActionListener, Serializab
 
     /**
      * Constructor.
-     * 
-     * @param targetExpression
-     *            expression voor target
-     * @param urlExpression
-     *            expression voor url
-     * @param usernameExpression
-     *            expression voor username
-     * @param passwordExpression
-     *            expression voor password
+     * @param targetExpression expression voor target
+     * @param urlExpression expression voor url
+     * @param usernameExpression expression voor username
+     * @param passwordExpression expression voor password
      */
     public JmxServerActionListener(
-        final ValueExpression targetExpression,
-        final ValueExpression urlExpression,
-        final ValueExpression usernameExpression,
-        final ValueExpression passwordExpression)
-    {
+            final ValueExpression targetExpression,
+            final ValueExpression urlExpression,
+            final ValueExpression usernameExpression,
+            final ValueExpression passwordExpression) {
         this.targetExpression = targetExpression;
         this.urlExpression = urlExpression;
         this.usernameExpression = usernameExpression;

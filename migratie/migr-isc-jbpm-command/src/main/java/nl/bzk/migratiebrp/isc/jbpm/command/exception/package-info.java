@@ -5,9 +5,9 @@
  */
 
 /**
- * 
+ *
  */
 /**
- * 
+ *
  */
 package nl.bzk.migratiebrp.isc.jbpm.command.exception;

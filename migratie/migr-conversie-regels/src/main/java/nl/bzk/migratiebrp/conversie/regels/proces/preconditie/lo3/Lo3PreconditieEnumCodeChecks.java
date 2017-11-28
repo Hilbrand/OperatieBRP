@@ -38,7 +38,8 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieOnjuist;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatiePKVolledigGeconverteerdCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOpschortingBijhoudingCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Signalering;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Bevat de statische checks van Lo3 codes aan de hand van statisch gedefinieerde Enum classes.
@@ -53,245 +54,187 @@ public final class Lo3PreconditieEnumCodeChecks {
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param aanduidingBijzonderNederlandschap
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param aanduidingBijzonderNederlandschap de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3AanduidingBijzonderNederlandschap aanduidingBijzonderNederlandschap, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(aanduidingBijzonderNederlandschap)
-            && !Lo3AanduidingBijzonderNederlandschapEnum.containsCode(aanduidingBijzonderNederlandschap.getWaarde()))
-        {
+    static void controleerCode(final Lo3AanduidingBijzonderNederlandschap aanduidingBijzonderNederlandschap, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(aanduidingBijzonderNederlandschap)
+                && !Lo3AanduidingBijzonderNederlandschapEnum.containsCode(aanduidingBijzonderNederlandschap.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param aanduidingEuropeesKiesrecht
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param aanduidingEuropeesKiesrecht de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3AanduidingEuropeesKiesrecht aanduidingEuropeesKiesrecht, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(aanduidingEuropeesKiesrecht)
-            && !Lo3AanduidingEuropeesKiesrechtEnum.containsCode(aanduidingEuropeesKiesrecht.getIntegerWaarde()))
-        {
+    static void controleerCode(final Lo3AanduidingEuropeesKiesrecht aanduidingEuropeesKiesrecht, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(aanduidingEuropeesKiesrecht)
+                && !Lo3AanduidingEuropeesKiesrechtEnum.containsCode(aanduidingEuropeesKiesrecht.getIntegerWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param aanduidingInhouding
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param aanduidingInhouding de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3AanduidingInhoudingVermissingNederlandsReisdocument aanduidingInhouding, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(aanduidingInhouding)
-            && !Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum.containsCode(aanduidingInhouding.getWaarde()))
-        {
+    static void controleerCode(final Lo3AanduidingInhoudingVermissingNederlandsReisdocument aanduidingInhouding, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(aanduidingInhouding)
+                && !Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum.containsCode(aanduidingInhouding.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param aanduidingNaamgebruikCode
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param aanduidingNaamgebruikCode de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3AanduidingNaamgebruikCode aanduidingNaamgebruikCode, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(aanduidingNaamgebruikCode)
-            && !Lo3AanduidingNaamgebruikCodeEnum.containsCode(aanduidingNaamgebruikCode.getWaarde()))
-        {
+    static void controleerCode(final Lo3AanduidingNaamgebruikCode aanduidingNaamgebruikCode, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(aanduidingNaamgebruikCode)
+                && !Lo3AanduidingNaamgebruikCodeEnum.containsCode(aanduidingNaamgebruikCode.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param aanduidingUitgeslotenKiesrecht
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param aanduidingUitgeslotenKiesrecht de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3AanduidingUitgeslotenKiesrecht aanduidingUitgeslotenKiesrecht, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(aanduidingUitgeslotenKiesrecht)
-            && !Lo3AanduidingUitgeslotenKiesrechtEnum.containsCode(aanduidingUitgeslotenKiesrecht.getWaarde()))
-        {
+    static void controleerCode(final Lo3AanduidingUitgeslotenKiesrecht aanduidingUitgeslotenKiesrecht, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(aanduidingUitgeslotenKiesrecht)
+                && !Lo3AanduidingUitgeslotenKiesrechtEnum.containsCode(aanduidingUitgeslotenKiesrecht.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param aangifteAdreshouding
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param aangifteAdreshouding de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3AangifteAdreshouding aangifteAdreshouding, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(aangifteAdreshouding) && !Lo3AangifteAdreshoudingEnum.containsCode(aangifteAdreshouding.getWaarde())) {
+    static void controleerCode(final Lo3AangifteAdreshouding aangifteAdreshouding, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(aangifteAdreshouding) && !Lo3AangifteAdreshoudingEnum.containsCode(aangifteAdreshouding.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param functieAdres
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param functieAdres de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3FunctieAdres functieAdres, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(functieAdres) && !Lo3FunctieAdresEnum.containsCode(functieAdres.getWaarde())) {
+    static void controleerCode(final Lo3FunctieAdres functieAdres, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(functieAdres) && !Lo3FunctieAdresEnum.containsCode(functieAdres.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param geslachtsaanduiding
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param geslachtsaanduiding de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3Geslachtsaanduiding geslachtsaanduiding, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(geslachtsaanduiding) && !Lo3GeslachtsaanduidingEnum.containsCode(geslachtsaanduiding.getWaarde())) {
+    static void controleerCode(final Lo3Geslachtsaanduiding geslachtsaanduiding, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(geslachtsaanduiding) && !Lo3GeslachtsaanduidingEnum.containsCode(geslachtsaanduiding.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param indicatieCurateleregister
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param indicatieCurateleregister de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3IndicatieCurateleregister indicatieCurateleregister, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(indicatieCurateleregister)
-            && !Lo3IndicatieCurateleregisterEnum.containsCode(indicatieCurateleregister.getIntegerWaarde()))
-        {
+    static void controleerCode(final Lo3IndicatieCurateleregister indicatieCurateleregister, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(indicatieCurateleregister)
+                && !Lo3IndicatieCurateleregisterEnum.containsCode(indicatieCurateleregister.getIntegerWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param indicatieDocument
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param indicatieDocument de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3IndicatieDocument indicatieDocument, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(indicatieDocument) && !Lo3IndicatieDocumentEnum.containsCode(indicatieDocument.getIntegerWaarde())) {
+    static void controleerCode(final Lo3IndicatieDocument indicatieDocument, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(indicatieDocument) && !Lo3IndicatieDocumentEnum.containsCode(indicatieDocument.getIntegerWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param indicatieGeheimCode
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param indicatieGeheimCode de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3IndicatieGeheimCode indicatieGeheimCode, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(indicatieGeheimCode) && !Lo3IndicatieGeheimCodeEnum.containsCode(indicatieGeheimCode.getIntegerWaarde())) {
+    static void controleerCode(final Lo3IndicatieGeheimCode indicatieGeheimCode, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(indicatieGeheimCode) && !Lo3IndicatieGeheimCodeEnum.containsCode(indicatieGeheimCode.getIntegerWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param indicatieGezagMinderjarige
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param indicatieGezagMinderjarige de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3IndicatieGezagMinderjarige indicatieGezagMinderjarige, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(indicatieGezagMinderjarige)
-            && !Lo3IndicatieGezagMinderjarigeEnum.containsCode(indicatieGezagMinderjarige.getWaarde()))
-        {
+    static void controleerCode(final Lo3IndicatieGezagMinderjarige indicatieGezagMinderjarige, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(indicatieGezagMinderjarige)
+                && !Lo3IndicatieGezagMinderjarigeEnum.containsCode(indicatieGezagMinderjarige.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param indicatiePKVolledigGeconverteerdCode
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param indicatiePKVolledigGeconverteerdCode de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(
-        final Lo3IndicatiePKVolledigGeconverteerdCode indicatiePKVolledigGeconverteerdCode,
-        final Foutmelding foutmelding)
-    {
-        if (Validatie.isElementGevuld(indicatiePKVolledigGeconverteerdCode)
-            && !Lo3IndicatiePKVolledigGeconverteerdCodeEnum.containsCode(indicatiePKVolledigGeconverteerdCode.getWaarde()))
-        {
+    static void controleerCode(
+            final Lo3IndicatiePKVolledigGeconverteerdCode indicatiePKVolledigGeconverteerdCode,
+            final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(indicatiePKVolledigGeconverteerdCode)
+                && !Lo3IndicatiePKVolledigGeconverteerdCodeEnum.containsCode(indicatiePKVolledigGeconverteerdCode.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param onjuist
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param onjuist de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3IndicatieOnjuist onjuist, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(onjuist) && !Lo3IndicatieOnjuistEnum.containsCode(onjuist.getWaarde())) {
+    static void controleerCode(final Lo3IndicatieOnjuist onjuist, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(onjuist) && !Lo3IndicatieOnjuistEnum.containsCode(onjuist.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param redenOpschortingBijhoudingCode
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param redenOpschortingBijhoudingCode de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3RedenOpschortingBijhoudingCode redenOpschortingBijhoudingCode, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(redenOpschortingBijhoudingCode)
-            && !Lo3RedenOpschortingBijhoudingCodeEnum.containsCode(redenOpschortingBijhoudingCode.getWaarde()))
-        {
+    static void controleerCode(final Lo3RedenOpschortingBijhoudingCode redenOpschortingBijhoudingCode, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(redenOpschortingBijhoudingCode)
+                && !Lo3RedenOpschortingBijhoudingCodeEnum.containsCode(redenOpschortingBijhoudingCode.getWaarde())) {
             foutmelding.log();
         }
     }
 
     /**
      * Controleer of de gegeven code een geldige code is, en log een foutmelding indien niet.
-     *
-     * @param signalering
-     *            de code om te controleren.
-     * @param foutmelding
-     *            de foutmelding om te loggen als de code niet geldig is.
+     * @param signalering de code om te controleren.
+     * @param foutmelding de foutmelding om te loggen als de code niet geldig is.
      */
-    protected static void controleerCode(final Lo3Signalering signalering, final Foutmelding foutmelding) {
-        if (Validatie.isElementGevuld(signalering) && !Lo3SignaleringEnum.containsCode(signalering.getIntegerWaarde())) {
+    static void controleerCode(final Lo3Signalering signalering, final Foutmelding foutmelding) {
+        if (Lo3Validatie.isElementGevuld(signalering) && !Lo3SignaleringEnum.containsCode(signalering.getIntegerWaarde())) {
             foutmelding.log();
         }
     }

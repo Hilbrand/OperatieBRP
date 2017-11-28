@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <brpAfnemersindicaties>
    <administratienummer>1670825121</administratienummer>
    <afnemersindicaties class="java.util.ArrayList">
@@ -85,7 +86,23 @@
                      <voorkomen>1</voorkomen>
                   </lo3Herkomst>
                </actieInhoud>
-               <actieVerval ref="392"/>
+               <actieVerval id="392">
+                  <datumTijdRegistratie>
+                     <waarde>20120101010000000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>199902</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <lo3Herkomst>
+                     <categorie>CATEGORIE_14</categorie>
+                     <stapel>4</stapel>
+                     <voorkomen>0</voorkomen>
+                  </lo3Herkomst>
+               </actieVerval>
                <historie>
                   <datumTijdRegistratie>
                      <waarde>20100101010000000</waarde>

@@ -6,16 +6,15 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
@@ -24,25 +23,19 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Onder
 /**
  * Deze mapper mapped BrpAdresInhoud uit het migratie model op de corresponderen BRP entiteiten uit het operationele
  * datamodel van de BRP.
- *
  */
 public final class AdresMapper extends AbstractHistorieMapperStrategie<BrpAdresInhoud, PersoonAdresHistorie, PersoonAdres> {
 
     /**
      * Maakt een AdresMapper object.
-     *
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public AdresMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -54,54 +47,17 @@ public final class AdresMapper extends AbstractHistorieMapperStrategie<BrpAdresI
         entiteit.addPersoonAdresHistorie(historie);
     }
 
-    @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpAdresInhoud> brpStapel, final PersoonAdres adres) {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonAdresHistorie historie, final PersoonAdres adres) {
-        adres.setAangeverAdreshouding(historie.getAangeverAdreshouding());
-        adres.setIdentificatiecodeAdresseerbaarObject(historie.getIdentificatiecodeAdresseerbaarObject());
-        adres.setAfgekorteNaamOpenbareRuimte(historie.getAfgekorteNaamOpenbareRuimte());
-        adres.setBuitenlandsAdresRegel1(historie.getBuitenlandsAdresRegel1());
-        adres.setBuitenlandsAdresRegel2(historie.getBuitenlandsAdresRegel2());
-        adres.setBuitenlandsAdresRegel3(historie.getBuitenlandsAdresRegel3());
-        adres.setBuitenlandsAdresRegel4(historie.getBuitenlandsAdresRegel4());
-        adres.setBuitenlandsAdresRegel5(historie.getBuitenlandsAdresRegel5());
-        adres.setBuitenlandsAdresRegel6(historie.getBuitenlandsAdresRegel6());
-        adres.setDatumAanvangAdreshouding(historie.getDatumAanvangAdreshouding());
-        adres.setSoortAdres(historie.getSoortAdres());
-        adres.setGemeentedeel(historie.getGemeentedeel());
-        adres.setHuisletter(historie.getHuisletter());
-        adres.setHuisnummer(historie.getHuisnummer());
-        adres.setHuisnummertoevoeging(historie.getHuisnummertoevoeging());
-        adres.setIdentificatiecodeNummeraanduiding(historie.getIdentificatiecodeNummeraanduiding());
-        adres.setLandOfGebied(historie.getLandOfGebied());
-        adres.setLocatieOmschrijving(historie.getLocatieOmschrijving());
-        adres.setLocatietovAdres(historie.getLocatietovAdres());
-        adres.setNaamOpenbareRuimte(historie.getNaamOpenbareRuimte());
-        adres.setAfgekorteNaamOpenbareRuimte(historie.getAfgekorteNaamOpenbareRuimte());
-        adres.setGemeente(historie.getGemeente());
-        adres.setWoonplaatsnaam(historie.getWoonplaatsnaam());
-        adres.setPostcode(historie.getPostcode());
-        adres.setRedenWijziging(historie.getRedenWijziging());
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     protected PersoonAdresHistorie mapHistorischeGroep(final BrpAdresInhoud groepInhoud, final PersoonAdres adres) {
-        // TODO conversie van indicatiePersoonNietAangetroffenOpAdres
         final PersoonAdresHistorie result =
                 new PersoonAdresHistorie(
-                    adres,
-                    FunctieAdres.parseCode(groepInhoud.getSoortAdresCode().getWaarde()),
-                    getStamtabelMapping().findLandOfGebiedByCode(groepInhoud.getLandOfGebiedCode()),
-                    getStamtabelMapping().findRedenWijzigingVerblijfByCode(groepInhoud.getRedenWijzigingAdresCode()));
+                        adres,
+                        SoortAdres.parseCode(groepInhoud.getSoortAdresCode().getWaarde()),
+                        getStamtabelMapping().findLandOfGebiedByCode(groepInhoud.getLandOfGebiedCode()),
+                        getStamtabelMapping().findRedenWijzigingVerblijfByCode(groepInhoud.getRedenWijzigingAdresCode()));
         result.setAangeverAdreshouding(getStamtabelMapping().findAangeverByCode(groepInhoud.getAangeverAdreshoudingCode()));
         result.setIdentificatiecodeAdresseerbaarObject(BrpString.unwrap(groepInhoud.getIdentificatiecodeAdresseerbaarObject()));
         result.setBuitenlandsAdresRegel1(BrpString.unwrap(groepInhoud.getBuitenlandsAdresRegel1()));
@@ -143,9 +99,9 @@ public final class AdresMapper extends AbstractHistorieMapperStrategie<BrpAdresI
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getLandOfGebiedCode(), Element.PERSOON_ADRES_LANDGEBIEDCODE);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getAangeverAdreshoudingCode(), Element.PERSOON_ADRES_AANGEVERADRESHOUDINGCODE);
         getOnderzoekMapper().mapOnderzoek(
-            historieEntiteit,
-            groepInhoud.getIdentificatiecodeAdresseerbaarObject(),
-            Element.PERSOON_ADRES_IDENTIFICATIECODEADRESSEERBAAROBJECT);
+                historieEntiteit,
+                groepInhoud.getIdentificatiecodeAdresseerbaarObject(),
+                Element.PERSOON_ADRES_IDENTIFICATIECODEADRESSEERBAAROBJECT);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getBuitenlandsAdresRegel1(), Element.PERSOON_ADRES_BUITENLANDSADRESREGEL1);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getBuitenlandsAdresRegel2(), Element.PERSOON_ADRES_BUITENLANDSADRESREGEL2);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getBuitenlandsAdresRegel3(), Element.PERSOON_ADRES_BUITENLANDSADRESREGEL3);
@@ -158,16 +114,16 @@ public final class AdresMapper extends AbstractHistorieMapperStrategie<BrpAdresI
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getHuisnummer(), Element.PERSOON_ADRES_HUISNUMMER);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getHuisnummertoevoeging(), Element.PERSOON_ADRES_HUISNUMMERTOEVOEGING);
         getOnderzoekMapper().mapOnderzoek(
-            historieEntiteit,
-            groepInhoud.getIdentificatiecodeNummeraanduiding(),
-            Element.PERSOON_ADRES_IDENTIFICATIECODENUMMERAANDUIDING);
+                historieEntiteit,
+                groepInhoud.getIdentificatiecodeNummeraanduiding(),
+                Element.PERSOON_ADRES_IDENTIFICATIECODENUMMERAANDUIDING);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getLocatieOmschrijving(), Element.PERSOON_ADRES_LOCATIEOMSCHRIJVING);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getLocatieTovAdres(), Element.PERSOON_ADRES_LOCATIETENOPZICHTEVANADRES);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getNaamOpenbareRuimte(), Element.PERSOON_ADRES_NAAMOPENBARERUIMTE);
         getOnderzoekMapper().mapOnderzoek(
-            historieEntiteit,
-            groepInhoud.getAfgekorteNaamOpenbareRuimte(),
-            Element.PERSOON_ADRES_AFGEKORTENAAMOPENBARERUIMTE);
+                historieEntiteit,
+                groepInhoud.getAfgekorteNaamOpenbareRuimte(),
+                Element.PERSOON_ADRES_AFGEKORTENAAMOPENBARERUIMTE);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getGemeenteCode(), Element.PERSOON_ADRES_GEMEENTECODE);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getWoonplaatsnaam(), Element.PERSOON_ADRES_WOONPLAATSNAAM);
         getOnderzoekMapper().mapOnderzoek(historieEntiteit, groepInhoud.getPostcode(), Element.PERSOON_ADRES_POSTCODE);

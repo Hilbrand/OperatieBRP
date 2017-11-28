@@ -6,51 +6,47 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpIstGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstRelatieGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstStandaardGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.StamtabelMapping;
 
 /**
  * Deze mapper mapped de BrpIstAbstractInhoud op Stapel en StapelVoorkomen uit het BRP operationele model.
- *
- * @param <T>
- *            het specifieke type IstMapper
+ * @param <T> het specifieke type IstMapper
  */
 public abstract class AbstractIstMapper<T extends AbstractBrpIstGroepInhoud> extends AbstractMapperStrategie<T, Persoon> {
     private final AdministratieveHandeling administratieveHandeling;
 
     /**
      * Maakt een IstMapper object.
-     *
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param administratieveHandeling
-     *            de administratieve handeling voor de IST stapel
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param administratieveHandeling de administratieve handeling voor de IST stapel
      */
     public AbstractIstMapper(final DynamischeStamtabelRepository dynamischeStamtabelRepository, final AdministratieveHandeling administratieveHandeling) {
         super(dynamischeStamtabelRepository, null);
@@ -59,28 +55,22 @@ public abstract class AbstractIstMapper<T extends AbstractBrpIstGroepInhoud> ext
 
     /**
      * Mapt de IST stapelop de Persoon.
-     *
-     * @param brpStapel
-     *            stapel met IST gegevens
-     * @param persoon
-     *            persoon die opgeslagen wordt in de database
+     * @param brpStapel stapel met IST gegevens
+     * @param persoon persoon die opgeslagen wordt in de database
      * @return Map met daarin per categorie een map van stapels met als sleutel het stapelnummer.
      */
     public final Map<Lo3CategorieEnum, Map<Integer, Stapel>> mapIstStapelOpPersoon(final BrpStapel<T> brpStapel, final Persoon persoon) {
-        return mapIstStapelsOpPersoon(Arrays.asList(brpStapel), persoon);
+        return mapIstStapelsOpPersoon(Collections.singletonList(brpStapel), persoon);
     }
 
     /**
      * Mapt de IST stapels op de Persoon.
-     *
-     * @param brpStapels
-     *            stapels met IST gegevens
-     * @param persoon
-     *            persoon die opgeslagen wordt in de database
+     * @param brpStapels stapels met IST gegevens
+     * @param persoon persoon die opgeslagen wordt in de database
      * @return Map met daarin per categorie een map van stapels met als sleutel het stapelnummer.
      */
     public final Map<Lo3CategorieEnum, Map<Integer, Stapel>> mapIstStapelsOpPersoon(final List<BrpStapel<T>> brpStapels, final Persoon persoon) {
-        final Map<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie = new HashMap<>();
+        final EnumMap<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie = new EnumMap<>(Lo3CategorieEnum.class);
         final Map<Integer, Stapel> stapels = new HashMap<>();
 
         for (final BrpStapel<T> brpStapel : brpStapels) {
@@ -96,9 +86,7 @@ public abstract class AbstractIstMapper<T extends AbstractBrpIstGroepInhoud> ext
                     stapel = new Stapel(persoon, categorie.getCategorie(), stapelnr);
                     persoon.addStapel(stapel);
                     stapels.put(stapelnr, stapel);
-                    if (stapelsPerCategorie.isEmpty()) {
-                        stapelsPerCategorie.put(categorie, stapels);
-                    }
+                    toevoegenAlsLeeg(stapelsPerCategorie, stapels, categorie);
                 }
 
                 // Aanmaken van de stapelvoorkomen(s)
@@ -108,30 +96,27 @@ public abstract class AbstractIstMapper<T extends AbstractBrpIstGroepInhoud> ext
         return stapelsPerCategorie;
     }
 
-    @Override
-    protected final void mapActueleGegevens(final BrpStapel<T> brpStapel, final Persoon persoon) {
+    private void toevoegenAlsLeeg(final Map<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie, final Map<Integer, Stapel> stapels,
+                                  final Lo3CategorieEnum categorie) {
+        if (stapelsPerCategorie.isEmpty()) {
+            stapelsPerCategorie.put(categorie, stapels);
+        }
     }
 
     /**
      * Maakt een {@link StapelVoorkomen} aan met de opgegeven inhoud en koppelt deze aan de opgegeven stapel.
-     *
-     * @param stapel
-     *            stapel waaraan de nieuwe stapelvoorkomen moet komen
-     * @param inhoud
-     *            de inhoud waarmee het stapelvoorkomen gevuld moet worden;
+     * @param stapel stapel waaraan de nieuwe stapelvoorkomen moet komen
+     * @param inhoud de inhoud waarmee het stapelvoorkomen gevuld moet worden;
      * @return een gevuld {@link StapelVoorkomen}
      */
-    protected abstract StapelVoorkomen mapStapelVoorkomen(final Stapel stapel, final T inhoud);
+    protected abstract StapelVoorkomen mapStapelVoorkomen(Stapel stapel, T inhoud);
 
     /**
      * Mapt de gegevens van de standaard velden naar het voorkomen.
-     *
-     * @param voorkomen
-     *            stapel voorkomen dat gevuld moet worden
-     * @param inhoud
-     *            inhoud waaruit het voorkomen gevuld gaat worden
+     * @param voorkomen stapel voorkomen dat gevuld moet worden
+     * @param inhoud inhoud waaruit het voorkomen gevuld gaat worden
      */
-    protected final void vulStandaard(final StapelVoorkomen voorkomen, final BrpIstStandaardGroepInhoud inhoud) {
+    final void vulStandaard(final StapelVoorkomen voorkomen, final BrpIstStandaardGroepInhoud inhoud) {
         final StamtabelMapping stamtabelMapping = getStamtabelMapping();
 
         voorkomen.setSoortDocument(stamtabelMapping.findSoortDocumentByCode(inhoud.getSoortDocument()));
@@ -151,17 +136,14 @@ public abstract class AbstractIstMapper<T extends AbstractBrpIstGroepInhoud> ext
 
     /**
      * Mapt de gegevens van de gerelateerden naar het voorkomen.
-     *
-     * @param voorkomen
-     *            stapel voorkomen dat gevuld moet worden
-     * @param inhoud
-     *            inhoud waaruit het voorkomen gevuld gaat worden
+     * @param voorkomen stapel voorkomen dat gevuld moet worden
+     * @param inhoud inhoud waaruit het voorkomen gevuld gaat worden
      */
-    protected final void vulGerelateerden(final StapelVoorkomen voorkomen, final BrpIstRelatieGroepInhoud inhoud) {
+    final void vulGerelateerden(final StapelVoorkomen voorkomen, final BrpIstRelatieGroepInhoud inhoud) {
         final StamtabelMapping stamtabelMapping = getStamtabelMapping();
 
-        voorkomen.setAnummer(BrpLong.unwrap(inhoud.getAnummer()));
-        voorkomen.setBsn(BrpInteger.unwrap(inhoud.getBsn()));
+        voorkomen.setAnummer(BrpString.unwrap(inhoud.getAnummer()));
+        voorkomen.setBsn(BrpString.unwrap(inhoud.getBsn()));
         voorkomen.setVoornamen(BrpString.unwrap(inhoud.getVoornamen()));
         vulPredikaat(voorkomen, inhoud.getPredicaatCode());
         vulAdellijkeTitel(voorkomen, inhoud.getAdellijkeTitelCode());
@@ -178,26 +160,25 @@ public abstract class AbstractIstMapper<T extends AbstractBrpIstGroepInhoud> ext
     }
 
     private void vulAdellijkeTitel(final StapelVoorkomen voorkomen, final BrpAdellijkeTitelCode adellijkeTitel) {
-        if (Validatie.isAttribuutGevuld(adellijkeTitel)) {
+        if (BrpValidatie.isAttribuutGevuld(adellijkeTitel)) {
             voorkomen.setAdellijkeTitel(AdellijkeTitel.valueOf(adellijkeTitel.getWaarde()));
             voorkomen.setGeslachtsaanduidingBijAdellijkeTitelOfPredikaat(MapperUtil.mapBrpGeslachtsaanduidingCode(adellijkeTitel.getGeslachtsaanduiding()));
         }
     }
 
     private void vulPredikaat(final StapelVoorkomen voorkomen, final BrpPredicaatCode predikaat) {
-        if (Validatie.isAttribuutGevuld(predikaat)) {
+        if (BrpValidatie.isAttribuutGevuld(predikaat)) {
             voorkomen.setPredicaat(Predicaat.valueOf(predikaat.getWaarde()));
             voorkomen.setGeslachtsaanduidingBijAdellijkeTitelOfPredikaat(MapperUtil.mapBrpGeslachtsaanduidingCode(predikaat.getGeslachtsaanduiding()));
         }
     }
 
     @Override
-    protected void mapHistorischeGegevens(final BrpStapel<T> brpStapel, final Persoon persoon) {
+    protected void mapHistorischeGegevens(final BrpStapel<T> brpStapel, final Persoon persoon, final Element objecttype) {
     }
 
     /**
      * Geef de waarde van administratieve handeling.
-     *
      * @return administratieve handeling
      */
     protected final AdministratieveHandeling getAdministratieveHandeling() {

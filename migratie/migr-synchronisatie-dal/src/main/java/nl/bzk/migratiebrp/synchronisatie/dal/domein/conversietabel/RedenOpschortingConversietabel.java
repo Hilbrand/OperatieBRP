@@ -9,11 +9,12 @@ package nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenOpschorting;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.ConversieMapEntry;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch.AbstractRedenOpschortingConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOpschortingBijhoudingCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenOpschorting;
 
 /**
  * Deze conversietabel map een Lo3RedenOpschortingBijhoudingCode op de corresponderen BrpRedenOpschortingBijhoudingCode
@@ -23,17 +24,14 @@ public final class RedenOpschortingConversietabel extends AbstractRedenOpschorti
 
     /**
      * Maakt een RedenOpschortingConversietabel object.
-     * 
-     * @param redenOpschortingLijst
-     *            de lijst met alle reden opschorting conversies
+     * @param redenOpschortingLijst de lijst met alle reden opschorting conversies
      */
     public RedenOpschortingConversietabel(final List<RedenOpschorting> redenOpschortingLijst) {
         super(converteerRedenOpschortingLijst(redenOpschortingLijst));
     }
 
     private static List<Entry<Lo3RedenOpschortingBijhoudingCode, BrpNadereBijhoudingsaardCode>> converteerRedenOpschortingLijst(
-        final List<RedenOpschorting> redenOpschortingLijst)
-    {
+            final List<RedenOpschorting> redenOpschortingLijst) {
         final List<Entry<Lo3RedenOpschortingBijhoudingCode, BrpNadereBijhoudingsaardCode>> result = new ArrayList<>();
         for (final RedenOpschorting redenOpschorting : redenOpschortingLijst) {
             final Lo3RedenOpschortingBijhoudingCode lo3RedenOpschortingBijhoudingCode =

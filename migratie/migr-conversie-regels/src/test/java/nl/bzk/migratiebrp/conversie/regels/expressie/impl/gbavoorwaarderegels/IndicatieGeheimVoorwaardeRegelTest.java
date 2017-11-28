@@ -6,11 +6,8 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,18 +20,19 @@ public class IndicatieGeheimVoorwaardeRegelTest {
     @Inject
     private IndicatieGeheimVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test of getBrpExpressie method, of class LandVoorwaardeRegel.
      */
     @Test
     public void testGetBrpExpressie() throws Exception {
-        testVoorwaarde("07.70.10 GA1 2", "NIET IS_NULL(indicatie.volledige_verstrekkingsbeperking)");
-        testVoorwaarde("07.70.10 GA1 0", "IS_NULL(indicatie.volledige_verstrekkingsbeperking)");
-    }
-
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        Assert.assertTrue(instance.filter(gbaVoorwaarde));
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
+        testUtil.testVoorwaarde("07.70.10 GA1 2", "KV(Persoon.Indicatie.VolledigeVerstrekkingsbeperking.Waarde)");
+        testUtil.testVoorwaarde("07.70.10 GA1 0", "KNV(Persoon.Indicatie.VolledigeVerstrekkingsbeperking.Waarde)");
     }
 }

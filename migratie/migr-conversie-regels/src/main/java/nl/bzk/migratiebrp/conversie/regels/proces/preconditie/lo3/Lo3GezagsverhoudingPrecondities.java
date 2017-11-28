@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -18,22 +19,26 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Preconditie controles voor categorie 11: Gezagsverhouding.
- * 
+ *
  * Maakt gebruik van de {@link nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging#log Logging.log} methode.
  */
-@Component
 public final class Lo3GezagsverhoudingPrecondities extends AbstractLo3Precondities {
 
     /**
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
+     */
+    public Lo3GezagsverhoudingPrecondities(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
+
+    /**
      * Controleer precondities op stapel niveau.
-     * 
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      */
     public void controleerStapel(final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel) {
         if (stapel == null || stapel.isEmpty()) {
@@ -78,10 +83,10 @@ public final class Lo3GezagsverhoudingPrecondities extends AbstractLo3Preconditi
         }
         if (documentAanwezig) {
             controleerGroep82Document(
-                documentatie.getGemeenteDocument(),
-                documentatie.getDatumDocument(),
-                documentatie.getBeschrijvingDocument(),
-                herkomst);
+                    documentatie.getGemeenteDocument(),
+                    documentatie.getDatumDocument(),
+                    documentatie.getBeschrijvingDocument(),
+                    herkomst);
         }
 
     }
@@ -94,13 +99,13 @@ public final class Lo3GezagsverhoudingPrecondities extends AbstractLo3Preconditi
 
     private void controleerGroep32GezagMinderjarige(final Lo3IndicatieGezagMinderjarige indicatieGezagMinderjarige, final Lo3Herkomst herkomst) {
         Lo3PreconditieEnumCodeChecks.controleerCode(
-            indicatieGezagMinderjarige,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE078, null));
+                indicatieGezagMinderjarige,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE078, null));
     }
 
     private void controleerGroep33Curatele(final Lo3IndicatieCurateleregister indicatieCurateleregister, final Lo3Herkomst herkomst) {
         Lo3PreconditieEnumCodeChecks.controleerCode(
-            indicatieCurateleregister,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_3310));
+                indicatieCurateleregister,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_3310));
     }
 }

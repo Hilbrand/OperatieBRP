@@ -18,6 +18,26 @@
         <property name="locateExistingServerIfPossible" value="true"/>
     </bean>
 
+    <bean id="iscServerConnectorSsl" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
+        <property name="serviceUrl" value="service:jmx:simple://0.0.0.0:${isc.jmx.serialize.port:3481}"/>
+        <property name="environmentMap">
+            <map>
+                <entry key="jmx.remote.authenticator">
+                    <bean class="nl.bzk.algemeenbrp.util.jmx.authenticator.PropertiesAuthenticator">
+                        <constructor-arg>
+                            <props>
+                                <prop key="admin">admin</prop>
+                            </props>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="jmx.remote.accesscontroller">
+                    <bean class="nl.bzk.algemeenbrp.util.jmx.access.AllAccessController"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
     <bean id="iscMBeanExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
         <property name="assembler" ref="iscMBeanAssembler" />
         <property name="server" ref="iscMBeanServer" />
@@ -38,24 +58,4 @@
         <property name="domain" value="nl.bzk.migratiebrp.isc"/>
     </bean>
 
-	<!--
-    <bean id="iscRmiRegistry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">
-        <property name="port" value="${isc.rmi.registry:1099}"/>
-    </bean>
-
-    <bean id="iscJmxServerConnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean" depends-on="iscRmiRegistry">
-        <property name="serviceUrl" value="service:jmx:rmi://localhost:${isc.jmx.service:9875}/jndi/rmi://localhost:${isc.rmi.registry:1099}/jmxrmi"/>
-    </bean>
-    -->
-
-	<!-- TODO EHCache JMX
-	<bean class="net.sf.ehcache.management.ManagementService" init-method="init" destroy-method="dispose">
-  		<constructor-arg ref="voiscEhCacheManager"/>
-  		<constructor-arg ref="voiscMBeanServer"/>
-  		<constructor-arg value="true"/>
-  		<constructor-arg value="true"/>
-  		<constructor-arg value="true"/>
-  		<constructor-arg value="true"/>
-	</bean>
- 	-->
 </beans>

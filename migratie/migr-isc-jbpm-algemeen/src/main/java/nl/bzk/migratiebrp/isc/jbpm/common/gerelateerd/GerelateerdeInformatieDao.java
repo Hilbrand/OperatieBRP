@@ -15,11 +15,8 @@ public interface GerelateerdeInformatieDao {
 
     /**
      * Toevoegen van gerelateerde informatie aan een proces.
-     * 
-     * @param processInstanceId
-     *            proces instance id
-     * @param gerelateerdeInformatie
-     *            gerelateerd informatie
+     * @param processInstanceId proces instance id
+     * @param gerelateerdeInformatie gerelateerd informatie
      */
     void toevoegenGerelateerdeGegevens(final long processInstanceId, GerelateerdeInformatie gerelateerdeInformatie);
 

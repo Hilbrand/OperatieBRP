@@ -8,8 +8,11 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.GerelateerdeInformatie;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3EindBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -20,7 +23,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * Null.
  */
-public final class NullBericht implements Lo3Bericht, Serializable {
+public final class NullBericht implements Lo3Bericht, Lo3EindBericht, Serializable {
     private static final long serialVersionUID = 1L;
 
     private String messageId;
@@ -32,20 +35,21 @@ public final class NullBericht implements Lo3Bericht, Serializable {
      * Default constructor.
      */
     public NullBericht() {
+        // bericht zonder correlatieId.
     }
 
     /**
      * Convenience constructor.
-     * 
-     * @param correlationId
-     *            correlation id
+     * @param correlationId correlation id
      */
     public NullBericht(final String correlationId) {
         this();
         setCorrelationId(correlationId);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.bericht.model.Bericht#getBerichtType()
      */
     @Override
@@ -59,12 +63,19 @@ public final class NullBericht implements Lo3Bericht, Serializable {
     }
 
     @Override
-    public String getHeader(final Lo3HeaderVeld veld) {
+    public String getHeaderWaarde(final Lo3HeaderVeld veld) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getHeader()
+    @Override
+    public List<String> getHeaderWaarden(final Lo3HeaderVeld veld) {
+        return Collections.emptyList();
+    }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getHeaderWaarde()
      */
     @Override
     public Lo3Header getHeader() {
@@ -81,7 +92,9 @@ public final class NullBericht implements Lo3Bericht, Serializable {
         return "";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.bericht.model.Bericht#getMessageId()
      */
     @Override
@@ -89,7 +102,9 @@ public final class NullBericht implements Lo3Bericht, Serializable {
         return messageId;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.bericht.model.Bericht#setMessageId(java.lang.String)
      */
     @Override
@@ -97,7 +112,9 @@ public final class NullBericht implements Lo3Bericht, Serializable {
         this.messageId = messageId;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.bericht.model.Bericht#getCorrelationId()
      */
     @Override
@@ -105,7 +122,9 @@ public final class NullBericht implements Lo3Bericht, Serializable {
         return correlationId;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.bericht.model.Bericht#setCorrelationId(java.lang.String)
      */
     @Override
@@ -113,39 +132,49 @@ public final class NullBericht implements Lo3Bericht, Serializable {
         this.correlationId = correlationId;
     }
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getBronGemeente()
+    /*
+     * (non-Javadoc)
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getBronPartijCode()
      */
     @Override
-    public String getBronGemeente() {
+    public String getBronPartijCode() {
         return originator;
     }
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setBronGemeente(java.lang.String)
+    /*
+     * (non-Javadoc)
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setBronPartijCode(java.lang.String)
      */
     @Override
-    public void setBronGemeente(final String bronGemeente) {
-        originator = bronGemeente;
+    public void setBronPartijCode(final String bronPartijCode) {
+        originator = bronPartijCode;
     }
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getDoelGemeente()
+    /*
+     * (non-Javadoc)
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getDoelPartijCode()
      */
     @Override
-    public String getDoelGemeente() {
+    public String getDoelPartijCode() {
         return recipient;
     }
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setDoelGemeente(java.lang.String)
+    /*
+     * (non-Javadoc)
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setDoelPartijCode(java.lang.String)
      */
     @Override
-    public void setDoelGemeente(final String doelGemeente) {
-        recipient = doelGemeente;
+    public void setDoelPartijCode(final String doelPartijCode) {
+        recipient = doelPartijCode;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.bericht.model.Bericht#getStartCyclus()
      */
     @Override
@@ -153,7 +182,9 @@ public final class NullBericht implements Lo3Bericht, Serializable {
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.bericht.model.Bericht#getGerelateerdeInformatie()
      */
     @Override
@@ -183,9 +214,9 @@ public final class NullBericht implements Lo3Bericht, Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("messageId", messageId)
-                                                                          .append("correlationId", correlationId)
-                                                                          .toString();
+                .append("messageId", messageId)
+                .append("correlationId", correlationId)
+                .toString();
     }
 
 }

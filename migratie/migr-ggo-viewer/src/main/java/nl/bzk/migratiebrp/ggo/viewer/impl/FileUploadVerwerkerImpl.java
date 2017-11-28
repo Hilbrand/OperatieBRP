@@ -6,11 +6,7 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
@@ -28,25 +24,34 @@ import nl.bzk.migratiebrp.ggo.viewer.service.LeesService;
 import nl.bzk.migratiebrp.ggo.viewer.service.ViewerService;
 import nl.bzk.migratiebrp.ggo.viewer.service.impl.LogRegelConverter;
 import nl.bzk.migratiebrp.ggo.viewer.util.VerwerkerUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
 
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Verwerkt de fileupload actie van de front end.
  */
 @Component
 public class FileUploadVerwerkerImpl implements FileUploadVerwerker {
+    private final LeesService leesService;
+    private final ViewerService viewerService;
+    private final BcmService bcmService;
+    private final GgoPersoonslijstGroepBuilder ggoPlGroepBuilder;
+    private final LogRegelConverter logRegelConverter;
+
     @Inject
-    private LeesService leesService;
-    @Inject
-    private ViewerService viewerService;
-    @Inject
-    private BcmService bcmService;
-    @Inject
-    private GgoPersoonslijstGroepBuilder ggoPlGroepBuilder;
-    @Inject
-    private LogRegelConverter logRegelConverter;
+    public FileUploadVerwerkerImpl(final LeesService leesService, final ViewerService viewerService, final BcmService bcmService,
+                                   final GgoPersoonslijstGroepBuilder ggoPlGroepBuilder, final LogRegelConverter logRegelConverter) {
+        this.leesService = leesService;
+        this.viewerService = viewerService;
+        this.bcmService = bcmService;
+        this.ggoPlGroepBuilder = ggoPlGroepBuilder;
+        this.logRegelConverter = logRegelConverter;
+    }
 
     @Override
     public final List<GgoPersoonslijstGroep> verwerkFileUpload(final String filename, final byte[] file, final FoutMelder foutMelder) {
@@ -83,13 +88,13 @@ public class FileUploadVerwerkerImpl implements FileUploadVerwerker {
 
                 // Bouw model
                 persoonslijstGroepen.add(ggoPlGroepBuilder.build(
-                    lo3PersoonslijstIngelezen,
-                    brpPersoonslijst,
-                    persoon,
-                    teruggeconverteerdMetHerkomst,
-                    verschillen,
-                    meldingen,
-                    foutLog.getFoutRegels()));
+                        lo3PersoonslijstIngelezen,
+                        brpPersoonslijst,
+                        persoon,
+                        teruggeconverteerdMetHerkomst,
+                        verschillen,
+                        meldingen,
+                        foutLog.getFoutRegels()));
 
                 Logging.destroyContext();
             }
@@ -151,10 +156,9 @@ public class FileUploadVerwerkerImpl implements FileUploadVerwerker {
     }
 
     private List<GgoVoorkomenVergelijking> vergelijk(
-        final Lo3Persoonslijst lo3PersoonslijstIngelezen,
-        final Lo3Persoonslijst teruggeconverteerd,
-        final FoutMelder foutLog)
-    {
+            final Lo3Persoonslijst lo3PersoonslijstIngelezen,
+            final Lo3Persoonslijst teruggeconverteerd,
+            final FoutMelder foutLog) {
         // Bepaal verschillen
         List<GgoVoorkomenVergelijking> verschillen = null;
         if (teruggeconverteerd != null) {
@@ -164,10 +168,9 @@ public class FileUploadVerwerkerImpl implements FileUploadVerwerker {
     }
 
     private Lo3Persoonslijst voegLo3HerkomstToe(
-        final Lo3Persoonslijst lo3PersoonslijstIngelezen,
-        final Lo3Persoonslijst teruggeconverteerd,
-        final FoutMelder foutLog)
-    {
+            final Lo3Persoonslijst lo3PersoonslijstIngelezen,
+            final Lo3Persoonslijst teruggeconverteerd,
+            final FoutMelder foutLog) {
         // Bepaal lo3Herkomst op basis van de verschil/match analyse
         return viewerService.voegLo3HerkomstToe(lo3PersoonslijstIngelezen, teruggeconverteerd, foutLog);
     }
@@ -175,7 +178,6 @@ public class FileUploadVerwerkerImpl implements FileUploadVerwerker {
     /**
      * Registreert de meldingen welke zijn opgekomen voor de conversie (syntax/preconditie controles) en zet deze GGO
      * Foutregel lijst.
-     *
      * @param meldingen de meldingen
      * @return of er conversie meldingen zijn
      */
@@ -194,7 +196,6 @@ public class FileUploadVerwerkerImpl implements FileUploadVerwerker {
 
     /**
      * Registreert dat de conversie naar BRP mislukt is in de FoutMelder.
-     *
      * @param foutMelder de foutmelder
      */
     private void registreerConversieMislukt(final FoutMelder foutMelder) {

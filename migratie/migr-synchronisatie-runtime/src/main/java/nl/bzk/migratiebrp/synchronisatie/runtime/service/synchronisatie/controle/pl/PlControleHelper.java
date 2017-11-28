@@ -19,11 +19,8 @@ public final class PlControleHelper {
 
     /**
      * Null-safe vergelijking (null is gelijk aan null).
-     *
-     * @param waarde
-     *            waarde
-     * @param andereWaarde
-     *            andere waarde
+     * @param waarde waarde
+     * @param andereWaarde andere waarde
      * @return true als de waarden beide null zijn, of equals().
      */
     public static boolean isGelijk(final Object waarde, final Object andereWaarde) {
@@ -36,9 +33,7 @@ public final class PlControleHelper {
 
     /**
      * Null-safe waarde teruggeef methode voor attributen met onderzoek.
-     *
-     * @param attribuut
-     *            Het attribuut waarvan we de waarde willen teruggeven.
+     * @param attribuut Het attribuut waarvan we de waarde willen teruggeven.
      * @return De waarde van het attribuut.
      */
     public static Object geefAttribuutWaarde(final BrpAttribuutMetOnderzoek attribuut) {

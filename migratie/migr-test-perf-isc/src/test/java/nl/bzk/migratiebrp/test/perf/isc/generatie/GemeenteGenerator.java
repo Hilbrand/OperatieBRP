@@ -15,16 +15,16 @@ public class GemeenteGenerator {
     private static final Random RANDOM = new Random();
 
     private static final List<String> GEMEENTEN = Arrays.asList(
-        "0517",
-        "0518",
-        "0523",
-        "0529",
-        "0530",
-        "0531",
-        "0532",
-        "0534",
-        "0537",
-        "0542");
+            "0517",
+            "0518",
+            "0523",
+            "0529",
+            "0530",
+            "0531",
+            "0532",
+            "0534",
+            "0537",
+            "0542");
 
     public Lo3GemeenteCode genereer() {
         return new Lo3GemeenteCode(GEMEENTEN.get(RANDOM.nextInt(GEMEENTEN.size())));

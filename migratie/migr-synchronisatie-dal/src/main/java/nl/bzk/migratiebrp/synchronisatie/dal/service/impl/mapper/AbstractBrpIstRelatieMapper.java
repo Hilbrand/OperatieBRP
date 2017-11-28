@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstRelatieGroepInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
 
 /**
  * Mapped IST stapels van een Persoon op de IST relatie (ouder1, ouder2 en kind) stapel van de BrpPersoonslijst.

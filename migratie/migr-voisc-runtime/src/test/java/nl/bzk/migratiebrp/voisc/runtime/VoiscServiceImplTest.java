@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import nl.bzk.migratiebrp.voisc.database.entities.Bericht;
 import nl.bzk.migratiebrp.voisc.database.entities.Mailbox;
 import nl.bzk.migratiebrp.voisc.database.entities.StatusEnum;
+import nl.bzk.migratiebrp.voisc.mailbox.client.Connection;
 import nl.bzk.migratiebrp.voisc.runtime.exceptions.VoiscDatabaseException;
 import nl.bzk.migratiebrp.voisc.runtime.exceptions.VoiscMailboxException;
 import nl.bzk.migratiebrp.voisc.runtime.exceptions.VoiscQueueException;
@@ -26,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -138,7 +138,7 @@ public class VoiscServiceImplTest {
         final List<Bericht> mailbox0001Berichten = Arrays.asList(mailbox0001Bericht0001, mailbox0001Bericht0002, mailbox0001Bericht0003);
         Mockito.when(voiscDatabase.leesEnLockNaarMailboxTeVerzendenBericht("1")).thenReturn(mailbox0001Berichten);
 
-        Mockito.doThrow(new VoiscMailboxException("Test")).when(voiscMailbox).login(mailbox0002);
+        Mockito.doThrow(new VoiscMailboxException("Test")).when(voiscMailbox).login(Matchers.any(Connection.class), Matchers.eq(mailbox0002));
 
         Mockito.when(voiscDatabase.leesEnLockNaarMailboxTeVerzendenBericht("3")).thenThrow(new IllegalStateException("Test"));
 
@@ -149,39 +149,38 @@ public class VoiscServiceImplTest {
         subject.berichtenVerzendenNaarEnOntvangenVanMailbox();
 
         // Verify
-        final InOrder inOrder = Mockito.inOrder(voiscConfiguratie, voiscMailbox, voiscDatabase);
 
-        inOrder.verify(voiscConfiguratie).bepaalMailboxen();
-        inOrder.verify(voiscMailbox).connectToMailboxServer();
+        Mockito.verify(voiscConfiguratie).bepaalMailboxen();
+        Mockito.verify(voiscMailbox, Mockito.times(mailboxes.size())).connectToMailboxServer();
 
-        inOrder.verify(voiscDatabase).leesEnLockNaarMailboxTeVerzendenBericht("1");
-        inOrder.verify(voiscMailbox).login(mailbox0001);
+        Mockito.verify(voiscDatabase).leesEnLockNaarMailboxTeVerzendenBericht("1");
+        Mockito.verify(voiscMailbox).login(Matchers.any(Connection.class), Matchers.eq(mailbox0001));
         final ArgumentCaptor<Mailbox> mailbox001Captor = ArgumentCaptor.forClass(Mailbox.class);
-        inOrder.verify(voiscMailbox).sendMessagesToMailbox(mailbox001Captor.capture(), Matchers.eq(mailbox0001Berichten));
+        Mockito.verify(voiscMailbox).sendMessagesToMailbox(Matchers.any(Connection.class), mailbox001Captor.capture(), Matchers.eq(mailbox0001Berichten));
         Assert.assertEquals(mailbox0001, mailbox001Captor.getValue());
-        inOrder.verify(voiscMailbox).receiveMessagesFromMailbox(mailbox0001);
+        Mockito.verify(voiscMailbox).receiveMessagesFromMailbox(Matchers.any(Connection.class), Matchers.eq(mailbox0001));
 
-        inOrder.verify(voiscDatabase).leesEnLockNaarMailboxTeVerzendenBericht("2");
-        inOrder.verify(voiscMailbox).login(mailbox0002);
+        Mockito.verify(voiscDatabase).leesEnLockNaarMailboxTeVerzendenBericht("2");
+        Mockito.verify(voiscMailbox).login(Matchers.any(Connection.class), Matchers.eq(mailbox0002));
 
-        inOrder.verify(voiscDatabase).leesEnLockNaarMailboxTeVerzendenBericht("3");
+        Mockito.verify(voiscDatabase).leesEnLockNaarMailboxTeVerzendenBericht("3");
 
-        inOrder.verify(voiscDatabase).leesEnLockNaarMailboxTeVerzendenBericht("4");
-        inOrder.verify(voiscMailbox).login(mailbox0004);
+        Mockito.verify(voiscDatabase).leesEnLockNaarMailboxTeVerzendenBericht("4");
+        Mockito.verify(voiscMailbox).login(Matchers.any(Connection.class), Matchers.eq(mailbox0004));
         final ArgumentCaptor<Mailbox> mailbox004Captor = ArgumentCaptor.forClass(Mailbox.class);
-        inOrder.verify(voiscMailbox).sendMessagesToMailbox(mailbox004Captor.capture(), Matchers.eq(mailbox0004Berichten));
+        Mockito.verify(voiscMailbox).sendMessagesToMailbox(Matchers.any(Connection.class), mailbox004Captor.capture(), Matchers.eq(mailbox0004Berichten));
         Assert.assertEquals(mailbox0004, mailbox004Captor.getValue());
-        inOrder.verify(voiscMailbox).receiveMessagesFromMailbox(mailbox0004);
+        Mockito.verify(voiscMailbox).receiveMessagesFromMailbox(Matchers.any(Connection.class), Matchers.eq(mailbox0004));
 
-        inOrder.verify(voiscMailbox).logout();
+        Mockito.verify(voiscMailbox, Mockito.times(mailboxes.size())).logout(Matchers.any(Connection.class));
 
         Mockito.verifyNoMoreInteractions(voiscDatabase, voiscMailbox, voiscQueue, voiscConfiguratie);
     }
 
-    private Mailbox maakMailbox(final int instantiecode) {
+    private Mailbox maakMailbox(final int code) {
         final Mailbox mailbox = new Mailbox();
-        mailbox.setInstantiecode(instantiecode);
-        mailbox.setMailboxnr(Integer.toString(instantiecode));
+        mailbox.setPartijcode(Integer.toString(code));
+        mailbox.setMailboxnr(Integer.toString(code));
         return mailbox;
     }
 
@@ -194,7 +193,7 @@ public class VoiscServiceImplTest {
 
         // Verify
         Mockito.verify(voiscConfiguratie).bepaalMailboxen();
-        Mockito.verify(voiscMailbox).connectToMailboxServer();
+        Mockito.verifyZeroInteractions(voiscMailbox);
 
         Mockito.verifyNoMoreInteractions(voiscDatabase, voiscMailbox, voiscQueue, voiscConfiguratie);
 
@@ -235,4 +234,31 @@ public class VoiscServiceImplTest {
         Assert.assertEquals(1, aantalOpgeschoond);
     }
 
+    @Test
+    public void testHerstellenBerichtenHappyFlow() {
+        final Date ouderDan = Calendar.getInstance().getTime();
+
+        Mockito.when(voiscDatabase.herstelBerichten(ouderDan, StatusEnum.SENDING_TO_MAILBOX, StatusEnum.RECEIVED_FROM_ISC)).thenReturn(1);
+        Mockito.when(voiscDatabase.herstelBerichten(ouderDan, StatusEnum.SENDING_TO_ISC, StatusEnum.RECEIVED_FROM_MAILBOX)).thenReturn(1);
+
+        final int aantalHersteldeBerichten = subject.herstellenVoiscBerichten(ouderDan);
+        Assert.assertEquals(2, aantalHersteldeBerichten);
+    }
+
+    @Test
+    public void testHerstellenBerichtenRuntimeException() {
+        final Date ouderDan = Calendar.getInstance().getTime();
+
+        Mockito.when(voiscDatabase.herstelBerichten(ouderDan, StatusEnum.SENDING_TO_MAILBOX, StatusEnum.RECEIVED_FROM_ISC))
+                .thenThrow(new IllegalStateException());
+
+        final int aantalHersteldeBerichten = subject.herstellenVoiscBerichten(ouderDan);
+        Assert.assertEquals(0, aantalHersteldeBerichten);
+    }
+
+    @Test
+    public void testHerstellenBerichtenNullDatum() {
+        final int aantalHersteldeBerichten = subject.herstellenVoiscBerichten(null);
+        Assert.assertEquals(0, aantalHersteldeBerichten);
+    }
 }

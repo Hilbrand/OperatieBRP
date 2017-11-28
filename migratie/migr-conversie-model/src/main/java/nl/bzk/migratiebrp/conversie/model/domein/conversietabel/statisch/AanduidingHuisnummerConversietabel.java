@@ -7,10 +7,11 @@
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingBijHuisnummerCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingHuisnummerEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingHuisnummer;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Dit is een statische conversie (er wordt geen tabel gebruikt) tussen de LO3 en BRP aanduiding huisnummer.
@@ -47,14 +48,14 @@ public final class AanduidingHuisnummerConversietabel implements Conversietabel<
 
     @Override
     public boolean valideerLo3(final Lo3AanduidingHuisnummer input) {
-        return !Validatie.isElementGevuld(input) || Lo3AanduidingHuisnummerEnum.getByCode(input.getWaarde()) != null;
+        return !Lo3Validatie.isElementGevuld(input) || Lo3AanduidingHuisnummerEnum.getByCode(input.getWaarde()) != null;
     }
 
     @Override
     public boolean valideerBrp(final BrpAanduidingBijHuisnummerCode input) {
-        return !nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie.isAttribuutGevuld(input)
-               || BrpAanduidingBijHuisnummerCode.CODE_BY.equals(input.getWaarde())
-               || BrpAanduidingBijHuisnummerCode.CODE_TO.equals(input.getWaarde());
+        return !BrpValidatie.isAttribuutGevuld(input)
+                || BrpAanduidingBijHuisnummerCode.CODE_BY.equals(input.getWaarde())
+                || BrpAanduidingBijHuisnummerCode.CODE_TO.equals(input.getWaarde());
     }
 
 }

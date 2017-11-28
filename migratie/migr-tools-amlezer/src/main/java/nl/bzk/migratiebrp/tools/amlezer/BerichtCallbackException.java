@@ -15,11 +15,8 @@ final class BerichtCallbackException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
-     * @param cause
-     *            oorzaak
+     * @param message melding
+     * @param cause oorzaak
      */
     public BerichtCallbackException(final String message, final Throwable cause) {
         super(message, cause);

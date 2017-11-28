@@ -7,9 +7,11 @@
 package nl.bzk.migratiebrp.isc.console.mig4jsf;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.dto.Bericht;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.filter.BerichtenFilter;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.filter.Filter;
+import nl.bzk.migratiebrp.isc.console.mig4jsf.filter.FilterEnum;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.pager.PagerBean;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.jsf.JbpmActionListener;
@@ -23,14 +25,15 @@ public class ListBerichtenForProcessInstanceTest extends AbstractTagTest {
     @Test
     public void test() throws Exception {
         setupDatabase(
-            "/sql/mig-drop.sql",
-            "/sql/jbpm-drop.sql",
-            "/sql/jbpm-create.sql",
-            "/sql/mig-create.sql",
-            "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
+                "/sql/hsqldb4postgres.sql",
+                "/sql/mig-drop.sql",
+                "/sql/jbpm-drop.sql",
+                "/sql/jbpm-create.sql",
+                "/sql/mig-create.sql",
+                "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
 
         final PagerBean pager = new PagerBean(0, 25);
-        final Filter filter = new BerichtenFilter(null, null, null, null, null, null, null);
+        final Filter filter = new BerichtenFilter(new EnumMap<>(FilterEnum.class));
 
         final ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
         Mockito.when(processInstance.getId()).thenReturn(4321L);

@@ -10,7 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3PersoonslijstFormatter;
@@ -23,9 +27,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerBrpNaarLo3Service;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.PersoonRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.BrpPersoonslijstMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
@@ -35,44 +36,62 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOn
  */
 public final class ZoekPersoonFilterImpl implements ZoekPersoonFilter {
 
+
+    private static final int MAX_AANTAL_PERSONEN = 2;
+    private final ConversietabelFactory conversietabelFactory;
+    private final BrpPersoonslijstMapper brpPersoonslijstMapper;
+    private final ConverteerBrpNaarLo3Service converteerBrpNaarLo3Service;
+
+    /**
+     * Constructor.
+     * @param conversietabelFactory conversie tabel factory
+     * @param brpPersoonslijstMapper brp persoonlijst mapper
+     * @param converteerBrpNaarLo3Service converteer brp naar lo3 service
+     */
     @Inject
-    private ConversietabelFactory conversietabelFactory;
-    @Inject
-    private PersoonRepository persoonRepository;
-    @Inject
-    private BrpPersoonslijstMapper brpPersoonslijstMapper;
-    @Inject
-    private ConverteerBrpNaarLo3Service converteerBrpNaarLo3Service;
+    public ZoekPersoonFilterImpl(final ConversietabelFactory conversietabelFactory,
+                                 final BrpPersoonslijstMapper brpPersoonslijstMapper,
+                                 final ConverteerBrpNaarLo3Service converteerBrpNaarLo3Service) {
+        this.conversietabelFactory = conversietabelFactory;
+        this.brpPersoonslijstMapper = brpPersoonslijstMapper;
+        this.converteerBrpNaarLo3Service = converteerBrpNaarLo3Service;
+    }
 
     @Override
     public List<GevondenPersoon> filter(final List<Persoon> personen, final String aanvullendeZoekCriteria) throws BerichtSyntaxException {
         final List<GevondenPersoon> resultaat = new ArrayList<>();
 
         if (personen != null && !personen.isEmpty()) {
-
             // Bepaal filter
             final List<Lo3CategorieWaarde> lo3Filter = parseAanvullendeZoekCriteria(aanvullendeZoekCriteria);
 
-            for (final Persoon persoon : personen) {
-                // Map entiteit naar BrpPersoonslijst
-                final List<Onderzoek> onderzoeken = persoonRepository.findOnderzoekenVoorPersoon(persoon);
-                final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(onderzoeken);
-                final BrpPersoonslijst brpPersoonslijst = brpPersoonslijstMapper.mapNaarMigratie(persoon, brpOnderzoekMapper);
-
-                // Converteer
-                final Lo3Persoonslijst lo3Persoonslijst = converteerBrpNaarLo3Service.converteerBrpPersoonslijst(brpPersoonslijst);
-                final List<Lo3CategorieWaarde> lo3Categorieen = new Lo3PersoonslijstFormatter().format(lo3Persoonslijst);
-
-                if (voldoetAanFilter(lo3Categorieen, lo3Filter)) {
-                    resultaat.add(mapPersoonNaarGevondenPersoon(persoon));
-                    if (resultaat.size() >= 2) {
-                        break;
-                    }
-                }
-            }
+            resultaat.addAll(
+                    personen.stream()
+                            .filter(persoon -> filterPersoon(persoon, lo3Filter))
+                            .map(this::mapPersoonNaarGevondenPersoon)
+                            .limit(MAX_AANTAL_PERSONEN)
+                            .collect(Collectors.toList())
+            );
 
         }
         return resultaat;
+    }
+
+    private boolean filterPersoon(final Persoon persoon, final List<Lo3CategorieWaarde> lo3Filter) {
+        final BrpPersoonslijst brpPersoonslijst = mapEntiteitNaarBrpPersoonslijst(persoon);
+        final List<Lo3CategorieWaarde> lo3Categorieen = converteerBrpPersoonsLijstNaarLo3CategorieWaarden(brpPersoonslijst);
+        return voldoetAanFilter(lo3Categorieen, lo3Filter);
+    }
+
+    private List<Lo3CategorieWaarde> converteerBrpPersoonsLijstNaarLo3CategorieWaarden(final BrpPersoonslijst brpPersoonslijst) {
+        final Lo3Persoonslijst lo3Persoonslijst = converteerBrpNaarLo3Service.converteerBrpPersoonslijst(brpPersoonslijst);
+        return new Lo3PersoonslijstFormatter().format(lo3Persoonslijst);
+    }
+
+    private BrpPersoonslijst mapEntiteitNaarBrpPersoonslijst(final Persoon persoon) {
+        final Set<Onderzoek> onderzoeken = persoon.getOnderzoeken();
+        final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(onderzoeken);
+        return brpPersoonslijstMapper.mapNaarMigratie(persoon, brpOnderzoekMapper);
     }
 
     private List<Lo3CategorieWaarde> parseAanvullendeZoekCriteria(final String aanvullendeZoekCriteria) throws BerichtSyntaxException {
@@ -85,11 +104,8 @@ public final class ZoekPersoonFilterImpl implements ZoekPersoonFilter {
 
     /**
      * Controleert of een lijst aan lo3 categorieen voldoet aan een filter.
-     *
-     * @param lo3Categorieen
-     *            lijst van lo3 categorieen
-     * @param lo3FilterCategorieen
-     *            filter
+     * @param lo3Categorieen lijst van lo3 categorieen
+     * @param lo3FilterCategorieen filter
      * @return true, als de gegevens lijst van lo3 categorieen voldoet, anders false
      */
     private boolean voldoetAanFilter(final List<Lo3CategorieWaarde> lo3Categorieen, final List<Lo3CategorieWaarde> lo3FilterCategorieen) {
@@ -97,8 +113,7 @@ public final class ZoekPersoonFilterImpl implements ZoekPersoonFilter {
             boolean ok = false;
 
             for (final Lo3CategorieWaarde lo3Categorie : lo3Categorieen) {
-                if (lo3Categorie.getCategorie().equals(lo3Filter.getCategorie()) && nietOnjuist(lo3Categorie) && voldoetAanFilter(lo3Categorie, lo3Filter))
-                {
+                if (lo3Categorie.getCategorie().equals(lo3Filter.getCategorie()) && nietOnjuist(lo3Categorie) && voldoetAanFilter(lo3Categorie, lo3Filter)) {
                     ok = true;
                     break;
                 }
@@ -129,13 +144,14 @@ public final class ZoekPersoonFilterImpl implements ZoekPersoonFilter {
             if (filterValue == null || "".equals(filterValue)) {
                 if (lo3Value != null && !"".equals(lo3Value)) {
                     result = false;
-                    break;
                 }
             } else {
                 if (!filterValue.equals(lo3Value)) {
                     result = false;
-                    break;
                 }
+            }
+            if (!result) {
+                break;
             }
         }
 
@@ -143,8 +159,8 @@ public final class ZoekPersoonFilterImpl implements ZoekPersoonFilter {
     }
 
     private GevondenPersoon mapPersoonNaarGevondenPersoon(final Persoon persoon) {
-        final Integer persoonId = persoon.getId();
-        final Long administratienummer = persoon.getAdministratienummer();
+        final Long persoonId = persoon.getId();
+        final String administratienummer = persoon.getAdministratienummer();
 
         final String bijhoudingsgemeente;
         if (persoon.getBijhoudingspartij() != null) {

@@ -6,25 +6,23 @@
 
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch;
 
-import java.text.DecimalFormat;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Abstract gemeente conversie tabel.
  */
 public abstract class AbstractGemeenteConversietabel implements Conversietabel<Lo3GemeenteCode, BrpGemeenteCode> {
 
-    private static final String GEMEENTE_CODE_FORMAT = "0000";
-
     @Override
     public final BrpGemeenteCode converteerNaarBrp(final Lo3GemeenteCode input) {
         final BrpGemeenteCode resultaat;
 
-        if (nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie.isElementGevuld(input)) {
-            resultaat = new BrpGemeenteCode(Short.parseShort(input.getWaarde()), input.getOnderzoek());
+        if (Lo3Validatie.isElementGevuld(input)) {
+            resultaat = new BrpGemeenteCode(input.getWaarde(), input.getOnderzoek());
         } else {
             if (input != null && input.getOnderzoek() != null) {
                 resultaat = new BrpGemeenteCode(null, input.getOnderzoek());
@@ -40,8 +38,8 @@ public abstract class AbstractGemeenteConversietabel implements Conversietabel<L
     public final Lo3GemeenteCode converteerNaarLo3(final BrpGemeenteCode input) {
         final Lo3GemeenteCode resultaat;
 
-        if (Validatie.isAttribuutGevuld(input)) {
-            resultaat = new Lo3GemeenteCode(new DecimalFormat(GEMEENTE_CODE_FORMAT).format(input.getWaarde()), input.getOnderzoek());
+        if (BrpValidatie.isAttribuutGevuld(input)) {
+            resultaat = new Lo3GemeenteCode(input.getWaarde(), input.getOnderzoek());
         } else {
             if (input != null && input.getOnderzoek() != null) {
                 resultaat = new Lo3GemeenteCode(null, input.getOnderzoek());

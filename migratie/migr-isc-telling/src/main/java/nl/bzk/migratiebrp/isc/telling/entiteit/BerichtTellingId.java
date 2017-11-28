@@ -15,7 +15,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Id klasse voor de berichten tellingen database tabel.
- * 
  */
 public final class BerichtTellingId implements Serializable {
 
@@ -30,18 +29,14 @@ public final class BerichtTellingId implements Serializable {
      * Default constructor.
      */
     public BerichtTellingId() {
-
+        // leeg voor testcode
     }
 
     /**
      * Convenient constructor.
-     * 
-     * @param berichtType
-     *            Het berichttype
-     * @param datum
-     *            De datum
-     * @param kanaal
-     *            Het kanaal
+     * @param berichtType Het berichttype
+     * @param datum De datum
+     * @param kanaal Het kanaal
      */
     public BerichtTellingId(final Timestamp datum, final String berichtType, final String kanaal) {
         this.datum = Kopieer.timestamp(datum);
@@ -51,7 +46,6 @@ public final class BerichtTellingId implements Serializable {
 
     /**
      * Geef de waarde van bericht type.
-     *
      * @return bericht type
      */
     public String getBerichtType() {
@@ -60,7 +54,6 @@ public final class BerichtTellingId implements Serializable {
 
     /**
      * Geef de waarde van datum.
-     *
      * @return datum
      */
     public Timestamp getDatum() {
@@ -69,7 +62,6 @@ public final class BerichtTellingId implements Serializable {
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public String getKanaal() {
@@ -91,8 +83,8 @@ public final class BerichtTellingId implements Serializable {
         }
         final BerichtTellingId castOther = (BerichtTellingId) other;
         return new EqualsBuilder().append(getDatum(), castOther.getDatum())
-                                  .append(getBerichtType(), castOther.getBerichtType())
-                                  .append(getKanaal(), castOther.getKanaal())
-                                  .isEquals();
+                .append(getBerichtType(), castOther.getBerichtType())
+                .append(getKanaal(), castOther.getKanaal())
+                .isEquals();
     }
 }

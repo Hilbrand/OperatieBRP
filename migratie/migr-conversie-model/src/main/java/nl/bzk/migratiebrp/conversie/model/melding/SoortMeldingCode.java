@@ -8,20 +8,27 @@ package nl.bzk.migratiebrp.conversie.model.melding;
 
 /**
  * Bevat de lijst met unieke melding codes.
- *
  */
 public enum SoortMeldingCode {
 
-    /** De categorie mag het element niet bevatten. */
+    /**
+     * De categorie mag het element niet bevatten.
+     */
     ELEMENT,
 
-    /** Het element bevat tekens die niet in de teletex-set voorkomen. */
+    /**
+     * Het element bevat tekens die niet in de teletex-set voorkomen.
+     */
     TELETEX,
 
-    /** Het element bevat niet uitsluitend cijfers. */
+    /**
+     * Het element bevat niet uitsluitend cijfers.
+     */
     NUMERIEK,
 
-    /** Het element heeft een niet toegestane lengte. */
+    /**
+     * Het element heeft een niet toegestane lengte.
+     */
     LENGTE,
 
     /**
@@ -267,17 +274,17 @@ public enum SoortMeldingCode {
     PRE043,
 
     /**
-     * TODO: specificeren.
+     * Gereserveerd voor toekomst
      */
     PRE044,
 
     /**
-     * TODO: specificeren.
+     * Gereserveerd voor toekomst
      */
     PRE045,
 
     /**
-     * TODO: specificeren.
+     * Gereserveerd voor toekomst
      */
     PRE046,
 
@@ -336,7 +343,7 @@ public enum SoortMeldingCode {
      * woonplaats zijn. Kortom het moet een in BAG voorkomende woonplaats zijn. Dit wordt gecontroleerd door na te gaan
      * of de woonplaatsnaam voorkomt in de BRP stamtabel Plaats.
      *
-     * Uitzondering hierop is de standaardwaarde ‘.’. Dit wordt behandeld als <geen waarde>.
+     * Uitzondering hierop is de standaardwaarde ‘.’. Dit wordt behandeld als {@literal <geen waarde>}.
      */
     PRE057,
 
@@ -640,7 +647,14 @@ public enum SoortMeldingCode {
      * partnerschap en 09/59 Kind mag niet overeenkomen met 01.01.10 A-nummer.
      */
     PRE113,
-
+    /**
+     * Als er sprake is van omzetting bij cat05, dan moet ieder substapel minstens 1 juiste sluiting bevatten.
+     */
+    PRE114,
+    /**
+     * Als 73.10 EU-persoonsnummer is gevuld, dan moet 05.10 Nationaliteit ook gevuld zijn.
+     */
+    PRE115,
     /**
      * Afnemersindicaties: a-nummer is verplicht.
      */
@@ -765,9 +779,14 @@ public enum SoortMeldingCode {
     AUT012,
 
     /**
-     * Afnemersindicaties: plaatsingsbevoegd, maar geen spontaan autorisatie.
+     * Autorisaties: plaatsingsbevoegd, maar geen spontaan autorisatie.
      */
     AUT013,
+
+    /**
+     * Autorisaties: partij kan niet gevonden worden obv afnemersindicatie.
+     */
+    AUT014,
 
     /**
      * Er is een geboorte geregistreerd in een onbekend land of een internationaal gebied.
@@ -952,6 +971,16 @@ public enum SoortMeldingCode {
     BIJZ_CONV_LB040,
 
     /**
+     * Bij splitsing cat05 zijn er 1 of meer substapels (zijnde niet de laatste) die een juiste ontbinding bevat.
+     */
+    BIJZ_CONV_LB041,
+
+    /**
+     * Het Ouderlijk gezag start op een datum waarop geen familierechtelijke betrekking met een ouder bestaat.
+     */
+    BIJZ_CONV_LB042,
+
+    /**
      * Element bevat geen geldige datum.
      */
     STRUC_DATUM,
@@ -984,11 +1013,315 @@ public enum SoortMeldingCode {
     /**
      * Categorie 13: Kiesrecht mag alleen actuele categorie voorkomens hebben.
      */
-    STRUC_CATEGORIE_13;
+    STRUC_CATEGORIE_13,
+
+    /**
+     * Toevallige gebeurtenis: Groep 20 A-nummerverwijzingen niet toegestaan.
+     */
+    TG001,
+
+    /**
+     * Toevallige gebeurtenis: Groep 61 Naamgebruik niet toegestaan.
+     */
+    TG002,
+
+    /**
+     * Toevallige gebeurtenis: Groep 88 RNI-deelnemer niet toegestaan.
+     */
+    TG003,
+
+    /**
+     * Toevallige gebeurtenis: Groep 82 Document niet toegestaan.
+     */
+    TG005,
+
+    /**
+     * Toevallige gebeurtenis: Groep 83 Procedure niet toegestaan.
+     */
+    TG006,
+
+    /**
+     * Toevallige gebeurtenis: Groep 84 Onjuist niet toegestaan.
+     */
+    TG007,
+
+    /**
+     * Toevallige gebeurtenis: Groep 86 Opneming niet toegestaan.
+     */
+    TG009,
+
+    /**
+     * Toevallige gebeurtenis: De ontvangende gemeente (mailbox metadata) moet een geldige Nederlandse gemeente zijn.
+     */
+    TG010,
+
+    /**
+     * Toevallige gebeurtenis: De verzendende gemeente (mailbox metadata) moet een geldige Nederlandse gemeente zijn.
+     */
+    TG011,
+
+    /**
+     * Toevallige gebeurtenis: Het aktenummer moet een 'bekend' soort akte zijn.
+     */
+    TG012,
+
+    /**
+     * Toevallige gebeurtenis: Groep 08 Overlijden is verplicht in categorie 06 Overlijden.
+     */
+    TG013,
+
+    /**
+     * Toevallige gebeurtenis: Groep 02 Naam is verplicht in categorie 02/03/52/53 Ouder 1/2.
+     */
+    TG014,
+
+    /**
+     * Toevallige gebeurtenis: Groep 03 Geboorte is verplicht in categorie 02/03/52/53 Ouder 1/2.
+     */
+    TG015,
+
+    /**
+     * Toevallige gebeurtenis: Groep 04 Geslacht is verplicht in categorie 02/03 Ouder 1/2.
+     */
+    TG016,
+
+    /**
+     * Toevallige gebeurtenis: Groep 62 Familierechtelijke betrekking is verplicht in categorie 02/03/52/53 Ouder 1/2.
+     */
+    TG017,
+
+    /**
+     * Toevallige gebeurtenis: Er mag naast een actuele maximaal 1 historische categorie voorkomen.
+     */
+    TG018,
+
+    /**
+     * Toevallige gebeurtenis: Groep 02 Naam is verplicht in categorie 05/55 Huwelijk/Geregistreerde partnerschap.
+     */
+    TG019,
+
+    /**
+     * Toevallige gebeurtenis: Groep 03 Geboorte is verplicht in categorie 05/55 Huwelijk/Geregistreerde partnerschap.
+     */
+    TG020,
+
+    /**
+     * Toevallige gebeurtenis: Groep 07 Ontbinding is niet toegestaan in categorie 55 Huwelijk/Geregistreerde
+     * partnerschap.
+     */
+    TG021,
+
+    /**
+     * Toevallige gebeurtenis: Groep 15 Soort verbintenis is verplicht in categorie 05/55 Huwelijk/Geregistreerde
+     * partnerschap.
+     */
+    TG022,
+
+    /**
+     * Toevallige gebeurtenis: Element 81.10 Registergemeente akte moet overeenkomen met de verzendende gemeente.
+     */
+    TG023,
+
+    /**
+     * Toevallige gebeurtenis: Element 81.20 Nummer akte moet overeenkomen met het aktenummer in de header.
+     */
+    TG024,
+
+    /**
+     * Toevallige gebeurtenis: Alle 85.10 Ingangsdatum geldigheid in het bericht dienen overeen te komen.
+     */
+    TG025,
+
+    /**
+     * Toevallige gebeurtenis: Categorie 01 moet verplicht voorkomen.
+     */
+    TG026,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte mag deze categorie alleen actueel voorkomen.
+     */
+    TG027,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte mag deze categorie niet voorkomen.
+     */
+    TG028,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moet categorie 06 voorkomen.
+     */
+    TG029,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moet categorie 05 voorkomen.
+     */
+    TG031,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moet groep 06 Sluiting in categorie 05 Huwelijk/Geregistreerd
+     * partnerschap voorkomen.
+     */
+    TG032,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte mag groep 07 Ontbinding niet in categorie 05 Huwelijk/Geregistreerd
+     * partnerschap voorkomen.
+     */
+    TG033,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moet groep 15 Soort verbintenis de een waarde hebben die
+     * overeenkomst met de soort akte.
+     */
+    TG034,
+
+    /**
+     * Toevallige gebeurtenis: Groep 04 Geslacht is verplicht in categorie 05 Huwelijk/Geregistreerd partnerschap.
+     */
+    TG035,
+
+    /**
+     * Toevallige gebeurtenis: Groep 06 Sluiting is verplicht in categorie 55 Huwelijk/Geregistreerd partnerschap.
+     */
+    TG036,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moet categorie 55 voorkomen.
+     */
+    TG037,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte mag groep 06 Sluiting niet in categorie 05 Huwelijk/Geregistreerd
+     * partnerschap voorkomen.
+     */
+    TG038,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moet groep 07 Ontbinding in categorie 05 Huwelijk/Geregistreerd
+     * partnerschap voorkomen.
+     */
+    TG039,
+
+    /**
+     * Toevallige gebeurtenis: Groep 02 uit categorie 05 moet overeenkomen met groep 02 uit categorie 55.
+     */
+    TG040,
+
+    /**
+     * Toevallige gebeurtenis: Groep 03 uit categorie 05 moet overeenkomen met groep 03 uit categorie 55.
+     */
+    TG041,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moet categorie 51 voorkomen.
+     */
+    TG042,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moeten element 02.30 en 02.40 uit categorie 01 overeenkomen met
+     * elementen 02.30 en 02.40 uit categorie 51.
+     */
+    TG044,
+
+    /**
+     * Toevallige gebeurtenis: Groep 03 uit categorie 01 moet overeenkomen met groep 03 uit categorie 51.
+     */
+    TG045,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moet element 04.10 uit categorie 01 overeenkomen met element 04.10
+     * uit categorie 51.
+     */
+    TG046,
+
+    /**
+     * Toevallige gebeurtenis: Groep 81 Akte niet toegestaan.
+     */
+    TG047,
+
+    /**
+     * Toevallige gebeurtenis: Groep 81 Akte moet voorkomen.
+     */
+    TG048,
+
+    /**
+     * Toevallige gebeurtenis: Groep 85 Geldigheid niet toegestaan.
+     */
+    TG049,
+
+    /**
+     * Toevallige gebeurtenis: Groep 85 Geldigheid moet voorkomen.
+     */
+    TG050,
+
+    /**
+     * Toevallige gebeurtenis: Groep 01 Identificatienummers is verplicht in categorie 01 Persoon.
+     */
+    TG051,
+
+    /**
+     * Toevallige gebeurtenis: Groep 02 Naam is verplicht in categorie 01/51 Persoon.
+     */
+    TG052,
+
+    /**
+     * Toevallige gebeurtenis: Groep 03 Geboorte is verplicht in categorie 01/51 Persoon.
+     */
+    TG053,
+
+    /**
+     * Toevallige gebeurtenis: Groep 04 Geslachtsaanduiding is verplicht in categorie 01/51 Persoon.
+     */
+    TG054,
+
+    /**
+     * Toevallige gebeurtenis: Groep 04 Geslachtsaanduiding is niet toegestaan in categorie 55 Huwelijk/Geregistreerd
+     * partnerschap.
+     */
+    TG055,
+
+    /**
+     * Toevallige gebeurtenis: Groep 01 Identificatienummers is niet toegestaan in categorie 55 Huwelijk/Geregistreerd
+     * partnerschap.
+     */
+    TG056,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moeten element 02.20 uit categorie 01 overeenkomen met element 02.20
+     * uit categorie 51.
+     */
+    TG057,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moeten element 02.10 uit categorie 01 overeenkomen met element 02.10
+     * uit categorie 51.
+     */
+    TG058,
+
+    /**
+     * Toevallige gebeurtenis: Groep 01 Identificatienummers is niet toegestaan in categorie 52/53 Ouder 1/2.
+     */
+    TG059,
+
+    /**
+     * Toevallige gebeurtenis: Groep 04 Geslachtsaanduiding is niet toegestaan in categorie 52/53 Ouder 1/2.
+     */
+    TG060,
+
+    /**
+     * Toevallige gebeurtenis: Voor deze soort akte moeten elementen 02.10, 03.10, 03.20, 03.30 en 04.10 uit categorie
+     * 01 overeenkomen met elementen 02.10, 03.10, 03.20, 03.30 en 04.10 uit categorie 51.
+     */
+    TG061,
+
+    /**
+     * Toevallige gebeurtenis: De toevallig gebeurtenis moet plaatsvinden in Nederland. Hierdoor moet de landcode
+     * overeenkomen met Nederland (6030).
+     */
+    TG062;
 
     /**
      * Geeft aan of het een preconditie betreft.
-     *
      * @return true als het een preconditie is, anders false
      */
     public boolean isPreconditie() {
@@ -997,7 +1330,6 @@ public enum SoortMeldingCode {
 
     /**
      * Geeft aan of het een structuurfout betreft.
-     *
      * @return true als het een structuurfout is, anders false
      */
     public boolean isStructuurFout() {

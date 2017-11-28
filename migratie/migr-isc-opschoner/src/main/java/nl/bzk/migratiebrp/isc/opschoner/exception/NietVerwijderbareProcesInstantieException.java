@@ -11,7 +11,6 @@ import nl.bzk.migratiebrp.util.common.Kopieer;
 
 /**
  * Exceptieklasse voor de exceptie die wordt gegooid wanneer een proces instantie niet verwijderbaar is.
- * 
  */
 public final class NietVerwijderbareProcesInstantieException extends Exception {
 
@@ -21,11 +20,8 @@ public final class NietVerwijderbareProcesInstantieException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            message
-     * @param laatsteActiviteitDatum
-     *            laatsteActiviteitDatum
+     * @param message message
+     * @param laatsteActiviteitDatum laatsteActiviteitDatum
      */
     public NietVerwijderbareProcesInstantieException(final String message, final Timestamp laatsteActiviteitDatum) {
         super(message);
@@ -34,13 +30,9 @@ public final class NietVerwijderbareProcesInstantieException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            message
-     * @param cause
-     *            cause
-     * @param laatsteActiviteitDatum
-     *            laatsteActiviteitDatum
+     * @param message message
+     * @param cause cause
+     * @param laatsteActiviteitDatum laatsteActiviteitDatum
      */
     public NietVerwijderbareProcesInstantieException(final String message, final Throwable cause, final Timestamp laatsteActiviteitDatum) {
         super(message, cause);
@@ -49,7 +41,6 @@ public final class NietVerwijderbareProcesInstantieException extends Exception {
 
     /**
      * Geef de waarde van laatste activiteit datum.
-     *
      * @return laatste activiteit datum
      */
     public Timestamp getLaatsteActiviteitDatum() {

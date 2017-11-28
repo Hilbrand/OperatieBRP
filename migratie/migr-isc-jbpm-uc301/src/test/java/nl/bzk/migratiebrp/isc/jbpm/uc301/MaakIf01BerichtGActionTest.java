@@ -16,27 +16,18 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakIf01BerichtGActionTest {
 
-    private MaakIf01BerichtGAction subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new MaakIf01BerichtGAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakIf01BerichtGAction subject = new MaakIf01BerichtGAction(berichtenDao);
 
     @Test
     public void test() {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("1234");
-        ii01Bericht.setDoelGemeente("5678");
+        ii01Bericht.setBronPartijCode("1234");
+        ii01Bericht.setDoelPartijCode("5678");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.ANUMMER, "1234567891");
 
         final Map<String, Object> parameters = new HashMap<>();
@@ -47,10 +38,10 @@ public class MaakIf01BerichtGActionTest {
 
         final If01Bericht if01Bericht = (If01Bericht) berichtenDao.leesBericht((Long) result.get("if01Bericht"));
         Assert.assertNotNull(if01Bericht);
-        Assert.assertEquals("1234", if01Bericht.getDoelGemeente());
-        Assert.assertEquals("5678", if01Bericht.getBronGemeente());
+        Assert.assertEquals("1234", if01Bericht.getDoelPartijCode());
+        Assert.assertEquals("5678", if01Bericht.getBronPartijCode());
         Assert.assertEquals(ii01Bericht.getCategorieen(), if01Bericht.getCategorieen());
-        Assert.assertEquals("G", if01Bericht.getHeader(Lo3HeaderVeld.FOUTREDEN));
+        Assert.assertEquals("G", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
     }
 
 }

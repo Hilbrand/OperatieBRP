@@ -6,37 +6,72 @@
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.logMetaObject;
+import static nl.bzk.brp.levering.lo3.support.TestHelper.assertElementen;
+
+import java.util.HashSet;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.LocatieTenOpzichteVanAdres;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.FunctieAdres;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortActie;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortAdministratieveHandeling;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortMigratie;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonAdresHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonHisVolledigImpl;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonAdresHisVolledigImplBuilder;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
+import nl.bzk.brp.levering.lo3.builder.MetaObjectAdder;
+import nl.bzk.brp.levering.lo3.conversie.ConversieCache;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-import support.PersoonHisVolledigUtil;
 
 /**
  * Verblijfplaats.
  */
 public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerderIntegratieTest {
 
+    @Inject
+    private MutatieConverteerder subject;
+
     @Test
     public void testGroep09Gemeente() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        builder.nieuwBijhoudingRecord(actie).bijhoudingspartij(59901).eindeRecord();
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_BIJHOUDING.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_BIJHOUDING_PARTIJCODE.getId()), "059901")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        logMetaObject(persoon.getMetaObject());
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -67,31 +102,48 @@ public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep10Adreshouding() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final PersoonHisVolledigImpl hisVolledigImpl = (PersoonHisVolledigImpl) ReflectionTestUtils.getField(builder, "hisVolledigImpl");
-        final PersoonAdresHisVolledigImpl adresHisVolledigImpl = hisVolledigImpl.getAdressen().iterator().next();
-        final PersoonAdresHisVolledigImplBuilder adresBuilder = new PersoonAdresHisVolledigImplBuilder();
-        ReflectionTestUtils.setField(adresBuilder, "hisVolledigImpl", adresHisVolledigImpl);
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        adresBuilder.nieuwStandaardRecord(actie)
-                    .aangeverAdreshouding("I")
-                    .datumAanvangAdreshouding(19391228)
-                    .gemeente((short) 518)
-                    .gemeentedeel("links")
-                    .huisletter("A")
-                    .huisnummer(10)
-                    .huisnummertoevoeging("B")
-                    .landGebied((short) 6030)
-                    .naamOpenbareRuimte("naam")
-                    .postcode("2245HJ")
-                    .redenWijziging("P")
-                    .soort(FunctieAdres.BRIEFADRES)
-                    .woonplaatsnaam("Rotterdam")
-                    .eindeRecord();
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_ADRES_STANDAARD.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_ADRES.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_AANGEVERADRESHOUDINGCODE.getId()), "I")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_DATUMAANVANGADRESHOUDING.getId()), 19391228)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTECODE.getId()), "0518")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTEDEEL.getId()), "links")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISLETTER.getId()), "A")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMER.getId()), 10)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMERTOEVOEGING.getId()), "B")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_INDICATIEPERSOONAANGETROFFENOPADRES.getId()), false)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_LANDGEBIEDCODE.getId()), "6030")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_NAAMOPENBARERUIMTE.getId()), "naam")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_POSTCODE.getId()), "2245HJ")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_REDENWIJZIGINGCODE.getId()), "P")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_SOORTCODE.getId()), "B")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_WOONPLAATSNAAM.getId()), "Rotterdam")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -126,35 +178,52 @@ public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep11Adres() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final PersoonHisVolledigImpl hisVolledigImpl = (PersoonHisVolledigImpl) ReflectionTestUtils.getField(builder, "hisVolledigImpl");
-        final PersoonAdresHisVolledigImpl adresHisVolledigImpl = hisVolledigImpl.getAdressen().iterator().next();
-        final PersoonAdresHisVolledigImplBuilder adresBuilder = new PersoonAdresHisVolledigImplBuilder();
-        ReflectionTestUtils.setField(adresBuilder, "hisVolledigImpl", adresHisVolledigImpl);
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        adresBuilder.nieuwStandaardRecord(actie)
-                    .aangeverAdreshouding("I")
-                    .datumAanvangAdreshouding(actieGeboorte.getDatumAanvangGeldigheid())
-                    .gemeente((short) 518)
-                    .gemeentedeel("deel vd gemeente")
-                    .huisletter("V")
-                    .huisnummer(123)
-                    .huisnummertoevoeging("Y")
-                    .locatieTenOpzichteVanAdres(LocatieTenOpzichteVanAdres.BY)
-                    .landGebied((short) 6030)
-                    .afgekorteNaamOpenbareRuimte("straatnaam")
-                    .naamOpenbareRuimte("openbareruimte")
-                    .postcode("6643WE")
-                    .redenWijziging("P")
-                    .soort(FunctieAdres.WOONADRES)
-                    .woonplaatsnaam("Rotjeknor")
-                    .identificatiecodeAdresseerbaarObject("IDENT-001")
-                    .identificatiecodeNummeraanduiding("IDENT-002")
-                    .eindeRecord();
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_ADRES_STANDAARD.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_ADRES.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_AANGEVERADRESHOUDINGCODE.getId()), "I")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_DATUMAANVANGADRESHOUDING.getId()), 19200101)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTECODE.getId()), "0518")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTEDEEL.getId()), "deel vd gemeente")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISLETTER.getId()), "V")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMER.getId()), 123)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMERTOEVOEGING.getId()), "Y")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_INDICATIEPERSOONAANGETROFFENOPADRES.getId()), false)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_LOCATIETENOPZICHTEVANADRES.getId()), "by")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_LANDGEBIEDCODE.getId()), "6030")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_AFGEKORTENAAMOPENBARERUIMTE.getId()), "straatnaam")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_NAAMOPENBARERUIMTE.getId()), "openbareruimte")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_POSTCODE.getId()), "6643WE")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_REDENWIJZIGINGCODE.getId()), "P")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_SOORTCODE.getId()), "W")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_WOONPLAATSNAAM.getId()), "Rotjeknor")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_IDENTIFICATIECODEADRESSEERBAAROBJECT.getId()), "IDENT-001")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_IDENTIFICATIECODENUMMERAANDUIDING.getId()), "IDENT-002")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -217,32 +286,49 @@ public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep12Locatie() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final PersoonHisVolledigImpl hisVolledigImpl = (PersoonHisVolledigImpl) ReflectionTestUtils.getField(builder, "hisVolledigImpl");
-        final PersoonAdresHisVolledigImpl adresHisVolledigImpl = hisVolledigImpl.getAdressen().iterator().next();
-        final PersoonAdresHisVolledigImplBuilder adresBuilder = new PersoonAdresHisVolledigImplBuilder();
-        ReflectionTestUtils.setField(adresBuilder, "hisVolledigImpl", adresHisVolledigImpl);
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        adresBuilder.nieuwStandaardRecord(actie)
-                    .aangeverAdreshouding("I")
-                    .datumAanvangAdreshouding(actieGeboorte.getDatumAanvangGeldigheid())
-                    .gemeente((short) 518)
-                    .gemeentedeel("deel vd gemeente")
-                    .huisletter("A")
-                    .huisnummer(10)
-                    .huisnummertoevoeging("B")
-                    .landGebied((short) 6030)
-                    .naamOpenbareRuimte("naam")
-                    .postcode("2245HJ")
-                    .redenWijziging("P")
-                    .soort(FunctieAdres.WOONADRES)
-                    .woonplaatsnaam("Rotterdam")
-                    .locatieomschrijving("locatieomschrijving")
-                    .eindeRecord();
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_ADRES_STANDAARD.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_ADRES.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_AANGEVERADRESHOUDINGCODE.getId()), "I")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_DATUMAANVANGADRESHOUDING.getId()), 19200101)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTECODE.getId()), "0518")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTEDEEL.getId()), "deel vd gemeente")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISLETTER.getId()), "A")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMER.getId()), 10)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMERTOEVOEGING.getId()), "B")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_INDICATIEPERSOONAANGETROFFENOPADRES.getId()), false)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_LANDGEBIEDCODE.getId()), "6030")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_NAAMOPENBARERUIMTE.getId()), "naam")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_POSTCODE.getId()), "2245HJ")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_REDENWIJZIGINGCODE.getId()), "P")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_SOORTCODE.getId()), "W")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_WOONPLAATSNAAM.getId()), "Rotterdam")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_LOCATIEOMSCHRIJVING.getId()), "locatieomschrijving")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -269,18 +355,39 @@ public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep13Emigratie() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        builder.nieuwMigratieRecord(actie)
-               .soortMigratie(SoortMigratie.EMIGRATIE)
-               .landGebiedMigratie((short) 5002)
-               .buitenlandsAdresRegel1Migratie("regel1")
-               .buitenlandsAdresRegel2Migratie("regel2")
-               .buitenlandsAdresRegel3Migratie("regel3")
-               .eindeRecord();
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_MIGRATIE.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_MIGRATIE_SOORTCODE.getId()), "E")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_MIGRATIE_LANDGEBIEDCODE.getId()), "5002")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_MIGRATIE_BUITENLANDSADRESREGEL1.getId()), "regel1")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_MIGRATIE_BUITENLANDSADRESREGEL2.getId()), "regel2")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_MIGRATIE_BUITENLANDSADRESREGEL3.getId()), "regel3")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -323,12 +430,36 @@ public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep14Immigratie() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        builder.nieuwMigratieRecord(actie).soortMigratie(SoortMigratie.IMMIGRATIE).landGebiedMigratie((short) 5002).eindeRecord();
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_MIGRATIE.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_MIGRATIE_SOORTCODE.getId()), "I")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_MIGRATIE_LANDGEBIEDCODE.getId()), "5002")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -359,31 +490,48 @@ public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep72AdresaangifteAangever() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final PersoonHisVolledigImpl hisVolledigImpl = (PersoonHisVolledigImpl) ReflectionTestUtils.getField(builder, "hisVolledigImpl");
-        final PersoonAdresHisVolledigImpl adresHisVolledigImpl = hisVolledigImpl.getAdressen().iterator().next();
-        final PersoonAdresHisVolledigImplBuilder adresBuilder = new PersoonAdresHisVolledigImplBuilder();
-        ReflectionTestUtils.setField(adresBuilder, "hisVolledigImpl", adresHisVolledigImpl);
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        adresBuilder.nieuwStandaardRecord(actie)
-                    .aangeverAdreshouding("P")
-                    .datumAanvangAdreshouding(actieGeboorte.getDatumAanvangGeldigheid())
-                    .gemeente((short) 518)
-                    .gemeentedeel("deel vd gemeente")
-                    .huisletter("A")
-                    .huisnummer(10)
-                    .huisnummertoevoeging("B")
-                    .landGebied((short) 6030)
-                    .naamOpenbareRuimte("naam")
-                    .postcode("2245HJ")
-                    .redenWijziging("P")
-                    .soort(FunctieAdres.WOONADRES)
-                    .woonplaatsnaam("Rotterdam")
-                    .eindeRecord();
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_ADRES_STANDAARD.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_ADRES.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_AANGEVERADRESHOUDINGCODE.getId()), "P")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_DATUMAANVANGADRESHOUDING.getId()), 19200101)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTECODE.getId()), "0518")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTEDEEL.getId()), "deel vd gemeente")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISLETTER.getId()), "A")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMER.getId()), 10)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMERTOEVOEGING.getId()), "B")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_INDICATIEPERSOONAANGETROFFENOPADRES.getId()), false)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_LANDGEBIEDCODE.getId()), "6030")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_NAAMOPENBARERUIMTE.getId()), "naam")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_POSTCODE.getId()), "2245HJ")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_REDENWIJZIGINGCODE.getId()), "P")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_SOORTCODE.getId()), "W")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_WOONPLAATSNAAM.getId()), "Rotterdam")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -410,30 +558,47 @@ public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep72AdresaangifteReden() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final PersoonHisVolledigImpl hisVolledigImpl = (PersoonHisVolledigImpl) ReflectionTestUtils.getField(builder, "hisVolledigImpl");
-        final PersoonAdresHisVolledigImpl adresHisVolledigImpl = hisVolledigImpl.getAdressen().iterator().next();
-        final PersoonAdresHisVolledigImplBuilder adresBuilder = new PersoonAdresHisVolledigImplBuilder();
-        ReflectionTestUtils.setField(adresBuilder, "hisVolledigImpl", adresHisVolledigImpl);
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        adresBuilder.nieuwStandaardRecord(actie)
-                    .datumAanvangAdreshouding(actieGeboorte.getDatumAanvangGeldigheid())
-                    .gemeente((short) 518)
-                    .gemeentedeel("deel vd gemeente")
-                    .huisletter("A")
-                    .huisnummer(10)
-                    .huisnummertoevoeging("B")
-                    .landGebied((short) 6030)
-                    .naamOpenbareRuimte("naam")
-                    .postcode("2245HJ")
-                    .redenWijziging("B")
-                    .soort(FunctieAdres.WOONADRES)
-                    .woonplaatsnaam("Rotterdam")
-                    .eindeRecord();
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_ADRES_STANDAARD.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_ADRES.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_DATUMAANVANGADRESHOUDING.getId()), 19200101)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTECODE.getId()), "0518")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTEDEEL.getId()), "deel vd gemeente")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISLETTER.getId()), "A")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMER.getId()), 10)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMERTOEVOEGING.getId()), "B")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_INDICATIEPERSOONAANGETROFFENOPADRES.getId()), false)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_LANDGEBIEDCODE.getId()), "6030")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_NAAMOPENBARERUIMTE.getId()), "naam")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_POSTCODE.getId()), "2245HJ")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_REDENWIJZIGINGCODE.getId()), "B")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_SOORTCODE.getId()), "W")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_WOONPLAATSNAAM.getId()), "Rotterdam")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -460,12 +625,80 @@ public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep75DocumentindicatieTrue() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        builder.nieuwBijhoudingRecord(actie).bijhoudingspartij(51801).indicatieOnverwerktDocumentAanwezig(true).eindeRecord();
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_BIJHOUDING.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_BIJHOUDING_PARTIJCODE.getId()), "051801")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+
+        final MetaRecord indicatieIdentiteitRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG.getId()))
+                          .metId(95)
+                          .metGroep()
+                          .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG_IDENTITEIT.getId()))
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metAttribuut(
+                              ElementHelper.getAttribuutElement(Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG_SOORTNAAM.getId()),
+                              SoortIndicatie.ONVERWERKT_DOCUMENT_AANWEZIG.toString())
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(ElementHelper.getGroepElement(Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG_IDENTITEIT.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
+
+        final MetaRecord indicatieStandaardRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG.getId()))
+                          .metId(95)
+                          .metGroep()
+                          .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG_STANDAARD.getId()))
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG_WAARDE.getId()), true)
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(ElementHelper.getGroepElement(Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG_STANDAARD.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
+
+        final Persoonslijst persoon =
+                new Persoonslijst(
+                    persoonAdder.voegPersoonMutatieToe(indicatieIdentiteitRecord)
+                                .voegPersoonMutatieToe(indicatieStandaardRecord)
+                                .voegPersoonMutatieToe(mutatieRecord)
+                                .build(),
+                        0L);
+
+        logMetaObject(persoon.getMetaObject());
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -496,12 +729,36 @@ public class MutatieCategorie08IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep75DocumentindicatieFalse() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        builder.nieuwBijhoudingRecord(actie).bijhoudingspartij(51801).indicatieOnverwerktDocumentAanwezig(false).eindeRecord();
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_BIJHOUDING.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_BIJHOUDING_PARTIJCODE.getId()), "051801")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        logMetaObject(persoon.getMetaObject());
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,

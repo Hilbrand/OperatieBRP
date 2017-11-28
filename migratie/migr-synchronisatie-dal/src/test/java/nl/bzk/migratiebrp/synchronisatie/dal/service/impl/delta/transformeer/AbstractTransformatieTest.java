@@ -12,18 +12,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
@@ -42,11 +43,16 @@ public abstract class AbstractTransformatieTest {
     @Before
     public final void abstractSetup() {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd HH");
-        administratieveHandeling = new AdministratieveHandeling(new Partij("naam", 0), SoortAdministratieveHandeling.GBA_INITIELE_VULLING);
-        administratieveHandeling.setDatumTijdRegistratie(maakTimestamp("1990-01-02 02"));
+        final Timestamp datumTijdRegistratie = maakTimestamp("1990-01-02 02");
+        administratieveHandeling =
+                new AdministratieveHandeling(new Partij("naam", "000000"), SoortAdministratieveHandeling.GBA_INITIELE_VULLING, datumTijdRegistratie);
         persoonOud = new Persoon(SoortPersoon.INGESCHREVENE);
         persoonNieuw = new Persoon(SoortPersoon.INGESCHREVENE);
-        persoonNieuw.setAdministratieveHandeling(administratieveHandeling);
+        persoonNieuw.addPersoonAfgeleidAdministratiefHistorie(new PersoonAfgeleidAdministratiefHistorie(
+                (short) 1,
+                persoonNieuw,
+                administratieveHandeling,
+                datumTijdRegistratie));
         context = new DeltaBepalingContext(persoonNieuw, persoonOud, null, false);
     }
 
@@ -73,8 +79,13 @@ public abstract class AbstractTransformatieTest {
                 verschilGroep = VerschilGroep.maakVerschilGroepMetHistorie(historieRij);
             }
 
-            verschilGroep.addVerschil(
-                new Verschil(new EntiteitSleutel(PersoonIDHistorie.class, "veld"), new Object(), null, verschilType, historieRij, historieRij));
+            verschilGroep.addVerschil(new Verschil(
+                    new EntiteitSleutel(PersoonIDHistorie.class, "veld"),
+                    new Object(),
+                    null,
+                    verschilType,
+                    historieRij,
+                    historieRij));
         }
         return verschilGroep;
     }
@@ -89,8 +100,8 @@ public abstract class AbstractTransformatieTest {
 
     protected BRPActie maakDummyActie() {
         final AdministratieveHandeling bijhouding =
-                new AdministratieveHandeling(new Partij("testPartij", 606), SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
-        bijhouding.setDatumTijdRegistratie(new Timestamp(System.currentTimeMillis()));
+                new AdministratieveHandeling(new Partij("testPartij", "060601"), SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL, new Timestamp(
+                        System.currentTimeMillis()));
         return new BRPActie(SoortActie.CONVERSIE_GBA, bijhouding, bijhouding.getPartij(), bijhouding.getDatumTijdRegistratie());
     }
 
@@ -137,21 +148,12 @@ public abstract class AbstractTransformatieTest {
     protected BRPActie maakActieVerval(final String categorie, final int stapel, final int voorkomen) {
         final BRPActie result =
                 new BRPActie(
-                    SoortActie.CONVERSIE_GBA,
-                    administratieveHandeling,
-                    administratieveHandeling.getPartij(),
-                    administratieveHandeling.getDatumTijdRegistratie());
-        result.setLo3Voorkomen(
-            new Lo3Voorkomen(
-                new Lo3Bericht(
-                    "ActualiseringVanFormeelHistorischeRijTest",
-                    Lo3BerichtenBron.INITIELE_VULLING,
-                    new Timestamp(System.currentTimeMillis()),
-                    "testdata",
-                    true),
-                categorie,
-                stapel,
-                voorkomen));
+                        SoortActie.CONVERSIE_GBA,
+                        administratieveHandeling,
+                        administratieveHandeling.getPartij(),
+                        administratieveHandeling.getDatumTijdRegistratie());
+        result.setLo3Voorkomen(new Lo3Voorkomen(new Lo3Bericht("ActualiseringVanFormeelHistorischeRijTest", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(
+                System.currentTimeMillis()), "testdata", true), categorie, stapel, voorkomen));
         return result;
     }
 

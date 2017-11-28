@@ -6,26 +6,33 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc1003;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.AdHocZoekAntwoordFoutReden;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.ZoekPersoonResultaatType;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.AdHocZoekPersoonAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.PlaatsAfnemersindicatieVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkAfnemersindicatieAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwijderAfnemersindicatieVerzoekBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonAntwoordBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegisterImpl;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Rol;
 import nl.bzk.migratiebrp.isc.jbpm.common.AbstractUcTest;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.plaatsen.PlaatsenAfnIndTestUtil;
+import org.junit.Before;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration("classpath:/uc1003-test-beans.xml")
+@ContextConfiguration({"classpath:/uc1003-test-beans.xml"})
 public abstract class AbstractUc1003Test extends AbstractUcTest {
 
     private static final String BIJHOUDINGS_GEMEENTE = "0518";
-    private static final String A_NUMMER_PERSOON_1 = "1234567890";
 
     protected AbstractUc1003Test(final String processDefinitionXml) {
         super(processDefinitionXml);
@@ -36,20 +43,28 @@ public abstract class AbstractUc1003Test extends AbstractUcTest {
         return UUID.randomUUID().toString();
     }
 
+    @Before
+    public void setupPartijRegister() {
+        // Partij register
+        final List<Partij> partijen = new ArrayList<>();
+        partijen.add(new Partij("059901", "0599", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("042901", "0429", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("051801", "0518", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("199902", "1999", intToDate(19900101), Collections.emptyList()));
+        partijen.add(new Partij("071701", "0717", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        setPartijRegister(new PartijRegisterImpl(partijen));
+    }
+
     /* *** ZOEK PERSOON ***************************************************************************************** */
 
-    protected ZoekPersoonAntwoordBericht maakZoekPersoonAntwoordBericht(final SyncBericht zoekPersoonVerzoek, final int aantalGevonden) {
-        final ZoekPersoonAntwoordBericht antwoordBericht = new ZoekPersoonAntwoordBericht();
-        antwoordBericht.setStatus(StatusType.OK);
+    protected AdHocZoekPersoonAntwoordBericht maakAdHocZoekPersoonAntwoordBericht(final SyncBericht zoekPersoonVerzoek, final int aantalGevonden) {
+        final AdHocZoekPersoonAntwoordBericht antwoordBericht = new AdHocZoekPersoonAntwoordBericht();
         if (aantalGevonden == 0) {
-            antwoordBericht.setResultaat(ZoekPersoonResultaatType.GEEN);
+            antwoordBericht.setFoutreden(AdHocZoekAntwoordFoutReden.G);
         } else if (aantalGevonden == 1) {
-            antwoordBericht.setResultaat(ZoekPersoonResultaatType.GEVONDEN);
-            antwoordBericht.setAnummer(A_NUMMER_PERSOON_1);
-            antwoordBericht.setPersoonId(1);
-            antwoordBericht.setGemeente(BIJHOUDINGS_GEMEENTE);
+            antwoordBericht.setInhoud("00000000Ha01A000000000003801031011001012345678900120009123456789");
         } else {
-            antwoordBericht.setResultaat(ZoekPersoonResultaatType.MEERDERE);
+            antwoordBericht.setFoutreden(AdHocZoekAntwoordFoutReden.U);
         }
         antwoordBericht.setMessageId(generateMessageId());
         antwoordBericht.setCorrelationId(zoekPersoonVerzoek.getMessageId());
@@ -59,9 +74,8 @@ public abstract class AbstractUc1003Test extends AbstractUcTest {
     /* *** BLOKKERING INFO ***************************************************************************************** */
 
     protected BlokkeringInfoAntwoordBericht maakBlokkeringInfoAntwoordBericht(
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek,
-        final PersoonsaanduidingType persoonsaanduiding)
-    {
+            final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek,
+            final PersoonsaanduidingType persoonsaanduiding) {
         final BlokkeringInfoAntwoordBericht result = new BlokkeringInfoAntwoordBericht();
         result.setStatus(StatusType.OK);
         result.setPersoonsaanduiding(persoonsaanduiding);
@@ -81,9 +95,8 @@ public abstract class AbstractUc1003Test extends AbstractUcTest {
      */
 
     protected VerwerkAfnemersindicatieAntwoordBericht maakVerwerkAfnemersindicatieAntwoordBericht(
-        final PlaatsAfnemersindicatieVerzoekBericht plaatsVerzoekBericht,
-        final String foutCode)
-    {
+            final PlaatsAfnemersindicatieVerzoekBericht plaatsVerzoekBericht,
+            final String foutCode) {
         final VerwerkAfnemersindicatieAntwoordBericht antwoordBericht = PlaatsenAfnIndTestUtil.maakVerwerkAfnemersindicatieAntwoordBericht(foutCode);
         antwoordBericht.setMessageId(generateMessageId());
         antwoordBericht.setCorrelationId(plaatsVerzoekBericht.getMessageId());
@@ -96,9 +109,8 @@ public abstract class AbstractUc1003Test extends AbstractUcTest {
      */
 
     protected VerwerkAfnemersindicatieAntwoordBericht maakVerwerkAfnemersindicatieAntwoordBericht(
-        final VerwijderAfnemersindicatieVerzoekBericht verwijderVerzoekBericht,
-        final String foutCode)
-    {
+            final VerwijderAfnemersindicatieVerzoekBericht verwijderVerzoekBericht,
+            final String foutCode) {
         final VerwerkAfnemersindicatieAntwoordBericht antwoordBericht = PlaatsenAfnIndTestUtil.maakVerwerkAfnemersindicatieAntwoordBericht(foutCode);
         antwoordBericht.setMessageId(generateMessageId());
         antwoordBericht.setCorrelationId(verwijderVerzoekBericht.getMessageId());

@@ -22,13 +22,9 @@ public final class ExecuteAsyncScriptCommand extends AbstractCommand {
 
     /**
      * Voer seleniumscript async uit.
-     * 
-     * @param index
-     *            command index
-     * @param name
-     *            command name
-     * @param args
-     *            command arguments
+     * @param index command index
+     * @param name command name
+     * @param args command arguments
      */
     ExecuteAsyncScriptCommand(final int index, final String name, final String... args) {
         super(index, name, args, ArgumentType.VALUE);

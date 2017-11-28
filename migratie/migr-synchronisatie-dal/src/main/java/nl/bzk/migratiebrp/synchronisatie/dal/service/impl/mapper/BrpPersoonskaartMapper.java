@@ -6,11 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonPersoonskaartHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonPersoonskaartHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -24,12 +24,12 @@ public final class BrpPersoonskaartMapper extends AbstractBrpMapper<PersoonPerso
     protected BrpPersoonskaartInhoud mapInhoud(final PersoonPersoonskaartHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         final BrpBoolean indicatie =
                 BrpMapperUtil.mapBrpBoolean(
-                    historie.getIndicatiePersoonskaartVolledigGeconverteerd(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_PERSOONSKAART_INDICATIEVOLLEDIGGECONVERTEERD, true));
+                        historie.getIndicatiePersoonskaartVolledigGeconverteerd(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_PERSOONSKAART_INDICATIEVOLLEDIGGECONVERTEERD, true));
         final BrpPartijCode partijCode =
                 BrpMapperUtil.mapBrpPartijCode(
-                    historie.getPartij(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_PERSOONSKAART_PARTIJCODE, true));
+                        historie.getPartij(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_PERSOONSKAART_PARTIJCODE, true));
         return new BrpPersoonskaartInhoud(partijCode, indicatie);
     }
 

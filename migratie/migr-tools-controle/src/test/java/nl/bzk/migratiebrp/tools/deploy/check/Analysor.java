@@ -21,62 +21,62 @@ import java.util.jar.JarFile;
 
 public class Analysor {
 
-	private final File directory;
-	private Map<String, List<String>> contents = new HashMap<>();
-	private Map<String, Set<String>> duplicates = new HashMap<>();
+    private final File directory;
+    private Map<String, List<String>> contents = new HashMap<>();
+    private Map<String, Set<String>> duplicates = new HashMap<>();
 
-	public Analysor(String directoryName) {
-		directory = new File(directoryName);
-		if (!directory.isDirectory()) {
-			throw new IllegalArgumentException(directoryName + " is not a valid directory.");
-		}
-	}
+    public Analysor(String directoryName) {
+        directory = new File(directoryName);
+        if (!directory.isDirectory()) {
+            throw new IllegalArgumentException(directoryName + " is not a valid directory.");
+        }
+    }
 
-	public void analyse() throws IOException {
-		for (File file : directory.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File directory, String name) {
-				return name.endsWith(".jar");
-			}
-		})) {
+    public void analyse() throws IOException {
+        for (File file : directory.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File directory, String name) {
+                return name.endsWith(".jar");
+            }
+        })) {
 
-			System.out.println("Looking in: " + file.getName());
+            System.out.println("Looking in: " + file.getName());
 
-			String thisContentKey = file.getName();
-			List<String> thisContentList = new ArrayList<>();
+            String thisContentKey = file.getName();
+            List<String> thisContentList = new ArrayList<>();
 
-			try (JarFile jarFile = new JarFile(file)) {
-				Enumeration<JarEntry> entries = jarFile.entries();
-				while (entries.hasMoreElements()) {
-					JarEntry entry = entries.nextElement();
-					String thisContent = entry.getName();
-					
-					if(!thisContent.endsWith(".class")) {
-						continue;
-					}
+            try (JarFile jarFile = new JarFile(file)) {
+                Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    String thisContent = entry.getName();
 
-					if (!entry.isDirectory()) {
-						thisContentList.add(thisContent);
+                    if (!thisContent.endsWith(".class")) {
+                        continue;
+                    }
 
-						for (Map.Entry<String, List<String>> otherContents : contents.entrySet()) {
-							if (otherContents.getValue().contains(thisContent)) {
-								duplicates.get(otherContents.getKey()).add(thisContentKey);
-							}
-						}
-					}
-				}
-			}
+                    if (!entry.isDirectory()) {
+                        thisContentList.add(thisContent);
 
-			contents.put(thisContentKey, thisContentList);
-			duplicates.put(thisContentKey, new HashSet<String>());
-		}
-	}
+                        for (Map.Entry<String, List<String>> otherContents : contents.entrySet()) {
+                            if (otherContents.getValue().contains(thisContent)) {
+                                duplicates.get(otherContents.getKey()).add(thisContentKey);
+                            }
+                        }
+                    }
+                }
+            }
 
-	public void printDuplicates() {
-		for (Map.Entry<String, Set<String>> thisDuplicate : duplicates.entrySet()) {
-			for (String thatDuplicate : thisDuplicate.getValue()) {
-				System.out.println(thisDuplicate.getKey() + " contains classes that are also present in " + thatDuplicate);
-			}
-		}
-	}
+            contents.put(thisContentKey, thisContentList);
+            duplicates.put(thisContentKey, new HashSet<String>());
+        }
+    }
+
+    public void printDuplicates() {
+        for (Map.Entry<String, Set<String>> thisDuplicate : duplicates.entrySet()) {
+            for (String thatDuplicate : thisDuplicate.getValue()) {
+                System.out.println(thisDuplicate.getKey() + " contains classes that are also present in " + thatDuplicate);
+            }
+        }
+    }
 }

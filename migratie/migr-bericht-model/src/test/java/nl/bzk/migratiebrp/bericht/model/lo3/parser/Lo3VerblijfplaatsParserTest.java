@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -41,31 +41,31 @@ public class Lo3VerblijfplaatsParserTest extends AbstractParserTest {
         final List<Lo3Categorie<Lo3VerblijfplaatsInhoud>> categorieInhoudLijst = new ArrayList<>();
         final Lo3VerblijfplaatsInhoud verblijfplaatsInhoud =
                 new Lo3VerblijfplaatsInhoud(
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0910, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0920, onderzoek),
-                    new Lo3FunctieAdres(WAARDE_ELEMENT_1010, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1020, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_1030, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1110, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1115, onderzoek),
-                    new Lo3Huisnummer(WAARDE_ELEMENT_1120, onderzoek),
-                    maakLo3Character(WAARDE_ELEMENT_1130, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1140, onderzoek),
-                    new Lo3AanduidingHuisnummer(WAARDE_ELEMENT_1150, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1160, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1170, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1180, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1190, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1210, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_1310, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_1320, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1330, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1340, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1350, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_1410, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_1420, onderzoek),
-                    new Lo3AangifteAdreshouding(WAARDE_ELEMENT_7210),
-                    new Lo3IndicatieDocument(WAARDE_ELEMENT_7510, null));
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0910, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0920, onderzoek),
+                        new Lo3FunctieAdres(WAARDE_ELEMENT_1010, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1020, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_1030, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1110, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1115, onderzoek),
+                        new Lo3Huisnummer(WAARDE_ELEMENT_1120, onderzoek),
+                        maakLo3Character(WAARDE_ELEMENT_1130, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1140, onderzoek),
+                        new Lo3AanduidingHuisnummer(WAARDE_ELEMENT_1150, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1160, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1170, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1180, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1190, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1210, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_1310, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_1320, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1330, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1340, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1350, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_1410, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_1420, onderzoek),
+                        new Lo3AangifteAdreshouding(WAARDE_ELEMENT_7210),
+                        new Lo3IndicatieDocument(WAARDE_ELEMENT_7510, null));
 
         final Lo3Categorie<Lo3VerblijfplaatsInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(verblijfplaatsInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 0));

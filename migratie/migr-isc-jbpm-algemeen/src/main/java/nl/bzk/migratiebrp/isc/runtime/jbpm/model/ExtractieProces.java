@@ -14,7 +14,7 @@ import org.jbpm.graph.exe.ProcessInstance;
 /**
  * Proces extractie.
  */
-@SuppressWarnings("checkstyle:designforextension")
+
 public class ExtractieProces implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -33,7 +33,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft het proces instantie ID.
-     * 
      * @return het proces instantie ID
      */
     public Long getProcessInstanceId() {
@@ -42,7 +41,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft proces instantie.
-     * 
      * @return de proces instantie
      */
     public ProcessInstance getProcessInstance() {
@@ -51,9 +49,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet de proces instantie.
-     *
-     * @param processInstance
-     *            De te zetten proces instantie
+     * @param processInstance De te zetten proces instantie
      */
     public void setProcessInstance(final ProcessInstance processInstance) {
         this.processInstance = processInstance;
@@ -61,7 +57,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft de procesnaam.
-     * 
      * @return de procesnaam
      */
     public String getProcesNaam() {
@@ -70,9 +65,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet de procesnaam.
-     *
-     * @param procesNaam
-     *            De te zetten procesNaam
+     * @param procesNaam De te zetten procesNaam
      */
     public void setProcesNaam(final String procesNaam) {
         this.procesNaam = procesNaam;
@@ -80,7 +73,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft het bericht type.
-     * 
      * @return het bericht type
      */
     public String getBerichtType() {
@@ -89,9 +81,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet het bericht type.
-     *
-     * @param berichtType
-     *            Het te zetten bericht type
+     * @param berichtType Het te zetten bericht type
      */
     public void setBerichtType(final String berichtType) {
         this.berichtType = berichtType;
@@ -99,7 +89,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft het kanaal.
-     * 
      * @return het kanaal
      */
     public String getKanaal() {
@@ -108,9 +97,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet het kanaal.
-     *
-     * @param kanaal
-     *            Het te zetten kanaal
+     * @param kanaal Het te zetten kanaal
      */
     public void setKanaal(final String kanaal) {
         this.kanaal = kanaal;
@@ -118,7 +105,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft de foutreden.
-     * 
      * @return de foutreden
      */
     public String getFoutreden() {
@@ -127,9 +113,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet de foutreden.
-     *
-     * @param foutreden
-     *            De te zetten foutreden
+     * @param foutreden De te zetten foutreden
      */
     public void setFoutreden(final String foutreden) {
         this.foutreden = foutreden;
@@ -137,7 +121,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft het anummer.
-     * 
      * @return het anummer
      */
     public String getAnummer() {
@@ -146,9 +129,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet het anummer.
-     *
-     * @param anummer
-     *            Het te zetten anummer
+     * @param anummer Het te zetten anummer
      */
     public void setAnummer(final String anummer) {
         this.anummer = anummer;
@@ -156,7 +137,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft de startdatum.
-     *
      * @return de startdatum
      */
     public Date getStartdatum() {
@@ -165,9 +145,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet de startdatum.
-     *
-     * @param startdatum
-     *            De te zetten startdatum
+     * @param startdatum De te zetten startdatum
      */
     public void setStartdatum(final Date startdatum) {
         this.startdatum = startdatum == null ? null : new Date(startdatum.getTime());
@@ -175,7 +153,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft de einddatum.
-     *
      * @return de einddatum
      */
     public Date getEinddatum() {
@@ -184,9 +161,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet de einddatum.
-     *
-     * @param einddatum
-     *            De te zetten einddatum
+     * @param einddatum De te zetten einddatum
      */
     public void setEinddatum(final Date einddatum) {
         this.einddatum = einddatum == null ? null : new Date(einddatum.getTime());
@@ -194,7 +169,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft de wacht startdatum.
-     *
      * @return de wacht startdatum
      */
     public Date getWachtStartdatum() {
@@ -203,9 +177,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet de wacht startdatum.
-     *
-     * @param wachtStartdatum
-     *            De te zetten wacht startdatum
+     * @param wachtStartdatum De te zetten wacht startdatum
      */
     public void setWachtStartdatum(final Date wachtStartdatum) {
         this.wachtStartdatum = wachtStartdatum == null ? null : new Date(wachtStartdatum.getTime());
@@ -213,7 +185,6 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Geeft de wacht einddatum.
-     *
      * @return de wacht einddatum
      */
     public Date getWachtEinddatum() {
@@ -222,9 +193,7 @@ public class ExtractieProces implements Serializable {
 
     /**
      * Zet de wacht einddatum.
-     *
-     * @param wachtEinddatum
-     *            De te zetten wacht einddatum
+     * @param wachtEinddatum De te zetten wacht einddatum
      */
     public void setWachtEinddatum(final Date wachtEinddatum) {
         this.wachtEinddatum = wachtEinddatum == null ? null : new Date(wachtEinddatum.getTime());

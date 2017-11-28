@@ -13,17 +13,15 @@ import java.util.TreeSet;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-import org.springframework.stereotype.Component;
 
 /**
  * Controleer of de historie van a-nummers van de aangeboden en de gevonden persoonslijst overeenkomt.
  */
-@Component(value = "plControleHistorieAnummerGelijk")
 public final class PlControleHistorieAnummerGelijk implements PlControle {
 
     @Override
@@ -32,11 +30,11 @@ public final class PlControleHistorieAnummerGelijk implements PlControle {
         final ControleLogging logging = new ControleLogging(ControleMelding.PL_CONTROLE_HISTORIE_ANUMMER_GELIJK);
 
         // Aangeboden waarden
-        final Set<Long> brpAnummers = getAnummerHistorie(brpPersoonslijst);
+        final Set<String> brpAnummers = getAnummerHistorie(brpPersoonslijst);
         logging.logAangebodenWaarden(brpAnummers);
 
         // Gevonden waarden
-        final Set<Long> dbAnummers = getAnummerHistorie(dbPersoonslijst);
+        final Set<String> dbAnummers = getAnummerHistorie(dbPersoonslijst);
         logging.logGevondenWaarden(dbAnummers);
 
         // Resultaat
@@ -46,19 +44,19 @@ public final class PlControleHistorieAnummerGelijk implements PlControle {
         return result;
     }
 
-    private Set<Long> getAnummerHistorie(final BrpPersoonslijst persoonslijst) {
+    private Set<String> getAnummerHistorie(final BrpPersoonslijst persoonslijst) {
         final BrpStapel<BrpIdentificatienummersInhoud> stapel = persoonslijst.getIdentificatienummerStapel();
         if (stapel == null) {
             return Collections.emptySet();
         }
-        final SortedSet<Long> anummers = new TreeSet<>();
+        final SortedSet<String> anummers = new TreeSet<>();
 
         for (final BrpGroep<BrpIdentificatienummersInhoud> groep : stapel) {
             if (groep.getActieVerval() != null) {
                 continue;
             }
             final BrpIdentificatienummersInhoud inhoud = groep.getInhoud();
-            final Long administratienummer = BrpLong.unwrap(inhoud.getAdministratienummer());
+            final String administratienummer = BrpString.unwrap(inhoud.getAdministratienummer());
             if (administratienummer != null && !anummers.contains(administratienummer)) {
                 anummers.add(administratienummer);
             }

@@ -8,4 +8,3 @@
  * Bevat de logging model top level classes.
  */
 package nl.bzk.migratiebrp.init.logging.model;
-

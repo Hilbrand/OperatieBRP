@@ -10,7 +10,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3SignaleringEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Signalering;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Dit is een statische conversie (er wordt geen tabel gebruikt) tussen de LO3 en BRP code.
@@ -37,7 +37,7 @@ public final class SignaleringConversietabel implements Conversietabel<Lo3Signal
 
     @Override
     public boolean valideerLo3(final Lo3Signalering input) {
-        return !Validatie.isElementGevuld(input) || Lo3SignaleringEnum.getByCode(input.getIntegerWaarde()) != null;
+        return !Lo3Validatie.isElementGevuld(input) || Lo3SignaleringEnum.getByCode(input.getIntegerWaarde()) != null;
     }
 
     @Override

@@ -8,65 +8,61 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonDeelnameEuVerkiezingenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeboorteHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponent;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNaamgebruikHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteitHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNummerverwijzingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonOverlijdenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonPersoonskaartHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonUitsluitingKiesrechtHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerblijfsrechtHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaam;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Naamgebruik;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Naamgebruik;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonDeelnameEuVerkiezingenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeboorteHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponent;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNaamgebruikHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteitHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNummerverwijzingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonOverlijdenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonPersoonskaartHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonUitsluitingKiesrechtHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerblijfsrechtHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaam;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Verblijfsrecht;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,10 +72,10 @@ import org.junit.Test;
  * alleen voor de aantallen records om te testen dat de loops goed gaan.
  */
 public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
-    private static final Partij ONBEKENDE_PARTIJ = new Partij("?", 1);
+    private static final Partij ONBEKENDE_PARTIJ = new Partij("?", "000001");
 
-    private static final LandOfGebied NEDERLAND = new LandOfGebied((short) 6030, "Nederland");
-    private final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(new ArrayList<Onderzoek>());
+    private static final LandOfGebied NEDERLAND = new LandOfGebied("6030", "Nederland");
+    private final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(new ArrayList<>());
     private Timestamp tsRegistratie;
     private Timestamp datumTijdStempel;
     @Inject
@@ -93,8 +89,7 @@ public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
 
     @Test
     public void testNull() {
-        final BrpPersoonslijst result = mapper.mapNaarMigratie(null, brpOnderzoekMapper);
-        Assert.assertNull(result);
+        Assert.assertNull(mapper.mapNaarMigratie(null, brpOnderzoekMapper));
     }
 
     @Test
@@ -112,14 +107,14 @@ public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
         final PersoonAdres persoonAdres = new PersoonAdres(persoon);
         final RedenWijzigingVerblijf redenWijziging = new RedenWijzigingVerblijf('W', "Wijziging");
         persoonAdres.addPersoonAdresHistorie(
-            vul(new PersoonAdresHistorie(persoonAdres, FunctieAdres.WOONADRES, new LandOfGebied((short) 344, "LandOfGebied"), redenWijziging)));
+                vul(new PersoonAdresHistorie(persoonAdres, SoortAdres.WOONADRES, new LandOfGebied("0344", "LandOfGebied"), redenWijziging)));
         persoonAdres.addPersoonAdresHistorie(
-            vul(new PersoonAdresHistorie(persoonAdres, FunctieAdres.WOONADRES, new LandOfGebied((short) 344, "LandOfGebied"), redenWijziging)));
+                vul(new PersoonAdresHistorie(persoonAdres, SoortAdres.WOONADRES, new LandOfGebied("0344", "LandOfGebied"), redenWijziging)));
         persoon.addPersoonAdres(persoonAdres);
         persoon.addPersoonBijhoudingHistorie(
-            vul(new PersoonBijhoudingHistorie(persoon, ONBEKENDE_PARTIJ, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL, false)));
+                vul(new PersoonBijhoudingHistorie(persoon, ONBEKENDE_PARTIJ, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL)));
         persoon.addPersoonBijhoudingHistorie(
-            vul(new PersoonBijhoudingHistorie(persoon, ONBEKENDE_PARTIJ, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL, false)));
+                vul(new PersoonBijhoudingHistorie(persoon, ONBEKENDE_PARTIJ, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL)));
         persoon.addPersoonDeelnameEuVerkiezingenHistorie(vul(new PersoonDeelnameEuVerkiezingenHistorie(persoon, false)));
         persoon.addPersoonDeelnameEuVerkiezingenHistorie(vul(new PersoonDeelnameEuVerkiezingenHistorie(persoon, false)));
         persoon.addPersoonGeboorteHistorie(vul(new PersoonGeboorteHistorie(persoon, 20000101, NEDERLAND)));
@@ -137,8 +132,8 @@ public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
         persoon.addPersoonInschrijvingHistorie(vulInschrijving(new PersoonInschrijvingHistorie(persoon, 20000101, 1, datumTijdStempel), 2L));
         persoon.addPersoonInschrijvingHistorie(vulInschrijving(new PersoonInschrijvingHistorie(persoon, 20000101, 1, datumTijdStempel), 3L));
         persoon.addPersoonNummerverwijzingHistorie(vulNummerverwijzing(persoon));
-        persoon.addPersoonNationaliteit(nationaliteit(persoon, "Behandeld als Nederlander", (short) 2));
-        persoon.addPersoonNationaliteit(nationaliteit(persoon, "Burger van de Bondsrepubliek Duitsland", (short) 55));
+        persoon.addPersoonNationaliteit(nationaliteit(persoon, "Behandeld als Nederlander", "0002"));
+        persoon.addPersoonNationaliteit(nationaliteit(persoon, "Burger van de Bondsrepubliek Duitsland", "0055"));
         persoon.addPersoonOverlijdenHistorie(vul(new PersoonOverlijdenHistorie(persoon, 20000101, NEDERLAND)));
         persoon.addPersoonOverlijdenHistorie(vul(new PersoonOverlijdenHistorie(persoon, 20000101, NEDERLAND)));
         persoon.addPersoonOverlijdenHistorie(vul(new PersoonOverlijdenHistorie(persoon, 20000101, NEDERLAND)));
@@ -153,8 +148,10 @@ public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
         persoon.addPersoonUitsluitingKiesrechtHistorie(vul(new PersoonUitsluitingKiesrechtHistorie(persoon, false)));
         persoon.addPersoonUitsluitingKiesrechtHistorie(vul(new PersoonUitsluitingKiesrechtHistorie(persoon, false)));
         persoon.addPersoonUitsluitingKiesrechtHistorie(vul(new PersoonUitsluitingKiesrechtHistorie(persoon, false)));
-        persoon.addPersoonVerblijfsrechtHistorie(vul(new PersoonVerblijfsrechtHistorie(persoon, new Verblijfsrecht((short) 0, "Onbekend"), 20000101, 20000101)));
-        persoon.addPersoonVerblijfsrechtHistorie(vul(new PersoonVerblijfsrechtHistorie(persoon, new Verblijfsrecht((short) 0, "Onbekend"), 20000101, 20000101)));
+        persoon.addPersoonVerblijfsrechtHistorie(
+                vul(new PersoonVerblijfsrechtHistorie(persoon, new Verblijfsrecht("00", "Onbekend"), 20000101, 20000101)));
+        persoon.addPersoonVerblijfsrechtHistorie(
+                vul(new PersoonVerblijfsrechtHistorie(persoon, new Verblijfsrecht("00", "Onbekend"), 20000101, 20000101)));
         persoon.addPersoonVoornaam(voornaam(persoon, 1));
         persoon.addPersoonVoornaam(voornaam(persoon, 2));
         persoon.addPersoonVoornaam(voornaam(persoon, 3));
@@ -185,8 +182,8 @@ public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
         Assert.assertEquals(2, result.getVerblijfsrechtStapel().size());
         Assert.assertEquals(4, result.getVoornaamStapels().size());
         Assert.assertEquals(
-            Lo3CategorieEnum.CATEGORIE_01,
-            result.getVoornaamStapels().get(0).getLaatsteElement().getActieInhoud().getLo3Herkomst().getCategorie());
+                Lo3CategorieEnum.CATEGORIE_01,
+                result.getVoornaamStapels().get(0).getLaatsteElement().getActieInhoud().getLo3Herkomst().getCategorie());
         Assert.assertEquals(0, result.getVoornaamStapels().get(0).getLaatsteElement().getActieInhoud().getLo3Herkomst().getVoorkomen());
     }
 
@@ -202,8 +199,8 @@ public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
 
     private PersoonNummerverwijzingHistorie vulNummerverwijzing(final Persoon persoon) {
         final PersoonNummerverwijzingHistorie historie = new PersoonNummerverwijzingHistorie(persoon);
-        historie.setVolgendeAdministratienummer(1234567890L);
-        historie.setVorigeAdministratienummer(9876543210L);
+        historie.setVolgendeAdministratienummer("1234567890");
+        historie.setVorigeAdministratienummer("9876543210");
         return vul(historie);
     }
 
@@ -216,7 +213,7 @@ public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
         return result;
     }
 
-    private PersoonNationaliteit nationaliteit(final Persoon persoon, final String naam, final short code) {
+    private PersoonNationaliteit nationaliteit(final Persoon persoon, final String naam, final String code) {
         final PersoonNationaliteit result = new PersoonNationaliteit(persoon, new Nationaliteit(naam, code));
         result.addPersoonNationaliteitHistorie(vul(new PersoonNationaliteitHistorie(result)));
         return result;
@@ -248,20 +245,26 @@ public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
         result.setVolgnummer(volgnummer);
         final BRPActie brpActie1 =
                 new BRPActie(
-                    SoortActie.CONVERSIE_GBA,
-                    new AdministratieveHandeling(ONBEKENDE_PARTIJ, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL),
-                    ONBEKENDE_PARTIJ,
-                    new Timestamp(20000101));
+                        SoortActie.CONVERSIE_GBA,
+                        new AdministratieveHandeling(
+                                ONBEKENDE_PARTIJ,
+                                SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL,
+                                new Timestamp(System.currentTimeMillis())),
+                        ONBEKENDE_PARTIJ,
+                        new Timestamp(20000101));
         brpActie1.setId(1L);
         brpActie1.setDatumTijdRegistratie(tsRegistratie);
-        final Partij partij = new Partij("Migratievoorzieningen", 9999);
+        final Partij partij = new Partij("Migratievoorzieningen", "999901");
         brpActie1.setPartij(partij);
         final BRPActie brpActie2 =
                 new BRPActie(
-                    SoortActie.CONVERSIE_GBA,
-                    new AdministratieveHandeling(ONBEKENDE_PARTIJ, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL),
-                    ONBEKENDE_PARTIJ,
-                    new Timestamp(20000101));
+                        SoortActie.CONVERSIE_GBA,
+                        new AdministratieveHandeling(
+                                ONBEKENDE_PARTIJ,
+                                SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL,
+                                new Timestamp(System.currentTimeMillis())),
+                        ONBEKENDE_PARTIJ,
+                        new Timestamp(20000101));
         brpActie2.setId(2L);
         brpActie2.setDatumTijdRegistratie(tsRegistratie);
         brpActie2.setPartij(partij);
@@ -287,10 +290,11 @@ public class BrpPersoonslijstMapperTest extends BrpAbstractTest {
     }
 
     private PersoonAfgeleidAdministratiefHistorie afgeleidAdministratief(final Persoon persoon, final long tsLaatsteWijziging) {
-        final Partij partij = new Partij("Migratievoorzieningen", 9999);
-        final AdministratieveHandeling admhnd = new AdministratieveHandeling(partij, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
+        final Partij partij = new Partij("Migratievoorzieningen", "999901");
+        final AdministratieveHandeling admhnd =
+                new AdministratieveHandeling(partij, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL, new Timestamp(System.currentTimeMillis()));
         final PersoonAfgeleidAdministratiefHistorie result =
-                new PersoonAfgeleidAdministratiefHistorie((short) 1, persoon, admhnd, new Timestamp(tsLaatsteWijziging), false);
+                new PersoonAfgeleidAdministratiefHistorie((short) 1, persoon, admhnd, new Timestamp(tsLaatsteWijziging));
         result.setDatumTijdRegistratie(tsRegistratie);
         return result;
     }

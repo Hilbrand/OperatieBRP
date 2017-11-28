@@ -14,9 +14,7 @@ public class VoiscException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param foutmelding
-     *            foutmelding
+     * @param foutmelding foutmelding
      */
     public VoiscException(final String foutmelding) {
         super(foutmelding);
@@ -24,11 +22,8 @@ public class VoiscException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param foutmelding
-     *            foutmelding
-     * @param oorzaak
-     *            oorzaak
+     * @param foutmelding foutmelding
+     * @param oorzaak oorzaak
      */
     public VoiscException(final String foutmelding, final Throwable oorzaak) {
         super(foutmelding, oorzaak);

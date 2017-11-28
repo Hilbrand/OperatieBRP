@@ -13,14 +13,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3InschrijvingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerblijfplaatsInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datumtijdstempel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
-
 import org.junit.Test;
 
 public class Lo3PersoonslijstTest {
@@ -38,31 +36,31 @@ public class Lo3PersoonslijstTest {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         final Lo3VerblijfplaatsInhoud verblijfplaatsInhoud =
                 new Lo3VerblijfplaatsInhoud(
-                    new Lo3GemeenteCode("0599"),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
+                        new Lo3GemeenteCode("0599"),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
         builder.verblijfplaatsStapel(maakVerblijfplaatsStapel(verblijfplaatsInhoud));
         final boolean gevuld = builder.build().isGemeenteVanInschrijvingGevuld();
         assertTrue(gevuld);
@@ -91,17 +89,17 @@ public class Lo3PersoonslijstTest {
     public void testIsGroep80VanInschrijvingStapelNietLeeg() {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         builder.inschrijvingStapel(maakInschrijvingStapel(new Lo3InschrijvingInhoud(), new Lo3InschrijvingInhoud(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            new Lo3Integer(1),
-            null,
-            null)));
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                new Lo3Integer(1),
+                null,
+                null)));
         assertFalse(builder.build().isGroep80VanInschrijvingStapelLeeg());
     }
 
@@ -124,17 +122,17 @@ public class Lo3PersoonslijstTest {
     public void testMaakKopieMetDefaultGroep80VoorInschrijvingStapelFout() {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         builder.inschrijvingStapel(maakInschrijvingStapel(new Lo3InschrijvingInhoud(), new Lo3InschrijvingInhoud(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            new Lo3Integer(1),
-            null,
-            null)));
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                new Lo3Integer(1),
+                null,
+                null)));
         builder.build().maakKopieMetDefaultGroep80VoorInschrijvingStapel();
     }
 

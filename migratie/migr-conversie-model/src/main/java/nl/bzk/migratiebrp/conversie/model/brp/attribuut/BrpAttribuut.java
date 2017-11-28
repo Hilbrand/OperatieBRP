@@ -8,11 +8,8 @@ package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
 /**
  * Deze marker interface typeert alle BRP attributen.
- * 
+ *
  * BrpGroepInhoud bestaat uit Brp attributen.
- * 
- * 
- * 
  */
 public interface BrpAttribuut {
 

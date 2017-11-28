@@ -1,1 +1,0 @@
-select count(*) as aantal from autaut.dienstbundel;

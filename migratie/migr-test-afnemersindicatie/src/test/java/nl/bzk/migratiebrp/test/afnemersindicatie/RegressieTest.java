@@ -9,11 +9,9 @@ package nl.bzk.migratiebrp.test.afnemersindicatie;
 import java.io.File;
 import java.io.FilenameFilter;
 import nl.bzk.migratiebrp.test.common.util.BaseFilter;
-import nl.bzk.migratiebrp.test.common.util.CompositeFilter;
-import nl.bzk.migratiebrp.test.common.util.CompositeFilter.Type;
 import nl.bzk.migratiebrp.test.common.util.FilterType;
 import nl.bzk.migratiebrp.test.common.util.NotEndsWithFilter;
-import nl.bzk.migratiebrp.test.common.util.StartsWithFilter;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 
 public class RegressieTest extends ConversieTestConfiguratie {
 
@@ -34,9 +32,11 @@ public class RegressieTest extends ConversieTestConfiguratie {
 
     @Override
     public FilenameFilter getCasusFilter() {
-        final StartsWithFilter startsWith = new StartsWithFilter("", FilterType.DIRECTORY);
-        final NotEndsWithFilter notEndsWith = new NotEndsWithFilter("NO TEST", FilterType.DIRECTORY);
-        
-        return new CompositeFilter(Type.AND, startsWith, notEndsWith);
+        return new NotEndsWithFilter("NO TEST", FilterType.DIRECTORY);
+    }
+
+    @Override
+    public TestSkipper getTestSkipper() {
+        return TestSkipper.regressie();
     }
 }

@@ -8,39 +8,31 @@ package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.conv.LO3AanduidingInhoudingDanWelVermissingNLReisdocumentAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.AanduidingInhoudingVermissingReisdocumentCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieAanduidingInhoudingVermissingReisdocument;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.AanduidingInhoudingVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingVermissingReisdocument;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import org.junit.Assert;
 import org.junit.Test;
-import support.ReflectionUtils;
 
 /**
  * Test voor {@link AanduidingInhoudingVermissingReisdocumentConversietabel}.
  */
 public class AanduidingInhoudingVermissingReisdocumentConversietabelTest {
 
-    private static final String X = "X";
-    private static final String Z = "Z";
+    private static final char X = 'X';
+    private static final char Z = 'Z';
 
     @Test
-    public void test() throws ReflectiveOperationException {
-        final List<ConversieAanduidingInhoudingVermissingReisdocument> list = new ArrayList<>();
+    public void test() {
+        final List<AanduidingInhoudingVermissingReisdocument> list = new ArrayList<>();
         list.add(maakConversietabelRegel(X, Z));
 
         final AanduidingInhoudingVermissingReisdocumentConversietabel subject = new AanduidingInhoudingVermissingReisdocumentConversietabel(list);
 
-        Assert.assertEquals(X, subject.converteerNaarLo3(new BrpAanduidingInhoudingOfVermissingReisdocumentCode('Z')).getWaarde());
+        Assert.assertEquals("X", subject.converteerNaarLo3(new BrpAanduidingInhoudingOfVermissingReisdocumentCode('Z')).getWaarde());
     }
 
-    private ConversieAanduidingInhoudingVermissingReisdocument maakConversietabelRegel(final String lo3, final String brp)
-        throws ReflectiveOperationException
-    {
-        return ReflectionUtils.instantiate(
-            ConversieAanduidingInhoudingVermissingReisdocument.class,
-            new LO3AanduidingInhoudingDanWelVermissingNLReisdocumentAttribuut(lo3),
-            new AanduidingInhoudingVermissingReisdocument(new AanduidingInhoudingVermissingReisdocumentCodeAttribuut(brp), null));
+    private AanduidingInhoudingVermissingReisdocument maakConversietabelRegel(final char lo3, final char brp) {
+        return new AanduidingInhoudingVermissingReisdocument(lo3, new AanduidingInhoudingOfVermissingReisdocument(brp, "Naam"));
     }
 }

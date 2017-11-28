@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -40,24 +40,24 @@ public class Lo3HuwelijkOfGpParserTest extends AbstractParserTest {
 
         final Lo3HuwelijkOfGpInhoud huwelijkOfGpInhoud =
                 new Lo3HuwelijkOfGpInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110, onderzoek),
-                    maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
-                    new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0610, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0620, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0630, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0710, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0720, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0730, onderzoek),
-                    new Lo3RedenOntbindingHuwelijkOfGpCode(WAARDE_ELEMENT_0740, onderzoek),
-                    new Lo3SoortVerbintenis(WAARDE_ELEMENT_1510, onderzoek));
+                        maakLo3String(WAARDE_ELEMENT_0110, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0120, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
+                        new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0610, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0620, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0630, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0710, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0720, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0730, onderzoek),
+                        new Lo3RedenOntbindingHuwelijkOfGpCode(WAARDE_ELEMENT_0740, onderzoek),
+                        new Lo3SoortVerbintenis(WAARDE_ELEMENT_1510, onderzoek));
 
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> huwelijkOfGpInhoudCategorie =
                 new Lo3Categorie<>(huwelijkOfGpInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_05, 0, 0));
@@ -195,7 +195,7 @@ public class Lo3HuwelijkOfGpParserTest extends AbstractParserTest {
     @Test
     public void testHuwelijkOfGpParserGeenWaarden() {
         final Lo3HuwelijkOfGpParser parser = new Lo3HuwelijkOfGpParser();
-        final Lo3Stapel<Lo3HuwelijkOfGpInhoud> parsedInhoud = parser.parse(new ArrayList<Lo3CategorieWaarde>());
+        final Lo3Stapel<Lo3HuwelijkOfGpInhoud> parsedInhoud = parser.parse(new ArrayList<>());
         Assert.assertNull(parsedInhoud);
     }
 

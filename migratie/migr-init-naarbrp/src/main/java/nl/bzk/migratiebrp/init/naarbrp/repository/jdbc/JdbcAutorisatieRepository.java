@@ -14,15 +14,16 @@ import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieRecordType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieRecordsType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.MediumType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.AutorisatieBericht;
 import nl.bzk.migratiebrp.init.naarbrp.domein.ConversieResultaat;
 import nl.bzk.migratiebrp.init.naarbrp.repository.AutorisatieRepository;
-import nl.bzk.migratiebrp.init.naarbrp.verwerker.AutorisatieBerichtVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.init.naarbrp.verwerker.BerichtVerwerker;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -36,8 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
  * De JDBC implementatie van de AutorisatieRepository.
  */
 @Repository
-public final class JdbcAutorisatieRepository extends AbstractJdbcRepository implements AutorisatieRepository {
+public final class JdbcAutorisatieRepository extends BasisJdbcRepository implements AutorisatieRepository {
 
+    private static final String AUTORISATIE_ID = "autorisatie_id";
     private static final String AFNEMER_CODE = "afnemer_code";
     private static final String VERSTREKKINGS_BEPERKING = "verstrekkings_beperking";
     private static final String TABEL_REGEL_START_DATUM = "tabel_regel_start_datum";
@@ -68,8 +70,14 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
     private static final String CONVERSIE_RESULTAAT = "conversie_resultaat";
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    /**
+     * {@inheritDoc}
+     *
+     * Let op: transactie timeout is verhoogd naar Integer.MAX_VALUE omdat dit statement zeer lang
+     * kan duren.
+     */
     @Override
-    @Transactional(value = INIT_RUNTIME_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
+    @Transactional(value = INIT_RUNTIME_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED, timeout = Integer.MAX_VALUE)
     public void laadInitVullingAutTable() {
         final String sqlInitVulling = getStringResourceData("/sql/laadAutorisatie.sql");
         getJdbcTemplate().getJdbcOperations().execute(sqlInitVulling);
@@ -77,13 +85,12 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
 
     @Override
     @Transactional(value = INIT_RUNTIME_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
-    public void updateAutorisatieBerichtStatus(final List<Integer> afnemerCodes, final ConversieResultaat conversieResultaat) {
+    public void updateAutorisatieBerichtStatus(final List<String> afnemerCodes, final ConversieResultaat conversieResultaat) {
         final String updateInitVullingSqlAut = getStringResourceData("/sql/update_init_vulling_aut.sql");
 
-        @SuppressWarnings("unchecked")
-        final Map<String, ?>[] batchParameters = new Map[afnemerCodes.size()];
+        @SuppressWarnings("unchecked") final Map<String, ?>[] batchParameters = new Map[afnemerCodes.size()];
         int batchIndex = 0;
-        for (final Integer afnemerCode : afnemerCodes) {
+        for (final String afnemerCode : afnemerCodes) {
             final Map<String, Object> parameters = new HashMap<>();
             parameters.put(AFNEMER_CODE, afnemerCode);
             parameters.put(CONVERSIE_RESULTAAT, conversieResultaat.toString());
@@ -96,12 +103,8 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
 
     @Override
     @Transactional(value = INIT_RUNTIME_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED, readOnly = true)
-    public boolean verwerkAutorisatie(
-        final ConversieResultaat zoekConversieResultaat,
-        final AutorisatieBerichtVerwerker verwerker,
-        final int batchGrootte)
-    {
-
+    public boolean verwerkAutorisatie(final ConversieResultaat zoekConversieResultaat, final BerichtVerwerker<AutorisatieBericht> verwerker,
+                                      final int batchGrootte) {
         if (haalAutorisatieBatchOp(zoekConversieResultaat, verwerker, batchGrootte)) {
             LOG.debug("Berichten verwerken.");
             verwerker.verwerkBerichten();
@@ -109,11 +112,8 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
         return verwerker.aantalBerichten() >= batchGrootte;
     }
 
-    private boolean haalAutorisatieBatchOp(
-        final ConversieResultaat zoekConversieResultaat,
-        final AutorisatieBerichtVerwerker verwerker,
-        final int batchGrootte)
-    {
+    private boolean haalAutorisatieBatchOp(final ConversieResultaat zoekConversieResultaat, final BerichtVerwerker<AutorisatieBericht> verwerker,
+                                           final int batchGrootte) {
 
         final String selectInitVullingSqlAut = getStringResourceData("/sql/Verwerk_init_vulling_aut.sql") + " LIMIT " + batchGrootte;
 
@@ -121,44 +121,13 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
         parameters.put(CONVERSIE_RESULTAAT, zoekConversieResultaat.toString());
         final SqlParameterSource namedParameters = new MapSqlParameterSource(parameters);
 
-        final AutorisatieBerichtVerwerkerRowHandler rowHandler = new AutorisatieBerichtVerwerkerRowHandler(getJdbcTemplate(), verwerker);
+        final AutorisatieBerichtVerwerkerRowHandler
+                rowHandler =
+                new AutorisatieBerichtVerwerkerRowHandler(getJdbcTemplate(), zoekConversieResultaat, verwerker);
 
         getJdbcTemplate().query(selectInitVullingSqlAut, namedParameters, rowHandler);
 
         return verwerker.aantalBerichten() > 0;
-    }
-
-    private static String getString(final ResultSet rs, final String columnLabel) throws SQLException {
-        return rs.getString(columnLabel);
-    }
-
-    private static MediumType getMedium(final ResultSet rs, final String columnLabel) throws SQLException {
-        final String value = getString(rs, columnLabel);
-
-        if (value == null || "".equals(value)) {
-            return null;
-        } else {
-            return MediumType.fromValue(value);
-        }
-    }
-
-    private static Integer getInteger(final ResultSet rs, final String columnLabel) throws SQLException {
-        final int value = rs.getInt(columnLabel);
-        if (rs.wasNull()) {
-            return null;
-        } else {
-            return value;
-        }
-    }
-
-    private static BigInteger getBigInteger(final ResultSet rs, final String columnLabel) throws SQLException {
-        final Integer value = getInteger(rs, columnLabel);
-        return value == null ? null : BigInteger.valueOf(value);
-    }
-
-    private static Short getShort(final ResultSet rs, final String columnLabel) throws SQLException {
-        final Integer value = getInteger(rs, columnLabel);
-        return value == null ? null : value.shortValue();
     }
 
     /**
@@ -166,21 +135,21 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
      */
     private static final class AutorisatieBerichtVerwerkerRowHandler implements RowCallbackHandler {
         private final NamedParameterJdbcTemplate jdbcTemplate;
-        private final AutorisatieBerichtVerwerker verwerker;
+        private final ConversieResultaat zoekConversieResultaat;
+        private final BerichtVerwerker<AutorisatieBericht> verwerker;
 
         /**
          * Constructor.
-         *
-         * @param verwerker
-         *            Lo3BerichtVerwerker
+         * @param verwerker Lo3BerichtVerwerker
          */
-        public AutorisatieBerichtVerwerkerRowHandler(final NamedParameterJdbcTemplate jdbcTemplate, final AutorisatieBerichtVerwerker verwerker) {
+        AutorisatieBerichtVerwerkerRowHandler(final NamedParameterJdbcTemplate jdbcTemplate, ConversieResultaat zoekConversieResultaat,
+                                              final BerichtVerwerker<AutorisatieBericht> verwerker) {
             this.jdbcTemplate = jdbcTemplate;
+            this.zoekConversieResultaat = zoekConversieResultaat;
             this.verwerker = verwerker;
         }
 
         @Override
-        @SuppressWarnings("checkstyle:illegalcatch")
         public void processRow(final ResultSet rs) throws SQLException {
             final AutorisatieBericht bericht = mapAutorisatieBericht(rs);
             final int afnemerCode = rs.getInt(AFNEMER_CODE);
@@ -192,16 +161,16 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
             final AutorisatieType autorisaties = new AutorisatieType();
 
             final Map<String, Object> parameters = new HashMap<>();
-            parameters.put(AFNEMER_CODE, rs.getInt(AFNEMER_CODE));
+            parameters.put(AFNEMER_CODE, rs.getString(AFNEMER_CODE));
+            parameters.put(CONVERSIE_RESULTAAT, zoekConversieResultaat.toString());
             final SqlParameterSource namedParameters = new MapSqlParameterSource(parameters);
 
-            final List<AutorisatieRecordType> gevondenAutorisatiesVoorAfnemer =
-                    jdbcTemplate.query(
-                        "select * from initvul.initvullingresult_aut_regel where afnemer_code = :afnemer_code",
-                        namedParameters,
-                        new AutorisatieMapper());
+            final List<AutorisatieRecordType> gevondenAutorisatiesVoorAfnemer = jdbcTemplate
+                    .query("select * from initvul.initvullingresult_aut where afnemer_code = :afnemer_code and conversie_resultaat = :conversie_resultaat",
+                            namedParameters, new AutorisatieMapper());
 
-            autorisaties.getAutorisatieTabelRegels().addAll(gevondenAutorisatiesVoorAfnemer);
+            autorisaties.setAutorisatieTabelRegels(new AutorisatieRecordsType());
+            autorisaties.getAutorisatieTabelRegels().getAutorisatieTabelRegel().addAll(gevondenAutorisatiesVoorAfnemer);
             autorisaties.setAfnemerCode(rs.getString(AFNEMER_CODE));
 
             final AutorisatieBericht result = new AutorisatieBericht(autorisaties);
@@ -216,9 +185,52 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
      * Mapper voor autorisaties.
      */
     private static final class AutorisatieMapper implements RowMapper<AutorisatieRecordType> {
+        private static String getString(final ResultSet rs, final String columnLabel) throws SQLException {
+            return rs.getString(columnLabel);
+        }
+
+        private static MediumType getMedium(final ResultSet rs, final String columnLabel) throws SQLException {
+            final String value = getString(rs, columnLabel);
+
+            if (value == null || "".equals(value)) {
+                return null;
+            } else {
+                return MediumType.fromValue(value);
+            }
+        }
+
+        private static Integer getInteger(final ResultSet rs, final String columnLabel) throws SQLException {
+            final int value = rs.getInt(columnLabel);
+            if (rs.wasNull()) {
+                return null;
+            } else {
+                return value;
+            }
+        }
+
+        private static BigInteger getBigInteger(final ResultSet rs, final String columnLabel) throws SQLException {
+            final Integer value = getInteger(rs, columnLabel);
+            return value == null ? null : BigInteger.valueOf(value);
+        }
+
+        private static Long getLong(final ResultSet rs, final String columnLabel) throws SQLException {
+            final long value = rs.getLong(columnLabel);
+            if (rs.wasNull()) {
+                return null;
+            } else {
+                return value;
+            }
+        }
+
+        private static Short getShort(final ResultSet rs, final String columnLabel) throws SQLException {
+            final Integer value = getInteger(rs, columnLabel);
+            return value == null ? null : value.shortValue();
+        }
+
         @Override
         public AutorisatieRecordType mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final AutorisatieRecordType record = new AutorisatieRecordType();
+            record.setAutorisatieId(getLong(rs, AUTORISATIE_ID));
             record.setAdHocMedium(getMedium(rs, ADHOC_MEDIUM));
             record.setAdHocRubrieken(RubriekenFormatter.format(getString(rs, ADHOC_RUBRIEKEN)));
             record.setAdHocVoorwaarderegel(getString(rs, VOORWAARDE_REGEL_ADHOC));
@@ -247,14 +259,13 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
             record.setVerstrekkingsBeperking(getShort(rs, VERSTREKKINGS_BEPERKING));
 
             return record;
-
         }
     }
 
     /**
      * Converteert de rubrieken van formaat 'xxxxx xxxxxx xxxxx' naar 'xx.xx.xx#xx.xx.xx#xx.xx.xx'.
      */
-    public static class RubriekenFormatter {
+    public static final class RubriekenFormatter {
         private static final String NR_FORMAT = "##.##";
         private static final int BEGIN_CATEGORIE = 0;
         private static final int EIND_CATEGORIE = 2;
@@ -264,11 +275,13 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
         private static final int EIND_VOLG_NUMMER = 6;
         private static final String PUNT = ".";
 
+        private RubriekenFormatter() {
+            // Niet geinstantieerd.
+        }
+
         /**
          * Converteer rubrieken.
-         *
-         * @param rubrieken
-         *            in het formaat 'xxxxx xxxxxx xxxxxx'
+         * @param rubrieken in het formaat 'xxxxx xxxxxx xxxxxx'
          * @return String in het formaat 'xx.xx.xx#xx.xx.xx'
          */
         public static String format(final String rubrieken) {
@@ -289,11 +302,9 @@ public final class JdbcAutorisatieRepository extends AbstractJdbcRepository impl
                 // converteer van '\d[5,6]' naar '\d\d.\d\d.\d\d'
                 // met daarbij 'categorie.groep.rubriekVolgNummer'
                 // vervolgens weer aan elkaar 'plakken' met een '#'
-                geconverteerdeRubrieken.append(losseRubriek.substring(BEGIN_CATEGORIE, EIND_CATEGORIE))
-                                       .append(PUNT)
-                                       .append(losseRubriek.substring(BEGIN_GROEP, EIND_GROEP))
-                                       .append(PUNT)
-                                       .append(losseRubriek.substring(BEGIN_VOLG_NUMMER, EIND_VOLG_NUMMER));
+                geconverteerdeRubrieken.append(losseRubriek.substring(BEGIN_CATEGORIE, EIND_CATEGORIE)).append(PUNT)
+                        .append(losseRubriek.substring(BEGIN_GROEP, EIND_GROEP)).append(PUNT)
+                        .append(losseRubriek.substring(BEGIN_VOLG_NUMMER, EIND_VOLG_NUMMER));
 
                 if (i < losseRubrieken.length - 1) {
                     geconverteerdeRubrieken.append("#");

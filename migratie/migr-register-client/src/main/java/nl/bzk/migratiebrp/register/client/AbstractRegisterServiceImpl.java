@@ -6,29 +6,23 @@
 
 package nl.bzk.migratiebrp.register.client;
 
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.jms.Session;
 import javax.jms.TextMessage;
-
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Basis implementatie voor blocking en caching register service.
- *
- * @param <T>
- *            regsiter type
+ * @param <T> regsiter type
  */
 public abstract class AbstractRegisterServiceImpl<T> implements RegisterService<T>, MessageListener {
 
@@ -50,6 +44,9 @@ public abstract class AbstractRegisterServiceImpl<T> implements RegisterService<
 
     private JmsTemplate jmsTemplate;
 
+    private String laatsteBericht;
+    private Long laatsteOntvangst;
+
     /**
      * Constructor.
      */
@@ -59,11 +56,8 @@ public abstract class AbstractRegisterServiceImpl<T> implements RegisterService<
 
     /**
      * Constructor.
-     *
-     * @param timeout
-     *            timeout
-     * @param timeoutUnit
-     *            timeout unit
+     * @param timeout timeout
+     * @param timeoutUnit timeout unit
      */
     protected AbstractRegisterServiceImpl(final int timeout, final TimeUnit timeoutUnit) {
         this.timeout = timeout;
@@ -72,9 +66,7 @@ public abstract class AbstractRegisterServiceImpl<T> implements RegisterService<
 
     /**
      * Zet het JMS Template.
-     * 
-     * @param jmsTemplate
-     *            het te zetten JMS Template
+     * @param jmsTemplate het te zetten JMS Template
      */
     @Required
     public final void setJmsTemplate(final JmsTemplate jmsTemplate) {
@@ -86,19 +78,13 @@ public abstract class AbstractRegisterServiceImpl<T> implements RegisterService<
     public final void refreshRegister() {
         synchronized (lock) {
             LOG.info("Versturen register verzoek ({})", getClass());
-            jmsTemplate.send(new MessageCreator() {
-                @Override
-                public Message createMessage(final Session session) throws JMSException {
-                    return session.createTextMessage(maakVerzoek());
-                }
-            });
+            jmsTemplate.send(session -> session.createTextMessage(maakVerzoek()));
             started = true;
         }
     }
 
     /**
      * Maak het register verzoek bericht.
-     *
      * @return verzoek bericht
      */
     protected abstract String maakVerzoek();
@@ -108,6 +94,8 @@ public abstract class AbstractRegisterServiceImpl<T> implements RegisterService<
         synchronized (lock) {
             started = false;
             register = null;
+            laatsteBericht = null;
+            laatsteOntvangst = null;
             registerOntvangenLatch = new CountDownLatch(1);
         }
     }
@@ -128,7 +116,7 @@ public abstract class AbstractRegisterServiceImpl<T> implements RegisterService<
                 }
             }
         } catch (final InterruptedException e) {
-            throw new IllegalArgumentException("Register niet ontvangen (interrupted)", e);
+            Thread.currentThread().interrupt();
         }
         return register;
     }
@@ -138,7 +126,10 @@ public abstract class AbstractRegisterServiceImpl<T> implements RegisterService<
         synchronized (lock) {
             try {
                 LOG.info("Ontvangen register ({})", getClass());
-                register = leesRegister(leesMessage(message));
+                final String bericht = leesMessage(message);
+                laatsteBericht = bericht;
+                laatsteOntvangst = System.currentTimeMillis();
+                register = leesRegister(bericht);
                 registerOntvangenLatch.countDown();
             } catch (final JMSException e) {
                 LOG.warn("Kon binnenkomend bericht voor register niet verwerken. Bericht wordt genegeerd ...", e);
@@ -146,28 +137,36 @@ public abstract class AbstractRegisterServiceImpl<T> implements RegisterService<
         }
     }
 
+    @Override
+    public final String getLaatsteBericht() {
+        return laatsteBericht;
+    }
+
+    @Override
+    public final Date getLaatsteOntvangst() {
+        return laatsteOntvangst == null ? null : new Date(laatsteOntvangst);
+    }
+
+    @Override
+    public final String getRegisterAsString() {
+        return register == null ? null : register.toString();
+    }
+
     /**
      * Lees het register uit het gepubliceerde bericht.
-     *
-     * @param bericht
-     *            bericht
+     * @param bericht bericht
      * @return register
-     * @throws JMSException
-     *             bij lees fouten
+     * @throws JMSException bij lees fouten
      */
     protected abstract T leesRegister(String bericht) throws JMSException;
 
     private static String leesMessage(final Message message) throws JMSException {
-        if (message == null) {
-            return null;
-        }
-
         // content
         final String content;
         if (message instanceof TextMessage) {
             content = ((TextMessage) message).getText();
         } else {
-            throw new IllegalArgumentException("Message type niet ondersteund: " + message.getClass());
+            throw new IllegalArgumentException("Message type niet ondersteund: " + message);
         }
 
         return content;

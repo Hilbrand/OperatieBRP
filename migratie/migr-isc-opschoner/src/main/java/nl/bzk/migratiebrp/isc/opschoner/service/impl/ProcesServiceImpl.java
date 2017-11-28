@@ -24,14 +24,22 @@ public final class ProcesServiceImpl implements ProcesService {
 
     private static final String OPSCHONER_TRANSACTION_MANAGER = "opschonerTransactionManager";
 
-    @Inject
-    private JbpmDao jbpmDao;
+    private final JbpmDao jbpmDao;
+    private final MigDao migDao;
+    private final ExtractieDao extractieDao;
 
+    /**
+     * Constructor.
+     * @param jbpmDao jbpm dao
+     * @param migDao mig dao
+     * @param extractieDao extractie dao
+     */
     @Inject
-    private MigDao migDao;
-
-    @Inject
-    private ExtractieDao extractieDao;
+    public ProcesServiceImpl(final JbpmDao jbpmDao, final MigDao migDao, final ExtractieDao extractieDao) {
+        this.jbpmDao = jbpmDao;
+        this.migDao = migDao;
+        this.extractieDao = extractieDao;
+    }
 
     @Override
     @Transactional(value = OPSCHONER_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
@@ -42,10 +50,9 @@ public final class ProcesServiceImpl implements ProcesService {
     @Override
     @Transactional(value = OPSCHONER_TRANSACTION_MANAGER, propagation = Propagation.SUPPORTS)
     public void controleerProcesVerwijderbaar(
-        final Long procesId,
-        final List<Long> verwerkteProcesIds,
-        final List<Long> verwijderdeProcesIds) throws NietVerwijderbareProcesInstantieException
-    {
+            final Long procesId,
+            final List<Long> verwerkteProcesIds,
+            final List<Long> verwijderdeProcesIds) throws NietVerwijderbareProcesInstantieException {
 
         if (!verwijderdeProcesIds.contains(procesId)) {
 
@@ -59,27 +66,26 @@ public final class ProcesServiceImpl implements ProcesService {
                 controleerGerelateerdeProcessenVerwijderbaar(procesId, verwerkteProcesIds, verwijderdeProcesIds);
             } else if (einddatumProces == null) {
                 throw new NietVerwijderbareProcesInstantieException(
-                    "Het proces (id="
-                            + procesId
-                            + " )kan niet worden verwijderd aangezien er nog een of meerdere sub- of gerelateerd(e) "
-                            + "proces(sen) nog niet is/zijn beeindigd).",
-                    new Timestamp(System.currentTimeMillis()));
+                        "Het proces (id="
+                                + procesId
+                                + " )kan niet worden verwijderd aangezien er nog een of meerdere sub- of gerelateerd(e) "
+                                + "proces(sen) nog niet is/zijn beeindigd).",
+                        new Timestamp(System.currentTimeMillis()));
             } else if (datumLaatsteBericht != null) {
                 throw new NietVerwijderbareProcesInstantieException(
-                    "Het proces (id= "
-                            + procesId
-                            + " ) kan niet worden verwijderd (er is nog een bericht binnengekomen nadat het proces is "
-                            + "beeindigd).",
-                    datumLaatsteBericht);
+                        "Het proces (id= "
+                                + procesId
+                                + " ) kan niet worden verwijderd (er is nog een bericht binnengekomen nadat het proces is "
+                                + "beeindigd).",
+                        datumLaatsteBericht);
             }
         }
     }
 
     private void controleerGerelateerdeProcessenVerwijderbaar(
-        final Long procesId,
-        final List<Long> verwerkteProcesIds,
-        final List<Long> verwijderdeProcesIds) throws NietVerwijderbareProcesInstantieException
-    {
+            final Long procesId,
+            final List<Long> verwerkteProcesIds,
+            final List<Long> verwijderdeProcesIds) throws NietVerwijderbareProcesInstantieException {
         final List<Long> gerelateerdeProcesIds = migDao.selecteerGerelateerdeProcessenVoorProces(procesId);
         for (final Long gerelateerdeProcesId : gerelateerdeProcesIds) {
             if (!verwerkteProcesIds.contains(gerelateerdeProcesId)) {
@@ -89,10 +95,9 @@ public final class ProcesServiceImpl implements ProcesService {
     }
 
     private void controleerSubProcessenVerwijderbaar(
-        final Long procesId,
-        final List<Long> verwerkteProcesIds,
-        final List<Long> verwijderdeProcesIds) throws NietVerwijderbareProcesInstantieException
-    {
+            final Long procesId,
+            final List<Long> verwerkteProcesIds,
+            final List<Long> verwijderdeProcesIds) throws NietVerwijderbareProcesInstantieException {
         final List<Long> subProcesIds = jbpmDao.selecteerSubProcessenVoorProces(procesId);
         for (final Long subProcesId : subProcesIds) {
             if (!verwerkteProcesIds.contains(subProcesId)) {
@@ -136,7 +141,6 @@ public final class ProcesServiceImpl implements ProcesService {
 
     }
 
-    @Transactional(value = OPSCHONER_TRANSACTION_MANAGER, propagation = Propagation.SUPPORTS)
     private void verwijderProcesInformatie(final Long procesId) {
 
         final List<Long> tokens = jbpmDao.bepaalTokensVoorProces(procesId);

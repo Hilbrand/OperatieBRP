@@ -6,62 +6,64 @@
 
 package nl.bzk.brp.beheer.webapp.controllers.stamgegevens.kern;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PartijHistorie;
 import nl.bzk.brp.beheer.webapp.controllers.HistorieVerwerkerTestUtil;
-import nl.bzk.brp.beheer.webapp.controllers.stamgegevens.kern.PartijController.HisPartijVerwerker;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumEvtDeelsOnbekendAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.JaNeeAttribuut;
-import nl.bzk.brp.model.beheer.kern.HisPartij;
-import nl.bzk.brp.model.beheer.kern.Partij;
+import nl.bzk.brp.beheer.webapp.controllers.stamgegevens.kern.PartijController.PartijHistorieVerwerker;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 public class PartijControllerHistorieVerwerkerTest {
 
-    private final HisPartijVerwerker subject = new HisPartijVerwerker();
+    private final PartijHistorieVerwerker subject = new PartijHistorieVerwerker();
 
     @Test
     public void testMaakHis() {
-        final Partij item = new Partij();
-        item.setDatumIngang(new DatumEvtDeelsOnbekendAttribuut(19710101));
-        item.setDatumEinde(new DatumEvtDeelsOnbekendAttribuut(19720202));
-        item.setIndicatieVerstrekkingsbeperkingMogelijk(new JaNeeAttribuut(Boolean.TRUE));
+        final Partij item = new Partij("testpartij", "001234");
+        item.setDatumIngang(19710101);
+        item.setDatumEinde(19720202);
+        item.setIndicatieVerstrekkingsbeperkingMogelijk(Boolean.TRUE);
 
-        final HisPartij historie = subject.maakHistorie(item);
+        final PartijHistorie historie = subject.maakHistorie(item);
         Assert.assertEquals(item, historie.getPartij());
-        Assert.assertEquals(item.getDatumIngang(), historie.getDatumIngang());
+        Assert.assertEquals(item.getDatumIngang(), Integer.valueOf(historie.getDatumIngang()));
         Assert.assertEquals(item.getDatumEinde(), historie.getDatumEinde());
-        Assert.assertEquals(item.getIndicatieVerstrekkingsbeperkingMogelijk(), historie.getIndicatieVerstrekkingsbeperkingMogelijk());
-        Assert.assertNotNull(historie.getTijdstipRegistratie());
+        Assert.assertEquals(item.isIndicatieVerstrekkingsbeperkingMogelijk(), historie.isIndicatieVerstrekkingsbeperkingMogelijk());
+        Assert.assertNotNull(historie.getDatumTijdRegistratie());
     }
 
     @Test
     public void testMaakHisLeeg() {
-        Assert.assertNull(subject.maakHistorie(new Partij()));
+        final Partij partij = new Partij("testpartij", "001234");
+        partij.setDatumIngang(19700101);
+        Assert.assertNotNull(subject.maakHistorie(partij));
     }
 
     @Test
     public void testIsHistorieInhoudelijkGelijk() {
-        final HisPartij nieuweHistorie =
-                maakHisPartij(new DatumEvtDeelsOnbekendAttribuut(19710101), new DatumEvtDeelsOnbekendAttribuut(19720101), new JaNeeAttribuut(Boolean.TRUE));
-        final HisPartij actueleRecord =
-                maakHisPartij(new DatumEvtDeelsOnbekendAttribuut(19710101), new DatumEvtDeelsOnbekendAttribuut(19720101), new JaNeeAttribuut(Boolean.TRUE));
+        final Partij partij = new Partij("testpartij", "001234");
+        final PartijHistorie nieuweHistorie = maakHisPartij(partij, partij.getNaam(), 19710101, 19720101, Boolean.TRUE);
+        final PartijHistorie actueleRecord = maakHisPartij(partij, partij.getNaam(), 19710101, 19720101, Boolean.TRUE);
 
-        HistorieVerwerkerTestUtil.controleer(subject, nieuweHistorie, actueleRecord, "datumIngang", new DatumEvtDeelsOnbekendAttribuut(19830303));
-        HistorieVerwerkerTestUtil.controleer(subject, nieuweHistorie, actueleRecord, "datumEinde", new DatumEvtDeelsOnbekendAttribuut(19840404));
-        HistorieVerwerkerTestUtil.controleer(subject, nieuweHistorie, actueleRecord, "indicatieVerstrekkingsbeperkingMogelijk", new JaNeeAttribuut(
-                Boolean.FALSE));
+        HistorieVerwerkerTestUtil.controleer(subject, nieuweHistorie, actueleRecord, "datumIngang", 19830303);
+        HistorieVerwerkerTestUtil.controleer(subject, nieuweHistorie, actueleRecord, "datumEinde", 19840404);
+        HistorieVerwerkerTestUtil.controleer(subject, nieuweHistorie, actueleRecord, "indicatieVerstrekkingsbeperkingMogelijk", Boolean.FALSE);
     }
 
-    private HisPartij maakHisPartij(
-            final DatumEvtDeelsOnbekendAttribuut datumAanvang,
-            final DatumEvtDeelsOnbekendAttribuut datumEinde,
-            final JaNeeAttribuut indicatieVerstrekkingsbeperkingMogelijk)
+    private PartijHistorie maakHisPartij(
+        final Partij partij,
+        final String naam,
+        final Integer datumIngang,
+        final Integer datumEinde,
+        final Boolean indicatieVerstrekkingsbeperkingMogelijk)
     {
-        final HisPartij result = new HisPartij();
-        result.setDatumIngang(datumAanvang);
-        result.setDatumEinde(datumEinde);
-        result.setIndicatieVerstrekkingsbeperkingMogelijk(indicatieVerstrekkingsbeperkingMogelijk);
-
-        return result;
+        final PartijHistorie historie =
+                new PartijHistorie(partij, Timestamp.valueOf(LocalDateTime.now()), datumIngang, indicatieVerstrekkingsbeperkingMogelijk, naam);
+        historie.setDatumEinde(datumEinde);
+        return historie;
     }
 }

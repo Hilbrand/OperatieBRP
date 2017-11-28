@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.autoris
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpEffectAfnemerindicatiesCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpSoortDienstCode;
@@ -18,7 +19,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstSelectieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstbundelInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpLeveringsautorisatieInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpPartijInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Autorisatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3AutorisatieInhoud;
@@ -29,8 +29,7 @@ import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenDienst;
 import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenDienstbundel;
 import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenDienstbundelLo3Rubriek;
 import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenLeveringsautorisatie;
-import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenPartij;
-import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3.Foutmelding;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,51 +38,64 @@ import org.springframework.stereotype.Component;
 @Component
 public class AutorisatieConverteerder {
 
-    private static final Integer IND_CONDITIONEEL = Integer.valueOf(1);
-    private static final Integer IND_PLAATSEN_AFNIND = Integer.valueOf(0);
-    private static final Integer IND_ADHOC_ADRESVRAAG_BEVOEGD = Integer.valueOf(1);
-    private static final Integer IND_ADHOC_PLAATSINGS_BEVOEGD = Integer.valueOf(1);
-    private static final Integer SELECTIESOORT_BERICHT = Integer.valueOf(0);
-    private static final Integer SELECTIESOORT_PLAATSEN = Integer.valueOf(1);
-    private static final Integer SELECTIESOORT_VERWIJDEREN_LOGISCH = Integer.valueOf(2);
-    private static final Integer SELECTIESOORT_VERWIJDEREN_VOORWAARDELIJK_FYSIEK = Integer.valueOf(3);
-    private static final Integer SELECTIESOORT_VERWIJDEREN_ONVOORWAARDELIJK_FYSIEK = Integer.valueOf(4);
+    private static final Integer IND_GEHEIMHOUDING = 1;
+    private static final Integer IND_CONDITIONEEL = 1;
+    private static final Integer IND_PLAATSEN_AFNIND = 0;
+    private static final Integer IND_ADHOC_ADRESVRAAG_BEVOEGD = 1;
+    private static final Integer IND_ADHOC_PLAATSINGS_BEVOEGD = 1;
+    private static final Integer SELECTIESOORT_BERICHT = 0;
+    private static final Integer SELECTIESOORT_PLAATSEN = 1;
+    private static final Integer SELECTIESOORT_VERWIJDEREN_LOGISCH = 2;
+    private static final Integer SELECTIESOORT_VERWIJDEREN_VOORWAARDELIJK_FYSIEK = 3;
+    private static final Integer SELECTIESOORT_VERWIJDEREN_ONVOORWAARDELIJK_FYSIEK = 4;
     private static final String MEDIUM_TYPE_A = "A";
     private static final String MEDIUM_TYPE_N = "N";
 
-    @Inject
-    private DienstConverteerder dienstConverteerder;
-    @Inject
-    private DienstbundelConverteerder dienstbundelConverteerder;
-    @Inject
-    private LeveringsautorisatieConverteerder leveringsautorisatieConverteerder;
-    @Inject
-    private DienstbundelLo3RubriekenConverteerder lo3RubriekenConverteerder;
-    @Inject
-    private PartijConverteerder partijConverteerder;
+    private final DienstConverteerder dienstConverteerder;
+    private final DienstbundelConverteerder dienstbundelConverteerder;
+    private final LeveringsautorisatieConverteerder leveringsautorisatieConverteerder;
+    private final DienstbundelLo3RubriekenConverteerder lo3RubriekenConverteerder;
 
     /**
-     * Converteer van Lo3 model naar Migratie model.
-     *
-     * @param lo3Autorisatie
-     *            {@link Lo3Autorisatie}
-     * @return {@link nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenPartij}
+     * Constructor.
+     * @param dienstConverteerder dienst converteerder
+     * @param dienstbundelConverteerder dienstbundel converteerder
+     * @param leveringsautorisatieConverteerder leveringsautorisatie converteerder
+     * @param lo3RubriekenConverteerder lo3 rubrieken converteerder
      */
-    public final TussenPartij converteerPartij(final Lo3Autorisatie lo3Autorisatie) {
-        final Lo3AutorisatieInhoud meestRecenteNietLege = lo3Autorisatie.getAutorisatieStapel().get(0).getInhoud();
+    @Inject
+    public AutorisatieConverteerder(final DienstConverteerder dienstConverteerder,
+                                    final DienstbundelConverteerder dienstbundelConverteerder,
+                                    final LeveringsautorisatieConverteerder leveringsautorisatieConverteerder,
+                                    final DienstbundelLo3RubriekenConverteerder lo3RubriekenConverteerder) {
+        this.dienstConverteerder = dienstConverteerder;
+        this.dienstbundelConverteerder = dienstbundelConverteerder;
+        this.leveringsautorisatieConverteerder = leveringsautorisatieConverteerder;
+        this.lo3RubriekenConverteerder = lo3RubriekenConverteerder;
+    }
 
-        final String naam = meestRecenteNietLege.getAfnemernaam();
-        final BrpPartijCode partijCode = new BrpPartijCode(meestRecenteNietLege.getAfnemersindicatie());
-        final TussenStapel<BrpPartijInhoud> partijStapel = partijConverteerder.converteerPartijStapel(lo3Autorisatie.getAutorisatieStapel());
+    /**
+     * Converteer van Lo3 model naar Migratie model (partij code).
+     * @param lo3Autorisatie {@link Lo3Autorisatie}
+     * @return BrpPartijCode(afnemersindicatie)
+     */
+    public final BrpPartijCode converteerPartij(final Lo3Autorisatie lo3Autorisatie) {
+        return new BrpPartijCode(lo3Autorisatie.getAutorisatieStapel().get(0).getInhoud().getAfnemersindicatie());
+    }
 
-        return new TussenPartij(null, naam, partijCode, partijStapel);
+    /**
+     * Converteer van Lo3 model naar Migratie model (indicatie verstrekkingsbeperking mogelijk).
+     * @param lo3Autorisatie {@link Lo3Autorisatie}
+     * @return BrpBoolean(true) als 95.12 de waarde '1' heeft; anders BrpBoolean(false)
+     */
+
+    public final BrpBoolean converteerIndicatieVerstrekkingsbeperkingMogelijk(final Lo3Autorisatie lo3Autorisatie) {
+        return new BrpBoolean(IND_GEHEIMHOUDING.equals(lo3Autorisatie.getAutorisatieStapel().get(0).getInhoud().getIndicatieGeheimhouding()));
     }
 
     /**
      * Converteer van Lo3 model naar Migratie model.
-     *
-     * @param lo3Autorisatie
-     *            {@link Lo3Autorisatie}
+     * @param lo3Autorisatie {@link Lo3Autorisatie}
      * @return {@link List} van {@link nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenLeveringsautorisatie}
      */
     public final List<TussenLeveringsautorisatie> converteerAutorisatie(final Lo3Autorisatie lo3Autorisatie) {
@@ -107,9 +119,7 @@ public class AutorisatieConverteerder {
 
     /**
      * Converteer van Lo3 model naar Migratie model.
-     *
-     * @param autorisatie
-     *            {@link List} van {@link Lo3AutorisatieInhoud}
+     * @param autorisatie {@link List} van {@link Lo3AutorisatieInhoud}
      * @return {@link List} van {@link nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenDienstbundel}
      */
     public final List<TussenDienstbundel> converteerDienstbundels(final Lo3Categorie<Lo3AutorisatieInhoud> autorisatie) {
@@ -143,11 +153,10 @@ public class AutorisatieConverteerder {
     }
 
     private void voegSpontaanDienstbundelToe(
-        final List<TussenDienstbundel> dienstbundels,
-        final Lo3Categorie<Lo3AutorisatieInhoud> autorisatie,
-        final TussenStapel<BrpDienstInhoud> dienstInhoud,
-        final TussenStapel<BrpDienstAttenderingInhoud> dienstAttenderingInhoud)
-    {
+            final List<TussenDienstbundel> dienstbundels,
+            final Lo3Categorie<Lo3AutorisatieInhoud> autorisatie,
+            final TussenStapel<BrpDienstInhoud> dienstInhoud,
+            final TussenStapel<BrpDienstAttenderingInhoud> dienstAttenderingInhoud) {
         final List<TussenDienst> diensten = new ArrayList<>();
 
         final List<TussenDienstbundelLo3Rubriek> lo3Rubrieken =
@@ -158,22 +167,20 @@ public class AutorisatieConverteerder {
 
         // Attendering dmv plaatsen
         if (IND_PLAATSEN_AFNIND.equals(autorisatie.getInhoud().getConditioneleVerstrekking())
-            && autorisatie.getInhoud().getSleutelrubriek() != null
-            && !"".equals(autorisatie.getInhoud().getSleutelrubriek()))
-        {
+                && autorisatie.getInhoud().getSleutelrubriek() != null
+                && !"".equals(autorisatie.getInhoud().getSleutelrubriek())) {
             // De werking van LO3 en BRP verschilt bij de conditionele verstrekking; LO3 schrijft voor dat de
             // conditionele verstrekking niet wordt gedaan indien er een afnemersindicatie bestaat. Bij BRP is
             // dit niet zo; daarom een nadere populatiebeperking toevoegen die controleert of er geen afnemers-
             // indicatie bestaat.
             diensten.add(
-                new TussenDienst(BrpEffectAfnemerindicatiesCode.PLAATSEN, BrpSoortDienstCode.ATTENDERING, dienstInhoud, dienstAttenderingInhoud, null));
+                    new TussenDienst(BrpEffectAfnemerindicatiesCode.PLAATSEN, BrpSoortDienstCode.ATTENDERING, dienstInhoud, dienstAttenderingInhoud, null));
         }
 
         // Attendering
         if (IND_CONDITIONEEL.equals(autorisatie.getInhoud().getConditioneleVerstrekking())
-            && autorisatie.getInhoud().getSleutelrubriek() != null
-            && !"".equals(autorisatie.getInhoud().getSleutelrubriek()))
-        {
+                && autorisatie.getInhoud().getSleutelrubriek() != null
+                && !"".equals(autorisatie.getInhoud().getSleutelrubriek())) {
             diensten.add(new TussenDienst(null, BrpSoortDienstCode.ATTENDERING, dienstInhoud, dienstAttenderingInhoud, null));
         }
 
@@ -183,11 +190,10 @@ public class AutorisatieConverteerder {
     }
 
     private void voegSelectieDienstbundelToe(
-        final List<TussenDienstbundel> dienstbundels,
-        final Lo3Categorie<Lo3AutorisatieInhoud> autorisatie,
-        final TussenStapel<BrpDienstInhoud> dienstInhoud,
-        final TussenStapel<BrpDienstSelectieInhoud> dienstSelectieInhoud)
-    {
+            final List<TussenDienstbundel> dienstbundels,
+            final Lo3Categorie<Lo3AutorisatieInhoud> autorisatie,
+            final TussenStapel<BrpDienstInhoud> dienstInhoud,
+            final TussenStapel<BrpDienstSelectieInhoud> dienstSelectieInhoud) {
         final List<TussenDienst> diensten = new ArrayList<>();
 
         final List<TussenDienstbundelLo3Rubriek> lo3Rubrieken =
@@ -202,11 +208,10 @@ public class AutorisatieConverteerder {
         }
 
         if (SELECTIESOORT_VERWIJDEREN_LOGISCH.equals(autorisatie.getInhoud().getSelectiesoort())
-            || SELECTIESOORT_VERWIJDEREN_ONVOORWAARDELIJK_FYSIEK.equals(autorisatie.getInhoud().getSelectiesoort())
-            || SELECTIESOORT_VERWIJDEREN_VOORWAARDELIJK_FYSIEK.equals(autorisatie.getInhoud().getSelectiesoort()))
-        {
+                || SELECTIESOORT_VERWIJDEREN_ONVOORWAARDELIJK_FYSIEK.equals(autorisatie.getInhoud().getSelectiesoort())
+                || SELECTIESOORT_VERWIJDEREN_VOORWAARDELIJK_FYSIEK.equals(autorisatie.getInhoud().getSelectiesoort())) {
             diensten.add(
-                new TussenDienst(BrpEffectAfnemerindicatiesCode.VERWIJDEREN, BrpSoortDienstCode.SELECTIE, dienstInhoud, null, dienstSelectieInhoud));
+                    new TussenDienst(BrpEffectAfnemerindicatiesCode.VERWIJDEREN, BrpSoortDienstCode.SELECTIE, dienstInhoud, null, dienstSelectieInhoud));
         }
 
         final TussenStapel<BrpDienstbundelInhoud> dienstbundelStapel =
@@ -215,11 +220,10 @@ public class AutorisatieConverteerder {
     }
 
     private void voegAdHocDienstbundelToe(
-        final List<TussenDienstbundel> dienstbundels,
-        final Lo3Categorie<Lo3AutorisatieInhoud> autorisatie,
-        final TussenStapel<BrpDienstInhoud> dienstInhoud,
-        final boolean heeftSpontaanBundel)
-    {
+            final List<TussenDienstbundel> dienstbundels,
+            final Lo3Categorie<Lo3AutorisatieInhoud> autorisatie,
+            final TussenStapel<BrpDienstInhoud> dienstInhoud,
+            final boolean heeftSpontaanBundel) {
         final List<TussenDienst> diensten = new ArrayList<>();
 
         final List<TussenDienstbundelLo3Rubriek> lo3Rubrieken =
@@ -250,4 +254,5 @@ public class AutorisatieConverteerder {
                 dienstbundelConverteerder.converteerDienstbundel(autorisatie, "Ad hoc", autorisatie.getInhoud().getVoorwaarderegelAdHoc());
         dienstbundels.add(new TussenDienstbundel(diensten, lo3Rubrieken, dienstbundelStapel));
     }
+
 }

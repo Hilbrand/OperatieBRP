@@ -6,7 +6,6 @@
 
 /**
  * Algemene utilitiy klassen.
- *
  * @since 1.0
  */
 package nl.bzk.migratiebrp.util.common;

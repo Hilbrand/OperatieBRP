@@ -14,14 +14,14 @@ public class BrpAfnemersindicatieTest {
 
     @Test
     public void test() throws NoSuchMethodException, IllegalAccessException {
-        final BrpAfnemersindicatie subject = maak(1);
-        final BrpAfnemersindicatie equals = maak(1);
-        final BrpAfnemersindicatie different = maak(2);
+        final BrpAfnemersindicatie subject = maak("000001");
+        final BrpAfnemersindicatie equals = maak("000001");
+        final BrpAfnemersindicatie different = maak("000002");
 
         EqualsAndHashcodeTester.testEqualsHashcodeAndToString(subject, equals, different);
     }
 
-    public static BrpAfnemersindicatie maak(final int partijCode) {
+    public static BrpAfnemersindicatie maak(final String partijCode) {
         return new BrpAfnemersindicatie(new BrpPartijCode(partijCode), null, null);
     }
 

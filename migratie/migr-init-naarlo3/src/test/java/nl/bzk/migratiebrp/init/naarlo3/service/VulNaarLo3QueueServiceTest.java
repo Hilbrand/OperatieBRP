@@ -18,7 +18,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- *
  * Test de service voor het versturen van LO3-berichten.
  */
 @RunWith(SpringJUnit4ClassRunner.class)

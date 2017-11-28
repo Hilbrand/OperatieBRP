@@ -1,2 +1,0 @@
-bezemwagen-nl.bzk.brp.levering.bezemwagen:name=Bezemwagen
-plaatsOnverwerkteAdministratieveHandelingenOpQueue

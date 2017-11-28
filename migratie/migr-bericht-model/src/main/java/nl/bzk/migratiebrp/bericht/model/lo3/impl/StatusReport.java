@@ -13,7 +13,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 /**
  * Status report.
  */
-public class StatusReport extends AbstractUnparsedLo3Bericht {
+public final class StatusReport extends AbstractUnparsedLo3Bericht {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,9 +30,7 @@ public class StatusReport extends AbstractUnparsedLo3Bericht {
 
     /**
      * Zet de notification type.
-     *
-     * @param notificationType
-     *            notification type
+     * @param notificationType notification type
      */
     public void setNotificationType(final int notificationType) {
         setHeader(Lo3HeaderVeld.NOTIFICATION_TYPE, Integer.toString(notificationType));

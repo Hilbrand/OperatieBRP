@@ -1,26 +1,27 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
 import java.util.Collections;
 import java.util.List;
-import nl.bzk.brp.levering.lo3.mapper.ActieHisVolledigLocator;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AanduidingOuder;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.levering.lo3.mapper.AbstractOuderGezagMapper;
 import nl.bzk.brp.levering.lo3.mapper.OnderzoekMapper;
-import nl.bzk.brp.levering.lo3.util.HistorieSetUtil;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
-import nl.bzk.brp.model.algemeen.attribuuttype.verconv.LO3AanduidingOuder;
-import nl.bzk.brp.model.hisvolledig.kern.KindHisVolledig;
-import nl.bzk.brp.model.hisvolledig.kern.OuderHisVolledig;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.hisvolledig.kern.RelatieHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.HisBetrokkenheidModel;
-import nl.bzk.brp.model.operationeel.kern.HisOuderOuderlijkGezagModel;
-import nl.bzk.brp.model.operationeel.kern.HisOuderOuderschapModel;
+import nl.bzk.brp.levering.lo3.mapper.OuderGeboorteMapper;
+import nl.bzk.brp.levering.lo3.mapper.OuderGeslachtsaanduidingMapper;
+import nl.bzk.brp.levering.lo3.mapper.OuderIdentificatienummersMapper;
+import nl.bzk.brp.levering.lo3.mapper.OuderOuderschapMapper;
+import nl.bzk.brp.levering.lo3.mapper.OuderSamengesteldeNaamMapper;
+import nl.bzk.brp.levering.lo3.mapper.PersoonslijstMapper;
+import nl.bzk.brp.levering.lo3.util.MetaModelUtil;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3GezagsverhoudingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OuderInhoud;
@@ -58,511 +59,334 @@ public final class OuderVisitor extends AbstractRelatieVisitor {
 
     /**
      * Verwerk de wijzigingen in een ouder.
-     *
-     * @param ouderWijziging
-     *            lo3 ouder wijzigingen (output)
-     * @param indicatieOuder
-     *            indicatie ouder 1 of 2
-     * @param gezagWijziging
-     *            lo3 gezag wijzigingen (output)
-     * @param acties
-     *            acties
-     * @param onderzoekMapper
-     *            onderzoek mapper
-     * @param actieHisVolledigLocator
-     *            actie locator
-     * @param mijnBetrokkenheid
-     *            mijn (kind) betrokkenheid
-     * @param relatie
-     *            familierechtelijke betrekking relatie
-     * @param gerelateerdeBetrokkenheid
-     *            gerelateerde (ouder) betrokkenheid
+     * @param ouderWijziging lo3 ouder wijzigingen (output)
+     * @param indicatieOuder indicatie ouder 1 of 2
+     * @param gezagWijziging lo3 gezag wijzigingen (output)
+     * @param acties acties
+     * @param onderzoekMapper onderzoek mapper
+     * @param mijnKindBetrokkenheid mijn (kind) betrokkenheid
+     * @param gerelateerdeOuderBetrokkenheid gerelateerde (ouder) betrokkenheid
      */
-    public void verwerk(
-        final Lo3Wijzigingen<Lo3OuderInhoud> ouderWijziging,
-        final LO3AanduidingOuder indicatieOuder,
-        final Lo3Wijzigingen<Lo3GezagsverhoudingInhoud> gezagWijziging,
-        final List<Long> acties,
-        final OnderzoekMapper onderzoekMapper,
-        final ActieHisVolledigLocator actieHisVolledigLocator,
-        final KindHisVolledig mijnBetrokkenheid,
-        final RelatieHisVolledig relatie,
-        final OuderHisVolledig gerelateerdeBetrokkenheid)
-    {
-        LOGGER.debug("Verwerk ouder betrokkenheid (id={}, indouder={})", gerelateerdeBetrokkenheid.getID(), indicatieOuder);
-        final HisBetrokkenheidModel actueleBetrokkenheidEntiteit = bepaalActueel(gerelateerdeBetrokkenheid.getBetrokkenheidHistorie(), acties);
-        final HisBetrokkenheidModel historieBetrokkenheidEntiteit = bepaalVerval(gerelateerdeBetrokkenheid.getBetrokkenheidHistorie(), acties);
-
-        final PersoonHisVolledig gerelateerdePersoon = gerelateerdeBetrokkenheid.getPersoon();
+    public void verwerk(final Lo3Wijzigingen<Lo3OuderInhoud> ouderWijziging, final AanduidingOuder indicatieOuder,
+                        final Lo3Wijzigingen<Lo3GezagsverhoudingInhoud> gezagWijziging, final List<Long> acties, final OnderzoekMapper onderzoekMapper,
+                        final MetaObject mijnKindBetrokkenheid, final MetaObject gerelateerdeOuderBetrokkenheid) {
+        LOGGER.debug("Verwerk ouder betrokkenheid (id={}, indouder={})", gerelateerdeOuderBetrokkenheid.getObjectsleutel(), indicatieOuder);
+        final MetaRecord actueleBetrokkenheidEntiteit =
+                bepaalActueel(MetaModelUtil.getRecords(mijnKindBetrokkenheid, PersoonslijstMapper.KIND_GROEP_ELEMENT), acties);
+        final MetaRecord historieBetrokkenheidEntiteit =
+                bepaalVerval(MetaModelUtil.getRecords(mijnKindBetrokkenheid, PersoonslijstMapper.KIND_GROEP_ELEMENT), acties);
+        final MetaRecord gerelateerdeOuderBetrokkenheidIdentiteit =
+                MetaModelUtil.getIdentiteitRecord(gerelateerdeOuderBetrokkenheid, PersoonslijstMapper.GERELATEERDE_OUDER_IDENTITEIT_GROEP_ELEMENT);
 
         if (historieBetrokkenheidEntiteit != null) {
-            LOGGER.debug("Betrokkenheid is vervallen");
-            // De betrokkenheid is gevonden als 'vervallen' record. Dit betekent dat de volledige betrokkenheid
-            // gecorrigeerd is. Om dit als mutatie te leveren dienen alle gerelateerde 'actuele' groepen als historisch
-            // te worden verwerkt. Als een groep historisch wordt verwerkt dan wordt voor verantwoording (groepen 8x) de
-            // gekoppelde actie inhoud gebruikt.
-            // Nota: het is niet relevant of er nu ook tegelijk een actie inhoud is gevonden.
-            betrokkenheidMutatieVerwerker.verwerk(
-                ouderWijziging,
-                null,
-                null,
-                historieBetrokkenheidEntiteit,
-                acties,
-                Collections.<Long>emptyList(),
-                Collections.<Long>emptyList(),
-                onderzoekMapper,
-                actieHisVolledigLocator);
-
-            // Het kan mogelijk voorkomen dat dit ook de enige wijziging is die gevonden kan worden. Om dan de
-            // gerelateerde verantwoording te kunnen leveren, dient de actie verval gebruikt te worden als
-            // verantwoording (groepen 8x) in de actuele gegevens. We doen dit alleen als er geen andere actuele
-            // gegevens zijn gevonden want dan komen die uit een andere actie inhoud (en dan zou die logischerwijs
-            // hetzelfde moeten bevatten).
-            if (ouderWijziging.getActueleInhoud() == null) {
-                LOGGER.debug("Betrokkenheid is vervallen; verwerk ook als actueel");
-                betrokkenheidMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    null,
-                    historieBetrokkenheidEntiteit,
-                    null,
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-            }
-
-            ouderschapMutatieVerwerker.verwerk(
-                ouderWijziging,
-                null,
-                null,
-                null,
-                HistorieSetUtil.getActueleRecord(gerelateerdeBetrokkenheid.getOuderOuderschapHistorie()),
-                acties,
-                Collections.<Long>emptyList(),
-                Collections.<Long>emptyList(),
-                onderzoekMapper,
-                actieHisVolledigLocator);
-            // getGezagMutatieVerwerker(indicatieOuder).verwerk(
-            // gezagWijziging,
-            // null,
-            // null,
-            // null,
-            // HistorieSetUtil.getActueleRecord(gerelateerdeBetrokkenheid.getOuderOuderlijkGezagHistorie()),
-            // acties,
-            // Collections.<Long>emptyList(),
-            // Collections.<Long>emptyList(),
-            // onderzoekMapper,
-            // actieHisVolledigLocator);
-
-            if (gerelateerdePersoon != null) {
-                geboorteMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    null,
-                    null,
-                    HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonGeboorteHistorie()),
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-                identificatienummersMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    null,
-                    null,
-                    null,
-                    HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonIdentificatienummersHistorie()),
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-                samengesteldeNaamMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    null,
-                    null,
-                    null,
-                    HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonSamengesteldeNaamHistorie()),
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-                geslachtsaanduidingMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    null,
-                    null,
-                    null,
-                    HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonGeslachtsaanduidingHistorie()),
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-            } else {
-                LOGGER.debug("Betrokkenheid is vervallen; punt ouder");
-                // Als er geen gekoppeld persoon is, dan is dit een 'punt' ouder.
-                ouderWijziging.setHistorischeInhoud(verwerkPuntOuder(ouderWijziging.getHistorischeInhoud()));
-            }
+            betrokkenheidIsVervallen(ouderWijziging, acties, onderzoekMapper, gerelateerdeOuderBetrokkenheid, mijnKindBetrokkenheid);
         } else if (actueleBetrokkenheidEntiteit != null) {
-            LOGGER.debug("Betrokkenheid is nieuw");
-            // De betrokkenheid is gevonden als 'nieuw' record. Dit betekent dat de volledige betrokkenheid
-            // nieuw is. Om dit als mutatie te leveren dienen alle gerelateerde 'actuele' groepen als actueel
-            // te worden verwerkt.
-            betrokkenheidMutatieVerwerker.verwerk(
-                ouderWijziging,
-                actueleBetrokkenheidEntiteit,
-                null,
-                null,
-                acties,
-                Collections.<Long>emptyList(),
-                Collections.<Long>emptyList(),
-                onderzoekMapper,
-                actieHisVolledigLocator);
-
-            ouderschapMutatieVerwerker.verwerk(
-                ouderWijziging,
-                HistorieSetUtil.getActueleRecord(gerelateerdeBetrokkenheid.getOuderOuderschapHistorie()),
-                null,
-                null,
-                null,
-                acties,
-                Collections.<Long>emptyList(),
-                Collections.<Long>emptyList(),
-                onderzoekMapper,
-                actieHisVolledigLocator);
-            // getGezagMutatieVerwerker(indicatieOuder).verwerk(
-            // gezagWijziging,
-            // HistorieSetUtil.getActueleRecord(gerelateerdeBetrokkenheid.getOuderOuderlijkGezagHistorie()),
-            // null,
-            // null,
-            // null,
-            // acties,
-            // Collections.<Long>emptyList(),
-            // Collections.<Long>emptyList(),
-            // onderzoekMapper,
-            // actieHisVolledigLocator);
-
-            if (gerelateerdePersoon != null) {
-                geboorteMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonGeboorteHistorie()),
-                    null,
-                    null,
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-                identificatienummersMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonIdentificatienummersHistorie()),
-                    null,
-                    null,
-                    null,
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-                samengesteldeNaamMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonSamengesteldeNaamHistorie()),
-                    null,
-                    null,
-                    null,
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-                geslachtsaanduidingMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonGeslachtsaanduidingHistorie()),
-                    null,
-                    null,
-                    null,
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-            } else {
-                LOGGER.debug("Betrokkenheid is nieuw; punt ouder");
-                // Als er geen gekoppeld persoon is, dan is dit een 'punt' ouder.
-                ouderWijziging.setActueleInhoud(verwerkPuntOuder(ouderWijziging.getActueleInhoud()));
-            }
-
+            betrokkenheidIsNieuw(ouderWijziging, acties, onderzoekMapper, gerelateerdeOuderBetrokkenheid, mijnKindBetrokkenheid);
         } else {
-            LOGGER.debug("Betrokkenheid is niet geraakt");
-
-            // De betrokkenheid is niet geraakt; bepaal het 'ouder zijn' nu op basis van de historie van ouderschap.
-            final HisOuderOuderschapModel actueleOuderschapEntiteit = bepaalActueel(gerelateerdeBetrokkenheid.getOuderOuderschapHistorie(), acties);
-            final HisOuderOuderschapModel beeindigdeOuderschapEntiteit = bepaalBeeindiging(gerelateerdeBetrokkenheid.getOuderOuderschapHistorie(), acties);
-            final HisOuderOuderschapModel vervallenOuderschapEntiteit = bepaalVerval(gerelateerdeBetrokkenheid.getOuderOuderschapHistorie(), acties);
-
-            if (actueleOuderschapEntiteit != null) {
-                LOGGER.debug("Ouderschap is nieuw");
-                // Het ouderschap is gevonden als 'nieuw' record. Dit betekent dat het ouderschap nieuw is. Om dit als
-                // mutatie te leveren dienen alle gerelateerde 'actuele' groepen als actueel te worden verwerkt.
-                ouderschapMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    actueleOuderschapEntiteit,
-                    null,
-                    null,
-                    null,
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-                // getGezagMutatieVerwerker(indicatieOuder).verwerk(
-                // gezagWijziging,
-                // HistorieSetUtil.getActueleRecord(gerelateerdeBetrokkenheid.getOuderOuderlijkGezagHistorie()),
-                // null,
-                // null,
-                // null,
-                // acties,
-                // Collections.<Long>emptyList(),
-                // Collections.<Long>emptyList(),
-                // onderzoekMapper,
-                // actieHisVolledigLocator);
-
-                if (gerelateerdePersoon != null) {
-                    geboorteMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonGeboorteHistorie()),
-                        null,
-                        null,
-                        acties,
-                        Collections.<Long>emptyList(),
-                        Collections.<Long>emptyList(),
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                    identificatienummersMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonIdentificatienummersHistorie()),
-                        null,
-                        null,
-                        null,
-                        acties,
-                        Collections.<Long>emptyList(),
-                        Collections.<Long>emptyList(),
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                    samengesteldeNaamMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonSamengesteldeNaamHistorie()),
-                        null,
-                        null,
-                        null,
-                        acties,
-                        Collections.<Long>emptyList(),
-                        Collections.<Long>emptyList(),
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                    geslachtsaanduidingMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonGeslachtsaanduidingHistorie()),
-                        null,
-                        null,
-                        null,
-                        acties,
-                        Collections.<Long>emptyList(),
-                        Collections.<Long>emptyList(),
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                } else {
-                    LOGGER.debug("Ouderschap is nieuw; punt ouder");
-                    // Als er geen gekoppeld persoon is, dan is dit een 'punt' ouder.
-                    ouderWijziging.setActueleInhoud(verwerkPuntOuder(ouderWijziging.getActueleInhoud()));
-                }
-            } else if (beeindigdeOuderschapEntiteit != null) {
-                LOGGER.debug("Ouderschap is beeindigd");
-                // We hebben het ouderschap gevonden als 'beeindigd' record. Logischer wijs *MOET* er nu ook een
-                // vervallen record aanwezig zijn waaruit we de historische gegevens halen.
-                ouderschapMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    null,
-                    beeindigdeOuderschapEntiteit,
-                    null,
-                    null,
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-            }
-
-            if (vervallenOuderschapEntiteit != null) {
-                LOGGER.debug("Ouderschap is vervallen");
-                // Het ouderschap is gevonden als 'vervallen' record. Dit betekent dat het volledig ouder zijn is
-                // gecorrigeerd. Om dit als mutatie te leveren dienen alle gerelateerde 'actuele' groepen als
-                // historisch te worden verwerkt. Als een groep historisch wordt verwerkt dan wordt voor verantwoording
-                // (groepen 8x) de gekoppelde actie inhoud gebruikt.
-                // Nota: het is niet relevant of er nu ook tegelijk een actie inhoud is gevonden.
-                ouderschapMutatieVerwerker.verwerk(
-                    ouderWijziging,
-                    null,
-                    null,
-                    null,
-                    vervallenOuderschapEntiteit,
-                    acties,
-                    Collections.<Long>emptyList(),
-                    Collections.<Long>emptyList(),
-                    onderzoekMapper,
-                    actieHisVolledigLocator);
-
-                // Het kan mogelijk voorkomen dat dit ook de enige wijziging is die gevonden kan worden. Om dan de
-                // gerelateerde verantwoording te kunnen leveren, dient de actie verval gebruikt te worden als
-                // verantwoording (groepen 8x) in de actuele gegevens. We doen dit alleen als er geen andere actuele
-                // gegevens zijn gevonden want dan komen die uit een andere actie inhoud (en dan zou die logischerwijs
-                // hetzelfde moeten bevatten).
-                if (ouderWijziging.getActueleInhoud() == null) {
-                    ouderschapMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        null,
-                        null,
-                        vervallenOuderschapEntiteit,
-                        null,
-                        acties,
-                        Collections.<Long>emptyList(),
-                        Collections.<Long>emptyList(),
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                }
-
-                // getGezagMutatieVerwerker(indicatieOuder).verwerk(
-                // gezagWijziging,
-                // null,
-                // null,
-                // null,
-                // HistorieSetUtil.getActueleRecord(gerelateerdeBetrokkenheid.getOuderOuderlijkGezagHistorie()),
-                // acties,
-                // Collections.<Long>emptyList(),
-                // Collections.<Long>emptyList(),
-                // onderzoekMapper,
-                // actieHisVolledigLocator);
-
-                if (gerelateerdePersoon != null) {
-                    geboorteMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        null,
-                        null,
-                        HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonGeboorteHistorie()),
-                        acties,
-                        Collections.<Long>emptyList(),
-                        Collections.<Long>emptyList(),
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                    identificatienummersMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        null,
-                        null,
-                        null,
-                        HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonIdentificatienummersHistorie()),
-                        acties,
-                        Collections.<Long>emptyList(),
-                        Collections.<Long>emptyList(),
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                    samengesteldeNaamMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        null,
-                        null,
-                        null,
-                        HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonSamengesteldeNaamHistorie()),
-                        acties,
-                        Collections.<Long>emptyList(),
-                        Collections.<Long>emptyList(),
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                    geslachtsaanduidingMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        null,
-                        null,
-                        null,
-                        HistorieSetUtil.getActueleRecord(gerelateerdePersoon.getPersoonGeslachtsaanduidingHistorie()),
-                        acties,
-                        Collections.<Long>emptyList(),
-                        Collections.<Long>emptyList(),
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                } else {
-                    LOGGER.debug("Ouderschap is vervallen; punt ouder");
-                    // Als er geen gekoppeld persoon is, dan is dit een 'punt' ouder.
-                    ouderWijziging.setHistorischeInhoud(verwerkPuntOuder(ouderWijziging.getHistorischeInhoud()));
-                }
-            }
-
-            if (actueleOuderschapEntiteit == null && beeindigdeOuderschapEntiteit == null && vervallenOuderschapEntiteit == null) {
-                LOGGER.debug("Ouderschap is niet geraakt");
-                // Geen veranderingen in 'ouderschap'; overige groepen van betrokkenheid en de groepen van
-                // persoon gewoon verwerking voor veranderingen.
-
-                if (gerelateerdePersoon != null) {
-                    final List<Long> ouderObjectSleutels = ObjectSleutelsHelper.bepaalObjectSleutels(gerelateerdePersoon);
-
-                    geboorteMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        gerelateerdePersoon.getPersoonGeboorteHistorie(),
-                        acties,
-                        ouderObjectSleutels,
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                    identificatienummersMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        gerelateerdePersoon.getPersoonIdentificatienummersHistorie(),
-                        acties,
-                        ouderObjectSleutels,
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                    samengesteldeNaamMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        gerelateerdePersoon.getPersoonSamengesteldeNaamHistorie(),
-                        acties,
-                        ouderObjectSleutels,
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                    geslachtsaanduidingMutatieVerwerker.verwerk(
-                        ouderWijziging,
-                        gerelateerdePersoon.getPersoonGeslachtsaanduidingHistorie(),
-                        acties,
-                        ouderObjectSleutels,
-                        onderzoekMapper,
-                        actieHisVolledigLocator);
-                }
-            }
+            betrokkenheidIsNietGeraakt(ouderWijziging, acties, onderzoekMapper, gerelateerdeOuderBetrokkenheid);
         }
 
         // Gezag
-        final List<Long> betrokkenheidObjectSleutels = ObjectSleutelsHelper.bepaalObjectSleutels(gerelateerdeBetrokkenheid);
-        getGezagMutatieVerwerker(indicatieOuder).verwerk(
-            gezagWijziging,
-            gerelateerdeBetrokkenheid.getOuderOuderlijkGezagHistorie(),
-            acties,
-            betrokkenheidObjectSleutels,
-            onderzoekMapper,
-            actieHisVolledigLocator);
+        verwerkGezag(indicatieOuder, gezagWijziging, acties, onderzoekMapper, gerelateerdeOuderBetrokkenheid, gerelateerdeOuderBetrokkenheidIdentiteit);
 
         ouderGeslachtAdellijkeTitelPredikaatNabewerking.voerNabewerkingUit(ouderWijziging);
         LOGGER.debug("Betrokkenheid verwerkt");
+    }
+
+    private void betrokkenheidIsVervallen(final Lo3Wijzigingen<Lo3OuderInhoud> ouderWijziging, final List<Long> acties, final OnderzoekMapper onderzoekMapper,
+                                          final MetaObject gerelateerdeOuderBetrokkenheid, final MetaObject mijnKindBetrokkenheid) {
+        LOGGER.debug("Betrokkenheid is vervallen");
+        final MetaRecord historieBetrokkenheidEntiteit =
+                bepaalVerval(MetaModelUtil.getRecords(mijnKindBetrokkenheid, PersoonslijstMapper.KIND_GROEP_ELEMENT), acties);
+
+        final MetaObject gerelateerdeOuderPersoon =
+                MetaModelUtil.getObject(gerelateerdeOuderBetrokkenheid, PersoonslijstMapper.GERELATEERDE_OUDER_PERSOON_ELEMENT);
+
+        final MetaRecord mijnKindBetrokkenheidIdentiteit =
+                MetaModelUtil.getIdentiteitRecord(mijnKindBetrokkenheid, PersoonslijstMapper.KIND_IDENTITEIT_GROEP_ELEMENT);
+        final MetaRecord gerelateerdeOuderBetrokkenheidIdentiteit =
+                MetaModelUtil.getIdentiteitRecord(gerelateerdeOuderBetrokkenheid, PersoonslijstMapper.GERELATEERDE_OUDER_IDENTITEIT_GROEP_ELEMENT);
+        final MetaRecord gerelateerdeOuderPersoonIdentiteit = gerelateerdeOuderPersoon == null ? null
+                : MetaModelUtil.getIdentiteitRecord(gerelateerdeOuderPersoon, PersoonslijstMapper.GERELATEERDE_OUDER_PERSOON_IDENTITEIT_GROEP_ELEMENT);
+        // De betrokkenheid is gevonden als 'vervallen' record. Dit betekent dat de volledige
+        // betrokkenheid
+        // gecorrigeerd is. Om dit als mutatie te leveren dienen alle gerelateerde 'actuele'
+        // groepen als historisch
+        // te worden verwerkt. Als een groep historisch wordt verwerkt dan wordt voor
+        // verantwoording (groepen 8x) de
+        // gekoppelde actie inhoud gebruikt.
+        // Nota: het is niet relevant of er nu ook tegelijk een actie inhoud is gevonden.
+        betrokkenheidMutatieVerwerker.verwerk(ouderWijziging, mijnKindBetrokkenheidIdentiteit, null, null, historieBetrokkenheidEntiteit, acties,
+                Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+
+        // Het kan mogelijk voorkomen dat dit ook de enige wijziging is die gevonden kan worden.
+        // Om dan de
+        // gerelateerde verantwoording te kunnen leveren, dient de actie verval gebruikt te
+        // worden als
+        // verantwoording (groepen 8x) in de actuele gegevens. We doen dit alleen als er geen
+        // andere actuele
+        // gegevens zijn gevonden want dan komen die uit een andere actie inhoud (en dan zou die
+        // logischerwijs
+        // hetzelfde moeten bevatten).
+        if (ouderWijziging.getActueleInhoud() == null) {
+            LOGGER.debug("Betrokkenheid is vervallen; verwerk ook als actueel");
+            betrokkenheidMutatieVerwerker.verwerk(ouderWijziging, mijnKindBetrokkenheidIdentiteit, null, historieBetrokkenheidEntiteit, null, acties,
+                    Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+        }
+
+        ouderschapMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderBetrokkenheidIdentiteit, null, null, null,
+                MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderBetrokkenheid, OuderOuderschapMapper.GROEP_ELEMENT)), acties,
+                Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+
+        if (gerelateerdeOuderPersoon != null) {
+            geboorteMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit, null, null,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeboorteMapper.GROEP_ELEMENT)), acties,
+                    Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            identificatienummersMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit, null, null, null,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderIdentificatienummersMapper.GROEP_ELEMENT)),
+                    acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            samengesteldeNaamMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit, null, null, null,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderSamengesteldeNaamMapper.GROEP_ELEMENT)), acties,
+                    Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            geslachtsaanduidingMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit, null, null, null,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeslachtsaanduidingMapper.GROEP_ELEMENT)),
+                    acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+        } else {
+            LOGGER.debug("Betrokkenheid is vervallen; punt ouder");
+            // Als er geen gekoppeld persoon is, dan is dit een 'punt' ouder.
+            ouderWijziging.setHistorischeInhoud(verwerkPuntOuder(ouderWijziging.getHistorischeInhoud()));
+        }
+    }
+
+    private void betrokkenheidIsNieuw(final Lo3Wijzigingen<Lo3OuderInhoud> ouderWijziging, final List<Long> acties, final OnderzoekMapper onderzoekMapper,
+                                      final MetaObject gerelateerdeOuderBetrokkenheid, final MetaObject mijnKindBetrokkenheid) {
+        LOGGER.debug("Betrokkenheid is nieuw");
+        final MetaRecord actueleBetrokkenheidEntiteit =
+                bepaalActueel(MetaModelUtil.getRecords(mijnKindBetrokkenheid, PersoonslijstMapper.KIND_GROEP_ELEMENT), acties);
+        final MetaObject gerelateerdeOuderPersoon =
+                MetaModelUtil.getObject(gerelateerdeOuderBetrokkenheid, PersoonslijstMapper.GERELATEERDE_OUDER_PERSOON_ELEMENT);
+
+        final MetaRecord mijnKindBetrokkenheidIdentiteit =
+                MetaModelUtil.getIdentiteitRecord(mijnKindBetrokkenheid, PersoonslijstMapper.KIND_IDENTITEIT_GROEP_ELEMENT);
+        final MetaRecord gerelateerdeOuderBetrokkenheidIdentiteit =
+                MetaModelUtil.getIdentiteitRecord(gerelateerdeOuderBetrokkenheid, PersoonslijstMapper.GERELATEERDE_OUDER_IDENTITEIT_GROEP_ELEMENT);
+        final MetaRecord gerelateerdeOuderPersoonIdentiteit = gerelateerdeOuderPersoon == null ? null
+                : MetaModelUtil.getIdentiteitRecord(gerelateerdeOuderPersoon, PersoonslijstMapper.GERELATEERDE_OUDER_PERSOON_IDENTITEIT_GROEP_ELEMENT);
+
+        // De betrokkenheid is gevonden als 'nieuw' record. Dit betekent dat de volledige
+        // betrokkenheid
+        // nieuw is. Om dit als mutatie te leveren dienen alle gerelateerde 'actuele' groepen
+        // als actueel
+        // te worden verwerkt.
+        betrokkenheidMutatieVerwerker.verwerk(ouderWijziging, mijnKindBetrokkenheidIdentiteit, actueleBetrokkenheidEntiteit, null, null, acties,
+                Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+
+        ouderschapMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderBetrokkenheidIdentiteit,
+                MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderBetrokkenheid, AbstractOuderGezagMapper.GROEP_ELEMENT)), null,
+                null, null, acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+
+        if (gerelateerdeOuderPersoon != null) {
+            geboorteMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeboorteMapper.GROEP_ELEMENT)), null, null,
+                    acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            identificatienummersMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderIdentificatienummersMapper.GROEP_ELEMENT)), null,
+                    null, null, acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            samengesteldeNaamMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderSamengesteldeNaamMapper.GROEP_ELEMENT)), null,
+                    null, null, acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            geslachtsaanduidingMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeslachtsaanduidingMapper.GROEP_ELEMENT)), null,
+                    null, null, acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+        } else {
+            LOGGER.debug("Betrokkenheid is nieuw; punt ouder");
+            // Als er geen gekoppeld persoon is, dan is dit een 'punt' ouder.
+            ouderWijziging.setActueleInhoud(verwerkPuntOuder(ouderWijziging.getActueleInhoud()));
+        }
+    }
+
+    private void betrokkenheidIsNietGeraakt(final Lo3Wijzigingen<Lo3OuderInhoud> ouderWijziging, final List<Long> acties, final OnderzoekMapper onderzoekMapper,
+                                            final MetaObject gerelateerdeOuderBetrokkenheid) {
+        LOGGER.debug("Betrokkenheid is niet geraakt");
+        // De betrokkenheid is niet geraakt; bepaal het 'ouder zijn' nu op basis van de historie
+        // van ouderschap.
+        final MetaObject gerelateerdeOuderPersoon =
+                MetaModelUtil.getObject(gerelateerdeOuderBetrokkenheid, PersoonslijstMapper.GERELATEERDE_OUDER_PERSOON_ELEMENT);
+        final MetaRecord gerelateerdeOuderBetrokkenheidIdentiteit =
+                MetaModelUtil.getIdentiteitRecord(gerelateerdeOuderBetrokkenheid, PersoonslijstMapper.GERELATEERDE_OUDER_IDENTITEIT_GROEP_ELEMENT);
+        final MetaRecord gerelateerdeOuderPersoonIdentiteit = gerelateerdeOuderPersoon == null ? null
+                : MetaModelUtil.getIdentiteitRecord(gerelateerdeOuderPersoon, PersoonslijstMapper.GERELATEERDE_OUDER_PERSOON_IDENTITEIT_GROEP_ELEMENT);
+        final MetaRecord actueleOuderschapEntiteit =
+                bepaalActueel(MetaModelUtil.getRecords(gerelateerdeOuderBetrokkenheid, OuderOuderschapMapper.GROEP_ELEMENT), acties);
+        final MetaRecord beeindigdeOuderschapEntiteit =
+                bepaalBeeindiging(MetaModelUtil.getRecords(gerelateerdeOuderBetrokkenheid, OuderOuderschapMapper.GROEP_ELEMENT), acties);
+        final MetaRecord vervallenOuderschapEntiteit =
+                bepaalVerval(MetaModelUtil.getRecords(gerelateerdeOuderBetrokkenheid, OuderOuderschapMapper.GROEP_ELEMENT), acties);
+
+        if ((actueleOuderschapEntiteit != null) && (vervallenOuderschapEntiteit == null)) {
+            ouderschapIsNieuw(ouderWijziging, acties, onderzoekMapper, gerelateerdeOuderPersoon, gerelateerdeOuderBetrokkenheidIdentiteit,
+                    gerelateerdeOuderPersoonIdentiteit, actueleOuderschapEntiteit);
+        } else if (beeindigdeOuderschapEntiteit != null) {
+            ouderschapIsBeeindigd(ouderWijziging, acties, onderzoekMapper, gerelateerdeOuderBetrokkenheidIdentiteit, beeindigdeOuderschapEntiteit);
+        }
+
+        if ((vervallenOuderschapEntiteit != null) && (actueleOuderschapEntiteit == null)) {
+            ouderschapIsVervallen(ouderWijziging, acties, onderzoekMapper, gerelateerdeOuderPersoon, gerelateerdeOuderBetrokkenheidIdentiteit,
+                    gerelateerdeOuderPersoonIdentiteit, vervallenOuderschapEntiteit);
+        }
+
+
+        if (isOuderschapNietGeraakt(actueleOuderschapEntiteit, beeindigdeOuderschapEntiteit, vervallenOuderschapEntiteit)) {
+            ouderschapNietGeraakt(ouderWijziging, acties, onderzoekMapper, gerelateerdeOuderPersoon, gerelateerdeOuderPersoonIdentiteit);
+        }
+    }
+
+    private boolean isOuderschapNietGeraakt(final MetaRecord actueleOuderschapEntiteit,
+                                            final MetaRecord beeindigdeOuderschapEntiteit,
+                                            final MetaRecord vervallenOuderschapEntiteit) {
+        boolean ouderschapLeeg = actueleOuderschapEntiteit == null;
+        ouderschapLeeg = ouderschapLeeg && beeindigdeOuderschapEntiteit == null;
+        ouderschapLeeg = ouderschapLeeg && vervallenOuderschapEntiteit == null;
+        boolean ouderschapAanwezig = actueleOuderschapEntiteit != null;
+        ouderschapAanwezig = ouderschapAanwezig && vervallenOuderschapEntiteit != null;
+        return ouderschapLeeg || ouderschapAanwezig;
+    }
+    private void ouderschapNietGeraakt(final Lo3Wijzigingen<Lo3OuderInhoud> ouderWijziging, final List<Long> acties, final OnderzoekMapper onderzoekMapper,
+                                       final MetaObject gerelateerdeOuderPersoon, final MetaRecord gerelateerdeOuderPersoonIdentiteit) {
+        LOGGER.debug("Ouderschap is niet geraakt");
+        // Geen veranderingen in 'ouderschap'; overige groepen van betrokkenheid en de
+        // groepen van
+        // persoon gewoon verwerking voor veranderingen.
+
+        if (gerelateerdeOuderPersoon != null) {
+            final List<Long> ouderObjectSleutels = ObjectSleutelsHelper.bepaalObjectSleutels(gerelateerdeOuderPersoon);
+
+            geboorteMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeboorteMapper.GROEP_ELEMENT), acties, ouderObjectSleutels,
+                    onderzoekMapper);
+            identificatienummersMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderIdentificatienummersMapper.GROEP_ELEMENT), acties, ouderObjectSleutels,
+                    onderzoekMapper);
+            samengesteldeNaamMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderSamengesteldeNaamMapper.GROEP_ELEMENT), acties, ouderObjectSleutels,
+                    onderzoekMapper);
+            geslachtsaanduidingMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeslachtsaanduidingMapper.GROEP_ELEMENT), acties, ouderObjectSleutels,
+                    onderzoekMapper);
+        }
+    }
+
+    private void ouderschapIsVervallen(final Lo3Wijzigingen<Lo3OuderInhoud> ouderWijziging, final List<Long> acties, final OnderzoekMapper onderzoekMapper,
+                                       final MetaObject gerelateerdeOuderPersoon, final MetaRecord gerelateerdeOuderBetrokkenheidIdentiteit,
+                                       final MetaRecord gerelateerdeOuderPersoonIdentiteit, final MetaRecord vervallenOuderschapEntiteit) {
+        LOGGER.debug("Ouderschap is vervallen");
+        // Het ouderschap is gevonden als 'vervallen' record. Dit betekent dat het volledig
+        // ouder zijn is
+        // gecorrigeerd. Om dit als mutatie te leveren dienen alle gerelateerde 'actuele'
+        // groepen als
+        // historisch te worden verwerkt. Als een groep historisch wordt verwerkt dan wordt
+        // voor verantwoording
+        // (groepen 8x) de gekoppelde actie inhoud gebruikt.
+        // Nota: het is niet relevant of er nu ook tegelijk een actie inhoud is gevonden.
+        ouderschapMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderBetrokkenheidIdentiteit, null, null, null, vervallenOuderschapEntiteit,
+                acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+
+        // Het kan mogelijk voorkomen dat dit ook de enige wijziging is die gevonden kan
+        // worden. Om dan de
+        // gerelateerde verantwoording te kunnen leveren, dient de actie verval gebruikt te
+        // worden als
+        // verantwoording (groepen 8x) in de actuele gegevens. We doen dit alleen als er
+        // geen andere actuele
+        // gegevens zijn gevonden want dan komen die uit een andere actie inhoud (en dan zou
+        // die logischerwijs
+        // hetzelfde moeten bevatten).
+        if (ouderWijziging.getActueleInhoud() == null) {
+            ouderschapMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderBetrokkenheidIdentiteit, null, null, vervallenOuderschapEntiteit, null,
+                    acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+        }
+
+        if (gerelateerdeOuderPersoon != null) {
+            geboorteMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit, null, null,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeboorteMapper.GROEP_ELEMENT)), acties,
+                    Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            identificatienummersMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit, null, null, null,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderIdentificatienummersMapper.GROEP_ELEMENT)),
+                    acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            samengesteldeNaamMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit, null, null, null,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderSamengesteldeNaamMapper.GROEP_ELEMENT)),
+                    acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            geslachtsaanduidingMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit, null, null, null,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeslachtsaanduidingMapper.GROEP_ELEMENT)),
+                    acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+        } else {
+            LOGGER.debug("Ouderschap is vervallen; punt ouder");
+            // Als er geen gekoppeld persoon is, dan is dit een 'punt' ouder.
+            ouderWijziging.setHistorischeInhoud(verwerkPuntOuder(ouderWijziging.getHistorischeInhoud()));
+        }
+    }
+
+    private void ouderschapIsBeeindigd(final Lo3Wijzigingen<Lo3OuderInhoud> ouderWijziging, final List<Long> acties, final OnderzoekMapper onderzoekMapper,
+                                       final MetaRecord gerelateerdeOuderBetrokkenheidIdentiteit, final MetaRecord beeindigdeOuderschapEntiteit) {
+        LOGGER.debug("Ouderschap is beeindigd");
+        // We hebben het ouderschap gevonden als 'beeindigd' record. Logischer wijs *MOET*
+        // er nu ook een
+        // vervallen record aanwezig zijn waaruit we de historische gegevens halen.
+        ouderschapMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderBetrokkenheidIdentiteit, null, beeindigdeOuderschapEntiteit, null, null,
+                acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+    }
+
+    private void ouderschapIsNieuw(final Lo3Wijzigingen<Lo3OuderInhoud> ouderWijziging, final List<Long> acties, final OnderzoekMapper onderzoekMapper,
+                                   final MetaObject gerelateerdeOuderPersoon, final MetaRecord gerelateerdeOuderBetrokkenheidIdentiteit,
+                                   final MetaRecord gerelateerdeOuderPersoonIdentiteit, final MetaRecord actueleOuderschapEntiteit) {
+        LOGGER.debug("Ouderschap is nieuw");
+        // Het ouderschap is gevonden als 'nieuw' record. Dit betekent dat het ouderschap
+        // nieuw is. Om dit als
+        // mutatie te leveren dienen alle gerelateerde 'actuele' groepen als actueel te
+        // worden verwerkt.
+        ouderschapMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderBetrokkenheidIdentiteit, actueleOuderschapEntiteit, null, null, null,
+                acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+
+        if (gerelateerdeOuderPersoon != null) {
+            geboorteMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeboorteMapper.GROEP_ELEMENT)), null, null,
+                    acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            identificatienummersMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderIdentificatienummersMapper.GROEP_ELEMENT)),
+                    null, null, null, acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            samengesteldeNaamMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderSamengesteldeNaamMapper.GROEP_ELEMENT)),
+                    null, null, null, acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+            geslachtsaanduidingMutatieVerwerker.verwerk(ouderWijziging, gerelateerdeOuderPersoonIdentiteit,
+                    MetaModelUtil.getActueleRecord(MetaModelUtil.getRecords(gerelateerdeOuderPersoon, OuderGeslachtsaanduidingMapper.GROEP_ELEMENT)),
+                    null, null, null, acties, Collections.<Long>emptyList(), Collections.<Long>emptyList(), onderzoekMapper);
+        } else {
+            LOGGER.debug("Ouderschap is nieuw; punt ouder");
+            // Als er geen gekoppeld persoon is, dan is dit een 'punt' ouder.
+            ouderWijziging.setActueleInhoud(verwerkPuntOuder(ouderWijziging.getActueleInhoud()));
+        }
+    }
+
+    private void verwerkGezag(final AanduidingOuder indicatieOuder, final Lo3Wijzigingen<Lo3GezagsverhoudingInhoud> gezagWijziging, final List<Long> acties,
+                              final OnderzoekMapper onderzoekMapper, final MetaObject gerelateerdeOuderBetrokkenheid,
+                              final MetaRecord gerelateerdeOuderBetrokkenheidIdentiteit) {
+        final List<Long> betrokkenheidObjectSleutels = ObjectSleutelsHelper.bepaalObjectSleutels(gerelateerdeOuderBetrokkenheid);
+        getGezagMutatieVerwerker(indicatieOuder).verwerk(gezagWijziging, gerelateerdeOuderBetrokkenheidIdentiteit,
+                MetaModelUtil.getRecords(gerelateerdeOuderBetrokkenheid, AbstractOuderGezagMapper.GROEP_ELEMENT), acties, betrokkenheidObjectSleutels,
+                onderzoekMapper);
     }
 
     private Lo3Categorie<Lo3OuderInhoud> verwerkPuntOuder(final Lo3Categorie<Lo3OuderInhoud> categorie) {
         final Lo3OuderInhoud.Builder builder = new Lo3OuderInhoud.Builder(categorie.getInhoud());
         builder.geslachtsnaam(new Lo3String("."));
 
-        return new Lo3Categorie<Lo3OuderInhoud>(builder.build(), categorie.getDocumentatie(), categorie.getHistorie(), categorie.getLo3Herkomst());
+        return new Lo3Categorie<>(builder.build(), categorie.getDocumentatie(), categorie.getHistorie(), categorie.getLo3Herkomst());
     }
 
-    private AbstractMaterieelMutatieVerwerker<Lo3GezagsverhoudingInhoud, ?, HisOuderOuderlijkGezagModel> getGezagMutatieVerwerker(
-        final LO3AanduidingOuder indicatieOuder)
-    {
+    private AbstractMaterieelMutatieVerwerker<Lo3GezagsverhoudingInhoud, ?> getGezagMutatieVerwerker(final AanduidingOuder indicatieOuder) {
         switch (indicatieOuder) {
-            case OUDER1:
+            case OUDER_1:
                 return gezag1MutatieVerwerker;
-            case OUDER2:
+            case OUDER_2:
                 return gezag2MutatieVerwerker;
             default:
                 throw new IllegalArgumentException();

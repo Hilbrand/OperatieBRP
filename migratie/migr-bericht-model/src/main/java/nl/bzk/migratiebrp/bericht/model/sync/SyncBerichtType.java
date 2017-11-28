@@ -23,17 +23,25 @@ public enum SyncBerichtType {
     /**
      * Autorisatie (IV.AUT).
      */
-    AUTORISATIE("IV.AUT");
+    AUTORISATIE("IV.AUT"),
+
+    /**
+     * Protocollering (IV.PROT).
+     */
+    PROTOCOLLERING("IV.PROT");
 
     private final String type;
 
-    private SyncBerichtType(final String type) {
+    /**
+     * Constructor.
+     * @param type identifier
+     */
+    SyncBerichtType(final String type) {
         this.type = type;
     }
 
     /**
      * Geef de waarde van type.
-     *
      * @return type
      */
     public String getType() {
@@ -42,12 +50,10 @@ public enum SyncBerichtType {
 
     /**
      * Bepaal de waarde op basis van de type.
-     * 
-     * @param type
-     *            code
+     * @param type code
      * @return een SyncBerichtType object
      */
-    public static final SyncBerichtType valueOfType(final String type) {
+    public static SyncBerichtType valueOfType(final String type) {
         for (final SyncBerichtType waarde : SyncBerichtType.values()) {
             if (type.equals(waarde.getType())) {
                 return waarde;
@@ -55,5 +61,4 @@ public enum SyncBerichtType {
         }
         throw new IllegalArgumentException("Onbekend type voor SyncBerichtType: " + type);
     }
-
 }

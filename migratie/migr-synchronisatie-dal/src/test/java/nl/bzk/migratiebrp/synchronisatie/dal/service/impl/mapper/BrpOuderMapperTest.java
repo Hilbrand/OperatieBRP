@@ -7,19 +7,22 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.ArrayList;
+
 import javax.inject.Inject;
-import junit.framework.Assert;
+
+import org.junit.Test;
+
+import org.junit.Assert;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
-import org.junit.Test;
 
 public class BrpOuderMapperTest extends BrpAbstractTest {
 
@@ -32,12 +35,11 @@ public class BrpOuderMapperTest extends BrpAbstractTest {
     public void testMapInhoud() {
         final BetrokkenheidOuderHistorie historie =
                 new BetrokkenheidOuderHistorie(new Betrokkenheid(SoortBetrokkenheid.OUDER, new Relatie(
-                    SoortRelatie.FAMILIERECHTELIJKE_BETREKKING)), false);
+                        SoortRelatie.FAMILIERECHTELIJKE_BETREKKING)));
 
         final BrpOuderInhoud result = mapper.mapInhoud(historie, brpOnderzoekMapper);
 
         Assert.assertNotNull(result);
-        Assert.assertFalse(BrpBoolean.unwrap(result.getIndicatieOuder()));
         Assert.assertNull(BrpBoolean.unwrap(result.getIndicatieOuderUitWieKindIsGeboren()));
     }
 }

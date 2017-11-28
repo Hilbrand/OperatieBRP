@@ -6,7 +6,6 @@
 
 /**
  * Package voor de interface(s) voor de autorisatie service.
- *
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.service.autorisatie;
 

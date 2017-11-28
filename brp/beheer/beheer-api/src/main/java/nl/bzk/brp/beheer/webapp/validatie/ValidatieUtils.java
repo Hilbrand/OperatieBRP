@@ -1,16 +1,15 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.validatie;
 
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumEvtDeelsOnbekendAttribuut;
-import nl.bzk.brp.model.basis.Attribuut;
+import java.time.LocalDate;
+import nl.bzk.algemeenbrp.util.common.DatumUtil;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.springframework.validation.Errors;
 
 /**
@@ -19,8 +18,19 @@ import org.springframework.validation.Errors;
 public final class ValidatieUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger();
-    private static final String VALIDEER_DATUM_LIGT_NA_DATUM_EERSTE_DATUM_TWEEDE_DATUM = "Valideer datum ligt na datum(eersteDatum={},tweedeDatum={})";
+    private static final String VALIDEER_DATUM_LIGT_NA_DATUM_EERSTE_DATUM_TWEEDE_DATUM = "Datum {} moet na datum {} liggen";
+    private static final String VALIDEER_DATUM_LIGT_OP_OF_NA_DATUM_EERSTE_DATUM_TWEEDE_DATUM = "Datum {} moet op of na datum {} liggen";
     private static final String VELD_MOETLATERZIJN = "veld.moetlaterzijn";
+    private static final String VELD_MOETGELIJKOFLATERZIJN = "veld.moetgelijkoflaterzijn";
+    private static final String VALIDEER_DATUM_BEVAT_GEEN_ONBEKENDE_DELEN = "Valideer datum {} is niet deels onbekend.";
+    private static final String VELD_MAGNIETDEELSONBEKENDZIJN = "veld.magnietdeelsonbekendzijn";
+    private static final String PATROON_ONBEKEND_JAAR = "0000";
+    private static final String PATROON_ONBEKEND_MAAND_OF_DAG = "00";
+    private static final int START_INDEX_JAAR = 0;
+    private static final int START_INDEX_MAAND = 4;
+    private static final int START_INDEX_DAG = 6;
+    private static final int EIND_INDEX_JAAR = 4;
+    private static final int EIND_INDEX_MAAND = 6;
 
     private ValidatieUtils() {
         // Niet instantieerbaar
@@ -28,7 +38,6 @@ public final class ValidatieUtils {
 
     /**
      * Voer een validatie uit.
-     *
      * @param errors errors object
      * @param validatie true als validatie is geslaagd, anders false
      * @param veld veld code (voor errors object)
@@ -47,7 +56,6 @@ public final class ValidatieUtils {
 
     /**
      * Valideer dat een waarde gevuld is (niet null).
-     *
      * @param errors errors object
      * @param waarde te controleren waarde
      * @param veld veld code (voor errors object)
@@ -57,63 +65,60 @@ public final class ValidatieUtils {
     }
 
     /**
-     * Geef de waarde van een attribuut.
-     *
-     * @param attribuut attribuut
-     * @param <T> attribuut waarde type
-     * @return attribuut waarde, of null als attribuut null is
+     * Valideer of te valideren datum op of na de huidige datum ligt.
+     * @param errors validatie error map
+     * @param teValiderenDatum datum welke gevalideerd moet worden
+     * @param teValiderenDatumVeld naam van het veld, moet overeenkomen met property binnen object
      */
-    public static <T> T getAttribuutWaarde(final Attribuut<T> attribuut) {
-        return attribuut == null ? null : attribuut.getWaarde();
+    public static void valideerDatumLigtNaHuidigeDatum(final Errors errors, final Integer teValiderenDatum, final String teValiderenDatumVeld) {
+        valideerDatumLigtNaHuidigeDatum(errors, teValiderenDatum, teValiderenDatumVeld, teValiderenDatumVeld);
     }
 
     /**
-     * Valideer dat een attribuut gevuld is (niet null).
-     *
-     * @param errors errors object
-     * @param attribuut te controleren attribuut
-     * @param veld veld code (voor errors object)
+     * Valideer of te valideren datum op of na de huidige datum ligt.
+     * @param errors validatie error map
+     * @param teValiderenDatum datum welke gevalideerd moet worden
+     * @param teValiderenDatumVeld naam van het veld, moet overeenkomen met property binnen object
+     * @param teValiderenDatumVeldNaam naam om te tonen in berichten
      */
-    public static void valideerVerplichtVeldAttribuut(final Errors errors, final Attribuut<?> attribuut, final String veld) {
-        valideerVerplichtVeld(errors, getAttribuutWaarde(attribuut), veld);
-    }
-
-    /**
-     * Valideer dat een datum (tweedeDatum) na een andere datum (eersteDatum) ligt. Indien een van de datums niet gevuld
-     * is, wordt de validatie niet uitgevoerd.
-     *
-     * @param errors errors object
-     * @param eersteDatum eerste datum
-     * @param tweedeDatum tweede datum (die na de eerste datum moet liggen)
-     * @param veldEersteDatum veld code (voor errors object)
-     * @param veldTweedeDatum veld code (voor errors object)
-     */
-    public static void valideerDatumLigtNaDatum(
-        final Errors errors,
-        final DatumEvtDeelsOnbekendAttribuut eersteDatum,
-        final DatumEvtDeelsOnbekendAttribuut tweedeDatum,
-        final String veldEersteDatum,
-        final String veldTweedeDatum)
-    {
-        final Integer eersteDatumInteger = getAttribuutWaarde(eersteDatum);
-        final Integer tweedeDatumInteger = getAttribuutWaarde(tweedeDatum);
-
-        if (eersteDatum != null && tweedeDatum != null) {
-            LOG.info(VALIDEER_DATUM_LIGT_NA_DATUM_EERSTE_DATUM_TWEEDE_DATUM, eersteDatumInteger, tweedeDatumInteger);
+    public static void valideerDatumLigtNaHuidigeDatum(final Errors errors, final Integer teValiderenDatum, final String teValiderenDatumVeld,
+                                                       final String teValiderenDatumVeldNaam) {
+        final Integer huidigeDatum = DatumUtil.vanDatumNaarInteger(LocalDate.now());
+        LOG.info(VALIDEER_DATUM_LIGT_OP_OF_NA_DATUM_EERSTE_DATUM_TWEEDE_DATUM, teValiderenDatum, huidigeDatum);
+        if (teValiderenDatum != null) {
             valideer(
-                errors,
-                vulOnbekendeDelenEindDatumAan(tweedeDatumInteger) > eersteDatumInteger,
-                veldTweedeDatum,
+                    errors,
+                    vulOnbekendeDelenEindDatumAan(teValiderenDatum) > huidigeDatum,
+                    teValiderenDatumVeld,
                     VELD_MOETLATERZIJN,
-                veldEersteDatum,
-                veldTweedeDatum);
+                    "Vandaag",
+                    teValiderenDatumVeldNaam);
+        }
+    }
+
+    /**
+     * Valideer of te valideren datum op of na de huidige datum ligt.
+     * @param errors validatie error map
+     * @param teValiderenDatum datum welke gevalideerd moet worden
+     * @param teValiderenDatumVeld naam van het veld
+     */
+    public static void valideerDatumLigtOpOfNaHuidigeDatum(final Errors errors, final Integer teValiderenDatum, final String teValiderenDatumVeld) {
+        final Integer huidigeDatum = DatumUtil.vanDatumNaarInteger(LocalDate.now());
+        LOG.info(VALIDEER_DATUM_LIGT_OP_OF_NA_DATUM_EERSTE_DATUM_TWEEDE_DATUM, teValiderenDatum, huidigeDatum);
+        if (teValiderenDatum != null) {
+            valideer(
+                    errors,
+                    vulOnbekendeDelenEindDatumAan(teValiderenDatum) >= huidigeDatum,
+                    teValiderenDatumVeld,
+                    VELD_MOETGELIJKOFLATERZIJN,
+                    "Vandaag",
+                    teValiderenDatumVeld);
         }
     }
 
     /**
      * Valideer dat een datum (tweedeDatum) na een andere datum (eersteDatum) ligt. Indien een van de datums niet gevuld
      * is, wordt de validatie niet uitgevoerd.
-     *
      * @param errors errors object
      * @param eersteDatum eerste datum
      * @param tweedeDatum tweede datum (die na de eerste datum moet liggen)
@@ -122,24 +127,71 @@ public final class ValidatieUtils {
      */
     public static void valideerDatumLigtNaDatum(
             final Errors errors,
-            final DatumAttribuut eersteDatum,
-            final DatumAttribuut tweedeDatum,
+            final Integer eersteDatum,
+            final Integer tweedeDatum,
             final String veldEersteDatum,
-            final String veldTweedeDatum)
-    {
-        final Integer eersteDatumInteger = getAttribuutWaarde(eersteDatum);
-        final Integer tweedeDatumInteger = getAttribuutWaarde(tweedeDatum);
-
+            final String veldTweedeDatum) {
         if (eersteDatum != null && tweedeDatum != null) {
-            LOG.info(VALIDEER_DATUM_LIGT_NA_DATUM_EERSTE_DATUM_TWEEDE_DATUM, eersteDatumInteger, tweedeDatumInteger);
+            LOG.info(VALIDEER_DATUM_LIGT_NA_DATUM_EERSTE_DATUM_TWEEDE_DATUM, tweedeDatum, eersteDatum);
             valideer(
                     errors,
-                    vulOnbekendeDelenEindDatumAan(tweedeDatumInteger) > eersteDatumInteger,
+                    vulOnbekendeDelenEindDatumAan(tweedeDatum) > eersteDatum,
                     veldTweedeDatum,
                     VELD_MOETLATERZIJN,
                     veldEersteDatum,
                     veldTweedeDatum);
         }
+    }
+
+    /**
+     * Valideer dat een datum (tweedeDatum) na een andere datum (eersteDatum) ligt. Indien een van de datums niet gevuld
+     * is, wordt de validatie niet uitgevoerd.
+     * @param errors errors object
+     * @param eersteDatum eerste datum
+     * @param tweedeDatum tweede datum (die na de eerste datum moet liggen)
+     * @param veldEersteDatum veld code (voor errors object)
+     * @param veldTweedeDatum veld code (voor errors object)
+     */
+    public static void valideerDatumLigtOpOfNaDatum(
+            final Errors errors,
+            final Integer eersteDatum,
+            final Integer tweedeDatum,
+            final String veldEersteDatum,
+            final String veldTweedeDatum) {
+        if (eersteDatum != null && tweedeDatum != null) {
+            LOG.info(VALIDEER_DATUM_LIGT_NA_DATUM_EERSTE_DATUM_TWEEDE_DATUM, tweedeDatum, eersteDatum);
+            valideer(
+                    errors,
+                    vulOnbekendeDelenEindDatumAan(tweedeDatum) >= eersteDatum,
+                    veldTweedeDatum,
+                    VELD_MOETGELIJKOFLATERZIJN,
+                    veldEersteDatum,
+                    veldTweedeDatum);
+        }
+    }
+
+    /**
+     * Bepaalt of de meegegeven datum geen deels onbekende datumdelen bevat.
+     * @param errors errors object
+     * @param veldDatum veld code (voor errors object)
+     * @param datumInteger De te controleren datum
+     */
+    public static void valideerGeenDeelsOnbekendeDelen(final Errors errors, final Integer datumInteger, final String veldDatum) {
+
+        if (datumInteger != null) {
+            // Valideer datum is niet 0
+            boolean result = datumInteger != 0;
+            final String datum = String.format("%08d", datumInteger);
+            // Valideer jaar is niet 0000
+            result &= !datum.substring(START_INDEX_JAAR, EIND_INDEX_JAAR).contains(PATROON_ONBEKEND_JAAR);
+            // Valideer maand is niet 00
+            result &= !datum.substring(START_INDEX_MAAND, EIND_INDEX_MAAND).contains(PATROON_ONBEKEND_MAAND_OF_DAG);
+            // Valideer dag is niet 00
+            result &= !datum.substring(START_INDEX_DAG).contains(PATROON_ONBEKEND_MAAND_OF_DAG);
+            LOG.info(VALIDEER_DATUM_BEVAT_GEEN_ONBEKENDE_DELEN, datumInteger);
+            valideer(errors, result, veldDatum, VELD_MAGNIETDEELSONBEKENDZIJN, veldDatum);
+        }
+
     }
 
     private static int vulOnbekendeDelenEindDatumAan(final Integer datumInteger) {

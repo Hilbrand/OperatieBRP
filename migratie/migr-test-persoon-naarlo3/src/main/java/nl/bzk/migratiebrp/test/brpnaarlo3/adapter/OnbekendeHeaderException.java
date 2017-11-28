@@ -16,11 +16,8 @@ public final class OnbekendeHeaderException extends RuntimeException {
 
     /**
      * Constructor voor {@link OnbekendeHeaderException}.
-     *
-     * @param header
-     *            header die onbekend is
-     * @param converterName
-     *            converter object waarin de exception gegooid wordt.
+     * @param header header die onbekend is
+     * @param converterName converter object waarin de exception gegooid wordt.
      */
     public OnbekendeHeaderException(final String header, final String converterName) {
         super(String.format("Onverwachte element (%1s) voor %2s.", header, converterName));

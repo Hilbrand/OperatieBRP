@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3GeslachtsaanduidingEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Een adellijke titel is in de BRP niet afhankelijk van het geslacht; in LO3 wel.
@@ -30,27 +28,27 @@ import org.springframework.stereotype.Component;
  * Tijdens de conversie wordt altijd de mannelijke vorm van een adellijke titel (of predikaat) gevuld bij de
  * persoonsgegevens. Dit moet worden aangepast aan de hand van het geslacht.
  */
-@Component
 public class BrpBepalenAdellijkeTitel {
 
-    private static final Map<Lo3AdellijkeTitelPredikaatCode, Lo3AdellijkeTitelPredikaatCode> MAP =
-            Collections.unmodifiableMap(new HashMap<Lo3AdellijkeTitelPredikaatCode, Lo3AdellijkeTitelPredikaatCode>() {
-                {
-                    put(new Lo3AdellijkeTitelPredikaatCode("B"), new Lo3AdellijkeTitelPredikaatCode("BS"));
-                    put(new Lo3AdellijkeTitelPredikaatCode("G"), new Lo3AdellijkeTitelPredikaatCode("GI"));
-                    put(new Lo3AdellijkeTitelPredikaatCode("H"), new Lo3AdellijkeTitelPredikaatCode("HI"));
-                    put(new Lo3AdellijkeTitelPredikaatCode("JH"), new Lo3AdellijkeTitelPredikaatCode("JV"));
-                    put(new Lo3AdellijkeTitelPredikaatCode("M"), new Lo3AdellijkeTitelPredikaatCode("MI"));
-                    put(new Lo3AdellijkeTitelPredikaatCode("P"), new Lo3AdellijkeTitelPredikaatCode("PS"));
-                    put(new Lo3AdellijkeTitelPredikaatCode("R"), new Lo3AdellijkeTitelPredikaatCode("R"));
-                }
-            });
+    private final Map<Lo3AdellijkeTitelPredikaatCode, Lo3AdellijkeTitelPredikaatCode> manVrouwAdellijkTitelPredicaatMap;
+
+    /**
+     * constructor.
+     */
+    public BrpBepalenAdellijkeTitel() {
+        manVrouwAdellijkTitelPredicaatMap = new HashMap<>();
+        manVrouwAdellijkTitelPredicaatMap.put(new Lo3AdellijkeTitelPredikaatCode("B"), new Lo3AdellijkeTitelPredikaatCode("BS"));
+        manVrouwAdellijkTitelPredicaatMap.put(new Lo3AdellijkeTitelPredikaatCode("G"), new Lo3AdellijkeTitelPredikaatCode("GI"));
+        manVrouwAdellijkTitelPredicaatMap.put(new Lo3AdellijkeTitelPredikaatCode("H"), new Lo3AdellijkeTitelPredikaatCode("HI"));
+        manVrouwAdellijkTitelPredicaatMap.put(new Lo3AdellijkeTitelPredikaatCode("JH"), new Lo3AdellijkeTitelPredikaatCode("JV"));
+        manVrouwAdellijkTitelPredicaatMap.put(new Lo3AdellijkeTitelPredikaatCode("M"), new Lo3AdellijkeTitelPredikaatCode("MI"));
+        manVrouwAdellijkTitelPredicaatMap.put(new Lo3AdellijkeTitelPredikaatCode("P"), new Lo3AdellijkeTitelPredikaatCode("PS"));
+        manVrouwAdellijkTitelPredicaatMap.put(new Lo3AdellijkeTitelPredikaatCode("R"), new Lo3AdellijkeTitelPredikaatCode("R"));
+    }
 
     /**
      * Voer de na-conversie uit voor adellijke titels en predikaten.
-     *
-     * @param persoonslijst
-     *            persoonslijst
+     * @param persoonslijst persoonslijst
      * @return persoonslijst
      */
     public final Lo3Persoonslijst converteer(final Lo3Persoonslijst persoonslijst) {
@@ -62,17 +60,15 @@ public class BrpBepalenAdellijkeTitel {
     }
 
     private Lo3AdellijkeTitelPredikaatCode bepaalAdellijkeTitelPredikaat(
-        final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode,
-        final Lo3Geslachtsaanduiding geslachtsaanduiding)
-    {
+            final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode,
+            final Lo3Geslachtsaanduiding geslachtsaanduiding) {
         Lo3AdellijkeTitelPredikaatCode resultaat = adellijkeTitelPredikaatCode;
         final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCodeZonderOnderzoek;
         adellijkeTitelPredikaatCodeZonderOnderzoek = new Lo3AdellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode.getWaarde(), null);
-        if (Validatie.isElementGevuld(geslachtsaanduiding)
-            && Lo3GeslachtsaanduidingEnum.VROUW.getCode().equals(geslachtsaanduiding.getWaarde())
-            && MAP.get(adellijkeTitelPredikaatCodeZonderOnderzoek) != null)
-        {
-            resultaat = MAP.get(adellijkeTitelPredikaatCodeZonderOnderzoek);
+        if (Lo3Validatie.isElementGevuld(geslachtsaanduiding)
+                && Lo3GeslachtsaanduidingEnum.VROUW.getCode().equals(geslachtsaanduiding.getWaarde())
+                && manVrouwAdellijkTitelPredicaatMap.get(adellijkeTitelPredikaatCodeZonderOnderzoek) != null) {
+            resultaat = manVrouwAdellijkTitelPredicaatMap.get(adellijkeTitelPredikaatCodeZonderOnderzoek);
             final Lo3Onderzoek resultaatOnderzoek =
                     Lo3Onderzoek.bepaalRelevantOnderzoek(Arrays.asList(adellijkeTitelPredikaatCode.getOnderzoek(), geslachtsaanduiding.getOnderzoek()));
             resultaat = new Lo3AdellijkeTitelPredikaatCode(resultaat.getWaarde(), resultaatOnderzoek);
@@ -91,7 +87,7 @@ public class BrpBepalenAdellijkeTitel {
     }
 
     private Lo3Categorie<Lo3PersoonInhoud> verwerkPersoon(final Lo3Categorie<Lo3PersoonInhoud> categorie) {
-        if (!Validatie.isElementGevuld(categorie.getInhoud().getAdellijkeTitelPredikaatCode())) {
+        if (!Lo3Validatie.isElementGevuld(categorie.getInhoud().getAdellijkeTitelPredikaatCode())) {
             return categorie;
         }
         final Lo3PersoonInhoud inhoud = categorie.getInhoud();

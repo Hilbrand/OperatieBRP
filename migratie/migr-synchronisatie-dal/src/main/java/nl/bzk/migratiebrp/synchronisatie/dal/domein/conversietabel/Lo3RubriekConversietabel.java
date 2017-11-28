@@ -19,9 +19,7 @@ public final class Lo3RubriekConversietabel extends AbstractLo3RubriekConversiet
 
     /**
      * Constructor.
-     *
-     * @param geldigeRubrieken
-     *            geldige rubrieken.
+     * @param geldigeRubrieken geldige rubrieken.
      */
     public Lo3RubriekConversietabel(final Collection<String> geldigeRubrieken) {
         this.geldigeRubrieken = geldigeRubrieken;

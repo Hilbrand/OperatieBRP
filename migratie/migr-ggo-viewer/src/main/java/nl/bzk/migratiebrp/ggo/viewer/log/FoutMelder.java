@@ -14,7 +14,7 @@ import nl.bzk.migratiebrp.ggo.viewer.model.GgoStap;
 
 /**
  * Gebruikt om fouten te melden bij het aanroepen van de verschillende services.
- * 
+ *
  * Dit om ook bij problemen nog iets zinnigs op het beeld te kunnen zetten.
  */
 public class FoutMelder {
@@ -24,13 +24,9 @@ public class FoutMelder {
 
     /**
      * Logt de (fout) melding en severity.
-     * 
-     * @param severity
-     *            Niveau van de melding.
-     * @param code
-     *            Melding code.
-     * @param omschrijving
-     *            Omschrijving van de code.
+     * @param severity Niveau van de melding.
+     * @param code Melding code.
+     * @param omschrijving Omschrijving van de code.
      */
     public final void log(final LogSeverity severity, final String code, final String omschrijving) {
         log(severity, code, omschrijving, null);
@@ -38,15 +34,10 @@ public class FoutMelder {
 
     /**
      * Logt de (fout) melding en severity.
-     * 
-     * @param severity
-     *            Niveau van de melding.
-     * @param code
-     *            Melding code.
-     * @param omschrijving
-     *            Omschrijving van de code.
-     * @param htmlFieldId
-     *            Het id van het html component waar de fout betrekking op heeft. Deze wordt dan rood gehighlight.
+     * @param severity Niveau van de melding.
+     * @param code Melding code.
+     * @param omschrijving Omschrijving van de code.
+     * @param htmlFieldId Het id van het html component waar de fout betrekking op heeft. Deze wordt dan rood gehighlight.
      */
     public final void log(final LogSeverity severity, final String code, final String omschrijving, final String htmlFieldId) {
         foutRegels.add(new GgoFoutRegel(huidigeStap, null, severity, null, code, omschrijving, htmlFieldId));
@@ -54,13 +45,9 @@ public class FoutMelder {
 
     /**
      * Log de (fout) melding en severity.
-     * 
-     * @param severity
-     *            Niveau van de melding.
-     * @param code
-     *            Melding code.
-     * @param e
-     *            De exception die gelogt moet worden.
+     * @param severity Niveau van de melding.
+     * @param code Melding code.
+     * @param e De exception die gelogt moet worden.
      */
     public final void log(final LogSeverity severity, final String code, final Exception e) {
         String omschrijving = e.getMessage();
@@ -81,7 +68,6 @@ public class FoutMelder {
 
     /**
      * Get de lijst met foutRegels.
-     * 
      * @return get een lijst met foutRegels.
      */
     public final List<GgoFoutRegel> getFoutRegels() {
@@ -90,9 +76,7 @@ public class FoutMelder {
 
     /**
      * Geef aan welke stap op dit moment wordt uitgevoerd.
-     * 
-     * @param huidigeStap
-     *            De huidige stap.
+     * @param huidigeStap De huidige stap.
      */
     public final void setHuidigeStap(final GgoStap huidigeStap) {
         this.huidigeStap = huidigeStap;

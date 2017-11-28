@@ -7,9 +7,8 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -20,9 +19,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaat
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
@@ -41,13 +38,14 @@ public class Lo3PersoonParser extends AbstractLo3CategorieParser<Lo3PersoonInhou
         final List<Lo3Categorie<Lo3PersoonInhoud>> persoonList = new ArrayList<>();
 
         for (final Lo3CategorieWaarde categorie : categorieen) {
-            final Map<Lo3ElementEnum, String> elementen = new HashMap<>(categorie.getElementen());
+            final EnumMap<Lo3ElementEnum, String> elementen = new EnumMap<>(Lo3ElementEnum.class);
+            elementen.putAll(categorie.getElementen());
             final Lo3Herkomst lo3Herkomst = categorie.getLo3Herkomst();
             final Lo3Onderzoek lo3Onderzoek = parseLo3Onderzoek(elementen, lo3Herkomst);
             final Lo3CategorieEnum herkomstCategorie = lo3Herkomst.getCategorie();
 
-            final Lo3Long aNummer = Parser.parseLo3Long(elementen, Lo3ElementEnum.ELEMENT_0110, herkomstCategorie, lo3Onderzoek);
-            final Lo3Integer burgerservicenummer = Parser.parseLo3Integer(elementen, Lo3ElementEnum.ELEMENT_0120, herkomstCategorie, lo3Onderzoek);
+            final Lo3String aNummer = Parser.parseLo3String(elementen, Lo3ElementEnum.ELEMENT_0110, herkomstCategorie, lo3Onderzoek);
+            final Lo3String burgerservicenummer = Parser.parseLo3String(elementen, Lo3ElementEnum.ELEMENT_0120, herkomstCategorie, lo3Onderzoek);
             final Lo3String voornamen = Parser.parseLo3String(elementen, Lo3ElementEnum.ELEMENT_0210, herkomstCategorie, lo3Onderzoek);
             final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode =
                     Parser.parseLo3AdellijkeTitelPredikaatCode(elementen, Lo3ElementEnum.ELEMENT_0220, herkomstCategorie, lo3Onderzoek);
@@ -58,8 +56,8 @@ public class Lo3PersoonParser extends AbstractLo3CategorieParser<Lo3PersoonInhou
             final Lo3LandCode landCode = Parser.parseLo3LandCode(elementen, Lo3ElementEnum.ELEMENT_0330, herkomstCategorie, lo3Onderzoek);
             final Lo3Geslachtsaanduiding geslachtsaanduiding =
                     Parser.parseLo3Geslachtsaanduiding(elementen, Lo3ElementEnum.ELEMENT_0410, herkomstCategorie, lo3Onderzoek);
-            final Lo3Long vorigANummer = Parser.parseLo3Long(elementen, Lo3ElementEnum.ELEMENT_2010, herkomstCategorie, lo3Onderzoek);
-            final Lo3Long volgendANummer = Parser.parseLo3Long(elementen, Lo3ElementEnum.ELEMENT_2020, herkomstCategorie, lo3Onderzoek);
+            final Lo3String vorigANummer = Parser.parseLo3String(elementen, Lo3ElementEnum.ELEMENT_2010, herkomstCategorie, lo3Onderzoek);
+            final Lo3String volgendANummer = Parser.parseLo3String(elementen, Lo3ElementEnum.ELEMENT_2020, herkomstCategorie, lo3Onderzoek);
             final Lo3AanduidingNaamgebruikCode aanduidingNaamgebruikCode =
                     Parser.parseLo3AanduidingNaamgebruikCode(elementen, Lo3ElementEnum.ELEMENT_6110, herkomstCategorie, lo3Onderzoek);
 
@@ -72,19 +70,19 @@ public class Lo3PersoonParser extends AbstractLo3CategorieParser<Lo3PersoonInhou
 
             final Lo3Categorie<Lo3PersoonInhoud> persoon =
                     new Lo3Categorie<>(new Lo3PersoonInhoud(
-                        aNummer,
-                        burgerservicenummer,
-                        voornamen,
-                        adellijkeTitelPredikaatCode,
-                        voorvoegselGeslachtsnaam,
-                        geslachtsnaam,
-                        geboorteDatum,
-                        gemeenteCode,
-                        landCode,
-                        geslachtsaanduiding,
-                        vorigANummer,
-                        volgendANummer,
-                        aanduidingNaamgebruikCode), lo3Documentatie, lo3Onderzoek, lo3Historie, categorie.getLo3Herkomst());
+                            aNummer,
+                            burgerservicenummer,
+                            voornamen,
+                            adellijkeTitelPredikaatCode,
+                            voorvoegselGeslachtsnaam,
+                            geslachtsnaam,
+                            geboorteDatum,
+                            gemeenteCode,
+                            landCode,
+                            geslachtsaanduiding,
+                            vorigANummer,
+                            volgendANummer,
+                            aanduidingNaamgebruikCode), lo3Documentatie, lo3Onderzoek, lo3Historie, categorie.getLo3Herkomst());
 
             persoonList.add(persoon);
         }

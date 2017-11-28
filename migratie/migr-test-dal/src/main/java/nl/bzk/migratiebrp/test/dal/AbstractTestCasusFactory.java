@@ -11,9 +11,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.brpkern.DBUnitBrpUtil;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.test.dal.DBUnitBrpUtil;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 /**
@@ -38,9 +38,7 @@ public abstract class AbstractTestCasusFactory implements TestCasusFactory {
 
     /**
      * Constructor waarbij de Spring application context wordt meegegeven.
-     *
-     * @param context
-     *            de application context
+     * @param context de application context
      */
     protected AbstractTestCasusFactory(final GenericXmlApplicationContext context) {
         this.context = context;
@@ -88,11 +86,8 @@ public abstract class AbstractTestCasusFactory implements TestCasusFactory {
 
     /**
      * Maak de naam voor een test casus.
-     *
-     * @param name
-     *            basis naam
-     * @param i
-     *            index
+     * @param name basis naam
+     * @param i index
      * @return naam
      */
     protected final String maakNaam(final String name, final int i) {
@@ -104,29 +99,24 @@ public abstract class AbstractTestCasusFactory implements TestCasusFactory {
 
     /**
      * Maak de naam voor een test casus.
-     *
-     * @param name
-     *            basis naam
-     * @param identificatie
-     *            index
-     * @param gefixeerdeLengte
-     *            vastgestelde lengte voor de naam
+     * @param name basis naam
+     * @param identificatie index
+     * @param gefixeerdeLengte vastgestelde lengte voor de naam
      * @return naam
      */
-    protected final String maakNaamMetGefixeerdeIdentificatieLengte(final String name, final int identificatie, final int gefixeerdeLengte) {
+    protected final String maakNaamMetGefixeerdeIdentificatieLengte(final String name, final String identificatie, final int gefixeerdeLengte) {
+        final StringBuilder gefixeerdeIdentificatie = new StringBuilder(identificatie);
+        while(gefixeerdeIdentificatie.length() < gefixeerdeLengte) {
+            gefixeerdeIdentificatie.insert(0, '0');
+        }
 
-        final String format = "%0" + gefixeerdeLengte + "d";
-
-        return name.substring(0, name.indexOf('.')) + KOPPELTEKEN + String.format(format, identificatie);
+        return name.substring(0, name.indexOf('.')) + KOPPELTEKEN + gefixeerdeIdentificatie.toString();
     }
 
     /**
      * Geeft de array terug als {@link java.util.List} object.
-     *
-     * @param list
-     *            de array
-     * @param <T>
-     *            type van de inhoud van de array
+     * @param list de array
+     * @param <T> type van de inhoud van de array
      * @return een {@link java.util.List} met de inhoud van de meegegeven array
      */
     protected final <T> List<T> asList(final T[] list) {
@@ -139,9 +129,7 @@ public abstract class AbstractTestCasusFactory implements TestCasusFactory {
 
     /**
      * Reset de database voor de tests.
-     *
-     * @param log
-     *            de log waarin gemeld kan worden wat er gebeurd tijdens het resetten van de database.
+     * @param log de log waarin gemeld kan worden wat er gebeurd tijdens het resetten van de database.
      */
     protected final void resetDB(final Logger log) {
         final Properties sysProps = System.getProperties();
@@ -156,7 +144,6 @@ public abstract class AbstractTestCasusFactory implements TestCasusFactory {
 
     /**
      * Geef de waarde van context.
-     *
      * @return context
      */
     protected final GenericXmlApplicationContext getContext() {

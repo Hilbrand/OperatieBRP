@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A unique sequence.
- * 
  */
 public final class UniqueSequence {
 
@@ -22,7 +21,6 @@ public final class UniqueSequence {
 
     /**
      * Get next value (thread-safe).
-     * 
      * @return next sequence value
      */
     public static long next() {

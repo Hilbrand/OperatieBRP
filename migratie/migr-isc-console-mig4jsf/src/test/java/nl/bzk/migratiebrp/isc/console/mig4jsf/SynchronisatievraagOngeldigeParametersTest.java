@@ -21,11 +21,11 @@ public class SynchronisatievraagOngeldigeParametersTest extends AbstractTagTest 
         addTagAttribute("target", null);
 
         setupDatabase(
-            "/sql/mig-drop.sql",
-            "/sql/jbpm-drop.sql",
-            "/sql/jbpm-create.sql",
-            "/sql/mig-create.sql",
-            "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
+                "/sql/mig-drop.sql",
+                "/sql/jbpm-drop.sql",
+                "/sql/jbpm-create.sql",
+                "/sql/mig-create.sql",
+                "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
 
         // Execute
         final JbpmActionListener subject = initializeSubject(SynchronisatievraagHandler.class);

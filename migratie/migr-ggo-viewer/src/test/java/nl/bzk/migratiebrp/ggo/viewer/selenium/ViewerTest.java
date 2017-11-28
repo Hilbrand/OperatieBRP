@@ -6,9 +6,8 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.selenium;
 
-import static junit.framework.Assert.assertTrue;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,10 +38,10 @@ public class ViewerTest {
         final InlogPage inlog = new InlogPage(driver);
         final String expectedinlog = "input";
         final WebElement actualinlog = inlog.login("admin");
-        assertTrue(actualinlog.getTagName().contains(expectedinlog));
+        Assert.assertTrue(actualinlog.getTagName().contains(expectedinlog));
 
         final ViewerPage home = new ViewerPage(driver);
         final boolean actual = home.searchFor("01.10 A-nummer");
-        assertTrue(actual);
+        Assert.assertTrue(actual);
     }
 }

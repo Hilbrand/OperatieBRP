@@ -5,7 +5,8 @@ SELECT
     bericht,
     id,
     ms_sequence_number,
-    verwerkt
+    verwerkt,
+    mailbox_nr
 FROM 
     proefSynchronisatieBericht
 WHERE

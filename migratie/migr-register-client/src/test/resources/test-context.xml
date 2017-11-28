@@ -7,18 +7,20 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-	<!-- Config -->
-	<context:annotation-config />
-    <context:property-placeholder />
+    <!-- Config -->
+    <context:annotation-config/>
+    <context:property-placeholder/>
 
-  	<amq:connectionFactory id="connectionFactory" brokerURL="tcp://localhost:61620"/>
-  	<bean name="autorisatieConnectionFactory, gemeenteConnectionFactory" class="nl.bzk.migratiebrp.register.client.util.RefBeanFactory">
-  		<property name="bean" ref="connectionFactory"/>
-  	</bean>
+    <amq:connectionFactory id="connectionFactory" brokerURL="tcp://localhost:${test.routering.port}">
+        <amq:redeliveryPolicy>
+            <amq:redeliveryPolicy maximumRedeliveries="0"/>
+        </amq:redeliveryPolicy>
+    </amq:connectionFactory>
 
-  	<amq:topic id="gemeenteRegisterTopic" physicalName="gemeente.register" />
-  	<amq:queue id="gemeenteVerzoekQueue" physicalName="gemeente.verzoek" />
-  	<amq:topic id="autorisatieRegisterTopic" physicalName="autorisatie.register" />
-  	<amq:queue id="autorisatieVerzoekQueue" physicalName="autorisatie.verzoek" />
+    <bean name="partijConnectionFactory" class="nl.bzk.migratiebrp.register.client.util.RefBeanFactory">
+        <property name="bean" ref="connectionFactory"/>
+    </bean>
 
+    <amq:topic id="partijRegisterTopic" physicalName="partij.register"/>
+    <amq:queue id="partijVerzoekQueue" physicalName="partij.verzoek"/>
 </beans>

@@ -7,18 +7,19 @@
 package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.GemeenteConverter;
@@ -26,6 +27,7 @@ import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.LandOfGebiedConverter
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.PartijConverter;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.RedenBeeindigingRelatieConverter;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.SoortDocumentConverter;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -34,99 +36,189 @@ import org.springframework.stereotype.Component;
 @Component
 public final class IstStapelVoorkomenConverter extends EntityConverter {
 
-    /** HEADER_TYPE. **/
+    /**
+     * HEADER_TYPE.
+     **/
     static final String HEADER_TYPE = "ist.stapelvoorkomen";
-    /** HEADER_STAPEL. **/
+    /**
+     * HEADER_STAPEL.
+     **/
     static final String HEADER_STAPEL = "stapel";
-    /** HEADER_VOLGNUMMER. **/
+    /**
+     * HEADER_VOLGNUMMER.
+     **/
     static final String HEADER_VOLGNUMMER = "volgnr";
-    /** HEADER_ADMINISTRATIEVE_HANDELING. **/
+    /**
+     * HEADER_ADMINISTRATIEVE_HANDELING.
+     **/
     static final String HEADER_ADMINISTRATIEVE_HANDELING = "admhnd";
-    /** HEADER_SOORT_DOCUMENTATIE. **/
+    /**
+     * HEADER_SOORT_DOCUMENTATIE.
+     **/
     static final String HEADER_SOORT_DOCUMENTATIE = "srtdoc";
-    /** HEADER_PARTIJ. **/
-    static final String HEADER_PARTIJ = "partij";
-    /** HEADER_RUBRIEK_8220. **/
+    /**
+     * HEADER_RUBRIEK_8220.
+     **/
     static final String HEADER_RUBRIEK_8220 = "rubr8220datdoc";
-    /** HEADER_DOCUMENTATIE_OMSCHRIJVING. **/
+    /**
+     * HEADER_DOCUMENTATIE_OMSCHRIJVING.
+     **/
     static final String HEADER_DOCUMENTATIE_OMSCHRIJVING = "docoms";
-    /** HEADER_RUBRIEK_8310. **/
+    /**
+     * HEADER_RUBRIEK_8310.
+     **/
     static final String HEADER_RUBRIEK_8310 = "rubr8310aandgegevensinonderz";
-    /** HEADER_RUBRIEK_8320. **/
+    /**
+     * HEADER_RUBRIEK_8320.
+     **/
     static final String HEADER_RUBRIEK_8320 = "rubr8320datingangonderzoek";
-    /** HEADER_RUBRIEK_8330. **/
+    /**
+     * HEADER_RUBRIEK_8330.
+     **/
     static final String HEADER_RUBRIEK_8330 = "rubr8330dateindeonderzoek";
-    /** HEADER_RUBRIEK_8410. **/
+    /**
+     * HEADER_RUBRIEK_8410.
+     **/
     static final String HEADER_RUBRIEK_8410 = "rub8410onjuiststrijdigopenb";
-    /** HEADER_RUBRIEK_8510. **/
+    /**
+     * HEADER_RUBRIEK_8510.
+     **/
     static final String HEADER_RUBRIEK_8510 = "rubr8510ingangsdatgel";
-    /** HEADER_RUBRIEK_8610. **/
+    /**
+     * HEADER_RUBRIEK_8610.
+     **/
     static final String HEADER_RUBRIEK_8610 = "rubr8610datvanopneming";
-    /** HEADER_RUBRIEK_6210. **/
+    /**
+     * HEADER_RUBRIEK_6210.
+     **/
     static final String HEADER_RUBRIEK_6210 = "rub6210datingangfamilierech";
-    /** HEADER_AKTE_NUMMER. **/
+    /**
+     * HEADER_AKTE_NUMMER.
+     **/
     static final String HEADER_AKTE_NUMMER = "aktenr";
-    /** HEADER_ANUMMER. **/
+    /**
+     * HEADER_ANUMMER.
+     **/
     static final String HEADER_ANUMMER = "anr";
-    /** HEADER_BSN. **/
+    /**
+     * HEADER_BSN.
+     **/
     static final String HEADER_BSN = "bsn";
-    /** HEADER_VOORNAMEN. **/
+    /**
+     * HEADER_VOORNAMEN.
+     **/
     static final String HEADER_VOORNAMEN = "voornamen";
-    /** HEADER_PREDICAAT. **/
+    /**
+     * HEADER_PREDICAAT.
+     **/
     static final String HEADER_PREDICAAT = "predicaat";
-    /** HEADER_ADELLIJKE_TITEL. **/
+    /**
+     * HEADER_ADELLIJKE_TITEL.
+     **/
     static final String HEADER_ADELLIJKE_TITEL = "adellijketitel";
-    /** HEADER_GESLACHT_BIJ_ADELLIJKE_TITEL_PREDICAAT. **/
+    /**
+     * HEADER_GESLACHT_BIJ_ADELLIJKE_TITEL_PREDICAAT.
+     **/
     static final String HEADER_GESLACHT_BIJ_ADELLIJKE_TITEL_PREDICAAT = "geslachtbijadellijketitelpre";
-    /** HEADER_VOORVOEGSEL. **/
+    /**
+     * HEADER_VOORVOEGSEL.
+     **/
     static final String HEADER_VOORVOEGSEL = "voorvoegsel";
-    /** HEADER_SCHEIDINGSTEKEN. **/
+    /**
+     * HEADER_SCHEIDINGSTEKEN.
+     **/
     static final String HEADER_SCHEIDINGSTEKEN = "scheidingsteken";
-    /** HEADER_GESLACHTSNAAMSTAM. **/
+    /**
+     * HEADER_GESLACHTSNAAMSTAM.
+     **/
     static final String HEADER_GESLACHTSNAAMSTAM = "geslnaamstam";
-    /** HEADER_DATUM_GEBOORTE. **/
+    /**
+     * HEADER_DATUM_GEBOORTE.
+     **/
     static final String HEADER_DATUM_GEBOORTE = "datgeboorte";
-    /** HEADER_GEMEENTE_GEBOORTE. **/
+    /**
+     * HEADER_GEMEENTE_GEBOORTE.
+     **/
     static final String HEADER_GEMEENTE_GEBOORTE = "gemgeboorte";
-    /** HEADER_BUITENLANDSE_PLAATS_GEBOORTE. **/
+    /**
+     * HEADER_BUITENLANDSE_PLAATS_GEBOORTE.
+     **/
     static final String HEADER_BUITENLANDSE_PLAATS_GEBOORTE = "blplaatsgeboorte";
-    /** HEADER_OMSCHRIJVING_LOCATIE_GEBOORTE. **/
+    /**
+     * HEADER_OMSCHRIJVING_LOCATIE_GEBOORTE.
+     **/
     static final String HEADER_OMSCHRIJVING_LOCATIE_GEBOORTE = "omslocgeboorte";
-    /** HEADER_LAND_OF_GEBIED_GEBOORTE. **/
+    /**
+     * HEADER_LAND_OF_GEBIED_GEBOORTE.
+     **/
     static final String HEADER_LAND_OF_GEBIED_GEBOORTE = "landgebiedgeboorte";
-    /** HEADER_GESLACHTS_AANDUIDING. **/
+    /**
+     * HEADER_GESLACHTS_AANDUIDING.
+     **/
     static final String HEADER_GESLACHTS_AANDUIDING = "geslachtsaand";
-    /** HEADER_DATUM_AANVANG. **/
+    /**
+     * HEADER_DATUM_AANVANG.
+     **/
     static final String HEADER_DATUM_AANVANG = "dataanv";
-    /** HEADER_GEMEENTE_AANVANG. **/
+    /**
+     * HEADER_GEMEENTE_AANVANG.
+     **/
     static final String HEADER_GEMEENTE_AANVANG = "gemaanv";
-    /** HEADER_BUITENLANDSE_PLAATS_AANVANG. **/
+    /**
+     * HEADER_BUITENLANDSE_PLAATS_AANVANG.
+     **/
     static final String HEADER_BUITENLANDSE_PLAATS_AANVANG = "blplaatsaanv";
-    /** HEADER_OMSCHRIJVING_LOCATIE_AANVANG. **/
+    /**
+     * HEADER_OMSCHRIJVING_LOCATIE_AANVANG.
+     **/
     static final String HEADER_OMSCHRIJVING_LOCATIE_AANVANG = "omslocaanv";
-    /** HEADER_LAND_OF_GEBIED_AANVANG. **/
+    /**
+     * HEADER_LAND_OF_GEBIED_AANVANG.
+     **/
     static final String HEADER_LAND_OF_GEBIED_AANVANG = "landgebiedaanv";
-    /** HEADER_REDEN_EINDE. **/
+    /**
+     * HEADER_REDEN_EINDE.
+     **/
     static final String HEADER_REDEN_EINDE = "rdneinde";
-    /** HEADER_DATUM_EINDE. **/
+    /**
+     * HEADER_DATUM_EINDE.
+     **/
     static final String HEADER_DATUM_EINDE = "dateinde";
-    /** HEADER_GEMEENTE_EINDE. **/
+    /**
+     * HEADER_GEMEENTE_EINDE.
+     **/
     static final String HEADER_GEMEENTE_EINDE = "gemeinde";
-    /** HEADER_BUITENLANDSE_PLAATS_EINDE. **/
+    /**
+     * HEADER_BUITENLANDSE_PLAATS_EINDE.
+     **/
     static final String HEADER_BUITENLANDSE_PLAATS_EINDE = "blplaatseinde";
-    /** HEADER_OMSCHRIJVING_LOCATIE_EINDE. **/
+    /**
+     * HEADER_OMSCHRIJVING_LOCATIE_EINDE.
+     **/
     static final String HEADER_OMSCHRIJVING_LOCATIE_EINDE = "omsloceinde";
-    /** HEADER_LAND_OF_GEBIED_EINDE. **/
+    /**
+     * HEADER_LAND_OF_GEBIED_EINDE.
+     **/
     static final String HEADER_LAND_OF_GEBIED_EINDE = "landgebiedeinde";
-    /** HEADER_SOORT_RELATIE. **/
+    /**
+     * HEADER_SOORT_RELATIE.
+     **/
     static final String HEADER_SOORT_RELATIE = "srtrelatie";
-    /** HEADER_INDICATIE_OUDER1_HEEFT_GEZAG. **/
+    /**
+     * HEADER_INDICATIE_OUDER1_HEEFT_GEZAG.
+     **/
     static final String HEADER_INDICATIE_OUDER1_HEEFT_GEZAG = "indouder1heeftgezag";
-    /** HEADER_INDICATIE_OUDER2_HEEFT_GEZAG. **/
+    /**
+     * HEADER_INDICATIE_OUDER2_HEEFT_GEZAG.
+     **/
     static final String HEADER_INDICATIE_OUDER2_HEEFT_GEZAG = "indouder2heeftgezag";
-    /** HEADER_INDICATIE_DERDE_HEEFT_GEZAG. **/
+    /**
+     * HEADER_INDICATIE_DERDE_HEEFT_GEZAG.
+     **/
     static final String HEADER_INDICATIE_DERDE_HEEFT_GEZAG = "indderdeheeftgezag";
-    /** HEADER_INDICATIE_ONDER_CURATELE. **/
+    /**
+     * HEADER_INDICATIE_ONDER_CURATELE.
+     **/
     static final String HEADER_INDICATIE_ONDER_CURATELE = "indondercuratele";
 
     @Inject
@@ -155,8 +247,8 @@ public final class IstStapelVoorkomenConverter extends EntityConverter {
     private Integer rubriek8610;
     private Integer rubriek6210;
     private String aktenummer;
-    private Long anummer;
-    private Integer bsn;
+    private String anummer;
+    private String bsn;
     private String voornamen;
     private Predicaat predicaat;
     private AdellijkeTitel adellijkeTitel;
@@ -245,22 +337,22 @@ public final class IstStapelVoorkomenConverter extends EntityConverter {
                 aktenummer = value;
                 break;
             case HEADER_ANUMMER:
-                anummer = Long.valueOf(value);
+                anummer = value;
                 break;
             case HEADER_BSN:
-                bsn = Integer.valueOf(value);
+                bsn = value;
                 break;
             case HEADER_VOORNAMEN:
                 voornamen = value;
                 break;
             case HEADER_PREDICAAT:
-                predicaat = Predicaat.parseId(Short.valueOf(value));
+                predicaat = Predicaat.parseId(Integer.valueOf(value));
                 break;
             case HEADER_ADELLIJKE_TITEL:
-                adellijkeTitel = AdellijkeTitel.parseId(Short.valueOf(value));
+                adellijkeTitel = AdellijkeTitel.parseId(Integer.valueOf(value));
                 break;
             case HEADER_GESLACHT_BIJ_ADELLIJKE_TITEL_PREDICAAT:
-                geslachtsaanduidingBijAdellijkeTitelOfPredicaat = Geslachtsaanduiding.parseId(Short.valueOf(value));
+                geslachtsaanduidingBijAdellijkeTitelOfPredicaat = Geslachtsaanduiding.parseId(Integer.valueOf(value));
                 break;
             case HEADER_VOORVOEGSEL:
                 voorvoegsel = value;
@@ -287,7 +379,7 @@ public final class IstStapelVoorkomenConverter extends EntityConverter {
                 landOfGebiedGeboorte = landOfGebiedConverter.convert(value);
                 break;
             case HEADER_GESLACHTS_AANDUIDING:
-                geslachtsaanduiding = Geslachtsaanduiding.parseId(Short.valueOf(value));
+                geslachtsaanduiding = Geslachtsaanduiding.parseId(Integer.valueOf(value));
                 break;
             case HEADER_DATUM_AANVANG:
                 datumAanvang = Integer.valueOf(value);
@@ -323,7 +415,7 @@ public final class IstStapelVoorkomenConverter extends EntityConverter {
                 landOfGebiedEinde = landOfGebiedConverter.convert(value);
                 break;
             case HEADER_SOORT_RELATIE:
-                soortRelatie = SoortRelatie.parseId(Short.valueOf(value));
+                soortRelatie = SoortRelatie.parseId(Integer.valueOf(value));
                 break;
             case HEADER_INDICATIE_OUDER1_HEEFT_GEZAG:
                 indicatieOuder1HeeftGezag = Boolean.valueOf(value);

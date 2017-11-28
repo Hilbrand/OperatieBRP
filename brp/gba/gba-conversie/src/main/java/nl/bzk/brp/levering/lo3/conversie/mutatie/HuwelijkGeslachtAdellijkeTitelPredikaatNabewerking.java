@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
@@ -13,7 +13,6 @@ import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3HuwelijkOfGpInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +28,6 @@ public final class HuwelijkGeslachtAdellijkeTitelPredikaatNabewerking {
     /**
      * Voer nabewerking uit. Bepaal of er een addellijk titel of een predikaat aanwezig is (in beide historie en
      * actueel). Kopieer vervolgens het geslacht uit hetzelfde record.
-     *
      * @param wijziging wijziging
      */
     public void voerNabewerkingUit(final Lo3Wijzigingen<Lo3HuwelijkOfGpInhoud> wijziging) {
@@ -39,10 +37,9 @@ public final class HuwelijkGeslachtAdellijkeTitelPredikaatNabewerking {
 
     private Lo3Categorie<Lo3HuwelijkOfGpInhoud> verwerk(final Lo3Categorie<Lo3HuwelijkOfGpInhoud> categorie) {
         if (categorie != null
-            && categorie.getInhoud() != null
-            && categorie.getInhoud().getAdellijkeTitelPredikaatCode() != null
-            && categorie.getInhoud().getGeslachtsaanduiding() != null)
-        {
+                && categorie.getInhoud() != null
+                && categorie.getInhoud().getAdellijkeTitelPredikaatCode() != null
+                && categorie.getInhoud().getGeslachtsaanduiding() != null) {
             final Conversietabel<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar> conversietabel =
                     conversieTabelFactory.createAdellijkeTitelPredikaatConversietabel();
 

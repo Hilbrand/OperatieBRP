@@ -20,9 +20,9 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "synchronisatievraag", description = "Versturen synchronisatievraag.",
         attributes = {@TldAttribute(name = "gemeente", description = "The gemeente to which the synchronisatievraag should be sent."),
-                      @TldAttribute(name = "aNummer", description = "The anummer of the persoon to request a synchonisatievraag for."),
-                      @TldAttribute(name = "bulkBestand", description = "The bulk bestand containing multiple synchronisatievragen."),
-                      @TldAttribute(name = "target", description = "The target for the synchronisatievraag.") })
+                @TldAttribute(name = "aNummer", description = "The anummer of the persoon to request a synchonisatievraag for."),
+                @TldAttribute(name = "bulkBestand", description = "The bulk bestand containing multiple synchronisatievragen."),
+                @TldAttribute(name = "target", description = "The target for the synchronisatievraag.")})
 public final class SynchronisatievraagHandler extends AbstractHandler {
     private final TagAttribute gemeenteTagAttribute;
     private final TagAttribute aNummerTagAttribute;
@@ -31,9 +31,7 @@ public final class SynchronisatievraagHandler extends AbstractHandler {
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public SynchronisatievraagHandler(final TagConfig config) {
         super(config);

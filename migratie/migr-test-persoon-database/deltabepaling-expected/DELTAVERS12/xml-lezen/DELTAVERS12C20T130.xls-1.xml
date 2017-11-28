@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><brpPersoonslijst>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<brpPersoonslijst>
    <voornaamStapels class="java.util.ArrayList">
       <voornaamStapel>
          <brpGroep>
@@ -18,15 +19,11 @@
                   <brpActieBron>
                      <documentStapel>
                         <brpGroep>
-                           <actieInhoud ref="4"/>
-                           <historie>
-                              <datumTijdRegistratie>
-                                 <waarde>19900102010000000</waarde>
-                              </datumTijdRegistratie>
-                           </historie>
+                           
+                           
                            <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                               <partijCode>
-                                 <waarde>59901</waarde>
+                                 <waarde>059901</waarde>
                               </partijCode>
                               <aktenummer>
                                  <waarde>1 A5820</waarde>
@@ -91,15 +88,11 @@
                         <brpActieBron>
                            <documentStapel>
                               <brpGroep>
-                                 <actieInhoud ref="2"/>
-                                 <historie>
-                                    <datumTijdRegistratie>
-                                       <waarde>19900102010000000</waarde>
-                                    </datumTijdRegistratie>
-                                 </historie>
+                                 
+                                 
                                  <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                                     <partijCode>
-                                       <waarde>59901</waarde>
+                                       <waarde>059901</waarde>
                                     </partijCode>
                                     <aktenummer>
                                        <waarde>1 A5820</waarde>
@@ -119,9 +112,7 @@
                      </lo3Herkomst>
                   </actieInhoud>
                   <historie>
-                     <datumAanvangGeldigheid>
-                        <waarde>19900101</waarde>
-                     </datumAanvangGeldigheid>
+                     
                      <datumTijdRegistratie>
                         <waarde>19900102010000000</waarde>
                      </datumTijdRegistratie>
@@ -151,15 +142,11 @@
                      <brpActieBron>
                         <documentStapel>
                            <brpGroep>
-                              <actieInhoud ref="1"/>
-                              <historie>
-                                 <datumTijdRegistratie>
-                                    <waarde>19900102010000000</waarde>
-                                 </datumTijdRegistratie>
-                              </historie>
+                              
+                              
                               <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                                  <partijCode>
-                                    <waarde>59901</waarde>
+                                    <waarde>059901</waarde>
                                  </partijCode>
                                  <aktenummer>
                                     <waarde>1 A5820</waarde>
@@ -193,7 +180,7 @@
                </rol>
                <identificatienummerStapel>
                   <brpGroep>
-                     <actieInhoud ref="2"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19900101</waarde>
@@ -207,11 +194,50 @@
                            <waarde>876461641</waarde>
                         </burgerservicenummer>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="2">
+                     <datumTijdRegistratie>
+                        <waarde>19900102010000000</waarde>
+                     </datumTijdRegistratie>
+                     <sortering>0</sortering>
+                     <partijCode>
+                        <waarde>199902</waarde>
+                     </partijCode>
+                     
+                     <soortActieCode>
+                        <waarde>Conversie GBA</waarde>
+                     </soortActieCode>
+                     <actieBronnen>
+                        <brpActieBron>
+                           <documentStapel>
+                              <brpGroep>
+                                 
+                                 
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                    <partijCode>
+                                       <waarde>059901</waarde>
+                                    </partijCode>
+                                    <aktenummer>
+                                       <waarde>1 A5820</waarde>
+                                    </aktenummer>
+                                    <soortDocumentCode>
+                                       <waarde>Historie conversie</waarde>
+                                    </soortDocumentCode>
+                                 </inhoud>
+                              </brpGroep>
+                           </documentStapel>
+                        </brpActieBron>
+                     </actieBronnen>
+                     <lo3Herkomst>
+                        <categorie>CATEGORIE_03</categorie>
+                        <stapel>0</stapel>
+                        <voorkomen>0</voorkomen>
+                     </lo3Herkomst>
+                  </actieInhoud>
+                        </brpGroep>
                </identificatienummerStapel>
                <geboorteStapel>
                   <brpGroep>
-                     <actieInhoud ref="2"/>
+                     
                      <historie>
                         <datumTijdRegistratie>
                            <waarde>19900102010000000</waarde>
@@ -228,25 +254,101 @@
                            <waarde>6030</waarde>
                         </landOfGebiedCode>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="2">
+                     <datumTijdRegistratie>
+                        <waarde>19900102010000000</waarde>
+                     </datumTijdRegistratie>
+                     <sortering>0</sortering>
+                     <partijCode>
+                        <waarde>199902</waarde>
+                     </partijCode>
+                     
+                     <soortActieCode>
+                        <waarde>Conversie GBA</waarde>
+                     </soortActieCode>
+                     <actieBronnen>
+                        <brpActieBron>
+                           <documentStapel>
+                              <brpGroep>
+                                 
+                                 
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                    <partijCode>
+                                       <waarde>059901</waarde>
+                                    </partijCode>
+                                    <aktenummer>
+                                       <waarde>1 A5820</waarde>
+                                    </aktenummer>
+                                    <soortDocumentCode>
+                                       <waarde>Historie conversie</waarde>
+                                    </soortDocumentCode>
+                                 </inhoud>
+                              </brpGroep>
+                           </documentStapel>
+                        </brpActieBron>
+                     </actieBronnen>
+                     <lo3Herkomst>
+                        <categorie>CATEGORIE_03</categorie>
+                        <stapel>0</stapel>
+                        <voorkomen>0</voorkomen>
+                     </lo3Herkomst>
+                  </actieInhoud>
+                        </brpGroep>
                </geboorteStapel>
                <identiteitStapel>
                   <brpGroep>
-                     <actieInhoud ref="2"/>
+                     
                      <historie>
-                        <datumAanvangGeldigheid>
-                           <waarde>19900101</waarde>
-                        </datumAanvangGeldigheid>
+                        
                         <datumTijdRegistratie>
                            <waarde>19900102010000000</waarde>
                         </datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentiteitInhoud"/>
-                  </brpGroep>
+                  <actieInhoud id="2">
+                     <datumTijdRegistratie>
+                        <waarde>19900102010000000</waarde>
+                     </datumTijdRegistratie>
+                     <sortering>0</sortering>
+                     <partijCode>
+                        <waarde>199902</waarde>
+                     </partijCode>
+                     
+                     <soortActieCode>
+                        <waarde>Conversie GBA</waarde>
+                     </soortActieCode>
+                     <actieBronnen>
+                        <brpActieBron>
+                           <documentStapel>
+                              <brpGroep>
+                                 
+                                 
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                    <partijCode>
+                                       <waarde>059901</waarde>
+                                    </partijCode>
+                                    <aktenummer>
+                                       <waarde>1 A5820</waarde>
+                                    </aktenummer>
+                                    <soortDocumentCode>
+                                       <waarde>Historie conversie</waarde>
+                                    </soortDocumentCode>
+                                 </inhoud>
+                              </brpGroep>
+                           </documentStapel>
+                        </brpActieBron>
+                     </actieBronnen>
+                     <lo3Herkomst>
+                        <categorie>CATEGORIE_03</categorie>
+                        <stapel>0</stapel>
+                        <voorkomen>0</voorkomen>
+                     </lo3Herkomst>
+                  </actieInhoud>
+                        </brpGroep>
                </identiteitStapel>
                <samengesteldeNaamStapel>
                   <brpGroep>
-                     <actieInhoud ref="2"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19900101</waarde>
@@ -269,11 +371,50 @@
                            <waarde>false</waarde>
                         </indicatieAfgeleid>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="2">
+                     <datumTijdRegistratie>
+                        <waarde>19900102010000000</waarde>
+                     </datumTijdRegistratie>
+                     <sortering>0</sortering>
+                     <partijCode>
+                        <waarde>199902</waarde>
+                     </partijCode>
+                     
+                     <soortActieCode>
+                        <waarde>Conversie GBA</waarde>
+                     </soortActieCode>
+                     <actieBronnen>
+                        <brpActieBron>
+                           <documentStapel>
+                              <brpGroep>
+                                 
+                                 
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                    <partijCode>
+                                       <waarde>059901</waarde>
+                                    </partijCode>
+                                    <aktenummer>
+                                       <waarde>1 A5820</waarde>
+                                    </aktenummer>
+                                    <soortDocumentCode>
+                                       <waarde>Historie conversie</waarde>
+                                    </soortDocumentCode>
+                                 </inhoud>
+                              </brpGroep>
+                           </documentStapel>
+                        </brpActieBron>
+                     </actieBronnen>
+                     <lo3Herkomst>
+                        <categorie>CATEGORIE_03</categorie>
+                        <stapel>0</stapel>
+                        <voorkomen>0</voorkomen>
+                     </lo3Herkomst>
+                  </actieInhoud>
+                        </brpGroep>
                </samengesteldeNaamStapel>
                <ouderStapel>
                   <brpGroep>
-                     <actieInhoud ref="2"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19900101</waarde>
@@ -283,15 +424,52 @@
                         </datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>
-                           <waarde>true</waarde>
-                        </indicatieOuder>
+                        
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="2">
+                     <datumTijdRegistratie>
+                        <waarde>19900102010000000</waarde>
+                     </datumTijdRegistratie>
+                     <sortering>0</sortering>
+                     <partijCode>
+                        <waarde>199902</waarde>
+                     </partijCode>
+                     
+                     <soortActieCode>
+                        <waarde>Conversie GBA</waarde>
+                     </soortActieCode>
+                     <actieBronnen>
+                        <brpActieBron>
+                           <documentStapel>
+                              <brpGroep>
+                                 
+                                 
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                    <partijCode>
+                                       <waarde>059901</waarde>
+                                    </partijCode>
+                                    <aktenummer>
+                                       <waarde>1 A5820</waarde>
+                                    </aktenummer>
+                                    <soortDocumentCode>
+                                       <waarde>Historie conversie</waarde>
+                                    </soortDocumentCode>
+                                 </inhoud>
+                              </brpGroep>
+                           </documentStapel>
+                        </brpActieBron>
+                     </actieBronnen>
+                     <lo3Herkomst>
+                        <categorie>CATEGORIE_03</categorie>
+                        <stapel>0</stapel>
+                        <voorkomen>0</voorkomen>
+                     </lo3Herkomst>
+                  </actieInhoud>
+                        </brpGroep>
                </ouderStapel>
                <geslachtsaanduidingStapel>
                   <brpGroep>
-                     <actieInhoud ref="2"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19900101</waarde>
@@ -305,7 +483,46 @@
                            <waarde>M</waarde>
                         </geslachtsaanduidingCode>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="2">
+                     <datumTijdRegistratie>
+                        <waarde>19900102010000000</waarde>
+                     </datumTijdRegistratie>
+                     <sortering>0</sortering>
+                     <partijCode>
+                        <waarde>199902</waarde>
+                     </partijCode>
+                     
+                     <soortActieCode>
+                        <waarde>Conversie GBA</waarde>
+                     </soortActieCode>
+                     <actieBronnen>
+                        <brpActieBron>
+                           <documentStapel>
+                              <brpGroep>
+                                 
+                                 
+                                 <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                    <partijCode>
+                                       <waarde>059901</waarde>
+                                    </partijCode>
+                                    <aktenummer>
+                                       <waarde>1 A5820</waarde>
+                                    </aktenummer>
+                                    <soortDocumentCode>
+                                       <waarde>Historie conversie</waarde>
+                                    </soortDocumentCode>
+                                 </inhoud>
+                              </brpGroep>
+                           </documentStapel>
+                        </brpActieBron>
+                     </actieBronnen>
+                     <lo3Herkomst>
+                        <categorie>CATEGORIE_03</categorie>
+                        <stapel>0</stapel>
+                        <voorkomen>0</voorkomen>
+                     </lo3Herkomst>
+                  </actieInhoud>
+                        </brpGroep>
                </geslachtsaanduidingStapel>
             </betrokkenheid>
             <betrokkenheid>
@@ -314,7 +531,7 @@
                </rol>
                <identificatienummerStapel>
                   <brpGroep>
-                     <actieInhoud ref="1"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19900101</waarde>
@@ -328,11 +545,50 @@
                            <waarde>190707057</waarde>
                         </burgerservicenummer>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="1">
+                  <datumTijdRegistratie>
+                     <waarde>19900102010000000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>199902</waarde>
+                  </partijCode>
+                  
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>059901</waarde>
+                                 </partijCode>
+                                 <aktenummer>
+                                    <waarde>1 A5820</waarde>
+                                 </aktenummer>
+                                 <soortDocumentCode>
+                                    <waarde>Historie conversie</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+                  <lo3Herkomst>
+                     <categorie>CATEGORIE_02</categorie>
+                     <stapel>0</stapel>
+                     <voorkomen>0</voorkomen>
+                  </lo3Herkomst>
+               </actieInhoud>
+                        </brpGroep>
                </identificatienummerStapel>
                <geboorteStapel>
                   <brpGroep>
-                     <actieInhoud ref="1"/>
+                     
                      <historie>
                         <datumTijdRegistratie>
                            <waarde>19900102010000000</waarde>
@@ -349,25 +605,101 @@
                            <waarde>6030</waarde>
                         </landOfGebiedCode>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="1">
+                  <datumTijdRegistratie>
+                     <waarde>19900102010000000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>199902</waarde>
+                  </partijCode>
+                  
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>059901</waarde>
+                                 </partijCode>
+                                 <aktenummer>
+                                    <waarde>1 A5820</waarde>
+                                 </aktenummer>
+                                 <soortDocumentCode>
+                                    <waarde>Historie conversie</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+                  <lo3Herkomst>
+                     <categorie>CATEGORIE_02</categorie>
+                     <stapel>0</stapel>
+                     <voorkomen>0</voorkomen>
+                  </lo3Herkomst>
+               </actieInhoud>
+                        </brpGroep>
                </geboorteStapel>
                <identiteitStapel>
                   <brpGroep>
-                     <actieInhoud ref="1"/>
+                     
                      <historie>
-                        <datumAanvangGeldigheid>
-                           <waarde>19900101</waarde>
-                        </datumAanvangGeldigheid>
+                        
                         <datumTijdRegistratie>
                            <waarde>19900102010000000</waarde>
                         </datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentiteitInhoud"/>
-                  </brpGroep>
+                  <actieInhoud id="1">
+                  <datumTijdRegistratie>
+                     <waarde>19900102010000000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>199902</waarde>
+                  </partijCode>
+                  
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>059901</waarde>
+                                 </partijCode>
+                                 <aktenummer>
+                                    <waarde>1 A5820</waarde>
+                                 </aktenummer>
+                                 <soortDocumentCode>
+                                    <waarde>Historie conversie</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+                  <lo3Herkomst>
+                     <categorie>CATEGORIE_02</categorie>
+                     <stapel>0</stapel>
+                     <voorkomen>0</voorkomen>
+                  </lo3Herkomst>
+               </actieInhoud>
+                        </brpGroep>
                </identiteitStapel>
                <samengesteldeNaamStapel>
                   <brpGroep>
-                     <actieInhoud ref="1"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19900101</waarde>
@@ -390,11 +722,50 @@
                            <waarde>false</waarde>
                         </indicatieAfgeleid>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="1">
+                  <datumTijdRegistratie>
+                     <waarde>19900102010000000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>199902</waarde>
+                  </partijCode>
+                  
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>059901</waarde>
+                                 </partijCode>
+                                 <aktenummer>
+                                    <waarde>1 A5820</waarde>
+                                 </aktenummer>
+                                 <soortDocumentCode>
+                                    <waarde>Historie conversie</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+                  <lo3Herkomst>
+                     <categorie>CATEGORIE_02</categorie>
+                     <stapel>0</stapel>
+                     <voorkomen>0</voorkomen>
+                  </lo3Herkomst>
+               </actieInhoud>
+                        </brpGroep>
                </samengesteldeNaamStapel>
                <ouderStapel>
                   <brpGroep>
-                     <actieInhoud ref="1"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19900101</waarde>
@@ -404,15 +775,52 @@
                         </datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>
-                           <waarde>true</waarde>
-                        </indicatieOuder>
+                        
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="1">
+                  <datumTijdRegistratie>
+                     <waarde>19900102010000000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>199902</waarde>
+                  </partijCode>
+                  
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>059901</waarde>
+                                 </partijCode>
+                                 <aktenummer>
+                                    <waarde>1 A5820</waarde>
+                                 </aktenummer>
+                                 <soortDocumentCode>
+                                    <waarde>Historie conversie</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+                  <lo3Herkomst>
+                     <categorie>CATEGORIE_02</categorie>
+                     <stapel>0</stapel>
+                     <voorkomen>0</voorkomen>
+                  </lo3Herkomst>
+               </actieInhoud>
+                        </brpGroep>
                </ouderStapel>
                <geslachtsaanduidingStapel>
                   <brpGroep>
-                     <actieInhoud ref="1"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19900101</waarde>
@@ -426,7 +834,46 @@
                            <waarde>V</waarde>
                         </geslachtsaanduidingCode>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="1">
+                  <datumTijdRegistratie>
+                     <waarde>19900102010000000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>199902</waarde>
+                  </partijCode>
+                  
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>059901</waarde>
+                                 </partijCode>
+                                 <aktenummer>
+                                    <waarde>1 A5820</waarde>
+                                 </aktenummer>
+                                 <soortDocumentCode>
+                                    <waarde>Historie conversie</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+                  <lo3Herkomst>
+                     <categorie>CATEGORIE_02</categorie>
+                     <stapel>0</stapel>
+                     <voorkomen>0</voorkomen>
+                  </lo3Herkomst>
+               </actieInhoud>
+                        </brpGroep>
                </geslachtsaanduidingStapel>
             </betrokkenheid>
          </betrokkenheden>
@@ -449,7 +896,7 @@
                         <waarde>1 A5820</waarde>
                      </aktenummer>
                      <partij>
-                        <waarde>59901</waarde>
+                        <waarde>059901</waarde>
                      </partij>
                      <rubriek8510IngangsdatumGeldigheid>
                         <waarde>19900101</waarde>
@@ -504,7 +951,7 @@
                         <waarde>1 A5820</waarde>
                      </aktenummer>
                      <partij>
-                        <waarde>59901</waarde>
+                        <waarde>059901</waarde>
                      </partij>
                      <rubriek8510IngangsdatumGeldigheid>
                         <waarde>19900101</waarde>
@@ -599,7 +1046,24 @@
          </inhoud>
       </brpGroep>
       <brpGroep>
-         <actieInhoud ref="8"/>
+         <actieInhoud id="8">
+            <datumTijdRegistratie>
+               <waarde>20140101010000000</waarde>
+            </datumTijdRegistratie>
+            <sortering>0</sortering>
+            <partijCode>
+               <waarde>199902</waarde>
+            </partijCode>
+            
+            <soortActieCode>
+               <waarde>Conversie GBA</waarde>
+            </soortActieCode>
+            <lo3Herkomst>
+               <categorie>CATEGORIE_07</categorie>
+               <stapel>0</stapel>
+               <voorkomen>0</voorkomen>
+            </lo3Herkomst>
+         </actieInhoud>
          <historie>
             <datumTijdRegistratie>
                <waarde>20150714074918427</waarde>
@@ -617,7 +1081,7 @@
    </persoonAfgeleidAdministratiefStapel>
    <verstrekkingsbeperkingIndicatieStapel>
       <brpGroep>
-         <actieInhoud ref="3"/>
+         
          <historie>
             <datumTijdRegistratie>
                <waarde>19900101010000000</waarde>
@@ -628,12 +1092,30 @@
                <waarde>true</waarde>
             </indicatie>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="3">
+            <datumTijdRegistratie>
+               <waarde>19900101010000000</waarde>
+            </datumTijdRegistratie>
+            <sortering>0</sortering>
+            <partijCode>
+               <waarde>199902</waarde>
+            </partijCode>
+            
+            <soortActieCode>
+               <waarde>Conversie GBA</waarde>
+            </soortActieCode>
+            <lo3Herkomst>
+               <categorie>CATEGORIE_07</categorie>
+               <stapel>0</stapel>
+               <voorkomen>0</voorkomen>
+            </lo3Herkomst>
+         </actieInhoud>
+        </brpGroep>
    </verstrekkingsbeperkingIndicatieStapel>
    <geslachtsnaamcomponentStapels class="java.util.ArrayList">
       <geslachtsnaamcomponentStapel>
          <brpGroep>
-            <actieInhoud ref="4"/>
+            
             <historie>
                <datumAanvangGeldigheid>
                   <waarde>19900101</waarde>
@@ -650,12 +1132,51 @@
                   <waarde>1</waarde>
                </volgnummer>
             </inhoud>
-         </brpGroep>
+         <actieInhoud id="4">
+               <datumTijdRegistratie>
+                  <waarde>19900102010000000</waarde>
+               </datumTijdRegistratie>
+               <sortering>0</sortering>
+               <partijCode>
+                  <waarde>199902</waarde>
+               </partijCode>
+               
+               <soortActieCode>
+                  <waarde>Conversie GBA</waarde>
+               </soortActieCode>
+               <actieBronnen>
+                  <brpActieBron>
+                     <documentStapel>
+                        <brpGroep>
+                           
+                           
+                           <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                              <partijCode>
+                                 <waarde>059901</waarde>
+                              </partijCode>
+                              <aktenummer>
+                                 <waarde>1 A5820</waarde>
+                              </aktenummer>
+                              <soortDocumentCode>
+                                 <waarde>Historie conversie</waarde>
+                              </soortDocumentCode>
+                           </inhoud>
+                        </brpGroep>
+                     </documentStapel>
+                  </brpActieBron>
+               </actieBronnen>
+               <lo3Herkomst>
+                  <categorie>CATEGORIE_01</categorie>
+                  <stapel>0</stapel>
+                  <voorkomen>0</voorkomen>
+               </lo3Herkomst>
+            </actieInhoud>
+            </brpGroep>
       </geslachtsnaamcomponentStapel>
    </geslachtsnaamcomponentStapels>
    <identificatienummerStapel>
       <brpGroep>
-         <actieInhoud ref="4"/>
+         
          <historie>
             <datumAanvangGeldigheid>
                <waarde>19900101</waarde>
@@ -672,11 +1193,50 @@
                <waarde>194681129</waarde>
             </burgerservicenummer>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="4">
+               <datumTijdRegistratie>
+                  <waarde>19900102010000000</waarde>
+               </datumTijdRegistratie>
+               <sortering>0</sortering>
+               <partijCode>
+                  <waarde>199902</waarde>
+               </partijCode>
+               
+               <soortActieCode>
+                  <waarde>Conversie GBA</waarde>
+               </soortActieCode>
+               <actieBronnen>
+                  <brpActieBron>
+                     <documentStapel>
+                        <brpGroep>
+                           
+                           
+                           <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                              <partijCode>
+                                 <waarde>059901</waarde>
+                              </partijCode>
+                              <aktenummer>
+                                 <waarde>1 A5820</waarde>
+                              </aktenummer>
+                              <soortDocumentCode>
+                                 <waarde>Historie conversie</waarde>
+                              </soortDocumentCode>
+                           </inhoud>
+                        </brpGroep>
+                     </documentStapel>
+                  </brpActieBron>
+               </actieBronnen>
+               <lo3Herkomst>
+                  <categorie>CATEGORIE_01</categorie>
+                  <stapel>0</stapel>
+                  <voorkomen>0</voorkomen>
+               </lo3Herkomst>
+            </actieInhoud>
+        </brpGroep>
    </identificatienummerStapel>
    <geboorteStapel>
       <brpGroep>
-         <actieInhoud ref="4"/>
+         
          <historie>
             <datumTijdRegistratie>
                <waarde>19900102010000000</waarde>
@@ -687,17 +1247,56 @@
                <waarde>19900101</waarde>
             </geboortedatum>
             <gemeenteCode>
-               <waarde>599</waarde>
+               <waarde>0599</waarde>
             </gemeenteCode>
             <landOfGebiedCode>
                <waarde>6030</waarde>
             </landOfGebiedCode>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="4">
+               <datumTijdRegistratie>
+                  <waarde>19900102010000000</waarde>
+               </datumTijdRegistratie>
+               <sortering>0</sortering>
+               <partijCode>
+                  <waarde>199902</waarde>
+               </partijCode>
+               
+               <soortActieCode>
+                  <waarde>Conversie GBA</waarde>
+               </soortActieCode>
+               <actieBronnen>
+                  <brpActieBron>
+                     <documentStapel>
+                        <brpGroep>
+                           
+                           
+                           <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                              <partijCode>
+                                 <waarde>059901</waarde>
+                              </partijCode>
+                              <aktenummer>
+                                 <waarde>1 A5820</waarde>
+                              </aktenummer>
+                              <soortDocumentCode>
+                                 <waarde>Historie conversie</waarde>
+                              </soortDocumentCode>
+                           </inhoud>
+                        </brpGroep>
+                     </documentStapel>
+                  </brpActieBron>
+               </actieBronnen>
+               <lo3Herkomst>
+                  <categorie>CATEGORIE_01</categorie>
+                  <stapel>0</stapel>
+                  <voorkomen>0</voorkomen>
+               </lo3Herkomst>
+            </actieInhoud>
+        </brpGroep>
    </geboorteStapel>
    <samengesteldeNaamStapel>
       <brpGroep>
-         <actieInhoud ref="4"/>
+         
          <historie>
             <datumAanvangGeldigheid>
                <waarde>19900101</waarde>
@@ -720,11 +1319,50 @@
                <waarde>true</waarde>
             </indicatieAfgeleid>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="4">
+               <datumTijdRegistratie>
+                  <waarde>19900102010000000</waarde>
+               </datumTijdRegistratie>
+               <sortering>0</sortering>
+               <partijCode>
+                  <waarde>199902</waarde>
+               </partijCode>
+               
+               <soortActieCode>
+                  <waarde>Conversie GBA</waarde>
+               </soortActieCode>
+               <actieBronnen>
+                  <brpActieBron>
+                     <documentStapel>
+                        <brpGroep>
+                           
+                           
+                           <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                              <partijCode>
+                                 <waarde>059901</waarde>
+                              </partijCode>
+                              <aktenummer>
+                                 <waarde>1 A5820</waarde>
+                              </aktenummer>
+                              <soortDocumentCode>
+                                 <waarde>Historie conversie</waarde>
+                              </soortDocumentCode>
+                           </inhoud>
+                        </brpGroep>
+                     </documentStapel>
+                  </brpActieBron>
+               </actieBronnen>
+               <lo3Herkomst>
+                  <categorie>CATEGORIE_01</categorie>
+                  <stapel>0</stapel>
+                  <voorkomen>0</voorkomen>
+               </lo3Herkomst>
+            </actieInhoud>
+        </brpGroep>
    </samengesteldeNaamStapel>
    <geslachtsaanduidingStapel>
       <brpGroep>
-         <actieInhoud ref="4"/>
+         
          <historie>
             <datumAanvangGeldigheid>
                <waarde>19900101</waarde>
@@ -738,11 +1376,50 @@
                <waarde>M</waarde>
             </geslachtsaanduidingCode>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="4">
+               <datumTijdRegistratie>
+                  <waarde>19900102010000000</waarde>
+               </datumTijdRegistratie>
+               <sortering>0</sortering>
+               <partijCode>
+                  <waarde>199902</waarde>
+               </partijCode>
+               
+               <soortActieCode>
+                  <waarde>Conversie GBA</waarde>
+               </soortActieCode>
+               <actieBronnen>
+                  <brpActieBron>
+                     <documentStapel>
+                        <brpGroep>
+                           
+                           
+                           <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                              <partijCode>
+                                 <waarde>059901</waarde>
+                              </partijCode>
+                              <aktenummer>
+                                 <waarde>1 A5820</waarde>
+                              </aktenummer>
+                              <soortDocumentCode>
+                                 <waarde>Historie conversie</waarde>
+                              </soortDocumentCode>
+                           </inhoud>
+                        </brpGroep>
+                     </documentStapel>
+                  </brpActieBron>
+               </actieBronnen>
+               <lo3Herkomst>
+                  <categorie>CATEGORIE_01</categorie>
+                  <stapel>0</stapel>
+                  <voorkomen>0</voorkomen>
+               </lo3Herkomst>
+            </actieInhoud>
+        </brpGroep>
    </geslachtsaanduidingStapel>
    <naamgebruikStapel>
       <brpGroep>
-         <actieInhoud ref="4"/>
+         
          <historie>
             <datumTijdRegistratie>
                <waarde>19900102010000000</waarde>
@@ -762,11 +1439,50 @@
                <waarde>Vermeer</waarde>
             </geslachtsnaamstam>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="4">
+               <datumTijdRegistratie>
+                  <waarde>19900102010000000</waarde>
+               </datumTijdRegistratie>
+               <sortering>0</sortering>
+               <partijCode>
+                  <waarde>199902</waarde>
+               </partijCode>
+               
+               <soortActieCode>
+                  <waarde>Conversie GBA</waarde>
+               </soortActieCode>
+               <actieBronnen>
+                  <brpActieBron>
+                     <documentStapel>
+                        <brpGroep>
+                           
+                           
+                           <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                              <partijCode>
+                                 <waarde>059901</waarde>
+                              </partijCode>
+                              <aktenummer>
+                                 <waarde>1 A5820</waarde>
+                              </aktenummer>
+                              <soortDocumentCode>
+                                 <waarde>Historie conversie</waarde>
+                              </soortDocumentCode>
+                           </inhoud>
+                        </brpGroep>
+                     </documentStapel>
+                  </brpActieBron>
+               </actieBronnen>
+               <lo3Herkomst>
+                  <categorie>CATEGORIE_01</categorie>
+                  <stapel>0</stapel>
+                  <voorkomen>0</voorkomen>
+               </lo3Herkomst>
+            </actieInhoud>
+        </brpGroep>
    </naamgebruikStapel>
    <persoonskaartStapel>
       <brpGroep>
-         <actieInhoud ref="3"/>
+         
          <historie>
             <datumTijdRegistratie>
                <waarde>19900101010000000</waarde>
@@ -777,7 +1493,25 @@
                <waarde>true</waarde>
             </indicatiePKVolledigGeconverteerd>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="3">
+            <datumTijdRegistratie>
+               <waarde>19900101010000000</waarde>
+            </datumTijdRegistratie>
+            <sortering>0</sortering>
+            <partijCode>
+               <waarde>199902</waarde>
+            </partijCode>
+            
+            <soortActieCode>
+               <waarde>Conversie GBA</waarde>
+            </soortActieCode>
+            <lo3Herkomst>
+               <categorie>CATEGORIE_07</categorie>
+               <stapel>0</stapel>
+               <voorkomen>0</voorkomen>
+            </lo3Herkomst>
+         </actieInhoud>
+        </brpGroep>
    </persoonskaartStapel>
    <verificatieStapels class="java.util.ArrayList"/>
    <reisdocumentStapels class="java.util.ArrayList">
@@ -802,18 +1536,14 @@
                   <brpActieBron>
                      <documentStapel>
                         <brpGroep>
-                           <actieInhoud ref="6"/>
-                           <historie>
-                              <datumTijdRegistratie>
-                                 <waarde>19900111010000000</waarde>
-                              </datumTijdRegistratie>
-                           </historie>
+                           
+                           
                            <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                               <omschrijving>
                                  <waarde>Reisdocument</waarde>
                               </omschrijving>
                               <partijCode>
-                                 <waarde>59901</waarde>
+                                 <waarde>059901</waarde>
                               </partijCode>
                               <soortDocumentCode>
                                  <waarde>Historie conversie</waarde>
@@ -878,18 +1608,14 @@
                   <brpActieBron>
                      <documentStapel>
                         <brpGroep>
-                           <actieInhoud ref="9"/>
-                           <historie>
-                              <datumTijdRegistratie>
-                                 <waarde>19900111010000000</waarde>
-                              </datumTijdRegistratie>
-                           </historie>
+                           
+                           
                            <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                               <omschrijving>
                                  <waarde>Reisdocument</waarde>
                               </omschrijving>
                               <partijCode>
-                                 <waarde>59901</waarde>
+                                 <waarde>059901</waarde>
                               </partijCode>
                               <soortDocumentCode>
                                  <waarde>Historie conversie</waarde>
@@ -991,7 +1717,7 @@
    <istKindStapels class="java.util.ArrayList"/>
    <bijhoudingStapel>
       <brpGroep>
-         <actieInhoud ref="5"/>
+         
          <historie>
             <datumAanvangGeldigheid>
                <waarde>19761030</waarde>
@@ -1010,11 +1736,27 @@
             <nadereBijhoudingsaardCode>
                <waarde>A</waarde>
             </nadereBijhoudingsaardCode>
-            <indicatieOnverwerktDocumentAanwezig>
-               <waarde>false</waarde>
-            </indicatieOnverwerktDocumentAanwezig>
+            
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="5">
+            <datumTijdRegistratie>
+               <waarde>19761031010000000</waarde>
+            </datumTijdRegistratie>
+            <sortering>0</sortering>
+            <partijCode>
+               <waarde>199902</waarde>
+            </partijCode>
+            
+            <soortActieCode>
+               <waarde>Conversie GBA</waarde>
+            </soortActieCode>
+            <lo3Herkomst>
+               <categorie>CATEGORIE_08</categorie>
+               <stapel>0</stapel>
+               <voorkomen>0</voorkomen>
+            </lo3Herkomst>
+         </actieInhoud>
+        </brpGroep>
    </bijhoudingStapel>
    <istOuder2Stapel>
       <brpGroep>
@@ -1035,7 +1777,7 @@
                   <waarde>1 A5820</waarde>
                </aktenummer>
                <partij>
-                  <waarde>59901</waarde>
+                  <waarde>059901</waarde>
                </partij>
                <rubriek8510IngangsdatumGeldigheid>
                   <waarde>19900101</waarde>
@@ -1090,7 +1832,7 @@
                   <waarde>1 A5820</waarde>
                </aktenummer>
                <partij>
-                  <waarde>59901</waarde>
+                  <waarde>059901</waarde>
                </partij>
                <rubriek8510IngangsdatumGeldigheid>
                   <waarde>19900101</waarde>
@@ -1129,7 +1871,24 @@
    <istHuwelijkOfGpStapels class="java.util.ArrayList"/>
    <inschrijvingStapel>
       <brpGroep>
-         <actieInhoud ref="8"/>
+         <actieInhoud id="8">
+            <datumTijdRegistratie>
+               <waarde>20140101010000000</waarde>
+            </datumTijdRegistratie>
+            <sortering>0</sortering>
+            <partijCode>
+               <waarde>199902</waarde>
+            </partijCode>
+            
+            <soortActieCode>
+               <waarde>Conversie GBA</waarde>
+            </soortActieCode>
+            <lo3Herkomst>
+               <categorie>CATEGORIE_07</categorie>
+               <stapel>0</stapel>
+               <voorkomen>0</voorkomen>
+            </lo3Herkomst>
+         </actieInhoud>
          <historie>
             <datumTijdRegistratie>
                <waarde>20140101010000000</waarde>
@@ -1148,4 +1907,5 @@
          </inhoud>
       </brpGroep>
    </inschrijvingStapel>
+<buitenlandsPersoonsnummerStapels/>
 </brpPersoonslijst>

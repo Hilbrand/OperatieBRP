@@ -7,6 +7,8 @@
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.sql;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.sql.DataSource;
 
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
@@ -19,20 +21,22 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
  */
 public final class CleanDatabaseKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "cleandb";
+
+    private static final String DATABASE_ISC = "ISC";
+    private static final String DATABASE_BRP = "BRP";
 
     /**
      * Constructor.
      */
     public CleanDatabaseKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-db-gbav.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:infra-db-voisc.xml",
+                "classpath:configuratie.xml",
+                "classpath:infra-db-brp.xml",
+                "classpath:infra-db-isc.xml",
                 "classpath:infra-sql.xml"));
     }
 
@@ -40,8 +44,17 @@ public final class CleanDatabaseKanaal extends LazyLoadingKanaal {
      * Verwerker.
      */
     public static final class Worker extends AbstractKanaal {
+
         @Inject
         private SqlHelper sqlHelper;
+
+        @Inject
+        @Named("iscDataSource")
+        private DataSource iscDataSource;
+
+        @Inject
+        @Named("brpDataSource")
+        private DataSource brpDataSource;
 
         /*
          * (non-Javadoc)
@@ -55,7 +68,16 @@ public final class CleanDatabaseKanaal extends LazyLoadingKanaal {
 
         @Override
         public void verwerkUitgaand(final TestCasusContext testCasus, final Bericht bericht) throws KanaalException {
-            sqlHelper.opschonenDatabase(bericht.getInhoud());
+            switch (bericht.getInhoud().trim().toUpperCase()) {
+                case DATABASE_BRP:
+                    sqlHelper.opschonenDatabase(brpDataSource, "/sql/cleandb_brp.sql");
+                    break;
+                case DATABASE_ISC:
+                    sqlHelper.opschonenDatabase(iscDataSource, "/sql/cleandb_isc.sql");
+                    break;
+                default:
+                    throw new IllegalArgumentException("Optie '" + bericht.getInhoud().trim().toUpperCase() + "' voor cleandb niet ondersteund.");
+            }
         }
     }
 }

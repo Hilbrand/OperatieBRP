@@ -15,37 +15,28 @@ public interface VirtueelProcesDao {
 
     /**
      * Maak een virtueel proces.
-     *
      * @return id
      */
     long maak();
 
     /**
      * Toevoegen van gerelateerde informatie aan een virtueel proces.
-     *
-     * @param processInstanceId
-     *            proces instance id
-     * @param soortGegeven
-     *            soort gegeven
-     * @param gegeven
-     *            gegeven
+     * @param processInstanceId proces instance id
+     * @param soortGegeven soort gegeven
+     * @param gegeven gegeven
      */
     void toevoegenGerelateerdeGegevens(final long processInstanceId, String soortGegeven, String gegeven);
 
     /**
      * Lees het virtuele proces.
-     *
-     * @param id
-     *            id
+     * @param id id
      * @return het virtuele proces
      */
     VirtueelProces lees(long id);
 
     /**
      * Verwijder een virtueel proces.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     void verwijder(long id);
 

@@ -8,11 +8,11 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import org.springframework.stereotype.Component;
@@ -54,7 +54,7 @@ public final class PersoonIndicatieHistorieConverter extends AbstractEntityHisto
                 persoon = context.getPersoon(Integer.parseInt(value));
                 break;
             case HEADER_SOORT_INDICATIE:
-                soortIndicatie = SoortIndicatie.parseId(Short.valueOf(value));
+                soortIndicatie = SoortIndicatie.parseId(Integer.valueOf(value));
                 break;
             case HEADER_WAARDE:
                 waarde = Boolean.valueOf(value);

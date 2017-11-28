@@ -12,13 +12,10 @@ public class ConversieTest extends ConversieTestConfiguratie {
 
     @Override
     public boolean useMemoryDS() {
-        return true;
         // return false;
+        return true;
     }
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getInputFolder()
-     */
     @Override
     public File getInputFolder() {
         return new File("./test");

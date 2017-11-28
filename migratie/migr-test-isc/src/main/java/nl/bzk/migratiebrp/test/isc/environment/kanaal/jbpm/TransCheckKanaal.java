@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.jbpm;
 
 import javax.inject.Inject;
+
 import nl.bzk.migratiebrp.test.isc.environment.correlatie.Correlator;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
@@ -19,18 +20,17 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
  */
 public class TransCheckKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "transcheck";
 
     /**
      * Constructor.
      */
     public TransCheckKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-jms-isc.xml",
-            "classpath:infra-jbpm.xml"));
+        super(new Worker(),
+                new Configuration("classpath:configuratie.xml", "classpath:infra-db-isc.xml", "classpath:infra-jms-isc.xml", "classpath:infra-jbpm.xml"));
     }
 
     /**
@@ -47,7 +47,7 @@ public class TransCheckKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -71,16 +71,16 @@ public class TransCheckKanaal extends LazyLoadingKanaal {
             } else {
                 berichtId = correlator.getBerichtReferentie(verwachtBericht.getCorrelatieReferentie());
                 if (berichtId == null) {
-                    throw new KanaalException("Bericht gerefereerd aan bericht met volgnummer "
-                                              + verwachtBericht.getCorrelatieReferentie()
-                                              + ", maar geen bericht gevonden.");
+                    throw new KanaalException(
+                            "Bericht gerefereerd aan bericht met volgnummer " + verwachtBericht.getCorrelatieReferentie() + ", maar geen bericht gevonden.");
                 }
             }
 
             final String[] parts = verwachtBericht.getInhoud().replaceAll("\r", "").split("\n");
             if (parts.length < 1) {
-                throw new KanaalException("Transitie check kanaal verwacht een bericht met minimaal een regel; "
-                                          + "de eerste regel bevat de node naam; de tweede regel de transitie; de derde regel het aantal herhalingen.");
+                throw new KanaalException(
+                        "Transitie check kanaal verwacht een bericht met minimaal een regel; "
+                                + "de eerste regel bevat de node naam; de tweede regel de transitie; de derde regel het aantal herhalingen.");
             }
 
             try {

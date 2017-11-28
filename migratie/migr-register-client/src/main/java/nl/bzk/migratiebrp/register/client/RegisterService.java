@@ -6,17 +6,16 @@
 
 package nl.bzk.migratiebrp.register.client;
 
+import java.util.Date;
+
 /**
  * Register service.
- *
- * @param <T>
- *            type register
+ * @param <T> type register
  */
 public interface RegisterService<T> {
 
     /**
      * Geef het register.
-     *
      * @return register
      */
     T geefRegister();
@@ -30,5 +29,23 @@ public interface RegisterService<T> {
      * Cache leeg maken.
      */
     void clearRegister();
+
+    /**
+     * Geef het tijdstip laatste register bericht dat is ontvangen.
+     * @return bericht, of null
+     */
+    String getLaatsteBericht();
+
+    /**
+     * Geef het tijdstip wanneer het laatste register is ontvangen.
+     * @return tijdstip, of null
+     */
+    Date getLaatsteOntvangst();
+
+    /**
+     * Geef het register als string.
+     * @return regsiter als string
+     */
+    String getRegisterAsString();
 
 }

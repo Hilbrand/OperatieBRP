@@ -1,73 +1,72 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>nl.bzk.migratiebrp.isc.deploy</groupId>
     <artifactId>migr-isc-deploy-mailbox-as</artifactId>
     <name>Migr - ISC - Deploy - Deploy Mailbox AS</name>
-	<version>1.0</version>
 	<packaging>pom</packaging>
+	<parent>
+		<groupId>nl.bzk.migratiebrp.isc.deploy</groupId>
+		<artifactId>migr-isc-deploy-properties</artifactId>
+		<version>1.0</version>
+		<relativePath>./deploy-properties.pom.xml</relativePath>
+	</parent>
+	
+	<properties>
+		<!-- Ant plugin config -->
+		<ant.build.file>mailbox-as.build.xml</ant.build.file>
+		<!-- Copy plugin config (copy-single execution) -->
+		<copy.groupId>nl.bzk.brp</copy.groupId>
+		<copy.artifactId>distributie-zip-tools-mailbox</copy.artifactId>
+		<copy.version>${migratie.tools-mailbox.version}</copy.version>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>install</id>
+			<activation>
+				<property>
+					<name>deploy.target</name>
+					<value>install</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-single</id>
+							</execution>
+						</executions>
+					</plugin>		
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>properties-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>system-properties-single</id>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
 				<executions>
 					<execution>
-						<phase>install</phase>
-						<configuration>
-							<target>
-								<fail unless="deploy.target" message="Geen deploy.target opgegeven!" />
-								<fail unless="deploy.propfile" message="Geen deploy.propfile opgegeven!" />
-								<fail message="${deploy.propfile} bestaat niet!">
-									<condition>
-										<not>
-											<resourcecount count="1" >
-												<fileset dir="${basedir}">
-													<include name="${deploy.propfile}" />
-												</fileset>
-											</resourcecount>
-										</not>
-									</condition>
-								</fail>								
-								<ant antfile="${basedir}/build/mailbox-as.build.xml" useNativeBasedir="true" inheritAll="false" inheritRefs="false" target="${deploy.target}" >
-								  <property file="${deploy.propfile}"/>
-								</ant>							
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
+						<id>install</id>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.ant</groupId>
-						<artifactId>ant-jsch</artifactId>
-						<version>1.9.2</version>
-					</dependency>
-					<dependency>
-						<groupId>com.jcraft</groupId>
-						<artifactId>jsch</artifactId>
-						<version>0.1.50</version>
-					</dependency>
-					<dependency>
-						<groupId>ant-contrib</groupId>
-						<artifactId>ant-contrib</artifactId>
-						<version>1.0b3</version>					
-						<exclusions>
-							<exclusion>
-								<groupId>ant</groupId>
-								<artifactId>ant</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-				</dependencies>			
 			</plugin>
 		</plugins>		
 	</build>
 </project>
-		

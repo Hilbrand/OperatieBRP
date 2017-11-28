@@ -13,27 +13,18 @@ import nl.bzk.migratiebrp.bericht.model.lo3.impl.NullBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakNullActionTest {
 
-    private MaakNullAction subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new MaakNullAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakNullAction subject = new MaakNullAction(berichtenDao);
 
     @Test
     public void test() {
         final Iv01Bericht iv01Bericht = new Iv01Bericht();
-        iv01Bericht.setBronGemeente("1234");
-        iv01Bericht.setDoelGemeente("5678");
+        iv01Bericht.setBronPartijCode("1234");
+        iv01Bericht.setDoelPartijCode("5678");
 
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("iv01Bericht", berichtenDao.bewaarBericht(iv01Bericht));
@@ -43,8 +34,8 @@ public class MaakNullActionTest {
 
         final NullBericht nullBericht = (NullBericht) berichtenDao.leesBericht((Long) result.get("nullBericht"));
         Assert.assertNotNull(nullBericht);
-        Assert.assertEquals("1234", nullBericht.getDoelGemeente());
-        Assert.assertEquals("5678", nullBericht.getBronGemeente());
+        Assert.assertEquals("1234", nullBericht.getDoelPartijCode());
+        Assert.assertEquals("5678", nullBericht.getBronPartijCode());
         Assert.assertEquals(iv01Bericht.getMessageId(), nullBericht.getCorrelationId());
     }
 

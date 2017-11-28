@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lo3Persoonslijst>
    <overlijdenStapel>
       <lo3Categorie>
@@ -122,7 +123,7 @@
                <waarde>7982967585</waarde>
             </aNummer>
             <burgerservicenummer>
-               <waarde>246230873</waarde>
+               <waarde>634050953</waarde>
             </burgerservicenummer>
             <voornamen>
                <waarde>Peter Richard</waarde>
@@ -203,12 +204,8 @@
             </datumtijdstempel>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <documentatie>
             <id>1168</id>

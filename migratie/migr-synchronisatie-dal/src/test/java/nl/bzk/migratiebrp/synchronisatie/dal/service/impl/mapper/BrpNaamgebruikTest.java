@@ -8,26 +8,26 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.ArrayList;
 import javax.inject.Inject;
-import junit.framework.Assert;
+import org.junit.Assert;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNaamgebruikHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Naamgebruik;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikGeslachtsnaamstam;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNaamgebruikInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Naamgebruik;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNaamgebruikHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
 import org.junit.Test;
 
 public class BrpNaamgebruikTest extends BrpAbstractTest {
 
-    private final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(new ArrayList<Onderzoek>());
+    private final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(new ArrayList<>());
 
     @Inject
     private BrpNaamgebruikMapper mapper;
@@ -36,10 +36,10 @@ public class BrpNaamgebruikTest extends BrpAbstractTest {
     public void testMapInhoud() {
         final PersoonNaamgebruikHistorie historie =
                 new PersoonNaamgebruikHistorie(
-                    new Persoon(SoortPersoon.INGESCHREVENE),
-                    "Janssen-van der Dingenmans",
-                    Boolean.TRUE,
-                    Naamgebruik.EIGEN);
+                        new Persoon(SoortPersoon.INGESCHREVENE),
+                        "Janssen-van der Dingenmans",
+                        Boolean.TRUE,
+                        Naamgebruik.EIGEN);
         historie.setPredicaat(Predicaat.K);
         // historie.setAdellijkeTitel
         historie.setVoornamenNaamgebruik("Voor nam en");
@@ -56,6 +56,6 @@ public class BrpNaamgebruikTest extends BrpAbstractTest {
         Assert.assertEquals(new BrpString("Voor nam en", null), result.getVoornamen());
         Assert.assertEquals(new BrpString("van der den a la", null), result.getVoorvoegsel());
         Assert.assertEquals(new BrpCharacter('x', null), result.getScheidingsteken());
-        Assert.assertEquals(new BrpString("Janssen-van der Dingenmans", null), result.getGeslachtsnaamstam());
+        Assert.assertEquals(new BrpNaamgebruikGeslachtsnaamstam("Janssen-van der Dingenmans", null), result.getGeslachtsnaamstam());
     }
 }

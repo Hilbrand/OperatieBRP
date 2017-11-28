@@ -26,74 +26,74 @@ public class MainTest {
     @Test
     public void testMainHappy() {
         final String[] args =
-                new String[] {CONFIG_PARAM,
-                              PROPERTIES,
-                              CREATE_PARAM,
-                              DATUM_VANAF_PARAM,
-                              VANAF_DATUM,
-                              BATCH_SIZE_PARAM,
-                              BATCH_SIZE,
-                              TIMEOUT_PARAM,
-                              TIMEOUT, };
-        Main.setSpringConfig(new String[] {PROEF_SYNC_TEST_BEANS });
+                new String[]{CONFIG_PARAM,
+                        PROPERTIES,
+                        CREATE_PARAM,
+                        DATUM_VANAF_PARAM,
+                        VANAF_DATUM,
+                        BATCH_SIZE_PARAM,
+                        BATCH_SIZE,
+                        TIMEOUT_PARAM,
+                        TIMEOUT,};
+        Main.setSpringConfig(new String[]{PROEF_SYNC_TEST_BEANS});
         Main.main(args);
     }
 
     @Test
     public void testMainHappyTs() {
         final String[] args =
-                new String[] {CONFIG_PARAM,
-                              PROPERTIES,
-                              CREATE_PARAM,
-                              DATUM_VANAF_PARAM,
-                              VANAF_TIMESTAMP,
-                              BATCH_SIZE_PARAM,
-                              BATCH_SIZE,
-                              TIMEOUT_PARAM,
-                              TIMEOUT, };
-        Main.setSpringConfig(new String[] {PROEF_SYNC_TEST_BEANS });
+                new String[]{CONFIG_PARAM,
+                        PROPERTIES,
+                        CREATE_PARAM,
+                        DATUM_VANAF_PARAM,
+                        VANAF_TIMESTAMP,
+                        BATCH_SIZE_PARAM,
+                        BATCH_SIZE,
+                        TIMEOUT_PARAM,
+                        TIMEOUT,};
+        Main.setSpringConfig(new String[]{PROEF_SYNC_TEST_BEANS});
         Main.main(args);
     }
 
     @Test
     public void testMainBatchGrootteDefaultTimeout() {
-        final String[] args = new String[] {CONFIG_PARAM, PROPERTIES, BATCH_SIZE_PARAM, "10000", };
-        Main.setSpringConfig(new String[] {PROEF_SYNC_TEST_BEANS });
+        final String[] args = new String[]{CONFIG_PARAM, PROPERTIES, BATCH_SIZE_PARAM, "10000",};
+        Main.setSpringConfig(new String[]{PROEF_SYNC_TEST_BEANS});
         Main.main(args);
     }
 
     @Test
     public void testMainTimeoutDefaultBatchGrootte() {
-        final String[] args = new String[] {CONFIG_PARAM, PROPERTIES, TIMEOUT_PARAM, TIMEOUT, };
-        Main.setSpringConfig(new String[] {PROEF_SYNC_TEST_BEANS });
+        final String[] args = new String[]{CONFIG_PARAM, PROPERTIES, TIMEOUT_PARAM, TIMEOUT,};
+        Main.setSpringConfig(new String[]{PROEF_SYNC_TEST_BEANS});
         Main.main(args);
     }
 
     @Test
     public void testMainGeenGetalBatchGrootte() {
-        final String[] args = new String[] {CONFIG_PARAM, PROPERTIES, BATCH_SIZE_PARAM, DUMMY_PARAM, };
-        Main.setSpringConfig(new String[] {PROEF_SYNC_TEST_BEANS, });
+        final String[] args = new String[]{CONFIG_PARAM, PROPERTIES, BATCH_SIZE_PARAM, DUMMY_PARAM,};
+        Main.setSpringConfig(new String[]{PROEF_SYNC_TEST_BEANS,});
         Main.main(args);
     }
 
     @Test
     public void testMainGeenGetalTimeout() {
-        final String[] args = new String[] {CONFIG_PARAM, PROPERTIES, TIMEOUT_PARAM, DUMMY_PARAM, };
-        Main.setSpringConfig(new String[] {PROEF_SYNC_TEST_BEANS });
+        final String[] args = new String[]{CONFIG_PARAM, PROPERTIES, TIMEOUT_PARAM, DUMMY_PARAM,};
+        Main.setSpringConfig(new String[]{PROEF_SYNC_TEST_BEANS});
         Main.main(args);
     }
 
     @Test
     public void testMainWrongConfig() {
-        final String[] args = new String[] {CONFIG_PARAM, "proef-sync-test.properties" };
-        Main.setSpringConfig(new String[] {PROEF_SYNC_TEST_BEANS });
+        final String[] args = new String[]{CONFIG_PARAM, "proef-sync-test.properties"};
+        Main.setSpringConfig(new String[]{PROEF_SYNC_TEST_BEANS});
         Main.main(args);
     }
 
     @Test
     public void testMainNoConfig() {
-        final String[] args = new String[] {};
-        Main.setSpringConfig(new String[] {PROEF_SYNC_TEST_BEANS });
+        final String[] args = new String[]{};
+        Main.setSpringConfig(new String[]{PROEF_SYNC_TEST_BEANS});
         Main.main(args);
     }
 

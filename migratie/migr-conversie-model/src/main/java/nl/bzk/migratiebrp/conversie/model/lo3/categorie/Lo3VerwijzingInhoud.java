@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
@@ -14,14 +15,13 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de LO3 categorie Verwijziging (21).
@@ -73,31 +73,18 @@ public final class Lo3VerwijzingInhoud implements Lo3CategorieInhoud {
 
     /**
      * Maak een Lo3VerwijzingInhoud object.
-     *
-     * @param aNummer
-     *            het LO3 A-nummer
-     * @param burgerservicenummer
-     *            het LO3 burgerservicenummer, mag null zijn
-     * @param voornamen
-     *            de LO3 voornaam of voornamen, mag null zijn
-     * @param adellijkeTitelPredikaatCode
-     *            de LO3 adelijke titel / predikaat code, mag null zijn
-     * @param voorvoegselGeslachtsnaam
-     *            de LO3 voorvoegsel van de geslachtsnaam, mag null zijn, als gevuld dan lengte tussen 1 en 10 karakters
-     * @param geslachtsnaam
-     *            de LO3 geslachtsnaam, mag niet null zijn en lengte tussen 1 en 200 karakters
-     * @param geboortedatum
-     *            de geboortedatum, mag niet null zijn
-     * @param geboorteGemeenteCode
-     *            de geboorte gemeente, mag niet null zijn
-     * @param geboorteLandCode
-     *            de geboorte landcode mag niet null zijn
-     * @param gemeenteInschrijving
-     *            de LO3 Gemeente van inschrijving, mag niet null zijn
-     * @param datumInschrijving
-     *            de LO3 Datum van inschrijving, mag niet null zijn
-     * @param indicatieGeheimCode
-     *            indicatie geheim verwijsgegevens
+     * @param aNummer het LO3 A-nummer
+     * @param burgerservicenummer het LO3 burgerservicenummer, mag null zijn
+     * @param voornamen de LO3 voornaam of voornamen, mag null zijn
+     * @param adellijkeTitelPredikaatCode de LO3 adelijke titel / predikaat code, mag null zijn
+     * @param voorvoegselGeslachtsnaam de LO3 voorvoegsel van de geslachtsnaam, mag null zijn, als gevuld dan lengte tussen 1 en 10 karakters
+     * @param geslachtsnaam de LO3 geslachtsnaam, mag niet null zijn en lengte tussen 1 en 200 karakters
+     * @param geboortedatum de geboortedatum, mag niet null zijn
+     * @param geboorteGemeenteCode de geboorte gemeente, mag niet null zijn
+     * @param geboorteLandCode de geboorte landcode mag niet null zijn
+     * @param gemeenteInschrijving de LO3 Gemeente van inschrijving, mag niet null zijn
+     * @param datumInschrijving de LO3 Datum van inschrijving, mag niet null zijn
+     * @param indicatieGeheimCode indicatie geheim verwijsgegevens
      */
     public Lo3VerwijzingInhoud(
         /* Meer dan 7 parameters is in constructors van immutable model klassen getolereerd. */
@@ -112,8 +99,7 @@ public final class Lo3VerwijzingInhoud implements Lo3CategorieInhoud {
         @Element(name = "geboorteLandCode", required = false) final Lo3LandCode geboorteLandCode,
         @Element(name = "gemeenteInschrijving", required = false) final Lo3GemeenteCode gemeenteInschrijving,
         @Element(name = "datumInschrijving", required = false) final Lo3Datum datumInschrijving,
-        @Element(name = "indicatieGeheimCode", required = false) final Lo3IndicatieGeheimCode indicatieGeheimCode)
-    {
+        @Element(name = "indicatieGeheimCode", required = false) final Lo3IndicatieGeheimCode indicatieGeheimCode) {
         super();
         this.aNummer = aNummer;
         this.burgerservicenummer = burgerservicenummer;
@@ -131,129 +117,117 @@ public final class Lo3VerwijzingInhoud implements Lo3CategorieInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.Lo3CategorieInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(
-            aNummer,
-            burgerservicenummer,
-            voornamen,
-            adellijkeTitelPredikaatCode,
-            voorvoegselGeslachtsnaam,
-            geslachtsnaam,
-            geboortedatum,
-            geboorteGemeenteCode,
-            geboorteLandCode,
-            gemeenteInschrijving,
-            datumInschrijving,
-            indicatieGeheimCode);
+        return !Lo3Validatie.isEenParameterGevuld(
+                aNummer,
+                burgerservicenummer,
+                voornamen,
+                adellijkeTitelPredikaatCode,
+                voorvoegselGeslachtsnaam,
+                geslachtsnaam,
+                geboortedatum,
+                geboorteGemeenteCode,
+                geboorteLandCode,
+                gemeenteInschrijving,
+                datumInschrijving,
+                indicatieGeheimCode);
     }
 
     /**
-     * Geef de waarde van a nummer.
-     *
-     * @return a nummer
+     * Geef de waarde van a nummer van Lo3VerwijzingInhoud.
+     * @return de waarde van a nummer van Lo3VerwijzingInhoud
      */
     public Lo3Long getANummer() {
         return aNummer;
     }
 
     /**
-     * Geef de waarde van burgerservicenummer.
-     *
-     * @return burgerservicenummer
+     * Geef de waarde van burgerservicenummer van Lo3VerwijzingInhoud.
+     * @return de waarde van burgerservicenummer van Lo3VerwijzingInhoud
      */
     public Lo3Integer getBurgerservicenummer() {
         return burgerservicenummer;
     }
 
     /**
-     * Geef de waarde van voornamen.
-     *
-     * @return voornamen
+     * Geef de waarde van voornamen van Lo3VerwijzingInhoud.
+     * @return de waarde van voornamen van Lo3VerwijzingInhoud
      */
     public Lo3String getVoornamen() {
         return voornamen;
     }
 
     /**
-     * Geef de waarde van adellijke titel predikaat code.
-     *
-     * @return adellijke titel predikaat code
+     * Geef de waarde van adellijke titel predikaat code van Lo3VerwijzingInhoud.
+     * @return de waarde van adellijke titel predikaat code van Lo3VerwijzingInhoud
      */
     public Lo3AdellijkeTitelPredikaatCode getAdellijkeTitelPredikaatCode() {
         return adellijkeTitelPredikaatCode;
     }
 
     /**
-     * Geef de waarde van voorvoegsel geslachtsnaam.
-     *
-     * @return voorvoegsel geslachtsnaam
+     * Geef de waarde van voorvoegsel geslachtsnaam van Lo3VerwijzingInhoud.
+     * @return de waarde van voorvoegsel geslachtsnaam van Lo3VerwijzingInhoud
      */
     public Lo3String getVoorvoegselGeslachtsnaam() {
         return voorvoegselGeslachtsnaam;
     }
 
     /**
-     * Geef de waarde van geslachtsnaam.
-     *
-     * @return geslachtsnaam
+     * Geef de waarde van geslachtsnaam van Lo3VerwijzingInhoud.
+     * @return de waarde van geslachtsnaam van Lo3VerwijzingInhoud
      */
     public Lo3String getGeslachtsnaam() {
         return geslachtsnaam;
     }
 
     /**
-     * Geef de waarde van geboortedatum.
-     *
-     * @return geboortedatum
+     * Geef de waarde van geboortedatum van Lo3VerwijzingInhoud.
+     * @return de waarde van geboortedatum van Lo3VerwijzingInhoud
      */
     public Lo3Datum getGeboortedatum() {
         return geboortedatum;
     }
 
     /**
-     * Geef de waarde van geboorte gemeente code.
-     *
-     * @return geboorte gemeente code
+     * Geef de waarde van geboorte gemeente code van Lo3VerwijzingInhoud.
+     * @return de waarde van geboorte gemeente code van Lo3VerwijzingInhoud
      */
     public Lo3GemeenteCode getGeboorteGemeenteCode() {
         return geboorteGemeenteCode;
     }
 
     /**
-     * Geef de waarde van geboorte land code.
-     *
-     * @return geboorte land code
+     * Geef de waarde van geboorte land code van Lo3VerwijzingInhoud.
+     * @return de waarde van geboorte land code van Lo3VerwijzingInhoud
      */
     public Lo3LandCode getGeboorteLandCode() {
         return geboorteLandCode;
     }
 
     /**
-     * Geef de waarde van gemeente inschrijving.
-     *
-     * @return gemeente inschrijving
+     * Geef de waarde van gemeente inschrijving van Lo3VerwijzingInhoud.
+     * @return de waarde van gemeente inschrijving van Lo3VerwijzingInhoud
      */
     public Lo3GemeenteCode getGemeenteInschrijving() {
         return gemeenteInschrijving;
     }
 
     /**
-     * Geef de waarde van datum inschrijving.
-     *
-     * @return datum inschrijving
+     * Geef de waarde van datum inschrijving van Lo3VerwijzingInhoud.
+     * @return de waarde van datum inschrijving van Lo3VerwijzingInhoud
      */
     public Lo3Datum getDatumInschrijving() {
         return datumInschrijving;
     }
 
     /**
-     * Geef de waarde van indicatie geheim code.
-     *
-     * @return indicatie geheim code
+     * Geef de waarde van indicatie geheim code van Lo3VerwijzingInhoud.
+     * @return de waarde van indicatie geheim code van Lo3VerwijzingInhoud
      */
     public Lo3IndicatieGeheimCode getIndicatieGeheimCode() {
         return indicatieGeheimCode;
@@ -269,53 +243,53 @@ public final class Lo3VerwijzingInhoud implements Lo3CategorieInhoud {
         }
         final Lo3VerwijzingInhoud castOther = (Lo3VerwijzingInhoud) other;
         return new EqualsBuilder().append(aNummer, castOther.aNummer)
-                                  .append(burgerservicenummer, castOther.burgerservicenummer)
-                                  .append(voornamen, castOther.voornamen)
-                                  .append(adellijkeTitelPredikaatCode, castOther.adellijkeTitelPredikaatCode)
-                                  .append(voorvoegselGeslachtsnaam, castOther.voorvoegselGeslachtsnaam)
-                                  .append(geslachtsnaam, castOther.geslachtsnaam)
-                                  .append(geboortedatum, castOther.geboortedatum)
-                                  .append(geboorteGemeenteCode, castOther.geboorteGemeenteCode)
-                                  .append(geboorteLandCode, castOther.geboorteLandCode)
-                                  .append(gemeenteInschrijving, castOther.gemeenteInschrijving)
-                                  .append(datumInschrijving, castOther.datumInschrijving)
-                                  .append(indicatieGeheimCode, castOther.indicatieGeheimCode)
-                                  .isEquals();
+                .append(burgerservicenummer, castOther.burgerservicenummer)
+                .append(voornamen, castOther.voornamen)
+                .append(adellijkeTitelPredikaatCode, castOther.adellijkeTitelPredikaatCode)
+                .append(voorvoegselGeslachtsnaam, castOther.voorvoegselGeslachtsnaam)
+                .append(geslachtsnaam, castOther.geslachtsnaam)
+                .append(geboortedatum, castOther.geboortedatum)
+                .append(geboorteGemeenteCode, castOther.geboorteGemeenteCode)
+                .append(geboorteLandCode, castOther.geboorteLandCode)
+                .append(gemeenteInschrijving, castOther.gemeenteInschrijving)
+                .append(datumInschrijving, castOther.datumInschrijving)
+                .append(indicatieGeheimCode, castOther.indicatieGeheimCode)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(aNummer)
-                                    .append(burgerservicenummer)
-                                    .append(voornamen)
-                                    .append(adellijkeTitelPredikaatCode)
-                                    .append(voorvoegselGeslachtsnaam)
-                                    .append(geslachtsnaam)
-                                    .append(geboortedatum)
-                                    .append(geboorteGemeenteCode)
-                                    .append(geboorteLandCode)
-                                    .append(gemeenteInschrijving)
-                                    .append(datumInschrijving)
-                                    .append(indicatieGeheimCode)
-                                    .toHashCode();
+                .append(burgerservicenummer)
+                .append(voornamen)
+                .append(adellijkeTitelPredikaatCode)
+                .append(voorvoegselGeslachtsnaam)
+                .append(geslachtsnaam)
+                .append(geboortedatum)
+                .append(geboorteGemeenteCode)
+                .append(geboorteLandCode)
+                .append(gemeenteInschrijving)
+                .append(datumInschrijving)
+                .append(indicatieGeheimCode)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("aNummer", aNummer)
-                                                                          .append("burgerservicenummer", burgerservicenummer)
-                                                                          .append("voornamen", voornamen)
-                                                                          .append("adellijkeTitelPredikaatCode", adellijkeTitelPredikaatCode)
-                                                                          .append("voorvoegselGeslachtsnaam", voorvoegselGeslachtsnaam)
-                                                                          .append("geslachtsnaam", geslachtsnaam)
-                                                                          .append("geboortedatum", geboortedatum)
-                                                                          .append("geboorteGemeenteCode", geboorteGemeenteCode)
-                                                                          .append("geboorteLandCode", geboorteLandCode)
-                                                                          .append("gemeenteInschrijving", gemeenteInschrijving)
-                                                                          .append("datumInschrijving", datumInschrijving)
-                                                                          .append("indicatieGeheimCode", indicatieGeheimCode)
-                                                                          .toString();
+                .append("aNummer", aNummer)
+                .append("burgerservicenummer", burgerservicenummer)
+                .append("voornamen", voornamen)
+                .append("adellijkeTitelPredikaatCode", adellijkeTitelPredikaatCode)
+                .append("voorvoegselGeslachtsnaam", voorvoegselGeslachtsnaam)
+                .append("geslachtsnaam", geslachtsnaam)
+                .append("geboortedatum", geboortedatum)
+                .append("geboorteGemeenteCode", geboorteGemeenteCode)
+                .append("geboorteLandCode", geboorteLandCode)
+                .append("gemeenteInschrijving", gemeenteInschrijving)
+                .append("datumInschrijving", datumInschrijving)
+                .append("indicatieGeheimCode", indicatieGeheimCode)
+                .toString();
     }
 
     /**
@@ -335,15 +309,16 @@ public final class Lo3VerwijzingInhoud implements Lo3CategorieInhoud {
         private Lo3Datum datumInschrijving;
         private Lo3IndicatieGeheimCode indicatieGeheimCode;
 
-        /** Maak een lege builder. */
+        /**
+         * Maak een lege builder.
+         */
         public Builder() {
+            //lege builder
         }
 
         /**
          * Maak een initieel gevulde builder.
-         *
-         * @param inhoud
-         *            initiele vulling
+         * @param inhoud initiele vulling
          */
         public Builder(final Lo3VerwijzingInhoud inhoud) {
             administratienummer = inhoud.aNummer;
@@ -362,140 +337,115 @@ public final class Lo3VerwijzingInhoud implements Lo3CategorieInhoud {
 
         /**
          * Build.
-         *
          * @return inhoud
          */
         public Lo3VerwijzingInhoud build() {
             return new Lo3VerwijzingInhoud(
-                administratienummer,
-                burgerservicenummer,
-                voornamen,
-                adellijkeTitelPredikaatCode,
-                voorvoegselGeslachtsnaam,
-                geslachtsnaam,
-                geboortedatum,
-                geboorteGemeenteCode,
-                geboorteLandCode,
-                gemeenteInschrijving,
-                datumInschrijving,
-                indicatieGeheimCode);
+                    administratienummer,
+                    burgerservicenummer,
+                    voornamen,
+                    adellijkeTitelPredikaatCode,
+                    voorvoegselGeslachtsnaam,
+                    geslachtsnaam,
+                    geboortedatum,
+                    geboorteGemeenteCode,
+                    geboorteLandCode,
+                    gemeenteInschrijving,
+                    datumInschrijving,
+                    indicatieGeheimCode);
         }
 
         /**
-         * Zet de waarde van administratienummer.
-         *
-         * @param administratienummer
-         *            administratienummer
+         * Zet de waarden voor administratienummer van Lo3VerwijzingInhoud.
+         * @param administratienummer de nieuwe waarde voor administratienummer van Lo3VerwijzingInhoud
          */
         public void setAdministratienummer(final Lo3Long administratienummer) {
             this.administratienummer = administratienummer;
         }
 
         /**
-         * Zet de waarde van burgerservicenummer.
-         *
-         * @param burgerservicenummer
-         *            burgerservicenummer
+         * Zet de waarden voor burgerservicenummer van Lo3VerwijzingInhoud.
+         * @param burgerservicenummer de nieuwe waarde voor burgerservicenummer van Lo3VerwijzingInhoud
          */
         public void setBurgerservicenummer(final Lo3Integer burgerservicenummer) {
             this.burgerservicenummer = burgerservicenummer;
         }
 
         /**
-         * Zet de waarde van voornamen.
-         *
-         * @param voornamen
-         *            voornamen
+         * Zet de waarden voor voornamen van Lo3VerwijzingInhoud.
+         * @param voornamen de nieuwe waarde voor voornamen van Lo3VerwijzingInhoud
          */
         public void setVoornamen(final Lo3String voornamen) {
             this.voornamen = voornamen;
         }
 
         /**
-         * Zet de waarde van adellijke titel predikaat code.
-         *
-         * @param adellijkeTitelPredikaatCode
-         *            adellijke titel predikaat code
+         * Zet de waarden voor adellijke titel predikaat code van Lo3VerwijzingInhoud.
+         * @param adellijkeTitelPredikaatCode de nieuwe waarde voor adellijke titel predikaat code van Lo3VerwijzingInhoud
          */
         public void setAdellijkeTitelPredikaatCode(final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode) {
             this.adellijkeTitelPredikaatCode = adellijkeTitelPredikaatCode;
         }
 
         /**
-         * Zet de waarde van voorvoegsel geslachtsnaam.
-         *
-         * @param voorvoegselGeslachtsnaam
-         *            voorvoegsel geslachtsnaam
+         * Zet de waarden voor voorvoegsel geslachtsnaam van Lo3VerwijzingInhoud.
+         * @param voorvoegselGeslachtsnaam de nieuwe waarde voor voorvoegsel geslachtsnaam van Lo3VerwijzingInhoud
          */
         public void setVoorvoegselGeslachtsnaam(final Lo3String voorvoegselGeslachtsnaam) {
             this.voorvoegselGeslachtsnaam = voorvoegselGeslachtsnaam;
         }
 
         /**
-         * Zet de waarde van geslachtsnaam.
-         *
-         * @param geslachtsnaam
-         *            geslachtsnaam
+         * Zet de waarden voor geslachtsnaam van Lo3VerwijzingInhoud.
+         * @param geslachtsnaam de nieuwe waarde voor geslachtsnaam van Lo3VerwijzingInhoud
          */
         public void setGeslachtsnaam(final Lo3String geslachtsnaam) {
             this.geslachtsnaam = geslachtsnaam;
         }
 
         /**
-         * Zet de waarde van geboortedatum.
-         *
-         * @param geboortedatum
-         *            geboortedatum
+         * Zet de waarden voor geboortedatum van Lo3VerwijzingInhoud.
+         * @param geboortedatum de nieuwe waarde voor geboortedatum van Lo3VerwijzingInhoud
          */
         public void setGeboortedatum(final Lo3Datum geboortedatum) {
             this.geboortedatum = geboortedatum;
         }
 
         /**
-         * Zet de waarde van geboorte gemeente code.
-         *
-         * @param geboorteGemeenteCode
-         *            geboorte gemeente code
+         * Zet de waarden voor geboorte gemeente code van Lo3VerwijzingInhoud.
+         * @param geboorteGemeenteCode de nieuwe waarde voor geboorte gemeente code van Lo3VerwijzingInhoud
          */
         public void setGeboorteGemeenteCode(final Lo3GemeenteCode geboorteGemeenteCode) {
             this.geboorteGemeenteCode = geboorteGemeenteCode;
         }
 
         /**
-         * Zet de waarde van geboorte land code.
-         *
-         * @param geboorteLandCode
-         *            geboorte land code
+         * Zet de waarden voor geboorte land code van Lo3VerwijzingInhoud.
+         * @param geboorteLandCode de nieuwe waarde voor geboorte land code van Lo3VerwijzingInhoud
          */
         public void setGeboorteLandCode(final Lo3LandCode geboorteLandCode) {
             this.geboorteLandCode = geboorteLandCode;
         }
 
         /**
-         * Zet de waarde van gemeente inschrijving.
-         *
-         * @param gemeenteInschrijving
-         *            gemeente inschrijving
+         * Zet de waarden voor gemeente inschrijving van Lo3VerwijzingInhoud.
+         * @param gemeenteInschrijving de nieuwe waarde voor gemeente inschrijving van Lo3VerwijzingInhoud
          */
         public void setGemeenteInschrijving(final Lo3GemeenteCode gemeenteInschrijving) {
             this.gemeenteInschrijving = gemeenteInschrijving;
         }
 
         /**
-         * Zet de waarde van datum inschrijving.
-         *
-         * @param datumInschrijving
-         *            datum inschrijving
+         * Zet de waarden voor datum inschrijving van Lo3VerwijzingInhoud.
+         * @param datumInschrijving de nieuwe waarde voor datum inschrijving van Lo3VerwijzingInhoud
          */
         public void setDatumInschrijving(final Lo3Datum datumInschrijving) {
             this.datumInschrijving = datumInschrijving;
         }
 
         /**
-         * Zet de waarde van indicatie geheim code.
-         *
-         * @param indicatieGeheimCode
-         *            indicatie geheim code
+         * Zet de waarden voor indicatie geheim code van Lo3VerwijzingInhoud.
+         * @param indicatieGeheimCode de nieuwe waarde voor indicatie geheim code van Lo3VerwijzingInhoud
          */
         public void setIndicatieGeheimCode(final Lo3IndicatieGeheimCode indicatieGeheimCode) {
             this.indicatieGeheimCode = indicatieGeheimCode;

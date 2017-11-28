@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.isc.telling.entiteit;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.isc.telling.entiteit.Bericht.Direction;
 import org.junit.Test;
 

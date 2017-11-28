@@ -8,11 +8,21 @@ package nl.bzk.brp.gba.dataaccess;
 
 import java.util.Collection;
 import javax.inject.Inject;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.AanduidingVerblijfsrecht;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Gemeente;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Plaats;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.RedenVerkrijgingNLNationaliteit;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Plaats;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerkrijgingNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
+import nl.bzk.algemeenbrp.test.dal.DBUnit;
+import nl.bzk.brp.gba.dataaccess.stam.GemeenteRepository;
+import nl.bzk.brp.gba.dataaccess.stam.LandOfGebiedRepository;
+import nl.bzk.brp.gba.dataaccess.stam.NationaliteitRepository;
+import nl.bzk.brp.gba.dataaccess.stam.PlaatsRepository;
+import nl.bzk.brp.gba.dataaccess.stam.RedenVerkrijgingNLNationaliteitRepository;
+import nl.bzk.brp.gba.dataaccess.stam.RedenVerliesNLNationaliteitRepository;
+import nl.bzk.brp.gba.dataaccess.stam.VerblijfsrechtRepository;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,53 +32,67 @@ import org.junit.Test;
 public class StamTabelRepositoryTest extends AbstractIntegratieTest {
 
     @Inject
-    private StamTabelRepository stamTabelRepository;
+    private GemeenteRepository gemeenteRepository;
+    @Inject
+    private LandOfGebiedRepository landOfGebiedRepository;
+    @Inject
+    private NationaliteitRepository nationaliteitRepository;
+    @Inject
+    private PlaatsRepository plaatsRepository;
+    @Inject
+    private RedenVerkrijgingNLNationaliteitRepository redenVerkrijgingNLNationaliteitRepository;
+    @Inject
+    private RedenVerliesNLNationaliteitRepository redenVerliesNLNationaliteitRepository;
+    @Inject
+    private VerblijfsrechtRepository verblijfsrechtRepository;
 
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
     @Test
     public final void findAllGemeentes() {
-        final Collection<Gemeente> result = stamTabelRepository.findAllGemeente();
+        final Collection<Gemeente> result = gemeenteRepository.findAll();
         Assert.assertFalse(result.isEmpty());
     }
 
+
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
     @Test
-    public final void findAllGemeenteCodes() {
-        final Collection<Short> result = stamTabelRepository.findAllGemeenteCodes();
+    public final void findAllLand() {
+        final Collection<LandOfGebied> result = landOfGebiedRepository.findAll();
         Assert.assertFalse(result.isEmpty());
     }
 
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
     @Test
-    public final void findAllLandCodes() {
-        final Collection<Short> result = stamTabelRepository.findAllLandCodes();
+    public final void findAllNationaliteit() {
+        final Collection<Nationaliteit> result = nationaliteitRepository.findAll();
         Assert.assertFalse(result.isEmpty());
     }
 
-    @Test
-    public final void findAllNationaliteitCodes() {
-        final Collection<Short> result = stamTabelRepository.findAllNationaliteitCodes();
-        Assert.assertFalse(result.isEmpty());
-    }
-
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
     @Test
     public final void findAllVerblijfstitel() {
-        final Collection<AanduidingVerblijfsrecht> result = stamTabelRepository.findAllAanduidingVerblijfsrecht();
+        final Collection<Verblijfsrecht> result = verblijfsrechtRepository.findAll();
         Assert.assertFalse(result.isEmpty());
     }
 
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
     @Test
     public final void findAllVerkrijgingNLNationaliteit() {
-        final Collection<RedenVerkrijgingNLNationaliteit> result = stamTabelRepository.findAllVerkrijgingNLNationaliteit();
+        final Collection<RedenVerkrijgingNLNationaliteit> result = redenVerkrijgingNLNationaliteitRepository.findAll();
         Assert.assertFalse(result.isEmpty());
     }
 
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
     @Test
     public final void findAllVerliesNLNationaliteit() {
-        final Collection<RedenVerliesNLNationaliteit> result = stamTabelRepository.findAllVerliesNLNationaliteit();
+        final Collection<RedenVerliesNLNationaliteit> result = redenVerliesNLNationaliteitRepository.findAll();
         Assert.assertFalse(result.isEmpty());
     }
 
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
     @Test
     public final void findAllPlaats() {
-        final Collection<Plaats> result = stamTabelRepository.findAllPlaats();
+        final Collection<Plaats> result = plaatsRepository.findAll();
         Assert.assertFalse(result.isEmpty());
     }
 }

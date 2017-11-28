@@ -6,9 +6,17 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
+import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.BrpType;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekOnbekendExceptie;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.RubriekWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Criterium;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.ElementWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.KNVOperator;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.KVOperator;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,37 +28,42 @@ public final class ProbasVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
     private static final String REGEX = "^04\\.82\\.30\\s*(O)?GA(1|A).*(?i:proba).*";
     private static final int VOLGORDE = 400;
 
+    private final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler;
+
     /**
      * Constructor.
+     * @param gbaRubriekNaarBrpTypeVertaler rubriekvertaler
      */
-    public ProbasVoorwaardeRegel() {
+    @Inject
+    public ProbasVoorwaardeRegel(final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler) {
         super(VOLGORDE, REGEX);
+        this.gbaRubriekNaarBrpTypeVertaler = gbaRubriekNaarBrpTypeVertaler;
     }
 
     @Override
-    public String getBrpExpressie(final String voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
+    public Expressie getBrpExpressie(final RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
         final BrpType[] brpType;
         try {
-            brpType = getGbaRubriekNaarBrpTypeVertaler().vertaalGbaRubriekNaarBrpType("probas");
+            brpType = gbaRubriekNaarBrpTypeVertaler.vertaalGbaRubriekNaarBrpType("probas");
         } catch (final GbaRubriekOnbekendExceptie e) {
-            throw new GbaVoorwaardeOnvertaalbaarExceptie(voorwaardeRegel, e);
+            throw new GbaVoorwaardeOnvertaalbaarExceptie(voorwaardeRegel.getLo3Expressie(), e);
         }
 
-        final String[] delen = voorwaardeRegel.split(SPLIT_CHARACTER, DEEL_AANTAL);
-        final String operator = delen[DEEL_OPERATOR];
+        final String[] delen = voorwaardeRegel.getLo3Expressie().split(GbaVoorwaardeConstanten.SPLIT_CHARACTER, GbaVoorwaardeConstanten.DEEL_AANTAL);
+        final String operator = delen[GbaVoorwaardeConstanten.DEEL_OPERATOR];
 
-        final String result;
+        final Expressie result;
         switch (operator.toUpperCase()) {
             case "OGA1":
             case "OGAA":
-                result = String.format("IS_NULL(%s)", brpType[0].getType());
+                result = new ElementWaarde(new Criterium(brpType[0].getType(), new KNVOperator(), null));
                 break;
             case "GA1":
             case "GAA":
-                result = String.format("NIET IS_NULL(%s)", brpType[0].getType());
+                result = new ElementWaarde(new Criterium(brpType[0].getType(), new KVOperator(), "J"));
                 break;
             default:
-                throw new GbaVoorwaardeOnvertaalbaarExceptie(voorwaardeRegel);
+                throw new GbaVoorwaardeOnvertaalbaarExceptie(voorwaardeRegel.getLo3Expressie());
         }
 
         return result;

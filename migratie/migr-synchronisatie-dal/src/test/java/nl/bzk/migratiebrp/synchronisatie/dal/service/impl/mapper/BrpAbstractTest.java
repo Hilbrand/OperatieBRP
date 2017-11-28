@@ -9,7 +9,9 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
+
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

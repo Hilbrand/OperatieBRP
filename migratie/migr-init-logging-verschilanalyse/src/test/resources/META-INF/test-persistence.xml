@@ -8,8 +8,6 @@
         <class>nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatie</class>
         <class>nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatieStapel</class>
         <class>nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatieStapelPk</class>
-        <class>nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatieRegel</class>
-        <class>nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatieRegelPk</class>
         <class>nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAutorisatie</class>
         <class>nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingLog</class>
         <class>nl.bzk.migratiebrp.init.logging.model.domein.entities.VerschilAnalyseRegel</class>

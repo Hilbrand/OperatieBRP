@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpBetrokkenheid;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
@@ -53,16 +52,14 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 /**
  * Deze utility wordt gebruikt om de 'expected' xml van testgevallen aan te passen voor de nieuwe conversie regels rond
  * historie die gemaakt zijn om brp leveren te verbeteren. Zie ook Jira story ORANJE-3258.
- * 
+ *
  * De class wordt uitgevoerd als Main class, met als parameters één of meer paden waaronder de aan te passen expecteds
  * gevonden worden.
  */
 public class ConverteerBrpExpecteds {
     /**
      * De main van deze class.
-     * 
-     * @param args
-     *            een lijst met paden waarbinnen de expecteds zullen worden aangepast.
+     * @param args een lijst met paden waarbinnen de expecteds zullen worden aangepast.
      */
     public static void main(final String[] args) {
         for (final String rootPath : args) {
@@ -248,7 +245,7 @@ public class ConverteerBrpExpecteds {
     private static BrpRelatie verwerkRelatie(final BrpRelatie inRelatie) {
         boolean relatieAangepast = false;
 
-        final BrpRelatie.Builder builder = new BrpRelatie.Builder(inRelatie, new LinkedHashMap<Long, BrpActie>());
+        final BrpRelatie.Builder builder = new BrpRelatie.Builder(inRelatie, inRelatie.getRelatieId(), new LinkedHashMap<Long, BrpActie>());
 
         final BrpStapel<BrpRelatieInhoud> relatieStapel = verwerkFormeleHistorie(inRelatie.getRelatieStapel());
         if (relatieStapel != inRelatie.getRelatieStapel()) {
@@ -324,7 +321,7 @@ public class ConverteerBrpExpecteds {
                     final BrpHistorie.Builder hisBuilder = new BrpHistorie.Builder(groep.getHistorie());
                     hisBuilder.setDatumTijdVerval(groep.getHistorie().getDatumTijdRegistratie());
                     groepen.add(
-                        new BrpGroep<>(groep.getInhoud(), hisBuilder.build(), groep.getActieInhoud(), groep.getActieInhoud(), groep.getActieGeldigheid()));
+                            new BrpGroep<>(groep.getInhoud(), hisBuilder.build(), groep.getActieInhoud(), groep.getActieInhoud(), groep.getActieGeldigheid()));
                     stapelAangepast = true;
                 } else {
                     groepen.add(groep);
@@ -370,11 +367,11 @@ public class ConverteerBrpExpecteds {
                     final BrpGroep<T> opvolger = zoekOpvolger(groep, inStapel);
                     if (opvolger != null) {
                         groepen.add(new BrpGroep<>(
-                            groep.getInhoud(),
-                            groep.getHistorie(),
-                            groep.getActieInhoud(),
-                            groep.getActieVerval(),
-                            opvolger.getActieInhoud()));
+                                groep.getInhoud(),
+                                groep.getHistorie(),
+                                groep.getActieInhoud(),
+                                groep.getActieVerval(),
+                                opvolger.getActieInhoud()));
                         stapelAangepast = true;
                     }
                 } else {
@@ -397,9 +394,8 @@ public class ConverteerBrpExpecteds {
 
         for (final BrpGroep<T> groep : inStapel) {
             if (groep.getHistorie().getDatumTijdVerval() == null
-                && groep.getHistorie().getDatumAanvangGeldigheid().getWaarde().equals(basisEindeGeldigheid.getWaarde())
-                && groep != basis)
-            {
+                    && groep.getHistorie().getDatumAanvangGeldigheid().getWaarde().equals(basisEindeGeldigheid.getWaarde())
+                    && groep != basis) {
                 opvolger = groep;
                 aantalGevondenOpvolgers += 1;
             }

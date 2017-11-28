@@ -13,8 +13,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.sql.DataSource;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
 import nl.bzk.migratiebrp.isc.telling.util.DBUnitUtil;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.dataset.DataSetException;
 import org.springframework.stereotype.Component;
@@ -29,19 +29,19 @@ public class DBUnitTellingenUtil extends DBUnitUtil {
 
     private static final TruncateTellingenTableTellingen TRUNCATE_TABLE_OPERATION = new TruncateTellingenTableTellingen();
 
-    private static final String[] SOA_TABELLEN = {"mig_lock_anummer",
-                                                  "mig_bericht",
-                                                  "mig_configuratie",
-                                                  "mig_correlatie",
-                                                  "mig_extractie_proces",
-                                                  "mig_runtime",
-                                                  "mig_fout",
-                                                  "mig_lock",
-                                                  "mig_proces_relatie",
-                                                  "mig_telling_bericht",
-                                                  "mig_telling_proces", };
+    private static final String[] SOA_TABELLEN =
+            {"mig_taak_gerelateerd",
+                    "mig_bericht",
+                    "mig_configuratie",
+                    "mig_correlatie",
+                    "mig_extractie_proces",
+                    "mig_runtime",
+                    "mig_fout",
+                    "mig_proces_relatie",
+                    "mig_telling_bericht",
+                    "mig_telling_proces",};
 
-    private static final String[] JBPM_TABELLEN = {"jbpm_processdefinition", "jbpm_processinstance", };
+    private static final String[] JBPM_TABELLEN = {"jbpm_processdefinition", "jbpm_processinstance",};
 
     @Inject
     private DataSource dataSource;
@@ -62,11 +62,8 @@ public class DBUnitTellingenUtil extends DBUnitUtil {
 
     /**
      * Leegt de database en reset de stamgegevens.
-     * 
-     * @param testClass
-     *            testclass waaruit deze methode wordt aangeroepen
-     * @param log
-     *            logger waarin gelogd kan worden
+     * @param testClass testclass waaruit deze methode wordt aangeroepen
+     * @param log logger waarin gelogd kan worden
      */
     public final void resetDB(final Class<?> testClass, final Logger log) {
         resetDB(testClass, log, true);
@@ -74,13 +71,9 @@ public class DBUnitTellingenUtil extends DBUnitUtil {
 
     /**
      * Leegt de database en indien gewenst wordt de stamgegevens ook gereset.
-     * 
-     * @param testClass
-     *            testclass waaruit deze methode wordt aangeroepen
-     * @param log
-     *            logger waarin gelogd kan worden
-     * @param resetStamgegevens
-     *            true als de stamgegevens gereset moet worden
+     * @param testClass testclass waaruit deze methode wordt aangeroepen
+     * @param log logger waarin gelogd kan worden
+     * @param resetStamgegevens true als de stamgegevens gereset moet worden
      */
     public final void resetDB(final Class<?> testClass, final Logger log, final boolean resetStamgegevens) {
         log.info("Preparing database");
@@ -89,26 +82,22 @@ public class DBUnitTellingenUtil extends DBUnitUtil {
                 log.info("Truncating all tables");
                 truncateTables();
                 log.info("Inserting SOA data");
-                insert(testClass, new String[] {"/sql/data/soa_data.xml", });
+                insert(testClass, new String[]{"/sql/data/soa_data.xml",});
                 log.info("Inserting JBPM data");
-                insert(testClass, new String[] {"/sql/data/jbpm_data.xml", });
+                insert(testClass, new String[]{"/sql/data/jbpm_data.xml",});
             } else {
                 log.info("Truncating tables");
                 truncateTables();
             }
         } catch (final
-            DatabaseUnitException
-            | SQLException e)
-        {
+        DatabaseUnitException
+                | SQLException e) {
             throw new RuntimeException("Kan database niet intialiseren.", e);
         }
     }
 
     /**
      * Truncate alle tabellen met uitzondering van de statische stamtabellen.
-     * 
-     * @throws DatabaseUnitException
-     * @throws SQLException
      */
     @Override
     public void truncateTables() throws SQLException, DatabaseUnitException {

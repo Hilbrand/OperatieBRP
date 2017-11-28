@@ -6,21 +6,17 @@
 
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.sql;
 
-import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
-
 import java.util.List;
-import java.util.concurrent.Callable;
-
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
 
@@ -29,7 +25,9 @@ import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
  */
 public final class CheckSqlResultKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "check_sql_result";
 
     private static final Logger LOG = LoggerFactory.getLogger();
@@ -40,20 +38,14 @@ public final class CheckSqlResultKanaal extends LazyLoadingKanaal {
      * Constructor.
      */
     public CheckSqlResultKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-db-gbav.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:infra-db-voisc.xml",
-                "classpath:infra-sql.xml"));
+        super(new Worker(), new Configuration("classpath:configuratie.xml", "classpath:infra-sql.xml"));
     }
 
     /**
      * Verwerker.
      */
     public static final class Worker extends AbstractKanaal {
+
         @Inject
         private SqlHelper sqlHelper;
 
@@ -74,21 +66,18 @@ public final class CheckSqlResultKanaal extends LazyLoadingKanaal {
             HERHAAL_COUNTER.set(0);
 
             try {
-                return herhaal.herhaal(new Callable<Bericht>() {
-                    @Override
-                    public Bericht call() throws LaatsteBerichtException, KanaalException {
-                        LOG.info("Controleren SQL (herhaling {} van {})", HERHAAL_COUNTER.incrementAndGet(), herhaal.getMaximumAantalPogingen());
-                        final Bericht ontvangenBericht = sqlHelper.checkSqlResult(verwachtBericht);
+                return herhaal.herhaal(() -> {
+                    LOG.info("Controleren SQL (herhaling {} van {})", HERHAAL_COUNTER.incrementAndGet(), herhaal.getMaximumAantalPogingen());
+                    final Bericht ontvangenBericht = sqlHelper.checkSqlResult(verwachtBericht);
 
-                        if (vergelijkInhoud(verwachtBericht.getInhoud(), ontvangenBericht.getInhoud())) {
-                            LOG.info("Controleren SQL: resultaat correct");
-                            return ontvangenBericht;
-                        } else {
-                            LOG.info("Controleren SQL: resultaat niet correct");
-                            throw new LaatsteBerichtException(ontvangenBericht);
-                        }
-
+                    if (vergelijkInhoud(verwachtBericht.getInhoud(), ontvangenBericht.getInhoud())) {
+                        LOG.info("Controleren SQL: resultaat correct");
+                        return ontvangenBericht;
+                    } else {
+                        LOG.info("Controleren SQL: resultaat niet correct");
+                        throw new LaatsteBerichtException(ontvangenBericht);
                     }
+
                 });
             } catch (final HerhaalException e) {
                 final List<Exception> pogingExcepties = e.getPogingExcepties();
@@ -111,15 +100,14 @@ public final class CheckSqlResultKanaal extends LazyLoadingKanaal {
      * Wrapper om laatste bericht te bewaren via lijst van herhalingen.
      */
     public static final class LaatsteBerichtException extends Exception {
+
         private static final long serialVersionUID = 1L;
 
         private final Bericht ontvangenBericht;
 
         /**
          * Constructor.
-         *
-         * @param ontvangenBericht
-         *            bericht
+         * @param ontvangenBericht bericht
          */
         public LaatsteBerichtException(final Bericht ontvangenBericht) {
             this.ontvangenBericht = ontvangenBericht;
@@ -127,7 +115,6 @@ public final class CheckSqlResultKanaal extends LazyLoadingKanaal {
 
         /**
          * Geef de waarde van ontvangen bericht.
-         *
          * @return ontvangen bericht
          */
         public Bericht getOntvangenBericht() {

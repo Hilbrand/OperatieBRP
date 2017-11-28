@@ -6,16 +6,16 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3CategorieInhoud;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Afnemers indicatie inhoud.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class Lo3AfnemersindicatieInhoud implements Lo3CategorieInhoud {
@@ -23,8 +23,8 @@ public final class Lo3AfnemersindicatieInhoud implements Lo3CategorieInhoud {
     /*
      * 40.10 Afnemersindicatie
      */
-    @Element(name = "afnemersindicatie", required = false)
-    private final Integer afnemersindicatie;
+    @Element(name = "afnemersindicatie")
+    private final String afnemersindicatie;
 
     /**
      * Default constructor (alles null).
@@ -35,21 +35,18 @@ public final class Lo3AfnemersindicatieInhoud implements Lo3CategorieInhoud {
 
     /**
      * Maakt een Lo3AfnemersindicatieInhoud.
-     * 
-     * @param afnemersindicatie
-     *            afnemers indicatie
+     * @param afnemersindicatie afnemers indicatie
      */
-    public Lo3AfnemersindicatieInhoud(@Element(name = "afnemersindicatie", required = false) final Integer afnemersindicatie) {
+    public Lo3AfnemersindicatieInhoud(@Element(name = "afnemersindicatie") final String afnemersindicatie) {
         super();
         this.afnemersindicatie = afnemersindicatie;
     }
 
     /**
      * Geef de waarde van afnemersindicatie.
-     *
      * @return the afnemersindicatie
      */
-    public Integer getAfnemersindicatie() {
+    public String getAfnemersindicatie() {
         return afnemersindicatie;
     }
 
@@ -77,7 +74,7 @@ public final class Lo3AfnemersindicatieInhoud implements Lo3CategorieInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.Lo3CategorieInhoud#isLeeg()
      */
     @Override

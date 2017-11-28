@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3;
 
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.OngeldigBericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.AbstractOngeldigLo3Bericht;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class OngeldigeBerichtenTest {
         final Lo3BerichtFactory factory = new Lo3BerichtFactory();
         final Lo3Bericht bericht = factory.getBericht("00000000Ii01A0003801033011001041902492490120009884369481");
 
-        Assert.assertTrue(bericht instanceof OngeldigBericht);
+        Assert.assertTrue(bericht instanceof AbstractOngeldigLo3Bericht);
     }
 
     @Test(expected = BerichtSyntaxException.class)

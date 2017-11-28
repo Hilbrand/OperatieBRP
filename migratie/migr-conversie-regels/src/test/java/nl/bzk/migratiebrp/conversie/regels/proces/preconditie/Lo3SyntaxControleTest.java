@@ -22,7 +22,7 @@ import org.junit.Test;
 public class Lo3SyntaxControleTest {
 
     @Before
-    public void setUp () {
+    public void setUp() {
         Logging.initContext();
     }
 
@@ -32,7 +32,7 @@ public class Lo3SyntaxControleTest {
     }
 
     @Test
-    public void testGeenStuurKaraktersInElement () throws OngeldigePersoonslijstException {
+    public void testGeenStuurKaraktersInElement() throws OngeldigePersoonslijstException {
         final Lo3CategorieWaarde lo3CategorieWaarde = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_01, 0, 0);
         lo3CategorieWaarde.addElement(Lo3ElementEnum.ELEMENT_0240, "Achternaam");
 
@@ -40,8 +40,8 @@ public class Lo3SyntaxControleTest {
         syntaxControle.controleer(Collections.singletonList(lo3CategorieWaarde));
     }
 
-    @Test (expected = OngeldigePersoonslijstException.class)
-    public void testLineFeedInElement () throws OngeldigePersoonslijstException {
+    @Test(expected = OngeldigePersoonslijstException.class)
+    public void testLineFeedInElement() throws OngeldigePersoonslijstException {
         final Lo3CategorieWaarde lo3CategorieWaarde = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_01, 0, 0);
         lo3CategorieWaarde.addElement(Lo3ElementEnum.ELEMENT_0240, "Achter\nnaam");
 
@@ -49,8 +49,8 @@ public class Lo3SyntaxControleTest {
         syntaxControle.controleer(Collections.singletonList(lo3CategorieWaarde));
     }
 
-    @Test (expected = OngeldigePersoonslijstException.class)
-    public void testCarriageReturnInElement () throws OngeldigePersoonslijstException {
+    @Test(expected = OngeldigePersoonslijstException.class)
+    public void testCarriageReturnInElement() throws OngeldigePersoonslijstException {
         final Lo3CategorieWaarde lo3CategorieWaarde = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_01, 0, 0);
         lo3CategorieWaarde.addElement(Lo3ElementEnum.ELEMENT_0240, "Achter\rnaam");
 
@@ -58,8 +58,8 @@ public class Lo3SyntaxControleTest {
         syntaxControle.controleer(Collections.singletonList(lo3CategorieWaarde));
     }
 
-    @Test (expected = OngeldigePersoonslijstException.class)
-    public void testFormFeedInElement () throws OngeldigePersoonslijstException {
+    @Test(expected = OngeldigePersoonslijstException.class)
+    public void testFormFeedInElement() throws OngeldigePersoonslijstException {
         final Lo3CategorieWaarde lo3CategorieWaarde = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_01, 0, 0);
         lo3CategorieWaarde.addElement(Lo3ElementEnum.ELEMENT_0240, "Achter\fnaam");
 

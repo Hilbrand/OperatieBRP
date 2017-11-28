@@ -69,6 +69,7 @@
 		<th>Reden verkrijging NL</th>
 		<th>Reden verlies NL</th>
 		<th>Aanduidig bijz. NLschap</th>
+		<th>Buitenlands persoonsnummer</th>
 	</xsl:template>
 	
 	<xsl:template match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3NationaliteitInhoud']" mode="inhoud">
@@ -76,6 +77,7 @@
 		<td><xsl:value-of select="redenVerkrijgingNederlandschapCode/*/text()"/><xsl:apply-templates select="redenVerkrijgingNederlandschapCode/onderzoek"/></td>
 		<td><xsl:value-of select="redenVerliesNederlandschapCode/*/text()"/><xsl:apply-templates select="redenVerliesNederlandschapCode/onderzoek"/></td>
 		<td><xsl:value-of select="aanduidingBijzonderNederlandschap/*/text()"/><xsl:apply-templates select="aanduidingBijzonderNederlandschap/onderzoek"/></td>
+		<td><xsl:value-of select="buitenlandsPersoonsnummer/*/text()"/><xsl:apply-templates select="buitenlandsPersoonsnummer/onderzoek"/></td>
 	</xsl:template>
 
 	<!-- CATEGORIE 05: HUWELIJk -->

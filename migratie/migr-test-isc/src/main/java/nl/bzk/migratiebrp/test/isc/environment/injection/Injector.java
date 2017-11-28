@@ -16,17 +16,11 @@ public interface Injector {
 
     /**
      * Injecteer een variabele in het bericht.
-     * 
-     * @param context
-     *            context
-     * @param bericht
-     *            bericht
-     * @param key
-     *            sleutel/configuratie
-     * @param value
-     *            waarde
-     * @throws TestException
-     *             bij fouten
+     * @param context context
+     * @param bericht bericht
+     * @param key sleutel/configuratie
+     * @param value waarde
+     * @throws TestException bij fouten
      */
     void inject(Context context, Bericht bericht, String key, String value) throws TestException;
 }

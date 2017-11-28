@@ -16,16 +16,11 @@ public interface Extractor {
 
     /**
      * Extraheer een waarde.
-     *
-     * @param context
-     *            context
-     * @param bericht
-     *            test bericht
-     * @param key
-     *            sleutel (uit configuratie)
+     * @param context context
+     * @param bericht test bericht
+     * @param key sleutel (uit configuratie)
      * @return resulterende waarde uit extractie
-     * @throws TestException
-     *             bij fouten
+     * @throws TestException bij fouten
      */
     String extract(Context context, Bericht bericht, String key) throws TestException;
 }

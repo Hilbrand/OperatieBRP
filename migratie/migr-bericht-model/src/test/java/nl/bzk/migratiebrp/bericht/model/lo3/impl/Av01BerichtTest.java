@@ -7,14 +7,15 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.IOException;
+import java.util.Collections;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
-import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTest;
+import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTestBasis;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Av01BerichtTest extends AbstractLo3BerichtTest {
+public class Av01BerichtTest extends AbstractLo3BerichtTestBasis {
 
     private static final String A_NUMMER = "9876543210";
     private static final String BRON_GEMEENTE = "0600";
@@ -31,8 +32,8 @@ public class Av01BerichtTest extends AbstractLo3BerichtTest {
     public void testCyclusEnGetters() throws ClassNotFoundException, BerichtInhoudException, IOException {
         final Av01Bericht av01Bericht = new Av01Bericht();
         av01Bericht.setANummer(A_NUMMER);
-        av01Bericht.setBronGemeente(BRON_GEMEENTE);
-        av01Bericht.setDoelGemeente(DOEL_GEMEENTE);
+        av01Bericht.setBronPartijCode(BRON_GEMEENTE);
+        av01Bericht.setDoelPartijCode(DOEL_GEMEENTE);
         av01Bericht.setMessageId(MessageIdGenerator.generateId());
         testFormatAndParseBericht(av01Bericht);
 
@@ -42,15 +43,15 @@ public class Av01BerichtTest extends AbstractLo3BerichtTest {
 
         final Av01Bericht controleBericht = new Av01Bericht();
         controleBericht.setANummer(A_NUMMER);
-        controleBericht.setBronGemeente(BRON_GEMEENTE);
-        controleBericht.setDoelGemeente(DOEL_GEMEENTE);
+        controleBericht.setBronPartijCode(BRON_GEMEENTE);
+        controleBericht.setDoelPartijCode(DOEL_GEMEENTE);
         controleBericht.setMessageId(av01Bericht.getMessageId());
 
         Assert.assertEquals(av01Bericht.hashCode(), controleBericht.hashCode());
         Assert.assertEquals(av01Bericht.toString(), controleBericht.toString());
         Assert.assertTrue(av01Bericht.equals(av01Bericht));
         Assert.assertTrue(controleBericht.equals(av01Bericht));
-        Assert.assertNull(av01Bericht.getGerelateerdeAnummers());
+        Assert.assertEquals(Collections.emptyList(), av01Bericht.getGerelateerdeAnummers());
 
         Assert.assertFalse(av01Bericht.equals(new Lq01Bericht()));
     }

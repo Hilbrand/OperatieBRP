@@ -9,7 +9,8 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActieBron;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpBetrokkenheid;
@@ -20,7 +21,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.BrpRelatie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.AbstractBrpAttribuutMetOnderzoek;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAttribuutMetOnderzoek;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpIndicatieGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpIstGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud;
@@ -28,8 +29,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstStandaardGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,9 +41,7 @@ public final class Lo3VerzamelBrpOnderzoeken {
 
     /**
      * Verzameld alle herkomsten van onderzoeken die aan de opgegeven persoonslijst zijn gekoppeld.
-     *
-     * @param brpPersoonslijst
-     *            de BRP Persoonslijst waar onderzoeken aan gekoppeld zijn
+     * @param brpPersoonslijst de BRP Persoonslijst waar onderzoeken aan gekoppeld zijn
      * @return een lijst {@link Lo3Herkomst} van onderzoeken die in de persoonslijst voorkomen
      */
     public List<Lo3Herkomst> verzamelHerkomstenBijOnderzoek(final BrpPersoonslijst brpPersoonslijst) {
@@ -79,6 +76,8 @@ public final class Lo3VerzamelBrpOnderzoeken {
         verzamelHerkomstenInStapels(herkomsten, brpPersoonslijst.getVoornaamStapels());
         verzamelHerkomstenInStapel(herkomsten, brpPersoonslijst.getBijzondereVerblijfsrechtelijkePositieIndicatieStapel());
         verzamelHerkomstenInStapels(herkomsten, brpPersoonslijst.getVerificatieStapels());
+        verzamelHerkomstenInStapels(herkomsten, brpPersoonslijst.getBuitenlandsPersoonsnummerStapels());
+        verzamelHerkomstenInStapel(herkomsten, brpPersoonslijst.getOnverwerktDocumentAanwezigIndicatieStapel());
 
         return herkomsten;
     }
@@ -99,10 +98,9 @@ public final class Lo3VerzamelBrpOnderzoeken {
     }
 
     private void verzamelHerkomstenInIstStapels(
-        final List<Lo3Herkomst> herkomsten,
-        final BrpPersoonslijst brpPersoonslijst,
-        final List<Lo3Herkomst> gebruikteHerkomsten)
-    {
+            final List<Lo3Herkomst> herkomsten,
+            final BrpPersoonslijst brpPersoonslijst,
+            final List<Lo3Herkomst> gebruikteHerkomsten) {
         verzamelHerkomstenInIstStapel(herkomsten, brpPersoonslijst.getIstOuder1Stapel(), gebruikteHerkomsten);
         verzamelHerkomstenInIstStapel(herkomsten, brpPersoonslijst.getIstOuder2Stapel(), gebruikteHerkomsten);
         verzamelHerkomstenInIstStapels(herkomsten, brpPersoonslijst.getIstHuwelijkOfGpStapels(), gebruikteHerkomsten);
@@ -111,31 +109,28 @@ public final class Lo3VerzamelBrpOnderzoeken {
     }
 
     private <T extends AbstractBrpIstGroepInhoud> void verzamelHerkomstenInIstStapels(
-        final List<Lo3Herkomst> herkomsten,
-        final List<BrpStapel<T>> istStapels,
-        final List<Lo3Herkomst> gebruikteHerkomsten)
-    {
+            final List<Lo3Herkomst> herkomsten,
+            final List<BrpStapel<T>> istStapels,
+            final List<Lo3Herkomst> gebruikteHerkomsten) {
         for (final BrpStapel<T> istStapel : istStapels) {
             verzamelHerkomstenInIstStapel(herkomsten, istStapel, gebruikteHerkomsten);
         }
     }
 
     private <T extends AbstractBrpIstGroepInhoud> void verzamelHerkomstenInIstStapel(
-        final List<Lo3Herkomst> herkomsten,
-        final BrpStapel<T> istStapel,
-        final List<Lo3Herkomst> gebruikteHerkomsten)
-    {
+            final List<Lo3Herkomst> herkomsten,
+            final BrpStapel<T> istStapel,
+            final List<Lo3Herkomst> gebruikteHerkomsten) {
         if (istStapel == null) {
             return;
         }
 
         for (final BrpGroep<T> istGroep : istStapel.getGroepen()) {
             final BrpIstStandaardGroepInhoud istInhoud = istGroep.getInhoud().getStandaardGegevens();
-            if (Validatie.isEenParameterGevuld(
-                istInhoud.getRubriek8310AanduidingGegevensInOnderzoek(),
-                istInhoud.getRubriek8320DatumIngangOnderzoek(),
-                istInhoud.getRubriek8330DatumEindeOnderzoek()))
-            {
+            if (BrpValidatie.isEenParameterGevuld(
+                    istInhoud.getRubriek8310AanduidingGegevensInOnderzoek(),
+                    istInhoud.getRubriek8320DatumIngangOnderzoek(),
+                    istInhoud.getRubriek8330DatumEindeOnderzoek())) {
                 final Lo3Herkomst herkomst = new Lo3Herkomst(istInhoud.getCategorie(), istInhoud.getStapel(), istInhoud.getVoorkomen());
                 if (!gebruikteHerkomsten.contains(herkomst)) {
                     herkomsten.add(herkomst);
@@ -224,20 +219,20 @@ public final class Lo3VerzamelBrpOnderzoeken {
             if (AbstractBrpAttribuutMetOnderzoek.class.isAssignableFrom(field.getType())) {
                 try {
                     field.setAccessible(true);
-                    final BrpAttribuutMetOnderzoek attribuut = (AbstractBrpAttribuutMetOnderzoek) field.get(object);
-                    if (attribuut != null && attribuut.getOnderzoek() != null) {
-                        final Lo3Onderzoek onderzoek = attribuut.getOnderzoek();
-                        final Lo3Herkomst lo3Herkomst = onderzoek.getLo3Herkomst();
-                        if (!herkomsten.contains(lo3Herkomst)) {
-                            herkomsten.add(lo3Herkomst);
-                        }
-                    }
-                } catch (final
-                    IllegalAccessException
-                    | IllegalArgumentException e)
-                {
-                    LOGGER.warn("Kan onderzoek niet bepalen voor BRP persoonslijst");
+                    verzamelHerkomstVanAttribuut(herkomsten, (AbstractBrpAttribuutMetOnderzoek) field.get(object));
+                } catch (final IllegalAccessException | IllegalArgumentException e) {
+                    LOGGER.warn("Kan onderzoek niet bepalen voor BRP persoonslijst\n{}", e);
                 }
+            }
+        }
+    }
+
+    private void verzamelHerkomstVanAttribuut(final List<Lo3Herkomst> herkomsten, final BrpAttribuutMetOnderzoek attribuut) {
+        if (attribuut != null && attribuut.isInhoudelijkGevuld() && attribuut.getOnderzoek() != null) {
+            final Lo3Onderzoek onderzoek = attribuut.getOnderzoek();
+            final Lo3Herkomst lo3Herkomst = onderzoek.getLo3Herkomst();
+            if (!herkomsten.contains(lo3Herkomst)) {
+                herkomsten.add(lo3Herkomst);
             }
         }
     }
@@ -254,11 +249,15 @@ public final class Lo3VerzamelBrpOnderzoeken {
             for (final BrpActieBron actieBron : actieBronnen) {
                 verzamelHerkomstenVanAttribuut(herkomsten, actieBron);
                 final BrpStapel<BrpDocumentInhoud> documentStapel = actieBron.getDocumentStapel();
-                if (documentStapel != null) {
-                    for (final BrpGroep<BrpDocumentInhoud> groep : documentStapel.getGroepen()) {
-                        verzamelHerkomstenVanAttribuut(herkomsten, groep.getInhoud());
-                    }
-                }
+                verzamelHerkomstenVanDocument(herkomsten, documentStapel);
+            }
+        }
+    }
+
+    private void verzamelHerkomstenVanDocument(List<Lo3Herkomst> herkomsten, BrpStapel<BrpDocumentInhoud> documentStapel) {
+        if (documentStapel != null) {
+            for (final BrpGroep<BrpDocumentInhoud> groep : documentStapel.getGroepen()) {
+                verzamelHerkomstenVanAttribuut(herkomsten, groep.getInhoud());
             }
         }
     }

@@ -15,7 +15,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * #IDENTITEIT} constante ipv de constructor.
  *
  * Deze class is immutable en threadsafe.
- *
  */
 public final class BrpIdentiteitInhoud extends AbstractBrpGroepInhoud {
 
@@ -26,15 +25,12 @@ public final class BrpIdentiteitInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een BrpOuderInhoud object.
-     *
      */
     private BrpIdentiteitInhoud() {
     }
 
-    /**
-     * Identiteit is altijd gevuld.
-     *
-     * @return false
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {

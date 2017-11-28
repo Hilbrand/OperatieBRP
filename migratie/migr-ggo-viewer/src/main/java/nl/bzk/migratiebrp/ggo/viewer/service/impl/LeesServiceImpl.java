@@ -16,7 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
@@ -30,14 +34,13 @@ import nl.bzk.migratiebrp.ggo.viewer.converter.Lg01Converter;
 import nl.bzk.migratiebrp.ggo.viewer.log.FoutMelder;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoStap;
 import nl.bzk.migratiebrp.ggo.viewer.service.LeesService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.excel.ExcelAdapter;
 import nl.bzk.migratiebrp.util.excel.ExcelAdapterException;
 import nl.bzk.migratiebrp.util.excel.ExcelData;
 import nl.gba.gbav.am.DataRecord;
 import nl.gba.gbav.impl.am.AMReaderFactoryImpl;
 import nl.gba.gbav.impl.am.AMReaderImpl;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 
@@ -66,7 +69,7 @@ public class LeesServiceImpl implements LeesService {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
+    
     public final List<List<Lo3CategorieWaarde>> leesBestand(final String filename, final byte[] file, final FoutMelder foutMelder) {
         foutMelder.setHuidigeStap(GgoStap.LO3);
 
@@ -79,9 +82,9 @@ public class LeesServiceImpl implements LeesService {
             final OndersteundeFormatenEnum ondersteundFormaat = OndersteundeFormatenEnum.getByExtensie(extensie);
             if (ondersteundFormaat == null) {
                 foutMelder.log(
-                    LogSeverity.WARNING,
-                    "Onbekende bestandsnaam",
-                    "Ondersteunde extensies zijn: " + Arrays.toString(OndersteundeFormatenEnum.getBestandExtensies()));
+                        LogSeverity.WARNING,
+                        "Onbekende bestandsnaam",
+                        "Ondersteunde extensies zijn: " + Arrays.toString(OndersteundeFormatenEnum.getBestandExtensies()));
             } else {
                 switch (ondersteundFormaat) {
                     case NIC:
@@ -114,7 +117,7 @@ public class LeesServiceImpl implements LeesService {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
+    
     public final Lo3Persoonslijst parsePersoonslijstMetSyntaxControle(final List<Lo3CategorieWaarde> lo3CategorieWaarden, final FoutMelder foutMelder) {
         foutMelder.setHuidigeStap(GgoStap.LO3);
 
@@ -162,11 +165,8 @@ public class LeesServiceImpl implements LeesService {
 
     /**
      * Leest een lg01 formaat in en retourneert een lijst van Lo3CategorieWaarde. Bevat maar 1 PL.
-     *
-     * @param file
-     *            byte[]
+     * @param file byte[]
      * @return List of Lo3CategorieWaarde
-     * @throws BerichtSyntaxException
      */
     private List<List<Lo3CategorieWaarde>> leesLg01(final byte[] file, final FoutMelder foutMelder) throws BerichtSyntaxException {
         final String berichtString = new String(file, Charset.forName(VIEWER_CHAR_SET));
@@ -179,11 +179,8 @@ public class LeesServiceImpl implements LeesService {
 
     /**
      * Leest een excel formaat in en retourneert een lijst van Lo3CategorieWaarde. Kan meerdere PLen bevatten.
-     *
-     * @param file
-     *            byte[]
-     * @param foutMelder
-     *            Het object om verwerkingsfouten aan te melden.
+     * @param file byte[]
+     * @param foutMelder Het object om verwerkingsfouten aan te melden.
      * @return List of Lo3CategorieWaarde
      */
     private List<List<Lo3CategorieWaarde>> leesExcel(final byte[] file, final FoutMelder foutMelder) {
@@ -209,13 +206,9 @@ public class LeesServiceImpl implements LeesService {
 
     /**
      * Leest een AM formaat in en retourneert een lijst van Lo3CategorieWaarde. Kan meerdere PLen bevatten.
-     *
-     * @param fileData
-     *            byte[]
-     * @param foutMelder
-     *            Het object om verwerkingsfouten aan te melden.
+     * @param fileData byte[]
+     * @param foutMelder Het object om verwerkingsfouten aan te melden.
      * @return List of Lo3CategorieWaarde
-     * @throws BerichtSyntaxException
      */
     private List<List<Lo3CategorieWaarde>> leesAM(final byte[] fileData, final FoutMelder foutMelder) throws BerichtSyntaxException {
         final List<List<Lo3CategorieWaarde>> result = new ArrayList<>();
@@ -229,7 +222,7 @@ public class LeesServiceImpl implements LeesService {
             amFile = kopieerBestandNaarServer(fileData);
 
             // Lees AM bestand in
-            amReader.setFiles(new File[] {amFile });
+            amReader.setFiles(new File[]{amFile});
             amReader.open();
 
             while (amReader.hasData()) {
@@ -263,12 +256,9 @@ public class LeesServiceImpl implements LeesService {
 
     /**
      * Kopieert de bytes naar een tijdelijk bestand.
-     *
-     * @param data
-     *            byte array
+     * @param data byte array
      * @return file
-     * @throws IOException
-     *             als er fouten optreden tijdens het schrijven naar bestand
+     * @throws IOException als er fouten optreden tijdens het schrijven naar bestand
      */
     private File kopieerBestandNaarServer(final byte[] data) throws IOException {
         final File destFile = File.createTempFile("upload", OndersteundeFormatenEnum.GBA.getBestandExtensie());
@@ -280,11 +270,8 @@ public class LeesServiceImpl implements LeesService {
 
     /**
      * Verwijderd de bestanden in de opgegeven directory.
-     *
-     * @param amFile
-     *            het AM-bestand dat verwijderd moet worden
-     * @param foutMelder
-     *            {@link FoutMelder} object waarin alle fouten worden gelogd
+     * @param amFile het AM-bestand dat verwijderd moet worden
+     * @param foutMelder {@link FoutMelder} object waarin alle fouten worden gelogd
      * @return true als de verwijder actie geslaagd is
      */
     private boolean verwijderBestand(final File amFile, final FoutMelder foutMelder) {

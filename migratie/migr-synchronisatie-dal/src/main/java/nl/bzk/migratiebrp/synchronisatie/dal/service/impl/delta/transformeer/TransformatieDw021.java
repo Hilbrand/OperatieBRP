@@ -6,14 +6,16 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractMaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteitHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteitHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Deze situatie herkent een gewijzigde rij waarbij DEG, AAG gevuld wordt en aand. verval,actie verval en tsverval leeg
@@ -27,51 +29,36 @@ public final class TransformatieDw021 extends AbstractTransformatie {
     }
 
     private boolean zijnVerwachteVeldenGevuld(final VerschilGroep verschillen) {
-        boolean datumEindeGeldigheidGevuld = false;
-        boolean actieAanpassingGeldigheidGevuld = false;
-        boolean datumTijdRegistratieGewijzigd = false;
-        boolean actieInhoudGewijzigd = false;
-        boolean overigVeldGevuld = false;
+        final List<Verschil> kopieVerschillen = new ArrayList<>(verschillen.getVerschillen());
+        final boolean zijnVerwachteVervalVeldenGevuld = zijnVerwachteVervalVeldenGevuld(kopieVerschillen, true);
+        final boolean zijnVerwachteGeldigheidVeldenGevuld = zijnVerwachteGeldigheidVeldenGevuld(kopieVerschillen);
 
-        for (final Verschil verschil : verschillen) {
+        final List<Verschil> tsRegActieInhoudVerschillen = zoekActieInhoudTsRegVeldenGewijzigdVerschillen(verschillen);
+        kopieVerschillen.removeAll(tsRegActieInhoudVerschillen);
+        final boolean isDw901Verschil = tsRegActieInhoudVerschillen.isEmpty() || TransformatieDw901.isCorrectVerschilPaar(tsRegActieInhoudVerschillen);
+
+        final boolean isNationaliteitOfIndicatieVerschil = verschillen.getFormeleHistorie() instanceof PersoonNationaliteitHistorie
+                || verschillen.getFormeleHistorie() instanceof PersoonIndicatieHistorie;
+
+        final Iterator<Verschil> iter = kopieVerschillen.iterator();
+        while (iter.hasNext()) {
+            final Verschil verschil = iter.next();
             final String veldnaam = verschil.getSleutel().getVeld();
-            final VerschilType verschilType = verschil.getVerschilType();
-
-            if (VerschilType.ELEMENT_NIEUW.equals(verschilType)) {
-                if (AbstractMaterieleHistorie.DATUM_EINDE_GELDIGHEID.equals(veldnaam)) {
-                    datumEindeGeldigheidGevuld = true;
-                } else if (AbstractMaterieleHistorie.ACTIE_AANPASSING_GELDIGHEID.equals(veldnaam)) {
-                    actieAanpassingGeldigheidGevuld = true;
-
-                } else if (!PersoonNationaliteitHistorie.VELD_REDEN_VERLIES_NL_NATIONALITEIT.equals(veldnaam)
-                           && !PersoonIndicatieHistorie.MIGRATIE_REDEN_BEEINDIGING_NATIONALITEIT.equals(veldnaam))
-                {
-                    overigVeldGevuld = true;
-                }
-            } else if (VerschilType.ELEMENT_AANGEPAST.equals(verschilType)) {
-                if (AbstractMaterieleHistorie.DATUM_TIJD_REGISTRATIE.equals(veldnaam)) {
-                    datumTijdRegistratieGewijzigd = true;
-                } else if (AbstractMaterieleHistorie.ACTIE_INHOUD.equals(veldnaam)) {
-                    actieInhoudGewijzigd = true;
-                } else {
-                    overigVeldGevuld = true;
-                }
-            } else {
-                overigVeldGevuld = true;
+            if (isNationaliteitOfIndicatieVerschil && (PersoonNationaliteitHistorie.VELD_REDEN_VERLIES_NL_NATIONALITEIT.equals(veldnaam)
+                    || PersoonIndicatieHistorie.MIGRATIE_REDEN_BEEINDIGING_NATIONALITEIT.equals(veldnaam))) {
+                iter.remove();
             }
         }
 
-        final boolean zijnDw021VeldenGevuld = datumEindeGeldigheidGevuld && actieAanpassingGeldigheidGevuld;
-        final boolean zijnDw901VeldenGewijzigd = datumTijdRegistratieGewijzigd || actieInhoudGewijzigd;
-        return zijnDw021VeldenGevuld && (!zijnDw901VeldenGewijzigd || TransformatieDw901.isCorrectVerschilPaar(verschillen)) && !overigVeldGevuld;
+        return zijnVerwachteGeldigheidVeldenGevuld && !zijnVerwachteVervalVeldenGevuld && isDw901Verschil && kopieVerschillen.isEmpty();
+
     }
 
     @Override
     public VerschilGroep execute(
-        final VerschilGroep verschilGroep,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final DeltaBepalingContext deltaBepalingContext)
-    {
+            final VerschilGroep verschilGroep,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final DeltaBepalingContext deltaBepalingContext) {
         return maakMRijEnNieuweRijVerschilVoorVerschilGroep(verschilGroep, actieVervalTbvLeveringMuts, false, true, deltaBepalingContext);
     }
 

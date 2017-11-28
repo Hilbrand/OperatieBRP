@@ -42,8 +42,8 @@ public class Lo3HistorieConversieAlternatieveSorteringTest extends AbstractConve
     private Lo3PersoonslijstBuilder maakPersoonslijstBuilder() {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         builder.persoonStapel(VerplichteStapel.createPersoonStapel());
-        builder.ouder1Stapel(VerplichteStapel.createOuderStapel(1111111111L, Lo3CategorieEnum.CATEGORIE_02));
-        builder.ouder2Stapel(VerplichteStapel.createOuderStapel(2222222222L, Lo3CategorieEnum.CATEGORIE_03));
+        builder.ouder1Stapel(VerplichteStapel.createOuderStapel("1111111111", Lo3CategorieEnum.CATEGORIE_02));
+        builder.ouder2Stapel(VerplichteStapel.createOuderStapel("2222222222", Lo3CategorieEnum.CATEGORIE_03));
         builder.inschrijvingStapel(VerplichteStapel.createInschrijvingStapel());
         builder.verblijfplaatsStapel(VerplichteStapel.createVerblijfplaatsStapel());
         return builder;
@@ -51,16 +51,14 @@ public class Lo3HistorieConversieAlternatieveSorteringTest extends AbstractConve
 
     /**
      * Maakt een nationaliteit stapel aan met 2 voorkomens. 1 gevulde (al dan niet onjuist) en 1 lege juiste rij.
-     * 
-     * @param historie
-     *            historie voor de gevulde rij. Hiermee kan de gevulde rij onjuist gemaakt worden
+     * @param historie historie voor de gevulde rij. Hiermee kan de gevulde rij onjuist gemaakt worden
      * @return een Lo3 nationaliteit stapel met 2 voorkomens
      */
     private Lo3Stapel<Lo3NationaliteitInhoud> maakNationaliteitStapel(final Lo3Historie historie) {
         final Lo3Herkomst c4Lo3Herkomst0 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 0);
         final Lo3Herkomst c4Lo3Herkomst1 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1);
-        final Lo3NationaliteitInhoud c4InhoudDuits = new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6029"), null, null, null);
-        final Lo3NationaliteitInhoud c4InhoudLegeRij = new Lo3NationaliteitInhoud(null, null, null, null);
+        final Lo3NationaliteitInhoud c4InhoudDuits = new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6029"), null, null, null, null);
+        final Lo3NationaliteitInhoud c4InhoudLegeRij = new Lo3NationaliteitInhoud(null, null, null, null, null);
         final Lo3Historie c4HistorieLegeRij = new Lo3Historie(null, DEFAULT_DATUM, DEFAULT_DATUM);
 
         final List<Lo3Categorie<Lo3NationaliteitInhoud>> categorieen = new ArrayList<>();

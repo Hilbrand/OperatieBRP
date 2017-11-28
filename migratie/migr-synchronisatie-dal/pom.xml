@@ -1,38 +1,60 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>nl.bzk.migratiebrp</groupId>
         <artifactId>migr-synchronisatie</artifactId>
-        <version>3.2.108-SNAPSHOT</version>
+        <version>145.3</version>
         <relativePath>../migr-synchronisatie</relativePath>
     </parent>
-    <groupId>nl.bzk.migratiebrp.synchronisatie</groupId>
+
     <artifactId>migr-synchronisatie-dal</artifactId>
     <name>Migr - Synchronisatie - DAL</name>
 
-	<properties>
-		<m2e.jpa.activation>false</m2e.jpa.activation>
-	</properties>
+    <properties>
+        <m2e.jpa.activation>false</m2e.jpa.activation>
+    </properties>
 
     <dependencies>
         <!-- Project -->
         <dependency>
-            <groupId>nl.bzk.migratiebrp.util</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-util-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.bericht</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-bericht-model</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.conversie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-conversie-model</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.conversie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-conversie-regels</artifactId>
+        </dependency>
+
+        <!-- Algemeen entiteiten -->
+        <dependency>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-dal-entiteiten</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-test-dal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-services-blobber</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-dal-jta</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-dal-repositories-jpa</artifactId>
         </dependency>
 
         <!-- Spring -->
@@ -60,12 +82,12 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
-		<!--
+        <!--
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
         </dependency>
-		-->
+        -->
 
         <!-- jsr330 -->
         <dependency>
@@ -83,11 +105,11 @@
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
         <dependency>
-			<groupId>com.mchange</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
         </dependency>
 
-        <!-- JTA -->
+        <!-- JTA
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jdbc</artifactId>
@@ -99,7 +121,7 @@
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jms</artifactId>
-        </dependency>
+        </dependency> -->
 
         <!-- PostgreSQL JDBC driver -->
         <dependency>
@@ -119,19 +141,19 @@
 
         <!-- Project -->
         <dependency>
-            <groupId>nl.bzk.migratiebrp.conversie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-conversie-model</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.conversie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-conversie-regels</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.test</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-test-common</artifactId>
             <scope>test</scope>
         </dependency>
@@ -141,29 +163,14 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <scope>test</scope>
-			<!--
+            <!--
             <exclusions>
                 <exclusion>
                      <groupId>org.javassist</groupId>
                      <artifactId>javassist</artifactId>
                 </exclusion>
             </exclusions>
-			-->
+            -->
         </dependency>
-
-		<dependency>
-			<groupId>com.google.code.findbugs</groupId>
-			<artifactId>annotations</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-
-
-        <!-- HyperSQL als in memory alternatief voor PostgreSQL t.b.v. unit-testen -->
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 </project>

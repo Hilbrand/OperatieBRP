@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.isc.runtime.jbpm.job;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.logging.FunctioneleMelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.quartz.JobDataMap;
 import org.springframework.context.ApplicationContext;
 
@@ -17,7 +17,9 @@ import org.springframework.context.ApplicationContext;
  */
 public final class ExecuteTimerJob extends AbstractExecuteJob {
 
-    /** Job data map key waaronder het ID van de uit te voeren timer is opgeslagen. */
+    /**
+     * Job data map key waaronder het ID van de uit te voeren timer is opgeslagen.
+     */
     public static final String TIMER_ID_KEY = "jbpm.timer.id";
 
     private static final Logger LOG = LoggerFactory.getLogger();

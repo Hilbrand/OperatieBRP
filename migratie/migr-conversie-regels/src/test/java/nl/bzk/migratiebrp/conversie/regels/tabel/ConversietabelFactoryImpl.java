@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.conversie.regels.tabel;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
@@ -92,8 +93,8 @@ public final class ConversietabelFactoryImpl extends AbstractConversietabelFacto
     }
 
     @Override
-    public Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode> createAanduidingInhoudingVermissingReisdocumentConversietabel()
-    {
+    public Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode>
+    createAanduidingInhoudingVermissingReisdocumentConversietabel() {
         return new AanduidingInhoudingVermissingReisdocumentConversietabel();
     }
 
@@ -130,6 +131,11 @@ public final class ConversietabelFactoryImpl extends AbstractConversietabelFacto
     @Override
     public Conversietabel<String, String> createLo3RubriekConversietabel() {
         return new Lo3RubriekConversietabel();
+    }
+
+    @Override
+    public Conversietabel<Lo3NationaliteitCode, BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer> createAutoriteitVanAfgifteBuitenlandsPersoonsnummertabel() {
+        return new AutoriteitVanAfgifteBuitenlandsPersoonsnummerConversietabel();
     }
 
     @Override

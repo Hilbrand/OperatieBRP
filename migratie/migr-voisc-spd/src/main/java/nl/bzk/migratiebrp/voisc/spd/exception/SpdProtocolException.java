@@ -12,117 +12,92 @@ import nl.bzk.migratiebrp.voisc.database.entities.Bericht;
  * This exception is used when errors occurred during parsing of sPd-messages from the MailboxServer. When an error
  * occurred during parsing an sPd-GetMessageResult, the current state of the LO3Bericht which is already parsed is given
  * to this exception. The calling method can catch this exception and retreive the LO3Bericht object from this exception
- * with getBericht().z
+ * with getBericht().
  */
 public class SpdProtocolException extends VoaException {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8957657627497773820L;
     private final Bericht bericht;
 
     /**
      * Default constructor.
-     * 
-     * @param code
-     *            String with the number of the error message defined in [messages.properties]
-     * @see nl.ictu.spg.common.messages.IMessagesCodes
+     * @param code MessagesCodes with the number of the error message defined in [messages.properties]
+     * @see "nl.ictu.spg.common.messages.IMessagesCodes"
      */
-    public SpdProtocolException(final String code) {
-        super(code, null, null);
+    public SpdProtocolException(final MessagesCodes code) {
+        super(code.getErrorCode(), null, null);
         bericht = null;
     }
 
     /**
      * Constructor.
-     * 
-     * @param code
-     *            String with the number of the error message defined in [messages.properties]
-     * @param cause
-     *            Throwable the original cause can be null
-     * @see nl.ictu.spg.common.messages.IMessagesCodes
+     * @param code MessagesCodes with the number of the error message defined in [messages.properties]
+     * @param cause Throwable the original cause can be null
+     * @see "nl.ictu.spg.common.messages.IMessagesCodes"
      */
-    public SpdProtocolException(final String code, final Throwable cause) {
-        super(code, null, cause);
+    public SpdProtocolException(final MessagesCodes code, final Throwable cause) {
+        super(code.getErrorCode(), null, cause);
         bericht = null;
     }
 
     /**
      * Special Constructor for MailboxServerProxy.ReceiveBericht().
-     * 
-     * @param code
-     *            foutmelding code
-     * @param bericht
-     *            bericht wat verstuurd/ontvangen is in de voa
+     * @param code foutmelding code
+     * @param bericht bericht wat verstuurd/ontvangen is in de voa
      */
-    public SpdProtocolException(final String code, final Bericht bericht) {
-        super(code, null, null);
+    public SpdProtocolException(final MessagesCodes code, final Bericht bericht) {
+        super(code.getErrorCode(), null, null);
         this.bericht = bericht;
     }
 
     /**
      * With this constructor it's possible to give an array of specific values to the generic error message.
-     * 
-     * @param code
-     *            String
-     * @param parameter
-     *            Object[]
+     * @param code MessagesCodes
+     * @param parameter Object[]
      */
-    public SpdProtocolException(final String code, final Object[] parameter) {
-        super(code, parameter);
+    public SpdProtocolException(final MessagesCodes code, final Object[] parameter) {
+        super(code.getErrorCode(), parameter);
         bericht = null;
     }
 
     /**
      * Special Constructor for MailboxServerProxy.ReceiveBericht().
-     * 
-     * @param code
-     *            foutmelding code
-     * @param parameter
-     *            Object[] array of Objects that will be put in the corresponding message, can be null
-     * @param bericht
-     *            bericht wat verstuurd/ontvangen is in de voa
+     * @param code foutmelding code
+     * @param parameter Object[] array of Objects that will be put in the corresponding message, can be null
+     * @param bericht bericht wat verstuurd/ontvangen is in de voa
      */
-    public SpdProtocolException(final String code, final Object[] parameter, final Bericht bericht) {
-        super(code, parameter);
+    public SpdProtocolException(final MessagesCodes code, final Object[] parameter, final Bericht bericht) {
+        super(code.getErrorCode(), parameter);
         this.bericht = bericht;
     }
 
     /**
      * Protected Constructor to force the developer to create a specific subclass of SpgRuntimeException.
-     * 
-     * @param code
-     *            String the key used for finding the corresponding exception message
-     * @param parameters
-     *            Object[] array of Objects that will be put in the corresponding message, can be null
-     * @param cause
-     *            Throwable the original cause can be null
+     * @param code String the key used for finding the corresponding exception message
+     * @param parameters Object[] array of Objects that will be put in the corresponding message, can be null
+     * @param cause Throwable the original cause can be null
      */
-    public SpdProtocolException(final String code, final Object[] parameters, final Throwable cause) {
-        super(code, parameters, cause);
+    public SpdProtocolException(final MessagesCodes code, final Object[] parameters, final Throwable cause) {
+        super(code.getErrorCode(), parameters, cause);
         bericht = null;
     }
 
     /**
      * Special Constructor for MailboxServerProxy.ReceiveBericht().
-     * 
-     * @param code
-     *            foutmelding code
-     * @param cause
-     *            oorzaak van de fout
-     * @param parameters
-     *            Object[] array of Objects that will be put in the corresponding message, can be null
-     * @param bericht
-     *            bericht wat verstuurd/ontvangen is in de voa
+     * @param code foutmelding code
+     * @param cause oorzaak van de fout
+     * @param parameters Object[] array of Objects that will be put in the corresponding message, can be null
+     * @param bericht bericht wat verstuurd/ontvangen is in de voa
      */
-    public SpdProtocolException(final String code, final Object[] parameters, final Throwable cause, final Bericht bericht) {
-        super(code, parameters, cause);
+    public SpdProtocolException(final MessagesCodes code, final Object[] parameters, final Throwable cause, final Bericht bericht) {
+        super(code.getErrorCode(), parameters, cause);
         this.bericht = bericht;
     }
 
     /**
      * Retreive a VoaBericht.
-     * 
      * @return bericht
      */
     public final Bericht getBericht() {

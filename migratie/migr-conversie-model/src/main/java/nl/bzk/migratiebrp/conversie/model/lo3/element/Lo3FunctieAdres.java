@@ -6,20 +6,17 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Functie adres.
- * 
  */
 public final class Lo3FunctieAdres extends AbstractLo3Element {
     private static final long serialVersionUID = 1L;
 
     /**
      * Constructor.
-     * 
-     * @param code
-     *            code
+     * @param code code
      */
     public Lo3FunctieAdres(final String code) {
         this(code, null);
@@ -27,16 +24,12 @@ public final class Lo3FunctieAdres extends AbstractLo3Element {
 
     /**
      * Constructor met onderzoek.
-     * 
-     * @param waarde
-     *            code
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde code
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
     public Lo3FunctieAdres(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 }

@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpIstGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
@@ -30,9 +30,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGezagMinderjarige;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
@@ -41,72 +39,63 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 /**
  * Abstract klasse voor IST conversie.
  */
-public abstract class AbstractRelatieConverteerder extends AbstractConverteerder {
+public abstract class AbstractRelatieConverteerder extends Converteerder {
+
+    /**
+     * constructor.
+     * @param lo3AttribuutConverteerder
+     */
+    public AbstractRelatieConverteerder(final Lo3AttribuutConverteerder lo3AttribuutConverteerder) {
+        super(lo3AttribuutConverteerder);
+    }
 
     /**
      * Maakt een IstRelatie inhoud aan.
-     *
-     * @param adellijkeTitelPredikaatCode
-     *            adellijktitel of predikaat code
-     * @param voornamen
-     *            voornamen
-     * @param voorvoegselGeslachtsnaam
-     *            voorvoegsel geslachtsnaam
-     * @param geslachtsnaam
-     *            geslachtsnaam
-     * @param geboorteGemeenteCode
-     *            gemeentecode waar persoon geboren is
-     * @param geboorteLandCode
-     *            land waar persoon geboren is
-     * @param geboortedatum
-     *            datum wanneer persoon geboren is
-     * @param geslachtsaanduiding
-     *            geslachtsaanduiding
-     * @param anummer
-     *            anummer
-     * @param burgerservicenummer
-     *            BSN
-     * @param familierechtelijkeBetrekking
-     *            datum ingang familie rechtelijke betrekking
-     * @param lo3Documentatie
-     *            lo3 documentatie
-     * @param lo3Onderzoek
-     *            lo3 onderzoek
-     * @param lo3Historie
-     *            lo3 historie
-     * @param lo3Herkomst
-     *            lo3 herkomst
+     * @param adellijkeTitelPredikaatCode adellijktitel of predikaat code
+     * @param voornamen voornamen
+     * @param voorvoegselGeslachtsnaam voorvoegsel geslachtsnaam
+     * @param geslachtsnaam geslachtsnaam
+     * @param geboorteGemeenteCode gemeentecode waar persoon geboren is
+     * @param geboorteLandCode land waar persoon geboren is
+     * @param geboortedatum datum wanneer persoon geboren is
+     * @param geslachtsaanduiding geslachtsaanduiding
+     * @param anummer anummer
+     * @param burgerservicenummer BSN
+     * @param familierechtelijkeBetrekking datum ingang familie rechtelijke betrekking
+     * @param lo3Documentatie lo3 documentatie
+     * @param lo3Onderzoek lo3 onderzoek
+     * @param lo3Historie lo3 historie
+     * @param lo3Herkomst lo3 herkomst
      * @return gevulde IST-relatie
      */
-    protected final BrpIstRelatieGroepInhoud maakIstRelatieGroepInhoud(
-        final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode,
-        final Lo3String voornamen,
-        final Lo3String voorvoegselGeslachtsnaam,
-        final Lo3String geslachtsnaam,
-        final Lo3GemeenteCode geboorteGemeenteCode,
-        final Lo3LandCode geboorteLandCode,
-        final Lo3Datum geboortedatum,
-        final Lo3Geslachtsaanduiding geslachtsaanduiding,
-        final Lo3Long anummer,
-        final Lo3Integer burgerservicenummer,
-        final Lo3Datum familierechtelijkeBetrekking,
-        final Lo3Documentatie lo3Documentatie,
-        final Lo3Onderzoek lo3Onderzoek,
-        final Lo3Historie lo3Historie,
-        final Lo3Herkomst lo3Herkomst)
-    {
+    final BrpIstRelatieGroepInhoud maakIstRelatieGroepInhoud(
+            final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode,
+            final Lo3String voornamen,
+            final Lo3String voorvoegselGeslachtsnaam,
+            final Lo3String geslachtsnaam,
+            final Lo3GemeenteCode geboorteGemeenteCode,
+            final Lo3LandCode geboorteLandCode,
+            final Lo3Datum geboortedatum,
+            final Lo3Geslachtsaanduiding geslachtsaanduiding,
+            final Lo3String anummer,
+            final Lo3String burgerservicenummer,
+            final Lo3Datum familierechtelijkeBetrekking,
+            final Lo3Documentatie lo3Documentatie,
+            final Lo3Onderzoek lo3Onderzoek,
+            final Lo3Historie lo3Historie,
+            final Lo3Herkomst lo3Herkomst) {
         final BrpIdentificatienummersInhoud identInhoud =
                 getUtils().maakIdentificatieGroep(anummer, burgerservicenummer, lo3Historie, lo3Documentatie, lo3Herkomst).getInhoud();
 
         final BrpSamengesteldeNaamInhoud naamInhoud =
                 getUtils().maakSamengesteldeNaamGroep(
-                    adellijkeTitelPredikaatCode,
-                    voornamen,
-                    voorvoegselGeslachtsnaam,
-                    geslachtsnaam,
-                    lo3Historie,
-                    lo3Documentatie,
-                    lo3Herkomst).getInhoud();
+                        adellijkeTitelPredikaatCode,
+                        voornamen,
+                        voorvoegselGeslachtsnaam,
+                        geslachtsnaam,
+                        lo3Historie,
+                        lo3Documentatie,
+                        lo3Herkomst).getInhoud();
 
         final BrpGeboorteInhoud geboorteInhoud =
                 getUtils().maakGeboorteGroep(geboorteGemeenteCode, geboorteLandCode, geboortedatum, lo3Historie, lo3Documentatie, lo3Herkomst).getInhoud();
@@ -120,57 +109,49 @@ public abstract class AbstractRelatieConverteerder extends AbstractConverteerder
 
         vulGerelateerdeGegevens(relatieBuilder, identInhoud, naamInhoud, geboorteInhoud, geslachtsAanduidingInhoud);
         if (familierechtelijkeBetrekking != null) {
-            relatieBuilder.rubriek6210DatumIngangFamilierechtelijkeBetrekking(new BrpInteger(
-                familierechtelijkeBetrekking.getIntegerWaarde(),
-                familierechtelijkeBetrekking.getOnderzoek()));
+            relatieBuilder.rubriek6210DatumIngangFamilierechtelijkeBetrekking(
+                    new BrpInteger(familierechtelijkeBetrekking.getIntegerWaarde(), familierechtelijkeBetrekking.getOnderzoek()));
         }
         return relatieBuilder.build();
     }
 
     /**
      * Maakt een IST Huwelijk of Geregistreerd partnerschap inhoud.
-     *
-     * @param lo3Inhoud
-     *            lo3 inhoud met Huwelijk of Geregistreerd partnerschap
-     * @param lo3Documentatie
-     *            lo3 documentatie
-     * @param lo3Onderzoek
-     *            lo3 onderzoek
-     * @param lo3Historie
-     *            lo3 historie
-     * @param lo3Herkomst
-     *            lo3 herkomst
+     * @param lo3Inhoud lo3 inhoud met Huwelijk of Geregistreerd partnerschap
+     * @param lo3Documentatie lo3 documentatie
+     * @param lo3Onderzoek lo3 onderzoek
+     * @param lo3Historie lo3 historie
+     * @param lo3Herkomst lo3 herkomst
      * @return een gevuld IST Huwelijk of Geregistreerd partnerschap inhoud
      */
-    protected final BrpIstHuwelijkOfGpGroepInhoud maakIstHuwelijkOfGpGroepInhoud(
-        final Lo3HuwelijkOfGpInhoud lo3Inhoud,
-        final Lo3Documentatie lo3Documentatie,
-        final Lo3Onderzoek lo3Onderzoek,
-        final Lo3Historie lo3Historie,
-        final Lo3Herkomst lo3Herkomst)
-    {
+    final BrpIstHuwelijkOfGpGroepInhoud maakIstHuwelijkOfGpGroepInhoud(
+            final Lo3HuwelijkOfGpInhoud lo3Inhoud,
+            final Lo3Documentatie lo3Documentatie,
+            final Lo3Onderzoek lo3Onderzoek,
+            final Lo3Historie lo3Historie,
+            final Lo3Herkomst lo3Herkomst) {
         final BrpIdentificatienummersInhoud identInhoud =
                 getUtils().maakIdentificatieGroep(lo3Inhoud.getaNummer(), lo3Inhoud.getBurgerservicenummer(), lo3Historie, lo3Documentatie, lo3Herkomst)
-                          .getInhoud();
+                        .getInhoud();
 
         final BrpSamengesteldeNaamInhoud naamInhoud =
                 getUtils().maakSamengesteldeNaamGroep(
-                    lo3Inhoud.getAdellijkeTitelPredikaatCode(),
-                    lo3Inhoud.getVoornamen(),
-                    lo3Inhoud.getVoorvoegselGeslachtsnaam(),
-                    lo3Inhoud.getGeslachtsnaam(),
-                    lo3Historie,
-                    lo3Documentatie,
-                    lo3Herkomst).getInhoud();
+                        lo3Inhoud.getAdellijkeTitelPredikaatCode(),
+                        lo3Inhoud.getVoornamen(),
+                        lo3Inhoud.getVoorvoegselGeslachtsnaam(),
+                        lo3Inhoud.getGeslachtsnaam(),
+                        lo3Historie,
+                        lo3Documentatie,
+                        lo3Herkomst).getInhoud();
 
         final BrpGeboorteInhoud geboorteInhoud =
                 getUtils().maakGeboorteGroep(
-                    lo3Inhoud.getGeboorteGemeenteCode(),
-                    lo3Inhoud.getGeboorteLandCode(),
-                    lo3Inhoud.getGeboortedatum(),
-                    lo3Historie,
-                    lo3Documentatie,
-                    lo3Herkomst).getInhoud();
+                        lo3Inhoud.getGeboorteGemeenteCode(),
+                        lo3Inhoud.getGeboorteLandCode(),
+                        lo3Inhoud.getGeboortedatum(),
+                        lo3Historie,
+                        lo3Documentatie,
+                        lo3Herkomst).getInhoud();
 
         final BrpGeslachtsaanduidingInhoud geslachtsAanduidingInhoud =
                 getUtils().maakGeslachtsaanduidingInhoud(lo3Inhoud.getGeslachtsaanduiding(), lo3Historie, lo3Documentatie, lo3Herkomst).getInhoud();
@@ -185,7 +166,7 @@ public abstract class AbstractRelatieConverteerder extends AbstractConverteerder
 
         final BrpIstHuwelijkOfGpGroepInhoud.Builder builder = new BrpIstHuwelijkOfGpGroepInhoud.Builder(standaardGegevens, relatieBuilder.build());
 
-        if (Validatie.isAttribuutGevuld(relatieInhoud.getDatumAanvang())) {
+        if (BrpValidatie.isAttribuutGevuld(relatieInhoud.getDatumAanvang())) {
             builder.datumAanvang(new BrpInteger(relatieInhoud.getDatumAanvang().getWaarde(), relatieInhoud.getDatumAanvang().getOnderzoek()));
         }
 
@@ -195,7 +176,7 @@ public abstract class AbstractRelatieConverteerder extends AbstractConverteerder
         builder.landOfGebiedAanvang(relatieInhoud.getLandOfGebiedCodeAanvang());
         builder.redenBeeindigingRelatieCode(relatieInhoud.getRedenEindeRelatieCode());
 
-        if (Validatie.isAttribuutGevuld(relatieInhoud.getDatumEinde())) {
+        if (BrpValidatie.isAttribuutGevuld(relatieInhoud.getDatumEinde())) {
             builder.datumEinde(new BrpInteger(relatieInhoud.getDatumEinde().getWaarde(), relatieInhoud.getDatumEinde().getOnderzoek()));
         }
 
@@ -210,26 +191,19 @@ public abstract class AbstractRelatieConverteerder extends AbstractConverteerder
 
     /**
      * Maak IST Gezagsverhouding groep inhoud.
-     *
-     * @param lo3Inhoud
-     *            inhoud
-     * @param lo3Documentatie
-     *            documentatie
-     * @param lo3Onderzoek
-     *            onderzoek
-     * @param lo3Historie
-     *            historie
-     * @param lo3Herkomst
-     *            herkomst
+     * @param lo3Inhoud inhoud
+     * @param lo3Documentatie documentatie
+     * @param lo3Onderzoek onderzoek
+     * @param lo3Historie historie
+     * @param lo3Herkomst herkomst
      * @return gezagsverhouding inhoud.
      */
-    protected final BrpIstGezagsVerhoudingGroepInhoud maakIstGezagsVerhoudingGroepInhoud(
-        final Lo3GezagsverhoudingInhoud lo3Inhoud,
-        final Lo3Documentatie lo3Documentatie,
-        final Lo3Onderzoek lo3Onderzoek,
-        final Lo3Historie lo3Historie,
-        final Lo3Herkomst lo3Herkomst)
-    {
+    final BrpIstGezagsVerhoudingGroepInhoud maakIstGezagsVerhoudingGroepInhoud(
+            final Lo3GezagsverhoudingInhoud lo3Inhoud,
+            final Lo3Documentatie lo3Documentatie,
+            final Lo3Onderzoek lo3Onderzoek,
+            final Lo3Historie lo3Historie,
+            final Lo3Herkomst lo3Herkomst) {
         final Lo3IndicatieGezagMinderjarige indicatieGezagMinderjarige = lo3Inhoud.getIndicatieGezagMinderjarige();
 
         final BrpIstStandaardGroepInhoud standaardGegevens = vulStandaardGegevens(lo3Herkomst, lo3Historie, lo3Documentatie, lo3Onderzoek);
@@ -246,30 +220,28 @@ public abstract class AbstractRelatieConverteerder extends AbstractConverteerder
         }
 
         istGezagsVerhoudingBuilder.indicatieDerdeHeeftGezag(getLo3AttribuutConverteerder().converteerDerdeHeeftGezag(indicatieGezagMinderjarige));
-        istGezagsVerhoudingBuilder.indicatieOnderCuratele(getLo3AttribuutConverteerder().converteerOnderCuratele(lo3Inhoud.getIndicatieCurateleregister()));
+        istGezagsVerhoudingBuilder.indicatieOnderCuratele(
+                getLo3AttribuutConverteerder().converteerOnderCuratele(lo3Inhoud.getIndicatieCurateleregister()));
         return istGezagsVerhoudingBuilder.build();
     }
 
     /**
      * Maak tussen groep.
-     *
-     * @param inhoud
-     *            inhoud
+     * @param inhoud inhoud
      * @param <T> extends AbstractBrpIstGroepInhoud
      * @return tussen groep.
      */
-    protected final <T extends AbstractBrpIstGroepInhoud> TussenGroep<T> maakMigratieGroep(final T inhoud) {
-        return new TussenGroep<>(inhoud, Lo3Historie.NULL_HISTORIE, null, null);
+    final <T extends AbstractBrpIstGroepInhoud> TussenGroep<T> maakMigratieGroep(final T inhoud) {
+        return new TussenGroep<>(inhoud, new Lo3Historie(null, null, null), null, null);
     }
 
     /* Private methods */
     private void vulGerelateerdeGegevens(
-        final BrpIstRelatieGroepInhoud.Builder istInhoudBuilder,
-        final BrpIdentificatienummersInhoud identInhoud,
-        final BrpSamengesteldeNaamInhoud naamInhoud,
-        final BrpGeboorteInhoud geboorteInhoud,
-        final BrpGeslachtsaanduidingInhoud geslachtsAanduidingInhoud)
-    {
+            final BrpIstRelatieGroepInhoud.Builder istInhoudBuilder,
+            final BrpIdentificatienummersInhoud identInhoud,
+            final BrpSamengesteldeNaamInhoud naamInhoud,
+            final BrpGeboorteInhoud geboorteInhoud,
+            final BrpGeslachtsaanduidingInhoud geslachtsAanduidingInhoud) {
         istInhoudBuilder.anummer(identInhoud.getAdministratienummer());
         istInhoudBuilder.bsn(identInhoud.getBurgerservicenummer());
         istInhoudBuilder.voornamen(naamInhoud.getVoornamen());
@@ -278,8 +250,9 @@ public abstract class AbstractRelatieConverteerder extends AbstractConverteerder
         istInhoudBuilder.voorvoegsel(naamInhoud.getVoorvoegsel());
         istInhoudBuilder.scheidingsteken(naamInhoud.getScheidingsteken());
         istInhoudBuilder.geslachtsnaamstam(naamInhoud.getGeslachtsnaamstam());
-        if (Validatie.isAttribuutGevuld(geboorteInhoud.getGeboortedatum())) {
-            istInhoudBuilder.datumGeboorte(new BrpInteger(geboorteInhoud.getGeboortedatum().getWaarde(), geboorteInhoud.getGeboortedatum().getOnderzoek()));
+        if (BrpValidatie.isAttribuutGevuld(geboorteInhoud.getGeboortedatum())) {
+            istInhoudBuilder.datumGeboorte(
+                    new BrpInteger(geboorteInhoud.getGeboortedatum().getWaarde(), geboorteInhoud.getGeboortedatum().getOnderzoek()));
         }
         istInhoudBuilder.gemeenteCodeGeboorte(geboorteInhoud.getGemeenteCode());
         istInhoudBuilder.buitenlandsePlaatsGeboorte(geboorteInhoud.getBuitenlandsePlaatsGeboorte());
@@ -289,11 +262,10 @@ public abstract class AbstractRelatieConverteerder extends AbstractConverteerder
     }
 
     private BrpIstStandaardGroepInhoud vulStandaardGegevens(
-        final Lo3Herkomst lo3Herkomst,
-        final Lo3Historie lo3Historie,
-        final Lo3Documentatie lo3Documentatie,
-        final Lo3Onderzoek lo3Onderzoek)
-    {
+            final Lo3Herkomst lo3Herkomst,
+            final Lo3Historie lo3Historie,
+            final Lo3Documentatie lo3Documentatie,
+            final Lo3Onderzoek lo3Onderzoek) {
         // Standaard
         final BrpIstStandaardGroepInhoud.Builder standaardGegevens =
                 new BrpIstStandaardGroepInhoud.Builder(lo3Herkomst.getCategorie(), lo3Herkomst.getStapel(), lo3Herkomst.getVoorkomen());
@@ -322,14 +294,14 @@ public abstract class AbstractRelatieConverteerder extends AbstractConverteerder
     }
 
     private BrpPartijCode bepaalLegePartij(final Lo3Documentatie lo3Documentatie) {
-        final Lo3GemeenteCode bronGemeente;
+        final Lo3GemeenteCode bronPartijCode;
         if (lo3Documentatie.getGemeenteAkte() != null) {
-            bronGemeente = lo3Documentatie.getGemeenteAkte();
+            bronPartijCode = lo3Documentatie.getGemeenteAkte();
         } else {
-            bronGemeente = lo3Documentatie.getGemeenteDocument();
+            bronPartijCode = lo3Documentatie.getGemeenteDocument();
         }
 
-        return getLo3AttribuutConverteerder().converteerLo3GemeenteCodeNaarBrpPartijCode(bronGemeente);
+        return getLo3AttribuutConverteerder().converteerLo3GemeenteCodeNaarBrpPartijCode(bronPartijCode);
     }
 
 }

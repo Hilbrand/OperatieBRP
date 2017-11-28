@@ -7,10 +7,11 @@
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatiePKVolledigGeconverteerdCodeEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatiePKVolledigGeconverteerdCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Dit is een statische conversie (er wordt geen tabel gebruikt) tussen de LO3 en BRP code. Er wordt geen onderzoek
@@ -20,7 +21,7 @@ public final class IndicatiePKConversietabel implements Conversietabel<Lo3Indica
 
     @Override
     public BrpBoolean converteerNaarBrp(final Lo3IndicatiePKVolledigGeconverteerdCode input) {
-        if (!Validatie.isElementGevuld(input)) {
+        if (!Lo3Validatie.isElementGevuld(input)) {
             return new BrpBoolean(false);
         }
 
@@ -30,17 +31,17 @@ public final class IndicatiePKConversietabel implements Conversietabel<Lo3Indica
 
     @Override
     public Lo3IndicatiePKVolledigGeconverteerdCode converteerNaarLo3(final BrpBoolean input) {
-        if (!nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie.isAttribuutGevuld(input)) {
+        if (!BrpValidatie.isAttribuutGevuld(input)) {
             return null;
         }
 
         return input.getWaarde() ? new Lo3IndicatiePKVolledigGeconverteerdCode(
-            Lo3IndicatiePKVolledigGeconverteerdCodeEnum.VOLLEDIG_GECONVERTEERD.getCode()) : null;
+                Lo3IndicatiePKVolledigGeconverteerdCodeEnum.VOLLEDIG_GECONVERTEERD.getCode()) : null;
     }
 
     @Override
     public boolean valideerLo3(final Lo3IndicatiePKVolledigGeconverteerdCode input) {
-        return !Validatie.isElementGevuld(input) || Lo3IndicatiePKVolledigGeconverteerdCodeEnum.getByCode(input.getWaarde()) != null;
+        return !Lo3Validatie.isElementGevuld(input) || Lo3IndicatiePKVolledigGeconverteerdCodeEnum.getByCode(input.getWaarde()) != null;
     }
 
     @Override

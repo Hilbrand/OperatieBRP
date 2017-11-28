@@ -25,11 +25,11 @@ public class BrpDienstTest {
 
     public static BrpDienst maak(final int datumIngang) {
         return new BrpDienst(
-            BrpEffectAfnemerindicatiesCode.PLAATSEN,
-            BrpSoortDienstCode.MUTATIELEVERING_OP_BASIS_VAN_AFNEMERSINDICATIE,
-            maakStapel(new BrpDatum(datumIngang, null)),
-            null,
-            null);
+                BrpEffectAfnemerindicatiesCode.PLAATSEN,
+                BrpSoortDienstCode.MUTATIELEVERING_OP_BASIS_VAN_AFNEMERSINDICATIE,
+                maakStapel(new BrpDatum(datumIngang, null)),
+                null,
+                null);
     }
 
     private static BrpStapel<BrpDienstInhoud> maakStapel(final BrpDatum datumIngang) {
@@ -37,14 +37,14 @@ public class BrpDienstTest {
         final BrpHistorie historie = new BrpHistorie(BrpDatumTijd.fromDatum(datumIngang.getWaarde(), null), null, null);
         final BrpActie actie =
                 new BrpActie(
-                    1L,
-                    BrpSoortActieCode.CONVERSIE_GBA,
-                    BrpPartijCode.MIGRATIEVOORZIENING,
-                    historie.getDatumTijdRegistratie(),
-                    null,
-                    null,
-                    1,
-                    null);
+                        1L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        BrpPartijCode.MIGRATIEVOORZIENING,
+                        historie.getDatumTijdRegistratie(),
+                        null,
+                        null,
+                        1,
+                        null);
 
         final BrpGroep<BrpDienstInhoud> groep = new BrpGroep<>(inhoud, historie, actie, null, null);
 

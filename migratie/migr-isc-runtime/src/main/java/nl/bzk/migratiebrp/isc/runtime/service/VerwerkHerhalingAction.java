@@ -7,16 +7,13 @@
 package nl.bzk.migratiebrp.isc.runtime.service;
 
 import java.sql.Timestamp;
-
+import java.time.Instant;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao.Direction;
 import nl.bzk.migratiebrp.isc.runtime.message.Acties;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -26,7 +23,7 @@ import org.springframework.beans.factory.annotation.Required;
 public final class VerwerkHerhalingAction implements Action {
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    private static final long TWEE_DAGEN = 2 * 24 * 60 * 60 * 1000;
+    private static final long TWEE_DAGEN = 2 * 24 * 60 * 60 * 1_000L;
 
     private String kanaal;
 
@@ -36,9 +33,7 @@ public final class VerwerkHerhalingAction implements Action {
 
     /**
      * Zet de outbound service voor VOISC.
-     *
-     * @param service
-     *            de te zetten outbound service voor VOISC
+     * @param service de te zetten outbound service voor VOISC
      */
     @Required
     public void setVoiscOutboundService(final Service service) {
@@ -76,25 +71,26 @@ public final class VerwerkHerhalingAction implements Action {
         // controle dmv System.currentTimeInMillis gebruikt.
         final Long berichtUTCTime = bericht == null ? null : bericht.getTijdstip().getTime();
 
-        final Long currentUTCTime = new DateTime(DateTimeZone.UTC).getMillis();
+        final Long currentUTCTime = Instant.now().toEpochMilli();
         LOG.info(
-            "[Bericht: {}]: meest recente antwoord {} (tijdstip herhaling (UTC)={}, tijdstip eerder bericht (UTC)={})",
-            new Object[] {berichtId,
-                          bericht == null ? null : bericht.getId(),
-                          new Timestamp(currentUTCTime),
-                          berichtUTCTime == null ? "geen recent antwoord gevonden" : new Timestamp(berichtUTCTime), });
+                "[Bericht: {}]: meest recente antwoord {} (tijdstip herhaling (UTC)={}, tijdstip eerder bericht (UTC)={})",
+                new Object[]{berichtId,
+                        bericht == null ? null : bericht.getId(),
+                        new Timestamp(currentUTCTime),
+                        berichtUTCTime == null ? "geen recent antwoord gevonden" : new Timestamp(berichtUTCTime),});
         if (bericht != null && berichtUTCTime + TWEE_DAGEN < currentUTCTime) {
             // Stuur antwoord op herhaling
             final Long antwoordBerichtId =
                     berichtenDao.bewaar(
-                        kanaal,
-                        Direction.UITGAAND,
-                        bericht.getMessageId(),
-                        bericht.getCorrelationId(),
-                        bericht.getBericht(),
-                        bericht.getVerzendendePartij(),
-                        bericht.getOntvangendePartij(),
-                        null);
+                            kanaal,
+                            Direction.UITGAAND,
+                            bericht.getMessageId(),
+                            bericht.getCorrelationId(),
+                            bericht.getBericht(),
+                            bericht.getVerzendendePartij(),
+                            bericht.getOntvangendePartij(),
+                            null,
+                            bericht.getRequestNonReceipt());
             berichtenDao.updateProcessInstance(antwoordBerichtId, bericht.getProcessInstance().getId());
 
             berichtenDao.updateActie(berichtId, Acties.ACTIE_HERHALING_BEANTWOORD);
@@ -106,8 +102,8 @@ public final class VerwerkHerhalingAction implements Action {
         } else {
             // Geen antwoord of antwoord minder dan twee dagen geleden, negeren
             LOG.info(
-                "[Bericht: {}]: herhaling genegeerd (tijdstip herhaling (UTC)={}, tijdstip eerder bericht (UTC)={})",
-                new Object[] {berichtId, new Timestamp(currentUTCTime), bericht == null ? "geen recent antwoord" : bericht.getTijdstip(), });
+                    "[Bericht: {}]: herhaling genegeerd (tijdstip herhaling (UTC)={}, tijdstip eerder bericht (UTC)={})",
+                    new Object[]{berichtId, new Timestamp(currentUTCTime), bericht == null ? "geen recent antwoord" : bericht.getTijdstip(),});
             berichtenDao.updateActie(berichtId, Acties.ACTIE_HERHALING_GENEGEERD);
         }
 

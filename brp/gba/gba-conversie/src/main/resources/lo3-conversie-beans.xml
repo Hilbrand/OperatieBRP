@@ -4,14 +4,15 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <import resource="classpath:gba-algemeen-beans.xml"/>
+
     <!-- Bericht -->
-    <bean id="lo3_berichtFactory" class="nl.bzk.brp.levering.lo3.bericht.BerichtFactoryImpl" />
+    <bean id="lo3_berichtFactory" class="nl.bzk.brp.levering.lo3.bericht.BerichtFactoryImpl"/>
 
     <!-- Conversie (plus conversietabellen) -->
     <context:component-scan base-package="nl.bzk.brp.levering.lo3.conversie"/>
 
-    <bean id="lo3_conversieTabelFactory"
-          class="nl.bzk.brp.levering.lo3.tabel.Lo3ConversieTabelFactory"/>
+    <bean id="lo3_conversieTabelFactory" class="nl.bzk.brp.levering.lo3.tabel.Lo3ConversieTabelFactory"/>
 
     <import resource="classpath:conversie-beans.xml"/>
 

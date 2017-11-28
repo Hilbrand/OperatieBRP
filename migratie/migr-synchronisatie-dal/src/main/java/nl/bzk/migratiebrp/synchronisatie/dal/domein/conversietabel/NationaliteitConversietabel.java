@@ -7,34 +7,32 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel;
 
 import java.util.Collection;
+
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch.AbstractNationaliteitConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Conversietabel voor LO3 naar BRP codering en vice versa.
  */
 public final class NationaliteitConversietabel extends AbstractNationaliteitConversietabel implements
-        Conversietabel<Lo3NationaliteitCode, BrpNationaliteitCode>
-{
+        Conversietabel<Lo3NationaliteitCode, BrpNationaliteitCode> {
 
-    private final Collection<Short> geldigeCodes;
+    private final Collection<String> geldigeCodes;
 
     /**
      * Constructor.
-     * 
-     * @param geldigeCodes
-     *            geldige codes.
+     * @param geldigeCodes geldige codes.
      */
-    public NationaliteitConversietabel(final Collection<Short> geldigeCodes) {
+    public NationaliteitConversietabel(final Collection<String> geldigeCodes) {
         this.geldigeCodes = geldigeCodes;
     }
 
     @Override
     public boolean valideerLo3(final Lo3NationaliteitCode input) {
-        return !Validatie.isElementGevuld(input) || geldigeCodes.contains(Short.valueOf(input.getWaarde()));
+        return !Lo3Validatie.isElementGevuld(input) || geldigeCodes.contains(input.getWaarde());
     }
 
     @Override

@@ -6,15 +6,14 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een BRP soort document code. Dit is geen enum maar een class omdat het hier een dynamische
  * stamtabel betreft.
- * 
+ *
  * Deze class is immutable en thread safe.
- * 
  */
 public final class BrpSoortDocumentCode extends AbstractBrpAttribuutMetOnderzoek {
 
@@ -27,9 +26,7 @@ public final class BrpSoortDocumentCode extends AbstractBrpAttribuutMetOnderzoek
 
     /**
      * Maakt een BrpSoortDocumentCode object.
-     * 
-     * @param waarde
-     *            de waarde die binnen BRP een soort document uniek identficeert
+     * @param waarde de waarde die binnen BRP een soort document uniek identficeert
      */
     public BrpSoortDocumentCode(final String waarde) {
         this(waarde, null);
@@ -37,22 +34,18 @@ public final class BrpSoortDocumentCode extends AbstractBrpAttribuutMetOnderzoek
 
     /**
      * Maakt een BrpSoortDocumentCode object met onderzoek.
-     * 
-     * @param waarde
-     *            de waarde die binnen BRP een soort document uniek identficeert
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde de waarde die binnen BRP een soort document uniek identficeert
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
     public BrpSoortDocumentCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -63,7 +56,6 @@ public final class BrpSoortDocumentCode extends AbstractBrpAttribuutMetOnderzoek
 
     /**
      * Geeft een kopie van het attribuut terug zonder onderzoek.
-     * 
      * @return Geeft een kopie van het attribuut terug zonder onderzoek
      */
     public BrpSoortDocumentCode verwijderOnderzoek() {

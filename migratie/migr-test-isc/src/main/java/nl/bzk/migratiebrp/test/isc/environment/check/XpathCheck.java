@@ -51,11 +51,10 @@ public final class XpathCheck implements Check {
             return verwachtResultaat.equals(resultaat);
 
         } catch (final
-            IOException
-            | ParserConfigurationException
-            | SAXException
-            | XPathExpressionException e)
-        {
+        IOException
+                | ParserConfigurationException
+                | SAXException
+                | XPathExpressionException e) {
             throw new TestException("Probleem tijdens xpath check", e);
         }
 

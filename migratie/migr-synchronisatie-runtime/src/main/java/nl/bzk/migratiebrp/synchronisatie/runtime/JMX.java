@@ -12,11 +12,6 @@ package nl.bzk.migratiebrp.synchronisatie.runtime;
 public interface JMX {
 
     /**
-     * Object name to bind JMX object to.
-     */
-    String OBJECT_NAME = "nl.bzk.migratiebrp.synchronisatie:name=SYNCHRONISATIE";
-
-    /**
      * Synchronisatie afsluiten.
      */
     void afsluiten();

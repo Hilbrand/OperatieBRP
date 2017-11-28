@@ -8,8 +8,8 @@ package nl.bzk.migratiebrp.isc.jbpm.common.spring;
 
 import java.util.HashMap;
 import java.util.Map;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.jbpm.graph.def.ActionHandler;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
@@ -19,7 +19,9 @@ import org.jbpm.graph.exe.Token;
  */
 public final class SpringActionHandler extends SpringHandler implements ActionHandler {
 
-    /** Als deze key is gevuld in het resultaat dan wordt die transition gesignald. */
+    /**
+     * Als deze key is gevuld in het resultaat dan wordt die transition gesignald.
+     */
     public static final String TRANSITION_RESULT = "transition";
 
     private static final long serialVersionUID = 1L;
@@ -28,7 +30,7 @@ public final class SpringActionHandler extends SpringHandler implements ActionHa
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private String bean;
-    private Map<String, Object> parameters;
+    private transient Map<String, Object> parameters;
 
     @Override
     public void execute(final ExecutionContext executionContext) {
@@ -72,9 +74,10 @@ public final class SpringActionHandler extends SpringHandler implements ActionHa
         if (result != null) {
             transition = (String) result.remove(TRANSITION_RESULT);
             if (result.containsKey(INPUT)) {
+                final String origineleValue = variables == null ? "null" : (String) variables.get(INPUT);
                 throw new IllegalArgumentException(
-                    String.format("Het is niet toegestaan de variabele met key \"input\" te overschrijven!"
-                                  + "%nOriginele value: %s, afgekeurde value: %s.", variables.get(INPUT), result.get(INPUT)));
+                        String.format("Het is niet toegestaan de variabele met key \"input\" te overschrijven!"
+                                + "%nOriginele value: %s, afgekeurde value: %s.", origineleValue, result.get(INPUT)));
             }
 
             for (final Map.Entry<String, Object> entry : result.entrySet()) {
@@ -97,9 +100,7 @@ public final class SpringActionHandler extends SpringHandler implements ActionHa
 
     /**
      * Zet de waarde van bean.
-     *
-     * @param bean
-     *            the bean to set
+     * @param bean the bean to set
      */
     public void setBean(final String bean) {
         this.bean = bean;
@@ -107,9 +108,7 @@ public final class SpringActionHandler extends SpringHandler implements ActionHa
 
     /**
      * Parameters to add to the execution.
-     *
-     * @param parameters
-     *            parameters
+     * @param parameters parameters
      */
     public void setParameters(final Map<String, Object> parameters) {
         this.parameters = parameters;

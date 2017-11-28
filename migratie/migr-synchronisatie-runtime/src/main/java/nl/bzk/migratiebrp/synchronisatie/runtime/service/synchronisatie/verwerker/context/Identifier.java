@@ -19,9 +19,7 @@ public final class Identifier {
 
     /**
      * Constructor.
-     *
-     * @param objects
-     *            identifiers
+     * @param objects identifiers
      */
     public Identifier(final Object... objects) {
         this.objects = objects;

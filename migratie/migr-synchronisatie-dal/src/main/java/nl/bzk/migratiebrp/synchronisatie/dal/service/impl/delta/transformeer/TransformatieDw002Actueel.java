@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
@@ -25,10 +25,9 @@ public final class TransformatieDw002Actueel extends AbstractTransformatie {
 
     @Override
     public VerschilGroep execute(
-        final VerschilGroep verschillen,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final DeltaBepalingContext deltaBepalingContext)
-    {
+            final VerschilGroep verschillen,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final DeltaBepalingContext deltaBepalingContext) {
         return verschillen;
     }
 

@@ -16,9 +16,7 @@ public interface ANummerVerwerker extends Callable<Void> {
 
     /**
      * Voeg een A-Nummer toe om te verwerken.
-     * 
-     * @param aNummer
-     *            het aNummer
+     * @param aNummer het aNummer
      */
-    void addANummer(long aNummer);
+    void addANummer(String aNummer);
 }

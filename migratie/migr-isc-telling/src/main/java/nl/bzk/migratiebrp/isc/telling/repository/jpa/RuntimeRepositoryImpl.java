@@ -8,13 +8,16 @@ package nl.bzk.migratiebrp.isc.telling.repository.jpa;
 
 import java.net.UnknownHostException;
 import java.sql.Date;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.telling.entiteit.Runtime;
 import nl.bzk.migratiebrp.isc.telling.repository.RuntimeRepository;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;

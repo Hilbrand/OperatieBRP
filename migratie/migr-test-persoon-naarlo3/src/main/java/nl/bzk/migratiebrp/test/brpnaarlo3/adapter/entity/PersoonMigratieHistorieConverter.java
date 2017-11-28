@@ -8,16 +8,19 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
+
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.LandOfGebiedConverter;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.SoortMigratieConverter;
+
 import org.springframework.stereotype.Component;
 
 /**

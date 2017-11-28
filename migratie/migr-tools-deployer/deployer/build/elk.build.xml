@@ -1,4 +1,4 @@
-<project name="migr-init-logging" basedir="." default="fail">
+<project name="ELK" basedir="." default="fail">
 
     <!--
      | Algemene properties
@@ -271,12 +271,15 @@ bundled_plugin_ids:
     
     <target name="start" depends="checkProperties">
         <echo message="Starting ${ant.project.name}" />
+
         <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
                  command="cd ~; cd ${application.directory}/${application.directory.elasticsearch}/bin; ./elasticsearch -p pids -XX:-UseSuperWord > output.txt 2> output_2.txt &amp;" />
         <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
                  command="sleep 20s; cd ~; cd ${application.directory}/${application.directory.logstash}/bin; ./logstash agent -f logstash.conf -- web > output.txt 2> output_2.txt &amp;" />
         <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
                  command="sleep 20s; cd ~; cd ${application.directory}/${application.directory.kibana}/bin; ./kibana > output.txt 2> output_2.txt &amp;" />
+
+        <echo message="Succesfully started ${ant.project.name}" />
     </target>
 
     <target name="stop" depends="checkProperties">

@@ -20,9 +20,7 @@ public final class PrettyPrint {
 
     /**
      * Pretty print.
-     * 
-     * @param bericht
-     *            bericht
+     * @param bericht bericht
      * @return pretty printed bericht
      */
     public String prettyPrint(final Bericht bericht) {
@@ -35,7 +33,7 @@ public final class PrettyPrint {
                 result = prettyIsc.prettyPrint(bericht.getBericht());
                 break;
             case "Levering":
-            case "VOSPG":
+            case "VOISC":
                 result = prettyLo3.prettyPrint(bericht.getBericht());
                 break;
             case "SYNC":

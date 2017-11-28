@@ -33,11 +33,8 @@ public final class ListTransitionsForProcessInstanceActionListener extends Abstr
 
     /**
      * Constructor.
-     *
-     * @param processInstanceExpression
-     *            process instance expression
-     * @param targetExpression
-     *            target expression
+     * @param processInstanceExpression process instance expression
+     * @param targetExpression target expression
      */
     public ListTransitionsForProcessInstanceActionListener(final ValueExpression processInstanceExpression, final ValueExpression targetExpression) {
         super("listTransitionsForProcessInstance");

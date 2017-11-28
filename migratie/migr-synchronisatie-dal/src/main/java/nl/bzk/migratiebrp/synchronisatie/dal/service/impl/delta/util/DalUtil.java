@@ -9,25 +9,22 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Document;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.MaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponent;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerstrekkingsbeperking;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaam;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.util.PersistenceUtil;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.MaterieleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponent;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerstrekkingsbeperking;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaam;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 
 /**
  * Utility klasse voor de DAL-laag van de BRP Services.
@@ -39,9 +36,7 @@ public final class DalUtil {
 
     /**
      * Verzamel alle acties die onder de Persoon hangen.
-     *
-     * @param persoon
-     *            De Persoon
+     * @param persoon De Persoon
      * @return Een Map met alle acties, en bij elke actie een set met de historie records waar ze aan gekoppeld zijn.
      */
     public static Map<BRPActie, Set<FormeleHistorie>> verzamelActies(final Persoon persoon) {
@@ -55,9 +50,7 @@ public final class DalUtil {
 
     /**
      * Verzamel alle acties die onder de Persoon hangen, uitgezonderd acties die aan relatie-groepen hangen.
-     *
-     * @param persoon
-     *            De Persoon
+     * @param persoon De Persoon
      * @return Een Map met alle acties, en bij elke actie een set met de historie records waar ze aan gekoppeld zijn.
      */
     public static Map<BRPActie, Set<FormeleHistorie>> verzamelActiesUitgezonderdRelaties(final Persoon persoon) {
@@ -122,9 +115,8 @@ public final class DalUtil {
                 verzamelActies(acties, betrokkenheid.getBetrokkenheidOuderlijkGezagHistorieSet());
 
                 if (betrokkenheid.getPersoon() != null
-                    && persoon != betrokkenheid.getPersoon()
-                    && SoortPersoon.ONBEKEND.equals(betrokkenheid.getPersoon().getSoortPersoon()))
-                {
+                        && persoon != betrokkenheid.getPersoon()
+                        && SoortPersoon.PSEUDO_PERSOON.equals(betrokkenheid.getPersoon().getSoortPersoon())) {
                     final Map<BRPActie, Set<FormeleHistorie>> gerelateerdeActies = verzamelActiesUitgezonderdRelaties(betrokkenheid.getPersoon());
                     acties.putAll(gerelateerdeActies);
                 }
@@ -153,8 +145,8 @@ public final class DalUtil {
     }
 
     private static void verzamelActie(final Map<BRPActie, Set<FormeleHistorie>> resultaat, final BRPActie actie, final FormeleHistorie historie) {
-        final BRPActie actiePojo = PersistenceUtil.getPojoFromObject(actie);
-        final FormeleHistorie historiePojo = PersistenceUtil.getPojoFromObject(historie);
+        final BRPActie actiePojo = Entiteit.convertToPojo(actie);
+        final FormeleHistorie historiePojo = Entiteit.convertToPojo(historie);
 
         final Set<FormeleHistorie> actieHistorieSet;
         if (resultaat.containsKey(actiePojo)) {
@@ -165,11 +157,5 @@ public final class DalUtil {
         }
 
         actieHistorieSet.add(historiePojo);
-
-        if (!(historiePojo instanceof DocumentHistorie)) {
-            for (final Document document : actiePojo.getDocumentSet()) {
-                verzamelActies(resultaat, document.getDocumentHistorieSet());
-            }
-        }
     }
 }

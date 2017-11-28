@@ -20,24 +20,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteitPaar;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +58,9 @@ public class DeltaBepalingContextTest extends AbstractDeltaTest {
     public void setUp() {
         bestaandPersoon = maakPersoon(true);
         nieuwPersoon = maakPersoon(false);
-        administratieveHandeling = nieuwPersoon.getAdministratieveHandeling();
+        administratieveHandeling =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(nieuwPersoon.getPersoonAfgeleidAdministratiefHistorieSet())
+                        .getAdministratieveHandeling();
         lo3Bericht = new Lo3Bericht("referentie", Lo3BerichtenBron.INITIELE_VULLING, Timestamp.valueOf("2005-01-01 00:00:00.000"), "data", true);
         context = new DeltaBepalingContext(nieuwPersoon, bestaandPersoon, lo3Bericht, false);
     }
@@ -199,7 +202,7 @@ public class DeltaBepalingContextTest extends AbstractDeltaTest {
         map.put(brpActie, lo3Voorkomen);
         context.addActieHerkomstMapInhoud(map);
 
-        Map<BRPActie, Lo3Voorkomen> actualMap = context.getActieHerkomstMap();
+        final Map<BRPActie, Lo3Voorkomen> actualMap = context.getActieHerkomstMap();
         assertFalse(actualMap.isEmpty());
         assertTrue(actualMap.containsKey(brpActie));
         assertEquals(lo3Voorkomen, actualMap.get(brpActie));
@@ -218,8 +221,12 @@ public class DeltaBepalingContextTest extends AbstractDeltaTest {
         final ConsolidatieData contextActieConsolidatieData = context.getActieConsolidatieData();
         assertNotNull(contextActieConsolidatieData);
         assertEquals(
-            "{BRPActie[id=<null>,soortActie=CONVERSIE_GBA,administratieveHandeling=AdministratieveHandeling[id=<null>,soort=GBA_BIJHOUDING_ACTUEEL],partij=Partij[id=<null>],datumTijdRegistratie=2005-01-01 00:00:00.0,datumOntlening=<null>,lo3Voorkomen=<null>]=[BRPActie[id=<null>,soortActie=CONVERSIE_GBA,administratieveHandeling=AdministratieveHandeling[id=<null>,soort=GBA_BIJHOUDING_ACTUEEL],partij=Partij[id=<null>],datumTijdRegistratie=2008-01-01 00:00:00.0,datumOntlening=<null>,lo3Voorkomen=<null>]]}",
-            contextActieConsolidatieData.toString());
+                "{BRPActie[id=<null>,soortActie=CONVERSIE_GBA,administratieveHandeling=AdministratieveHandeling[id=<null>,soort=GBA_BIJHOUDING_ACTUEEL],"
+                        + "partij=Partij[id=<null>,code=051801,naam=Gemeente 's-Gravenhage],datumTijdRegistratie=2005-01-01 00:00:00.0,datumOntlening=<null>,"
+                        + "lo3Voorkomen=<null>]=[BRPActie[id=<null>,soortActie=CONVERSIE_GBA,administratieveHandeling=AdministratieveHandeling[id=<null>,"
+                        + "soort=GBA_BIJHOUDING_ACTUEEL],partij=Partij[id=<null>,code=051801,naam=Gemeente 's-Gravenhage],datumTijdRegistratie=2008-01-01 "
+                        + "00:00:00.0,datumOntlening=<null>,lo3Voorkomen=<null>]]}",
+                contextActieConsolidatieData.toString());
     }
 
     @Test
@@ -228,12 +235,12 @@ public class DeltaBepalingContextTest extends AbstractDeltaTest {
         context.setDeltaRootEntiteitMatches(Collections.singleton(new DeltaRootEntiteitMatch(bestaandPersoon, nieuwPersoon, null, null)));
         final Collection<DeltaRootEntiteitMatch> deltaRootEntiteitMatches = context.getDeltaRootEntiteitMatches();
         assertTrue(deltaRootEntiteitMatches.size() == 1);
-        assertEquals(bestaandPersoon, deltaRootEntiteitMatches.iterator().next().getBestaandeDeltaRootEntiteit());
+        assertEquals(bestaandPersoon, deltaRootEntiteitMatches.iterator().next().getBestaandeRootEntiteit());
 
         context.setDeltaRootEntiteitMatches(Collections.singleton(new DeltaRootEntiteitMatch(nieuwPersoon, bestaandPersoon, null, null)));
         final Collection<DeltaRootEntiteitMatch> deltaRootEntiteitMatches2 = context.getDeltaRootEntiteitMatches();
         assertTrue(deltaRootEntiteitMatches.size() == 1);
-        assertEquals(nieuwPersoon, deltaRootEntiteitMatches2.iterator().next().getBestaandeDeltaRootEntiteit());
+        assertEquals(nieuwPersoon, deltaRootEntiteitMatches2.iterator().next().getBestaandeRootEntiteit());
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -266,9 +273,9 @@ public class DeltaBepalingContextTest extends AbstractDeltaTest {
     @Test
     public void testVerbreekDeltaEntiteitPaar() {
         final PersoonBijhoudingHistorie bestaandeHistorie =
-                new PersoonBijhoudingHistorie(bestaandPersoon, maakPartij(), Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL, false);
+                new PersoonBijhoudingHistorie(bestaandPersoon, maakPartij(), Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL);
         final PersoonBijhoudingHistorie nieuweHistorie =
-                new PersoonBijhoudingHistorie(nieuwPersoon, maakPartij(), Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL, false);
+                new PersoonBijhoudingHistorie(nieuwPersoon, maakPartij(), Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL);
         context.addDeltaEntiteitPaarSetInhoud(Collections.singleton(new DeltaEntiteitPaar(bestaandeHistorie, nieuweHistorie)));
         assertTrue(context.getDeltaEntiteitPaarSet().size() == 1);
 
@@ -287,7 +294,6 @@ public class DeltaBepalingContextTest extends AbstractDeltaTest {
     private boolean isAnummerWijziging(final DeltaBepalingContext context) {
         return SoortAdministratieveHandeling.GBA_A_NUMMER_WIJZIGING.equals(context.getAdministratieveHandelingGekoppeldAanActies().getSoort());
     }
-
 
     @Test
     public void testInfraAlleenEigenPersoonWijzigingen() throws ReflectiveOperationException {
@@ -378,7 +384,7 @@ public class DeltaBepalingContextTest extends AbstractDeltaTest {
 
     @Test
     public void testGetAdministratieveHandelingenAsString() {
-        assertEquals ("GBA - Bijhouding actueel", context.getAdministratieveHandelingenAlsString());
+        assertEquals("GBA - Bijhouding actueel", context.getAdministratieveHandelingenAlsString());
         context.setBijhoudingOverig();
         context.setBijhoudingAnummerWijziging();
         assertEquals("GBA - A-nummer wijziging, GBA - Bijhouding overig", context.getAdministratieveHandelingenAlsString());

@@ -31,7 +31,6 @@ import nl.bzk.migratiebrp.init.logging.model.VoorkomenMatch;
  */
 @Entity
 @Table(name = "verschil_analyse", schema = "initvul")
-@SuppressWarnings("checkstyle:designforextension")
 public class VerschilAnalyseRegel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -57,21 +56,20 @@ public class VerschilAnalyseRegel implements Serializable {
     @Column(name = "element", nullable = true)
     private String element;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "gbav_pl_id")
     private InitVullingLog log;
 
-    /** Default constructor voor hibernate. */
+    /**
+     * Default constructor voor hibernate.
+     */
     protected VerschilAnalyseRegel() {
     }
 
     /**
      * Constructor.
-     *
-     * @param stapelMatch
-     *            stapel match
-     * @param <T>
-     *            type
+     * @param stapelMatch stapel match
+     * @param <T> type
      */
     public <T extends Lo3CategorieInhoud> VerschilAnalyseRegel(final StapelMatch<T> stapelMatch) {
         this(stapelMatch.getHerkomst(), stapelMatch.getVerschilType(), false);
@@ -79,11 +77,8 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Constructor.
-     *
-     * @param voorkomenMatch
-     *            voorkomen match
-     * @param <T>
-     *            type
+     * @param voorkomenMatch voorkomen match
+     * @param <T> type
      */
     public <T extends Lo3CategorieInhoud> VerschilAnalyseRegel(final VoorkomenMatch<T> voorkomenMatch) {
         this(voorkomenMatch.getHerkomst(), voorkomenMatch.getVerschilType(), true);
@@ -91,13 +86,9 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Constructor.
-     *
-     * @param herkomst
-     *            herkomst
-     * @param type
-     *            type
-     * @param vulVoorkomen
-     *            indicatie of voorkomen uit herkomst genomen moet worden
+     * @param herkomst herkomst
+     * @param type type
+     * @param vulVoorkomen indicatie of voorkomen uit herkomst genomen moet worden
      */
     private VerschilAnalyseRegel(final Lo3Herkomst herkomst, final VerschilType type, final boolean vulVoorkomen) {
         ValidationUtils.controleerOpNullWaarden("Herkomst mag niet null zijn", herkomst);
@@ -110,13 +101,9 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Constructor.
-     *
-     * @param herkomst
-     *            herkomst
-     * @param type
-     *            verschil type
-     * @param element
-     *            element
+     * @param herkomst herkomst
+     * @param type verschil type
+     * @param element element
      */
     public VerschilAnalyseRegel(final Lo3Herkomst herkomst, final VerschilType type, final String element) {
         this(herkomst, type, true);
@@ -125,7 +112,6 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public Long getId() {
@@ -134,9 +120,7 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public void setId(final Long id) {
         this.id = id;
@@ -144,7 +128,6 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return categorie
      */
     public Integer getCategorie() {
@@ -153,9 +136,7 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Zet de waarde van categorie.
-     *
-     * @param categorie
-     *            categorie
+     * @param categorie categorie
      */
     public void setCategorie(final Integer categorie) {
         this.categorie = categorie;
@@ -163,7 +144,6 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Geef de waarde van stapel.
-     *
      * @return stapel
      */
     public Integer getStapel() {
@@ -172,9 +152,7 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Zet de waarde van stapel.
-     *
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      */
     public void setStapel(final Integer stapel) {
         this.stapel = stapel;
@@ -182,7 +160,6 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Geef de waarde van voorkomen.
-     *
      * @return voorkomen
      */
     public Integer getVoorkomen() {
@@ -191,9 +168,7 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Zet de waarde van voorkomen.
-     *
-     * @param voorkomen
-     *            voorkomen
+     * @param voorkomen voorkomen
      */
     public void setVoorkomen(final Integer voorkomen) {
         this.voorkomen = voorkomen;
@@ -201,7 +176,6 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Geef de waarde van type.
-     *
      * @return type
      */
     public VerschilType getType() {
@@ -210,9 +184,7 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Zet de waarde van type.
-     *
-     * @param type
-     *            type
+     * @param type type
      */
     public void setType(final VerschilType type) {
         this.type = type;
@@ -220,7 +192,6 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Geef de waarde van element.
-     *
      * @return element
      */
     public String getElement() {
@@ -229,9 +200,7 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Zet de waarde van element.
-     *
-     * @param element
-     *            element
+     * @param element element
      */
     public void setElement(final String element) {
         this.element = element;
@@ -239,7 +208,6 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Geef de waarde van log.
-     *
      * @return log
      */
     public InitVullingLog getLog() {
@@ -248,9 +216,7 @@ public class VerschilAnalyseRegel implements Serializable {
 
     /**
      * Zet de waarde van log.
-     *
-     * @param log
-     *            log
+     * @param log log
      */
     void setLog(final InitVullingLog log) {
         this.log = log;

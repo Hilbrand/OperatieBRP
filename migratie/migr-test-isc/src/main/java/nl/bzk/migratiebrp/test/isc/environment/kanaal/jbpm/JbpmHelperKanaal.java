@@ -19,7 +19,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
  */
 public final class JbpmHelperKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "jbpmHelper";
 
     /**
@@ -27,10 +29,10 @@ public final class JbpmHelperKanaal extends LazyLoadingKanaal {
      */
     protected JbpmHelperKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-jms-isc.xml",
-            "classpath:infra-jbpm.xml"));
+                "classpath:configuratie.xml",
+                "classpath:infra-db-isc.xml",
+                "classpath:infra-jms-isc.xml",
+                "classpath:infra-jbpm.xml"));
     }
 
     /**
@@ -49,9 +51,7 @@ public final class JbpmHelperKanaal extends LazyLoadingKanaal {
 
     /**
      * Bepaal alle processen.
-     *
-     * @param messageIds
-     *            message ids
+     * @param messageIds message ids
      * @return lijst van proces ids
      */
     public Set<Long> bepaalAlleProcessen(final List<String> messageIds) {
@@ -60,9 +60,7 @@ public final class JbpmHelperKanaal extends LazyLoadingKanaal {
 
     /**
      * Controleer dat een proces beeindigd is.
-     *
-     * @param procesId
-     *            proces id
+     * @param procesId proces id
      * @return true, als proces beeindigd is
      */
     public boolean controleerProcesBeeindigd(final Long procesId) {
@@ -89,7 +87,6 @@ public final class JbpmHelperKanaal extends LazyLoadingKanaal {
 
         /**
          * Geef de waarde van jbpm helper.
-         *
          * @return jbpm helper
          */
         public JbpmHelper getJbpmHelper() {

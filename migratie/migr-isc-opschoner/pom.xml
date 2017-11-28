@@ -1,25 +1,32 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>nl.bzk.migratiebrp</groupId>
         <artifactId>migr-isc</artifactId>
-        <version>3.2.108-SNAPSHOT</version>
+        <version>145.3</version>
         <relativePath>../migr-isc</relativePath>
     </parent>
-    <groupId>nl.bzk.migratiebrp.isc</groupId>
+
     <artifactId>migr-isc-opschoner</artifactId>
     <name>Migr - ISC - Opschoner</name>
 
     <dependencies>
         <!-- Project -->
         <dependency>
-            <groupId>nl.bzk.migratiebrp.util</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-util-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.isc</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-isc-database</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>nl.bzk.migratiebrp</groupId>
+            <artifactId>migr-isc-database</artifactId>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 
@@ -73,7 +80,7 @@
         </dependency>
 
         <dependency>
-			<groupId>com.mchange</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
         </dependency>
 

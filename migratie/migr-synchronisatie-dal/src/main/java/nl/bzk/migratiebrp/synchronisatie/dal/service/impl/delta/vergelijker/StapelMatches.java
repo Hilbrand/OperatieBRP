@@ -16,9 +16,7 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.StapelMatchType;
 
 /**
  * Houdt de koppeling bij tussen gegevens.
- * 
- * @param <T>
- *            Type waar voor er stapel matches gemaakt worden.
+ * @param <T> Type waar voor er stapel matches gemaakt worden.
  */
 public final class StapelMatches<T> {
     private Map<T, List<T>> bestaandeStapelMatches = new HashMap<>();
@@ -27,11 +25,8 @@ public final class StapelMatches<T> {
     /**
      * Legt een koppeling vast tussen de bestaande en de nieuwe stapel. Als 1 van beide of allebei null zijn, dan wordt
      * er geen koppeling vast gelegd.
-     *
-     * @param bestaandeStapel
-     *            de bestaande stapel. Kan null zijn
-     * @param nieuweStapel
-     *            de nieuwe stapel. Kan null zijn
+     * @param bestaandeStapel de bestaande stapel. Kan null zijn
+     * @param nieuweStapel de nieuwe stapel. Kan null zijn
      */
     public void toevoegenMatch(final T bestaandeStapel, final T nieuweStapel) {
         toevoegen(bestaandeStapelMatches, bestaandeStapel, nieuweStapel);
@@ -57,11 +52,8 @@ public final class StapelMatches<T> {
 
     /**
      * Controleert of de nieuwe stapel al mogelijke matches heeft.
-     * 
-     * @param stapel
-     *            de stapel waarvan gecontroleerd moet worden of deze al mogelijke matches heeft
-     * @param isBestaandeStapel
-     *            true als het de bestaande stapel betreft
+     * @param stapel de stapel waarvan gecontroleerd moet worden of deze al mogelijke matches heeft
+     * @param isBestaandeStapel true als het de bestaande stapel betreft
      * @return true als de stapel al mogelijke matches heeft.
      */
     public boolean bevatKoppelingVoorStapel(final T stapel, final boolean isBestaandeStapel) {
@@ -76,8 +68,7 @@ public final class StapelMatches<T> {
     }
 
     /**
-     * @param stapel
-     *            de stapel waarvoor de matches worden terug gegeven.
+     * @param stapel de stapel waarvoor de matches worden terug gegeven.
      * @return Geeft de matches terug voor de bestaande stapel. Null als er geen matches zijn.
      */
     public List<T> getMatchesVoorBestaandeStapel(final T stapel) {
@@ -92,8 +83,7 @@ public final class StapelMatches<T> {
     }
 
     /**
-     * @param stapel
-     *            de stapel waarvoor de matches worden terug gegeven.
+     * @param stapel de stapel waarvoor de matches worden terug gegeven.
      * @return Geeft de matches terug voor de nieuwe stapel. Null als er geen matches zijn.
      */
     public List<T> getMatchesVoorNieuweStapel(final T stapel) {
@@ -106,11 +96,8 @@ public final class StapelMatches<T> {
      * matches zijn dan wordt het {@link StapelMatchType#STAPEL_NIEUW} als het een nieuwe stapel betrof, anders
      * {@link StapelMatchType#STAPEL_VERWIJDERD}. In het geval dat zowel de meegegeven stapel 1 match heeft als zijn
      * matchende stapel 1 match heeft, dan wordt het {@link StapelMatchType#MATCHED}.
-     * 
-     * @param stapel
-     *            de stapel waarvoor het {@link StapelMatchType} bepaalt moet worden.
-     * @param isBestaandeStapel
-     *            true als het de bestaande stapel betreft
+     * @param stapel de stapel waarvoor het {@link StapelMatchType} bepaalt moet worden.
+     * @param isBestaandeStapel true als het de bestaande stapel betreft
      * @return een waarde van {@link StapelMatchType}.
      */
     public StapelMatchType bepaalMatchType(final T stapel, final boolean isBestaandeStapel) {
@@ -136,14 +123,10 @@ public final class StapelMatches<T> {
 
     /**
      * Geeft de matchting stapel voor de meegegeven stapel terug. Of NULL als er geen matchende stapel is.
-     * 
-     * @param stapel
-     *            de stapel waarvoor de matchende stapel opgevraagd wordt.
-     * @param isBestaandeStapel
-     *            true als het de bestaande stapel betreft
-     * @throws IllegalStateException
-     *             Als er meer dan 1 matchende stapel is gevonden
+     * @param stapel de stapel waarvoor de matchende stapel opgevraagd wordt.
+     * @param isBestaandeStapel true als het de bestaande stapel betreft
      * @return de matchende stapel
+     * @throws IllegalStateException Als er meer dan 1 matchende stapel is gevonden
      */
     public T getMatchingStapel(final T stapel, final boolean isBestaandeStapel) {
         final List<T> matchingStapels = isBestaandeStapel ? bestaandeStapelMatches.get(stapel) : nieuweStapelMatches.get(stapel);

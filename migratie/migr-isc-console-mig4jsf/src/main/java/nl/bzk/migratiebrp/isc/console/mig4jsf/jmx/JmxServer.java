@@ -27,64 +27,57 @@ public final class JmxServer {
 
     /**
      * Constructor.
-     * 
-     * @param url
-     *            url
-     * @param username
-     *            username
-     * @param password
-     *            password
-     * @throws IOException
-     *             als geen verbinding gemaakt kan worden
+     * @param url url
+     * @param username username
+     * @param password password
+     * @throws IOException als geen verbinding gemaakt kan worden
      */
     public JmxServer(final String url, final String username, final String password) throws IOException {
         final JMXServiceURL jmxUrl = new JMXServiceURL(url);
 
         final Map<String, Object> env = new HashMap<>();
         if (username != null && !"".equals(username) && password != null && !"".equals(password)) {
-            final String[] creds = {username, password };
+            final String[] creds = {username, password};
             env.put(JMXConnector.CREDENTIALS, creds);
         }
 
-        final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxUrl, env);
-        serverConnection = jmxConnector.getMBeanServerConnection();
+        try (final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxUrl, env)) {
+            serverConnection = jmxConnector.getMBeanServerConnection();
+        }
     }
 
     /**
      * haal de waarde van een attribute op van een jmx object.
-     * 
-     * @param objectName
-     *            object naam
-     * @param attributeName
-     *            attribute naam
+     * @param objectName object naam
+     * @param attributeName attribute naam
      * @return waarde
-     * @throws IOException
-     *             bij communicatie fouten
-     * @throws JMException
-     *             bij JMX fouten
+     * @throws JmxServerException bij fouten
      */
-    public Object getAttribute(final String objectName, final String attributeName) throws IOException, JMException {
-        final ObjectName name = new ObjectName(objectName);
-        return serverConnection.getAttribute(name, attributeName);
+    public Object getAttribute(final String objectName, final String attributeName) throws JmxServerException {
+        try {
+            final ObjectName name = new ObjectName(objectName);
+            return serverConnection.getAttribute(name, attributeName);
+        } catch (IOException | JMException e) {
+            throw new JmxServerException(e);
+        }
     }
 
     /**
      * Lijst van esb deployments.
-     * 
-     * @param prefix
-     *            prefix
+     * @param prefix prefix
      * @return lijst van esb deployment object namen
-     * @throws IOException
-     *             bij communicatie fouten
-     * @throws JMException
-     *             bij JMX fouten
+     * @throws JmxServerException bij fouten
      */
-    public List<String> listEsbDeployments(final String prefix) throws JMException, IOException {
-        final List<String> result = new ArrayList<>();
-        final ObjectName objectName = new ObjectName("jboss.esb:deployment=" + prefix + "*");
-        for (final ObjectName resultName : serverConnection.queryNames(objectName, null)) {
-            result.add(resultName.getKeyPropertyList().get("deployment"));
+    public List<String> listEsbDeployments(final String prefix) throws JmxServerException {
+        try {
+            final List<String> result = new ArrayList<>();
+            final ObjectName objectName = new ObjectName("jboss.esb:deployment=" + prefix + "*");
+            for (final ObjectName resultName : serverConnection.queryNames(objectName, null)) {
+                result.add(resultName.getKeyPropertyList().get("deployment"));
+            }
+            return result;
+        } catch (IOException | JMException e) {
+            throw new JmxServerException(e);
         }
-        return result;
     }
 }

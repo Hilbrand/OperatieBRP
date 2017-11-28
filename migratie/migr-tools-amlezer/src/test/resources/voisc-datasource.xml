@@ -14,7 +14,7 @@
              | Tijdens jUnit testen kan de ApplicationContext meerdere keren worden geinstantieerd.
              | Elke keer dient een unique naam gebruikt te worden, anders gaat Atomikos fout.
               -->
-            <bean class="nl.bzk.migratiebrp.util.common.UniqueName" >
+            <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName" >
             	<property name="baseName" value="voiscDatabase" />
             </bean>
         </property>        <property name="url" value="jdbc:h2:mem:voisc;DB_CLOSE_ON_EXIT=FALSE"/>
@@ -22,7 +22,7 @@
         <property name="user" value="sa"/>
         <property name="password" value="" />
         <property name="maxPoolSize" value="20" />
-        <property name="minPoolSize" value="10"/>
+        <property name="minPoolSize" value="1"/>
     </bean>
 
     <jdbc:initialize-database ignore-failures="ALL" data-source="voiscDataSource">

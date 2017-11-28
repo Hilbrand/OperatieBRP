@@ -27,6 +27,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.LandConversietabel;
 import org.junit.Test;
 
@@ -38,8 +39,7 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     private static final String DOC = "Doc";
     private static final String GEM_CODE = "0514";
     private static final Lo3Herkomst LO3_HERKOMST_REISDOCUMENT = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_12, 0, 0);
-    @Inject
-    private Lo3ReisdocumentPrecondities precondities;
+    private Lo3ReisdocumentPrecondities precondities = new Lo3ReisdocumentPrecondities(new ConversietabelFactoryImpl());
 
     private Lo3ReisdocumentInhoud.Builder reisdocumentBuilder() {
         final Lo3ReisdocumentInhoud.Builder builder = new Lo3ReisdocumentInhoud.Builder();
@@ -63,11 +63,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testHappyReisdocument() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -78,11 +78,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testHappySignalering() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        signaleringBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                signaleringBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -99,11 +99,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testContr110() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(null, 20000101, 20000100),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(null, 20000101, 20000100),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -115,11 +115,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testContr112() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel2 =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 00000000, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 00000000, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel2);
 
@@ -127,11 +127,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -153,11 +153,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -169,11 +169,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testContr267() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(null, null, 20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(null, null, 20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -185,11 +185,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testContr268() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(null, 20000101, null),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(null, 20000101, null),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -211,11 +211,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -231,11 +231,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -251,11 +251,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -271,11 +271,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -291,11 +291,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -316,11 +316,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -334,11 +334,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -352,11 +352,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -367,11 +367,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40121() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -382,11 +382,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40124() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(null, 20040141, 20010101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(null, 20040141, 20010101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -397,11 +397,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40125() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(null, 20010101, 20040141),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(null, 20010101, 20040141),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -412,11 +412,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
     public void testContr4064() {
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -437,11 +437,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -456,11 +456,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -475,11 +475,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -492,12 +492,12 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Onderzoek lo3Onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10110), null, null);
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        signaleringBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        lo3Onderzoek,
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                signaleringBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                lo3Onderzoek,
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapel(stapel);
 
@@ -526,11 +526,11 @@ public class Lo3ReisdocumentPreconditiesTest extends AbstractPreconditieTest {
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(signaleringBuilder().build(), LO3_HERKOMST_REISDOCUMENT));
         final Lo3Stapel<Lo3ReisdocumentInhoud> stapel2 =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        reisdocumentBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_REISDOCUMENT));
+                        Lo3StapelHelper.lo3Cat(
+                                reisdocumentBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_REISDOCUMENT));
 
         precondities.controleerStapels(Arrays.asList(stapel1, stapel2));
 

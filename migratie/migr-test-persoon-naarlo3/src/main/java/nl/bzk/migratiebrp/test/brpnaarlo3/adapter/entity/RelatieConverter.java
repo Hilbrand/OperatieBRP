@@ -8,19 +8,22 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
+
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RelatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RelatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.GemeenteConverter;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.LandOfGebiedConverter;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.RedenBeeindigingRelatieConverter;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -141,7 +144,7 @@ public final class RelatieConverter extends AbstractEntityHistorieConverter<Rela
                 id = Integer.valueOf(value);
                 break;
             case HEADER_SOORT:
-                soortRelatie = SoortRelatie.parseId(Short.valueOf(value));
+                soortRelatie = SoortRelatie.parseId(Integer.valueOf(value));
                 break;
             case HEADER_DATUM_AANVANG:
                 datumAanvang = Integer.valueOf(value);

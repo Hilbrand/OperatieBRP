@@ -12,7 +12,13 @@ import static org.junit.Assert.assertNotNull;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3Severity;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3SoortMelding;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3PersoonslijstFormatter;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
@@ -24,11 +30,9 @@ import nl.bzk.migratiebrp.ggo.viewer.log.FoutMelder;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoFoutRegel;
 import nl.bzk.migratiebrp.ggo.viewer.service.DbService;
 import nl.bzk.migratiebrp.ggo.viewer.service.ViewerService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Severity;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3SoortMelding;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,11 +54,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(transactionManager = "syncDalTransactionManager")
 @Rollback(false)
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class })
-@ContextConfiguration(locations = {"classpath:viewer-beans.xml", "classpath:synchronisatie-beans.xml" })
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, TransactionalTestExecutionListener.class})
+@ContextConfiguration(locations = {"classpath:viewer-beans.xml", "classpath:synchronisatie-beans.xml"})
 public class DbIntegratieTest {
     @Inject
     private BrpDalService brpDalService;
+
+    @Inject
+    private BrpPersoonslijstService brpPersoonslijstService;
 
     @Inject
     private DbService dbService;
@@ -75,7 +82,7 @@ public class DbIntegratieTest {
             assertNotNull("BrpPersoonslijst mag niet null zijn: " + foutMelder.getFoutRegels().toString(), brpPersoonslijst);
             final Lo3Bericht lo3Bericht =
                     new Lo3Bericht("DbIntegratieTest", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()), "TEST_DATA", true);
-            brpDalService.persisteerPersoonslijst(brpPersoonslijst, lo3Bericht);
+            brpPersoonslijstService.persisteerPersoonslijst(brpPersoonslijst, lo3Bericht);
             brpDalService.persisteerLo3Bericht(maakLo3Bericht(brpPersoonslijst, lo3Persoonslijst));
         }
         Logging.destroyContext();
@@ -88,15 +95,15 @@ public class DbIntegratieTest {
     public void testDbIntegratie() throws Exception {
         zetOp();
 
-        final BrpPersoonslijst brpPersoonslijst = dbService.zoekBrpPersoonsLijst(8750000001L);
-        final Lo3Bericht lo3Bericht = dbService.zoekLo3Bericht(8750000001L);
+        final BrpPersoonslijst brpPersoonslijst = dbService.zoekBrpPersoonsLijst("8750000001");
+        final Lo3Bericht lo3Bericht = dbService.zoekLo3Bericht("8750000001");
         final Lo3Persoonslijst lo3Persoonslijst = dbService.haalLo3PersoonslijstUitLo3Bericht(lo3Bericht);
         final List<GgoFoutRegel> logRegels = dbService.haalLogRegelsUitLo3Bericht(lo3Bericht);
 
         assertNotNull(brpPersoonslijst);
-        assertEquals(8750000001L, brpPersoonslijst.getActueelAdministratienummer().longValue());
+        assertEquals("8750000001", brpPersoonslijst.getActueelAdministratienummer());
         assertNotNull(lo3Persoonslijst);
-        assertEquals(8750000001L, lo3Persoonslijst.getActueelAdministratienummer().longValue());
+        assertEquals("8750000001", lo3Persoonslijst.getActueelAdministratienummer());
         assertEquals(1, logRegels.size());
         assertEquals(Lo3SoortMelding.PRE001.getCode(), logRegels.iterator().next().getCode());
     }

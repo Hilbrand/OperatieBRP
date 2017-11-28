@@ -21,11 +21,8 @@ public final class PersoonslijstOverzicht implements Serializable {
 
     /**
      * Constructor (voor builder).
-     * 
-     * @param identificaties
-     *            identificaties
-     * @param categorieen
-     *            categorieen
+     * @param identificaties identificaties
+     * @param categorieen categorieen
      */
     PersoonslijstOverzicht(final List<String> identificaties, final List<Categorie> categorieen) {
         this.identificaties = identificaties;
@@ -34,16 +31,14 @@ public final class PersoonslijstOverzicht implements Serializable {
 
     /**
      * Geef het aantal PL-en.
-     * 
      * @return aantal pl-en
      */
-    public int getAantalCategorieen() {
+    public int getAantalPersoonslijsten() {
         return identificaties.size();
     }
 
     /**
      * Geef de waarde van identificaties.
-     *
      * @return identificaties
      */
     public List<String> getIdentificaties() {
@@ -52,20 +47,13 @@ public final class PersoonslijstOverzicht implements Serializable {
 
     /**
      * Geef de waarde van categorieen.
-     *
      * @return categorieen
      */
     public List<Categorie> getCategorieen() {
         return categorieen;
     }
 
-    private static boolean isEquals(final Object first, final Object second) {
-        if (first == null) {
-            return second == null;
-        } else {
-            return first.equals(second);
-        }
-    }
+
 
     /**
      * Categorie data.
@@ -80,13 +68,9 @@ public final class PersoonslijstOverzicht implements Serializable {
 
         /**
          * Constructor (voor builder).
-         * 
-         * @param titel
-         *            titel
-         * @param historie
-         *            is historie categorie
-         * @param elementen
-         *            elementen
+         * @param titel titel
+         * @param historie is historie categorie
+         * @param elementen elementen
          */
         Categorie(final String titel, final boolean historie, final List<Element> elementen) {
             this.titel = titel;
@@ -96,18 +80,21 @@ public final class PersoonslijstOverzicht implements Serializable {
             if (!elementen.isEmpty()) {
                 changedIndicators.addAll(elementen.get(0).getChangedIndicators());
                 for (final Element element : this.elementen) {
-                    for (int i = 1; i < element.getChangedIndicators().size(); i++) {
-                        if (element.getChangedIndicators().get(i)) {
-                            changedIndicators.set(i, true);
-                        }
-                    }
+                    verwerkElement(element);
+                }
+            }
+        }
+
+        private void verwerkElement(final Element element) {
+            for (int i = 1; i < element.getChangedIndicators().size(); i++) {
+                if (element.getChangedIndicators().get(i)) {
+                    changedIndicators.set(i, true);
                 }
             }
         }
 
         /**
          * Geef de waarde van titel.
-         *
          * @return titel
          */
         public String getTitel() {
@@ -116,7 +103,6 @@ public final class PersoonslijstOverzicht implements Serializable {
 
         /**
          * Geef de historie.
-         *
          * @return historie
          */
         public boolean isHistorie() {
@@ -125,7 +111,6 @@ public final class PersoonslijstOverzicht implements Serializable {
 
         /**
          * Geef de waarde van changed indicators.
-         *
          * @return changed indicators
          */
         public List<Boolean> getChangedIndicators() {
@@ -134,7 +119,6 @@ public final class PersoonslijstOverzicht implements Serializable {
 
         /**
          * Geef de waarde van elementen.
-         *
          * @return elementen
          */
         public List<Element> getElementen() {
@@ -155,11 +139,8 @@ public final class PersoonslijstOverzicht implements Serializable {
 
         /**
          * Constructor (voor builder).
-         * 
-         * @param titel
-         *            titel
-         * @param waarden
-         *            waarden
+         * @param titel titel
+         * @param waarden waarden
          */
         Element(final String titel, final List<String> waarden) {
             this.titel = titel;
@@ -181,7 +162,6 @@ public final class PersoonslijstOverzicht implements Serializable {
 
         /**
          * Geef de waarde van titel.
-         *
          * @return titel
          */
         public String getTitel() {
@@ -190,7 +170,6 @@ public final class PersoonslijstOverzicht implements Serializable {
 
         /**
          * Geef de waarde van waarden.
-         *
          * @return waarden
          */
         public List<String> getWaarden() {
@@ -199,7 +178,6 @@ public final class PersoonslijstOverzicht implements Serializable {
 
         /**
          * Geef de waarde van changed indicators.
-         *
          * @return changed indicators
          */
         public List<Boolean> getChangedIndicators() {
@@ -208,11 +186,18 @@ public final class PersoonslijstOverzicht implements Serializable {
 
         /**
          * Geef de waarde van empty indicator.
-         *
          * @return empty indicator
          */
         public Boolean getEmptyIndicator() {
             return emptyIndicator;
+        }
+
+        private static boolean isEquals(final Object first, final Object second) {
+            if (first == null) {
+                return second == null;
+            } else {
+                return first.equals(second);
+            }
         }
     }
 }

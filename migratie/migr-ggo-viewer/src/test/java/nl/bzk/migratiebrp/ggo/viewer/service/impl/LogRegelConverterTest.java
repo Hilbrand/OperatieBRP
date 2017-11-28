@@ -16,6 +16,17 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Melding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3Severity;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3SoortMelding;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
@@ -23,25 +34,16 @@ import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoFoutRegel;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Melding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Severity;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3SoortMelding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LogRegelConverterTest {
 
     private static final Lo3Bericht DUMMY_BERICHT = new Lo3Bericht(
-        "DUMMY",
-        Lo3BerichtenBron.INITIELE_VULLING,
-        new Timestamp(System.currentTimeMillis()),
-        "DUMMY_DATA",
-        true);
+            "DUMMY",
+            Lo3BerichtenBron.INITIELE_VULLING,
+            new Timestamp(System.currentTimeMillis()),
+            "DUMMY_DATA",
+            true);
 
     private final LogRegelConverter logRegelConverter = new LogRegelConverter();
 
@@ -88,12 +90,11 @@ public class LogRegelConverterTest {
     }
 
     private Lo3Voorkomen createDBLogRegel(
-        final String catNr,
-        final Integer stapelNr,
-        final Integer volgNr,
-        final Lo3Severity severity,
-        final Lo3SoortMelding code)
-    {
+            final String catNr,
+            final Integer stapelNr,
+            final Integer volgNr,
+            final Lo3Severity severity,
+            final Lo3SoortMelding code) {
         final Lo3Voorkomen voorkomen = new Lo3Voorkomen(DUMMY_BERICHT, catNr);
         voorkomen.setStapelvolgnummer(stapelNr);
         voorkomen.setVoorkomenvolgnummer(volgNr);
@@ -103,12 +104,11 @@ public class LogRegelConverterTest {
     }
 
     private LogRegel createModelLogRegel(
-        final Integer catNr,
-        final Integer stapelNr,
-        final Integer volgNr,
-        final LogSeverity severity,
-        final SoortMeldingCode code)
-    {
+            final Integer catNr,
+            final Integer stapelNr,
+            final Integer volgNr,
+            final LogSeverity severity,
+            final SoortMeldingCode code) {
         final Lo3Herkomst lo3Herkomst = new Lo3Herkomst(Lo3CategorieEnum.getLO3Categorie(catNr), stapelNr, volgNr);
         return new LogRegel(lo3Herkomst, severity, code, null);
     }

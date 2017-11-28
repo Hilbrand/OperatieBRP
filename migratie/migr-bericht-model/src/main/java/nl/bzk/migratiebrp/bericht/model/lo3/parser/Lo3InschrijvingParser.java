@@ -7,9 +7,8 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -28,7 +27,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 
 /**
  * Deze parser verwerkt de LO3 categorie inschrijving in de excel input.
- * 
  */
 public final class Lo3InschrijvingParser extends AbstractLo3CategorieParser<Lo3InschrijvingInhoud> {
 
@@ -39,7 +37,7 @@ public final class Lo3InschrijvingParser extends AbstractLo3CategorieParser<Lo3I
             if (inschrijvingCategorie != null) {
                 throw new ParseException(String.format("Onverwachte historie voor categorie %s", categorie.getCategorie()));
             }
-            final Map<Lo3ElementEnum, String> elementen = new HashMap<>(categorie.getElementen());
+            final EnumMap<Lo3ElementEnum, String> elementen = new EnumMap<>(categorie.getElementen());
 
             // 66 Blokkering
             final Lo3Datum datumIngangBlokkering = Parser.parseLo3Datum(elementen, Lo3ElementEnum.ELEMENT_6620, null, null);
@@ -64,7 +62,7 @@ public final class Lo3InschrijvingParser extends AbstractLo3CategorieParser<Lo3I
 
             // 80 Synchroniciteit
             final Lo3Integer versienummer = Parser.parseLo3Integer(elementen, Lo3ElementEnum.ELEMENT_8010, null, null);
-            final Lo3Datumtijdstempel datumtijdstempel = Parser.parseLo3Datumtijdstempel(elementen, Lo3ElementEnum.ELEMENT_8020, null, null);
+            final Lo3Datumtijdstempel datumtijdstempel = Parser.parseLo3Datumtijdstempel(elementen, Lo3ElementEnum.ELEMENT_8020);
 
             // 87 PK-conversie
             final Lo3IndicatiePKVolledigGeconverteerdCode indicatiePKVolledigGeconverteerdCode =
@@ -77,18 +75,23 @@ public final class Lo3InschrijvingParser extends AbstractLo3CategorieParser<Lo3I
             }
 
             inschrijvingCategorie =
-                    new Lo3Categorie<>(new Lo3InschrijvingInhoud(
-                        datumIngangBlokkering,
-                        datumOpschortingBijhouding,
-                        redenOpschortingBijhoudingCode,
-                        datumEersteInschrijving,
-                        gemeentePKCode,
-                        indicatieGeheimCode,
-                        datumVerificatie,
-                        omschrijvingVerificatie,
-                        versienummer,
-                        datumtijdstempel,
-                        indicatiePKVolledigGeconverteerdCode), lo3Documentatie, null, Lo3Historie.NULL_HISTORIE, categorie.getLo3Herkomst());
+                    new Lo3Categorie<>(
+                            new Lo3InschrijvingInhoud(
+                                    datumIngangBlokkering,
+                                    datumOpschortingBijhouding,
+                                    redenOpschortingBijhoudingCode,
+                                    datumEersteInschrijving,
+                                    gemeentePKCode,
+                                    indicatieGeheimCode,
+                                    datumVerificatie,
+                                    omschrijvingVerificatie,
+                                    versienummer,
+                                    datumtijdstempel,
+                                    indicatiePKVolledigGeconverteerdCode),
+                            lo3Documentatie,
+                            null,
+                            new Lo3Historie(null, null, null),
+                            categorie.getLo3Herkomst());
         }
 
         if (inschrijvingCategorie == null) {

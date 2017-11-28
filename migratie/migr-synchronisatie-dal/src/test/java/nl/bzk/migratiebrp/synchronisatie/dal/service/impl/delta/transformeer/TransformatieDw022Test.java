@@ -14,22 +14,22 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import org.junit.Before;
+import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaam;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaam;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class TransformatieDw022Test extends AbstractTransformatieTest {
 
@@ -72,8 +72,8 @@ public class TransformatieDw022Test extends AbstractTransformatieTest {
         assertTrue(nieuwVerschil.getNieuweWaarde() instanceof BRPActie);
         final BRPActie actieMuts = (BRPActie) nieuwVerschil.getNieuweWaarde();
         assertEquals(
-            adresActualisering.get(0).getNieuweHistorieRij().getActieInhoud().getAdministratieveHandeling(),
-            actieMuts.getAdministratieveHandeling());
+                adresActualisering.get(0).getNieuweHistorieRij().getActieInhoud().getAdministratieveHandeling(),
+                actieMuts.getAdministratieveHandeling());
         assertEquals(adresActualisering.get(0).getSleutel().getDelen(), sleutel.getDelen());
         assertEquals(((EntiteitSleutel) adresActualisering.get(0).getSleutel()).getEntiteit(), sleutel.getEntiteit());
     }
@@ -85,10 +85,10 @@ public class TransformatieDw022Test extends AbstractTransformatieTest {
 
     private VerschilGroep maakPersoonAdresActualisering() {
         final EntiteitSleutel datumTijdVervalSleutel =
-                maakPersoonAdresHistorieEntiteitSleutel("datumTijdVerval", 19900101, maakTimestamp("1990-01-02 02"));
-        final EntiteitSleutel actieVervalSleutel = maakPersoonAdresHistorieEntiteitSleutel("actieVerval", 19900101, maakTimestamp("1990-01-02 02"));
+                maakPersoonAdresHistorieEntiteitSleutel("datumTijdVerval", maakTimestamp("1990-01-02 02"));
+        final EntiteitSleutel actieVervalSleutel = maakPersoonAdresHistorieEntiteitSleutel("actieVerval", maakTimestamp("1990-01-02 02"));
         final EntiteitSleutel nadereAanduidingVervalSleutel =
-                maakPersoonAdresHistorieEntiteitSleutel("nadereAanduidingVerval", 19900101, maakTimestamp("1990-01-02 02"));
+                maakPersoonAdresHistorieEntiteitSleutel("nadereAanduidingVerval", maakTimestamp("1990-01-02 02"));
 
         final Timestamp nieuweDatumTijdVerval = maakTimestamp("1990-01-02 02");
         final BRPActie nieuweActieVerval = maakActieVerval("08", 0, 0);
@@ -98,12 +98,12 @@ public class TransformatieDw022Test extends AbstractTransformatieTest {
         final PersoonAdres persoonAdres = new PersoonAdres(persoon);
         persoonAdres.setHuisnummer(1);
 
-        final LandOfGebied landOfGebied = new LandOfGebied((short) 1, "testland");
+        final LandOfGebied landOfGebied = new LandOfGebied("0001", "testland");
         final RedenWijzigingVerblijf redenWijzging = new RedenWijzigingVerblijf('t', "test");
-        final PersoonAdresHistorie oudeRij = new PersoonAdresHistorie(persoonAdres, FunctieAdres.WOONADRES, landOfGebied, redenWijzging);
+        final PersoonAdresHistorie oudeRij = new PersoonAdresHistorie(persoonAdres, SoortAdres.WOONADRES, landOfGebied, redenWijzging);
         oudeRij.setActieInhoud(nieuweActieVerval);
         oudeRij.setDatumTijdRegistratie(nieuweActieVerval.getDatumTijdRegistratie());
-        final PersoonAdresHistorie nieuweRij = new PersoonAdresHistorie(persoonAdres, FunctieAdres.WOONADRES, landOfGebied, redenWijzging);
+        final PersoonAdresHistorie nieuweRij = new PersoonAdresHistorie(persoonAdres, SoortAdres.WOONADRES, landOfGebied, redenWijzging);
         nieuweRij.setActieInhoud(nieuweActieVerval);
         nieuweRij.setDatumTijdRegistratie(nieuweActieVerval.getDatumTijdRegistratie());
 
@@ -118,11 +118,11 @@ public class TransformatieDw022Test extends AbstractTransformatieTest {
         return verschilGroep;
     }
 
-    private EntiteitSleutel maakPersoonAdresHistorieEntiteitSleutel(final String veld, final Integer datumAanvangGeldigheid, final Timestamp tsReg) {
+    private EntiteitSleutel maakPersoonAdresHistorieEntiteitSleutel(final String veld, final Timestamp tsReg) {
         final EntiteitSleutel eigenaar = new EntiteitSleutel(Persoon.class, "persoonAdresSet");
         final EntiteitSleutel persoonAdres = new EntiteitSleutel(PersoonVoornaam.class, "persoonAdresHistorieSet", eigenaar);
         final EntiteitSleutel result = new EntiteitSleutel(PersoonAdresHistorie.class, veld, persoonAdres);
-        result.addSleuteldeel("dataanvgel", datumAanvangGeldigheid);
+        result.addSleuteldeel("dataanvgel", 19900101);
         result.addSleuteldeel("tsreg", tsReg);
         return result;
     }

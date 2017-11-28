@@ -19,7 +19,6 @@ import nl.bzk.migratiebrp.util.common.Kopieer;
 
 /**
  * Persistent klasse voor de berichten database tabel.
- *
  */
 @Entity
 @Table(name = "mig_bericht")
@@ -57,10 +56,10 @@ public class Bericht implements Serializable {
     private Long procesInstantieId;
 
     @Column(name = "verzendende_partij", nullable = true, insertable = false, updatable = false)
-    private String bronGemeente;
+    private String bronPartijCode;
 
     @Column(name = "ontvangende_partij", nullable = true, insertable = false, updatable = false)
-    private String doelGemeente;
+    private String doelPartijCode;
 
     @Column(name = "actie", nullable = true, insertable = false, updatable = false)
     private String jbpmActie;
@@ -70,7 +69,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public final Long getId() {
@@ -79,9 +77,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public final void setId(final Long id) {
         this.id = id;
@@ -89,7 +85,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van indicatie geteld.
-     *
      * @return indicatie geteld
      */
     public final Boolean getIndicatieGeteld() {
@@ -98,9 +93,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de waarde van indicatie geteld.
-     *
-     * @param indicatieGeteld
-     *            indicatie geteld
+     * @param indicatieGeteld indicatie geteld
      */
     public final void setIndicatieGeteld(final Boolean indicatieGeteld) {
         this.indicatieGeteld = indicatieGeteld;
@@ -108,7 +101,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van tijdstip.
-     *
      * @return tijdstip
      */
     public final Timestamp getTijdstip() {
@@ -117,7 +109,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public final String getKanaal() {
@@ -126,7 +117,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van richting.
-     *
      * @return richting
      */
     public final Character getRichting() {
@@ -135,7 +125,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van proces instantie id.
-     *
      * @return proces instantie id
      */
     public final Long getProcesInstantieId() {
@@ -144,7 +133,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van naam.
-     *
      * @return naam
      */
     public final String getNaam() {
@@ -153,7 +141,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van jbpm actie.
-     *
      * @return jbpm actie
      */
     public final String getJbpmActie() {
@@ -162,9 +149,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de waarde van tijdstip.
-     *
-     * @param tijdstip
-     *            tijdstip
+     * @param tijdstip tijdstip
      */
     public final void setTijdstip(final Timestamp tijdstip) {
         this.tijdstip = Kopieer.timestamp(tijdstip);
@@ -172,9 +157,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de waarde van kanaal.
-     *
-     * @param kanaal
-     *            kanaal
+     * @param kanaal kanaal
      */
     public final void setKanaal(final String kanaal) {
         this.kanaal = kanaal;
@@ -182,9 +165,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de waarde van richting.
-     *
-     * @param richting
-     *            richting
+     * @param richting richting
      */
     public final void setRichting(final Character richting) {
         this.richting = richting;
@@ -192,9 +173,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de waarde van jbpm actie.
-     *
-     * @param jbpmActie
-     *            jbpm actie
+     * @param jbpmActie jbpm actie
      */
     public final void setJbpmActie(final String jbpmActie) {
         this.jbpmActie = jbpmActie;
@@ -202,9 +181,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de waarde van naam.
-     *
-     * @param naam
-     *            naam
+     * @param naam naam
      */
     public final void setNaam(final String naam) {
         this.naam = naam;
@@ -212,7 +189,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van message id.
-     *
      * @return message id
      */
     public final String getMessageId() {
@@ -221,7 +197,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van correlation id.
-     *
      * @return correlation id
      */
     public final String getCorrelationId() {
@@ -230,7 +205,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van bericht.
-     *
      * @return bericht
      */
     public final String getBericht() {
@@ -239,38 +213,38 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van bron gemeente.
-     *
      * @return bron gemeente
      */
-    public final String getBronGemeente() {
-        return bronGemeente;
+    public final String getBronPartijCode() {
+        return bronPartijCode;
     }
 
     /**
      * Geef de waarde van doel gemeente.
-     *
      * @return doel gemeente
      */
-    public final String getDoelGemeente() {
-        return doelGemeente;
+    public final String getDoelPartijCode() {
+        return doelPartijCode;
     }
 
     /**
      * De richting van een bericht (vanuit het zichtpunt van ISC).
      */
-    public static enum Direction {
-        /** Inkomend. */
+    public enum Direction {
+        /**
+         * Inkomend.
+         */
         INKOMEND('I'),
-        /** Uitgaand. */
+        /**
+         * Uitgaand.
+         */
         UITGAAND('U');
 
         private final Character code;
 
         /**
          * Constructor.
-         *
-         * @param code
-         *            code
+         * @param code code
          */
         Direction(final Character code) {
             this.code = code;
@@ -278,7 +252,6 @@ public class Bericht implements Serializable {
 
         /**
          * Geef de waarde van code.
-         *
          * @return code
          */
         public Character getCode() {
@@ -287,9 +260,7 @@ public class Bericht implements Serializable {
 
         /**
          * Zoek de richting obv de code.
-         *
-         * @param code
-         *            code
+         * @param code code
          * @return richting, of null als niet gevonden
          */
         public static Direction valueOfCode(final Character code) {

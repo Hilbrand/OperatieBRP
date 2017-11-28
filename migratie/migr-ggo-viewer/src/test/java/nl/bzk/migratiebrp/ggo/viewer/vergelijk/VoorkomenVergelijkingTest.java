@@ -26,7 +26,7 @@ public class VoorkomenVergelijkingTest {
         voorkomenMatch.setOldVoorkomen(new PersoonGS());
         voorkomenMatch.setType(VoorkomenMatch.NEWER_THAN_ACTUAL);
 
-        final GgoVoorkomenVergelijking voorkomenVergelijking = new GgoVoorkomenVergelijking(voorkomenMatch, (long) 123456789, "changed");
+        final GgoVoorkomenVergelijking voorkomenVergelijking = new GgoVoorkomenVergelijking(voorkomenMatch, "123456789", "changed");
         assertEquals("02.10", voorkomenVergelijking.getInhoud());
         assertEquals("123456789_3_0_0", voorkomenVergelijking.getNieuweHerkomsten().toArray()[0]);
         assertEquals("123456789_3_0_0", voorkomenVergelijking.getOudeHerkomsten().toArray()[0]);

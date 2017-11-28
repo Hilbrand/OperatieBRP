@@ -11,10 +11,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat;
@@ -54,7 +55,7 @@ public class DeltaVergelijkerTest extends AbstractDeltaTest {
         assertEquals(1, resultaat.getVerschillen().size());
         final Verschil verschil = resultaat.getVerschillen().iterator().next();
         assertEquals(VerschilType.RIJ_TOEGEVOEGD, verschil.getVerschilType());
-        assertEquals(-1, verschil.getSleutel().getDelen().get(PersoonReisdocument.TECHNISCH_ID));
+        assertEquals(-1L, verschil.getSleutel().getDelen().get(PersoonReisdocument.TECHNISCH_ID));
     }
 
     @Test
@@ -77,7 +78,7 @@ public class DeltaVergelijkerTest extends AbstractDeltaTest {
         assertEquals(1, resultaat.getVerschillen().size());
         final Verschil verschil = resultaat.getVerschillen().iterator().next();
         assertEquals(VerschilType.RIJ_TOEGEVOEGD, verschil.getVerschilType());
-        assertEquals(-1, verschil.getSleutel().getDelen().get(PersoonReisdocument.TECHNISCH_ID));
+        assertEquals(-1L, verschil.getSleutel().getDelen().get(PersoonReisdocument.TECHNISCH_ID));
     }
 
     @Test
@@ -99,7 +100,8 @@ public class DeltaVergelijkerTest extends AbstractDeltaTest {
         maakReisdocument(bestaandPersoon, false);
         maakReisdocument(nieuwPersoon, false);
 
-        nieuwPersoon.getPersoonReisdocumentSet().iterator().next().setDatumIngangDocument(20151231);
+        FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(
+                nieuwPersoon.getPersoonReisdocumentSet().iterator().next().getPersoonReisdocumentHistorieSet()).setDatumIngangDocument(20151231);
 
         final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandPersoon, nieuwPersoon);
         assertFalse(resultaat.isLeeg());
@@ -121,7 +123,7 @@ public class DeltaVergelijkerTest extends AbstractDeltaTest {
 
         final Verschil verschil = resultaat.getVerschillen().iterator().next();
         assertEquals(VerschilType.RIJ_TOEGEVOEGD, verschil.getVerschilType());
-        assertEquals(-1, verschil.getSleutel().getDelen().get(PersoonReisdocument.TECHNISCH_ID));
+        assertEquals(-1L, verschil.getSleutel().getDelen().get(PersoonReisdocument.TECHNISCH_ID));
     }
 
     @Test
@@ -134,7 +136,7 @@ public class DeltaVergelijkerTest extends AbstractDeltaTest {
         assertEquals(2, resultaat.getVerschillen().size());
 
         boolean isRijToegevoegd = false;
-        boolean isRijVerwijderd= false;
+        boolean isRijVerwijderd = false;
 
         for (final Verschil verschil : resultaat.getVerschillen()) {
             if (VerschilType.RIJ_TOEGEVOEGD.equals(verschil.getVerschilType())) {
@@ -153,16 +155,9 @@ public class DeltaVergelijkerTest extends AbstractDeltaTest {
         final int datumEinde = anderDocument ? 20250101 : 20260101;
         final String nummer = anderDocument ? "123456890" : "0987654321";
         final String autoriteitVanAfgifte = anderDocument ? "0518" : "0017";
-        final SoortNederlandsReisdocument soortNederlandsReisdocument =
-                anderDocument ? PASPOORT : ID_KAART;
+        final SoortNederlandsReisdocument soortNederlandsReisdocument = anderDocument ? PASPOORT : ID_KAART;
 
         final PersoonReisdocument reisdocument = new PersoonReisdocument(persoon, soortNederlandsReisdocument);
-        reisdocument.setAutoriteitVanAfgifte(autoriteitVanAfgifte);
-        reisdocument.setDatumIngangDocument(datumIngang);
-        reisdocument.setDatumEindeDocument(datumEinde);
-        reisdocument.setDatumUitgifte(datumUitgifte);
-        reisdocument.setNummer(nummer);
-
         final PersoonReisdocumentHistorie historie =
                 new PersoonReisdocumentHistorie(datumIngang, datumUitgifte, datumEinde, nummer, autoriteitVanAfgifte, reisdocument);
 

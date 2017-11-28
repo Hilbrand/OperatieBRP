@@ -8,6 +8,8 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.List;
 import java.util.Set;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
@@ -19,22 +21,17 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstGezagsVerhoudingGroepI
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstStandaardGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
 import org.springframework.stereotype.Component;
 
 /**
  * Mapped IST stapels van een Persoon op de IST gezagsverhouding stapel van de BrpPersoonslijst.
- * 
  */
 @Component
 public final class BrpIstGezagsverhoudingMapper extends AbstractBrpIstMapper<BrpIstGezagsVerhoudingGroepInhoud> {
 
     /**
      * Mapped van de set met stapels de categorie 11 stapels op een BrpStapel met BrpIstGezagsVerhoudingGroepInhoud.
-     * 
-     * @param stapels
-     *            de set met IST stapels
+     * @param stapels de set met IST stapels
      * @return een stapel van BrpIstGezagsVerhoudingGroepInhoud
      */
     public BrpStapel<BrpIstGezagsVerhoudingGroepInhoud> map(final Set<Stapel> stapels) {
@@ -48,9 +45,7 @@ public final class BrpIstGezagsverhoudingMapper extends AbstractBrpIstMapper<Brp
 
     /**
      * Mapped een StapelVoorkomen op een BrpIstGezagsVerhoudingGroepInhoud.
-     * 
-     * @param voorkomen
-     *            het voorkomen dat gemapped moet worden
+     * @param voorkomen het voorkomen dat gemapped moet worden
      * @return het resultaat van de mapping
      */
     @Override

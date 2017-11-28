@@ -8,9 +8,8 @@
  * Levert de noodzakelijk classes om een LO3-persoonslijst te maken
  * <p>
  * De specifieke categorien waaruit een LO3 persoonslijst bestaat zijn hier gespecificeerd.
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.model.lo3
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 

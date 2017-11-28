@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -56,10 +56,12 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOpschortingBijhoud
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Signalering;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortVerbintenis;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
+
 import org.junit.Test;
 
 public class Lo3PersoonslijstParserTest extends AbstractParserTest {
@@ -102,28 +104,28 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
         Assert.assertEquals(ouder1Stapel.getLaatsteElement().getInhoud(), persoonslijst.getOuder1Stapel().getLaatsteElement().getInhoud());
         Assert.assertEquals(ouder2Stapel.getLaatsteElement().getInhoud(), persoonslijst.getOuder2Stapel().getLaatsteElement().getInhoud());
         Assert.assertEquals(
-            nationaliteitStapel.getLaatsteElement().getInhoud(),
-            persoonslijst.getNationaliteitStapels().get(0).getLaatsteElement().getInhoud());
+                nationaliteitStapel.getLaatsteElement().getInhoud(),
+                persoonslijst.getNationaliteitStapels().get(0).getLaatsteElement().getInhoud());
         Assert.assertEquals(
-            huwelijkOfGpStapel.getLaatsteElement().getInhoud(),
-            persoonslijst.getHuwelijkOfGpStapels().get(0).getLaatsteElement().getInhoud());
+                huwelijkOfGpStapel.getLaatsteElement().getInhoud(),
+                persoonslijst.getHuwelijkOfGpStapels().get(0).getLaatsteElement().getInhoud());
         Assert.assertEquals(overlijdenStapel.getLaatsteElement().getInhoud(), persoonslijst.getOverlijdenStapel().getLaatsteElement().getInhoud());
         Assert.assertEquals(inschrijvingStapel.getLaatsteElement().getInhoud(), persoonslijst.getInschrijvingStapel().getLaatsteElement().getInhoud());
         Assert.assertEquals(verblijfplaatsStapel.getLaatsteElement().getInhoud(), persoonslijst.getVerblijfplaatsStapel().getLaatsteElement().getInhoud());
         Assert.assertEquals(kindStapel.getLaatsteElement().getInhoud(), persoonslijst.getKindStapels().get(0).getLaatsteElement().getInhoud());
         Assert.assertEquals(verblijfstitelStapel.getLaatsteElement().getInhoud(), persoonslijst.getVerblijfstitelStapel().getLaatsteElement().getInhoud());
         Assert.assertEquals(
-            gezagVerhoudingStapel.getLaatsteElement().getInhoud(),
-            persoonslijst.getGezagsverhoudingStapel().getLaatsteElement().getInhoud());
+                gezagVerhoudingStapel.getLaatsteElement().getInhoud(),
+                persoonslijst.getGezagsverhoudingStapel().getLaatsteElement().getInhoud());
         Assert.assertEquals(
-            reisdocumentStapel.getLaatsteElement().getInhoud(),
-            persoonslijst.getReisdocumentStapels().get(0).getLaatsteElement().getInhoud());
+                reisdocumentStapel.getLaatsteElement().getInhoud(),
+                persoonslijst.getReisdocumentStapels().get(0).getLaatsteElement().getInhoud());
         Assert.assertEquals(kiesrechtStapel.getLaatsteElement().getInhoud(), persoonslijst.getKiesrechtStapel().getLaatsteElement().getInhoud());
     }
 
     private Lo3Stapel<Lo3PersoonInhoud> vulCategoriePersoon(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_01;
-        this.waardeElement8310 = "010000";
+        categorie = Lo3CategorieEnum.CATEGORIE_01;
+        waardeElement8310 = "010000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
@@ -161,19 +163,19 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
         final Lo3PersoonInhoud persoonInhoud =
                 new Lo3PersoonInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110, null),
-                    maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
-                    new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
-                    maakLo3Long(WAARDE_ELEMENT_2010, null),
-                    maakLo3Long(WAARDE_ELEMENT_2020, null),
-                    new Lo3AanduidingNaamgebruikCode(WAARDE_ELEMENT_6110, onderzoek));
+                        maakLo3String(WAARDE_ELEMENT_0110, null),
+                        maakLo3String(WAARDE_ELEMENT_0120, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
+                        new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_2010, null),
+                        maakLo3String(WAARDE_ELEMENT_2020, null),
+                        new Lo3AanduidingNaamgebruikCode(WAARDE_ELEMENT_6110, onderzoek));
 
         final Lo3Categorie<Lo3PersoonInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(persoonInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -184,13 +186,13 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3OuderInhoud> vulCategorieOuder1(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_02;
-        this.waardeElement8310 = "020000";
+        categorie = Lo3CategorieEnum.CATEGORIE_02;
+        waardeElement8310 = "020000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
 
-        final Lo3CategorieWaarde categorieWaarde = new Lo3CategorieWaarde(this.categorie, 1, 1);
+        final Lo3CategorieWaarde categorieWaarde = new Lo3CategorieWaarde(categorie, 1, 1);
 
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_0110, WAARDE_ELEMENT_0110);
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_0120, WAARDE_ELEMENT_0120);
@@ -221,17 +223,17 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
         final Lo3OuderInhoud ouderInhoud =
                 new Lo3OuderInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110, onderzoek),
-                    maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
-                    new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_6210, onderzoek));
+                        maakLo3String(WAARDE_ELEMENT_0110, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0120, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
+                        new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_6210, onderzoek));
 
         final Lo3Categorie<Lo3OuderInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(ouderInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -241,13 +243,13 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3OuderInhoud> vulCategorieOuder2(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_03;
-        this.waardeElement8310 = "030000";
+        categorie = Lo3CategorieEnum.CATEGORIE_03;
+        waardeElement8310 = "030000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
 
-        final Lo3CategorieWaarde categorieWaarde = new Lo3CategorieWaarde(this.categorie, 1, 1);
+        final Lo3CategorieWaarde categorieWaarde = new Lo3CategorieWaarde(categorie, 1, 1);
 
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_0110, WAARDE_ELEMENT_0110_2);
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_0120, WAARDE_ELEMENT_0120_2);
@@ -278,17 +280,17 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
         final Lo3OuderInhoud ouderInhoud =
                 new Lo3OuderInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110_2, onderzoek),
-                    maakLo3Integer(WAARDE_ELEMENT_0120_2, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210_2, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220_2, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230_2, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240_2, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310_2, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
-                    new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410_2, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_6210, onderzoek));
+                        maakLo3String(WAARDE_ELEMENT_0110_2, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0120_2, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210_2, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220_2, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230_2, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240_2, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310_2, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
+                        new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410_2, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_6210, onderzoek));
 
         final Lo3Categorie<Lo3OuderInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(ouderInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -298,8 +300,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3NationaliteitInhoud> vulCategorieNationaliteit(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_04;
-        this.waardeElement8310 = "040000";
+        categorie = Lo3CategorieEnum.CATEGORIE_04;
+        waardeElement8310 = "040000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
@@ -309,6 +311,7 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_6310, WAARDE_ELEMENT_6310);
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_6410, WAARDE_ELEMENT_6410);
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_6510, WAARDE_ELEMENT_6510);
+        categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_7310, WAARDE_ELEMENT_7310);
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_8210, WAARDE_ELEMENT_8210);
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_8220, WAARDE_ELEMENT_8220);
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_8220, WAARDE_ELEMENT_8230);
@@ -325,10 +328,11 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
         final Lo3NationaliteitInhoud categorieInhoud =
                 new Lo3NationaliteitInhoud(
-                    new Lo3NationaliteitCode(WAARDE_ELEMENT_0510, onderzoek),
-                    new Lo3RedenNederlandschapCode(WAARDE_ELEMENT_6310,onderzoek),
-                    new Lo3RedenNederlandschapCode(WAARDE_ELEMENT_6410,onderzoek),
-                    new Lo3AanduidingBijzonderNederlandschap(WAARDE_ELEMENT_6510, onderzoek));
+                        new Lo3NationaliteitCode(WAARDE_ELEMENT_0510, onderzoek),
+                        new Lo3RedenNederlandschapCode(WAARDE_ELEMENT_6310, onderzoek),
+                        new Lo3RedenNederlandschapCode(WAARDE_ELEMENT_6410, onderzoek),
+                        new Lo3AanduidingBijzonderNederlandschap(WAARDE_ELEMENT_6510, onderzoek),
+                        new Lo3String(WAARDE_ELEMENT_7310, onderzoek));
 
         final Lo3Categorie<Lo3NationaliteitInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(categorieInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -338,8 +342,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3HuwelijkOfGpInhoud> vulCategorieHuwelijkOfGp(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_05;
-        this.waardeElement8310 = "050000";
+        categorie = Lo3CategorieEnum.CATEGORIE_05;
+        waardeElement8310 = "050000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
@@ -381,24 +385,24 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
         final Lo3HuwelijkOfGpInhoud huwelijkOfGpInhoud =
                 new Lo3HuwelijkOfGpInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110, onderzoek),
-                    maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
-                    new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0610, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0620, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0630, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0710, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0720, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0730, onderzoek),
-                    new Lo3RedenOntbindingHuwelijkOfGpCode(WAARDE_ELEMENT_0740, onderzoek),
-                    new Lo3SoortVerbintenis(WAARDE_ELEMENT_1510, onderzoek));
+                        maakLo3String(WAARDE_ELEMENT_0110, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0120, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
+                        new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0610, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0620, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0630, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0710, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0720, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0730, onderzoek),
+                        new Lo3RedenOntbindingHuwelijkOfGpCode(WAARDE_ELEMENT_0740, onderzoek),
+                        new Lo3SoortVerbintenis(WAARDE_ELEMENT_1510, onderzoek));
 
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> huwelijkOfGpInhoudCategorie =
                 new Lo3Categorie<>(huwelijkOfGpInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -408,8 +412,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3OverlijdenInhoud> vulCategorieOverlijden(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_06;
-        this.waardeElement8310 = "060000";
+        categorie = Lo3CategorieEnum.CATEGORIE_06;
+        waardeElement8310 = "060000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
@@ -435,9 +439,9 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
         final List<Lo3Categorie<Lo3OverlijdenInhoud>> categorieInhoudLijst = new ArrayList<>();
         final Lo3OverlijdenInhoud overlijdenInhoud =
                 new Lo3OverlijdenInhoud(
-                    maakDatum(WAARDE_ELEMENT_0810, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0820, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0830, onderzoek));
+                        maakDatum(WAARDE_ELEMENT_0810, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0820, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0830, onderzoek));
 
         final Lo3Categorie<Lo3OverlijdenInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(overlijdenInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -447,7 +451,7 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3InschrijvingInhoud> vulCategorieInschrijving(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_07;
+        categorie = Lo3CategorieEnum.CATEGORIE_07;
 
         final Lo3CategorieWaarde categorieWaarde = new Lo3CategorieWaarde(categorie, 1, 1);
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_6620, WAARDE_ELEMENT_6620);
@@ -463,22 +467,22 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
         categorieWaarde.addElement(Lo3ElementEnum.ELEMENT_8710, WAARDE_ELEMENT_8710);
 
         categorieen.add(categorieWaarde);
-        final Lo3Historie nullHistorie = Lo3Historie.NULL_HISTORIE;
+        final Lo3Historie nullHistorie = new Lo3Historie(null, null, null);
         final List<Lo3Categorie<Lo3InschrijvingInhoud>> categorieInhoudLijst = new ArrayList<>();
 
         final Lo3InschrijvingInhoud inschrijvingInhoud =
                 new Lo3InschrijvingInhoud(
-                    maakDatum(WAARDE_ELEMENT_6620, null),
-                    maakDatum(WAARDE_ELEMENT_6710, null),
-                    new Lo3RedenOpschortingBijhoudingCode(WAARDE_ELEMENT_6720, null),
-                    maakDatum(WAARDE_ELEMENT_6810, null),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_6910, null),
-                    new Lo3IndicatieGeheimCode(WAARDE_ELEMENT_7010, null),
-                    maakDatum(WAARDE_ELEMENT_7110, null),
-                    maakLo3String(WAARDE_ELEMENT_7120, null),
-                    maakLo3Integer(WAARDE_ELEMENT_8010, null),
-                    new Lo3Datumtijdstempel(WAARDE_ELEMENT_8020, null),
-                    new Lo3IndicatiePKVolledigGeconverteerdCode(WAARDE_ELEMENT_8710, null));
+                        maakDatum(WAARDE_ELEMENT_6620, null),
+                        maakDatum(WAARDE_ELEMENT_6710, null),
+                        new Lo3RedenOpschortingBijhoudingCode(WAARDE_ELEMENT_6720, null),
+                        maakDatum(WAARDE_ELEMENT_6810, null),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_6910, null),
+                        new Lo3IndicatieGeheimCode(WAARDE_ELEMENT_7010, null),
+                        maakDatum(WAARDE_ELEMENT_7110, null),
+                        maakLo3String(WAARDE_ELEMENT_7120, null),
+                        maakLo3Integer(WAARDE_ELEMENT_8010, null),
+                        new Lo3Datumtijdstempel(WAARDE_ELEMENT_8020, null),
+                        new Lo3IndicatiePKVolledigGeconverteerdCode(WAARDE_ELEMENT_8710, null));
 
         final Lo3Categorie<Lo3InschrijvingInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(inschrijvingInhoud, null, null, nullHistorie, new Lo3Herkomst(categorie, 0, 0));
@@ -489,8 +493,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
     private Lo3Stapel<Lo3VerblijfplaatsInhoud> vulCategorieVerblijfplaats(final List<Lo3CategorieWaarde> categorieen) {
 
-        this.categorie = Lo3CategorieEnum.CATEGORIE_08;
-        this.waardeElement8310 = "080000";
+        categorie = Lo3CategorieEnum.CATEGORIE_08;
+        waardeElement8310 = "080000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
@@ -533,31 +537,31 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
         final List<Lo3Categorie<Lo3VerblijfplaatsInhoud>> categorieInhoudLijst = new ArrayList<>();
         final Lo3VerblijfplaatsInhoud verblijfplaatsInhoud =
                 new Lo3VerblijfplaatsInhoud(
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0910, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0920, onderzoek),
-                    new Lo3FunctieAdres(WAARDE_ELEMENT_1010, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1020, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_1030, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1110, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1115, onderzoek),
-                    new Lo3Huisnummer(WAARDE_ELEMENT_1120, onderzoek),
-                    maakLo3Character(WAARDE_ELEMENT_1130, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1140, onderzoek),
-                    new Lo3AanduidingHuisnummer(WAARDE_ELEMENT_1150, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1160, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1170, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1180, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1190, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1210, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_1310, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_1320, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1330, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1340, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_1350, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_1410, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_1420, onderzoek),
-                    new Lo3AangifteAdreshouding(WAARDE_ELEMENT_7210),
-                    new Lo3IndicatieDocument(WAARDE_ELEMENT_7510, null));
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0910, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0920, onderzoek),
+                        new Lo3FunctieAdres(WAARDE_ELEMENT_1010, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1020, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_1030, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1110, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1115, onderzoek),
+                        new Lo3Huisnummer(WAARDE_ELEMENT_1120, onderzoek),
+                        maakLo3Character(WAARDE_ELEMENT_1130, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1140, onderzoek),
+                        new Lo3AanduidingHuisnummer(WAARDE_ELEMENT_1150, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1160, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1170, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1180, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1190, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1210, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_1310, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_1320, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1330, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1340, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_1350, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_1410, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_1420, onderzoek),
+                        new Lo3AangifteAdreshouding(WAARDE_ELEMENT_7210),
+                        new Lo3IndicatieDocument(WAARDE_ELEMENT_7510, null));
 
         final Lo3Categorie<Lo3VerblijfplaatsInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(verblijfplaatsInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -567,8 +571,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3KindInhoud> vulCategorieKind(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_09;
-        this.waardeElement8310 = "090000";
+        categorie = Lo3CategorieEnum.CATEGORIE_09;
+        waardeElement8310 = "090000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
@@ -600,15 +604,15 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
         final List<Lo3Categorie<Lo3KindInhoud>> categorieInhoudLijst = new ArrayList<>();
         final Lo3KindInhoud kindInhoud =
                 new Lo3KindInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110, onderzoek),
-                    maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek));
+                        maakLo3String(WAARDE_ELEMENT_0110, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0120, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek));
 
         final Lo3Categorie<Lo3KindInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(kindInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -618,8 +622,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3VerblijfstitelInhoud> vulCategorieVerblijfstitel(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_10;
-        this.waardeElement8310 = "100000";
+        categorie = Lo3CategorieEnum.CATEGORIE_10;
+        waardeElement8310 = "100000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
@@ -641,9 +645,9 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
         final Lo3VerblijfstitelInhoud verblijfstitelInhoud =
                 new Lo3VerblijfstitelInhoud(
-                    new Lo3AanduidingVerblijfstitelCode(WAARDE_ELEMENT_3910, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_3920, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_3930, onderzoek));
+                        new Lo3AanduidingVerblijfstitelCode(WAARDE_ELEMENT_3910, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_3920, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_3930, onderzoek));
 
         final Lo3Categorie<Lo3VerblijfstitelInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(verblijfstitelInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -653,8 +657,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3GezagsverhoudingInhoud> vulCategorieGezagsverhouding(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_11;
-        this.waardeElement8310 = "110000";
+        categorie = Lo3CategorieEnum.CATEGORIE_11;
+        waardeElement8310 = "110000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
@@ -678,8 +682,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
         final Lo3GezagsverhoudingInhoud gezagsverhoudingInhoud =
                 new Lo3GezagsverhoudingInhoud(
-                    new Lo3IndicatieGezagMinderjarige(WAARDE_ELEMENT_3210, onderzoek),
-                    new Lo3IndicatieCurateleregister(WAARDE_ELEMENT_3310, onderzoek));
+                        new Lo3IndicatieGezagMinderjarige(WAARDE_ELEMENT_3210, onderzoek),
+                        new Lo3IndicatieCurateleregister(WAARDE_ELEMENT_3310, onderzoek));
 
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(gezagsverhoudingInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_11, 0, 0));
@@ -689,8 +693,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3ReisdocumentInhoud> vulCategorieReisdocument(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_12;
-        this.waardeElement8310 = "120000";
+        categorie = Lo3CategorieEnum.CATEGORIE_12;
+        waardeElement8310 = "120000";
         final Lo3Onderzoek onderzoek = maakOnderzoek();
         final Lo3Historie historie = maakHistorie();
         final Lo3Documentatie documentatie = maakDocumentatie();
@@ -720,14 +724,14 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
         final Lo3ReisdocumentInhoud reisdocumentInhoud =
                 new Lo3ReisdocumentInhoud(
-                    new Lo3SoortNederlandsReisdocument(WAARDE_ELEMENT_3510, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_3520, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_3530, onderzoek),
-                    new Lo3AutoriteitVanAfgifteNederlandsReisdocument(WAARDE_ELEMENT_3540, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_3550, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_3560, onderzoek),
-                    new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(WAARDE_ELEMENT_3570, onderzoek),
-                    new Lo3Signalering(WAARDE_ELEMENT_3610, onderzoek));
+                        new Lo3SoortNederlandsReisdocument(WAARDE_ELEMENT_3510, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_3520, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_3530, onderzoek),
+                        new Lo3AutoriteitVanAfgifteNederlandsReisdocument(WAARDE_ELEMENT_3540, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_3550, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_3560, onderzoek),
+                        new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(WAARDE_ELEMENT_3570, onderzoek),
+                        new Lo3Signalering(WAARDE_ELEMENT_3610, onderzoek));
 
         final Lo3Categorie<Lo3ReisdocumentInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(reisdocumentInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(categorie, 0, 0));
@@ -737,8 +741,8 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
     }
 
     private Lo3Stapel<Lo3KiesrechtInhoud> vulCategorieKiesrecht(final List<Lo3CategorieWaarde> categorieen) {
-        this.categorie = Lo3CategorieEnum.CATEGORIE_13;
-        this.waardeElement8310 = "130000";
+        categorie = Lo3CategorieEnum.CATEGORIE_13;
+        waardeElement8310 = "130000";
         final Lo3Documentatie documentatie = maakDocumentatie();
 
         final Lo3CategorieWaarde categorieWaarde = new Lo3CategorieWaarde(categorie, 1, 1);
@@ -753,16 +757,16 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
         categorieen.add(categorieWaarde);
 
-        final Lo3Historie nullHistorie = Lo3Historie.NULL_HISTORIE;
+        final Lo3Historie nullHistorie = new Lo3Historie(null, null, null);
         final List<Lo3Categorie<Lo3KiesrechtInhoud>> categorieInhoudLijst = new ArrayList<>();
 
         final Lo3KiesrechtInhoud gezagsverhoudingInhoud =
                 new Lo3KiesrechtInhoud(
-                    new Lo3AanduidingEuropeesKiesrecht(WAARDE_ELEMENT_3110, null),
-                    maakDatum(WAARDE_ELEMENT_3120, null),
-                    maakDatum(WAARDE_ELEMENT_3130, null),
-                    new Lo3AanduidingUitgeslotenKiesrecht(WAARDE_ELEMENT_3810),
-                    maakDatum(WAARDE_ELEMENT_3820, null));
+                        new Lo3AanduidingEuropeesKiesrecht(WAARDE_ELEMENT_3110, null),
+                        maakDatum(WAARDE_ELEMENT_3120, null),
+                        maakDatum(WAARDE_ELEMENT_3130, null),
+                        new Lo3AanduidingUitgeslotenKiesrecht(WAARDE_ELEMENT_3810),
+                        maakDatum(WAARDE_ELEMENT_3820, null));
 
         final Lo3Categorie<Lo3KiesrechtInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(gezagsverhoudingInhoud, documentatie, null, nullHistorie, new Lo3Herkomst(categorie, 0, 0));
@@ -773,7 +777,7 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.parser.AbstractParserTest#getGegevensInOnderzoek()
      */
     @Override
@@ -783,7 +787,7 @@ public class Lo3PersoonslijstParserTest extends AbstractParserTest {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.parser.AbstractParserTest#getCategorie()
      */
     @Override

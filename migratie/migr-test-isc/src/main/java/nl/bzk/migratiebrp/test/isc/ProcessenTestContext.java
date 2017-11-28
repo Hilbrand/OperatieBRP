@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.test.isc;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,9 +19,7 @@ public final class ProcessenTestContext {
 
     /**
      * Get a property.
-     *
-     * @param key
-     *            key
+     * @param key key
      * @return value (null, if not found)
      */
     public String get(final String key) {
@@ -29,13 +28,18 @@ public final class ProcessenTestContext {
 
     /**
      * Set a property.
-     * 
-     * @param key
-     *            key
-     * @param value
-     *            value
+     * @param key key
+     * @param value value
      */
     public void set(final String key, final String value) {
         values.put(key, value);
+    }
+
+    /**
+     * Retrieve all properties
+     * @return properties
+     */
+    public Map<String, String> getValues() {
+        return Collections.unmodifiableMap(values);
     }
 }

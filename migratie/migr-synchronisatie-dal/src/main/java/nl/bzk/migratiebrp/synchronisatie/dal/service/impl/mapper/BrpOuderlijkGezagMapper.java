@@ -6,12 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderlijkGezagHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderlijkGezagInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderlijkGezagHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,8 +22,8 @@ public final class BrpOuderlijkGezagMapper extends AbstractBrpMapper<Betrokkenhe
     @Override
     protected BrpOuderlijkGezagInhoud mapInhoud(final BetrokkenheidOuderlijkGezagHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         return new BrpOuderlijkGezagInhoud(BrpBoolean.wrap(historie.getIndicatieOuderHeeftGezag(), brpOnderzoekMapper.bepaalOnderzoek(
-            historie.getIndicatieOuderHeeftGezag(),
-            Element.GERELATEERDEOUDER_OUDERLIJKGEZAG_INDICATIEOUDERHEEFTGEZAG,
-            true)));
+                historie.getIndicatieOuderHeeftGezag(),
+                Element.GERELATEERDEOUDER_OUDERLIJKGEZAG_INDICATIEOUDERHEEFTGEZAG,
+                true)));
     }
 }

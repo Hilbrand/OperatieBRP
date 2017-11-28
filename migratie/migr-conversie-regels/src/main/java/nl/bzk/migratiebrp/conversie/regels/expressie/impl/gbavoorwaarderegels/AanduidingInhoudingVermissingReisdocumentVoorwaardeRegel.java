@@ -9,35 +9,42 @@ package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingInhoudingVermissingNederlandsReisdocument;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.RubriekWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
 import org.springframework.stereotype.Component;
 
 /**
  * Voor voorwaarden waarvan de waarde van een rubriek een aanduiding inhouding of vermissing reisdocument betreft.
  */
 @Component
-public final class AanduidingInhoudingVermissingReisdocumentVoorwaardeRegel extends AbstractStandaardVoorwaardeRegel {
+public final class AanduidingInhoudingVermissingReisdocumentVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
 
     private static final String REGEX_PATROON = "^12\\.35\\.70.*";
     private static final int VOLGORDE = 500;
 
-    @Inject
-    private ConversietabelFactory conversieTabelFactory;
+    private final StandaardVoorwaardeRegelUtil standaardVoorwaardeRegelUtil;
 
     /**
      * Maakt nieuwe voorwaarderegel aan.
+     * @param conversieTabelFactory conversie tabel factory
+     * @param gbaRubriekNaarBrpTypeVertaler rubriekvertaler
      */
-    public AanduidingInhoudingVermissingReisdocumentVoorwaardeRegel() {
+    @Inject
+    public AanduidingInhoudingVermissingReisdocumentVoorwaardeRegel(
+            final ConversietabelFactory conversieTabelFactory,
+            final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler) {
         super(VOLGORDE, REGEX_PATROON);
+        standaardVoorwaardeRegelUtil = new StandaardVoorwaardeRegelUtil(gbaRubriekNaarBrpTypeVertaler, waarde ->
+                conversieTabelFactory.createAanduidingInhoudingVermissingReisdocumentConversietabel()
+                        .converteerNaarBrp(new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(waarde.replaceAll("\"", "")))
+                        .getWaarde()
+        );
     }
 
     @Override
-    protected String vertaalWaardeVanRubriek(final String ruweWaarde) {
-        final String zonderAanhalingstekens = ruweWaarde.replaceAll("\"", "");
-        final String vertaaldeWaarde =
-                conversieTabelFactory.createAanduidingInhoudingVermissingReisdocumentConversietabel()
-                                     .converteerNaarBrp(new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(zonderAanhalingstekens))
-                                     .getWaarde()
-                                     .toString();
-        return String.format("\"%s\"", vertaaldeWaarde);
+    public Expressie getBrpExpressie(final RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
+        return standaardVoorwaardeRegelUtil.getBrpExpressie(voorwaardeRegel);
     }
 }

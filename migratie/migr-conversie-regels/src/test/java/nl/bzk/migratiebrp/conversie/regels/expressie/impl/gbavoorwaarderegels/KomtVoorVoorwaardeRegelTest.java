@@ -6,11 +6,8 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,67 +23,81 @@ public class KomtVoorVoorwaardeRegelTest {
     @Inject
     private KomtVoorVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test KomtVoorVoorwaardeRegel komt niet voor normale waarde.
-     *
-     * @throws java.lang.Exception
-     *             is fout
+     * @throws java.lang.Exception is fout
      */
     @Test
     public void testKomtVoorVoorwaardeRegelKomtNietVoor() throws Exception {
-        testVoorwaarde("KNV 01.03.10", "IS_NULL(geboorte.datum)");
-    }
-
-    @Test
-    public void testKNVLijst() throws Exception {
-        testVoorwaarde(
-            "KNV 05.06.10",
-            "(ALLE(RMAP(HUWELIJKEN(), x, x.datum_aanvang), v, IS_NULL(v))) EN (ALLE(RMAP(PARTNERSCHAPPEN(), x, x.datum_aanvang), v, IS_NULL(v)))");
+        testUtil.testVoorwaarde("KNV 01.03.10", "KNV(Persoon.Geboorte.Datum)");
     }
 
     @Test
     public void testNationaliteitUitzondering() throws Exception {
-        testVoorwaarde("KV 04.05.10", "(ER_IS(RMAP(nationaliteiten, x, x.nationaliteit), v, NIET IS_NULL(v))) OF (NIET IS_NULL(indicatie.staatloos))");
-        testVoorwaarde("KNV 04.05.10", "(ALLE(RMAP(nationaliteiten, x, x.nationaliteit), v, IS_NULL(v))) EN (IS_NULL(indicatie.staatloos))");
+        testUtil.testVoorwaarde("KV 04.05.10", "(KV(Persoon.Nationaliteit.NationaliteitCode) OF KV(Persoon.Indicatie.Staatloos.Waarde))");
+        testUtil.testVoorwaarde("KNV 04.05.10", "(KNV(Persoon.Nationaliteit.NationaliteitCode) EN KNV(Persoon.Indicatie.Staatloos.Waarde))");
     }
 
     /**
      * Test KomtVoorVoorwaardeRegel komt voor normale waarde.
-     *
-     * @throws java.lang.Exception
-     *             is fout
+     * @throws java.lang.Exception is fout
      */
     @Test
     public void testKomtVoorVoorwaardeRegelKomtVoor() throws Exception {
-        testVoorwaarde("KV 01.03.10", "NIET IS_NULL(geboorte.datum)");
-        testVoorwaarde("KV 01.01.10", "NIET IS_NULL(identificatienummers.administratienummer)");
+        testUtil.testVoorwaarde("KV 01.03.10", "KV(Persoon.Geboorte.Datum)");
+        testUtil.testVoorwaarde("KV 01.01.10", "KV(Persoon.Identificatienummers.Administratienummer)");
     }
 
     /**
      * Test KomtVoorVoorwaardeRegel komt niet voor lijst waarde.
-     *
-     * @throws java.lang.Exception
-     *             is fout
+     * @throws java.lang.Exception is fout
      */
     @Test
     public void testKomtVoorVoorwaardeRegelLijstKomtNietVoor() throws Exception {
-        testVoorwaarde("KNV 08.11.60", "ALLE(RMAP(adressen, x, x.postcode), v, IS_NULL(v))");
+        testUtil.testVoorwaarde("KNV 08.11.60", "KNV(Persoon.Adres.Postcode)");
     }
 
     /**
      * Test KomtVoorVoorwaardeRegel komt voor lijst waarde.
-     *
-     * @throws java.lang.Exception
-     *             is fout
+     * @throws java.lang.Exception is fout
      */
     @Test
     public void testKomtVoorVoorwaardeRegelLijstKomtVoor() throws Exception {
-        testVoorwaarde("KV 08.11.60", "ER_IS(RMAP(adressen, x, x.postcode), v, NIET IS_NULL(v))");
+        testUtil.testVoorwaarde("KV 08.11.60", "KV(Persoon.Adres.Postcode)");
     }
 
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        Assert.assertTrue(instance.filter(gbaVoorwaarde));
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
+    /**
+     * Test KomtVoorVoorwaardeRegel komt voor lijst waarde.
+     * @throws java.lang.Exception is fout
+     */
+    @Test
+    public void datumVestigingInNederlandKomtNietVoor() throws Exception {
+        testUtil.testVoorwaarde("KNV 08.14.20", "NIET(MAP(FILTER(Persoon.Migratie, x, x.SoortCode E= \"I\"), y, y.DatumAanvangGeldigheid) E<> NULL)");
+    }
+
+    @Test
+    public void datumVestigingInNederlandKomtVoor() throws Exception {
+        testUtil.testVoorwaarde("KV 08.14.20", "MAP(FILTER(Persoon.Migratie, x, x.SoortCode E= \"I\"), y, y.DatumAanvangGeldigheid) E<> NULL");
+    }
+
+    @Test
+    public void komtVoorHuwelijkAanvangDatum() throws Exception {
+        testUtil.testVoorwaarde("KV 05.06.10",
+                "(MAP(FILTER(Huwelijk, x, KNV(x.DatumEinde)), y, y.DatumAanvang) E<> NULL OF MAP(FILTER(GeregistreerdPartnerschap, x, KNV(x.DatumEinde)), y, "
+                        + "y.DatumAanvang) E<> NULL)");
+    }
+
+    @Test
+    public void komtNietVoorHuwelijkAanvangDatum() throws Exception {
+        testUtil.testVoorwaarde("KNV 05.06.10",
+                "(NIET(MAP(FILTER(Huwelijk, x, KNV(x.DatumEinde)), y, y.DatumAanvang) E<> NULL) EN NIET(MAP(FILTER(GeregistreerdPartnerschap, x, KNV(x"
+                        + ".DatumEinde)), y, y.DatumAanvang) E<> NULL))");
     }
 }

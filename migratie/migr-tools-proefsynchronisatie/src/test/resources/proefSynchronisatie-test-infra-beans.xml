@@ -32,7 +32,7 @@
     <!-- Queues -->
 
     <bean id="voiscOntvangstQueue" factory-bean="destinationManager" factory-method="createQueue">
-        <constructor-arg index="0" value="queue/vospg.ontvangst" />
+        <constructor-arg index="0" value="queue/voisc.ontvangst" />
     </bean>
 
     <!-- wordt verder niet gebruikt maar was nodig om de dependencies op orde te krijgen

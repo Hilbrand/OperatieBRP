@@ -6,15 +6,15 @@
 
 package nl.bzk.migratiebrp.init.logging.runtime;
 
-import nl.bzk.migratiebrp.util.common.Version;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.Version;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Basis runtime. Start de spring container; de spring container bevat componenten die een live thread opstarten (JMS
- * queue poller).
+ * Basis runtime. Start de spring container; de spring container bevat componenten die een live
+ * thread opstarten (JMS queue poller).
  */
 public final class Main {
 
@@ -27,15 +27,15 @@ public final class Main {
 
     /**
      * Run.
-     *
-     * @param args
-     *            argumenten (ongebruikt).
+     * @param args argumenten (ongebruikt).
      */
     public static void main(final String[] args) {
         final Version version = Version.readVersion("nl.bzk.migratiebrp.init.logging", "migr-init-logging-runtime");
         LOG.info("Starten applicatie ({}) ...\nComponenten:\n{}", version.toString(), version.toDetailsString());
 
-        context = new ClassPathXmlApplicationContext("init-logging-runtime.xml");
+        synchronized (Main.class) {
+            context = new ClassPathXmlApplicationContext("init-logging-runtime.xml");
+        }
 
         LOG.info("Starting application context");
     }

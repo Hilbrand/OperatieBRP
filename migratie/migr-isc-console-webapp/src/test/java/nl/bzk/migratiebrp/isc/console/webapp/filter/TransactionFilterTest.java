@@ -60,6 +60,8 @@ public class TransactionFilterTest {
         order.verify(transaction).commit();
 
         Mockito.verifyNoMoreInteractions(transactionFactory, transaction);
+
+        subject.destroy();
     }
 
     @Test

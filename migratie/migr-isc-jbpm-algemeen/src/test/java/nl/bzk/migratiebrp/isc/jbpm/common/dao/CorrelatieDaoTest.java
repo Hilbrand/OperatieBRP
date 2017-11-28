@@ -32,7 +32,7 @@ public class CorrelatieDaoTest extends AbstractJbpmDaoTest {
             @Override
             public void execute(final Connection connection) throws SQLException {
                 try (PreparedStatement statement =
-                        connection.prepareStatement("insert into jbpm_processinstance(id_, version_, issuspended_) values(?, 0, false)")) {
+                             connection.prepareStatement("insert into jbpm_processinstance(id_, version_, issuspended_) values(?, 0, false)")) {
                     statement.setLong(1, 1L);
                     statement.executeUpdate();
                     statement.setLong(1, 5L);

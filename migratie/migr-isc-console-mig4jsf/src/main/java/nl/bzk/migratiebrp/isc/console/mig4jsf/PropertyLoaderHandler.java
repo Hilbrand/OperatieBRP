@@ -22,18 +22,16 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "propertyLoader", description = "Read a property.",
         attributes = {@TldAttribute(name = "target", description = "An EL expression into which the information should be stored.", required = true,
-                              deferredType = String.class),
-                      @TldAttribute(name = "property", description = "An EL expression of the property to be read.", required = true,
-                              deferredType = String.class) })
+                deferredType = String.class),
+                @TldAttribute(name = "property", description = "An EL expression of the property to be read.", required = true,
+                        deferredType = String.class)})
 public final class PropertyLoaderHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute propertyTagAttribute;
 
     /**
      * Constructor.
-     *
-     * @param config
-     *            config
+     * @param config config
      */
     public PropertyLoaderHandler(final TagConfig config) {
         super(config);

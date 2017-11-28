@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>brp-parent</artifactId>
-        <groupId>nl.bzk.brp</groupId>
-        <version>96-SNAPSHOT</version>
-        <relativePath>../../brp-parent</relativePath>
+        <groupId>nl.bzk.algemeenbrp</groupId>
+        <artifactId>alg</artifactId>
+        <version>146-SNAPSHOT</version>
+        <relativePath>../../../algemeen/alg</relativePath>
     </parent>
     <groupId>nl.bzk.brp.test</groupId>
     <artifactId>brp-test-art-omgeving</artifactId>
@@ -22,7 +22,8 @@
         <project.brp.art.engine.versie>LATEST</project.brp.art.engine.versie>
         <project.brp.art.data.versie>LATEST</project.brp.art.data.versie>
         -->
-        <brp.release.version>94</brp.release.version>
+        <brp.release.version>132.2</brp.release.version>
+        <brp.algemeen.release.version>132.2</brp.algemeen.release.version>
 
         <!-- Properties die overschreven worden vanuit Jenkins/command-line -->
         <dbhost>localhost</dbhost>
@@ -38,7 +39,7 @@
         <soapui.directory.windows>C:\Program Files (x86)\SmartBear\SoapUI-${soapui.version}\lib\
         </soapui.directory.windows>
         <soapui.directory.linux>/opt/soapui-${soapui.version}/lib/</soapui.directory.linux>
-        <sqlfile>${project.build.directory}/brp-testdata/art-testdata.sql</sqlfile>
+        <sqlfile>art-testdata.sql</sqlfile>
 
         <!-- DB Properties -->
         <db.kern.driver>${dbdriver}</db.kern.driver>
@@ -71,6 +72,8 @@
 
         <!-- Er zou een "Test-Parent" pom moete bestaan zodat testers die enkel test hebben uitgechecked ook versie hebben -->
         <postgres.version>9.2-1004-jdbc41</postgres.version>
+
+        <dbcreate.skip>false</dbcreate.skip>
     </properties>
     <dependencies>
         <dependency>
@@ -89,75 +92,20 @@
             <version>1.4.1</version>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.brp.art.framework</groupId>
-            <artifactId>brp-art-framework-engine</artifactId>
-            <version>${project.brp.art.engine.versie}</version>
-        </dependency>
-        <dependency>
-            <groupId>nl.bzk.brp.art.data</groupId>
-            <artifactId>brp-art-data-resources</artifactId>
-            <version>${project.brp.art.data.versie}</version>
-        </dependency>
-        <dependency>
-            <groupId>nl.bzk.brp.art.data</groupId>
-            <artifactId>brp-art-data-testdata</artifactId>
+            <groupId>nl.bzk.brp</groupId>
+            <artifactId>brp-test-testdata</artifactId>
             <version>${project.brp.art.data.versie}</version>
             <type>zip</type>
             <classifier>sql</classifier>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.brp.algemeen.opslag</groupId>
-            <artifactId>brp-algemeen-opslag-database</artifactId>
-            <version>${project.brp.database.versie}</version>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-test-dal</artifactId>
+            <version>${project.brp.algemeen.version}</version>
         </dependency>
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.8</version>
-                <executions>
-                    <execution>
-                        <id>extract-ARTengine</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>nl.bzk.brp.art.framework</groupId>
-                                    <artifactId>brp-art-framework-engine</artifactId>
-                                    <overWrite>true</overWrite>
-                                    <includes>**/*</includes>
-                                    <excludes>Voorbeeld*/**/*</excludes>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${art.engine.directory}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>unpack-templates</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>nl.bzk.brp.art.data</groupId>
-                                    <artifactId>brp-art-data-resources</artifactId>
-                                    <version>${project.brp.art.data.versie}</version>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${art.afhankelijkheden.directory}</outputDirectory>
-                                    <includes>RequestTemplates/**.xml, SQL/**.sql</includes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>2.5</version>
@@ -186,6 +134,7 @@
                 <project.brp.database.versie>${project.version}</project.brp.database.versie>
                 <project.brp.art.data.versie>${project.version}</project.brp.art.data.versie>
                 <project.brp.art.engine.versie>${project.version}</project.brp.art.engine.versie>
+                <project.brp.algemeen.version>${project.version}</project.brp.algemeen.version>
             </properties>
             <build>
                 <plugins>
@@ -198,7 +147,6 @@
                                 <id>update-versions</id>
                                 <phase>initialize</phase>
                                 <goals>
-                                    <!-- <goal>update-properties</goal>-->
                                     <goal>use-latest-versions</goal>
                                 </goals>
                             </execution>
@@ -219,279 +167,8 @@
                 <project.brp.database.versie>${brp.release.version}</project.brp.database.versie>
                 <project.brp.art.data.versie>${brp.release.version}</project.brp.art.data.versie>
                 <project.brp.art.engine.versie>${brp.release.version}</project.brp.art.engine.versie>
+                <project.brp.algemeen.version>${brp.algemeen.release.version}</project.brp.algemeen.version>
             </properties>
-        </profile>
-        <profile>
-            <id>brp-soapui-mac</id>
-            <activation>
-                <os>
-                    <family>macosx</family>
-                    <arch>x86</arch>
-                </os>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <id>copy-jars</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target name="copy">
-                                        <echo message="Kopieer ondersteunende jar's naar SoapUI: ${soapui.directory.macosx}"/>
-                                        <echo message="Kopieer: ${org.postgresql:postgresql:jar}"/>
-                                        <copy file="${org.postgresql:postgresql:jar}"
-                                              todir="${soapui.directory.macosx}"/>
-                                        <echo message="Kopieer: ${net.sourceforge.jexcelapi:jxl:jar}"/>
-                                        <copy file="${net.sourceforge.jexcelapi:jxl:jar}"
-                                              todir="${soapui.directory.macosx}"/>
-                                        <echo message="Kopieer: ${jp.skypencil.java-diff-utils:diffutils:jar}"/>
-                                        <copy file="${jp.skypencil.java-diff-utils:diffutils:jar}"
-                                              todir="${soapui.directory.macosx}"/>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>brp-soapui-windows</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                    <arch>x86</arch>
-                </os>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <id>copy-jars</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target name="copy">
-                                        <echo message="Kopieer ondersteunende jar's naar SoapUI: ${soapui.directory.windows}"/>
-                                        <echo message="Kopieer: ${org.postgresql:postgresql:jar}"/>
-                                        <copy file="${org.postgresql:postgresql:jar}"
-                                              todir="${soapui.directory.windows}"/>
-                                        <echo message="Kopieer: ${net.sourceforge.jexcelapi:jxl:jar}"/>
-                                        <copy file="${net.sourceforge.jexcelapi:jxl:jar}"
-                                              todir="${soapui.directory.windows}"/>
-                                        <echo message="Kopieer: ${jp.skypencil.java-diff-utils:diffutils:jar}"/>
-                                        <copy file="${jp.skypencil.java-diff-utils:diffutils:jar}"
-                                              todir="${soapui.directory.windows}"/>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>brp-soapui-linux</id>
-            <activation>
-                <os>
-                    <family>linux</family>
-                    <arch>x86</arch>
-                </os>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <id>copy-jars</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target name="copy">
-                                        <echo message="Kopieer ondersteunende jar's naar SoapUI: ${soapui.directory.linux}"/>
-                                        <echo message="Kopieer: ${org.postgresql:postgresql:jar}"/>
-                                        <copy file="${org.postgresql:postgresql:jar}"
-                                              todir="${soapui.directory.linux}"/>
-                                        <echo message="Kopieer: ${net.sourceforge.jexcelapi:jxl:jar}"/>
-                                        <copy file="${net.sourceforge.jexcelapi:jxl:jar}"
-                                              todir="${soapui.directory.linux}"/>
-                                        <echo message="Kopieer: ${jp.skypencil.java-diff-utils:diffutils:jar}"/>
-                                        <copy file="${jp.skypencil.java-diff-utils:diffutils:jar}"
-                                              todir="${soapui.directory.linux}"/>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <!-- Profiel 3 verschillende databases aan te maken: xx-brp, xx-brp-lev en xx-brp-ber -->
-            <id>maak-databases</id>
-            <activation>
-                <property>
-                    <name>maak-databases</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.liquibase</groupId>
-                        <artifactId>liquibase-maven-plugin</artifactId>
-                        <executions>
-
-                            <!-- drop eerst alle schema's om 'achterblijvers' te voorkomen -->
-                            <execution>
-                                <id>drop-kern-schemas</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>true</dropFirst>
-                                    <changeLogFile>changeset/drop-alle-schemas.xml</changeLogFile>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-
-                                    <driver>${db.kern.driver}</driver>
-                                    <url>${db.kern.url}</url>
-                                    <username>${db.kern.username}</username>
-                                    <password>${db.kern.password}</password>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>maak-ber-schemas</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>true</dropFirst>
-                                    <changeLogFile>changeset/drop-alle-schemas.xml</changeLogFile>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-
-                                    <driver>${db.ber.driver}</driver>
-                                    <url>${db.ber.url}</url>
-                                    <username>${db.ber.username}</username>
-                                    <password>${db.ber.password}</password>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>maak-lev-schemas</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>true</dropFirst>
-                                    <changeLogFile>changeset/drop-alle-schemas.xml</changeLogFile>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-
-                                    <driver>${db.lev.driver}</driver>
-                                    <url>${db.lev.url}</url>
-                                    <username>${db.lev.username}</username>
-                                    <password>${db.lev.password}</password>
-                                </configuration>
-                            </execution>
-
-
-                            <execution>
-                                <id>maak-kern-database</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>true</dropFirst>
-                                    <changeLogFile>changeset/kern-database.xml</changeLogFile>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-
-                                    <driver>${db.kern.driver}</driver>
-                                    <url>${db.kern.url}</url>
-                                    <username>${db.kern.username}</username>
-                                    <password>${db.kern.password}</password>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>maak-lev-database</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>true</dropFirst>
-                                    <changeLogFile>changeset/lev-database.xml</changeLogFile>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-
-                                    <driver>${db.lev.driver}</driver>
-                                    <url>${db.lev.url}</url>
-                                    <username>${db.lev.username}</username>
-                                    <password>${db.lev.password}</password>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>maak-ber-database</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>true</dropFirst>
-                                    <changeLogFile>changeset/ber-database.xml</changeLogFile>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-
-                                    <driver>${db.ber.driver}</driver>
-                                    <url>${db.ber.url}</url>
-                                    <username>${db.ber.username}</username>
-                                    <password>${db.ber.password}</password>
-                                </configuration>
-                            </execution>
-
-                            <!-- Nodig voor de art's -->
-                            <execution>
-                                <id>update-database</id>
-                                <phase>generate-test-sources</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>false</dropFirst>
-                                    <changeLogFile>changeset/test-database-update.xml</changeLogFile>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-
-                                    <driver>${db.kern.driver}</driver>
-                                    <url>${db.kern.url}</url>
-                                    <username>${db.kern.username}</username>
-                                    <password>${db.kern.password}</password>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
 
         <profile>
@@ -507,11 +184,9 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>2.8</version>
                         <executions>
-                            <!-- Pak de dependencies uit met daarin alle SQL bestanden voor de database en de vulling -->
                             <execution>
-                                <id>unpack-brp-algemeen-opslag-database</id>
+                                <id>unpack-brp-test-testdata</id>
                                 <phase>generate-resources</phase>
                                 <goals>
                                     <goal>unpack</goal>
@@ -519,32 +194,14 @@
                                 <configuration>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>nl.bzk.brp.algemeen.opslag</groupId>
-                                            <artifactId>brp-algemeen-opslag-database</artifactId>
-                                            <version>${project.brp.database.versie}</version>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${project.build.directory}/brp-algemeen-opslag-database</outputDirectory>
-                                            <includes>**/*.sql,**/*.xml</includes>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>unpack-brp-art-data-testdata</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>nl.bzk.brp.art.data</groupId>
-                                            <artifactId>brp-art-data-testdata</artifactId>
+                                            <groupId>nl.bzk.brp</groupId>
+                                            <artifactId>brp-test-testdata</artifactId>
                                             <version>${project.brp.art.data.versie}</version>
                                             <classifier>sql</classifier>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
-                                            <outputDirectory>${project.build.directory}/brp-art-data-testdata</outputDirectory>
+                                            <outputDirectory>${project.build.directory}/brp-test-testdata
+                                            </outputDirectory>
                                             <includes>**/*.sql</includes>
                                         </artifactItem>
                                     </artifactItems>
@@ -555,6 +212,9 @@
                     <plugin>
                         <groupId>org.liquibase</groupId>
                         <artifactId>liquibase-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>${dbcreate.skip}</skip>
+                        </configuration>
                         <executions>
                             <!-- Maak de structuur van de BRP database en vul deze met stamgegevens -->
                             <execution>
@@ -565,43 +225,9 @@
                                 </goals>
                                 <configuration>
                                     <dropFirst>true</dropFirst>
-                                    <changeLogFile>changeset/brp-databases.xml</changeLogFile>
+                                    <changeLogFile>liquibase/changeset/brp-databases.xml</changeLogFile>
                                     <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                                     <!-- Alles in 1 database in dit profiel -->
-                                    <driver>${db.kern.driver}</driver>
-                                    <url>${db.kern.url}</url>
-                                    <username>${db.kern.username}</username>
-                                    <password>${db.kern.password}</password>
-                                </configuration>
-                            </execution>
-                            <!-- Maak een database voor een voorbeeld afnemer -->
-                            <execution>
-                                <id>maak-afnemer-database</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>false</dropFirst>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-                                    <changeLogFile>changeset/afnemervoorbeeld.xml</changeLogFile>
-                                    <driver>${db.afnemer.driver}</driver>
-                                    <url>${db.afnemer.url}</url>
-                                    <username>${db.afnemer.username}</username>
-                                    <password>${db.afnemer.password}</password>
-                                </configuration>
-                            </execution>
-                            <!-- Voer een SQL update uit om specifieke test tabellen te maken -->
-                            <execution>
-                                <id>update-database</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>false</dropFirst>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-                                    <changeLogFile>changeset/test-database-update.xml</changeLogFile>
                                     <driver>${db.kern.driver}</driver>
                                     <url>${db.kern.url}</url>
                                     <username>${db.kern.username}</username>
@@ -618,12 +244,17 @@
                                 <configuration>
                                     <dropFirst>true</dropFirst>
                                     <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-                                    <changeLogFile>changeset/activemq.xml</changeLogFile>
+                                    <changeLogFile>liquibase/changeset/activemq.xml</changeLogFile>
                                     <driver>${db.activemq.driver}</driver>
                                     <url>${db.activemq.url}</url>
                                     <username>${db.activemq.username}</username>
                                     <password>${db.activemq.password}</password>
                                 </configuration>
+                            </execution>
+                            <!-- overload de create-db execution uit brp-parent, zodat deze niet uitgevoerd wordt. -->
+                            <execution>
+                                <id>create-db</id>
+                                <phase>none</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -648,34 +279,8 @@
                                 <configuration>
                                     <autocommit>true</autocommit>
                                     <srcFiles>
-                                        <srcFile>${project.build.directory}/brp-art-data-testdata/art-testdata.sql</srcFile>
+                                        <srcFile>${project.build.directory}/brp-test-testdata/${sqlfile}</srcFile>
                                     </srcFiles>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- Bewaart de SQLs per persoon zodat personen "gereset" kunnen worden -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>backup-db</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>
-                                        <argument>-b</argument>
-                                        <argument>-d</argument>
-                                        <argument>${db.kern.url}</argument>
-                                        <argument>-u</argument>
-                                        <argument>${db.kern.username}</argument>
-                                        <argument>-p</argument>
-                                        <argument>${db.kern.password}</argument>
-                                    </arguments>
-                                    <mainClass>nl.bzk.brp.art.util.main.UtilRunner</mainClass>
                                 </configuration>
                             </execution>
                         </executions>
@@ -684,7 +289,7 @@
             </build>
         </profile>
         <profile>
-            <id>create-leveren-db</id>
+            <id>create-test-db-docker-bijhouding</id>
             <activation>
                 <property>
                     <name>create-test-db</name>
@@ -696,11 +301,9 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>2.8</version>
                         <executions>
-                            <!-- Pak de dependencies uit met daarin alle SQL bestanden voor de database en de vulling -->
                             <execution>
-                                <id>unpack-brp-algemeen-opslag-database</id>
+                                <id>unpack-brp-test-testdata</id>
                                 <phase>generate-resources</phase>
                                 <goals>
                                     <goal>unpack</goal>
@@ -708,119 +311,25 @@
                                 <configuration>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>nl.bzk.brp.algemeen.opslag</groupId>
-                                            <artifactId>brp-algemeen-opslag-database</artifactId>
-                                            <version>${project.brp.database.versie}</version>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${project.build.directory}/brp-algemeen-opslag-database</outputDirectory>
-                                            <includes>**/*.sql,**/*.xml</includes>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                            <!--<execution>
-                                <id>unpack-brp-art-data-testdata</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>nl.bzk.brp.art.data</groupId>
-                                            <artifactId>brp-art-data-testdata</artifactId>
+                                            <groupId>nl.bzk.brp</groupId>
+                                            <artifactId>brp-test-testdata</artifactId>
                                             <version>${project.brp.art.data.versie}</version>
                                             <classifier>sql</classifier>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
-                                            <outputDirectory>${project.build.directory}/brp-art-data-testdata</outputDirectory>
+                                            <outputDirectory>${project.build.directory}/brp-test-testdata
+                                            </outputDirectory>
                                             <includes>**/*.sql</includes>
                                         </artifactItem>
                                     </artifactItems>
-                                </configuration>
-                            </execution>-->
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.liquibase</groupId>
-                        <artifactId>liquibase-maven-plugin</artifactId>
-                        <executions>
-                            <!-- Maak de structuur van de BRP database en vul deze met stamgegevens -->
-                            <execution>
-                                <id>maak-database</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>true</dropFirst>
-                                    <changeLogFile>changeset/brp-databases.xml</changeLogFile>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-                                    <!-- Alles in 1 database in dit profiel -->
-                                    <driver>${db.kern.driver}</driver>
-                                    <url>${db.kern.url}</url>
-                                    <username>${db.kern.username}</username>
-                                    <password>${db.kern.password}</password>
-                                </configuration>
-                            </execution>
-                            <!-- Maak een database voor een voorbeeld afnemer -->
-                            <execution>
-                                <id>maak-afnemer-database</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>false</dropFirst>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-                                    <changeLogFile>changeset/afnemervoorbeeld.xml</changeLogFile>
-                                    <driver>${db.afnemer.driver}</driver>
-                                    <url>${db.afnemer.url}</url>
-                                    <username>${db.afnemer.username}</username>
-                                    <password>${db.afnemer.password}</password>
-                                </configuration>
-                            </execution>
-                            <!-- Voer een SQL update uit om specifieke test tabellen te maken -->
-                            <execution>
-                                <id>update-database</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>false</dropFirst>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-                                    <changeLogFile>changeset/test-database-update.xml</changeLogFile>
-                                    <driver>${db.kern.driver}</driver>
-                                    <url>${db.kern.url}</url>
-                                    <username>${db.kern.username}</username>
-                                    <password>${db.kern.password}</password>
-                                </configuration>
-                            </execution>
-                            <!-- Schoon de activemq database op, zodat er geen oude berichten blijven staan. -->
-                            <execution>
-                                <id>clear-activemq</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <configuration>
-                                    <dropFirst>true</dropFirst>
-                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-                                    <changeLogFile>changeset/activemq.xml</changeLogFile>
-                                    <driver>${db.activemq.driver}</driver>
-                                    <url>${db.activemq.url}</url>
-                                    <username>${db.activemq.username}</username>
-                                    <password>${db.activemq.password}</password>
                                 </configuration>
                             </execution>
                         </executions>
                     </plugin>
                     <!-- Vul de database met testdata -->
-                    <!--<plugin>
+                    <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>sql-maven-plugin</artifactId>
-                        <version>1.5</version>
                         <configuration>
                             <driver>${db.kern.driver}</driver>
                             <url>${db.kern.url}</url>
@@ -837,34 +346,8 @@
                                 <configuration>
                                     <autocommit>true</autocommit>
                                     <srcFiles>
-                                        <srcFile>${project.build.directory}/brp-art-data-testdata/art-testdata.sql</srcFile>
+                                        <srcFile>${project.build.directory}/brp-test-testdata/${sqlfile}</srcFile>
                                     </srcFiles>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>-->
-                    <!-- Bewaart de SQLs per persoon zodat personen "gereset" kunnen worden -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>backup-db</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>
-                                        <argument>-b</argument>
-                                        <argument>-d</argument>
-                                        <argument>${db.kern.url}</argument>
-                                        <argument>-u</argument>
-                                        <argument>${db.kern.username}</argument>
-                                        <argument>-p</argument>
-                                        <argument>${db.kern.password}</argument>
-                                    </arguments>
-                                    <mainClass>nl.bzk.brp.art.util.main.UtilRunner</mainClass>
                                 </configuration>
                             </execution>
                         </executions>

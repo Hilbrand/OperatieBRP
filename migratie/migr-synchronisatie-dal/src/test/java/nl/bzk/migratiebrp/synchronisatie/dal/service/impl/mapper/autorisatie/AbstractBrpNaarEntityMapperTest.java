@@ -7,6 +7,8 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.Collections;
+
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
@@ -15,8 +17,8 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
+
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -34,14 +36,14 @@ public abstract class AbstractBrpNaarEntityMapperTest {
         final BrpHistorie historie = new BrpHistorie(null, null, BrpDatumTijd.fromDatum(19900102, null), null, null);
         final BrpActie actie =
                 new BrpActie(
-                    1L,
-                    BrpSoortActieCode.CONVERSIE_GBA,
-                    BrpPartijCode.MIGRATIEVOORZIENING,
+                        1L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        BrpPartijCode.MIGRATIEVOORZIENING,
                         BrpDatumTijd.fromDatum(19900102, null),
-                    null,
-                    null,
-                    1,
-                    null);
+                        null,
+                        null,
+                        1,
+                        null);
 
         final BrpGroep<T> groep = new BrpGroep<>(inhoud, historie, actie, null, null);
         return new BrpStapel<>(Collections.singletonList(groep));

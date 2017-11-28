@@ -59,9 +59,19 @@ public class Lo3VergelijkerTest {
         builder2.persoonStapel(VerplichteStapel.createPersoonStapel());
 
         final Lo3InschrijvingInhoud inhoud =
-                new Lo3InschrijvingInhoud(null, null, null, new Lo3Datum(18000101), null, null, null, null, new Lo3Integer(1), new Lo3Datumtijdstempel(
-                    19000101120000000L), null);
-        final Lo3Historie historie = Lo3Historie.NULL_HISTORIE;
+                new Lo3InschrijvingInhoud(
+                        null,
+                        null,
+                        null,
+                        new Lo3Datum(18000101),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Lo3Integer(1),
+                        new Lo3Datumtijdstempel(19000101120000000L),
+                        null);
+        final Lo3Historie historie = new Lo3Historie(null, null, null);
         final Lo3Documentatie documentatie =
                 new Lo3Documentatie(-1000, new Lo3GemeenteCode(DEN_HAAG), Lo3String.wrap("1Inschr-Akte"), null, null, null, null, null);
 
@@ -80,30 +90,32 @@ public class Lo3VergelijkerTest {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
 
         final List<Lo3Categorie<Lo3PersoonInhoud>> persoonCategorieen = new ArrayList<>();
-        persoonCategorieen.add(VerplichteStapel.buildPersoon(
-            1000000000L,
-            "Klaas",
-            "Jansen",
-            VerplichteStapel.GEBOORTE_DATUM,
-            "0363",
-            null,
-            19960101,
-            19960110,
-            6,
-            DEN_HAAG,
-            "3A"));
-        persoonCategorieen.add(VerplichteStapel.buildPersoon(
-            1000000000L,
-            "Zlaas",
-            "Jansen",
-            VerplichteStapel.GEBOORTE_DATUM,
-            "0363",
-            null,
-            19950101,
-            19950110,
-            6,
-            DEN_HAAG,
-            "3A"));
+        persoonCategorieen.add(
+                VerplichteStapel.buildPersoon(
+                        "1000000000",
+                        "Klaas",
+                        "Jansen",
+                        VerplichteStapel.GEBOORTE_DATUM,
+                        "0363",
+                        null,
+                        19960101,
+                        19960110,
+                        6,
+                        DEN_HAAG,
+                        "3A"));
+        persoonCategorieen.add(
+                VerplichteStapel.buildPersoon(
+                        "1000000000",
+                        "Zlaas",
+                        "Jansen",
+                        VerplichteStapel.GEBOORTE_DATUM,
+                        "0363",
+                        null,
+                        19950101,
+                        19950110,
+                        6,
+                        DEN_HAAG,
+                        "3A"));
         builder.persoonStapel(StapelUtils.createStapel(persoonCategorieen));
 
         builder.inschrijvingStapel(VerplichteStapel.createInschrijvingStapel());
@@ -112,36 +124,48 @@ public class Lo3VergelijkerTest {
         final Lo3PersoonslijstBuilder builder2 = new Lo3PersoonslijstBuilder();
 
         final List<Lo3Categorie<Lo3PersoonInhoud>> persoonCategorieen2 = new ArrayList<>();
-        persoonCategorieen2.add(VerplichteStapel.buildPersoon(
-            1000000000L,
-            "Klaas",
-            "Jansen",
-            VerplichteStapel.GEBOORTE_DATUM,
-            "0363",
-            null,
-            19960101,
-            19960110,
-            6,
-            DEN_HAAG,
-            "3A"));
-        persoonCategorieen2.add(VerplichteStapel.buildPersoon(
-            1000000000L,
-            "Zlaas",
-            "Jansen",
-            VerplichteStapel.GEBOORTE_DATUM,
-            "0363",
-            null,
-            19950102,
-            19950111,
-            6,
-            "0519",
-            "3A"));
+        persoonCategorieen2.add(
+                VerplichteStapel.buildPersoon(
+                        "1000000000",
+                        "Klaas",
+                        "Jansen",
+                        VerplichteStapel.GEBOORTE_DATUM,
+                        "0363",
+                        null,
+                        19960101,
+                        19960110,
+                        6,
+                        DEN_HAAG,
+                        "3A"));
+        persoonCategorieen2.add(
+                VerplichteStapel.buildPersoon(
+                        "1000000000",
+                        "Zlaas",
+                        "Jansen",
+                        VerplichteStapel.GEBOORTE_DATUM,
+                        "0363",
+                        null,
+                        19950102,
+                        19950111,
+                        6,
+                        "0519",
+                        "3A"));
         builder2.persoonStapel(StapelUtils.createStapel(persoonCategorieen2));
 
         final Lo3InschrijvingInhoud inhoud =
-                new Lo3InschrijvingInhoud(null, null, null, new Lo3Datum(18000101), null, null, null, null, new Lo3Integer(1), new Lo3Datumtijdstempel(
-                    19000101120000000L), null);
-        final Lo3Historie historie = Lo3Historie.NULL_HISTORIE;
+                new Lo3InschrijvingInhoud(
+                        null,
+                        null,
+                        null,
+                        new Lo3Datum(18000101),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Lo3Integer(1),
+                        new Lo3Datumtijdstempel(19000101120000000L),
+                        null);
+        final Lo3Historie historie = new Lo3Historie(null, null, null);
         final Lo3Documentatie documentatie =
                 new Lo3Documentatie(-1000, new Lo3GemeenteCode(DEN_HAAG), Lo3String.wrap("Inschr-Akte"), null, null, null, null, null);
 

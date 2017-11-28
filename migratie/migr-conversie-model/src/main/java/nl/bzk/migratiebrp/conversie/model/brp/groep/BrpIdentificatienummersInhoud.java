@@ -6,72 +6,61 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de BRP groep Persoon / identificatienummers.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
- * 
- * 
- * 
  */
 public final class BrpIdentificatienummersInhoud extends AbstractBrpGroepInhoud {
 
-    @Element(name = "administratienummer", required = false)
-    private final BrpLong administratienummer;
-    @Element(name = "burgerservicenummer", required = false)
-    private final BrpInteger burgerservicenummer;
+    @Element(name = "administratienummer")
+    private final BrpString administratienummer;
+    @Element(name = "burgerservicenummer")
+    private final BrpString burgerservicenummer;
 
     /**
      * Maakt een BrpIdentificatienummersInhoud object.
-     * 
-     * @param administratienummer
-     *            het BRP administratienummer, mag null zijn
-     * @param burgerservicenummer
-     *            het BRP burgerservicenummer, mag null zijn
+     * @param administratienummer het BRP administratienummer, mag null zijn
+     * @param burgerservicenummer het BRP burgerservicenummer, mag null zijn
      */
-    public BrpIdentificatienummersInhoud(@Element(name = "administratienummer", required = false) final BrpLong administratienummer, @Element(
-            name = "burgerservicenummer", required = false) final BrpInteger burgerservicenummer)
-    {
+    public BrpIdentificatienummersInhoud(@Element(name = "administratienummer") final BrpString administratienummer,
+                                         @Element(name = "burgerservicenummer") final BrpString burgerservicenummer) {
         this.administratienummer = administratienummer;
         this.burgerservicenummer = burgerservicenummer;
     }
 
     /**
-     * Geef de waarde van administratienummer.
-     *
-     * @return het administratienummer of null
+     * Geef de waarde van administratienummer van BrpIdentificatienummersInhoud.
+     * @return de waarde van administratienummer van BrpIdentificatienummersInhoud
      */
-    public BrpLong getAdministratienummer() {
+    public BrpString getAdministratienummer() {
         return administratienummer;
     }
 
     /**
-     * Geef de waarde van burgerservicenummer.
-     *
-     * @return het burgerservicenummer of null
+     * Geef de waarde van burgerservicenummer van BrpIdentificatienummersInhoud.
+     * @return de waarde van burgerservicenummer van BrpIdentificatienummersInhoud
      */
-    public BrpInteger getBurgerservicenummer() {
+    public BrpString getBurgerservicenummer() {
         return burgerservicenummer;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return true als administratienummer en burgerservicenummer beide null zijn, anders false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isAttribuutGevuld(administratienummer) && !Validatie.isAttribuutGevuld(burgerservicenummer);
+        return !BrpValidatie.isAttribuutGevuld(administratienummer) && !BrpValidatie.isAttribuutGevuld(burgerservicenummer);
     }
 
     @Override
@@ -84,8 +73,8 @@ public final class BrpIdentificatienummersInhoud extends AbstractBrpGroepInhoud 
         }
         final BrpIdentificatienummersInhoud castOther = (BrpIdentificatienummersInhoud) other;
         return new EqualsBuilder().append(administratienummer, castOther.administratienummer)
-                                  .append(burgerservicenummer, castOther.burgerservicenummer)
-                                  .isEquals();
+                .append(burgerservicenummer, castOther.burgerservicenummer)
+                .isEquals();
     }
 
     @Override
@@ -96,8 +85,8 @@ public final class BrpIdentificatienummersInhoud extends AbstractBrpGroepInhoud 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("administratienummer", administratienummer)
-                                                                          .append("burgerservicenummer", burgerservicenummer)
-                                                                          .toString();
+                .append("administratienummer", administratienummer)
+                .append("burgerservicenummer", burgerservicenummer)
+                .toString();
     }
 }

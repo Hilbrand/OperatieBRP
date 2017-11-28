@@ -6,14 +6,14 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een BRP Predicaat code als onderdeel van het BRP geslachtsnaam component.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
+ *
  * (N.b. spelling aan BRP kant is 'Predicaat'. Aan de Lo3 kant is het nog 'Predikaat'. Dit volgt de spellingsregels van
  * die tijd.)
  */
@@ -24,9 +24,7 @@ public final class BrpPredicaatCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpPredicaatCode object.
-     * 
-     * @param waarde
-     *            de waarde
+     * @param waarde de waarde
      */
     public BrpPredicaatCode(final String waarde) {
         this(waarde, null);
@@ -34,22 +32,18 @@ public final class BrpPredicaatCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpPredicaatCode object met onderzoek.
-     * 
-     * @param waarde
-     *            de waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde de waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpPredicaatCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -60,7 +54,6 @@ public final class BrpPredicaatCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Geef de waarde van geslachtsaanduiding.
-     *
      * @return geslachtsaanduiding
      */
     public BrpGeslachtsaanduidingCode getGeslachtsaanduiding() {
@@ -69,9 +62,7 @@ public final class BrpPredicaatCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Zet de waarde van geslachtsaanduiding.
-     *
-     * @param brpGeslachtsaanduidingCode
-     *            geslachtsaanduiding
+     * @param brpGeslachtsaanduidingCode geslachtsaanduiding
      */
     public void setGeslachtsaanduiding(final BrpGeslachtsaanduidingCode brpGeslachtsaanduidingCode) {
         geslachtsaanduiding = brpGeslachtsaanduidingCode;
@@ -79,7 +70,6 @@ public final class BrpPredicaatCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Geeft een kopie van het attribuut terug zonder onderzoek.
-     * 
      * @return Geeft een kopie van het attribuut terug zonder onderzoek
      */
     public BrpPredicaatCode verwijderOnderzoek() {
@@ -91,11 +81,8 @@ public final class BrpPredicaatCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Wrap de waarde en onderzoek naar een BrpPredicaatCode.
-     * 
-     * @param waarde
-     *            de String waarde
-     * @param onderzoek
-     *            het Lo3 onderzoek
+     * @param waarde de String waarde
+     * @param onderzoek het Lo3 onderzoek
      * @return BrpPredicaatCode object met daarin waarde en onderzoek
      */
     public static BrpPredicaatCode wrap(final String waarde, final Lo3Onderzoek onderzoek) {

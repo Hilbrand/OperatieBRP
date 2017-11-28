@@ -19,11 +19,8 @@ public class CompositeFilter implements FilenameFilter {
 
     /**
      * Default constructor.
-     *
-     * @param type
-     *            Het type waarop de filtering wordt toegepast.
-     * @param filters
-     *            De toe te passen filters.
+     * @param type Het type waarop de filtering wordt toegepast.
+     * @param filters De toe te passen filters.
      */
     public CompositeFilter(final Type type, final FilenameFilter... filters) {
         this.type = type;

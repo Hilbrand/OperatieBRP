@@ -15,9 +15,7 @@ public interface Service {
 
     /**
      * Verwerk bericht.
-     *
-     * @param message
-     *            bericht
+     * @param message bericht
      */
     void verwerk(Message message);
 }

@@ -12,21 +12,17 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpVerblijfsrechtCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AbstractAttribuutConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingVerblijfstitelCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze conversietabel mapt een Lo3AanduidingVerblijfstitelCode op de corresponderen BrpVerblijfsrechtCode en vice
  * versa.
- * 
  */
-public abstract class AbstractVerblijfsrechtConversietabel extends AbstractAttribuutConversietabel<Lo3AanduidingVerblijfstitelCode, BrpVerblijfsrechtCode>
-{
+public abstract class AbstractVerblijfsrechtConversietabel extends AbstractAttribuutConversietabel<Lo3AanduidingVerblijfstitelCode, BrpVerblijfsrechtCode> {
 
     /**
      * Maakt een VerblijfsrechtConversietabel object.
-     * 
-     * @param conversieLijst
-     *            de lijst met alle verblijfsrecht conversies
+     * @param conversieLijst de lijst met alle verblijfsrecht conversies
      */
     public AbstractVerblijfsrechtConversietabel(final List<Entry<Lo3AanduidingVerblijfstitelCode, BrpVerblijfsrechtCode>> conversieLijst) {
         super(conversieLijst);
@@ -35,7 +31,7 @@ public abstract class AbstractVerblijfsrechtConversietabel extends AbstractAttri
     @Override
     protected final Lo3AanduidingVerblijfstitelCode voegOnderzoekToeLo3(final Lo3AanduidingVerblijfstitelCode input, final Lo3Onderzoek onderzoek) {
         final Lo3AanduidingVerblijfstitelCode resultaat;
-        if (Validatie.isElementGevuld(input)) {
+        if (Lo3Validatie.isElementGevuld(input)) {
             resultaat = new Lo3AanduidingVerblijfstitelCode(input.getWaarde(), onderzoek);
         } else {
             if (onderzoek != null) {

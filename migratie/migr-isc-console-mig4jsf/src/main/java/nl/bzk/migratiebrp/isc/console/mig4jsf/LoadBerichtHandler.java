@@ -22,17 +22,15 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
         name = "loadBericht",
         description = "Read a berihte from the database.",
         attributes = {@TldAttribute(name = "id", description = "The ID of the bericht to load.", required = true, deferredType = long.class),
-                      @TldAttribute(name = "target", description = "An EL expression into which the process instance should be stored.",
-                              required = true, deferredType = Bericht.class) })
+                @TldAttribute(name = "target", description = "An EL expression into which the process instance should be stored.",
+                        required = true, deferredType = Bericht.class)})
 public final class LoadBerichtHandler extends AbstractHandler {
     private final TagAttribute idTagAttribute;
     private final TagAttribute targetTagAttribute;
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public LoadBerichtHandler(final TagConfig config) {
         super(config);
@@ -43,8 +41,8 @@ public final class LoadBerichtHandler extends AbstractHandler {
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new LoadBerichtActionListener(getValueExpression(idTagAttribute, ctx, Long.class), getValueExpression(
-            targetTagAttribute,
-            ctx,
-            Bericht.class));
+                targetTagAttribute,
+                ctx,
+                Bericht.class));
     }
 }

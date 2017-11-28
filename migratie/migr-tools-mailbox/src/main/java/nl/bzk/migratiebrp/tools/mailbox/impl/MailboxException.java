@@ -15,9 +15,7 @@ public class MailboxException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
+     * @param message melding
      */
     public MailboxException(final String message) {
         super(message);
@@ -25,11 +23,8 @@ public class MailboxException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
-     * @param cause
-     *            oorzaak
+     * @param message melding
+     * @param cause oorzaak
      */
     public MailboxException(final String message, final Throwable cause) {
         super(message, cause);

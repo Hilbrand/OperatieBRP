@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstbundelLo3RubriekInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3AutorisatieInhoud;
@@ -20,44 +22,47 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenDienstbundelLo3Rubriek;
-import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.AbstractConverteerder;
-import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3.Foutmelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
+import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.Converteerder;
+import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.Lo3AttribuutConverteerder;
 import org.springframework.stereotype.Component;
 
 /**
  * DienstConverteerder.
  */
 @Component
-public class DienstbundelLo3RubriekenConverteerder extends AbstractConverteerder {
+public class DienstbundelLo3RubriekenConverteerder extends Converteerder {
 
-    private static final Logger LOG = LoggerFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private final AutorisatieConversieHelper autorisatieConversieHelper;
+
+    /**
+     * constructor.
+     * @param autorisatieConversieHelper
+     * @param lo3AttribuutConverteerder
+     */
     @Inject
-    private AutorisatieConversieHelper autorisatieConversieHelper;
+    public DienstbundelLo3RubriekenConverteerder(final AutorisatieConversieHelper autorisatieConversieHelper,
+                                                 final Lo3AttribuutConverteerder lo3AttribuutConverteerder) {
+        super(lo3AttribuutConverteerder);
+        this.autorisatieConversieHelper = autorisatieConversieHelper;
+    }
 
     /**
      * Converteer van Lo3 model naar Migratie model.
-     *
-     * @param categorie
-     *            {@link Lo3Categorie} van {@link Lo3AutorisatieInhoud}
-     *
-     * @param lo3Rubrieken
-     *            de lo3 rubrieken
-     *
-     * @return {@link nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel} van
-     *         {@link BrpDienstbundelLo3RubriekInhoud}
+     * @param categorie {@link Lo3Categorie} van {@link Lo3AutorisatieInhoud}
+     * @param lo3Rubrieken de lo3 rubrieken
+     * @return {@link nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel} van {@link BrpDienstbundelLo3RubriekInhoud}
      */
-    public final List<TussenDienstbundelLo3Rubriek> converteerDienstbundelLo3Rubriek(
-        final Lo3Categorie<Lo3AutorisatieInhoud> categorie,
-        final String lo3Rubrieken)
-    {
+    final List<TussenDienstbundelLo3Rubriek> converteerDienstbundelLo3Rubriek(
+            final Lo3Categorie<Lo3AutorisatieInhoud> categorie,
+            final String lo3Rubrieken) {
         final List<String> lo3RubriekenLijst = maakLo3Rubrieken(lo3Rubrieken, categorie.getLo3Herkomst());
         final List<TussenDienstbundelLo3Rubriek> dienstbundelLo3Rubrieken = new ArrayList<>();
         for (final String lo3Rubriek : lo3RubriekenLijst) {
             dienstbundelLo3Rubrieken.add(
-                new TussenDienstbundelLo3Rubriek(lo3Rubriek, true, new TussenStapel<>(Collections.singletonList(converteer(categorie)))));
+                    new TussenDienstbundelLo3Rubriek(lo3Rubriek, true, new TussenStapel<>(Collections.singletonList(converteer(categorie)))));
         }
 
         return dienstbundelLo3Rubrieken;
@@ -70,7 +75,7 @@ public class DienstbundelLo3RubriekenConverteerder extends AbstractConverteerder
             try {
                 result.add(getLo3AttribuutConverteerder().converteerFilterRubriek(rubriek));
             } catch (final IllegalArgumentException e) {
-                LOG.warn(e.getMessage());
+                LOGGER.warn("Fout tijdens maken LO3 rubrieken", e);
                 Foutmelding.logMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.AUT008, null);
             }
         }

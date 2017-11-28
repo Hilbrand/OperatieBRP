@@ -13,7 +13,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 /**
  * Delivery report.
  */
-public class DeliveryReport extends AbstractUnparsedLo3Bericht {
+public final class DeliveryReport extends AbstractUnparsedLo3Bericht {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,9 +30,7 @@ public class DeliveryReport extends AbstractUnparsedLo3Bericht {
 
     /**
      * Zet de non delivery reason.
-     *
-     * @param nonDeliveryReason
-     *            non delivery reason
+     * @param nonDeliveryReason non delivery reason
      */
     public void setNonDeliveryReason(final int nonDeliveryReason) {
         setHeader(Lo3HeaderVeld.NON_DELIVERY_REASON, Integer.toString(nonDeliveryReason));

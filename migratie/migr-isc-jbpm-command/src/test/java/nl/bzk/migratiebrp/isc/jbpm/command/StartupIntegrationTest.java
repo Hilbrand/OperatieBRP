@@ -6,12 +6,13 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.command;
 
+import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
-public class StartupIntegrationTest extends AbstractIntegrationTest {
+public class StartupIntegrationTest extends AbstractIntegrationTestBasis {
 
     @Test
     public void test() throws InterruptedException {
-        Thread.sleep(5000);
+        TimeUnit.MILLISECONDS.sleep(5000);
     }
 }

@@ -40,12 +40,11 @@ public class HornetQConfigurer implements InitializingBean {
         // Queues
         for (final String queue : queues) {
             server.deployQueue(
-                SimpleString.toSimpleString(HornetQDestination.JMS_QUEUE_ADDRESS_PREFIX + queue),
-                SimpleString.toSimpleString(HornetQDestination.JMS_QUEUE_ADDRESS_PREFIX + queue),
-                SimpleString.toSimpleString(""),
-                true,
-                false);
+                    SimpleString.toSimpleString(HornetQDestination.JMS_QUEUE_ADDRESS_PREFIX + queue),
+                    SimpleString.toSimpleString(HornetQDestination.JMS_QUEUE_ADDRESS_PREFIX + queue),
+                    SimpleString.toSimpleString(""),
+                    true,
+                    false);
         }
-
     }
 }

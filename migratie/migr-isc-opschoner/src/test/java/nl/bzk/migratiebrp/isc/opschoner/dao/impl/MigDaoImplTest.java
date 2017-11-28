@@ -11,8 +11,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import junit.framework.Assert;
 import nl.bzk.migratiebrp.isc.opschoner.dao.MigDao;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class MigDaoImplTest extends AbstractDaoTest {

@@ -18,7 +18,7 @@ import org.jbpm.jsf.JbpmJsfContext;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 
 /**
- *
+ * List tasks action listener.
  */
 public final class ListTasksActionListener extends AbstractActionListener {
     private final ValueExpression targetExpression;
@@ -26,11 +26,8 @@ public final class ListTasksActionListener extends AbstractActionListener {
 
     /**
      * Constructor.
-     *
-     * @param includeEndedExpression
-     *            includeEnded expression
-     * @param targetExpression
-     *            target expression
+     * @param includeEndedExpression includeEnded expression
+     * @param targetExpression target expression
      */
     public ListTasksActionListener(final ValueExpression includeEndedExpression, final ValueExpression targetExpression) {
         super("listTasks");

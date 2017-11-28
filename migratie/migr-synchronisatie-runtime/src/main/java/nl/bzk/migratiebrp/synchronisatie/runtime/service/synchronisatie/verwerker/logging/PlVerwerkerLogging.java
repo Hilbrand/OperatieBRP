@@ -18,9 +18,7 @@ public final class PlVerwerkerLogging {
 
     /**
      * Constructor (en log start).
-     *
-     * @param melding
-     *            melding
+     * @param melding melding
      */
     public PlVerwerkerLogging(final PlVerwerkerMelding melding) {
         key = melding.getKey();
@@ -29,9 +27,7 @@ public final class PlVerwerkerLogging {
 
     /**
      * Log een verwerkings beslissing (in context van de controle).
-     *
-     * @param beslissing
-     *            beslissing
+     * @param beslissing beslissing
      */
     public void addBeslissing(final SynchronisatieBeslissing beslissing) {
         SynchronisatieLogging.addBeslissing(beslissing);
@@ -40,9 +36,7 @@ public final class PlVerwerkerLogging {
 
     /**
      * Log een melding (in context van de controle).
-     *
-     * @param melding
-     *            melding
+     * @param melding melding
      */
     public void addMelding(final String melding) {
         SynchronisatieLogging.addMelding(String.format("[%s] %s", key, melding));

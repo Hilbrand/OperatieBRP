@@ -6,12 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.simpleframework.xml.Element;
 
 /**
  * Indicatie onjuist.
- * 
  */
 public final class Lo3IndicatieOnjuist extends AbstractLo3Element implements Comparable<Lo3IndicatieOnjuist> {
 
@@ -24,9 +23,7 @@ public final class Lo3IndicatieOnjuist extends AbstractLo3Element implements Com
 
     /**
      * Constructor.
-     * 
-     * @param waarde
-     *            code
+     * @param waarde code
      */
     public Lo3IndicatieOnjuist(final String waarde) {
         this(waarde, null);
@@ -34,21 +31,17 @@ public final class Lo3IndicatieOnjuist extends AbstractLo3Element implements Com
 
     /**
      * Constructor met onderzoek.
-     * 
-     * @param waarde
-     *            code
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde code
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
-    public Lo3IndicatieOnjuist(@Element(name = "waarde", required = false) final String waarde, @Element(name = "onderzoek",
-            required = false) final Lo3Onderzoek onderzoek)
-    {
+    public Lo3IndicatieOnjuist(
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Geef de waarde van code as character.
-     *
      * @return de code als character
      */
     public Character getCodeAsCharacter() {

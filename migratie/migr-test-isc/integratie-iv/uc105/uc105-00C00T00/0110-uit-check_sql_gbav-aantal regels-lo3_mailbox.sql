@@ -1,1 +1,0 @@
-select count(*) as aantal_lo3 from lo3_mailbox

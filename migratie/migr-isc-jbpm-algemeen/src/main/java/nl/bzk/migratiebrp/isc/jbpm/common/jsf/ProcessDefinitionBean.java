@@ -17,7 +17,6 @@ public final class ProcessDefinitionBean {
 
     /**
      * Geef de huidige (task) process definitie.
-     * 
      * @return (task) process definitie
      */
     public ProcessDefinition getProcessDefinition() {
@@ -27,7 +26,6 @@ public final class ProcessDefinitionBean {
 
     /**
      * Geef de root process definitie.
-     * 
      * @return root process definitie.
      */
     public ProcessDefinition getRootProcessDefinition() {

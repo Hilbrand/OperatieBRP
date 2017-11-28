@@ -6,35 +6,72 @@
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.logMetaObject;
+import static nl.bzk.brp.levering.lo3.support.TestHelper.assertElementen;
+
+import java.util.HashSet;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortActie;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortAdministratieveHandeling;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.brp.levering.lo3.builder.MetaObjectAdder;
+import nl.bzk.brp.levering.lo3.conversie.ConversieCache;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
+
 import org.junit.Assert;
 import org.junit.Test;
-import support.PersoonHisVolledigUtil;
 
 /**
  * Verblijfstitel.
  */
 public class MutatieCategorie10IntegratieTest extends AbstractMutatieConverteerderIntegratieTest {
 
+    @Inject
+    private MutatieConverteerder subject;
+
     @Test
     public void testGroep39Verblijfstitel() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400102, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling(1940, 1, 3);
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        builder.nieuwVerblijfsrechtRecord(actie)
-               .aanduidingVerblijfsrecht((short) 9)
-               .datumAanvangVerblijfsrecht(19400101)
-               .datumVoorzienEindeVerblijfsrecht(19600102)
-               .datumMededelingVerblijfsrecht(19391224)
-               .eindeRecord();
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_VERBLIJFSRECHT.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                          .metGroep()
+                          .metGroepElement(groepElement)
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_VERBLIJFSRECHT_AANDUIDINGCODE.getId()), "09")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_VERBLIJFSRECHT_DATUMAANVANG.getId()), 19400101)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_VERBLIJFSRECHT_DATUMMEDEDELING.getId()), 19391224)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_VERBLIJFSRECHT_DATUMVOORZIENEINDE.getId()), 19600102)
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(groepElement)
+                          .getRecords()
+                          .iterator()
+                          .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,

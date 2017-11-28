@@ -25,7 +25,6 @@ public final class ConverterEnumType implements UserType, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Override
-    @SuppressWarnings({"PMD.CompareObjectsWithEquals", "PMD.SuspiciousEqualsMethodName" })
     public boolean equals(final Object o1, final Object o2) {
         return o1 == o2;
     }
@@ -62,7 +61,7 @@ public final class ConverterEnumType implements UserType, Serializable {
 
     @Override
     public int[] sqlTypes() {
-        return new int[] {Types.CHAR };
+        return new int[]{Types.CHAR};
     }
 
     @Override

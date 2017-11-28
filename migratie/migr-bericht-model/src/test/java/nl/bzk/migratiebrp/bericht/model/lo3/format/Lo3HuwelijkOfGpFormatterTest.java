@@ -6,7 +6,6 @@
 
 package nl.bzk.migratiebrp.bericht.model.lo3.format;
 
-import junit.framework.Assert;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3HuwelijkOfGpInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3SoortVerbintenisEnum;
@@ -14,13 +13,12 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaat
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOntbindingHuwelijkOfGpCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortVerbintenis;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class Lo3HuwelijkOfGpFormatterTest {
@@ -33,14 +31,14 @@ public class Lo3HuwelijkOfGpFormatterTest {
         lo3HuwelijkOfGpFormatter.format(huwelijkOfGpInhoud, lo3Formatter);
         final String formatted = Lo3Inhoud.formatInhoud(lo3Formatter.getList());
         Assert.assertEquals("00217052120110010001234567801200099875123210210005Carla0220001H0230003van0240007"
-                            + "Leeuwen03100081950101203200041904033000430100410001V06100082002060806200041905063000430100710008"
-                            + "2012050107200041904073000430100740001S1510001H", formatted);
+                + "Leeuwen03100081950101203200041904033000430100410001V06100082002060806200041905063000430100710008"
+                + "2012050107200041904073000430100740001S1510001H", formatted);
     }
 
     private static Lo3HuwelijkOfGpInhoud maakLo3HuwelijkOfGpInhoud() {
 
-        final Long aNummer = Long.valueOf("12345678");
-        final Integer burgerservicenummer = Integer.valueOf("987512321");
+        final String aNummer = "12345678";
+        final String burgerservicenummer = "987512321";
         final String voornamen = "Carla";
         final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode = new Lo3AdellijkeTitelPredikaatCode("H");
         final String voorvoegselGeslachtsnaam = "van";
@@ -59,23 +57,23 @@ public class Lo3HuwelijkOfGpFormatterTest {
         final Lo3SoortVerbintenis soortVerbintenis = new Lo3SoortVerbintenis(Lo3SoortVerbintenisEnum.HUWELIJK.getCode());
 
         return new Lo3HuwelijkOfGpInhoud(
-            Lo3Long.wrap(aNummer),
-            Lo3Integer.wrap(burgerservicenummer),
-            Lo3String.wrap(voornamen),
-            adellijkeTitelPredikaatCode,
-            Lo3String.wrap(voorvoegselGeslachtsnaam),
-            Lo3String.wrap(geslachtsnaam),
-            geboortedatum,
-            geboorteGemeenteCode,
-            geboorteLandCode,
-            geslachtsaanduiding,
-            datumSluitingHuwelijkOfAangaanGp,
-            gemeenteCodeSluitingHuwelijkOfAangaanGp,
-            landCodeSluitingHuwelijkOfAangaanGp,
-            datumOntbindingHuwelijkOfGp,
-            gemeenteCodeOntbindingHuwelijkOfGp,
-            landCodeOntbindingHuwelijkOfGp,
-            redenOntbindingHuwelijkOfGpCode,
-            soortVerbintenis);
+                Lo3String.wrap(aNummer),
+                Lo3String.wrap(burgerservicenummer),
+                Lo3String.wrap(voornamen),
+                adellijkeTitelPredikaatCode,
+                Lo3String.wrap(voorvoegselGeslachtsnaam),
+                Lo3String.wrap(geslachtsnaam),
+                geboortedatum,
+                geboorteGemeenteCode,
+                geboorteLandCode,
+                geslachtsaanduiding,
+                datumSluitingHuwelijkOfAangaanGp,
+                gemeenteCodeSluitingHuwelijkOfAangaanGp,
+                landCodeSluitingHuwelijkOfAangaanGp,
+                datumOntbindingHuwelijkOfGp,
+                gemeenteCodeOntbindingHuwelijkOfGp,
+                landCodeOntbindingHuwelijkOfGp,
+                redenOntbindingHuwelijkOfGpCode,
+                soortVerbintenis);
     }
 }

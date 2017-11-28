@@ -6,46 +6,32 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
 
 /**
  * Mapt de BrpOuder stapel uit het migratie model op de BetrokkenheidOuder historie in het operationele BRP model.
- * 
  */
 public final class BetrokkenheidOuderMapper extends AbstractHistorieMapperStrategie<BrpOuderInhoud, BetrokkenheidOuderHistorie, Betrokkenheid> {
 
     /**
      * Maakt een BetrokkenheidOuderMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public BetrokkenheidOuderMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpOuderInhoud> brpStapel, final Betrokkenheid entiteit) {
     }
 
     /**
@@ -60,24 +46,14 @@ public final class BetrokkenheidOuderMapper extends AbstractHistorieMapperStrate
      * {@inheritDoc}
      */
     @Override
-    protected void kopieerActueleGroepNaarEntiteit(final BetrokkenheidOuderHistorie historie, final Betrokkenheid entiteit) {
-        entiteit.setIndicatieOuder(historie.getIndicatieOuder());
-        entiteit.setIndicatieOuderUitWieKindIsGeboren(historie.getIndicatieOuderUitWieKindIsGeboren());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected BetrokkenheidOuderHistorie mapHistorischeGroep(final BrpOuderInhoud groepInhoud, final Betrokkenheid entiteit) {
-        final BetrokkenheidOuderHistorie result = new BetrokkenheidOuderHistorie(entiteit, BrpBoolean.unwrap(groepInhoud.getIndicatieOuder()));
+        final BetrokkenheidOuderHistorie result = new BetrokkenheidOuderHistorie(entiteit);
         result.setIndicatieOuderUitWieKindIsGeboren(BrpBoolean.unwrap(groepInhoud.getIndicatieOuderUitWieKindIsGeboren()));
 
-        getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getIndicatieOuder(), Element.GERELATEERDEOUDER_OUDERLIJKGEZAG_INDICATIEOUDERHEEFTGEZAG);
         getOnderzoekMapper().mapOnderzoek(
-            result,
-            groepInhoud.getIndicatieOuderUitWieKindIsGeboren(),
-            Element.GERELATEERDEOUDER_OUDERSCHAP_INDICATIEOUDERUITWIEKINDISGEBOREN);
+                result,
+                groepInhoud.getIndicatieOuderUitWieKindIsGeboren(),
+                Element.GERELATEERDEOUDER_OUDERSCHAP_INDICATIEOUDERUITWIEKINDISGEBOREN);
 
         return result;
     }

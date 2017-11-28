@@ -8,18 +8,19 @@ package nl.bzk.migratiebrp.isc.console.mig4jsf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import nl.bzk.migratiebrp.isc.console.mig4jsf.util.ValidationUtil;
 import nl.bzk.migratiebrp.isc.jbpm.command.Command;
 import nl.bzk.migratiebrp.isc.jbpm.command.client.CommandClient;
 import nl.bzk.migratiebrp.isc.jbpm.command.exception.CommandException;
 import nl.bzk.migratiebrp.isc.jbpm.command.impl.JbpmSynchronisatievraagCommand;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringService;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringServiceFactory;
+import nl.bzk.migratiebrp.util.common.AnummerUtil;
 import org.apache.commons.io.IOUtils;
 import org.jbpm.jsf.JbpmJsfContext;
 
@@ -42,22 +43,16 @@ public final class SynchronisatievraagActionListener extends AbstractActionListe
 
     /**
      * Constructor.
-     *
-     * @param gemeenteExpression
-     *            gemeente expression
-     * @param aNummerExpression
-     *            a-nummer expression
-     * @param bulkBestandExpression
-     *            bulk bestand expression
-     * @param targetExpression
-     *            target expression
+     * @param gemeenteExpression gemeente expression
+     * @param aNummerExpression a-nummer expression
+     * @param bulkBestandExpression bulk bestand expression
+     * @param targetExpression target expression
      */
     public SynchronisatievraagActionListener(
-        final ValueExpression gemeenteExpression,
-        final ValueExpression aNummerExpression,
-        final ValueExpression bulkBestandExpression,
-        final ValueExpression targetExpression)
-    {
+            final ValueExpression gemeenteExpression,
+            final ValueExpression aNummerExpression,
+            final ValueExpression bulkBestandExpression,
+            final ValueExpression targetExpression) {
         super("synchronisatievraag");
         this.gemeenteExpression = gemeenteExpression;
         this.aNummerExpression = aNummerExpression;
@@ -66,7 +61,7 @@ public final class SynchronisatievraagActionListener extends AbstractActionListe
     }
 
     @Override
-    public void verwerkAction(final JbpmJsfContext context, final ActionEvent event) throws IOException, CommandException {
+    public void verwerkAction(final JbpmJsfContext context, final ActionEvent event) throws ActionException {
         final FacesContext facesContext = FacesContext.getCurrentInstance();
         final ELContext elContext = facesContext.getELContext();
 
@@ -92,7 +87,13 @@ public final class SynchronisatievraagActionListener extends AbstractActionListe
             final SpringService springService =
                     (SpringService) context.getJbpmContext().getServiceFactory(SpringServiceFactory.SERVICE_NAME).openService();
             final CommandClient commandClient = springService.getBean(CommandClient.class);
-            final Object resultaat = commandClient.executeCommand(command);
+            final Object resultaat;
+            try {
+                resultaat = commandClient.executeCommand(command);
+            } catch (CommandException e) {
+                throw new ActionException(e);
+            }
+
             targetExpression.setValue(elContext, resultaat);
             context.addSuccessMessage(MESSAGE_OK);
             context.selectOutcome("success");
@@ -110,10 +111,14 @@ public final class SynchronisatievraagActionListener extends AbstractActionListe
 
     }
 
-    private Command<?> maakBulkCommand(final Object bulkBestand) throws IOException {
+    private Command<?> maakBulkCommand(final Object bulkBestand) throws ActionException {
         final StringBuilder uc812 = new StringBuilder(XML_HEADER + "<uc812 xmlns=\"http://www.moderniseringgba.nl/ISC/0001\"><bulkSynchronisatievraag>");
 
-        uc812.append(leesBulkBestand(bulkBestand));
+        try {
+            uc812.append(leesBulkBestand(bulkBestand));
+        } catch (IOException e) {
+            throw new ActionException(e);
+        }
         uc812.append("</bulkSynchronisatievraag></uc812>");
 
         return new JbpmSynchronisatievraagCommand("uc812", uc812.toString(), null, "Uc812");
@@ -121,7 +126,7 @@ public final class SynchronisatievraagActionListener extends AbstractActionListe
 
     private String leesBulkBestand(final Object bulkBestand) throws IOException {
         if (bulkBestand instanceof InputStream) {
-            return IOUtils.toString((InputStream) bulkBestand);
+            return IOUtils.toString((InputStream) bulkBestand, Charset.defaultCharset());
         } else if (bulkBestand instanceof byte[]) {
             return new String((byte[]) bulkBestand, "UTF-8");
         } else {
@@ -140,7 +145,7 @@ public final class SynchronisatievraagActionListener extends AbstractActionListe
     }
 
     private void valideerANummer(final JbpmJsfContext context, final String aNummer) {
-        if (aNummer != null && !"".equals(aNummer) && !ValidationUtil.valideerANummer(aNummer)) {
+        if (aNummer != null && !"".equals(aNummer) && !AnummerUtil.isAnummerValide(aNummer)) {
             context.setError("A-nummer moet een geldig a-nummer bevatten.");
         }
     }
@@ -151,14 +156,12 @@ public final class SynchronisatievraagActionListener extends AbstractActionListe
         final boolean single = heeftGemeente || heeftAnummer;
         final boolean multiple = bulkBestand != null;
 
-        boolean error = false;
-
         if (single) {
             if (heeftGemeente != heeftAnummer) {
                 context.setError("Gemeente en a-nummer moeten beide gevuld zijn.");
             }
             if (multiple) {
-                error = true;
+                context.setError("Er moet of een gemeente en a-nummer worden gevuld" + " of een bulk bestand worden opgegeven.");
             } else {
                 if (!context.isError()) {
                     context.selectOutcome(OUTCOME_SINGLE);
@@ -170,12 +173,8 @@ public final class SynchronisatievraagActionListener extends AbstractActionListe
                     context.selectOutcome(OUTCOME_MULTI);
                 }
             } else {
-                error = true;
+                context.setError("Er moet of een gemeente en a-nummer worden gevuld" + " of een bulk bestand worden opgegeven.");
             }
-        }
-
-        if (error) {
-            context.setError("Er moet of een gemeente en a-nummer worden gevuld" + " of een bulk bestand worden opgegeven.");
         }
     }
 

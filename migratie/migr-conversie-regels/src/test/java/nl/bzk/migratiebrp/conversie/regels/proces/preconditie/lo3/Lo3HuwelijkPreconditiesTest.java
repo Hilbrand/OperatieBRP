@@ -7,9 +7,6 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
 import java.util.Collections;
-
-import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
@@ -19,9 +16,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaat
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOntbindingHuwelijkOfGpCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortVerbintenis;
@@ -30,12 +25,11 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.GemeenteConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.LandConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.RedenEindeRelatieConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.VoorvoegselScheidingstekenConversietabel;
-
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -50,15 +44,14 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     private static final Lo3Herkomst LO3_HERKOMST_HUWELIJK = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_05, 0, 0);
     private static final Lo3Herkomst LO3_HERKOMST_HUWELIJK_1 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_05, 0, 1);
     private static final Lo3Herkomst LO3_HERKOMST_HUWELIJK_2 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_05, 0, 2);
-    private static final Lo3Long PERSOON_ANUMMER = new Lo3Long(1234567890L);
+    private static final Lo3String PERSOON_ANUMMER = new Lo3String("1234567890");
 
-    @Inject
-    private Lo3HuwelijkPrecondities precondities;
+    private Lo3HuwelijkPrecondities precondities = new Lo3HuwelijkPrecondities(new ConversietabelFactoryImpl());
 
     private Lo3HuwelijkOfGpInhoud.Builder sluitingBuilder() {
         final Lo3HuwelijkOfGpInhoud.Builder builder = new Lo3HuwelijkOfGpInhoud.Builder();
-        builder.aNummer(Lo3Long.wrap(1069532945L));
-        builder.burgerservicenummer(Lo3Integer.wrap(179543489));
+        builder.aNummer(Lo3String.wrap("1069532945"));
+        builder.burgerservicenummer(Lo3String.wrap("179543489"));
 
         builder.voornamen(Lo3String.wrap("Jaap"));
         builder.adellijkeTitelPredikaatCode(new Lo3AdellijkeTitelPredikaatCode("P"));
@@ -91,8 +84,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
 
     private Lo3HuwelijkOfGpInhoud.Builder ontbindingBuilder() {
         final Lo3HuwelijkOfGpInhoud.Builder builder = new Lo3HuwelijkOfGpInhoud.Builder();
-        builder.aNummer(Lo3Long.wrap(1069532945L));
-        builder.burgerservicenummer(Lo3Integer.wrap(179543489));
+        builder.aNummer(Lo3String.wrap("1069532945"));
+        builder.burgerservicenummer(Lo3String.wrap("179543489"));
 
         builder.voornamen(Lo3String.wrap("Jaap"));
         builder.adellijkeTitelPredikaatCode(new Lo3AdellijkeTitelPredikaatCode("P"));
@@ -122,11 +115,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testHappySluiting() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(sluitingBuilder().build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -136,74 +126,38 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testHappyOntbinding() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    ontbindingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                ontbindingBuilder().build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
         assertAantalErrors(0);
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-
-    @Ignore("Volgens mij zou je niet puur een huwelijk moeten kunnen beeidingen")
-    @Test
-    public void testContr101() {
-        final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelCorrectieOk =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1), Lo3StapelHelper.lo3Cat(
-                    new Lo3HuwelijkOfGpInhoud.Builder().build(),
-                    Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000101, DOC),
-                    Lo3StapelHelper.lo3His(null, 20000101, 20000101),
-                    LO3_HERKOMST_HUWELIJK));
-
-        precondities.controleerStapels(Collections.singletonList(stapelCorrectieOk), PERSOON_ANUMMER);
-
-        assertAantalErrors(0);
-
-        final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelNok =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    new Lo3HuwelijkOfGpInhoud.Builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
-
-        precondities.controleerStapels(Collections.singletonList(stapelNok), PERSOON_ANUMMER);
-
-        assertAantalErrors(1);
-        assertSoortMeldingCode(SoortMeldingCode.PRE050, 1);
-    }
-
     @Test
     public void testContr104() {
         Lo3Categorie<Lo3HuwelijkOfGpInhoud> onjuist1 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_HUWELIJK_2);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_HUWELIJK_2);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990101, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990101, 20000101),
+                        LO3_HERKOMST_HUWELIJK_1);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist3 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(3),
-                    Lo3StapelHelper.lo3His(null, 19990101, 20000101),
-                    LO3_HERKOMST_HUWELIJK);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990101, 20000101),
+                        LO3_HERKOMST_HUWELIJK);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelOk = Lo3StapelHelper.lo3Stapel(onjuist1, onjuist2, juist3);
 
@@ -212,10 +166,10 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
 
         onjuist1 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_HUWELIJK);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_HUWELIJK);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelNok = Lo3StapelHelper.lo3Stapel(onjuist1, onjuist2);
 
@@ -226,24 +180,27 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr105() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelCorrectieOk =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "Doc A"),
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1), Lo3StapelHelper.lo3Cat(
-                    new Lo3HuwelijkOfGpInhoud.Builder().build(),
-                    Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000101, "Doc B"),
-                    Lo3StapelHelper.lo3His(null, 20000101, 20010101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "Doc A"),
+                                Lo3StapelHelper.lo3His("O", 20000101, 20000101),
+                                LO3_HERKOMST_HUWELIJK_1),
+                        Lo3StapelHelper.lo3Cat(
+                                new Lo3HuwelijkOfGpInhoud.Builder().build(),
+                                Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000101, "Doc B"),
+                                Lo3StapelHelper.lo3His(null, 20000101, 20010101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapelCorrectieOk), PERSOON_ANUMMER);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelNok =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    new Lo3HuwelijkOfGpInhoud.Builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                new Lo3HuwelijkOfGpInhoud.Builder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapelNok), PERSOON_ANUMMER);
 
@@ -259,14 +216,11 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeSluitingHuwelijkOfAangaanGp(new Lo3LandCode(LAND_CODE));
         builder.soortVerbintenis(new Lo3SoortVerbintenis("H"));
 
-        builder.aNummer(Lo3Long.wrap(1069532945L));
+        builder.aNummer(Lo3String.wrap("1069532945"));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -287,11 +241,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geboorteLandCode(new Lo3LandCode(LAND_CODE));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -310,11 +261,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geslachtsaanduiding(new Lo3Geslachtsaanduiding("O"));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -329,11 +277,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geboorteLandCode(new Lo3LandCode("5010"));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelBuitenlandsOk =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapelBuitenlandsOk), PERSOON_ANUMMER);
 
@@ -342,11 +287,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geboorteLandCode(new Lo3LandCode(LAND_CODE));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelNok =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapelNok), PERSOON_ANUMMER);
 
@@ -361,11 +303,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeSluitingHuwelijkOfAangaanGp(new Lo3LandCode("5010"));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelBuitenlandsOk =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapelBuitenlandsOk), PERSOON_ANUMMER);
 
@@ -374,11 +313,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeSluitingHuwelijkOfAangaanGp(new Lo3LandCode(LAND_CODE));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelNok =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapelNok), PERSOON_ANUMMER);
 
@@ -393,11 +329,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeOntbindingHuwelijkOfGp(new Lo3LandCode("5010"));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelBuitenlandsOk =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapelBuitenlandsOk), PERSOON_ANUMMER);
 
@@ -406,11 +339,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeOntbindingHuwelijkOfGp(new Lo3LandCode(LAND_CODE));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapelNok =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapelNok), PERSOON_ANUMMER);
 
@@ -424,11 +354,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.soortVerbintenis(new Lo3SoortVerbintenis("."));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -439,11 +366,12 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr110() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20000101, 20000100),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His(null, 20000101, 20000100),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -455,22 +383,24 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     public void testContr112() {
         final int standaardDatum = 0;
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel2 =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, standaardDatum, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, standaardDatum, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel2), PERSOON_ANUMMER);
 
         assertAantalErrors(0);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -487,11 +417,12 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr230() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, null, 20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His(null, null, 20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -502,11 +433,12 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr231() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20000101, null),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His(null, 20000101, null),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -523,11 +455,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.redenOntbindingHuwelijkOfGpCode(new Lo3RedenOntbindingHuwelijkOfGpCode("S"));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -545,11 +474,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geslachtsnaam(null);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -564,11 +490,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.soortVerbintenis(null);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -579,11 +502,12 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr236() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His("O", 20000101, 20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -603,11 +527,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.aNummer(null);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -620,11 +541,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geslachtsnaam(null);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -638,11 +556,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geboortedatum(null);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -656,11 +571,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geboortedatum(null);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -674,11 +586,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeSluitingHuwelijkOfAangaanGp(null);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -692,11 +601,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeOntbindingHuwelijkOfGp(null);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -716,11 +622,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geboortedatum(new Lo3Datum(20031424));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -733,11 +636,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.datumSluitingHuwelijkOfAangaanGp(new Lo3Datum(20031424));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -750,11 +650,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.datumOntbindingHuwelijkOfGp(new Lo3Datum(20031424));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -764,11 +661,12 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr40121() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -778,11 +676,12 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr40124() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20040141, 20010101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His(null, 20040141, 20010101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -792,11 +691,12 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr40125() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20010101, 20040141),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His(null, 20010101, 20040141),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -809,11 +709,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geboorteGemeenteCode(GemeenteConversietabel.LO3_NIET_VALIDE_UITZONDERING);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -827,11 +724,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.gemeenteCodeSluitingHuwelijkOfAangaanGp(GemeenteConversietabel.LO3_NIET_VALIDE_UITZONDERING);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -845,11 +739,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.gemeenteCodeOntbindingHuwelijkOfGp(GemeenteConversietabel.LO3_NIET_VALIDE_UITZONDERING);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -863,11 +754,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geboorteLandCode(LandConversietabel.LO3_NIET_VALIDE_UITZONDERING);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -881,11 +769,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeSluitingHuwelijkOfAangaanGp(LandConversietabel.LO3_NIET_VALIDE_UITZONDERING);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -899,11 +784,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeOntbindingHuwelijkOfGp(LandConversietabel.LO3_NIET_VALIDE_UITZONDERING);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -914,11 +796,12 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr4063() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), "1-x0001", null, null, null),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Documentatie(1L, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), "1-x0001", null, null, null),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -929,11 +812,12 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr4064() {
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -953,11 +837,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.adellijkeTitelPredikaatCode(new Lo3AdellijkeTitelPredikaatCode("QQ"));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -971,11 +852,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.voorvoegselGeslachtsnaam(Lo3String.wrap(VoorvoegselScheidingstekenConversietabel.LO3_NIET_VALIDE_UITZONDERING));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -989,11 +867,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.geslachtsaanduiding(new Lo3Geslachtsaanduiding("Q"));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -1007,11 +882,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.redenOntbindingHuwelijkOfGpCode(RedenEindeRelatieConversietabel.LO3_NIET_VALIDE_UITZONDERING);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -1025,11 +897,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.soortVerbintenis(new Lo3SoortVerbintenis("Q"));
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -1087,10 +956,10 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
                 Lo3StapelHelper.lo3Cat(ontbindingBuilder().build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(20130101), LO3_HERKOMST_HUWELIJK);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> historieOnjuist =
                 Lo3StapelHelper.lo3Cat(
-                    ontbindingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 20120101, 20120102),
-                    LO3_HERKOMST_HUWELIJK_2);
+                        ontbindingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 20120101, 20120102),
+                        LO3_HERKOMST_HUWELIJK_2);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> historie =
                 Lo3StapelHelper.lo3Cat(sluitingBuilder().build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20120101), LO3_HERKOMST_HUWELIJK_1);
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel = Lo3StapelHelper.lo3Stapel(actueel, historieOnjuist, historie);
@@ -1107,11 +976,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         final Lo3HuwelijkOfGpInhoud.Builder builder = sluitingBuilder();
         builder.landCodeSluitingHuwelijkOfAangaanGp(new Lo3LandCode("0000"));
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -1126,11 +992,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         final Lo3HuwelijkOfGpInhoud.Builder builder = sluitingBuilder();
         builder.landCodeSluitingHuwelijkOfAangaanGp(new Lo3LandCode("9999"));
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -1145,11 +1008,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         final Lo3HuwelijkOfGpInhoud.Builder builder = ontbindingBuilder();
         builder.landCodeOntbindingHuwelijkOfGp(new Lo3LandCode("0000"));
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -1164,11 +1024,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         final Lo3HuwelijkOfGpInhoud.Builder builder = ontbindingBuilder();
         builder.landCodeOntbindingHuwelijkOfGp(new Lo3LandCode("9999"));
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
@@ -1183,7 +1040,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
                 Lo3StapelHelper.lo3Documentatie(1L, GEM_CODE2, "1-X" + String.format("%04d", 1L), GEM_CODE2, 20000101, "Testdocument");
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(sluitingBuilder().build(), docs, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(sluitingBuilder().build(), docs, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
         precondities.controleerDocumentOfAkte(stapel);
 
         assertAantalErrors(1);
@@ -1194,7 +1052,8 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     public void testDocumentEnAkteNietAanwezig() {
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(sluitingBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(sluitingBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_HUWELIJK));
         precondities.controleerDocumentOfAkte(stapel);
 
         assertAantalErrors(0);
@@ -1204,22 +1063,26 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie074Happy() {
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist1 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 19990101, 19990101),
-                    LO3_HERKOMST_HUWELIJK_2);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 19990101, 19990101),
+                        LO3_HERKOMST_HUWELIJK_2);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990102, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990102, 20000101),
+                        LO3_HERKOMST_HUWELIJK_1);
 
         final Lo3HuwelijkOfGpInhoud.Builder builder = sluitingBuilder();
         builder.datumSluitingHuwelijkOfAangaanGp(new Lo3Datum(20000101));
 
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1231,22 +1094,26 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie074Groep6Verschil() {
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist1 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 19990101, 19990101),
-                    LO3_HERKOMST_HUWELIJK_2);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 19990101, 19990101),
+                        LO3_HERKOMST_HUWELIJK_2);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990102, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990102, 20000101),
+                        LO3_HERKOMST_HUWELIJK_1);
 
         final Lo3HuwelijkOfGpInhoud.Builder builder = sluitingBuilder();
         builder.datumSluitingHuwelijkOfAangaanGp(new Lo3Datum(20000102));
 
         Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1257,7 +1124,11 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.gemeenteCodeSluitingHuwelijkOfAangaanGp(new Lo3GemeenteCode("0519"));
 
         juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1269,7 +1140,11 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeSluitingHuwelijkOfAangaanGp(new Lo3LandCode("6031"));
 
         juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1281,23 +1156,27 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie074VerschillendeCode() {
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist1 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 19990101, 19990101),
-                    LO3_HERKOMST_HUWELIJK_2);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 19990101, 19990101),
+                        LO3_HERKOMST_HUWELIJK_2);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990102, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990102, 20000101),
+                        LO3_HERKOMST_HUWELIJK_1);
 
         final Lo3HuwelijkOfGpInhoud.Builder builder = sluitingBuilder();
         builder.datumSluitingHuwelijkOfAangaanGp(new Lo3Datum(20000102));
         builder.soortVerbintenis(new Lo3SoortVerbintenis("P"));
 
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1309,16 +1188,16 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie074GeenGroep6() {
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist1 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 19990101, 19990101),
-                    LO3_HERKOMST_HUWELIJK_2);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 19990101, 19990101),
+                        LO3_HERKOMST_HUWELIJK_2);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990102, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1);
+                        sluitingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990102, 20000101),
+                        LO3_HERKOMST_HUWELIJK_1);
 
         final Lo3HuwelijkOfGpInhoud.Builder builder = sluitingBuilder();
         builder.datumSluitingHuwelijkOfAangaanGp(null);
@@ -1326,7 +1205,11 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeSluitingHuwelijkOfAangaanGp(null);
 
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1338,23 +1221,23 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie075Happy() {
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist1 =
                 Lo3StapelHelper.lo3Cat(
-                    ontbindingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 19990101, 19990101),
-                    LO3_HERKOMST_HUWELIJK_2);
+                        ontbindingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 19990101, 19990101),
+                        LO3_HERKOMST_HUWELIJK_2);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    ontbindingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990102, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1);
+                        ontbindingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990102, 20000101),
+                        LO3_HERKOMST_HUWELIJK_1);
 
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist3 =
                 Lo3StapelHelper.lo3Cat(
-                    ontbindingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(3),
-                    Lo3StapelHelper.lo3His(null, 19990103, 20000102),
-                    LO3_HERKOMST_HUWELIJK);
+                        ontbindingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1376,24 +1259,24 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist1 =
                 Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 19990101, 19990101),
-                    LO3_HERKOMST_HUWELIJK_2);
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 19990101, 19990101),
+                        LO3_HERKOMST_HUWELIJK_2);
 
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    ontbindingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990102, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1);
+                        ontbindingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990102, 20000101),
+                        LO3_HERKOMST_HUWELIJK_1);
 
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist3 =
                 Lo3StapelHelper.lo3Cat(
-                    ontbindingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(3),
-                    Lo3StapelHelper.lo3His(null, 19990103, 20000102),
-                    LO3_HERKOMST_HUWELIJK);
+                        ontbindingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1405,22 +1288,26 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie075Groep7Verschil() {
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist1 =
                 Lo3StapelHelper.lo3Cat(
-                    ontbindingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 19990101, 19990101),
-                    LO3_HERKOMST_HUWELIJK_2);
+                        ontbindingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 19990101, 19990101),
+                        LO3_HERKOMST_HUWELIJK_2);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    ontbindingBuilder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990102, 20000101),
-                    LO3_HERKOMST_HUWELIJK_1);
+                        ontbindingBuilder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990102, 20000101),
+                        LO3_HERKOMST_HUWELIJK_1);
 
         final Lo3HuwelijkOfGpInhoud.Builder builder = ontbindingBuilder();
         builder.datumOntbindingHuwelijkOfGp(new Lo3Datum(20000102));
 
         Lo3Categorie<Lo3HuwelijkOfGpInhoud> juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1431,7 +1318,11 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.gemeenteCodeOntbindingHuwelijkOfGp(new Lo3GemeenteCode("0519"));
 
         juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1442,7 +1333,11 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.landCodeOntbindingHuwelijkOfGp(new Lo3LandCode("6031"));
 
         juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1453,7 +1348,11 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
         builder.redenOntbindingHuwelijkOfGpCode(new Lo3RedenOntbindingHuwelijkOfGpCode("Z"));
 
         juist3 =
-                Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(3), Lo3StapelHelper.lo3His(null, 19990103, 20000102), LO3_HERKOMST_HUWELIJK);
+                Lo3StapelHelper.lo3Cat(
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990103, 20000102),
+                        LO3_HERKOMST_HUWELIJK);
 
         stapel = Lo3StapelHelper.lo3Stapel(juist1, onjuist2, juist3);
 
@@ -1464,20 +1363,22 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPreconditie088Triggered() {
         Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().datumSluitingHuwelijkOfAangaanGp(null).build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().datumSluitingHuwelijkOfAangaanGp(null).build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
         assertSoortMeldingCode(SoortMeldingCode.PRE088, 1);
 
         stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().datumSluitingHuwelijkOfAangaanGp(Lo3Datum.NULL_DATUM).build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().datumSluitingHuwelijkOfAangaanGp(new Lo3Datum(0)).build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 
         assertAantalErrors(1);
@@ -1488,12 +1389,13 @@ public class Lo3HuwelijkPreconditiesTest extends AbstractPreconditieTest {
     public void testControleerGroep83Procedure8310NietGevuld() {
         final Lo3Onderzoek lo3Onderzoek = new Lo3Onderzoek(null, new Lo3Datum(20140101), null);
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    sluitingBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    lo3Onderzoek,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_HUWELIJK));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                sluitingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                lo3Onderzoek,
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_HUWELIJK));
 
         precondities.controleerStapels(Collections.singletonList(stapel), PERSOON_ANUMMER);
 

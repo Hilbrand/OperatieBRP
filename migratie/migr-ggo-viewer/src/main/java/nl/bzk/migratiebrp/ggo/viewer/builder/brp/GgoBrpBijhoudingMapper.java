@@ -6,26 +6,35 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
- * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
+ * Mapper voor de groep Bijhouding.
  */
-@Component
 public class GgoBrpBijhoudingMapper extends AbstractGgoBrpMapper<PersoonBijhoudingHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpBijhoudingMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+                                  final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(final GgoBrpVoorkomen voorkomen, final PersoonBijhoudingHistorie brpInhoud, final GgoBrpGroepEnum brpGroepEnum) {
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.BIJHOUDINGSPARTIJ, brpInhoud.getPartij());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.BIJHOUDINGSAARD, brpInhoud.getBijhoudingsaard());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.NADERE_BIJHOUDINGSAARD, brpInhoud.getNadereBijhoudingsaard());
-        getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.ONVERWERKT_DOC_AANWEZIG,
-            brpInhoud.getIndicatieOnverwerktDocumentAanwezig());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.BIJHOUDINGSPARTIJ, brpInhoud.getPartij());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.BIJHOUDINGSAARD, brpInhoud.getBijhoudingsaard());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.NADERE_BIJHOUDINGSAARD, brpInhoud.getNadereBijhoudingsaard());
     }
 }

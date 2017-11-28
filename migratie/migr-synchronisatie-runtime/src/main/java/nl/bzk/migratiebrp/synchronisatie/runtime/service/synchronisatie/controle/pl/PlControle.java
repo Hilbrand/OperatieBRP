@@ -16,11 +16,8 @@ public interface PlControle {
 
     /**
      * Controleer.
-     *
-     * @param context
-     *            verwerkingscontext
-     * @param dbPersoonslijst
-     *            de gevonden persoonslijst in de database
+     * @param context verwerkingscontext
+     * @param dbPersoonslijst de gevonden persoonslijst in de database
      * @return true, als de controle slaagt
      */
     boolean controleer(VerwerkingsContext context, BrpPersoonslijst dbPersoonslijst);

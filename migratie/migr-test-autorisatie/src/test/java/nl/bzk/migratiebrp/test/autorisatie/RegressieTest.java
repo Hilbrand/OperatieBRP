@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.test.autorisatie;
 
 import java.io.File;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 
 public class RegressieTest extends ConversieTestConfiguratie {
 
@@ -19,5 +20,10 @@ public class RegressieTest extends ConversieTestConfiguratie {
     @Override
     public File getInputFolder() {
         return new File("./regressie");
+    }
+
+    @Override
+    public TestSkipper getTestSkipper() {
+        return TestSkipper.regressie();
     }
 }

@@ -6,6 +6,8 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Dienst;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.DienstHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpEffectAfnemerindicatiesCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpSoortDienstCode;
@@ -13,12 +15,9 @@ import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpDienst;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstAttenderingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstSelectieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.Dienst;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.DienstHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.AbstractBrpMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.BrpMapperUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,18 +28,14 @@ public final class BrpDienstMapper extends AbstractBrpMapper<DienstHistorie, Brp
 
     /**
      * Map een database entiteit dienst naar een BRP conversie model object.
-     *
-     * @param dienst
-     *            database entiteit
+     * @param dienst database entiteit
      * @return conversie model object
      */
     public BrpDienst mapDienst(final Dienst dienst) {
-
-        final BrpSoortDienstCode soortDienstCode = new BrpSoortDienstCode(dienst.getSoortDienst().getId());
+        final BrpSoortDienstCode soortDienstCode = new BrpSoortDienstCode((short) dienst.getSoortDienst().getId());
         final BrpEffectAfnemerindicatiesCode effectAfnemerindicatiesCode =
                 BrpMapperUtil.mapBrpEffectAfnemersindicatiesCode(dienst.getEffectAfnemerindicaties());
         dienst.getAttenderingscriterium();
-        dienst.getSelectiePeriodeInMaanden();
         dienst.getEersteSelectieDatum();
 
         final BrpStapel<BrpDienstInhoud> dienstStapel = map(dienst.getDienstHistorieSet(), null);
@@ -53,10 +48,9 @@ public final class BrpDienstMapper extends AbstractBrpMapper<DienstHistorie, Brp
 
     @Override
     protected BrpDienstInhoud mapInhoud(final DienstHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
-
         return new BrpDienstInhoud(
-            BrpMapperUtil.mapDatum(historie.getDatumIngang()),
-            BrpMapperUtil.mapDatum(historie.getDatumEinde()),
-            historie.getIndicatieGeblokkeerd());
+                BrpMapperUtil.mapDatum(historie.getDatumIngang()),
+                BrpMapperUtil.mapDatum(historie.getDatumEinde()),
+                historie.getIndicatieGeblokkeerd());
     }
 }

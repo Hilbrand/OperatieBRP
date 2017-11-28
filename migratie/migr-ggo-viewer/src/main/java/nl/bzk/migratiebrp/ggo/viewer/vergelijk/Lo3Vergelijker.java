@@ -24,18 +24,14 @@ import nl.ictu.spg.domain.pl.util.PLAssembler;
 
 /**
  * Roept GBAV code aan om twee Lo3 Persoonslijsten met elkaar te vergelijken.
- * 
  */
 public class Lo3Vergelijker {
     /**
      * Vergelijkt de originele Lo3Persoonslijst met de teruggeconverteerde Lo3Persoonslijst. Gebruikt het 'spontaan
      * component' uit GBAV om de vergelijking uit te voeren. Hierna worden de resultaten in een simpel formaat
      * geconverteerd zodat deze door JSON kunnen worden getoond.
-     * 
-     * @param origineel
-     *            Lo3Persoonslijst
-     * @param teruggeconverteerd
-     *            Lo3Persoonslijst
+     * @param origineel Lo3Persoonslijst
+     * @param teruggeconverteerd Lo3Persoonslijst
      * @return Een lijst GgoVoorkomenVergelijking'en
      */
     public final List<GgoVoorkomenVergelijking> vergelijk(final Lo3Persoonslijst origineel, final Lo3Persoonslijst teruggeconverteerd) {
@@ -52,11 +48,8 @@ public class Lo3Vergelijker {
 
     /**
      * Roept GBA-V verschil/match analyse aan om de verschillen tussen de persoonslijsten te bepalen.
-     * 
-     * @param origineel
-     *            Lo3Persoonslijst
-     * @param teruggeconverteerd
-     *            Lo3Persoonslijst
+     * @param origineel Lo3Persoonslijst
+     * @param teruggeconverteerd Lo3Persoonslijst
      * @return PlDiffResult de verschillen
      */
     protected final PlDiffResult bepaalVerschillen(final Lo3Persoonslijst origineel, final Lo3Persoonslijst teruggeconverteerd) {
@@ -72,9 +65,7 @@ public class Lo3Vergelijker {
 
     /**
      * Converteert een Lo3Persoonslijst naar een Lg01 string.
-     * 
-     * @param lo3Persoonslijst
-     *            Lo3Persoonslijst
+     * @param lo3Persoonslijst Lo3Persoonslijst
      * @return lg01 String
      */
     private static String toLg01String(final Lo3Persoonslijst lo3Persoonslijst) {
@@ -85,9 +76,7 @@ public class Lo3Vergelijker {
 
     /**
      * Maakt een GBAV PLData object van een Lg01.
-     * 
-     * @param lg01
-     *            String
+     * @param lg01 String
      * @return PLData
      */
     private static PLData createPLData(final String lg01) {
@@ -103,11 +92,11 @@ public class Lo3Vergelijker {
 
     /**
      * Converteer de veredelde lijst PlDiffResult naar een voor JSON bruikbare reguliere lijst.
-     * 
+     *
      * Tegelijkertijd vervangen we de StapelMatch en VoorkomenMatch objecten voor onze eigen implementaties, wederom
      * vooral om de lijsten JSON parseable te maken.
      */
-    private static List<GgoVoorkomenVergelijking> convertToNormalList(final PlDiffResult diffResult, final Long aNummer) {
+    private static List<GgoVoorkomenVergelijking> convertToNormalList(final PlDiffResult diffResult, final String aNummer) {
         final List<GgoVoorkomenVergelijking> stapelMatches = new ArrayList<>();
 
         for (int i = 0; i < diffResult.countStapelMatches(); i++) {

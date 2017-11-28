@@ -6,15 +6,13 @@
 
 package nl.bzk.migratiebrp.test.sleutelrubrieken;
 
-import nl.bzk.brp.versie.Versie;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.brpkern.DBUnitBrpUtil;
+import nl.bzk.algemeenbrp.test.dal.DBUnitBrpUtil;
+import nl.bzk.algemeenbrp.util.common.Version;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie;
 import nl.bzk.migratiebrp.test.dal.runner.TestRunner;
-import nl.bzk.migratiebrp.util.common.Version;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.junit.runner.RunWith;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -26,14 +24,13 @@ public abstract class ConversieTestConfiguratie extends TestConfiguratie {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getCasusFactory()
      */
     @Override
     public TestCasusFactory getCasusFactory() {
         LOG.info("\n#####\n#####\n##### VERSIES\n#####\n#####");
-        LOG.info("Migratie: {}", Version.readVersion("nl.bzk.migratiebrp.test", "migr-test-sleutelrubrieken").toDetailsString());
-        LOG.info("BRP: \n{}", Versie.leesVersie("nl.bzk.migratiebrp.test", "migr-test-sleutelrubrieken").toDetailsString());
+        LOG.info("{}", Version.readVersion("nl.bzk.migratiebrp.test", "migr-test-sleutelrubrieken").toDetailsString());
 
         if (useMemoryDS()) {
             LOG.info("\n#####\n#####\n##### Starting application context (database)\n#####\n#####");
@@ -65,7 +62,6 @@ public abstract class ConversieTestConfiguratie extends TestConfiguratie {
 
         LOG.info("\n#####\n#####\n##### Starting application context (brp levering)");
         final GenericXmlApplicationContext brpLeveringContext = new GenericXmlApplicationContext();
-        brpLeveringContext.setParent(brpDatasourceContext);
         if (useMemoryDS()) {
             brpLeveringContext.getEnvironment().setActiveProfiles("memoryDS");
         }
@@ -85,8 +81,9 @@ public abstract class ConversieTestConfiguratie extends TestConfiguratie {
 
         LOG.info("\n#####\n#####\n##### Returning new test casus factory...");
         return new ConversieTestCasusFactory(
-            migratieContext.getAutowireCapableBeanFactory(),
-            brpLeveringContext.getAutowireCapableBeanFactory(),
-            brpBijhoudingContext.getAutowireCapableBeanFactory());
+                migratieContext.getAutowireCapableBeanFactory(),
+                brpLeveringContext.getAutowireCapableBeanFactory(),
+                brpBijhoudingContext.getAutowireCapableBeanFactory(),
+                getTestSkipper());
     }
 }

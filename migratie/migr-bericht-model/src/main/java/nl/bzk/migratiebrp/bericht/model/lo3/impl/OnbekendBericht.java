@@ -7,6 +7,9 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.GerelateerdeInformatie;
 import nl.bzk.migratiebrp.bericht.model.impl.AbstractOnbekendBericht;
@@ -20,16 +23,13 @@ import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 public final class OnbekendBericht extends AbstractOnbekendBericht implements Lo3Bericht {
     private static final long serialVersionUID = 1L;
 
-    private String bronGemeente;
-    private String doelGemeente;
+    private String bronPartijCode;
+    private String doelPartijCode;
 
     /**
      * Constructor (gebruikt in ESB).
-     *
-     * @param bericht
-     *            bericht inhoud
-     * @param melding
-     *            melding
+     * @param bericht bericht inhoud
+     * @param melding melding
      */
     public OnbekendBericht(final String bericht, final String melding) {
         super(bericht, melding);
@@ -37,79 +37,84 @@ public final class OnbekendBericht extends AbstractOnbekendBericht implements Lo
 
     /**
      * Constructor (gebruikt in processen en ESB om onverwacht bericht te wrappen).
-     *
-     * @param lo3Bericht
-     *            onverwacht bericht
+     * @param lo3Bericht onverwacht bericht
      */
     public OnbekendBericht(final Lo3Bericht lo3Bericht) {
         super(safeFormat(lo3Bericht), "Onbekend bericht");
         setMessageId(lo3Bericht.getMessageId());
         setCorrelationId(lo3Bericht.getCorrelationId());
-        setBronGemeente(lo3Bericht.getBronGemeente());
-        setDoelGemeente(lo3Bericht.getDoelGemeente());
+        setBronPartijCode(lo3Bericht.getBronPartijCode());
+        setDoelPartijCode(lo3Bericht.getDoelPartijCode());
     }
 
     private static String safeFormat(final Lo3Bericht lo3Bericht) {
         try {
             return lo3Bericht.format();
         } catch (final BerichtInhoudException e) {
+            LoggerFactory.getLogger().debug("Fout tijdens opslaan formaat", e);
             return null;
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getBronGemeente()
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getBronPartijCode()
      */
     @Override
-    public String getBronGemeente() {
-        return bronGemeente;
+    public String getBronPartijCode() {
+        return bronPartijCode;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setBronGemeente(java.lang.String)
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setBronPartijCode(java.lang.String)
      */
     @Override
-    public void setBronGemeente(final String bronGemeente) {
-        this.bronGemeente = bronGemeente;
+    public void setBronPartijCode(final String bronPartijCode) {
+        this.bronPartijCode = bronPartijCode;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getDoelGemeente()
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getDoelPartijCode()
      */
     @Override
-    public String getDoelGemeente() {
-        return doelGemeente;
+    public String getDoelPartijCode() {
+        return doelPartijCode;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setDoelGemeente(java.lang.String)
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setDoelPartijCode(java.lang.String)
      */
     @Override
-    public void setDoelGemeente(final String doelGemeente) {
-        this.doelGemeente = doelGemeente;
+    public void setDoelPartijCode(final String doelPartijCode) {
+        this.doelPartijCode = doelPartijCode;
     }
 
     @Override
     public void setHeader(final Lo3HeaderVeld veld, final String waarde) {
+        // Onbekend bericht heeft geen header
     }
 
     @Override
-    public String getHeader(final Lo3HeaderVeld veld) {
+    public String getHeaderWaarde(final Lo3HeaderVeld veld) {
         return null;
+    }
+
+    @Override
+    public List<String> getHeaderWaarden(final Lo3HeaderVeld veld) {
+        return Collections.emptyList();
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getHeader()
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getHeaderWaarde()
      */
     @Override
     public Lo3Header getHeader() {
@@ -118,16 +123,17 @@ public final class OnbekendBericht extends AbstractOnbekendBericht implements Lo
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.Bericht#getGerelateerdeInformatie()
      */
     @Override
     public GerelateerdeInformatie getGerelateerdeInformatie() {
-        return new GerelateerdeInformatie(null, Arrays.asList(bronGemeente, doelGemeente), null);
+        return new GerelateerdeInformatie(null, Arrays.asList(bronPartijCode, doelPartijCode), null);
     }
 
     @Override
     public void parse(final String lo3Bericht) {
+        // Onbekend bericht hoeft niets te parsen
     }
 
 }

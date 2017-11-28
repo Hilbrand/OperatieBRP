@@ -8,16 +8,23 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBooleanTest;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class BrpPersoonskaartInhoudTest {
+    @Test
+    public void test(){
+        final BrpPersoonskaartInhoud inhoud = createInhoud();
+        Assert.assertEquals("000200",inhoud.getGemeentePKCode().getWaarde());
+    }
+
     public static BrpPersoonskaartInhoud createInhoud() {
-        return new BrpPersoonskaartInhoud(new BrpPartijCode(200), BrpBooleanTest.BRP_TRUE);
+        return new BrpPersoonskaartInhoud(new BrpPartijCode("000200"), BrpBooleanTest.BRP_TRUE);
     }
 
     public static BrpStapel<BrpPersoonskaartInhoud> createStapel() {

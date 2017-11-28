@@ -1,1 +1,0 @@
-select count(*) as aantal from mig_extractie_proces where bericht_type = 'Lg01' and einddatum is not null;

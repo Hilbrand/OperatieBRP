@@ -19,14 +19,12 @@ public final class TekstHelper {
 
     private static final String TEKST_PATTERN = "(?<![/])\\\"(.*?)(?<![/])\\\"";
 
-    private final Map<String, String> teksten = new HashMap<String, String>();
+    private final Map<String, String> teksten = new HashMap<>();
     private String veiligeRegel;
 
     /**
      * Constructor.
-     *
-     * @param gbaVoorwaardeRegel
-     *            De te gebruiken voorwaarderegel.
+     * @param gbaVoorwaardeRegel De te gebruiken voorwaarderegel.
      */
     public TekstHelper(final String gbaVoorwaardeRegel) {
 
@@ -36,7 +34,8 @@ public final class TekstHelper {
         int offset = 0;
         int teller = 0;
         while (matcher.find()) {
-            final String identifier = "T" + new DecimalFormat("00").format(teller++);
+            final String identifier = "T" + new DecimalFormat("00").format(teller);
+            teller++;
             final String value = matcher.group();
             teksten.put(identifier, value);
             result.replace(matcher.start() - offset, matcher.end() - offset, identifier);
@@ -48,7 +47,6 @@ public final class TekstHelper {
 
     /**
      * Geeft de 'veilige' regel terug.
-     *
      * @return De 'veilige' regel.
      */
     public String getVeiligeRegel() {
@@ -57,9 +55,7 @@ public final class TekstHelper {
 
     /**
      * Zet de 'veilige' regel terug.
-     *
-     * @param veiligeRegel
-     *            De te zetten 'veilige' regel.
+     * @param veiligeRegel De te zetten 'veilige' regel.
      */
     public void setVeiligeRegel(final String veiligeRegel) {
         this.veiligeRegel = veiligeRegel;
@@ -67,7 +63,6 @@ public final class TekstHelper {
 
     /**
      * Geeft de GBA voorwaarderegel.
-     *
      * @return De GBA voorwaarderegel.
      */
     public String getGbaVoorwaardeRegel() {

@@ -6,13 +6,13 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeboorteHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeboorteHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -28,38 +28,38 @@ public final class BrpGeboorteMapper extends AbstractBrpMapper<PersoonGeboorteHi
                 BrpMapperUtil.mapDatum(historie.getDatumGeboorte(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_DATUM, true));
         final BrpGemeenteCode gemeenteGeboorte =
                 BrpMapperUtil.mapBrpGemeenteCode(
-                    historie.getGemeente(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_GEMEENTECODE, true));
+                        historie.getGemeente(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_GEMEENTECODE, true));
         final BrpString woonplaatsnaamGeboorte =
                 BrpString.wrap(
-                    historie.getWoonplaatsnaamGeboorte(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_WOONPLAATSNAAM, true));
+                        historie.getWoonplaatsnaamGeboorte(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_WOONPLAATSNAAM, true));
         final BrpString buitenlandsePlaatsGeboorte =
                 BrpString.wrap(
-                    historie.getBuitenlandsePlaatsGeboorte(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_BUITENLANDSEPLAATS, true));
+                        historie.getBuitenlandsePlaatsGeboorte(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_BUITENLANDSEPLAATS, true));
         final BrpString buitenlandseRegioGeboorte =
                 BrpString.wrap(
-                    historie.getBuitenlandseRegioGeboorte(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_BUITENLANDSEREGIO, true));
+                        historie.getBuitenlandseRegioGeboorte(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_BUITENLANDSEREGIO, true));
         final BrpLandOfGebiedCode landOfGebiedGeboorte;
         landOfGebiedGeboorte =
                 BrpMapperUtil.mapBrpLandOfGebiedCode(
-                    historie.getLandOfGebied(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_LANDGEBIEDCODE, true));
+                        historie.getLandOfGebied(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_LANDGEBIEDCODE, true));
         final BrpString omschrijvingLocatieGeboorte =
                 BrpString.wrap(
-                    historie.getOmschrijvingGeboortelocatie(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_OMSCHRIJVINGLOCATIE, true));
+                        historie.getOmschrijvingGeboortelocatie(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GEBOORTE_OMSCHRIJVINGLOCATIE, true));
 
         return new BrpGeboorteInhoud(
-            datumGeboorte,
-            gemeenteGeboorte,
-            woonplaatsnaamGeboorte,
-            buitenlandsePlaatsGeboorte,
-            buitenlandseRegioGeboorte,
-            landOfGebiedGeboorte,
-            omschrijvingLocatieGeboorte);
+                datumGeboorte,
+                gemeenteGeboorte,
+                woonplaatsnaamGeboorte,
+                buitenlandsePlaatsGeboorte,
+                buitenlandseRegioGeboorte,
+                landOfGebiedGeboorte,
+                omschrijvingLocatieGeboorte);
     }
 
 }

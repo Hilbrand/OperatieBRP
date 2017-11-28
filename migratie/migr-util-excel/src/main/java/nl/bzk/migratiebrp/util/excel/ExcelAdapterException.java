@@ -16,11 +16,8 @@ public class ExcelAdapterException extends Exception {
     /**
      * Maakt een nieuwe ExcelParserException aan die aangeeft dat er iets fout ging tijdens het parsen van een Excel
      * bestand.
-     * 
-     * @param message
-     *            De reden van de fout
-     * @param cause
-     *            De onderliggende Exception
+     * @param message De reden van de fout
+     * @param cause De onderliggende Exception
      */
     public ExcelAdapterException(final String message, final Exception cause) {
         super(String.format("%s: %s", message, cause.getMessage()), cause);
@@ -29,11 +26,8 @@ public class ExcelAdapterException extends Exception {
     /**
      * Maakt een nieuwe ExcelParserException aan die aangeeft dat er iets fout ging tijdens het parsen van een Excel
      * bestand.
-     * 
-     * @param kolom
-     *            De kolom waarin de fout optreedt
-     * @param message
-     *            De reden van de fout
+     * @param kolom De kolom waarin de fout optreedt
+     * @param message De reden van de fout
      */
     public ExcelAdapterException(final String kolom, final String message) {
         super(String.format("Kolom %s: %s", kolom, message));

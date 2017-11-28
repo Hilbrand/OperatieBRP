@@ -6,23 +6,17 @@
 
 package nl.bzk.migratiebrp.init.naarlo3.repository.jdbc;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.inject.Inject;
 import javax.sql.DataSource;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.init.naarlo3.repository.ANummerVerwerker;
 import nl.bzk.migratiebrp.init.naarlo3.repository.BrpRepository;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.apache.commons.io.IOUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -37,15 +31,13 @@ public final class JdbcBrpRepository implements BrpRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger();
     private static final String FOUT_BIJ_VERWERKEN_VAN_A_NUMMERS = "Fout bij verwerken van A-nummers";
-    private static final int FETCH_SIZE = 10000;
+    private static final int FETCH_SIZE = 10_000;
 
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     /**
      * Set the datasource to use.
-     *
-     * @param dataSource
-     *            the datasource to use
+     * @param dataSource the datasource to use
      */
     @Inject
     public void setDataSource(final DataSource dataSource) {
@@ -58,26 +50,19 @@ public final class JdbcBrpRepository implements BrpRepository {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    @SuppressWarnings("checkstyle:illegalcatch")
+
     public void verwerkANummersVanIngeschrevenPersonen(final ANummerVerwerker verwerker, final int batchGrootte) {
         try (final InputStream inputStream = getClass().getResourceAsStream("/sql/select_anummers.sql")) {
-            final String selectInitVullingSql = getStringData(inputStream);
+            final String selectInitVullingSql = IOUtils.toString(inputStream, Charset.defaultCharset());
             final AtomicInteger teller = new AtomicInteger(0);
 
-            jdbcTemplate.query(selectInitVullingSql, new MapSqlParameterSource(), new RowCallbackHandler() {
-                @Override
-                public void processRow(final ResultSet rs) throws SQLException {
-                    final long aNummer = rs.getLong("anr");
+            jdbcTemplate.query(selectInitVullingSql, new MapSqlParameterSource(), rs -> {
+                final String aNummer = rs.getString("anr");
 
-                    verwerker.addANummer(aNummer);
-                    if (teller.addAndGet(1) >= batchGrootte) {
-                        try {
-                            verwerker.call();
-                        } catch (final Exception e /* Catch Exception: Nodig om call() fouten correct af te handelen */) {
-                            LOG.warn(FOUT_BIJ_VERWERKEN_VAN_A_NUMMERS, e);
-                        }
-                        teller.set(0);
-                    }
+                verwerker.addANummer(aNummer);
+                if (teller.addAndGet(1) >= batchGrootte) {
+                    call(verwerker);
+                    teller.set(0);
                 }
             });
             verwerker.call();
@@ -86,11 +71,11 @@ public final class JdbcBrpRepository implements BrpRepository {
         }
     }
 
-    private String getStringData(final InputStream inputStream) {
+    private void call(ANummerVerwerker verwerker) {
         try {
-            return IOUtils.toString(inputStream);
-        } catch (final IOException e) {
-            throw new IllegalArgumentException(e);
+            verwerker.call();
+        } catch (final Exception e /* Catch Exception: Nodig om call() fouten correct af te handelen */) {
+            LOG.warn(FOUT_BIJ_VERWERKEN_VAN_A_NUMMERS, e);
         }
     }
 }

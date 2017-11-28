@@ -11,13 +11,11 @@ import nl.bzk.migratiebrp.tools.levering.vergelijker.entity.LeveringsVergelijkin
 
 /**
  * DAO interface voor de berichten voor de leveringvergelijking.
- *
  */
 public interface LeveringsVergelijkingBerichtCorrelatieGbavRepository {
 
     /**
      * Haal de berichten voor de leveringvergelijkingen uit GBA-V op.
-     *
      * @return Lijst met de berichten voor de leveringvergelijkingen.
      */
     List<LeveringsVergelijkingBerichtCorrelatieGbav> haalLeveringVergelijkingBerichtenGbavOp();

@@ -8,8 +8,8 @@ package nl.bzk.migratiebrp.conversie.regels.expressie.impl;
 
 /**
  * Interface voor het vertalen van GBA rubrieken naar BRP Typen.
- * 
  */
+@FunctionalInterface
 public interface GbaRubriekNaarBrpTypeVertaler {
 
     /**
@@ -17,8 +17,7 @@ public interface GbaRubriekNaarBrpTypeVertaler {
      * wordt de lijst expressie teruggegeven
      * @param rubriek de te vertalen GBA rubriek
      * @return het BRP Type
-     * @throws GbaRubriekOnbekendExceptie wordt gegeven indien GBA rubriek niet
-     *                                    voorkomt
+     * @throws GbaRubriekOnbekendExceptie wordt gegeven indien GBA rubriek niet voorkomt
      */
     BrpType[] vertaalGbaRubriekNaarBrpType(String rubriek) throws GbaRubriekOnbekendExceptie;
 

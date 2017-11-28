@@ -25,9 +25,7 @@ public final class Lo3VerzamelLo3Onderzoeken {
 
     /**
      * Verzameld alle herkomsten bij de onderzoeken die aan de opgegeven persoonslijst zijn gekoppeld.
-     * 
-     * @param lo3Persoonslijst
-     *            de LO3 persoonslijst waar onderzoeken aan gekoppeld zijn.
+     * @param lo3Persoonslijst de LO3 persoonslijst waar onderzoeken aan gekoppeld zijn.
      * @return een lijst van {@link Lo3Herkomst} van onderzoeken die in deze persoonslijst aanwezig zijn.
      */
     public List<Lo3Herkomst> verzamelHerkomstenBijOnderzoek(final Lo3Persoonslijst lo3Persoonslijst) {

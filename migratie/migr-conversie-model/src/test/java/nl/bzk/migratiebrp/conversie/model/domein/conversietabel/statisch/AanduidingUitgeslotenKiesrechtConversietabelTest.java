@@ -14,12 +14,11 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingUitgeslotenKi
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Test;
 
 public class AanduidingUitgeslotenKiesrechtConversietabelTest {
     private final AanduidingUitgeslotenKiesrechtConversietabel subject = new AanduidingUitgeslotenKiesrechtConversietabel();
-    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), Lo3Datum.NULL_DATUM, null);
+    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), new Lo3Datum(0), null);
     private static final BrpBoolean EXPECTED_TRUE_ZONDER_ONDERZOEK = new BrpBoolean(true, null);
 
     @Test

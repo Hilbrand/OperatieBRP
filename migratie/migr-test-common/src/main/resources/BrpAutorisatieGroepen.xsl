@@ -4,7 +4,7 @@
      |   kan worden met de classes.
      +-->
 
-	<!-- ToegangLeveringsautorisatie -->
+    <!-- ToegangLeveringsautorisatie -->
     <xsl:template match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpToegangLeveringsautorisatieInhoud']"
                   mode="header">
         <th>Afleverpunt</th>
@@ -32,7 +32,6 @@
             <xsl:value-of select="datumEinde"/>
         </td>
     </xsl:template>
-	
 
     <!-- Leveringsautorisatie -->
     <xsl:template match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpLeveringsautorisatieInhoud']"
@@ -155,6 +154,8 @@
                   mode="header">
         <th>Eerste selectiedatum</th>
         <th>Selectieperiode in maanden</th>
+        <th>Leverwijze selectie</th>
+        <th>Selectie soort</th>
     </xsl:template>
 
     <xsl:template match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstSelectieInhoud']"
@@ -164,6 +165,12 @@
         </td>
         <td>
             <xsl:value-of select="selectiePeriodeInMaanden"/>
+        </td>
+        <td>
+            <xsl:value-of select="leverwijzeSelectie"/>
+        </td>
+        <td>
+            <xsl:value-of select="soortSelectie"/>
         </td>
     </xsl:template>
 
@@ -188,7 +195,6 @@
         </td>
     </xsl:template>
 
-
     <!-- Dienstbundel LO3 rubriek -->
     <xsl:template match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstbundelLo3RubriekInhoud']"
                   mode="header">
@@ -200,6 +206,6 @@
         <td>
             <xsl:value-of select="attr"/>
         </td>
-	</xsl:template>
+    </xsl:template>
 
 </xsl:stylesheet>

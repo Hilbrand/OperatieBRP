@@ -9,5 +9,5 @@
 "1","GerelateerdeOuder.Persoon.SamengesteldeNaam.Scheidingsteken","null","52","0","1","null"
 "1","GerelateerdeOuder.Persoon.SamengesteldeNaam.Voornamen","null","52","0","1","null"
 "1","GerelateerdeOuder.Persoon.SamengesteldeNaam.Voorvoegsel","null","52","0","1","null"
-"1","Ouder.Ouderschap.DatumAanvangGeldigheid","null","52","0","1","null"
-"3","Ouder.Ouderschap.DatumAanvangGeldigheid","null","52","0","1","null"
+"1","Persoon.Ouder.Ouderschap.DatumAanvangGeldigheid","null","52","0","1","null"
+"3","Persoon.Ouder.Ouderschap.DatumAanvangGeldigheid","null","52","0","1","null"

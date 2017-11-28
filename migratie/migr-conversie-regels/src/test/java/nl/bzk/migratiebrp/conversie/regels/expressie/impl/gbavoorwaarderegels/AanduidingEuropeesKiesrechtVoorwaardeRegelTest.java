@@ -6,11 +6,8 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,18 +20,19 @@ public class AanduidingEuropeesKiesrechtVoorwaardeRegelTest {
     @Inject
     private AanduidingEuropeesKiesrechtVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test of getBrpExpressie method, of class LandVoorwaardeRegel.
      */
     @Test
     public void testGetBrpExpressie() throws Exception {
-        testVoorwaarde("13.31.10 GA1 1", "deelname_eu_verkiezingen.deelname_eu_verkiezingen = ONWAAR");
-        testVoorwaarde("13.31.10 GA1 2", "deelname_eu_verkiezingen.deelname_eu_verkiezingen = WAAR");
-    }
-
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        Assert.assertTrue(instance.filter(gbaVoorwaarde));
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
+        testUtil.testVoorwaarde("13.31.10 GA1 1", "Persoon.DeelnameEUVerkiezingen.IndicatieDeelname E= ONWAAR");
+        testUtil.testVoorwaarde("13.31.10 GA1 2", "Persoon.DeelnameEUVerkiezingen.IndicatieDeelname E= WAAR");
     }
 }

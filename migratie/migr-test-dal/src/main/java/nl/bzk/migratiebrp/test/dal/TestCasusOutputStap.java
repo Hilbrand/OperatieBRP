@@ -84,7 +84,6 @@ public enum TestCasusOutputStap {
 
     /**
      * Geef de waarde van naam.
-     *
      * @return naam
      */
     public String getNaam() {

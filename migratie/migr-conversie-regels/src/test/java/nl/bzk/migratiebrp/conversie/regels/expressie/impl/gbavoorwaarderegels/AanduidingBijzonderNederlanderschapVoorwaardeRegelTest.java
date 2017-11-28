@@ -6,13 +6,10 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +23,13 @@ public class AanduidingBijzonderNederlanderschapVoorwaardeRegelTest {
     @Inject
     private AanduidingBijzonderNederlanderschapVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     @Before
     public void setup() {
         Logging.initContext();
@@ -38,33 +42,33 @@ public class AanduidingBijzonderNederlanderschapVoorwaardeRegelTest {
 
     @Test
     public void testBehandeldAlsNederlander() throws Exception {
-        testVoorwaarde("04.65.10 GA1 \"B\"", "NIET IS_NULL(indicatie.behandeld_als_nederlander)");
-        testVoorwaarde("04.65.10 GAA \"B\"", "NIET IS_NULL(indicatie.behandeld_als_nederlander)");
-        testVoorwaarde("04.65.10 OGA1 \"B\"", "IS_NULL(indicatie.behandeld_als_nederlander)");
-        testVoorwaarde("04.65.10 OGAA \"B\"", "IS_NULL(indicatie.behandeld_als_nederlander)");
+        testUtil.testVoorwaarde("04.65.10 GA1 \"B\"", "KV(Persoon.Indicatie.BehandeldAlsNederlander.Waarde)");
+        testUtil.testVoorwaarde("04.65.10 GAA \"B\"", "KV(Persoon.Indicatie.BehandeldAlsNederlander.Waarde)");
+        testUtil.testVoorwaarde("04.65.10 OGA1 \"B\"", "KNV(Persoon.Indicatie.BehandeldAlsNederlander.Waarde)");
+        testUtil.testVoorwaarde("04.65.10 OGAA \"B\"", "KNV(Persoon.Indicatie.BehandeldAlsNederlander.Waarde)");
     }
 
     @Test
     public void testVastgesteldNietNederlander() throws Exception {
-        testVoorwaarde("04.65.10 GA1 \"V\"", "NIET IS_NULL(indicatie.vastgesteld_niet_nederlander)");
-        testVoorwaarde("04.65.10 GAA \"V\"", "NIET IS_NULL(indicatie.vastgesteld_niet_nederlander)");
-        testVoorwaarde("04.65.10 OGA1 \"V\"", "IS_NULL(indicatie.vastgesteld_niet_nederlander)");
-        testVoorwaarde("04.65.10 OGAA \"V\"", "IS_NULL(indicatie.vastgesteld_niet_nederlander)");
+        testUtil.testVoorwaarde("04.65.10 GA1 \"V\"", "KV(Persoon.Indicatie.VastgesteldNietNederlander.Waarde)");
+        testUtil.testVoorwaarde("04.65.10 GAA \"V\"", "KV(Persoon.Indicatie.VastgesteldNietNederlander.Waarde)");
+        testUtil.testVoorwaarde("04.65.10 OGA1 \"V\"", "KNV(Persoon.Indicatie.VastgesteldNietNederlander.Waarde)");
+        testUtil.testVoorwaarde("04.65.10 OGAA \"V\"", "KNV(Persoon.Indicatie.VastgesteldNietNederlander.Waarde)");
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testFoutieveCode() throws Exception {
-        testVoorwaarde("04.65.10 GA1 \"X\"", "");
+        testUtil.testVoorwaarde("04.65.10 GA1 \"X\"", "");
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testFoutieveOperator() throws Exception {
-        testVoorwaarde("04.65.10 KD1 \"X\"", "");
+        testUtil.testVoorwaarde("04.65.10 KD1 \"X\"", "");
     }
 
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        Assert.assertTrue(instance.filter(gbaVoorwaarde));
-        assertEquals(brpExpressie, result);
+    @Test
+    public void testgbaVoorwaardemeerDan3Delen() throws Exception {
+        testUtil.testVoorwaarde("04.65.10 GA1 \"V\"", "KV(Persoon.Indicatie.VastgesteldNietNederlander.Waarde)");
+        testUtil.testVoorwaarde("04.65.10 GA1 AA \"V\"", "(KNV(Persoon.Indicatie.BehandeldAlsNederlander.Waarde) EN KNV(Persoon.Indicatie.VastgesteldNietNederlander.Waarde))");
     }
 }

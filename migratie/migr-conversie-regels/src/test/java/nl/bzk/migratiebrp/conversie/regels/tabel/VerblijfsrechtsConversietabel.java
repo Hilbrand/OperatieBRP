@@ -12,17 +12,19 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingVerblijfstite
 
 public class VerblijfsrechtsConversietabel implements Conversietabel<Lo3AanduidingVerblijfstitelCode, BrpVerblijfsrechtCode> {
 
-    /** Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk). */
+    /**
+     * Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk).
+     */
     public static final Lo3AanduidingVerblijfstitelCode LO3_NIET_VALIDE_UITZONDERING = new Lo3AanduidingVerblijfstitelCode("99");
 
     @Override
     public BrpVerblijfsrechtCode converteerNaarBrp(final Lo3AanduidingVerblijfstitelCode input) {
-        return input == null ? null : new BrpVerblijfsrechtCode(Short.valueOf(input.getWaarde()), input.getOnderzoek());
+        return input == null ? null : new BrpVerblijfsrechtCode(input.getWaarde(), input.getOnderzoek());
     }
 
     @Override
     public Lo3AanduidingVerblijfstitelCode converteerNaarLo3(final BrpVerblijfsrechtCode input) {
-        return input == null ? null : new Lo3AanduidingVerblijfstitelCode(Short.toString(input.getWaarde()), input.getOnderzoek());
+        return input == null ? null : new Lo3AanduidingVerblijfstitelCode(input.getWaarde(), input.getOnderzoek());
     }
 
     @Override

@@ -61,9 +61,9 @@ public class PlControleDatumtijdstempelTest {
     private BrpPersoonslijst maakPl(final int datumtijdstempel) {
         final BrpPersoonslijstBuilder builder = new BrpPersoonslijstBuilder();
         builder.inschrijvingStapel(BrpStapelHelper.stapel(BrpStapelHelper.groep(
-            BrpStapelHelper.inschrijving(19770101, 1, datumtijdstempel * 1000000L),
-            BrpStapelHelper.his(20000101),
-            BrpStapelHelper.act(1, 20000101))));
+                BrpStapelHelper.inschrijving(19770101, 1, datumtijdstempel * 1000000L),
+                BrpStapelHelper.his(20000101),
+                BrpStapelHelper.act(1, 20000101))));
         return builder.build();
     }
 }

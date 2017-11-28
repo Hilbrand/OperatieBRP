@@ -7,7 +7,7 @@
 package nl.bzk.migratiebrp.conversie.model.brp.autorisatie;
 
 import java.util.Collections;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
@@ -22,9 +22,9 @@ public class BrpAfnemersindicatiesTest {
 
     @Test
     public void test() {
-        final BrpAfnemersindicaties subject = maakAfnemersindicatie(123456789L, 123456, 199201011200L);
-        final BrpAfnemersindicaties equals = maakAfnemersindicatie(123456789L, 123456, 199201011200L);
-        final BrpAfnemersindicaties different = maakAfnemersindicatie(987654321L, 654321, 199201011200L);
+        final BrpAfnemersindicaties subject = maakAfnemersindicatie("123456789", "123456");
+        final BrpAfnemersindicaties equals = maakAfnemersindicatie("123456789", "123456");
+        final BrpAfnemersindicaties different = maakAfnemersindicatie("987654321", "654321");
 
         Assert.assertEquals(subject, equals);
         Assert.assertFalse(subject.equals(new Object()));
@@ -33,26 +33,24 @@ public class BrpAfnemersindicatiesTest {
         Assert.assertEquals(subject.toString(), equals.toString());
     }
 
-    private BrpAfnemersindicaties maakAfnemersindicatie(final long administratienummer, final int partijCode, final long datumTijdRegistratie) {
+    private BrpAfnemersindicaties maakAfnemersindicatie(final String administratienummer, final String partijCode) {
         final BrpAfnemersindicatieInhoud inhoud = new BrpAfnemersindicatieInhoud(null, null, false);
-        final BrpHistorie historie = new BrpHistorie(null, null, BrpDatumTijd.fromDatumTijd(datumTijdRegistratie, null), null, null);
+        final BrpHistorie historie = new BrpHistorie(null, null, BrpDatumTijd.fromDatumTijd(199201011200L, null), null, null);
         final BrpActie actieInhoud =
                 new BrpActie(
-                    1L,
-                    BrpSoortActieCode.CONVERSIE_GBA,
-                    new BrpPartijCode(199902),
-                    BrpDatumTijd.fromDatumTijd(datumTijdRegistratie, null),
-                    null,
-                    null,
-                    1,
-                    null);
+                        1L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        new BrpPartijCode("199902"),
+                        BrpDatumTijd.fromDatumTijd(199201011200L, null),
+                        null,
+                        null,
+                        1,
+                        null);
 
         final BrpGroep<BrpAfnemersindicatieInhoud> categorie = new BrpGroep<>(inhoud, historie, actieInhoud, null, null);
 
         final BrpStapel<BrpAfnemersindicatieInhoud> stapel = new BrpStapel<>(Collections.singletonList(categorie));
 
-        return new BrpAfnemersindicaties(
-            administratienummer,
-            Collections.singletonList(new BrpAfnemersindicatie(new BrpPartijCode(partijCode), stapel, null)));
+        return new BrpAfnemersindicaties(administratienummer, Collections.singletonList(new BrpAfnemersindicatie(new BrpPartijCode(partijCode), stapel, null)));
     }
 }

@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.synchronisatie.dal.domein.migratie.conversietabel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.util.Arrays;
+import java.util.Collections;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.GemeenteConversietabel;
@@ -18,11 +18,11 @@ import org.junit.Test;
 
 public class GemeenteConversietabelTest {
 
-    private final GemeenteConversietabel tabel = new GemeenteConversietabel(Arrays.asList(new Short("1")));
+    private final GemeenteConversietabel tabel = new GemeenteConversietabel(Collections.singletonList("0001"));
 
     @Test
     public void test() {
-        final BrpGemeenteCode brpCode = new BrpGemeenteCode(Short.parseShort("1"));
+        final BrpGemeenteCode brpCode = new BrpGemeenteCode("0001");
         final Lo3GemeenteCode lo3Code = new Lo3GemeenteCode("0001");
 
         assertNull(tabel.converteerNaarBrp(null));
@@ -33,7 +33,7 @@ public class GemeenteConversietabelTest {
 
         Assert.assertTrue(tabel.valideerLo3(new Lo3GemeenteCode("0001")));
         Assert.assertFalse(tabel.valideerLo3(new Lo3GemeenteCode("0002")));
-        Assert.assertTrue(tabel.valideerBrp(new BrpGemeenteCode(Short.parseShort("1"))));
-        Assert.assertFalse(tabel.valideerBrp(new BrpGemeenteCode(Short.parseShort("2"))));
+        Assert.assertTrue(tabel.valideerBrp(new BrpGemeenteCode("0001")));
+        Assert.assertFalse(tabel.valideerBrp(new BrpGemeenteCode("0002")));
     }
 }

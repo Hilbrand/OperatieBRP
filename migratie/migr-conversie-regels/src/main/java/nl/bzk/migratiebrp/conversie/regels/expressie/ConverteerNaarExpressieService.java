@@ -18,20 +18,15 @@ public interface ConverteerNaarExpressieService {
 
     /**
      * Converteert een lijst van sleutelrubrieken naar een attenderingscriterium.
-     *
-     * @param autorisatieRubrieken
-     *            lijst van lo3 rubrieken
-     * @param herkomst
-     *            herkomst
+     * @param autorisatieRubrieken lijst van lo3 rubrieken
+     * @param herkomst herkomst
      * @return attenderings criterium
      */
     String converteerSleutelRubrieken(final String autorisatieRubrieken, final Lo3Herkomst herkomst);
 
     /**
      * Converteert een voorwaarderegel naar een expressie.
-     *
-     * @param lo3Voorwaarderegel
-     *            String met de lo3 voorwaarderegel
+     * @param lo3Voorwaarderegel String met de lo3 voorwaarderegel
      * @return expressie
      */
     String converteerVoorwaardeRegel(final String lo3Voorwaarderegel);

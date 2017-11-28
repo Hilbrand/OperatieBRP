@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.command.executor;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.command.Command;
 import nl.bzk.migratiebrp.isc.jbpm.command.exception.CommandException;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.JbpmInvoker;
 import nl.bzk.migratiebrp.util.common.jmx.UseDynamicDomain;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -20,19 +20,20 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * Implementatie voor het via JMX uitvoeren van commands.
  */
 @UseDynamicDomain
-@ManagedResource(objectName = CommandService.JMX_NAME, description = "JMX Service voor ISC commando's")
-@SuppressWarnings("checkstyle:illegalcatch")
+@ManagedResource(objectName = CommandServiceImpl.JMX_NAME, description = "JMX Service voor ISC commando's")
 public final class CommandServiceImpl implements CommandService {
 
+    /**
+     * JMX Naam.
+     */
+    public static final String JMX_NAME = "nl.bzk.migratiebrp.isc:name=COMMANDO";
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private JbpmInvoker jbpmInvoker;
 
     /**
      * Zet de JBPM invoker.
-     * 
-     * @param jbpmInvoker
-     *            de te zetten JBPM invoker.
+     * @param jbpmInvoker de te zetten JBPM invoker.
      */
     public void setJbpmInvoker(final JbpmInvoker jbpmInvoker) {
         this.jbpmInvoker = jbpmInvoker;

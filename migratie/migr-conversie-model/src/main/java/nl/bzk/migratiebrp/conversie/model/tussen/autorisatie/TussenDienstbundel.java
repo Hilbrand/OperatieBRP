@@ -7,16 +7,14 @@
 package nl.bzk.migratiebrp.conversie.model.tussen.autorisatie;
 
 import java.util.List;
-
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstbundelInhoud;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 
 /**
  * Migratie representatie voor een dienstbundel (BRP inhoud, LO3 historie).
@@ -34,19 +32,15 @@ public final class TussenDienstbundel {
 
     /**
      * Maak een nieuw TussenDienstBundel object.
-     *
-     * @param diensten
-     *            de diensten
-     * @param lo3Rubrieken
-     *            de lo3Rubrieken
-     * @param dienstbundelStapel
-     *            de dienstbundel stapels
+     * @param diensten de diensten
+     * @param lo3Rubrieken de lo3Rubrieken
+     * @param dienstbundelStapel de dienstbundel stapels
      */
     public TussenDienstbundel(
-        @ElementList(name = "diensten", entry = "dienst", type = TussenDienst.class, required = false) final List<TussenDienst> diensten,
-        @ElementList(name = "lo3rubrieken", entry = "lo3Rubriek", type = TussenDienstbundelLo3Rubriek.class, required = false) final List<TussenDienstbundelLo3Rubriek> lo3Rubrieken,
-        @Element(name = "dienstbundelStapel", required = false) final TussenStapel<BrpDienstbundelInhoud> dienstbundelStapel)
-    {
+            @ElementList(name = "diensten", entry = "dienst", type = TussenDienst.class, required = false) final List<TussenDienst> diensten,
+            @ElementList(name = "lo3rubrieken", entry = "lo3Rubriek", type = TussenDienstbundelLo3Rubriek.class,
+                    required = false) final List<TussenDienstbundelLo3Rubriek> lo3Rubrieken,
+            @Element(name = "dienstbundelStapel", required = false) final TussenStapel<BrpDienstbundelInhoud> dienstbundelStapel) {
         super();
         this.diensten = diensten;
         this.lo3Rubrieken = lo3Rubrieken;
@@ -54,27 +48,24 @@ public final class TussenDienstbundel {
     }
 
     /**
-     * Geef de waarde van diensten.
-     *
-     * @return diensten
+     * Geef de waarde van diensten van TussenDienstbundel.
+     * @return de waarde van diensten van TussenDienstbundel
      */
     public List<TussenDienst> getDiensten() {
         return diensten;
     }
 
     /**
-     * Geef de waarde van lo3rubrieken.
-     *
-     * @return lo3rubrieken
+     * Geef de waarde van lo3 rubrieken van TussenDienstbundel.
+     * @return de waarde van lo3 rubrieken van TussenDienstbundel
      */
     public List<TussenDienstbundelLo3Rubriek> getLo3Rubrieken() {
         return lo3Rubrieken;
     }
 
     /**
-     * Geef de waarde van dienstbundel stapel.
-     *
-     * @return dienstbundel stapel
+     * Geef de waarde van dienstbundel stapel van TussenDienstbundel.
+     * @return de waarde van dienstbundel stapel van TussenDienstbundel
      */
     public TussenStapel<BrpDienstbundelInhoud> getDienstbundelStapel() {
         return dienstbundelStapel;

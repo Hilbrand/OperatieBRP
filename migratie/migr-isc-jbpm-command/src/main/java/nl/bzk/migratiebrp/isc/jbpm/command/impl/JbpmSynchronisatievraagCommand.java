@@ -25,25 +25,20 @@ public final class JbpmSynchronisatievraagCommand implements Command<Long> {
 
     private final String processDefinitionName;
     private final String inhoud;
-    private final String doelGemeente;
+    private final String doelPartijCode;
     private final String naam;
 
     /**
      * Default constructor.
-     *
-     * @param processDefinitionNaam
-     *            De naam van de proces definitie.
-     * @param inhoud
-     *            De inhoud van het bericht.
-     * @param doelGemeente
-     *            De doelgemeente.
-     * @param naam
-     *            De naam van het bericht.
+     * @param processDefinitionNaam De naam van de proces definitie.
+     * @param inhoud De inhoud van het bericht.
+     * @param doelPartijCode De doelPartijCode.
+     * @param naam De naam van het bericht.
      */
-    public JbpmSynchronisatievraagCommand(final String processDefinitionNaam, final String inhoud, final String doelGemeente, final String naam) {
+    public JbpmSynchronisatievraagCommand(final String processDefinitionNaam, final String inhoud, final String doelPartijCode, final String naam) {
         processDefinitionName = processDefinitionNaam;
         this.inhoud = inhoud;
-        this.doelGemeente = doelGemeente;
+        this.doelPartijCode = doelPartijCode;
         this.naam = naam;
     }
 
@@ -57,7 +52,7 @@ public final class JbpmSynchronisatievraagCommand implements Command<Long> {
         // Sla bericht op
         final SpringService springService = (SpringService) jbpmContext.getServices().getService(SpringServiceFactory.SERVICE_NAME);
         final BerichtenDao berichtenDao = springService.getBean(BerichtenDao.class);
-        final Long berichtId = berichtenDao.bewaar("ISC", Direction.INKOMEND, UUID.randomUUID().toString(), null, inhoud, null, doelGemeente, null);
+        final Long berichtId = berichtenDao.bewaar("ISC", Direction.INKOMEND, UUID.randomUUID().toString(), null, inhoud, null, doelPartijCode, null, null);
         berichtenDao.updateNaam(berichtId, naam);
         berichtenDao.updateProcessInstance(berichtId, processInstanceId);
 

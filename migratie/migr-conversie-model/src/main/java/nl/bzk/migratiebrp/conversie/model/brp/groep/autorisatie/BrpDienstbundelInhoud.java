@@ -6,14 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP DienstBundelInhoud.
@@ -39,31 +38,23 @@ public final class BrpDienstbundelInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maak een BrpDienstBundelInhoud object.
-     *
-     * @param naam
-     *            naam
-     * @param datumIngang
-     *            datum ingang
-     * @param datumEinde
-     *            datum einde
-     * @param naderePopulatiebeperking
-     *            nadere populatie beperking
-     * @param indicatieNaderePopulatiebeperkingVolledigGeconverteerd
-     *            indicatie nadere populatie beperking volledig geconverteerd
-     * @param toelichting
-     *            toelichting
-     * @param geblokkeerd
-     *            geblokkeerd
+     * @param naam naam
+     * @param datumIngang datum ingang
+     * @param datumEinde datum einde
+     * @param naderePopulatiebeperking nadere populatie beperking
+     * @param indicatieNaderePopulatiebeperkingVolledigGeconverteerd indicatie nadere populatie beperking volledig geconverteerd
+     * @param toelichting toelichting
+     * @param geblokkeerd geblokkeerd
      */
     public BrpDienstbundelInhoud(
-        @Element(name = "naam", required = false) final String naam,
-        @Element(name = "datumIngang", required = false) final BrpDatum datumIngang,
-        @Element(name = "datumEinde", required = false) final BrpDatum datumEinde,
-        @Element(name = "naderePopulatiebeperking", required = false) final String naderePopulatiebeperking,
-        @Element(name = "indicatieNaderePopulatiebeperkingVolledigGeconverteerd", required = false) final Boolean indicatieNaderePopulatiebeperkingVolledigGeconverteerd,
-        @Element(name = "toelichting", required = false) final String toelichting,
-        @Element(name = "geblokkeerd", required = false) final Boolean geblokkeerd)
-    {
+            @Element(name = "naam", required = false) final String naam,
+            @Element(name = "datumIngang", required = false) final BrpDatum datumIngang,
+            @Element(name = "datumEinde", required = false) final BrpDatum datumEinde,
+            @Element(name = "naderePopulatiebeperking", required = false) final String naderePopulatiebeperking,
+            @Element(name = "indicatieNaderePopulatiebeperkingVolledigGeconverteerd",
+                    required = false) final Boolean indicatieNaderePopulatiebeperkingVolledigGeconverteerd,
+            @Element(name = "toelichting", required = false) final String toelichting,
+            @Element(name = "geblokkeerd", required = false) final Boolean geblokkeerd) {
         super();
         this.naam = naam;
         this.datumIngang = datumIngang;
@@ -75,72 +66,65 @@ public final class BrpDienstbundelInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van naam.
-     *
-     * @return naam
+     * Geef de waarde van naam van BrpDienstbundelInhoud.
+     * @return de waarde van naam van BrpDienstbundelInhoud
      */
     public String getNaam() {
         return naam;
     }
 
     /**
-     * Geef de waarde van datum ingang.
-     *
-     * @return datum ingang
+     * Geef de waarde van datum ingang van BrpDienstbundelInhoud.
+     * @return de waarde van datum ingang van BrpDienstbundelInhoud
      */
     public BrpDatum getDatumIngang() {
         return datumIngang;
     }
 
     /**
-     * Geef de waarde van datum einde.
-     *
-     * @return datum einde
+     * Geef de waarde van datum einde van BrpDienstbundelInhoud.
+     * @return de waarde van datum einde van BrpDienstbundelInhoud
      */
     public BrpDatum getDatumEinde() {
         return datumEinde;
     }
 
     /**
-     * Geef de waarde van naderePopulatieberking.
-     *
-     * @return naderePopulatieberking
+     * Geef de waarde van nadere populatiebeperking van BrpDienstbundelInhoud.
+     * @return de waarde van nadere populatiebeperking van BrpDienstbundelInhoud
      */
     public String getNaderePopulatiebeperking() {
         return naderePopulatiebeperking;
     }
 
     /**
-     * Geef de waarde van geblokkeerd.
-     *
-     * @return geblokkeerd
+     * Geef de waarde van geblokkeerd van BrpDienstbundelInhoud.
+     * @return de waarde van geblokkeerd van BrpDienstbundelInhoud
      */
     public Boolean getGeblokkeerd() {
         return geblokkeerd;
     }
 
     /**
-     * Geef de waarde van indicatie voorwaarde regel volledig geconverteerd.
-     *
-     * @return indicatie voorwaarde regel volledig geconverteerd
+     * Geef de waarde van indicatie nadere populatiebeperking volledig geconverteerd van BrpDienstbundelInhoud.
+     * @return de waarde van indicatie nadere populatiebeperking volledig geconverteerd van BrpDienstbundelInhoud
      */
     public Boolean getIndicatieNaderePopulatiebeperkingVolledigGeconverteerd() {
         return indicatieNaderePopulatiebeperkingVolledigGeconverteerd;
     }
 
     /**
-     * Geef de waarde van toelichting.
-     *
-     * @return attenderings criterium
+     * Geef de waarde van toelichting van BrpDienstbundelInhoud.
+     * @return de waarde van toelichting van BrpDienstbundelInhoud
      */
     public String getToelichting() {
         return toelichting;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -157,40 +141,40 @@ public final class BrpDienstbundelInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpDienstbundelInhoud castOther = (BrpDienstbundelInhoud) other;
         return new EqualsBuilder().append(naam, castOther.naam)
-                                  .append(datumIngang, castOther.datumIngang)
-                                  .append(datumEinde, castOther.datumEinde)
-                                  .append(naderePopulatiebeperking, castOther.naderePopulatiebeperking)
-                                  .append(
-                    indicatieNaderePopulatiebeperkingVolledigGeconverteerd,
-                    castOther.indicatieNaderePopulatiebeperkingVolledigGeconverteerd)
-                                  .append(toelichting, castOther.toelichting)
-                                  .append(geblokkeerd, castOther.geblokkeerd)
-                                  .isEquals();
+                .append(datumIngang, castOther.datumIngang)
+                .append(datumEinde, castOther.datumEinde)
+                .append(naderePopulatiebeperking, castOther.naderePopulatiebeperking)
+                .append(
+                        indicatieNaderePopulatiebeperkingVolledigGeconverteerd,
+                        castOther.indicatieNaderePopulatiebeperkingVolledigGeconverteerd)
+                .append(toelichting, castOther.toelichting)
+                .append(geblokkeerd, castOther.geblokkeerd)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(naam)
-                                    .append(datumIngang)
-                                    .append(datumEinde)
-                                    .append(naderePopulatiebeperking)
-                                    .append(indicatieNaderePopulatiebeperkingVolledigGeconverteerd)
-                                    .append(toelichting)
-                                    .append(geblokkeerd)
-                                    .toHashCode();
+                .append(datumIngang)
+                .append(datumEinde)
+                .append(naderePopulatiebeperking)
+                .append(indicatieNaderePopulatiebeperkingVolledigGeconverteerd)
+                .append(toelichting)
+                .append(geblokkeerd)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("naam", naam)
-                                                                          .append("datumIngang", datumIngang)
-                                                                          .append("datumEinde", datumEinde)
-                                                                          .append("naderePopulatiebeperking", naderePopulatiebeperking)
-                                                                          .append(
-                                                                              "indnaderepopbeperkingvolconv",
-                                                                              indicatieNaderePopulatiebeperkingVolledigGeconverteerd)
-                                                                          .append("toelichting", toelichting)
-                                                                          .append("geblokkeerd", geblokkeerd)
-                                                                          .toString();
+                .append("datumIngang", datumIngang)
+                .append("datumEinde", datumEinde)
+                .append("naderePopulatiebeperking", naderePopulatiebeperking)
+                .append(
+                        "indnaderepopbeperkingvolconv",
+                        indicatieNaderePopulatiebeperkingVolledigGeconverteerd)
+                .append("toelichting", toelichting)
+                .append("geblokkeerd", geblokkeerd)
+                .toString();
     }
 }

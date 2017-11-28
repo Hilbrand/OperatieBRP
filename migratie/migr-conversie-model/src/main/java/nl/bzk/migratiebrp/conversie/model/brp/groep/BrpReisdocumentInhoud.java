@@ -6,17 +6,17 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpReisdocumentAutoriteitVanAfgifteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de BRP Groep Reisdocument.
@@ -44,25 +44,15 @@ public final class BrpReisdocumentInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een BrpReisdocumentInhoud object.
-     *
-     * @param soort
-     *            soort reisdocument, mag niet null zijn
-     * @param nummer
-     *            nummer van het reisdocument, mag niet null zijn
-     * @param datumIngangDocument
-     *            datum ingang document, mag niet null zijn
-     * @param datumUitgifte
-     *            datum van uitgifte, mag niet null zijn
-     * @param autoriteitVanAfgifte
-     *            autoriteit van afgifte, mag niet null zijn
-     * @param datumEindeDocument
-     *            voorziene einde geldigheid, mag niet null zijn
-     * @param datumInhoudingOfVermissing
-     *            datum inhouding of vermissing, mag null zijn
-     * @param aanduidingInhoudingOfVermissing
-     *            reden dat het reisdocument is vervallen, mag null zijn
-     * @throws NullPointerException
-     *             als een van de verplichte velden null is
+     * @param soort soort reisdocument, mag niet null zijn
+     * @param nummer nummer van het reisdocument, mag niet null zijn
+     * @param datumIngangDocument datum ingang document, mag niet null zijn
+     * @param datumUitgifte datum van uitgifte, mag niet null zijn
+     * @param autoriteitVanAfgifte autoriteit van afgifte, mag niet null zijn
+     * @param datumEindeDocument voorziene einde geldigheid, mag niet null zijn
+     * @param datumInhoudingOfVermissing datum inhouding of vermissing, mag null zijn
+     * @param aanduidingInhoudingOfVermissing reden dat het reisdocument is vervallen, mag null zijn
+     * @throws NullPointerException als een van de verplichte velden null is
      */
     public BrpReisdocumentInhoud(
         /* Meer dan 7 parameters is in constructors van immutable model klassen getolereerd. */
@@ -74,8 +64,7 @@ public final class BrpReisdocumentInhoud extends AbstractBrpGroepInhoud {
         @Element(name = "datumEindeDocument", required = false) final BrpDatum datumEindeDocument,
         @Element(name = "datumInhoudingOfVermissing", required = false) final BrpDatum datumInhoudingOfVermissing,
         @Element(name = "aanduidingInhoudingOfVermissing",
-                required = false) final BrpAanduidingInhoudingOfVermissingReisdocumentCode aanduidingInhoudingOfVermissing)
-    {
+                required = false) final BrpAanduidingInhoudingOfVermissingReisdocumentCode aanduidingInhoudingOfVermissing) {
         checkNotNull(soort, nummer, datumIngangDocument, datumUitgifte, autoriteitVanAfgifte, datumEindeDocument);
         this.soort = soort;
         this.nummer = nummer;
@@ -89,29 +78,26 @@ public final class BrpReisdocumentInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Controleer de verplichte velden op null waarden.
-     *
-     * @throws NullPointerException
-     *             als een van de velden null is
+     * @throws NullPointerException als een van de velden null is
      */
     private void checkNotNull(
-        final BrpSoortNederlandsReisdocumentCode soortParam,
-        final BrpString nummerParam,
-        final BrpDatum datumIngangDocumentParam,
-        final BrpDatum datumUitgifteParam,
-        final BrpReisdocumentAutoriteitVanAfgifteCode autoriteitVanAfgifteParam,
-        final BrpDatum datumVoorzieneEindeGeldigheidParam)
-    {
+            final BrpSoortNederlandsReisdocumentCode soortParam,
+            final BrpString nummerParam,
+            final BrpDatum datumIngangDocumentParam,
+            final BrpDatum datumUitgifteParam,
+            final BrpReisdocumentAutoriteitVanAfgifteCode autoriteitVanAfgifteParam,
+            final BrpDatum datumVoorzieneEindeGeldigheidParam) {
         final String message =
                 "Een van de verplichte velden is null: [soort=%s, nummer=%s, datumIngangDocument=%s, "
-                               + "datumUitgifte=%s, autoriteitVanAfgifte=%s, datumEindeDocument=%s]";
-        Validatie.controleerOpNullWaarden(
-            message,
-            soortParam,
-            nummerParam,
-            datumIngangDocumentParam,
-            datumUitgifteParam,
-            autoriteitVanAfgifteParam,
-            datumVoorzieneEindeGeldigheidParam);
+                        + "datumUitgifte=%s, autoriteitVanAfgifte=%s, datumEindeDocument=%s]";
+        BrpValidatie.controleerOpNullWaarden(
+                message,
+                soortParam,
+                nummerParam,
+                datumIngangDocumentParam,
+                datumUitgifteParam,
+                autoriteitVanAfgifteParam,
+                datumVoorzieneEindeGeldigheidParam);
     }
 
     /*
@@ -126,72 +112,64 @@ public final class BrpReisdocumentInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van soort.
-     *
-     * @return the soort
+     * Geef de waarde van soort van BrpReisdocumentInhoud.
+     * @return de waarde van soort van BrpReisdocumentInhoud
      */
     public BrpSoortNederlandsReisdocumentCode getSoort() {
         return soort;
     }
 
     /**
-     * Geef de waarde van nummer.
-     *
-     * @return the nummer
+     * Geef de waarde van nummer van BrpReisdocumentInhoud.
+     * @return de waarde van nummer van BrpReisdocumentInhoud
      */
     public BrpString getNummer() {
         return nummer;
     }
 
     /**
-     * Geef de waarde van datum ingang document.
-     *
-     * @return the datumIngangDocument
+     * Geef de waarde van datum ingang document van BrpReisdocumentInhoud.
+     * @return de waarde van datum ingang document van BrpReisdocumentInhoud
      */
     public BrpDatum getDatumIngangDocument() {
         return datumIngangDocument;
     }
 
     /**
-     * Geef de waarde van datum uitgifte.
-     *
-     * @return the datumUitgifte
+     * Geef de waarde van datum uitgifte van BrpReisdocumentInhoud.
+     * @return de waarde van datum uitgifte van BrpReisdocumentInhoud
      */
     public BrpDatum getDatumUitgifte() {
         return datumUitgifte;
     }
 
     /**
-     * Geef de waarde van autoriteit van afgifte.
-     *
-     * @return the autoriteitVanAfgifte
+     * Geef de waarde van autoriteit van afgifte van BrpReisdocumentInhoud.
+     * @return de waarde van autoriteit van afgifte van BrpReisdocumentInhoud
      */
     public BrpReisdocumentAutoriteitVanAfgifteCode getAutoriteitVanAfgifte() {
         return autoriteitVanAfgifte;
     }
 
     /**
-     * Geef de waarde van datum einde document.
-     *
-     * @return the datumEindeDocument
+     * Geef de waarde van datum einde document van BrpReisdocumentInhoud.
+     * @return de waarde van datum einde document van BrpReisdocumentInhoud
      */
     public BrpDatum getDatumEindeDocument() {
         return datumEindeDocument;
     }
 
     /**
-     * Geef de waarde van datum inhouding of vermissing.
-     *
-     * @return the datumInhoudingOfVermissing
+     * Geef de waarde van datum inhouding of vermissing van BrpReisdocumentInhoud.
+     * @return de waarde van datum inhouding of vermissing van BrpReisdocumentInhoud
      */
     public BrpDatum getDatumInhoudingOfVermissing() {
         return datumInhoudingOfVermissing;
     }
 
     /**
-     * Geef de waarde van aanduiding inhouding of vermissing.
-     *
-     * @return the aanduidingInhoudingOfVermissing
+     * Geef de waarde van aanduiding inhouding of vermissing van BrpReisdocumentInhoud.
+     * @return de waarde van aanduiding inhouding of vermissing van BrpReisdocumentInhoud
      */
     public BrpAanduidingInhoudingOfVermissingReisdocumentCode getAanduidingInhoudingOfVermissing() {
         return aanduidingInhoudingOfVermissing;
@@ -207,41 +185,41 @@ public final class BrpReisdocumentInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpReisdocumentInhoud castOther = (BrpReisdocumentInhoud) other;
         return new EqualsBuilder().append(soort, castOther.soort)
-                                  .append(nummer, castOther.nummer)
-                                  .append(datumIngangDocument, castOther.datumIngangDocument)
-                                  .append(datumUitgifte, castOther.datumUitgifte)
-                                  .append(autoriteitVanAfgifte, castOther.autoriteitVanAfgifte)
-                                  .append(datumEindeDocument, castOther.datumEindeDocument)
-                                  .append(datumInhoudingOfVermissing, castOther.datumInhoudingOfVermissing)
-                                  .append(aanduidingInhoudingOfVermissing, castOther.aanduidingInhoudingOfVermissing)
-                                  .isEquals();
+                .append(nummer, castOther.nummer)
+                .append(datumIngangDocument, castOther.datumIngangDocument)
+                .append(datumUitgifte, castOther.datumUitgifte)
+                .append(autoriteitVanAfgifte, castOther.autoriteitVanAfgifte)
+                .append(datumEindeDocument, castOther.datumEindeDocument)
+                .append(datumInhoudingOfVermissing, castOther.datumInhoudingOfVermissing)
+                .append(aanduidingInhoudingOfVermissing, castOther.aanduidingInhoudingOfVermissing)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(soort)
-                                    .append(nummer)
-                                    .append(datumIngangDocument)
-                                    .append(datumUitgifte)
-                                    .append(autoriteitVanAfgifte)
-                                    .append(datumEindeDocument)
-                                    .append(datumInhoudingOfVermissing)
-                                    .append(aanduidingInhoudingOfVermissing)
-                                    .toHashCode();
+                .append(nummer)
+                .append(datumIngangDocument)
+                .append(datumUitgifte)
+                .append(autoriteitVanAfgifte)
+                .append(datumEindeDocument)
+                .append(datumInhoudingOfVermissing)
+                .append(aanduidingInhoudingOfVermissing)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("soort", soort)
-                                                                          .append("nummer", nummer)
-                                                                          .append("datumIngangDocument", datumIngangDocument)
-                                                                          .append("datumUitgifte", datumUitgifte)
-                                                                          .append("autoriteitVanAfgifte", autoriteitVanAfgifte)
-                                                                          .append("datumEindeDocument", datumEindeDocument)
-                                                                          .append("datumInhoudingOfVermissing", datumInhoudingOfVermissing)
-                                                                          .append("aanduidingInhoudingOfVermissing", aanduidingInhoudingOfVermissing)
-                                                                          .toString();
+                .append("soort", soort)
+                .append("nummer", nummer)
+                .append("datumIngangDocument", datumIngangDocument)
+                .append("datumUitgifte", datumUitgifte)
+                .append("autoriteitVanAfgifte", autoriteitVanAfgifte)
+                .append("datumEindeDocument", datumEindeDocument)
+                .append("datumInhoudingOfVermissing", datumInhoudingOfVermissing)
+                .append("aanduidingInhoudingOfVermissing", aanduidingInhoudingOfVermissing)
+                .toString();
     }
 
 }

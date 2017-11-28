@@ -13,17 +13,13 @@ public interface RuntimeDao {
 
     /**
      * Voegt in de database een lock met de meegegeven runtimenaam toe.
-     * 
-     * @param runtimeNaam
-     *            De runtime waarvoor we de lock toevoegen.
+     * @param runtimeNaam De runtime waarvoor we de lock toevoegen.
      */
     void voegRuntimeToe(String runtimeNaam);
 
     /**
      * Verwijdert in de database een lock van de meegegeven runtimenaam.
-     * 
-     * @param runtimeNaam
-     *            De runtime waarvoor we de lock verwijderen.
+     * @param runtimeNaam De runtime waarvoor we de lock verwijderen.
      */
     void verwijderRuntime(String runtimeNaam);
 

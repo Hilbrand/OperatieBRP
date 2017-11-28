@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-    xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-	<context:annotation-config />
+    <context:annotation-config/>
+    <context:property-placeholder />
 
-	<!-- DataSource -->
-	<bean id="gbavDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.hsqldb.jdbc.JDBCDriver" />
-		<property name="url" value="jdbc:hsqldb:hsql://localhost:9043/gbav" />
-		<property name="username" value="sa" />
-		<property name="password" value="" />
-	</bean>
+    <!-- DataSource -->
+    <bean id="gbavDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbc.JDBCDriver"/>
+        <property name="url" value="jdbc:hsqldb:hsql://localhost:${test.database.port}/gbav"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
 
-	<!-- ConnectionFactory -->
+    <!-- ConnectionFactory -->
 
     <!-- Hornet queue -->
     <bean name="connectionFactory" class="org.hornetq.jms.client.HornetQXAConnectionFactory">
@@ -29,7 +30,7 @@
                 <constructor-arg>
                     <map key-type="java.lang.String" value-type="java.lang.Object">
                         <entry key="host" value="localhost"/>
-                        <entry key="port" value="5487"/>
+                        <entry key="port" value="${test.hornetq.port}"/>
                     </map>
                 </constructor-arg>
             </bean>

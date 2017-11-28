@@ -56,7 +56,7 @@ public class ZoekPersoonServiceUtilTest {
         verzoek.setMessageId("MSG-1");
 
         final List<GevondenPersoon> gevondenPersonen = new ArrayList<>();
-        gevondenPersonen.add(new GevondenPersoon(1, 1234567890L, "0003"));
+        gevondenPersonen.add(new GevondenPersoon(1L, "1234567890", "0003"));
 
         final ZoekPersoonAntwoordBericht antwoord = ZoekPersoonServiceUtil.maakZoekPersoonAntwoord(verzoek, gevondenPersonen);
         Assert.assertNotNull(antwoord);
@@ -64,7 +64,7 @@ public class ZoekPersoonServiceUtilTest {
         Assert.assertEquals("MSG-1", antwoord.getCorrelationId());
         Assert.assertEquals(StatusType.OK, antwoord.getStatus());
         Assert.assertEquals(ZoekPersoonResultaatType.GEVONDEN, antwoord.getResultaat());
-        Assert.assertEquals(Integer.valueOf(1), antwoord.getPersoonId());
+        Assert.assertEquals(Long.valueOf(1), antwoord.getPersoonId());
         Assert.assertEquals("1234567890", antwoord.getAnummer());
         Assert.assertEquals("0003", antwoord.getGemeente());
     }
@@ -75,8 +75,8 @@ public class ZoekPersoonServiceUtilTest {
         verzoek.setMessageId("MSG-1");
 
         final List<GevondenPersoon> gevondenPersonen = new ArrayList<>();
-        gevondenPersonen.add(new GevondenPersoon(1, 2L, "3"));
-        gevondenPersonen.add(new GevondenPersoon(4, 5L, "6"));
+        gevondenPersonen.add(new GevondenPersoon(1L, "2", "3"));
+        gevondenPersonen.add(new GevondenPersoon(4L, "5", "6"));
 
         final ZoekPersoonAntwoordBericht antwoord = ZoekPersoonServiceUtil.maakZoekPersoonAntwoord(verzoek, gevondenPersonen);
         Assert.assertNotNull(antwoord);

@@ -1,1 +1,1 @@
-IS_NULL(indicatie.bijzondere_verblijfsrechtelijke_positie)
+KNV(Persoon.Indicatie.BijzondereVerblijfsrechtelijkePositie.Waarde)

@@ -6,14 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Text;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAttribuut;
-
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Text;
 
 /**
  * Deze enum representeert een BRP Stelsel.
@@ -22,9 +21,13 @@ import org.simpleframework.xml.Text;
  */
 public final class BrpStelselCode implements BrpAttribuut, Comparable<BrpStelselCode> {
 
-    /** BRP. */
+    /**
+     * BRP.
+     */
     public static final BrpStelselCode BRP = new BrpStelselCode((short) 1);
-    /** GBA. */
+    /**
+     * GBA.
+     */
     public static final BrpStelselCode GBA = new BrpStelselCode((short) 2);
 
     @Text
@@ -32,9 +35,7 @@ public final class BrpStelselCode implements BrpAttribuut, Comparable<BrpStelsel
 
     /**
      * Maakt een BrpAandMediumCode.
-     *
-     * @param brpStelselCode
-     *            BRP code
+     * @param brpStelselCode BRP code
      */
     public BrpStelselCode(@Text final short brpStelselCode) {
         code = brpStelselCode;
@@ -42,7 +43,6 @@ public final class BrpStelselCode implements BrpAttribuut, Comparable<BrpStelsel
 
     /**
      * Geef de waarde van code.
-     *
      * @return the code
      */
     public short getCode() {

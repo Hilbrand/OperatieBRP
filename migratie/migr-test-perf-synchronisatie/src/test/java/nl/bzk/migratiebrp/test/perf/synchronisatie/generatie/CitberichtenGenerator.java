@@ -108,14 +108,14 @@ public class CitberichtenGenerator {
 
                 final String filename =
                         String.format(
-                            "%05d-%07d-%07d-%10d.txt",
-                            i,
-                            Integer.valueOf(verzendendePartij.getWaarde()),
-                            ONTVANGENDE_PARTIJ,
-                            pl.getActueelAdministratienummer());
+                                "%05d-%07d-%07d-%10d.txt",
+                                i,
+                                Integer.valueOf(verzendendePartij.getWaarde()),
+                                ONTVANGENDE_PARTIJ,
+                                pl.getActueelAdministratienummer());
 
                 try (
-                    FileOutputStream fos = new FileOutputStream(new File(directory, filename))) {
+                        FileOutputStream fos = new FileOutputStream(new File(directory, filename))) {
                     IOUtils.write(lg01.format(), fos);
                 }
 
@@ -138,7 +138,7 @@ public class CitberichtenGenerator {
         directory.mkdirs();
 
         try (
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(directory, "berichten.zip")))) {
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(directory, "berichten.zip")))) {
             final ZipOutputStream zip = new ZipOutputStream(os);
             zip.setLevel(9);
 
@@ -158,11 +158,11 @@ public class CitberichtenGenerator {
 
                 final String filename =
                         String.format(
-                            "%05d-%07d-%07d-%10d.txt",
-                            i,
-                            Integer.valueOf(verzendendePartij.getWaarde()),
-                            ONTVANGENDE_PARTIJ,
-                            pl.getActueelAdministratienummer());
+                                "%05d-%07d-%07d-%10d.txt",
+                                i,
+                                Integer.valueOf(verzendendePartij.getWaarde()),
+                                ONTVANGENDE_PARTIJ,
+                                pl.getActueelAdministratienummer());
 
                 final ZipEntry entry = new ZipEntry(filename);
                 zip.putNextEntry(entry);

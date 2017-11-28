@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="uc311" width="1290" height="1441">
-  <node name="START" x="264" y="12" width="361" height="36">
+<root-container name="uc311" width="1238" height="1441">
+  <node name="START" x="264" y="348" width="361" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Loggen start proces" x="336" y="84" width="217" height="36">
+  <node name="Loggen start proces" x="336" y="420" width="217" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -28,7 +28,7 @@
       <bendpoint w1="107" h1="61" w2="-205" h2="1"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-238" y="-20"/>
     </edge>
   </node>
   <node name="2-4. Bepaal antwoord opvragen PL" x="336" y="708" width="217" height="36">

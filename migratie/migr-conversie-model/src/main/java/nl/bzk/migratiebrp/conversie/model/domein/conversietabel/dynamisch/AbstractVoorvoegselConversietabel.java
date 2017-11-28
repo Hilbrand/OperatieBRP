@@ -11,24 +11,22 @@ import java.util.List;
 import java.util.Map.Entry;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AbstractConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.VoorvoegselScheidingstekenPaar;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Conversie van 'LO3 Voorvoegsel geslachtsnaam' naar een unieke combinatie van 'BRP Voorvoegsel' en 'BRP
  * Scheidingsteken'.
- * 
  */
 public abstract class AbstractVoorvoegselConversietabel extends AbstractConversietabel<Lo3String, VoorvoegselScheidingstekenPaar> {
 
     /**
      * Maakt een VoorvoegselConversietabel object.
-     * 
-     * @param conversieLijst
-     *            de lijst met voorvoegsel conversies
+     * @param conversieLijst de lijst met voorvoegsel conversies
      */
     public AbstractVoorvoegselConversietabel(final List<Entry<Lo3String, VoorvoegselScheidingstekenPaar>> conversieLijst) {
         super(conversieLijst);
@@ -62,7 +60,7 @@ public abstract class AbstractVoorvoegselConversietabel extends AbstractConversi
     @Override
     protected final Lo3String voegOnderzoekToeLo3(final Lo3String input, final Lo3Onderzoek onderzoek) {
         final Lo3String resultaat;
-        if (nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie.isElementGevuld(input)) {
+        if (Lo3Validatie.isElementGevuld(input)) {
             resultaat = new Lo3String(input.getWaarde(), onderzoek);
         } else {
             if (onderzoek != null) {
@@ -78,7 +76,7 @@ public abstract class AbstractVoorvoegselConversietabel extends AbstractConversi
     @Override
     protected final VoorvoegselScheidingstekenPaar voegOnderzoekToeBrp(final VoorvoegselScheidingstekenPaar input, final Lo3Onderzoek onderzoek) {
         final VoorvoegselScheidingstekenPaar resultaat;
-        if (input == null || !(Validatie.isAttribuutGevuld(input.getScheidingsteken()) || Validatie.isAttribuutGevuld(input.getVoorvoegsel()))) {
+        if (input == null || !(BrpValidatie.isAttribuutGevuld(input.getScheidingsteken()) || BrpValidatie.isAttribuutGevuld(input.getVoorvoegsel()))) {
             if (onderzoek == null) {
                 resultaat = null;
             } else {

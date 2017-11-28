@@ -8,7 +8,6 @@ package nl.bzk.brp.levering.lo3.mapper;
 
 import java.util.HashSet;
 import java.util.List;
-import nl.bzk.brp.model.logisch.ist.Stapel;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstHuwelijkOfGpGroepInhoud;
 import org.junit.Assert;
@@ -29,9 +28,8 @@ public class BrpIstHuwelijkOfGpMapperTest {
 
     @Test
     public void testLeeg() {
-        final List<BrpStapel<BrpIstHuwelijkOfGpGroepInhoud>> brpInhoud = mapper.map(new HashSet<Stapel>());
-
-        Assert.assertNull(brpInhoud);
+        final List<BrpStapel<BrpIstHuwelijkOfGpGroepInhoud>> brpInhoud = mapper.map(new HashSet<>());
+        Assert.assertEquals(true, brpInhoud.isEmpty());
     }
 
     /**
@@ -40,7 +38,7 @@ public class BrpIstHuwelijkOfGpMapperTest {
     @Test
     public void testGeenWaarde() {
         final List<BrpStapel<BrpIstHuwelijkOfGpGroepInhoud>> brpInhoud = mapper.map(null);
-        Assert.assertNull(brpInhoud);
+        Assert.assertEquals(true, brpInhoud.isEmpty());
     }
 
 }

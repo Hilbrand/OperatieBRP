@@ -6,15 +6,14 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpPartijInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert het BRP objecttype Partij.
@@ -34,22 +33,16 @@ public final class BrpPartij {
 
     /**
      * Maak een nieuw BrpPartij object.
-     *
-     * @param id
-     *            de id van de partij
-     * @param naam
-     *            de naam van de partij
-     * @param partijCode
-     *            de code van de partij
-     * @param partijStapel
-     *            de partij stapels
+     * @param id de id van de partij
+     * @param naam de naam van de partij
+     * @param partijCode de code van de partij
+     * @param partijStapel de partij stapels
      */
     public BrpPartij(
-        @Element(name = "id", required = false) final Long id,
-        @Element(name = "naam", required = false) final String naam,
-        @Element(name = "partijCode", required = false) final BrpPartijCode partijCode,
-        @Element(name = "partijStapel", required = false) final BrpStapel<BrpPartijInhoud> partijStapel)
-    {
+            @Element(name = "id", required = false) final Long id,
+            @Element(name = "naam", required = false) final String naam,
+            @Element(name = "partijCode", required = false) final BrpPartijCode partijCode,
+            @Element(name = "partijStapel", required = false) final BrpStapel<BrpPartijInhoud> partijStapel) {
         super();
         this.id = id;
         this.naam = naam;
@@ -59,7 +52,6 @@ public final class BrpPartij {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public Long getId() {
@@ -68,7 +60,6 @@ public final class BrpPartij {
 
     /**
      * Geef de waarde van naam.
-     *
      * @return naam
      */
     public String getNaam() {
@@ -77,7 +68,6 @@ public final class BrpPartij {
 
     /**
      * Geef de waarde van partij code.
-     *
      * @return partij code
      */
     public BrpPartijCode getPartijCode() {
@@ -86,7 +76,6 @@ public final class BrpPartij {
 
     /**
      * Geef de waarde van partij stapel.
-     *
      * @return partij stapel
      */
     public BrpStapel<BrpPartijInhoud> getPartijStapel() {

@@ -13,26 +13,18 @@ import nl.bzk.migratiebrp.bericht.model.lo3.impl.NullBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakNullBerichtActionTest {
 
     private static final String A_NUMMER = "1234567890";
-    private MaakNullBerichtAction subject;
-    private BerichtenDao berichtenDao;
 
-    @Before
-    public void setup() {
-        subject = new MaakNullBerichtAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakNullBerichtAction subject = new MaakNullBerichtAction(berichtenDao);
 
     @Test
     public void testMakenNullBericht() {
-        final Av01Bericht av01Bericht = VerwijderenAfnIndTestUtil.maakAv01Bericht("580001", A_NUMMER);
+        final Av01Bericht av01Bericht = VerwijderenAfnIndTestUtil.maakAv01Bericht("059901", A_NUMMER);
 
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("input", berichtenDao.bewaarBericht(av01Bericht));
@@ -43,8 +35,8 @@ public class MaakNullBerichtActionTest {
         final NullBericht nullBericht = (NullBericht) berichtenDao.leesBericht((Long) result.get("nullBericht"));
 
         Assert.assertNotNull(nullBericht);
-        Assert.assertEquals(av01Bericht.getDoelGemeente(), nullBericht.getBronGemeente());
-        Assert.assertEquals(av01Bericht.getBronGemeente(), nullBericht.getDoelGemeente());
+        Assert.assertEquals(av01Bericht.getDoelPartijCode(), nullBericht.getBronPartijCode());
+        Assert.assertEquals(av01Bericht.getBronPartijCode(), nullBericht.getDoelPartijCode());
 
         Assert.assertEquals(av01Bericht.getMessageId(), nullBericht.getCorrelationId());
         Assert.assertNotNull(nullBericht.getMessageId());

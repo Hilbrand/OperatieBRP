@@ -8,4 +8,3 @@
  * JDBC implementaties van de repositories.
  */
 package nl.bzk.migratiebrp.init.naarbrp.repository.jdbc;
-

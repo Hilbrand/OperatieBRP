@@ -30,31 +30,22 @@ public final class GgoFoutRegel implements Serializable {
 
     /**
      * Fout regel.
-     * 
-     * @param stap
-     *            stap
-     * @param herkomst
-     *            herkomst, mag niet null zijn
-     * @param severity
-     *            severity, mag niet null zijn
-     * @param type
-     *            type, mag niet null zijn
-     * @param code
-     *            code
-     * @param omschrijving
-     *            omschrijving
-     * @param htmlFieldId
-     *            het id van het html component waar de fout betrekking op heeft. Deze wordt dan rood gehighlight.
+     * @param stap stap
+     * @param herkomst herkomst, mag niet null zijn
+     * @param severity severity, mag niet null zijn
+     * @param type type, mag niet null zijn
+     * @param code code
+     * @param omschrijving omschrijving
+     * @param htmlFieldId het id van het html component waar de fout betrekking op heeft. Deze wordt dan rood gehighlight.
      */
     public GgoFoutRegel(
-        final GgoStap stap,
-        final GgoVoorkomen herkomst,
-        final LogSeverity severity,
-        final GgoLogType type,
-        final String code,
-        final String omschrijving,
-        final String htmlFieldId)
-    {
+            final GgoStap stap,
+            final GgoVoorkomen herkomst,
+            final LogSeverity severity,
+            final GgoLogType type,
+            final String code,
+            final String omschrijving,
+            final String htmlFieldId) {
         this.stap = stap;
         this.herkomst = herkomst;
         this.severity = severity;
@@ -66,59 +57,43 @@ public final class GgoFoutRegel implements Serializable {
 
     /**
      * Fout regel.
-     * 
-     * @param stap
-     *            stap
-     * @param herkomst
-     *            herkomst, mag niet null zijn
-     * @param severity
-     *            severity, mag niet null zijn
-     * @param type
-     *            type, mag niet null zijn
-     * @param code
-     *            code
-     * @param omschrijving
-     *            omschrijving
+     * @param stap stap
+     * @param herkomst herkomst, mag niet null zijn
+     * @param severity severity, mag niet null zijn
+     * @param type type, mag niet null zijn
+     * @param code code
+     * @param omschrijving omschrijving
      */
     public GgoFoutRegel(
-        final GgoStap stap,
-        final GgoVoorkomen herkomst,
-        final LogSeverity severity,
-        final GgoLogType type,
-        final String code,
-        final String omschrijving)
-    {
+            final GgoStap stap,
+            final GgoVoorkomen herkomst,
+            final LogSeverity severity,
+            final GgoLogType type,
+            final String code,
+            final String omschrijving) {
         this(stap, herkomst, severity, type, code, omschrijving, null);
 
     }
 
     /**
      * Dezelfde constructor als hierboven maar dan zonder stap.
-     * 
-     * @param herkomst
-     *            herkomst, mag niet null zijn
-     * @param severity
-     *            severity, mag niet null zijn
-     * @param type
-     *            type, mag niet null zijn
-     * @param code
-     *            code
-     * @param omschrijving
-     *            omschrijving
+     * @param herkomst herkomst, mag niet null zijn
+     * @param severity severity, mag niet null zijn
+     * @param type type, mag niet null zijn
+     * @param code code
+     * @param omschrijving omschrijving
      */
     public GgoFoutRegel(
-        final GgoVoorkomen herkomst,
-        final LogSeverity severity,
-        final GgoLogType type,
-        final String code,
-        final String omschrijving)
-    {
+            final GgoVoorkomen herkomst,
+            final LogSeverity severity,
+            final GgoLogType type,
+            final String code,
+            final String omschrijving) {
         this(null, herkomst, severity, type, code, omschrijving);
     }
 
     /**
      * Geef de waarde van stap.
-     *
      * @return the stap
      */
     public GgoStap getStap() {
@@ -127,7 +102,6 @@ public final class GgoFoutRegel implements Serializable {
 
     /**
      * Geef de waarde van herkomst.
-     *
      * @return the lo3Herkomst
      */
     public GgoVoorkomen getHerkomst() {
@@ -136,7 +110,6 @@ public final class GgoFoutRegel implements Serializable {
 
     /**
      * Geef de waarde van severity.
-     *
      * @return the severity
      */
     public LogSeverity getSeverity() {
@@ -145,7 +118,6 @@ public final class GgoFoutRegel implements Serializable {
 
     /**
      * Geef de waarde van type.
-     *
      * @return the type as String
      */
     public String getType() {
@@ -154,7 +126,6 @@ public final class GgoFoutRegel implements Serializable {
 
     /**
      * Geef de waarde van code.
-     *
      * @return the code
      */
     public String getCode() {
@@ -163,7 +134,6 @@ public final class GgoFoutRegel implements Serializable {
 
     /**
      * Geef de waarde van omschrijving.
-     *
      * @return the omschrijving
      */
     public String getOmschrijving() {
@@ -172,7 +142,6 @@ public final class GgoFoutRegel implements Serializable {
 
     /**
      * Geef de waarde van html field id.
-     *
      * @return the htmlFieldId
      */
     public String getHtmlFieldId() {
@@ -189,11 +158,11 @@ public final class GgoFoutRegel implements Serializable {
         }
         final GgoFoutRegel castOther = (GgoFoutRegel) other;
         return new EqualsBuilder().append(herkomst, castOther.herkomst)
-                                  .append(severity, castOther.severity)
-                                  .append(type, castOther.type)
-                                  .append(code, castOther.code)
-                                  .append(omschrijving, castOther.omschrijving)
-                                  .isEquals();
+                .append(severity, castOther.severity)
+                .append(type, castOther.type)
+                .append(code, castOther.code)
+                .append(omschrijving, castOther.omschrijving)
+                .isEquals();
     }
 
     @Override
@@ -204,12 +173,12 @@ public final class GgoFoutRegel implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("herkomst", herkomst)
-                                                                          .append("severity", severity)
-                                                                          .append("type", type)
-                                                                          .append("code", code)
-                                                                          .append("omschrijving", omschrijving)
-                                                                          .toString();
+                .append("herkomst", herkomst)
+                .append("severity", severity)
+                .append("type", type)
+                .append("code", code)
+                .append("omschrijving", omschrijving)
+                .toString();
     }
 
 }

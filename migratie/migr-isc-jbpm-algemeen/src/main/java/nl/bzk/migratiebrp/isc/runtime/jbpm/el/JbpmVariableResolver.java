@@ -6,6 +6,9 @@
 
 package nl.bzk.migratiebrp.isc.runtime.jbpm.el;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
 import org.jbpm.JbpmConfiguration.Configs;
 import org.jbpm.context.exe.ContextInstance;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -22,54 +25,66 @@ import org.jbpm.taskmgmt.exe.TaskMgmtInstance;
  */
 public final class JbpmVariableResolver implements VariableResolver {
 
+    private final Map<String, BiFunction<String, ExecutionContext, Object>> resolverMap = new HashMap<>();
+
+    /**
+     * Constructor.
+     */
+    public JbpmVariableResolver() {
+        resolverMap.put("taskInstance", (name, executionContext) -> executionContext.getTaskInstance());
+        resolverMap.put("processInstance", (name, executionContext) -> executionContext.getProcessInstance());
+        resolverMap.put("processDefinition", (name, executionContext) -> executionContext.getProcessDefinition());
+        resolverMap.put("token", (name, executionContext) -> executionContext.getToken());
+        resolverMap.put("taskMgmtInstance", (name, executionContext) -> executionContext.getTaskMgmtInstance());
+        resolverMap.put("contextInstance", (name, executionContext) -> executionContext.getContextInstance());
+    }
+
     @Override
     public Object resolveVariable(final String name) {
         final ExecutionContext executionContext = ExecutionContext.currentExecutionContext();
+        return resolverMap.getOrDefault(name, this::getDefaultObject).apply(name, executionContext);
+    }
 
-        if ("taskInstance".equals(name)) {
-            return executionContext.getTaskInstance();
-        }
-        if ("processInstance".equals(name)) {
-            return executionContext.getProcessInstance();
-        }
-        if ("processDefinition".equals(name)) {
-            return executionContext.getProcessDefinition();
-        }
-        if ("token".equals(name)) {
-            return executionContext.getToken();
-        }
-        if ("taskMgmtInstance".equals(name)) {
-            return executionContext.getTaskMgmtInstance();
-        }
-        if ("contextInstance".equals(name)) {
-            return executionContext.getContextInstance();
-        }
-
+    private Object getDefaultObject(final String name, final ExecutionContext executionContext) {
+        Object result;
         final TaskInstance taskInstance = executionContext.getTaskInstance();
         if (taskInstance != null && taskInstance.hasVariableLocally(name)) {
-            return taskInstance.getVariable(name);
+            result = taskInstance.getVariable(name);
+        } else {
+            result = checkContextInstance(name, executionContext);
+            if (result == null) {
+                result = checkTaskManagementInstance(name, executionContext);
+            }
+            if (result == null) {
+                result = Configs.hasObject(name) ? Configs.getObject(name) : null;
+            }
         }
+        return result;
+    }
 
+    private Object checkContextInstance(final String name, final ExecutionContext executionContext) {
+        Object result = null;
         final ContextInstance contextInstance = executionContext.getContextInstance();
         if (contextInstance != null) {
             final Token token = executionContext.getToken();
             if (contextInstance.hasVariable(name, token)) {
-                // BUGFIX: token werd niet doorgegeven bij getVariable()
-                return contextInstance.getVariable(name, token);
-            }
-            if (contextInstance.hasTransientVariable(name)) {
-                return contextInstance.getTransientVariable(name);
+                result = contextInstance.getVariable(name, token);
+            } else if (contextInstance.hasTransientVariable(name)) {
+                result = contextInstance.getTransientVariable(name);
             }
         }
+        return result;
+    }
 
+    private Object checkTaskManagementInstance(final String name, final ExecutionContext executionContext) {
+        Object result = null;
         final TaskMgmtInstance taskMgmtInstance = executionContext.getTaskMgmtInstance();
         if (taskMgmtInstance != null) {
             final SwimlaneInstance swimlaneInstance = taskMgmtInstance.getSwimlaneInstance(name);
             if (swimlaneInstance != null) {
-                return swimlaneInstance.getActorId();
+                result = swimlaneInstance.getActorId();
             }
         }
-
-        return Configs.hasObject(name) ? Configs.getObject(name) : null;
+        return result;
     }
 }

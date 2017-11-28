@@ -6,7 +6,6 @@
 
 /**
  * Bevat de conversietabel functionaliteit.
- *
  * @since 1.0
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel;

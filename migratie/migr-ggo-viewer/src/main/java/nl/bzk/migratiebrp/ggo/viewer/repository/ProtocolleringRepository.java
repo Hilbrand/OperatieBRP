@@ -16,20 +16,16 @@ public interface ProtocolleringRepository {
 
     /**
      * Slaat de meegegeven protocollering op in de database.
-     * 
-     * @param protocollering
-     *            de Protocollering entiteit die moet worden opgeslagen in de database
+     * @param protocollering de Protocollering entiteit die moet worden opgeslagen in de database
      * @return de Protocollering entiteit die opgeslagen is in de database
      */
     Protocollering save(Protocollering protocollering);
 
     /**
      * Vraagt de protocollering op bij een anummer.
-     * 
-     * @param aNummer
-     *            waarvoor de protocollering opgehaald moet worden.
+     * @param aNummer waarvoor de protocollering opgehaald moet worden.
      * @return Lijst met gevonden protocolleringen.
      */
-    List<Protocollering> findProtocolleringVoorANummer(Long aNummer);
+    List<Protocollering> findProtocolleringVoorANummer(String aNummer);
 
 }

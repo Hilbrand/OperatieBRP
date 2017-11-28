@@ -5,9 +5,6 @@
  */
 
 /**
- * Levert de logging functionaliteit voor het migratie project.
- * 
- * @since 1.0
+ * Levert tools voor het loggen van functionele/MDC meldingen.
  */
 package nl.bzk.migratiebrp.util.common.logging;
-

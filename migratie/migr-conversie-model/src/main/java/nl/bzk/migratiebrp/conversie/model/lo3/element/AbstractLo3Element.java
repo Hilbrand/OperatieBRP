@@ -7,15 +7,14 @@
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
 import java.io.Serializable;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze marker interface typeert LO3 Elementen.
- * 
  */
 public abstract class AbstractLo3Element implements Lo3Element, Serializable {
     private static final long serialVersionUID = 1L;
@@ -27,11 +26,8 @@ public abstract class AbstractLo3Element implements Lo3Element, Serializable {
 
     /**
      * Constructor voor implementerende classes.
-     * 
-     * @param waarde
-     *            waarde van dit element
-     * @param onderzoek
-     *            onderzoek van dit element
+     * @param waarde waarde van dit element
+     * @param onderzoek onderzoek van dit element
      */
     AbstractLo3Element(final String waarde, final Lo3Onderzoek onderzoek) {
         this.waarde = waarde;
@@ -40,7 +36,7 @@ public abstract class AbstractLo3Element implements Lo3Element, Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Element#isInhoudelijkGevuld()
      */
     @Override
@@ -50,7 +46,7 @@ public abstract class AbstractLo3Element implements Lo3Element, Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Element#getWaarde()
      */
     @Override
@@ -60,7 +56,7 @@ public abstract class AbstractLo3Element implements Lo3Element, Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Element#getOnderzoek()
      */
     @Override
@@ -71,11 +67,8 @@ public abstract class AbstractLo3Element implements Lo3Element, Serializable {
     /**
      * Vergelijk 2 Lo3Element en return <code>true</code> als de waarde gelijk (of beiden zijn null). Onderzoek wordt
      * buiten beschouwing gelaten in deze vergelijking.
-     * 
-     * @param element1
-     *            Het eerste element
-     * @param element2
-     *            Het tweede element
+     * @param element1 Het eerste element
+     * @param element2 Het tweede element
      * @return <code>true</code> als beide attributen qua waarde gelijk zijn.
      */
     public static boolean equalsWaarde(final Lo3Element element1, final Lo3Element element2) {
@@ -83,7 +76,7 @@ public abstract class AbstractLo3Element implements Lo3Element, Serializable {
         if (element1 != null) {
             result = element1.equalsWaarde(element2);
         } else {
-            result = element2 == null  || element2.getWaarde() == null;
+            result = element2 == null || element2.getWaarde() == null;
         }
         return result;
     }
@@ -109,8 +102,8 @@ public abstract class AbstractLo3Element implements Lo3Element, Serializable {
         }
 
         return new EqualsBuilder().append(waarde, ((AbstractLo3Element) other).waarde)
-                                  .append(onderzoek, ((AbstractLo3Element) other).onderzoek)
-                                  .isEquals();
+                .append(onderzoek, ((AbstractLo3Element) other).onderzoek)
+                .isEquals();
     }
 
     @Override
@@ -121,8 +114,8 @@ public abstract class AbstractLo3Element implements Lo3Element, Serializable {
     @Override
     public final String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("waarde", waarde)
-                                                                          .append("onderzoek", onderzoek)
-                                                                          .toString();
+                .append("waarde", waarde)
+                .append("onderzoek", onderzoek)
+                .toString();
     }
 }

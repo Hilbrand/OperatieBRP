@@ -14,9 +14,7 @@ public class GbaRubriekOnbekendExceptie extends Exception {
 
     /**
      * Maakt nieuwe exceptie aan.
-     * 
-     * @param rubriek
-     *            rubriek welke ontbreekt
+     * @param rubriek rubriek welke ontbreekt
      */
     public GbaRubriekOnbekendExceptie(final String rubriek) {
         super(rubriek);

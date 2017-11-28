@@ -14,112 +14,88 @@ package nl.bzk.migratiebrp.ggo.viewer.service;
 public interface StamtabelService {
 
     /**
-     * Haalt de stamgegevens van FunctieAdres (BRP) op.
-     *
-     * @param functieAdresCode
-     *            String
+     * Haalt de stamgegevens van SoortAdres (BRP) op.
+     * @param functieAdresCode String
      * @return formatted String
      */
-    String getFunctieAdres(final String functieAdresCode);
+    String getFunctieAdres(String functieAdresCode);
 
     /**
      * Haalt de stamgegevens van Partij (BRP) op.
-     *
-     * @param gemeenteCode
-     *            String
+     * @param gemeenteCode String
      * @return formatted String
      */
-    String getGemeente(final String gemeenteCode);
+    String getGemeente(String gemeenteCode);
 
     /**
      * Haalt de stamgegevens van Geslachtsaanduiding (BRP) op.
-     *
-     * @param geslachtsaanduidingCode
-     *            String
+     * @param geslachtsaanduidingCode String
      * @return formatted String
      */
-    String getGeslachtsaanduiding(final String geslachtsaanduidingCode);
+    String getGeslachtsaanduiding(String geslachtsaanduidingCode);
 
     /**
      * Haalt de stamgegevens van LandOfGebied (BRP) op.
-     *
-     * @param landCode
-     *            String
+     * @param landCode String
      * @return formatted String
      */
-    String getLandOfGebied(final String landCode);
+    String getLandOfGebied(String landCode);
 
     /**
      * Haalt de stamgegevens van Nationaliteit (BRP) op.
-     *
-     * @param nationaliteitCode
-     *            String
+     * @param nationaliteitCode String
      * @return formatted String
      */
-    String getNationaliteit(final String nationaliteitCode);
+    String getNationaliteit(String nationaliteitCode);
 
     /**
      * Haalt de stamgegevens van RedenVerkrijgingNLNationaliteit (BRP) op.
-     *
-     * @param redenVerkrijgingNederlandschapCode
-     *            String
+     * @param redenVerkrijgingNederlandschapCode String
      * @return formatted String
      */
-    String getRedenVerkrijgingNederlandschap(final String redenVerkrijgingNederlandschapCode);
+    String getRedenVerkrijgingNederlandschap(String redenVerkrijgingNederlandschapCode);
 
     /**
      * Haalt de stamgegevens van RedenVerliesNLNationaliteit (BRP) op.
-     *
-     * @param redenVerliesNederlandschapCode
-     *            String
+     * @param redenVerliesNederlandschapCode String
      * @return formatted String
      */
 
-    String getRedenVerliesNederlandschap(final String redenVerliesNederlandschapCode);
+    String getRedenVerliesNederlandschap(String redenVerliesNederlandschapCode);
 
     /**
      * Haalt de stamgegevens van Verblijfsrecht (BRP) op.
-     *
-     * @param verblijfstitelCode
-     *            String
+     * @param verblijfstitelCode String
      * @return formatted String
      */
-    String getVerblijfstitel(final String verblijfstitelCode);
+    String getVerblijfstitel(String verblijfstitelCode);
 
     /**
      * Haalt de stamgegevens van Naamgebruik (BRP) op.
-     *
-     * @param naamgebruikCode
-     *            String
+     * @param naamgebruikCode String
      * @return formatted String
      */
-    String getNaamgebruik(final String naamgebruikCode);
+    String getNaamgebruik(String naamgebruikCode);
 
     /**
      * Haalt de stamgegevens van AutoriteitVanAfgifteReisdocument op.
-     *
-     * @param brpReisdocumentAutoriteitVanAfgifte
-     *            String
+     * @param brpReisdocumentAutoriteitVanAfgifte String
      * @return formatted String
      */
-    String getAutoriteitVanAfgifteReisdocument(final String brpReisdocumentAutoriteitVanAfgifte);
+    String getAutoriteitVanAfgifteReisdocument(String brpReisdocumentAutoriteitVanAfgifte);
 
     /**
      * Haalt de stamgegevens van SoortNlReisdocument op.
-     *
-     * @param brpReisdocumentSoort
-     *            String
+     * @param brpReisdocumentSoort String
      * @return formatted String
      */
-    String getSoortNlReisdocument(final String brpReisdocumentSoort);
+    String getSoortNlReisdocument(String brpReisdocumentSoort);
 
     /**
      * Haalt de stamgegevens van RedenEindeRelatie op.
-     *
-     * @param brpRedenEindeRelatieCode
-     *            BrpRedenEindeRelatieCode
+     * @param brpRedenEindeRelatieCode BrpRedenEindeRelatieCode
      * @return formatted String
      */
-    String getRedenEindeRelatie(final String brpRedenEindeRelatieCode);
+    String getRedenEindeRelatie(String brpRedenEindeRelatieCode);
 
 }

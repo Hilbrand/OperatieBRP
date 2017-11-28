@@ -6,13 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderlijkGezagHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderlijkGezagInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderlijkGezagHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
@@ -20,35 +19,21 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Onder
 /**
  * Mapt de BrpOuderlijkGezag stapel uit het migratie model op de BetrokkenheidOuderlijkGezag historie in het
  * operationele BRP model.
- * 
  */
 public final class BetrokkenheidOuderlijkGezagMapper extends
-        AbstractHistorieMapperStrategie<BrpOuderlijkGezagInhoud, BetrokkenheidOuderlijkGezagHistorie, Betrokkenheid>
-{
+        AbstractHistorieMapperStrategie<BrpOuderlijkGezagInhoud, BetrokkenheidOuderlijkGezagHistorie, Betrokkenheid> {
 
     /**
      * Maakt een BetrokkenheidOuderlijkGezagMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public BetrokkenheidOuderlijkGezagMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpOuderlijkGezagInhoud> brpStapel, final Betrokkenheid entiteit) {
     }
 
     /**
@@ -57,14 +42,6 @@ public final class BetrokkenheidOuderlijkGezagMapper extends
     @Override
     protected void voegHistorieToeAanEntiteit(final BetrokkenheidOuderlijkGezagHistorie historie, final Betrokkenheid entiteit) {
         entiteit.addBetrokkenheidOuderlijkGezagHistorie(historie);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void kopieerActueleGroepNaarEntiteit(final BetrokkenheidOuderlijkGezagHistorie historie, final Betrokkenheid entiteit) {
-        entiteit.setIndicatieOuderHeeftGezag(historie.getIndicatieOuderHeeftGezag());
     }
 
     /**

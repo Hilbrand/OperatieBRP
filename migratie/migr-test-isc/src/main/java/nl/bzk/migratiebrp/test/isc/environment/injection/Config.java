@@ -17,13 +17,9 @@ public final class Config {
 
     /**
      * Constructor.
-     *
-     * @param name
-     *            naam
-     * @param type
-     *            type
-     * @param key
-     *            sleutel
+     * @param name naam
+     * @param type type
+     * @param key sleutel
      */
     public Config(final String name, final String type, final String key) {
         this.name = name;
@@ -33,7 +29,6 @@ public final class Config {
 
     /**
      * Geef de waarde van name.
-     *
      * @return name
      */
     public String getName() {
@@ -42,7 +37,6 @@ public final class Config {
 
     /**
      * Geef de waarde van type.
-     *
      * @return type
      */
     public String getType() {
@@ -51,7 +45,6 @@ public final class Config {
 
     /**
      * Geef de waarde van key.
-     *
      * @return key
      */
     public String getKey() {

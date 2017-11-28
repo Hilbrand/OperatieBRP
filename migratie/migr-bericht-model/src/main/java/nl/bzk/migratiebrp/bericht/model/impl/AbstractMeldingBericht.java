@@ -22,13 +22,9 @@ public abstract class AbstractMeldingBericht extends AbstractBericht implements 
 
     /**
      * Constructor.
-     *
-     * @param berichtType
-     *            bericht type
-     * @param bericht
-     *            ongeparsed bericht
-     * @param melding
-     *            melding
+     * @param berichtType bericht type
+     * @param bericht ongeparsed bericht
+     * @param melding melding
      */
     protected AbstractMeldingBericht(final String berichtType, final String bericht, final String melding) {
         this.bericht = bericht;
@@ -38,7 +34,6 @@ public abstract class AbstractMeldingBericht extends AbstractBericht implements 
 
     /**
      * Geef de waarde van bericht.
-     *
      * @return bericht
      */
     public final String getBericht() {
@@ -47,7 +42,6 @@ public abstract class AbstractMeldingBericht extends AbstractBericht implements 
 
     /**
      * Geef de waarde van melding.
-     *
      * @return melding
      */
     public final String getMelding() {

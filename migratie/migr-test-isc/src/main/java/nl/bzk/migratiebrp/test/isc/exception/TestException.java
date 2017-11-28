@@ -14,9 +14,7 @@ public class TestException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
+     * @param message melding
      */
     public TestException(final String message) {
         super(message);
@@ -24,11 +22,8 @@ public class TestException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
-     * @param cause
-     *            oorzaak
+     * @param message melding
+     * @param cause oorzaak
      */
     public TestException(final String message, final Throwable cause) {
         super(message, cause);

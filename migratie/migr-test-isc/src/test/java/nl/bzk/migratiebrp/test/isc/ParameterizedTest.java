@@ -17,28 +17,19 @@ import nl.bzk.migratiebrp.test.common.util.StartsWithFilter;
  */
 public class ParameterizedTest extends IscTestConfiguration {
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getThemaFilter()
-     */
+    @Override
+    public File getInputFolder() {
+        return new File(getProperty("test.directory", "./test"));
+    }
+
     @Override
     public FilenameFilter getThemaFilter() {
         return new EqualsFilter(getProperty("test.thema", null), FilterType.DIRECTORY);
     }
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getCasusFilter()
-     */
     @Override
     public FilenameFilter getCasusFilter() {
         return new StartsWithFilter(getProperty("test.casus", null), FilterType.DIRECTORY);
-    }
-
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getInputFolder()
-     */
-    @Override
-    public File getInputFolder() {
-        return new File(getProperty("test.directory", "./test"));
     }
 
     private String getProperty(final String name, final String defaultValue) {
@@ -49,7 +40,5 @@ public class ParameterizedTest extends IscTestConfiguration {
         } else {
             return value;
         }
-
     }
-
 }

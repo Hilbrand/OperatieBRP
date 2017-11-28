@@ -6,13 +6,14 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBooleanTest;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
@@ -21,11 +22,11 @@ public class BrpIstGezagsVerhoudingGroepInhoudTest {
 
     public static BrpIstGezagsVerhoudingGroepInhoud createInhoud() {
         return new BrpIstGezagsVerhoudingGroepInhoud(
-            BrpIstStandaardGroepInhoudTest.createInhoud(),
-            BrpBooleanTest.BRP_TRUE,
-            BrpBooleanTest.BRP_TRUE,
-            BrpBooleanTest.BRP_FALSE,
-            BrpBooleanTest.BRP_FALSE);
+                BrpIstStandaardGroepInhoudTestUtil.createInhoud(),
+                BrpBooleanTest.BRP_TRUE,
+                BrpBooleanTest.BRP_TRUE,
+                BrpBooleanTest.BRP_FALSE,
+                BrpBooleanTest.BRP_FALSE);
     }
 
     public static BrpStapel<BrpIstGezagsVerhoudingGroepInhoud> createStapel() {

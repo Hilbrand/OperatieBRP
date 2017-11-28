@@ -23,11 +23,8 @@ public final class JbpmTransitionCommand implements Command<Void> {
 
     /**
      * Constructor.
-     *
-     * @param tokenId
-     *            token id
-     * @param transitionName
-     *            transitie naam
+     * @param tokenId token id
+     * @param transitionName transitie naam
      */
     public JbpmTransitionCommand(final Long tokenId, final String transitionName) {
         this.tokenId = tokenId;

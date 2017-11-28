@@ -12,9 +12,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaat
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 
 /**
@@ -23,33 +21,33 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 public abstract class AbstractTb02Test {
 
     public static Lo3PersoonInhoud maakLo3PersoonInhoud() {
-        final Lo3Long aNummer = Lo3Long.wrap(2349326344L);
-        final Lo3Integer burgerservicenummer = new Lo3Integer(123456789);
+        final Lo3String aNummer = Lo3String.wrap("2349326344");
+        final Lo3String burgerservicenummer = new Lo3String("123456789");
         final Lo3String voornamen = new Lo3String("Henk Jan");
         final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode = null;
         final Lo3String voorvoegselGeslachtsnaam = new Lo3String("van");
         final Lo3String geslachtsnaam = new Lo3String("Dalen");
-        final Lo3Datum geboortedatum = new Lo3Datum(20121024);
+        final Lo3Datum geboortedatum = new Lo3Datum(2012_10_24);
         final Lo3GemeenteCode geboorteGemeenteCode = new Lo3GemeenteCode("1234");
         final Lo3LandCode geboorteLandCode = new Lo3LandCode("6030");
         final Lo3Geslachtsaanduiding geslachtsaanduiding = new Lo3Geslachtsaanduiding("M");
-        final Lo3Long vorigANummer = null;
-        final Lo3Long volgendANummer = null;
+        final Lo3String vorigANummer = null;
+        final Lo3String volgendANummer = null;
         final Lo3AanduidingNaamgebruikCode aanduidingNaamgebruikCode = new Lo3AanduidingNaamgebruikCode("E");
 
         return new Lo3PersoonInhoud(
-            aNummer,
-            burgerservicenummer,
-            voornamen,
-            adellijkeTitelPredikaatCode,
-            voorvoegselGeslachtsnaam,
-            geslachtsnaam,
-            geboortedatum,
-            geboorteGemeenteCode,
-            geboorteLandCode,
-            geslachtsaanduiding,
-            vorigANummer,
-            volgendANummer,
-            aanduidingNaamgebruikCode);
+                aNummer,
+                burgerservicenummer,
+                voornamen,
+                adellijkeTitelPredikaatCode,
+                voorvoegselGeslachtsnaam,
+                geslachtsnaam,
+                geboortedatum,
+                geboorteGemeenteCode,
+                geboorteLandCode,
+                geslachtsaanduiding,
+                vorigANummer,
+                volgendANummer,
+                aanduidingNaamgebruikCode);
     }
 }

@@ -18,7 +18,7 @@ public class PrettyPrintBerichtTest extends AbstractTagTest {
     public void test() throws Exception {
         final Bericht bericht = new Bericht();
         bericht.setBericht("00000000Wa0152417053985201302190008701082011001021506573130210006Anette0240008Vreehoek0310008197604290320004058003300046030");
-        bericht.setKanaal("VOSPG");
+        bericht.setKanaal("VOISC");
 
         addTagAttribute("bericht", bericht);
         addTagAttribute("target", null);

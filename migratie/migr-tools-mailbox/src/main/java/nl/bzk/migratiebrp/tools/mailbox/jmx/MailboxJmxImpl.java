@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.tools.mailbox.jmx;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.tools.mailbox.MailboxServerWrapper;
 import nl.bzk.migratiebrp.tools.mailbox.impl.Mailbox;
 import nl.bzk.migratiebrp.tools.mailbox.impl.MailboxException;
 import nl.bzk.migratiebrp.util.common.jmx.UseDynamicDomain;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -64,7 +64,7 @@ public final class MailboxJmxImpl implements MailboxJmx {
         final Mailbox mailbox = mailboxServerWrapper.getMailboxServer().getMailboxFactory().getMailbox(mailboxnr);
         try {
             mailbox.open();
-            mailbox.setStatus(Integer.parseInt(status));
+            mailbox.setStatus(Mailbox.MailboxStatus.fromValue(Integer.valueOf(status)));
             mailbox.save();
         } catch (final MailboxException e) {
             LOG.error("Probleem bij wijzigen status mailbox.", e);

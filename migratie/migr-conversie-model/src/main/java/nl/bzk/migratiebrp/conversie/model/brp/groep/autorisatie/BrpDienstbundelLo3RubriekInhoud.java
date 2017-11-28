@@ -6,13 +6,12 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP DienstBundelLo3RubriekInhoud.
@@ -26,19 +25,17 @@ public final class BrpDienstbundelLo3RubriekInhoud extends AbstractBrpGroepInhou
 
     /**
      * Maak een Brp DienstBundelLo3RubriekInhoud object.
-     *
-     * @param isLeeg
-     *            isLeeg
+     * @param isLeeg isLeeg
      */
     public BrpDienstbundelLo3RubriekInhoud(@Element(name = "isLeeg", required = false) final Boolean isLeeg) {
         super();
         this.isLeeg = isLeeg;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -46,9 +43,8 @@ public final class BrpDienstbundelLo3RubriekInhoud extends AbstractBrpGroepInhou
     }
 
     /**
-     * Geef de waarde van isLeeg.
-     *
-     * @return isLeeg
+     * Geef de waarde van checks if is leeg van BrpDienstbundelLo3RubriekInhoud.
+     * @return de waarde van checks if is leeg van BrpDienstbundelLo3RubriekInhoud
      */
     public Boolean getIsLeeg() {
         return isLeeg;

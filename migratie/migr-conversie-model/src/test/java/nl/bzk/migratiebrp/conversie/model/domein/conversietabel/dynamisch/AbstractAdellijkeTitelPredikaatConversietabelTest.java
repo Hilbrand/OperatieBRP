@@ -10,7 +10,6 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AdellijkeTitelPredikaatPaar;
@@ -19,7 +18,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,9 +28,10 @@ public class AbstractAdellijkeTitelPredikaatConversietabelTest {
     @Before
     public void setup() {
         final List<Entry<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar>> data = new ArrayList<>();
-        data.add(new SimpleEntry<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar>(
-            new Lo3AdellijkeTitelPredikaatCode("X"),
-            new AdellijkeTitelPredikaatPaar(new BrpCharacter('X'), new BrpCharacter('Y'), BrpGeslachtsaanduidingCode.MAN)));
+        data.add(
+                new SimpleEntry<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar>(
+                        new Lo3AdellijkeTitelPredikaatCode("X"),
+                        new AdellijkeTitelPredikaatPaar(new BrpCharacter('X'), new BrpCharacter('Y'), BrpGeslachtsaanduidingCode.MAN)));
 
         subject = new AbstractAdellijkeTitelPredikaatConversietabel(data) {
         };
@@ -40,11 +39,9 @@ public class AbstractAdellijkeTitelPredikaatConversietabelTest {
     }
 
     private static final Lo3AdellijkeTitelPredikaatCode LO3 = new Lo3AdellijkeTitelPredikaatCode("S");
-    private static final AdellijkeTitelPredikaatPaar BRP = new AdellijkeTitelPredikaatPaar(
-        new BrpCharacter('A'),
-        new BrpCharacter('B'),
-        new BrpGeslachtsaanduidingCode("M"));
-    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), Lo3Datum.NULL_DATUM, null);
+    private static final AdellijkeTitelPredikaatPaar BRP =
+            new AdellijkeTitelPredikaatPaar(new BrpCharacter('A'), new BrpCharacter('B'), new BrpGeslachtsaanduidingCode("M"));
+    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), new Lo3Datum(0), null);
 
     @Test
     public void bepaalOnderzoekLo3() {
@@ -57,12 +54,20 @@ public class AbstractAdellijkeTitelPredikaatConversietabelTest {
     public void bepaalOnderzoekBrp() {
         Assert.assertEquals(null, subject.bepaalOnderzoekBrp(null));
         Assert.assertEquals(null, subject.bepaalOnderzoekBrp(new AdellijkeTitelPredikaatPaar(null, null, new BrpGeslachtsaanduidingCode("P", null))));
-        Assert.assertEquals(ONDERZOEK, subject.bepaalOnderzoekBrp(new AdellijkeTitelPredikaatPaar(new BrpCharacter('I', null), new BrpCharacter(
-            'P',
-            ONDERZOEK), new BrpGeslachtsaanduidingCode("P", ONDERZOEK))));
-        Assert.assertEquals(ONDERZOEK, subject.bepaalOnderzoekBrp(new AdellijkeTitelPredikaatPaar(new BrpCharacter('I', ONDERZOEK), new BrpCharacter(
-            'P',
-            null), new BrpGeslachtsaanduidingCode("P", null))));
+        Assert.assertEquals(
+                ONDERZOEK,
+                subject.bepaalOnderzoekBrp(
+                        new AdellijkeTitelPredikaatPaar(
+                                new BrpCharacter('I', null),
+                                new BrpCharacter('P', ONDERZOEK),
+                                new BrpGeslachtsaanduidingCode("P", ONDERZOEK))));
+        Assert.assertEquals(
+                ONDERZOEK,
+                subject.bepaalOnderzoekBrp(
+                        new AdellijkeTitelPredikaatPaar(
+                                new BrpCharacter('I', ONDERZOEK),
+                                new BrpCharacter('P', null),
+                                new BrpGeslachtsaanduidingCode("P", null))));
     }
 
     @Test

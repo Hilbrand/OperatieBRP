@@ -8,6 +8,7 @@ package nl.bzk.migratiebrp.isc.console.mig4jsf.filter;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
@@ -29,44 +30,38 @@ public final class ProcessInstancesFilterActionListener implements ActionListene
     private final ValueExpression anummerExpression;
     private final ValueExpression partijExpression;
     private final ValueExpression ahIdExpression;
+    private final ValueExpression processInstanceIdExpression;
+    private final ValueExpression processDefinitionExpression;
     private final ValueExpression rootExpression;
 
     /**
      * Constructor.
-     *
-     * @param targetExpression
-     *            expression voor target
-     * @param keyExpression
-     *            expression voor key (filter waarde)
-     * @param startDateExpression
-     *            expression voor start datum (filter waarde)
-     * @param runningExpression
-     *            expression voor indicatie running (filter waarde)
-     * @param suspendedExpression
-     *            expression voor indicatie suspended (filter waarde)
-     * @param endedExpression
-     *            expression voor indicatie ended (filter waarde)
-     * @param anummerExpression
-     *            expression voor anummer (filter waarde)
-     * @param partijExpression
-     *            expression voor partij (filter waarde)
-     * @param ahIdExpression
-     *            expression voor ah-id (filter waarde)
-     * @param rootExpression
-     *            expression voor indicatie root proces (filter waarde)
+     * @param targetExpression expression voor target
+     * @param keyExpression expression voor key (filter waarde)
+     * @param startDateExpression expression voor start datum (filter waarde)
+     * @param runningExpression expression voor indicatie running (filter waarde)
+     * @param suspendedExpression expression voor indicatie suspended (filter waarde)
+     * @param endedExpression expression voor indicatie ended (filter waarde)
+     * @param anummerExpression expression voor anummer (filter waarde)
+     * @param partijExpression expression voor partij (filter waarde)
+     * @param ahIdExpression expression voor ah-id (filter waarde)
+     * @param processInstanceIdExpression expression voor processInstanceId (filter waarde)
+     * @param processDefinitionExpression expression voor processDefinition (filter waarde)
+     * @param rootExpression expression voor indicatie root proces (filter waarde)
      */
     public ProcessInstancesFilterActionListener(
-        final ValueExpression targetExpression,
-        final ValueExpression keyExpression,
-        final ValueExpression startDateExpression,
-        final ValueExpression runningExpression,
-        final ValueExpression suspendedExpression,
-        final ValueExpression endedExpression,
-        final ValueExpression anummerExpression,
-        final ValueExpression partijExpression,
-        final ValueExpression ahIdExpression,
-        final ValueExpression rootExpression)
-    {
+            final ValueExpression targetExpression,
+            final ValueExpression keyExpression,
+            final ValueExpression startDateExpression,
+            final ValueExpression runningExpression,
+            final ValueExpression suspendedExpression,
+            final ValueExpression endedExpression,
+            final ValueExpression anummerExpression,
+            final ValueExpression partijExpression,
+            final ValueExpression ahIdExpression,
+            final ValueExpression processInstanceIdExpression,
+            final ValueExpression processDefinitionExpression,
+            final ValueExpression rootExpression) {
         this.targetExpression = targetExpression;
         this.keyExpression = keyExpression;
         this.startDateExpression = startDateExpression;
@@ -76,6 +71,8 @@ public final class ProcessInstancesFilterActionListener implements ActionListene
         this.anummerExpression = anummerExpression;
         this.partijExpression = partijExpression;
         this.ahIdExpression = ahIdExpression;
+        this.processInstanceIdExpression = processInstanceIdExpression;
+        this.processDefinitionExpression = processDefinitionExpression;
         this.rootExpression = rootExpression;
     }
 
@@ -92,9 +89,13 @@ public final class ProcessInstancesFilterActionListener implements ActionListene
         final String anummer = ExpressionHelper.getString(anummerExpression, elContext);
         final String partij = ExpressionHelper.getString(partijExpression, elContext);
         final String ahId = ExpressionHelper.getString(ahIdExpression, elContext);
+        final String processInstanceId = ExpressionHelper.getString(processInstanceIdExpression, elContext);
+        final String processDefinition = ExpressionHelper.getString(processDefinitionExpression, elContext);
         final Boolean root = ExpressionHelper.getBoolean(rootExpression, elContext);
 
-        targetExpression.setValue(elContext, new ProcessInstancesFilter(key, startDate, running, suspended, ended, anummer, partij, ahId, root));
+        targetExpression.setValue(
+                elContext,
+                new ProcessInstancesFilter(key, startDate, running, suspended, ended, anummer, partij, ahId, processInstanceId, processDefinition, root));
     }
 
 }

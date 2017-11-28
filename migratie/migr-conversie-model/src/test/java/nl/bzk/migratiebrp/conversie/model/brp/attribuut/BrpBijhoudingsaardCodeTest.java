@@ -6,15 +6,15 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class BrpBijhoudingsaardCodeTest {
 
     @Test
-    public void testGetWaarde(){
+    public void testGetWaarde() {
         BrpBijhoudingsaardCode code = new BrpBijhoudingsaardCode("Test");
-        assertEquals("Test",code.getWaarde());
+        assertEquals("Test", code.getWaarde());
     }
 }

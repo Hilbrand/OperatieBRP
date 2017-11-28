@@ -28,19 +28,14 @@ public final class PagerActionListener implements ActionListener, Serializable {
 
     /**
      * Constructor.
-     * 
-     * @param pageExpression
-     *            expressie voor page (pagina)
-     * @param pageSizeExpression
-     *            expressie voor pagesize (aantal resultaten per pagina)
-     * @param targetExpression
-     *            expressie voor target
+     * @param pageExpression expressie voor page (pagina)
+     * @param pageSizeExpression expressie voor pagesize (aantal resultaten per pagina)
+     * @param targetExpression expressie voor target
      */
     public PagerActionListener(
-        final ValueExpression pageExpression,
-        final ValueExpression pageSizeExpression,
-        final ValueExpression targetExpression)
-    {
+            final ValueExpression pageExpression,
+            final ValueExpression pageSizeExpression,
+            final ValueExpression targetExpression) {
         this.pageExpression = pageExpression;
         this.pageSizeExpression = pageSizeExpression;
         this.targetExpression = targetExpression;
@@ -54,13 +49,13 @@ public final class PagerActionListener implements ActionListener, Serializable {
         final Object pageValue = pageExpression == null ? null : pageExpression.getValue(elContext);
         final int pageParameter =
                 pageValue == null ? 1 : pageValue instanceof Number ? ((Number) pageValue).intValue()
-                                                                   : Integer.parseInt(pageValue.toString());
+                        : Integer.parseInt(pageValue.toString());
         final int page = pageParameter < 1 ? 1 : pageParameter;
 
         final Object pageSizeValue = pageSizeExpression == null ? null : pageSizeExpression.getValue(elContext);
         final int pageSize =
                 pageSizeValue == null ? DEFAULT_PAGESIZE : pageSizeValue instanceof Number ? ((Number) pageSizeValue).intValue()
-                                                                                          : Integer.parseInt(pageSizeValue.toString());
+                        : Integer.parseInt(pageSizeValue.toString());
 
         targetExpression.setValue(elContext, new PagerBean(page, pageSize));
     }

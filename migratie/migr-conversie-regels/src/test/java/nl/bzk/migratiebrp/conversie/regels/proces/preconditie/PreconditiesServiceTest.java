@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstException;
@@ -68,7 +68,7 @@ public class PreconditiesServiceTest extends AbstractLoggingTest {
         final Lo3Persoonslijst pl = subject.verwerk(plNietGeschoond);
         // Check dat het een dummy pl is.
         Assert.assertNotNull("De pl zou niet null moeten zijn.", pl);
-        Assert.assertEquals("Anr zou gelijk moeten zijn", pl.getActueelAdministratienummer(), Long.valueOf(1000000000L));
+        Assert.assertEquals("Anr zou gelijk moeten zijn", pl.getActueelAdministratienummer(), "1000000000");
         Assert.assertNull(pl.getPersoonStapel().getLaatsteElement().getInhoud().getGeslachtsnaam());
         Assert.assertNull(pl.getPersoonStapel().getLaatsteElement().getInhoud().getVoornamen());
         Assert.assertNull(pl.getGezagsverhoudingStapel());
@@ -100,18 +100,18 @@ public class PreconditiesServiceTest extends AbstractLoggingTest {
 
         final Lo3InschrijvingInhoud inhoud =
                 new Lo3InschrijvingInhoud(
-                    null,
-                    new Lo3Datum(20110101),
-                    new Lo3RedenOpschortingBijhoudingCode(Lo3RedenOpschortingBijhoudingCodeEnum.FOUT.getCode()),
-                    new Lo3Datum(18000101),
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Lo3Integer(1),
-                    new Lo3Datumtijdstempel(18000101120000000L),
-                    null);
-        final Lo3Historie historie = Lo3Historie.NULL_HISTORIE;
+                        null,
+                        new Lo3Datum(20110101),
+                        new Lo3RedenOpschortingBijhoudingCode(Lo3RedenOpschortingBijhoudingCodeEnum.FOUT.getCode()),
+                        new Lo3Datum(18000101),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Lo3Integer(1),
+                        new Lo3Datumtijdstempel(18000101120000000L),
+                        null);
+        final Lo3Historie historie = new Lo3Historie(null, null, null);
         final Lo3Documentatie documentatie =
                 new Lo3Documentatie(-1000, new Lo3GemeenteCode("0518"), Lo3String.wrap("Inschr-Akte"), null, null, null, null, null);
 

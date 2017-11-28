@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;

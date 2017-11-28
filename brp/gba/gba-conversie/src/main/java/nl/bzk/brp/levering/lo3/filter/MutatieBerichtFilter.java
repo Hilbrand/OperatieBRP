@@ -1,21 +1,20 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.filter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import nl.bzk.brp.levering.lo3.conversie.OnderzoekUtil;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
+import nl.bzk.brp.levering.lo3.conversie.IdentificatienummerMutatie;
 import nl.bzk.brp.levering.lo3.util.PersoonUtil;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.logisch.ist.Stapel;
-import nl.bzk.brp.model.operationeel.kern.AdministratieveHandelingModel;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
@@ -32,56 +31,57 @@ public final class MutatieBerichtFilter implements Filter {
 
     private static final String PREFIX_1 = "1";
     private static final String PREFIX_0 = "0";
+    public static final int CATEGORIEEN_OUD_NIEUW = 2;
 
     /**
-     * Let op: aanname dat de categorieen 'kloppen' voor een mutatie. Dus setjes van twee categorieen waarbij de eerste
-     * altijd een actuele is en de tweede altijd de bijbehorende historische.
-     *
+     * Let op: aanname dat de categorieen 'kloppen' voor een mutatie. Dus setjes van twee categorieen waarbij de eerste altijd een actuele is en de tweede
+     * altijd de bijbehorende historische.
+     * <p>
      * {@inheritDoc}
-     *
-     * @throws IllegalArgumentException
-     *             wanneer de categorieen niet 'kloppen'
+     * @throws IllegalArgumentException wanneer de categorieen niet 'kloppen'
      */
     @Override
     public List<Lo3CategorieWaarde> filter(
-        final PersoonHisVolledig persoon,
-        final List<Stapel> istStapels,
-        final AdministratieveHandelingModel administratieveHandeling,
-        final List<Lo3CategorieWaarde> categorieen,
-        final List<String> lo3Filterrubrieken)
-    {
+            // Input
+            final Persoonslijst persoon,
+            final List<Stapel> istStapels,
+            final AdministratieveHandeling administratieveHandeling,
+            final IdentificatienummerMutatie identificatienummerMutatieResultaat,
+            // Variabele
+            final List<Lo3CategorieWaarde> categorieen,
+            // Config
+            final List<String> lo3Filterrubrieken) {
         LOGGER.debug("Filter rubrieken: {}", lo3Filterrubrieken);
         final List<Lo3CategorieWaarde> gefilteredCategorieen = new ArrayList<>();
 
         if (categorieen != null) {
-            if (categorieen.size() % 2 != 0) {
-                throw new IllegalArgumentException("Ongeldig (oneven) aantal categorieen bij mutatie levering.");
-            }
+            controleerCorrectAantalCategorieen(categorieen);
 
             final List<String> lo3MutatieFilterrubrieken = converteerVoorMutatieFilter(lo3Filterrubrieken);
             LOGGER.debug("Mutatie filter rubrieken: {}", lo3MutatieFilterrubrieken);
 
-            for (int index = 0; index < categorieen.size(); index = index + 2) {
+            for (int index = 0; index < categorieen.size(); index = index + CATEGORIEEN_OUD_NIEUW) {
                 final Lo3CategorieWaarde actueleCategorie = categorieen.get(index);
                 final Lo3CategorieWaarde historischeCategorie = categorieen.get(index + 1);
+                LOGGER.debug("Before:\n{}\n{}", actueleCategorie, historischeCategorie);
 
                 if (!actueleCategorie.getCategorie().isActueel()
-                    || historischeCategorie.getCategorie().isActueel()
-                    || historischeCategorie.getCategorie() != Lo3CategorieEnum.bepaalHistorischeCategorie(actueleCategorie.getCategorie(), true))
-                {
+                        || historischeCategorie.getCategorie().isActueel()
+                        || historischeCategorie.getCategorie() != Lo3CategorieEnum.bepaalHistorischeCategorie(actueleCategorie.getCategorie(), true)) {
                     throw new IllegalArgumentException(
-                        "Ongeldige categorieen bij mutatie levering (actuele categorie="
-                                                       + actueleCategorie.getCategorie()
-                                                       + ", historische categorie="
-                                                       + historischeCategorie.getCategorie()
-                                                       + ").");
+                            "Ongeldige categorieen bij mutatie levering (actuele categorie="
+                                    + actueleCategorie.getCategorie()
+                                    + ", historische categorie="
+                                    + historischeCategorie.getCategorie()
+                                    + ").");
                 }
 
                 final Lo3CategorieWaarde gefilterdeActueleCategorie = filterCategorie(lo3MutatieFilterrubrieken, actueleCategorie);
                 final Lo3CategorieWaarde gefilterdeHistorischeCategorie = filterCategorie(lo3MutatieFilterrubrieken, historischeCategorie);
+                LOGGER.debug("Na basis filter:\n{}\n{}", gefilterdeActueleCategorie, gefilterdeHistorischeCategorie);
 
                 evalueerOnderzoek(lo3MutatieFilterrubrieken, gefilterdeActueleCategorie, gefilterdeHistorischeCategorie);
-                evalueerRni(gefilterdeActueleCategorie, gefilterdeHistorischeCategorie);
+                LOGGER.debug("Na evalueer onderzoek:\n{}\n{}", gefilterdeActueleCategorie, gefilterdeHistorischeCategorie);
 
                 if (!gefilterdeActueleCategorie.isEmpty() || !gefilterdeHistorischeCategorie.isEmpty()) {
                     gefilteredCategorieen.add(gefilterdeActueleCategorie);
@@ -91,6 +91,12 @@ public final class MutatieBerichtFilter implements Filter {
         }
 
         return gefilteredCategorieen;
+    }
+
+    private void controleerCorrectAantalCategorieen(final List<Lo3CategorieWaarde> categorieen) {
+        if (categorieen.size() % CATEGORIEEN_OUD_NIEUW != 0) {
+            throw new IllegalArgumentException("Ongeldig (oneven) aantal categorieen bij mutatie levering.");
+        }
     }
 
     private Lo3CategorieWaarde filterCategorie(final List<String> lo3Filterrubrieken, final Lo3CategorieWaarde categorie) {
@@ -110,10 +116,9 @@ public final class MutatieBerichtFilter implements Filter {
     }
 
     private void evalueerOnderzoek(
-        final List<String> lo3Filterrubrieken,
-        final Lo3CategorieWaarde gefilterdeActueleCategorie,
-        final Lo3CategorieWaarde gefilterdeHistorischeCategorie)
-    {
+            final List<String> lo3Filterrubrieken,
+            final Lo3CategorieWaarde gefilterdeActueleCategorie,
+            final Lo3CategorieWaarde gefilterdeHistorischeCategorie) {
         final String actueleOnderzoek = gefilterdeActueleCategorie.getElement(Lo3ElementEnum.ELEMENT_8310);
         final String historischeOnderzoek = gefilterdeHistorischeCategorie.getElement(Lo3ElementEnum.ELEMENT_8310);
 
@@ -123,28 +128,13 @@ public final class MutatieBerichtFilter implements Filter {
         }
 
         final String gefilterdeActueleOnderzoek = filterOnderzoek(lo3Filterrubrieken, gefilterdeActueleCategorie.getCategorie(), actueleOnderzoek);
-        if (gefilterdeActueleOnderzoek == null) {
-            // Actuele onderzoek strekt zich niet uit tot geautoriseerde gegevens
-            gefilterdeActueleCategorie.addElement(Lo3ElementEnum.ELEMENT_8310, "");
-            gefilterdeActueleCategorie.addElement(Lo3ElementEnum.ELEMENT_8320, "");
-            if (gefilterdeActueleCategorie.getElement(Lo3ElementEnum.ELEMENT_8330) != null) {
-                gefilterdeActueleCategorie.addElement(Lo3ElementEnum.ELEMENT_8330, "");
-            }
-        }
+        filterGeautoriseerdeGegevens(gefilterdeActueleCategorie, gefilterdeActueleOnderzoek);
         final String gefilterdeHistorischeOnderzoek =
                 filterOnderzoek(lo3Filterrubrieken, gefilterdeHistorischeCategorie.getCategorie(), historischeOnderzoek);
-        if (gefilterdeHistorischeOnderzoek == null) {
-            // Historisch onderzoek strekt zich niet uit tot geautoriseerde gegevens
-            gefilterdeHistorischeCategorie.addElement(Lo3ElementEnum.ELEMENT_8310, "");
-            gefilterdeHistorischeCategorie.addElement(Lo3ElementEnum.ELEMENT_8320, "");
-            if (gefilterdeHistorischeCategorie.getElement(Lo3ElementEnum.ELEMENT_8330) != null) {
-                gefilterdeHistorischeCategorie.addElement(Lo3ElementEnum.ELEMENT_8330, "");
-            }
-        }
+        filterGeautoriseerdeGegevens(gefilterdeHistorischeCategorie, gefilterdeHistorischeOnderzoek);
 
         if ((gefilterdeActueleOnderzoek == null || "".equals(gefilterdeActueleOnderzoek))
-            && (gefilterdeHistorischeOnderzoek == null || "".equals(gefilterdeHistorischeOnderzoek)))
-        {
+                && (gefilterdeHistorischeOnderzoek == null || "".equals(gefilterdeHistorischeOnderzoek))) {
             // Beide actueel en historisch zijn nu 'leeg' (kan doordat het onderzoek zich niet strekt tot
             // de geautoriseerde gegevens, of omdat er geen onderzoek was/is).
             // Dan mogen de onderzoeksgegevens worden verwijderd.
@@ -154,6 +144,17 @@ public final class MutatieBerichtFilter implements Filter {
             gefilterdeHistorischeCategorie.addElement(Lo3ElementEnum.ELEMENT_8310, null);
             gefilterdeHistorischeCategorie.addElement(Lo3ElementEnum.ELEMENT_8320, null);
             gefilterdeHistorischeCategorie.addElement(Lo3ElementEnum.ELEMENT_8330, null);
+        }
+    }
+
+    private void filterGeautoriseerdeGegevens(final Lo3CategorieWaarde gefilterdeActueleCategorie, final String gefilterdeActueleOnderzoek) {
+        if (gefilterdeActueleOnderzoek == null) {
+            // Actuele onderzoek strekt zich niet uit tot geautoriseerde gegevens
+            gefilterdeActueleCategorie.addElement(Lo3ElementEnum.ELEMENT_8310, "");
+            gefilterdeActueleCategorie.addElement(Lo3ElementEnum.ELEMENT_8320, "");
+            if (gefilterdeActueleCategorie.getElement(Lo3ElementEnum.ELEMENT_8330) != null) {
+                gefilterdeActueleCategorie.addElement(Lo3ElementEnum.ELEMENT_8330, "");
+            }
         }
     }
 
@@ -172,32 +173,9 @@ public final class MutatieBerichtFilter implements Filter {
         return result;
     }
 
-    private void evalueerRni(final Lo3CategorieWaarde gefilterdeActueleCategorie, final Lo3CategorieWaarde gefilterdeHistorischeCategorie) {
-        if (bevatEnkelRniElementen(gefilterdeActueleCategorie) && bevatEnkelRniElementen(gefilterdeHistorischeCategorie)) {
-            gefilterdeActueleCategorie.getElementen().clear();
-            gefilterdeHistorischeCategorie.getElementen().clear();
-        }
-    }
-
-    private boolean bevatEnkelRniElementen(final Lo3CategorieWaarde categorie) {
-        for (final Entry<Lo3ElementEnum, String> entry : categorie.getElementen().entrySet()) {
-            final Lo3ElementEnum element = entry.getKey();
-            final Lo3GroepEnum groep = element.getGroep();
-            final boolean isGroep71 = Lo3GroepEnum.GROEP71.equals(groep);
-            final boolean isGroep88 = Lo3GroepEnum.GROEP88.equals(groep);
-            if (!(isGroep71 || isGroep88)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     /**
      * Converteer een set aan filter rubrieken zodat deze bruikbaar is voor een mutatie bericht.
-     *
-     * @param rubrieken
-     *            rubrieken zoals opgeslagen als filter bij het abonnement
+     * @param rubrieken rubrieken zoals opgeslagen als filter bij het abonnement
      * @return rubrieken voor vulberichten filter maar aangepast voor mutatiebericht
      */
     private List<String> converteerVoorMutatieFilter(final List<String> rubrieken) {
@@ -217,9 +195,7 @@ public final class MutatieBerichtFilter implements Filter {
 
     /**
      * Bepaalt of een rubriek actueel is.
-     *
-     * @param rubriek
-     *            rubriek
+     * @param rubriek rubriek
      * @return true als de rubriek actueel is
      */
     private boolean isActueel(final String rubriek) {
@@ -229,9 +205,7 @@ public final class MutatieBerichtFilter implements Filter {
 
     /**
      * Maakt een rubriek historisch.
-     *
-     * @param rubriek
-     *            rubriek
+     * @param rubriek rubriek
      * @return historische rubriek
      */
     private String maakHistorisch(final String rubriek) {
@@ -245,7 +219,7 @@ public final class MutatieBerichtFilter implements Filter {
     }
 
     @Override
-    public boolean leveringUitvoeren(final PersoonHisVolledig persoon, final List<Lo3CategorieWaarde> gefilterd) {
+    public boolean leveringUitvoeren(final Persoonslijst persoon, final List<Lo3CategorieWaarde> gefilterd) {
         return gefilterd != null && !gefilterd.isEmpty() && !PersoonUtil.isAfgevoerd(persoon);
     }
 

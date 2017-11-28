@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.isc.console.mig4jsf.dto;
 
 import java.sql.Timestamp;
+import nl.bzk.migratiebrp.bericht.model.BerichtMetaData;
 import nl.bzk.migratiebrp.util.common.Kopieer;
 
 /**
@@ -14,136 +15,112 @@ import nl.bzk.migratiebrp.util.common.Kopieer;
  */
 public final class Bericht {
 
-    private Long id;
-    private Timestamp tijdstip;
-    private String kanaal;
-    private Direction richting;
-    private String messageId;
-    private String correlationId;
+    private BerichtMetaData berichtMetaData = new BerichtMetaData();
     private String bericht;
     private String naam;
     private Long processInstanceId;
-    private String bronGemeente;
-    private String doelGemeente;
+    private String bronPartijCode;
+    private String doelPartijCode;
     private String msSequenceNumber;
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public Long getId() {
-        return id;
+        return berichtMetaData.getId();
     }
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public void setId(final Long id) {
-        this.id = id;
+        berichtMetaData.setId(id);
     }
 
     /**
      * Geef de waarde van tijdstip.
-     *
      * @return tijdstip
      */
     public Timestamp getTijdstip() {
-        return Kopieer.timestamp(tijdstip);
+        return Kopieer.timestamp(berichtMetaData.getTijdstip());
     }
 
     /**
      * Zet de waarde van tijdstip.
-     *
-     * @param tijdstip
-     *            tijdstip
+     * @param tijdstip tijdstip
      */
     public void setTijdstip(final Timestamp tijdstip) {
-        this.tijdstip = Kopieer.timestamp(tijdstip);
+        berichtMetaData.setTijdstip(Kopieer.timestamp(tijdstip));
     }
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public String getKanaal() {
-        return kanaal;
+        return berichtMetaData.getKanaal();
     }
 
     /**
      * Zet de waarde van kanaal.
-     *
-     * @param kanaal
-     *            kanaal
+     * @param kanaal kanaal
      */
     public void setKanaal(final String kanaal) {
-        this.kanaal = kanaal;
+        berichtMetaData.setKanaal(kanaal);
     }
 
     /**
      * Geef de waarde van richting.
-     *
      * @return richting
      */
     public Direction getRichting() {
-        return richting;
+        return Direction.valueOfCode(berichtMetaData.getRichting());
     }
 
     /**
      * Zet de waarde van richting.
-     *
-     * @param richting
-     *            richting
+     * @param richting richting
      */
     public void setRichting(final Direction richting) {
-        this.richting = richting;
+        berichtMetaData.setRichting(richting.getCode());
     }
 
     /**
      * Geef de waarde van message id.
-     *
      * @return message id
      */
     public String getMessageId() {
-        return messageId;
+        return berichtMetaData.getMessageId();
     }
 
     /**
      * Zet de waarde van message id.
-     *
-     * @param messageId
-     *            message id
+     * @param messageId message id
      */
     public void setMessageId(final String messageId) {
-        this.messageId = messageId;
+        berichtMetaData.setMessageId(messageId);
     }
 
     /**
      * Geef de waarde van correlation id.
-     *
      * @return correlation id
      */
     public String getCorrelationId() {
-        return correlationId;
+        return berichtMetaData.getCorrelationId();
     }
 
     /**
      * Zet de waarde van correlation id.
-     *
-     * @param correlationId
-     *            correlation id
+     * @param correlationId correlation id
      */
     public void setCorrelationId(final String correlationId) {
-        this.correlationId = correlationId;
+        berichtMetaData.setCorrelationId(correlationId);
     }
 
     /**
      * Geef de waarde van bericht.
-     *
      * @return bericht
      */
     public String getBericht() {
@@ -152,9 +129,7 @@ public final class Bericht {
 
     /**
      * Zet de waarde van bericht.
-     *
-     * @param bericht
-     *            bericht
+     * @param bericht bericht
      */
     public void setBericht(final String bericht) {
         this.bericht = bericht;
@@ -162,7 +137,6 @@ public final class Bericht {
 
     /**
      * Geef de waarde van naam.
-     *
      * @return naam
      */
     public String getNaam() {
@@ -171,9 +145,7 @@ public final class Bericht {
 
     /**
      * Zet de waarde van naam.
-     *
-     * @param naam
-     *            naam
+     * @param naam naam
      */
     public void setNaam(final String naam) {
         this.naam = naam;
@@ -181,7 +153,6 @@ public final class Bericht {
 
     /**
      * Geef de waarde van process instance id.
-     *
      * @return process instance id
      */
     public Long getProcessInstanceId() {
@@ -190,9 +161,7 @@ public final class Bericht {
 
     /**
      * Zet de waarde van process instance id.
-     *
-     * @param processInstanceId
-     *            process instance id
+     * @param processInstanceId process instance id
      */
     public void setProcessInstanceId(final Long processInstanceId) {
         this.processInstanceId = processInstanceId;
@@ -200,47 +169,39 @@ public final class Bericht {
 
     /**
      * Geef de waarde van bron gemeente.
-     *
      * @return bron gemeente
      */
-    public String getBronGemeente() {
-        return bronGemeente;
+    public String getBronPartijCode() {
+        return bronPartijCode;
     }
 
     /**
      * Zet de waarde van bron gemeente.
-     *
-     * @param bronGemeente
-     *            bron gemeente
+     * @param bronPartijCode bron gemeente
      */
-    public void setBronGemeente(final String bronGemeente) {
-        this.bronGemeente = bronGemeente;
+    public void setBronPartijCode(final String bronPartijCode) {
+        this.bronPartijCode = bronPartijCode;
     }
 
     /**
      * Geef de waarde van doel gemeente.
-     *
      * @return doel gemeente
      */
-    public String getDoelGemeente() {
-        return doelGemeente;
+    public String getDoelPartijCode() {
+        return doelPartijCode;
     }
 
     /**
      * Zet de waarde van doel gemeente.
-     *
-     * @param doelGemeente
-     *            doel gemeente
+     * @param doelPartijCode doel gemeente
      */
-    public void setDoelGemeente(final String doelGemeente) {
-        this.doelGemeente = doelGemeente;
+    public void setDoelPartijCode(final String doelPartijCode) {
+        this.doelPartijCode = doelPartijCode;
     }
 
     /**
      * Zet de waarde van ms sequence number.
-     *
-     * @param msSequenceNumber
-     *            ms sequence number
+     * @param msSequenceNumber ms sequence number
      */
     public void setMsSequenceNumber(final String msSequenceNumber) {
         this.msSequenceNumber = msSequenceNumber;
@@ -248,7 +209,6 @@ public final class Bericht {
 
     /**
      * Geef de waarde van ms sequence number.
-     *
      * @return ms sequence number
      */
     public String getMsSequenceNumber() {
@@ -258,19 +218,21 @@ public final class Bericht {
     /**
      * Richting.
      */
-    public static enum Direction {
-        /** Inkomend. */
+    public enum Direction {
+        /**
+         * Inkomend.
+         */
         INKOMEND("I"),
-        /** Uitgaand. */
+        /**
+         * Uitgaand.
+         */
         UITGAAND("U");
 
         private final String code;
 
         /**
          * Constructor.
-         * 
-         * @param code
-         *            code
+         * @param code code
          */
         Direction(final String code) {
             this.code = code;
@@ -278,7 +240,6 @@ public final class Bericht {
 
         /**
          * Geef de waarde van code.
-         *
          * @return code
          */
         public String getCode() {
@@ -287,9 +248,7 @@ public final class Bericht {
 
         /**
          * Zoek de richting obv de code.
-         * 
-         * @param code
-         *            code
+         * @param code code
          * @return richting, of null als niet gevonden
          */
         public static Direction valueOfCode(final String code) {

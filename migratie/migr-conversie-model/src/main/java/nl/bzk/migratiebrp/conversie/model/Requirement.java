@@ -14,9 +14,6 @@ import java.lang.annotation.RetentionPolicy;
  * Deze annotatie dient te worden gebruikt om de verantwoording van de code te verbeteren. Code implementeert
  * requirements, deze moeten explicitiet worden genoemd in de javadoc van de class of methode zodat men kan herleiden
  * welke eisen in de code zijn geimplementeerd.
- * 
- * 
- * 
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -24,6 +21,7 @@ public @interface Requirement {
 
     /**
      * Een unieke verwijzing naar een gedocumenteerde eis die door de code wordt geimplementeerd.
+     * @return lijst van gedocumenteerde eisen
      */
     Requirements[] value();
 }

@@ -8,9 +8,9 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import org.springframework.stereotype.Component;

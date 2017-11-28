@@ -5,7 +5,7 @@
  */
 
 /**
- * Deze module leest uit de BRP alle kern.pers a-nummers van ingeschreven personen en 
+ * Deze module leest uit de BRP alle kern.pers a-nummers van ingeschreven personen en
  * plaatst deze als werklijst op een queue.
  */
 package nl.bzk.migratiebrp.init.naarlo3;

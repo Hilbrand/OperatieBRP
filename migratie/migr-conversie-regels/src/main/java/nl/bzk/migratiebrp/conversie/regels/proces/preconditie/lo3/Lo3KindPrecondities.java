@@ -8,40 +8,45 @@ package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KindInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.groep.Lo3GroepUtil;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Preconditie controles voor categorie 09: Kind.
  *
  * Maakt gebruik van de {@link nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging#log Logging.log} methode.
  */
-@Component
 public final class Lo3KindPrecondities extends AbstractLo3Precondities {
 
     /**
-     * Controleer alle stapels.
-     *
-     * @param stapels
-     *            stapels
-     * @param persoonAnummer
-     *            anummer van de persoon zelf (01.01.10)
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
      */
-    public void controleerStapels(final List<Lo3Stapel<Lo3KindInhoud>> stapels, final Lo3Long persoonAnummer) {
+    public Lo3KindPrecondities(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
+
+    /**
+     * Controleer alle stapels.
+     * @param stapels stapels
+     * @param persoonAnummer anummer van de persoon zelf (01.01.10)
+     */
+    public void controleerStapels(final List<Lo3Stapel<Lo3KindInhoud>> stapels, final Lo3String persoonAnummer) {
         if (stapels == null) {
             return;
         }
 
-        final List<Long> anummers = new ArrayList<>();
+        final List<String> anummers = new ArrayList<>();
         for (final Lo3Stapel<Lo3KindInhoud> stapel : stapels) {
             controleerPreconditie073(anummers, stapel);
             // Controleer de stapel
@@ -51,16 +56,13 @@ public final class Lo3KindPrecondities extends AbstractLo3Precondities {
 
     /**
      * Controleer preconditie073 of alle kinderen een apart anummer hebben.
-     *
-     * @param anummers
-     *            De gevonden anummers tot nu toe.
-     * @param stapel
-     *            De stapel die gecontroleerd moet worden.
+     * @param anummers De gevonden anummers tot nu toe.
+     * @param stapel De stapel die gecontroleerd moet worden.
      */
-    private void controleerPreconditie073(final List<Long> anummers, final Lo3Stapel<Lo3KindInhoud> stapel) {
+    private void controleerPreconditie073(final List<String> anummers, final Lo3Stapel<Lo3KindInhoud> stapel) {
         if (stapel != null && stapel.getLo3ActueelVoorkomen() != null && stapel.getLo3ActueelVoorkomen().getInhoud() != null) {
             final Lo3Categorie<Lo3KindInhoud> actueel = stapel.getLo3ActueelVoorkomen();
-            final Long anummer = Lo3Long.unwrap(actueel.getInhoud().getaNummer());
+            final String anummer = Lo3String.unwrap(actueel.getInhoud().getaNummer());
 
             if (anummer != null) {
                 if (anummers.contains(anummer) && !actueel.getHistorie().isOnjuist()) {
@@ -72,7 +74,7 @@ public final class Lo3KindPrecondities extends AbstractLo3Precondities {
         }
     }
 
-    private void controleerStapel(final Lo3Stapel<Lo3KindInhoud> stapel, final Lo3Long persoonAnummer) {
+    private void controleerStapel(final Lo3Stapel<Lo3KindInhoud> stapel, final Lo3String persoonAnummer) {
         if (stapel == null || stapel.isEmpty()) {
             return;
         }
@@ -111,21 +113,21 @@ public final class Lo3KindPrecondities extends AbstractLo3Precondities {
             }
         } else {
             controleerGroep02Naam(
-                inhoud.getVoornamen(),
-                inhoud.getAdellijkeTitelPredikaatCode(),
-                inhoud.getVoorvoegselGeslachtsnaam(),
-                inhoud.getGeslachtsnaam(),
-                herkomst,
-                false);
+                    inhoud.getVoornamen(),
+                    inhoud.getAdellijkeTitelPredikaatCode(),
+                    inhoud.getVoorvoegselGeslachtsnaam(),
+                    inhoud.getGeslachtsnaam(),
+                    herkomst,
+                    false);
 
             // Groep 01: Identificatienummers
             if (groep01Aanwezig) {
                 controleerGroep01Identificatienummers(
-                    inhoud.getaNummer(),
-                    inhoud.getBurgerservicenummer(),
-                    historie.getIngangsdatumGeldigheid(),
-                    herkomst,
-                    false);
+                        inhoud.getaNummer(),
+                        inhoud.getBurgerservicenummer(),
+                        historie.getIngangsdatumGeldigheid(),
+                        herkomst,
+                        false);
             }
 
             // Groep 03: Geboorte

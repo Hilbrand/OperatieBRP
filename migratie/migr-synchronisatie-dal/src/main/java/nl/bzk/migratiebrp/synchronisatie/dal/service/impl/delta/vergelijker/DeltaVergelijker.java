@@ -6,26 +6,31 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.vergelijker;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat;
 
 /**
  * Vergelijkers vergelijken twee objecten(oud en nieuw) en levert een VergelijkerResultaat met daarin de verschillen op.
- *
  */
 public interface DeltaVergelijker {
 
     /**
      * Vergelijk oud en nieuw met elkaar.
-     *
-     * @param context
-     *            de context voor deltabepaling
-     * @param bestaandeEntiteit
-     *            de bestaande entiteit
-     * @param nieuweEntiteit
-     *            de nieuwe entiteit
+     * @param context de context voor deltabepaling
+     * @param bestaandeEntiteit de bestaande entiteit
+     * @param nieuweEntiteit de nieuwe entiteit
      * @return het vergelijker resultaat
      */
-    VergelijkerResultaat vergelijk(DeltaBepalingContext context, DeltaRootEntiteit bestaandeEntiteit, DeltaRootEntiteit nieuweEntiteit);
+    VergelijkerResultaat vergelijk(DeltaBepalingContext context, RootEntiteit bestaandeEntiteit, RootEntiteit nieuweEntiteit);
+
+    /**
+     * Vergelijk oud en nieuw met elkaar.
+     * @param rootEntiteit een {@link RootEntiteit}
+     * @param bestaandeEntiteit de bestaande entiteit
+     * @param nieuweEntiteit de nieuwe entiteit
+     * @return het vergelijker resultaat
+     */
+    VergelijkerResultaat vergelijkEntiteiten(RootEntiteit rootEntiteit, Entiteit bestaandeEntiteit, Entiteit nieuweEntiteit);
 }

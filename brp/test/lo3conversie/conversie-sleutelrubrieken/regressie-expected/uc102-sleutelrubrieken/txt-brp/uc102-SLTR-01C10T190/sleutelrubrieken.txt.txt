@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [adressen], [soort])
+GEWIJZIGD(oud, nieuw, [Persoon.Adres.SoortCode])

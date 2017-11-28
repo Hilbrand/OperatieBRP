@@ -6,19 +6,18 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de BRP groep Betrokkenheid/Ouderlijk gezag.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpOuderlijkGezagInhoud extends AbstractBrpGroepInhoud {
     @Element(name = "ouderHeeftGezag", required = false)
@@ -26,9 +25,7 @@ public final class BrpOuderlijkGezagInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een BrpOuderlijkGezagInhoud object.
-     * 
-     * @param ouderHeeftGezag
-     *            true als de ouder gezag heeft, false indien geen gezag, null indien onbekend
+     * @param ouderHeeftGezag true als de ouder gezag heeft, false indien geen gezag, null indien onbekend
      */
     public BrpOuderlijkGezagInhoud(@Element(name = "ouderHeeftGezag", required = false) final BrpBoolean ouderHeeftGezag) {
         this.ouderHeeftGezag = ouderHeeftGezag;
@@ -36,18 +33,17 @@ public final class BrpOuderlijkGezagInhoud extends AbstractBrpGroepInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(ouderHeeftGezag);
+        return !BrpValidatie.isEenParameterGevuld(ouderHeeftGezag);
     }
 
     /**
-     * Geef de waarde van ouder heeft gezag.
-     *
-     * @return ouder heeft gezag
+     * Geef de waarde van ouder heeft gezag van BrpOuderlijkGezagInhoud.
+     * @return de waarde van ouder heeft gezag van BrpOuderlijkGezagInhoud
      */
     public BrpBoolean getOuderHeeftGezag() {
         return ouderHeeftGezag;
@@ -73,7 +69,7 @@ public final class BrpOuderlijkGezagInhoud extends AbstractBrpGroepInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("ouderHeeftGezag", ouderHeeftGezag)
-                                                                          .toString();
+                .append("ouderHeeftGezag", ouderHeeftGezag)
+                .toString();
     }
 }

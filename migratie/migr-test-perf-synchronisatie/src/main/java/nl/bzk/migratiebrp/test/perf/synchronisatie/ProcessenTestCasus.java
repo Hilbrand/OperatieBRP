@@ -23,6 +23,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.common.resultaat.Foutmelding;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStatus;
@@ -31,13 +34,13 @@ import nl.bzk.migratiebrp.test.dal.TestCasusOutputStap;
 import nl.bzk.migratiebrp.test.perf.synchronisatie.bericht.TestBericht;
 import nl.bzk.migratiebrp.test.perf.synchronisatie.environment.TestEnvironment;
 import nl.bzk.migratiebrp.util.common.Kopieer;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal.Strategie;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
-import nl.bzk.migratiebrp.voisc.spd.MailboxClient;
-import nl.bzk.migratiebrp.voisc.spd.exception.SpdProtocolException;
+import nl.bzk.migratiebrp.voisc.mailbox.client.Connection;
+import nl.bzk.migratiebrp.voisc.mailbox.client.MailboxClient;
+import nl.bzk.migratiebrp.voisc.spd.exception.VoaException;
+
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -51,9 +54,9 @@ public final class ProcessenTestCasus extends TestCasus {
         @Override
         public boolean accept(final File file) {
             return file.isFile()
-                   && !file.getName().contains(".DS_Store")
-                   && !file.getName().contains(BERICHTEN_ZIP)
-                   && !file.getName().contains("properties");
+                    && !file.getName().contains(".DS_Store")
+                    && !file.getName().contains(BERICHTEN_ZIP)
+                    && !file.getName().contains("properties");
         }
     };
     private static final String KAN_INPUT_NIET_LEZEN = "Kan input niet lezen.";
@@ -64,28 +67,20 @@ public final class ProcessenTestCasus extends TestCasus {
 
     /**
      * Constructor.
-     *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
-     * @param outputFolder
-     *            output folder
-     * @param expectedFolder
-     *            expected folder
-     * @param input
-     *            input
-     * @param environment
-     *            environment
+     * @param thema thema
+     * @param naam naam
+     * @param outputFolder output folder
+     * @param expectedFolder expected folder
+     * @param input input
+     * @param environment environment
      */
     protected ProcessenTestCasus(
-        final String thema,
-        final String naam,
-        final File outputFolder,
-        final File expectedFolder,
-        final File input,
-        final TestEnvironment environment)
-    {
+            final String thema,
+            final String naam,
+            final File outputFolder,
+            final File expectedFolder,
+            final File input,
+            final TestEnvironment environment) {
         super(thema, naam, outputFolder, expectedFolder);
         inputDirectory = input;
         this.environment = environment;
@@ -93,7 +88,6 @@ public final class ProcessenTestCasus extends TestCasus {
 
     /**
      * Geef de waarde van name.
-     *
      * @return name
      */
     public String getName() {
@@ -102,7 +96,6 @@ public final class ProcessenTestCasus extends TestCasus {
 
     /**
      * Geef de waarde van aantal.
-     *
      * @return aantal
      */
     public long getAantal() {
@@ -111,7 +104,6 @@ public final class ProcessenTestCasus extends TestCasus {
 
     /**
      * Geef de waarde van started.
-     *
      * @return started
      */
     public Date getStarted() {
@@ -165,31 +157,34 @@ public final class ProcessenTestCasus extends TestCasus {
         return result;
     }
 
-    private void voerTestUit(final ProcessenTestResultaat result, final MailboxClient mailboxServerProxy, final List<Runnable> verwerkers, final long start)
-        throws InterruptedException
-    {
+    private void voerTestUit(
+            final ProcessenTestResultaat result,
+            final MailboxClient mailboxServerProxy,
+            final List<Runnable> verwerkers,
+            final long start) throws InterruptedException {
         LOG.info("Start: " + started);
 
         final ExecutorService executorService = Executors.newFixedThreadPool(16);
 
         // SSL verbinding opbouwen
-        mailboxServerProxy.connect();
+        try (final Connection mailboxConnection = mailboxServerProxy.connect()) {
 
-        for (final Runnable verwerker : verwerkers) {
-            aantal++;
-            executorService.execute(verwerker);
-        }
+            for (final Runnable verwerker : verwerkers) {
+                aantal++;
+                executorService.execute(verwerker);
+            }
 
-        executorService.shutdown();
-        while (!executorService.awaitTermination(1, TimeUnit.MINUTES)) {
-            LOG.error("Sending messages ...");
-        }
+            executorService.shutdown();
+            while (!executorService.awaitTermination(1, TimeUnit.MINUTES)) {
+                LOG.error("Sending messages ...");
+            }
 
-        // Logout
-        try {
-            mailboxServerProxy.logOff();
-        } catch (final SpdProtocolException e) {
-            throw new RuntimeException("Fout bij uitloggen na versturen bericht.", e);
+            // Logout
+            try {
+                mailboxServerProxy.logOff(mailboxConnection);
+            } catch (final VoaException e) {
+                throw new RuntimeException("Fout bij uitloggen na versturen bericht.", e);
+            }
         }
 
         LOG.info("Beëindigen test case ...");
@@ -257,11 +252,8 @@ public final class ProcessenTestCasus extends TestCasus {
 
         /**
          * Default constructor.
-         *
-         * @param environment
-         *            De Environment.
-         * @param mailboxServerProxy
-         *            De mailbox server.
+         * @param environment De Environment.
+         * @param mailboxServerProxy De mailbox server.
          */
         public AbstractVerwerker(final TestEnvironment environment, final MailboxClient mailboxServerProxy) {
             this.environment = environment;
@@ -302,13 +294,9 @@ public final class ProcessenTestCasus extends TestCasus {
 
         /**
          * Default constructor.
-         *
-         * @param file
-         *            Het te gebruiken bestand.
-         * @param environment
-         *            De Environment.
-         * @param mailboxServerProxy
-         *            De mailbox server.
+         * @param file Het te gebruiken bestand.
+         * @param environment De Environment.
+         * @param mailboxServerProxy De mailbox server.
          */
         public BestandVerwerker(final File file, final TestEnvironment environment, final MailboxClient mailboxServerProxy) {
             super(environment, mailboxServerProxy);
@@ -337,15 +325,10 @@ public final class ProcessenTestCasus extends TestCasus {
 
         /**
          * Default constructor.
-         *
-         * @param zipFile
-         *            Het te gebruiken zip-bestand.
-         * @param entry
-         *            De entry van het zip-bestand.
-         * @param environment
-         *            De Environment.
-         * @param mailboxServerProxy
-         *            De mailbox server.
+         * @param zipFile Het te gebruiken zip-bestand.
+         * @param entry De entry van het zip-bestand.
+         * @param environment De Environment.
+         * @param mailboxServerProxy De mailbox server.
          */
         public ZipEntryVerwerker(final ZipFile zipFile, final ZipEntry entry, final TestEnvironment environment, final MailboxClient mailboxServerProxy) {
             super(environment, mailboxServerProxy);

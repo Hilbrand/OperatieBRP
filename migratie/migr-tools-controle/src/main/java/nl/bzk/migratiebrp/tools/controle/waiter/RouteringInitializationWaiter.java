@@ -6,67 +6,29 @@
 
 package nl.bzk.migratiebrp.tools.controle.waiter;
 
+import java.io.IOException;
+import javax.management.JMException;
 import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
-
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
-import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
 
 /**
- * Stiekeme bean om te kunnen wachten totdat een Jboss installatie is geinitialiseerd.
- *
- * Maakt gebruikt van afterPropertiesSet in de InitializingBean om de controle te doen voordat de JndiFactoryBean de
- * lookup probeert te doen via de FactoryBean interface.
+ * Controle of de ROUTERING is gestart.
  */
-public final class RouteringInitializationWaiter {
-
-    private static final Logger LOG = LoggerFactory.getLogger();
+public final class RouteringInitializationWaiter extends AbstractInitializationWaiter {
 
     private RouteringInitializationWaiter() {
-        // Niet instantieerbaar
+        super(new InitializationConfig("ROUTERING").withSystemConfig());
     }
 
     /**
      * Run waiter.
-     *
-     * @param args
-     *            arguments
+     * @param args arguments
      */
     public static void main(final String[] args) {
-
-        // Controleer Voisc gestart
-        try {
-            final String server = PropertyUtil.getProperty("routering.server");
-            RouteringInitializationWaiter.controleerRouteringGestart(server);
-        } catch (final HerhaalException e) {
-            throw new RuntimeException(e);
-        }
+        new RouteringInitializationWaiter().check();
     }
 
-    private static void controleerRouteringGestart(final String server) throws HerhaalException {
-
-        LOG.info("Controle op initialisatie Routering gestart: " + server);
-
-        final Herhaal herhaling = new Herhaal(10000, 30, Herhaal.Strategie.REGELMATIG);
-        herhaling.herhaal(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(server));
-                    final MBeanServerConnection connection = connector.getMBeanServerConnection();
-
-                    connection.getMBeanInfo(new ObjectName("nl.bzk.migratiebrp.routering:name=ROUTERING"));
-                } catch (final Exception e) {
-                    LOG.info("Routering niet gestart: " + e);
-                    throw new RuntimeException("Routering niet gestart.");
-                }
-            }
-        });
-        LOG.info("Routering gestart");
+    @Override
+    protected void check(final MBeanServerConnection connection) throws JMException, IOException {
+        checkMBeanInfo(connection, "nl.bzk.migratiebrp.routering:name=ROUTERING");
     }
 }

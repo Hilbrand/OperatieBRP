@@ -6,45 +6,40 @@
 
 package nl.bzk.brp.beheer.webapp.controllers;
 
-import nl.bzk.brp.beheer.webapp.configuratie.BlobifierConfiguratie;
-import nl.bzk.brp.beheer.webapp.configuratie.RepositoryConfiguratie;
-import nl.bzk.brp.beheer.webapp.configuratie.WebConfiguratie;
-import nl.bzk.brp.beheer.webapp.test.AbstractDatabaseTest;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.mockito.Mockito;
+import org.springframework.core.env.Environment;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {WebConfiguratie.class, RepositoryConfiguratie.class, BlobifierConfiguratie.class, DummySecurityConfiguratie.class })
-public class ConfiguratieControllerTest extends AbstractDatabaseTest {
+/**
+ * ConfiguratieController test.
+ */
+public class ConfiguratieControllerTest {
 
-    @Autowired
-    private WebApplicationContext wac;
+    private ConfiguratieController subject;
 
-    private MockMvc mockMvc;
+    private Environment environment;
 
-    /**
-     * init env.
-     */
-    @Before
-    public final void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    @Test
+    public void testAfterPropertySetZonderSlash() throws Exception {
+        environment = Mockito.mock(Environment.class);
+        Mockito.when(environment.getRequiredProperty("isc.url")).thenReturn("isc");
+        Mockito.when(environment.getRequiredProperty("isc.processenOpAh")).thenReturn("opah");
+        subject = new ConfiguratieController(environment);
+        ReflectionTestUtils.setField(subject, "environment", environment);
+        subject.afterPropertiesSet();
+        Assert.assertEquals("Uitkomst moet slash bevatten", "isc/opah", subject.configuratie().get("isc-processenOpAh"));
     }
 
     @Test
-    public final void test() throws Exception {
-        final MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/configuratie")).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-        System.out.println("result: " + result.getResponse().getContentAsString());
+    public void testAfterPropertySetMetSlash() throws Exception {
+        environment = Mockito.mock(Environment.class);
+        Mockito.when(environment.getRequiredProperty("isc.url")).thenReturn("isc/");
+        Mockito.when(environment.getRequiredProperty("isc.processenOpAh")).thenReturn("opah");
+        subject = new ConfiguratieController(environment);
+        ReflectionTestUtils.setField(subject, "environment", environment);
+        subject.afterPropertiesSet();
+        Assert.assertEquals("Uitkomst moet slash bevatten", "isc/opah", subject.configuratie().get("isc-processenOpAh"));
     }
 }

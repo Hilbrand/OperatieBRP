@@ -18,7 +18,6 @@ public class GgoBrpIstVoorkomen extends GgoBrpVoorkomen {
 
     /**
      * Geef administratieve handeling.
-     *
      * @return administratieve handeling
      */
     public final Map<String, String> getAdministratieveHandeling() {
@@ -27,9 +26,7 @@ public class GgoBrpIstVoorkomen extends GgoBrpVoorkomen {
 
     /**
      * Zet administratieve handeling.
-     *
-     * @param administratieveHandeling
-     *            administratieve handeling
+     * @param administratieveHandeling administratieve handeling
      */
     public final void setAdministratieveHandeling(final Map<String, String> administratieveHandeling) {
         this.administratieveHandeling = administratieveHandeling;

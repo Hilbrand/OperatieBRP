@@ -9,8 +9,8 @@ package nl.bzk.migratiebrp.isc.runtime.jbpm.quartz;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.quartz.SchedulerConfigException;
 import org.quartz.spi.ClassLoadHelper;
 import org.quartz.spi.SchedulerSignaler;
@@ -29,7 +29,6 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * <p>
  * Overrides the closeConnection method because the Spring DataSourceUtils do not work correctly with the Atomikos JTA
  * manager as they do not close the connection (only release it).
- *
  * @see LocalDataSourceJobStore
  */
 public final class CustomDataSourceJobStore extends LocalDataSourceJobStore {
@@ -44,7 +43,7 @@ public final class CustomDataSourceJobStore extends LocalDataSourceJobStore {
         final DataSource dataSource = SchedulerFactoryBean.getConfigTimeDataSource();
         if (dataSource == null) {
             throw new SchedulerConfigException("No local DataSource found for configuration - "
-                                               + "'dataSource' property must be set on SchedulerFactoryBean");
+                    + "'dataSource' property must be set on SchedulerFactoryBean");
         }
 
         // Override transactional ConnectionProvider for Quartz.

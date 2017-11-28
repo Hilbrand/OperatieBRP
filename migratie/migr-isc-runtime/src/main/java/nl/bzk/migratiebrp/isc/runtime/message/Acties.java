@@ -11,15 +11,33 @@ package nl.bzk.migratiebrp.isc.runtime.message;
  */
 public final class Acties {
 
-    /** Actie: foutafhandeling gestart. */
+    /**
+     * Actie: foutafhandeling gestart.
+     */
     public static final String ACTIE_FOUTAFHANDELING_GESTART = "foutafhandelingGestart";
-    /** Actie: proces gestart. */
+    /**
+     * Actie: foutafhandeling gestart.
+     */
+    public static final String ACTIE_HERHAALPROCES_GESTART = "herhalingGestart";
+    /**
+     * Actie: foutafhandeling gestart.
+     */
+    public static final String ACTIE_ANTWOORD_AUTOMATISCH_HERHAALD = "antwoordAutomatischHerhaald";
+    /**
+     * Actie: proces gestart.
+     */
     public static final String ACTIE_PROCES_GESTART = "procesGestart";
-    /** Actie: proces vervolgd. */
+    /**
+     * Actie: proces vervolgd.
+     */
     public static final String ACTIE_PROCES_VERVOLGD = "procesVervolgd";
-    /** Actie: herhaling genegeerd. */
+    /**
+     * Actie: herhaling genegeerd.
+     */
     public static final String ACTIE_HERHALING_GENEGEERD = "herhalingGenegeerd";
-    /** Actie: herhaling beantwoord. */
+    /**
+     * Actie: herhaling beantwoord.
+     */
     public static final String ACTIE_HERHALING_BEANTWOORD = "herhalingBeantwoord";
 
     private Acties() {

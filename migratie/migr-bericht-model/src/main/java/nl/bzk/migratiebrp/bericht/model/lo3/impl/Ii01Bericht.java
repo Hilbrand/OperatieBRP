@@ -11,6 +11,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.AbstractCategorieGebaseerdParsedLo3B
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 
 /**
  * Ii01.
@@ -24,7 +25,7 @@ public final class Ii01Bericht extends AbstractCategorieGebaseerdParsedLo3Berich
      * Constructor.
      */
     public Ii01Bericht() {
-        super(HEADER, "Ii01", "uc301");
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Ii01", "uc301");
     }
 
 }

@@ -8,13 +8,16 @@ package nl.bzk.migratiebrp.isc.jbpm.uc311;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.AnummerWijzigingNotificatie;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpVerzoekBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,8 +28,16 @@ public final class MaakLeesUitBrpVerzoekAction implements SpringAction {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakLeesUitBrpVerzoekAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {

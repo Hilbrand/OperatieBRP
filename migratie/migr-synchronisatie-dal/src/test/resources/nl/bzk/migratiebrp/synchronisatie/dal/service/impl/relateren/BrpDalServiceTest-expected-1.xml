@@ -65,19 +65,19 @@
   <kern.persvoornaam id="1" pers="1" volgnr="1" naam="Marie"/>
   <kern.persvoornaam id="2" pers="5" volgnr="1" naam="Piet"/>
   <kern.betr id="1" relatie="1" rol="1" pers="1"/>
-  <kern.betr id="2" relatie="1" rol="2" pers="2" indouder="true"/>
-  <kern.betr id="3" relatie="1" rol="2" pers="3" indouder="true"/>
+  <kern.betr id="2" relatie="1" rol="2" pers="2"/>
+  <kern.betr id="3" relatie="1" rol="2" pers="3"/>
   <kern.betr id="4" relatie="2" rol="3" pers="1"/>
   <kern.betr id="5" relatie="2" rol="3" pers="4"/>
   <kern.betr id="6" relatie="3" rol="1" pers="5"/>
-  <kern.betr id="7" relatie="3" rol="2" pers="6" indouder="true"/>
-  <kern.betr id="8" relatie="3" rol="2" pers="7" indouder="true"/>
+  <kern.betr id="7" relatie="3" rol="2" pers="6"/>
+  <kern.betr id="8" relatie="3" rol="2" pers="7"/>
   <kern.betr id="9" relatie="4" rol="3" pers="5"/>
   <kern.betr id="10" relatie="4" rol="3" pers="1"/>
   <kern.betr id="11" relatie="5" rol="3" pers="5"/>
   <kern.betr id="12" relatie="5" rol="3" pers="1"/>
-  <kern.his_persafgeleidadministrati id="1" pers="1" tsreg="1998-06-25 03:00:00.0" actieinh="4" admhnd="1" tslaatstewijz="TODAY" indonderzoeknaarnietopgenome="false" sorteervolgorde="1" indonverwbijhvoorstelnieting="false" tslaatstewijzgbasystematiek="TODAY"/>
-  <kern.his_persafgeleidadministrati id="2" pers="5" tsreg="1998-06-25 03:00:00.0" actieinh="13" admhnd="2" tslaatstewijz="TODAY" indonderzoeknaarnietopgenome="false" sorteervolgorde="1" indonverwbijhvoorstelnieting="false" tslaatstewijzgbasystematiek="TODAY"/>
+  <kern.his_persafgeleidadministrati id="1" pers="1" tsreg="1998-06-25 03:00:00.0" actieinh="4" admhnd="1" tslaatstewijz="TODAY" sorteervolgorde="1" indonverwbijhvoorstelnieting="false" tslaatstewijzgbasystematiek="TODAY"/>
+  <kern.his_persafgeleidadministrati id="2" pers="5" tsreg="1998-06-25 03:00:00.0" actieinh="13" admhnd="2" tslaatstewijz="TODAY" sorteervolgorde="1" indonverwbijhvoorstelnieting="false" tslaatstewijzgbasystematiek="TODAY"/>
   <kern.his_relatie id="1" relatie="2" tsreg="TODAY" tsverval="TODAY" actieinh="3" actieverval="12" dataanv="19980624" gemaanv="17" landgebiedaanv="229"/>
   <kern.his_relatie id="2" relatie="4" tsreg="TODAY" tsverval="TODAY" actieinh="11" actieverval="12" dataanv="19980624" gemaanv="17" landgebiedaanv="229"/>
   <kern.his_relatie id="3" relatie="5" tsreg="TODAY" actieinh="12" dataanv="19980624" gemaanv="17" landgebiedaanv="229"/>
@@ -125,20 +125,8 @@
   <kern.his_persvoornaam id="2" persvoornaam="2" dataanvgel="19650217" tsreg="1965-02-18 02:00:00.0" actieinh="14" naam="Piet"/>
   <kern.his_persbijhouding id="1" pers="1" dataanvgel="19980622" tsreg="1998-06-23 03:00:00.0" actieinh="6" bijhpartij="629" bijhaard="1" naderebijhaard="1" indonverwdocaanw="false"/>
   <kern.his_persbijhouding id="2" pers="5" dataanvgel="19980622" tsreg="1998-06-23 03:00:00.0" actieinh="15" bijhpartij="629" bijhaard="1" naderebijhaard="1" indonverwdocaanw="false"/>
-  <kern.his_ouderouderschap id="1" betr="2" dataanvgel="19660821" tsreg="TODAY" actieinh="1" indouder="true"/>
-  <kern.his_ouderouderschap id="2" betr="3" dataanvgel="19660821" tsreg="TODAY" actieinh="2" indouder="true"/>
-  <kern.his_ouderouderschap id="3" betr="7" dataanvgel="19650217" tsreg="TODAY" actieinh="8" indouder="true"/>
-  <kern.his_ouderouderschap id="4" betr="8" dataanvgel="19650217" tsreg="TODAY" actieinh="9" indouder="true"/>
-  <kern.his_doc id="1" doc="1" tsreg="1966-08-22 02:00:00.0" actieinh="1" oms="PKA" partij="1442"/>
-  <kern.his_doc id="2" doc="2" tsreg="1966-08-22 02:00:00.0" actieinh="2" oms="PKA" partij="20"/>
-  <kern.his_doc id="3" doc="3" tsreg="1998-06-25 03:00:00.0" actieinh="3" oms="Huwelijks akte" partij="17"/>
-  <kern.his_doc id="4" doc="4" tsreg="1966-08-22 02:00:00.0" actieinh="5" oms="PKA" partij="17"/>
-  <kern.his_doc id="5" doc="5" tsreg="1966-08-22 02:00:00.0" actieinh="7" oms="PKA" partij="17"/>
-  <kern.his_doc id="6" doc="6" tsreg="1965-02-18 02:00:00.0" actieinh="8" oms="Geboorte akte" partij="1444"/>
-  <kern.his_doc id="7" doc="7" tsreg="1965-02-18 02:00:00.0" actieinh="9" oms="Geboorte akte" partij="629"/>
-  <kern.his_doc id="8" doc="8" tsreg="1998-06-25 03:00:00.0" actieinh="10" oms="Huwelijks akte" partij="17"/>
-  <kern.his_doc id="9" doc="9" tsreg="1998-06-25 03:00:00.0" actieinh="11" oms="Huwelijks akte" partij="17"/>
-  <kern.his_doc id="10" doc="10" tsreg="1998-06-25 03:00:00.0" actieinh="12" oms="Huwelijks akte" partij="17"/>
-  <kern.his_doc id="11" doc="11" tsreg="1965-02-18 02:00:00.0" actieinh="14" oms="Geboorte akte" partij="1454"/>
-  <kern.his_doc id="12" doc="12" tsreg="1965-02-18 02:00:00.0" actieinh="16" oms="Geboorte akte" partij="29"/>
+  <kern.his_ouderouderschap id="1" betr="2" dataanvgel="19660821" tsreg="TODAY" actieinh="1"/>
+  <kern.his_ouderouderschap id="2" betr="3" dataanvgel="19660821" tsreg="TODAY" actieinh="2"/>
+  <kern.his_ouderouderschap id="3" betr="7" dataanvgel="19650217" tsreg="TODAY" actieinh="8"/>
+  <kern.his_ouderouderschap id="4" betr="8" dataanvgel="19650217" tsreg="TODAY" actieinh="9"/>
 </dataset>

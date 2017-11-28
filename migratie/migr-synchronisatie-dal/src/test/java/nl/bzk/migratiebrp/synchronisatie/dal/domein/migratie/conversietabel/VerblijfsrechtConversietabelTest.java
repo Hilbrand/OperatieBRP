@@ -10,18 +10,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import javax.inject.Inject;
+
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpVerblijfsrechtCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingVerblijfstitelCode;
 import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
+import nl.bzk.algemeenbrp.test.dal.DBUnit.InsertBefore;
+
 import org.junit.Before;
 import org.junit.Test;
 
 public class VerblijfsrechtConversietabelTest extends AbstractDatabaseTest {
 
-    private static final BrpVerblijfsrechtCode BRP_AANDUIDING_VERBLIJFSTITEL = new BrpVerblijfsrechtCode((short) 10);
+    private static final BrpVerblijfsrechtCode BRP_AANDUIDING_VERBLIJFSTITEL = new BrpVerblijfsrechtCode("10");
 
     private static final Lo3AanduidingVerblijfstitelCode LO3_VERBLIJFSTITEL_CODE = new Lo3AanduidingVerblijfstitelCode("10");
 
@@ -34,7 +36,7 @@ public class VerblijfsrechtConversietabelTest extends AbstractDatabaseTest {
         conversietabel = conversietabelFactory.createVerblijfsrechtConversietabel();
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test
     public void testConverteerNaarBrp() {
         final BrpVerblijfsrechtCode brpResultaat = conversietabel.converteerNaarBrp(LO3_VERBLIJFSTITEL_CODE);
@@ -42,7 +44,7 @@ public class VerblijfsrechtConversietabelTest extends AbstractDatabaseTest {
         assertNull(conversietabel.converteerNaarBrp(null));
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test
     public void testConverteerNaarLo3() {
         final Lo3AanduidingVerblijfstitelCode lo3Resultaat = conversietabel.converteerNaarLo3(BRP_AANDUIDING_VERBLIJFSTITEL);

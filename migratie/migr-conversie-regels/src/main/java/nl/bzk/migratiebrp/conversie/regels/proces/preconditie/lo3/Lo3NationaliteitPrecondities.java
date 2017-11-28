@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -22,28 +23,33 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingBijzonderNede
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.groep.Lo3GroepUtil;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Preconditie controles voor categorie 04: Nationaliteit.
  *
  * Maakt gebruik van de {@link nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging#log Logging.log} methode.
  */
-@Component
 public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities {
 
     /**
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
+     */
+    public Lo3NationaliteitPrecondities(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
+
+    /**
      * Controleer alle stapels.
-     *
-     * @param stapels
-     *            stapels
+     * @param stapels stapels
      */
     public void controleerStapels(final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels) {
         if (stapels == null) {
@@ -62,9 +68,7 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
 
     /**
      * Controleer preconditie 82.
-     *
-     * @param stapels
-     *            De stapels die gecontroleerd moeten worden.
+     * @param stapels De stapels die gecontroleerd moeten worden.
      */
     @Preconditie(SoortMeldingCode.PRE082)
     private void controleerPreconditie082(final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels) {
@@ -79,56 +83,70 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
                     continue;
                 }
                 final Lo3NationaliteitCode code = categorie.getInhoud().getNationaliteitCode();
-                if (Validatie.isElementGevuld(code)) {
-                    if (nationaliteiten.contains(code.getWaarde())) {
-                        // preconditie 82
-                        Foutmelding.logMeldingFout(categorie.getLo3Herkomst(), LogSeverity.ERROR, SoortMeldingCode.PRE082, null);
-                    }
-                    natInStapel.add(categorie.getInhoud().getNationaliteitCode().getWaarde());
-                }
+                crontroleerElementPre082(nationaliteiten, natInStapel, categorie, code);
             }
             nationaliteiten.addAll(natInStapel);
         }
     }
 
+    private void crontroleerElementPre082(Set<String> nationaliteiten, Set<String> natInStapel, Lo3Categorie<Lo3NationaliteitInhoud> categorie,
+                                          Lo3NationaliteitCode code) {
+        if (Lo3Validatie.isElementGevuld(code)) {
+            if (nationaliteiten.contains(code.getWaarde())) {
+                // preconditie 82
+                Foutmelding.logMeldingFout(categorie.getLo3Herkomst(), LogSeverity.ERROR, SoortMeldingCode.PRE082, null);
+            }
+            natInStapel.add(categorie.getInhoud().getNationaliteitCode().getWaarde());
+        }
+    }
+
     /**
      * Controleer preconditie 93.
-     *
-     * @param stapels
-     *            De stapels die gecontroleerd moeten worden.
+     * @param stapels De stapels die gecontroleerd moeten worden.
      */
     @Preconditie(SoortMeldingCode.PRE093)
     private void controleerPreconditie093(final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels) {
         final Map<Lo3NationaliteitCode, Set<Integer>> nationaliteitStapels = new HashMap<>();
+        stapelsAanvullen(stapels, nationaliteitStapels);
+        controleerOfNationaliteitOokInAndereStapelsVoorkomt(stapels, nationaliteitStapels);
 
-        // Doorloop alle stapels en bepaal nationaliteiten per stapel.
-        for (final Lo3Stapel<Lo3NationaliteitInhoud> stapel : stapels) {
-            // Doorloop alle categorieen in de stapel
-            for (final Lo3Categorie<Lo3NationaliteitInhoud> categorie : stapel.getCategorieen()) {
-                final Integer stapelNr = categorie.getLo3Herkomst().getStapel();
-                final Lo3NationaliteitCode code = categorie.getInhoud().getNationaliteitCode();
-                if (Validatie.isElementGevuld(code)) {
-                    final Lo3NationaliteitCode codeZonderOnderzoek = Lo3NationaliteitCode.zonderOnderzoek(code);
-                    if (!nationaliteitStapels.containsKey(codeZonderOnderzoek)) {
-                        nationaliteitStapels.put(codeZonderOnderzoek, new HashSet<Integer>());
-                    }
-                    nationaliteitStapels.get(codeZonderOnderzoek).add(stapelNr);
-                }
-            }
-        }
 
+    }
+
+    private void controleerOfNationaliteitOokInAndereStapelsVoorkomt(List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels,
+                                                                     Map<Lo3NationaliteitCode, Set<Integer>> nationaliteitStapels) {
         // Doorloop onjuiste rijen van alle stapels en check of de nationaliteit ook in
         // andere stapels voorkomt.
         for (final Lo3Stapel<Lo3NationaliteitInhoud> stapel : stapels) {
             // Doorloop alle categorieen in de stapel
             for (final Lo3Categorie<Lo3NationaliteitInhoud> categorie : stapel.getCategorieen()) {
                 final Lo3NationaliteitCode code = categorie.getInhoud().getNationaliteitCode();
-                if (Validatie.isElementGevuld(code) && categorie.getHistorie().isOnjuist()) {
-                    final Lo3NationaliteitCode codeZonderOnderzoek = Lo3NationaliteitCode.zonderOnderzoek(code);
-                    if (nationaliteitStapels.get(codeZonderOnderzoek).size() > 1) {
-                        // Als deze nationaliteit in meer dan 1 stapel voorkomt log dan preconditie 93 fout.
-                        Foutmelding.logMeldingFout(categorie.getLo3Herkomst(), LogSeverity.ERROR, SoortMeldingCode.PRE093, null);
-                    }
+
+                if (Lo3Validatie.isElementGevuld(code) && categorie.getHistorie().isOnjuist()
+                        && nationaliteitStapels.get(Lo3NationaliteitCode.zonderOnderzoek(code)).size() > 1) {
+                    // Als deze nationaliteit in meer dan 1 stapel voorkomt log dan preconditie 93 fout.
+                    Foutmelding.logMeldingFout(categorie.getLo3Herkomst(), LogSeverity.ERROR, SoortMeldingCode.PRE093, null);
+                }
+            }
+        }
+    }
+
+    private void stapelsAanvullen(List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels, Map<Lo3NationaliteitCode, Set<Integer>> nationaliteitStapels) {
+        // Doorloop alle stapels en bepaal nationaliteiten per stapel.
+        for (final Lo3Stapel<Lo3NationaliteitInhoud> stapel : stapels) {
+            // Doorloop alle categorieen in de stapel
+            for (final Lo3Categorie<Lo3NationaliteitInhoud> categorie : stapel.getCategorieen()) {
+                final Integer stapelNr = categorie.getLo3Herkomst().getStapel();
+                final Lo3NationaliteitCode code = categorie.getInhoud().getNationaliteitCode();
+
+                final Lo3NationaliteitCode codeZonderOnderzoek = Lo3NationaliteitCode.zonderOnderzoek(code);
+                if (Lo3Validatie.isElementGevuld(code)
+                        && !nationaliteitStapels.containsKey(codeZonderOnderzoek)) {
+                    nationaliteitStapels.put(codeZonderOnderzoek, new HashSet<Integer>());
+                }
+
+                if (Lo3Validatie.isElementGevuld(code)) {
+                    nationaliteitStapels.get(codeZonderOnderzoek).add(stapelNr);
                 }
             }
         }
@@ -154,21 +172,27 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
                 final Lo3NationaliteitInhoud inhoud = categorie.getInhoud();
                 final Lo3NationaliteitCode code = inhoud.getNationaliteitCode();
                 final boolean bevatNLNationaliteitCode = AbstractLo3Element.equalsWaarde(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, code);
-                final boolean bevatAanduidingBijzonderNLschap = Validatie.isElementGevuld(inhoud.getAanduidingBijzonderNederlandschap());
+                final boolean bevatAanduidingBijzonderNLschap = Lo3Validatie.isElementGevuld(inhoud.getAanduidingBijzonderNederlandschap());
 
-                if (controleStapel == null) {
-                    if (bevatAanduidingBijzonderNLschap || bevatNLNationaliteitCode) {
-                        controleStapel = stapel;
-                        bevatControleBijzonderNederlanderschap = bevatAanduidingBijzonderNLschap;
-                    }
-                } else {
-                    if (!controleStapel.equals(stapel)
-                        && (bevatControleBijzonderNederlanderschap ? bevatNLNationaliteitCode : bevatAanduidingBijzonderNLschap))
-                    {
-                        Foutmelding.logMeldingFout(categorie.getLo3Herkomst(), LogSeverity.ERROR, SoortMeldingCode.PRE103, null);
-                    }
+                if (controleStapel == null && (bevatAanduidingBijzonderNLschap || bevatNLNationaliteitCode)) {
+                    controleStapel = stapel;
+                    bevatControleBijzonderNederlanderschap = bevatAanduidingBijzonderNLschap;
+                }
+
+                if (controleStapel != null) {
+                    controleMeldingPre103(controleStapel, bevatControleBijzonderNederlanderschap, stapel, categorie, bevatNLNationaliteitCode,
+                            bevatAanduidingBijzonderNLschap);
                 }
             }
+        }
+    }
+
+    private void controleMeldingPre103(Lo3Stapel<Lo3NationaliteitInhoud> controleStapel, boolean bevatControleBijzonderNederlanderschap,
+                                       Lo3Stapel<Lo3NationaliteitInhoud> stapel, Lo3Categorie<Lo3NationaliteitInhoud> categorie,
+                                       boolean bevatNLNationaliteitCode, boolean bevatAanduidingBijzonderNLschap) {
+        if (!controleStapel.equals(stapel)
+                && (bevatControleBijzonderNederlanderschap ? bevatNLNationaliteitCode : bevatAanduidingBijzonderNLschap)) {
+            Foutmelding.logMeldingFout(categorie.getLo3Herkomst(), LogSeverity.ERROR, SoortMeldingCode.PRE103, null);
         }
     }
 
@@ -190,25 +214,23 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
                 final Lo3Herkomst herkomst = categorie.getLo3Herkomst();
                 final Integer stapelNr = herkomst.getStapel();
 
-                if (isOnjuist) {
-                    if (Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE.equalsWaarde(code)
-                        && stapelSetBevatNietAlleenStapelNr(bijzonderNederlanderschapStapels, stapelNr))
-                    {
-                        Foutmelding.logMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE104, null);
-                    }
-                    if (Validatie.isElementGevuld(bijzonderNederlandschap) && stapelSetBevatNietAlleenStapelNr(nederlandseNationliteitStapels, stapelNr)) {
-                        Foutmelding.logMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE104, null);
-                    }
+                if (isOnjuist && Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE.equalsWaarde(code)
+                        && stapelSetBevatNietAlleenStapelNr(bijzonderNederlanderschapStapels, stapelNr)) {
+                    Foutmelding.logMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE104, null);
                 }
+                if (isOnjuist && Lo3Validatie.isElementGevuld(bijzonderNederlandschap)
+                        && stapelSetBevatNietAlleenStapelNr(nederlandseNationliteitStapels, stapelNr)) {
+                    Foutmelding.logMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE104, null);
+                }
+
             }
         }
     }
 
     private void bepaalNederlanderschapStapels(
-        final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels,
-        final Set<Integer> bijzonderNederlanderschapStapels,
-        final Set<Integer> nederlandseNationliteitStapels)
-    {
+            final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels,
+            final Set<Integer> bijzonderNederlanderschapStapels,
+            final Set<Integer> nederlandseNationliteitStapels) {
         // Doorloop alle stapels
         for (final Lo3Stapel<Lo3NationaliteitInhoud> stapel : stapels) {
             // Doorloop alle categorieen in de stapel
@@ -216,7 +238,7 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
                 final Lo3Herkomst herkomst = categorie.getLo3Herkomst();
                 final Lo3NationaliteitInhoud inhoud = categorie.getInhoud();
                 final Lo3NationaliteitCode code = inhoud.getNationaliteitCode();
-                if (Validatie.isElementGevuld(inhoud.getAanduidingBijzonderNederlandschap())) {
+                if (Lo3Validatie.isElementGevuld(inhoud.getAanduidingBijzonderNederlandschap())) {
                     bijzonderNederlanderschapStapels.add(herkomst.getStapel());
                 }
                 if (Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE.equalsWaarde(code)) {
@@ -230,7 +252,7 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
         return stapelSet.size() == 1 && !stapelSet.contains(stapelNr) || stapelSet.size() > 1;
     }
 
-    @Preconditie({SoortMeldingCode.PRE109, SoortMeldingCode.PRE110 })
+    @Preconditie({SoortMeldingCode.PRE109, SoortMeldingCode.PRE110})
     private void controleerPreconditie109en110(final Lo3Stapel<Lo3NationaliteitInhoud> stapel) {
         boolean heeftAndereNationaliteit = false;
         boolean heeftBijzonderNederlandschap = false;
@@ -241,7 +263,7 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
                 heeftAndereNationaliteit = true;
             }
 
-            if (Validatie.isElementGevuld(categorie.getInhoud().getAanduidingBijzonderNederlandschap())) {
+            if (Lo3Validatie.isElementGevuld(categorie.getInhoud().getAanduidingBijzonderNederlandschap())) {
                 heeftBijzonderNederlandschap = true;
                 if (!categorie.getHistorie().isOnjuist()) {
                     heeftJuistBijzonderNederlandschap = true;
@@ -253,11 +275,10 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
     }
 
     private void controleerCategorienOpPreconditie109en110(
-        final Lo3Stapel<Lo3NationaliteitInhoud> stapel,
-        final boolean heeftAndereNationaliteit,
-        final boolean heeftBijzonderNederlandschap,
-        final boolean heeftJuistBijzonderNederlandschap)
-    {
+            final Lo3Stapel<Lo3NationaliteitInhoud> stapel,
+            final boolean heeftAndereNationaliteit,
+            final boolean heeftBijzonderNederlandschap,
+            final boolean heeftJuistBijzonderNederlandschap) {
         for (final Lo3Categorie<Lo3NationaliteitInhoud> categorie : stapel.getCategorieen()) {
             // preconditie 109
             if (bevatAndereNationaliteit(categorie)) {
@@ -272,25 +293,22 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
             }
 
             // preconditie 110 op bijzondere nl schap
-            if (Validatie.isElementGevuld(categorie.getInhoud().getAanduidingBijzonderNederlandschap())
-                && categorie.getHistorie().isOnjuist()
-                && heeftAndereNationaliteit)
-            {
+            if (Lo3Validatie.isElementGevuld(categorie.getInhoud().getAanduidingBijzonderNederlandschap())
+                    && categorie.getHistorie().isOnjuist()
+                    && heeftAndereNationaliteit) {
                 Foutmelding.logMeldingFout(categorie.getLo3Herkomst(), LogSeverity.ERROR, SoortMeldingCode.PRE110, Lo3ElementEnum.ELEMENT_6510);
             }
         }
     }
 
     private boolean bevatAndereNationaliteit(final Lo3Categorie<Lo3NationaliteitInhoud> categorie) {
-        return Validatie.isElementGevuld(categorie.getInhoud().getNationaliteitCode())
-               && !Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE.equalsWaarde(categorie.getInhoud().getNationaliteitCode());
+        return Lo3Validatie.isElementGevuld(categorie.getInhoud().getNationaliteitCode())
+                && !Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE.equalsWaarde(categorie.getInhoud().getNationaliteitCode());
     }
 
     /**
      * Controleer precondities op stapel niveau.
-     *
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      */
     public void controleerStapel(final Lo3Stapel<Lo3NationaliteitInhoud> stapel) {
         if (stapel == null || stapel.isEmpty()) {
@@ -316,11 +334,9 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
 
     /**
      * Controleer precondities op categorie niveau.
-     *
-     * @param categorie
-     *            categorie
+     * @param categorie categorie
      */
-    @Preconditie({SoortMeldingCode.PRE023, SoortMeldingCode.PRE083, SoortMeldingCode.PRE105, SoortMeldingCode.PRE106 })
+    @Preconditie({SoortMeldingCode.PRE023, SoortMeldingCode.PRE083, SoortMeldingCode.PRE105, SoortMeldingCode.PRE106})
     void controleerCategorie(final Lo3Categorie<Lo3NationaliteitInhoud> categorie) {
         /* cyclomatic complexity is 14. Komt door de nieuwe precondities (105/106). Is niet complex. */
         final Lo3NationaliteitInhoud inhoud = categorie.getInhoud();
@@ -336,17 +352,35 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
         controleeerCategorieOpPre023(inhoud, herkomst, groep05Aanwezig, groep63Aanwezig, groep64Aanwezig, groep65Aanwezig);
         controleeerCategorieOpPre105(inhoud, herkomst, groep05Aanwezig, groep64Aanwezig, groep65Aanwezig);
 
+        controleerGroep73(inhoud, herkomst);
+
         // Documentatie Groep 81, Groep 82 en Groep 88
         controleerDocumentatie(categorie, herkomst);
     }
 
+    @Preconditie({SoortMeldingCode.PRE054, SoortMeldingCode.PRE115})
+    private void controleerGroep73(final Lo3NationaliteitInhoud inhoud, final Lo3Herkomst herkomst) {
+        if (Lo3GroepUtil.isGroepAanwezig(Lo3GroepEnum.GROEP73, inhoud)) {
+            controleerAanwezig(
+                    inhoud.getBuitenlandsPersoonsnummer(),
+                    Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_7310));
+
+            final Lo3NationaliteitCode nationaliteitCode = inhoud.getNationaliteitCode();
+            controleerAanwezig(
+                    nationaliteitCode,
+                    Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE115, Lo3ElementEnum.ELEMENT_0510));
+            controleerAutoriteitVanAfgifteCode(
+                    nationaliteitCode,
+                    Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_0510));
+        }
+    }
+
     private void controleeerCategorieOpPre105(
-        final Lo3NationaliteitInhoud inhoud,
-        final Lo3Herkomst herkomst,
-        final boolean groep05Aanwezig,
-        final boolean groep64Aanwezig,
-        final boolean groep65Aanwezig)
-    {
+            final Lo3NationaliteitInhoud inhoud,
+            final Lo3Herkomst herkomst,
+            final boolean groep05Aanwezig,
+            final boolean groep64Aanwezig,
+            final boolean groep65Aanwezig) {
         if (groep65Aanwezig) {
             controleerGroep65BijzonderNederlanderschap(inhoud.getAanduidingBijzonderNederlandschap(), herkomst);
 
@@ -357,13 +391,12 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
     }
 
     private void controleeerCategorieOpPre023(
-        final Lo3NationaliteitInhoud inhoud,
-        final Lo3Herkomst herkomst,
-        final boolean groep05Aanwezig,
-        final boolean groep63Aanwezig,
-        final boolean groep64Aanwezig,
-        final boolean groep65Aanwezig)
-    {
+            final Lo3NationaliteitInhoud inhoud,
+            final Lo3Herkomst herkomst,
+            final boolean groep05Aanwezig,
+            final boolean groep63Aanwezig,
+            final boolean groep64Aanwezig,
+            final boolean groep65Aanwezig) {
         if (groep64Aanwezig) {
             controleerGroep64VerliesNederlanderschap(inhoud.getRedenVerliesNederlandschapCode(), herkomst);
 
@@ -374,12 +407,11 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
     }
 
     private void controleeerCategorieOpPre083(
-        final Lo3NationaliteitInhoud inhoud,
-        final Lo3Herkomst herkomst,
-        final boolean groep05Aanwezig,
-        final boolean groep63Aanwezig,
-        final boolean groep65Aanwezig)
-    {
+            final Lo3NationaliteitInhoud inhoud,
+            final Lo3Herkomst herkomst,
+            final boolean groep05Aanwezig,
+            final boolean groep63Aanwezig,
+            final boolean groep65Aanwezig) {
         if (groep63Aanwezig) {
             controleerGroep63VerkrijgingNederlanderschap(inhoud.getRedenVerkrijgingNederlandschapCode(), herkomst);
             if (!groep05Aanwezig && !groep65Aanwezig) {
@@ -389,12 +421,11 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
     }
 
     private void controleeerCategorieOpPre106(
-        final Lo3NationaliteitInhoud inhoud,
-        final Lo3Herkomst herkomst,
-        final boolean groep05Aanwezig,
-        final boolean groep64Aanwezig,
-        final boolean groep65Aanwezig)
-    {
+            final Lo3NationaliteitInhoud inhoud,
+            final Lo3Herkomst herkomst,
+            final boolean groep05Aanwezig,
+            final boolean groep64Aanwezig,
+            final boolean groep65Aanwezig) {
         if (groep05Aanwezig) {
             controleerGroep05Nationaliteit(inhoud.getNationaliteitCode(), herkomst);
             if (groep64Aanwezig || groep65Aanwezig) {
@@ -432,40 +463,42 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
     private void controleerPreconditie051(final Lo3Stapel<Lo3NationaliteitInhoud> stapel) {
         Lo3Categorie<Lo3NationaliteitInhoud> laatstGevondenVoorkomen = null;
         for (final Lo3Categorie<Lo3NationaliteitInhoud> voorkomen : stapel) {
-            if (Validatie.isElementGevuld(voorkomen.getInhoud().getNationaliteitCode())) {
+            if (Lo3Validatie.isElementGevuld(voorkomen.getInhoud().getNationaliteitCode())) {
                 if (laatstGevondenVoorkomen == null
-                    || AbstractLo3Element.equalsWaarde(
+                        || AbstractLo3Element.equalsWaarde(
                         laatstGevondenVoorkomen.getInhoud().getNationaliteitCode(),
-                        voorkomen.getInhoud().getNationaliteitCode()))
-                {
+                        voorkomen.getInhoud().getNationaliteitCode())) {
                     laatstGevondenVoorkomen = voorkomen;
                 } else {
-                    // probeer de fout aan een onjuiste rij te koppelen, zodat dit opgeschoond kan worden
-                    Lo3Categorie<Lo3NationaliteitInhoud> onjuisteRij =
-                            filterOnjuisteRij(stapel, laatstGevondenVoorkomen.getInhoud().getNationaliteitCode());
+                    foutAanOnjuisteRijKoppelen(stapel, laatstGevondenVoorkomen, voorkomen);
 
-                    if (onjuisteRij == null) {
-                        onjuisteRij = filterOnjuisteRij(stapel, voorkomen.getInhoud().getNationaliteitCode());
-                    }
-
-                    final Lo3Herkomst herkomstFoutieveRij = onjuisteRij != null ? onjuisteRij.getLo3Herkomst() : laatstGevondenVoorkomen.getLo3Herkomst();
-                    Foutmelding.logMeldingFout(herkomstFoutieveRij, LogSeverity.ERROR, SoortMeldingCode.PRE051, null);
                     break;
                 }
             }
         }
     }
 
+    private void foutAanOnjuisteRijKoppelen(Lo3Stapel<Lo3NationaliteitInhoud> stapel, Lo3Categorie<Lo3NationaliteitInhoud> laatstGevondenVoorkomen,
+                                            Lo3Categorie<Lo3NationaliteitInhoud> voorkomen) {
+        // probeer de fout aan een onjuiste rij te koppelen, zodat dit opgeschoond kan worden
+        Lo3Categorie<Lo3NationaliteitInhoud> onjuisteRij = filterOnjuisteRij(stapel, laatstGevondenVoorkomen.getInhoud().getNationaliteitCode());
+
+        if (onjuisteRij == null) {
+            onjuisteRij = filterOnjuisteRij(stapel, voorkomen.getInhoud().getNationaliteitCode());
+        }
+
+        final Lo3Herkomst herkomstFoutieveRij = onjuisteRij != null ? onjuisteRij.getLo3Herkomst() : laatstGevondenVoorkomen.getLo3Herkomst();
+        Foutmelding.logMeldingFout(herkomstFoutieveRij, LogSeverity.ERROR, SoortMeldingCode.PRE051, null);
+    }
+
     private Lo3Categorie<Lo3NationaliteitInhoud> filterOnjuisteRij(
-        final Lo3Stapel<Lo3NationaliteitInhoud> nationaliteitVoorkomens,
-        final Lo3NationaliteitCode lo3NationaliteitCode)
-    {
+            final Lo3Stapel<Lo3NationaliteitInhoud> nationaliteitVoorkomens,
+            final Lo3NationaliteitCode lo3NationaliteitCode) {
         Lo3Categorie<Lo3NationaliteitInhoud> result = null;
 
         for (final Lo3Categorie<Lo3NationaliteitInhoud> nationaliteitVoorkomen : nationaliteitVoorkomens) {
             if (nationaliteitVoorkomen.getHistorie().isOnjuist()
-                && AbstractLo3Element.equalsWaarde(lo3NationaliteitCode, nationaliteitVoorkomen.getInhoud().getNationaliteitCode()))
-            {
+                    && AbstractLo3Element.equalsWaarde(lo3NationaliteitCode, nationaliteitVoorkomen.getInhoud().getNationaliteitCode())) {
                 result = nationaliteitVoorkomen;
                 break;
             }
@@ -481,44 +514,42 @@ public final class Lo3NationaliteitPrecondities extends AbstractLo3Precondities 
 
     private void controleerGroep05Nationaliteit(final Lo3NationaliteitCode nationaliteitCode, final Lo3Herkomst herkomst) {
         controleerAanwezig(
-            nationaliteitCode,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_0510));
-        controleerCode(nationaliteitCode, Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_0510));
+                nationaliteitCode,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_0510));
+        controleerNationaliteitCode(
+                nationaliteitCode,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_0510));
     }
 
-    private void controleerGroep63VerkrijgingNederlanderschap(
-        final Lo3RedenNederlandschapCode redenVerkrijgingNederlandschapCode,
-        final Lo3Herkomst herkomst)
-    {
+    private void controleerGroep63VerkrijgingNederlanderschap(final Lo3RedenNederlandschapCode redenVerkrijgingNederlandschapCode, final Lo3Herkomst herkomst) {
         controleerAanwezig(
-            redenVerkrijgingNederlandschapCode,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_6310));
+                redenVerkrijgingNederlandschapCode,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_6310));
         controleerCode(
-            redenVerkrijgingNederlandschapCode,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_6310),
-            true);
+                redenVerkrijgingNederlandschapCode,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_6310),
+                true);
     }
 
     private void controleerGroep64VerliesNederlanderschap(final Lo3RedenNederlandschapCode redenVerliesNederlandschapCode, final Lo3Herkomst herkomst) {
         controleerAanwezig(
-            redenVerliesNederlandschapCode,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_6410));
+                redenVerliesNederlandschapCode,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_6410));
         controleerCode(
-            redenVerliesNederlandschapCode,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_6410),
-            false);
+                redenVerliesNederlandschapCode,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_6410),
+                false);
     }
 
     private void controleerGroep65BijzonderNederlanderschap(
-        final Lo3AanduidingBijzonderNederlandschap aanduidingBijzonderNederlandschap,
-        final Lo3Herkomst herkomst)
-    {
+            final Lo3AanduidingBijzonderNederlandschap aanduidingBijzonderNederlandschap,
+            final Lo3Herkomst herkomst) {
         controleerAanwezig(
-            aanduidingBijzonderNederlandschap,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_6510));
+                aanduidingBijzonderNederlandschap,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_6510));
         Lo3PreconditieEnumCodeChecks.controleerCode(
-            aanduidingBijzonderNederlandschap,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_6510));
+                aanduidingBijzonderNederlandschap,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_6510));
     }
 
 }

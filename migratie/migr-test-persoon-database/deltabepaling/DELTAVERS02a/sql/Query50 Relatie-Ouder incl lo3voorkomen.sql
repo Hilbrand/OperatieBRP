@@ -32,6 +32,7 @@ left join kern.srtadmhnd o on o.id = k.srt
 left join kern.rdneinderelatie p on p.id = a.rdneinde
 
 where b.pers = 1
-and c.srt = 3	
-and b.indouder is null
+and c.srt = 3
+and b.rol <> 2	
+--and b.indouder is null
 order by a.tsreg DESC;

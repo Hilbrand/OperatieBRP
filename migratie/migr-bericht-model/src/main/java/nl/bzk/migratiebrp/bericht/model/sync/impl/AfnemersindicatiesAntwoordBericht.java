@@ -8,13 +8,21 @@ package nl.bzk.migratiebrp.bericht.model.sync.impl;
 
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.sync.AbstractSyncBerichtZonderGerelateerdeInformatie;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.AfnemersindicatieAntwoordRecordType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AfnemersindicatiesAntwoordType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.ObjectFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.xml.SyncXml;
+import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
+import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Afnemersindicatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3AfnemersindicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
+import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 
 /**
  * Afnemersindicaties antwoord bericht.
@@ -35,9 +43,7 @@ public final class AfnemersindicatiesAntwoordBericht extends AbstractSyncBericht
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param afnemersindicatiesType
-     *            het afnemersindicatiesType type
+     * @param afnemersindicatiesType het afnemersindicatiesType type
      */
     public AfnemersindicatiesAntwoordBericht(final AfnemersindicatiesAntwoordType afnemersindicatiesType) {
         super("AfnemersindicatiesAntwoord");
@@ -46,62 +52,52 @@ public final class AfnemersindicatiesAntwoordBericht extends AbstractSyncBericht
 
     /* ************************************************************************************************************* */
 
-    /**
-     * Geeft de status {@link StatusType} van het bericht terug.
-     *
-     * @return De status {@link StatusType} van het bericht.
-     */
-    public StatusType getStatus() {
-        return afnemersindicatiesAntwoordType.getStatus();
+    public List<AfnemersindicatieAntwoordRecordType> getAfnemersindicaties() {
+        return afnemersindicatiesAntwoordType.getAfnemersindicatie();
     }
 
+
     /**
-     * Zet de status {@link StatusType} op het bericht.
-     *
-     * @param status
-     *            De te zetten status {@link StatusType}.
+     * Maak voor elke stapel in het vraag bericht een antwoord record en bepaal de logging die daarbij hoort
+     * om de foutmelding te vullen.
+     * @param afnemersindicatiesBericht het vraag bericht
+     * @param logging de logging
      */
-    public void setStatus(final StatusType status) {
-        afnemersindicatiesAntwoordType.setStatus(status);
+    public void verwerkLogging(AfnemersindicatiesBericht afnemersindicatiesBericht, Set<LogRegel> logging) {
+        Lo3Afnemersindicatie lo3Afnemersindicatie = afnemersindicatiesBericht.getAfnemersindicaties();
+        for (Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemerindicatie : lo3Afnemersindicatie.getAfnemersindicatieStapels()) {
+            AfnemersindicatieAntwoordRecordType antwoordRecord = new AfnemersindicatieAntwoordRecordType();
+            antwoordRecord.setStapelNummer(afnemerindicatie.get(0).getLo3Herkomst().getStapel());
+
+            verwerkLogging(antwoordRecord, logging);
+
+            getAfnemersindicaties().add(antwoordRecord);
+        }
     }
 
-    /**
-     * Geef de waarde van foutmelding.
-     *
-     * @return de foutmelding van het bericht terug
-     */
-    public String getFoutmelding() {
-        return afnemersindicatiesAntwoordType.getFoutmelding();
-    }
 
-    /**
-     * Zet de waarde van foutmelding.
-     *
-     * @param foutmelding
-     *            De te zetten foutmelding
-     */
-    public void setFoutmelding(final String foutmelding) {
-        afnemersindicatiesAntwoordType.setFoutmelding(foutmelding);
-    }
+    private void verwerkLogging(AfnemersindicatieAntwoordRecordType antwoordRecord, Set<LogRegel> logging) {
+        int maxSeverity = 0;
+        final SortedSet<String> codes = new TreeSet<>();
 
-    /**
-     * Geeft de logregels op het bericht terug.
-     *
-     * @return De logregels op het bericht.
-     */
-    public List<LogRegel> getLogging() {
-        return asLogRegelList(afnemersindicatiesAntwoordType.getLogging());
-    }
+        for (final LogRegel logRegel : logging) {
+            if (logRegel.getLo3Herkomst().getStapel() == antwoordRecord.getStapelNummer()) {
+                codes.add(logRegel.getSoortMeldingCode().toString());
+                if(maxSeverity < logRegel.getSeverity().getSeverity()) {
+                    maxSeverity = logRegel.getSeverity().getSeverity();
+                }
+            }
+        }
 
-    /**
-     * Zet de logregels op het bericht.
-     *
-     * @param logRegels
-     *            De te zetten logregels.
-     */
-    public void setLogging(final Set<LogRegel> logRegels) {
-        afnemersindicatiesAntwoordType.setLogging(asLogRegelType(logRegels));
+        if(!codes.isEmpty()) {
+            antwoordRecord.setFoutmelding(codes.stream().collect(Collectors.joining(", ")));
+        }
 
+        if(maxSeverity >= LogSeverity.ERROR.getSeverity()) {
+            antwoordRecord.setStatus(StatusType.FOUT);
+        } else {
+            antwoordRecord.setStatus(StatusType.TOEGEVOEGD);
+        }
     }
 
     /* ************************************************************************************************************* */

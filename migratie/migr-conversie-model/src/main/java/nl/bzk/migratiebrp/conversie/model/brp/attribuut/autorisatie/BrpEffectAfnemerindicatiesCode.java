@@ -6,24 +6,28 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Text;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAttribuut;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Text;
 
 /**
  * Deze enum representeert een BRP Effect afnemerindicaties.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class BrpEffectAfnemerindicatiesCode implements BrpAttribuut, Comparable<BrpEffectAfnemerindicatiesCode> {
 
-    /** Plaatsen. */
+    /**
+     * Plaatsen.
+     */
     public static final BrpEffectAfnemerindicatiesCode PLAATSEN = new BrpEffectAfnemerindicatiesCode((short) 1);
-    /** Verwijderen. */
+    /**
+     * Verwijderen.
+     */
     public static final BrpEffectAfnemerindicatiesCode VERWIJDEREN = new BrpEffectAfnemerindicatiesCode((short) 2);
 
     @Text
@@ -31,9 +35,7 @@ public final class BrpEffectAfnemerindicatiesCode implements BrpAttribuut, Compa
 
     /**
      * Maakt een BRP Effect afnemerindicaties.
-     * 
-     * @param brpCode
-     *            BRP code
+     * @param brpCode BRP code
      */
     public BrpEffectAfnemerindicatiesCode(@Text final short brpCode) {
         code = brpCode;
@@ -41,7 +43,6 @@ public final class BrpEffectAfnemerindicatiesCode implements BrpAttribuut, Compa
 
     /**
      * Geef de waarde van code.
-     *
      * @return the code
      */
     public short getCode() {

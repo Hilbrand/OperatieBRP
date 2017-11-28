@@ -30,8 +30,8 @@ public final class LeveringsVergelijkingBerichtCorrelatieGbavRepositoryImpl impl
     public List<LeveringsVergelijkingBerichtCorrelatieGbav> haalLeveringVergelijkingBerichtenGbavOp() {
         final TypedQuery<LeveringsVergelijkingBerichtCorrelatieGbav> selectQuery =
                 em.createQuery(
-                    "select l from LeveringsVergelijkingBerichtCorrelatieGbav l order by bijhoudingBerichtId,afnemerCode",
-                    LeveringsVergelijkingBerichtCorrelatieGbav.class);
+                        "select l from LeveringsVergelijkingBerichtCorrelatieGbav l order by bijhoudingBerichtId,afnemerCode",
+                        LeveringsVergelijkingBerichtCorrelatieGbav.class);
 
         return selectQuery.getResultList();
     }

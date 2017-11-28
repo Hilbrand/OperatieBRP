@@ -23,8 +23,16 @@ import org.springframework.stereotype.Component;
 @Component("beeindigWachtBeheerderKeuzeAction")
 public final class BeeindigWachtBeheerderKeuzeAction implements SpringAction {
 
-    @Inject
     private RapportageDao rapportageDao;
+
+    /**
+     * Constructor.
+     * @param rapportageDao rapportage dao
+     */
+    @Inject
+    public BeeindigWachtBeheerderKeuzeAction(RapportageDao rapportageDao) {
+        this.rapportageDao = rapportageDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {

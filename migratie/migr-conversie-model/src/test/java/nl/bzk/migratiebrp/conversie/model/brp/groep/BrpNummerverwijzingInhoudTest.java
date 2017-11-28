@@ -8,26 +8,32 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class BrpNummerverwijzingInhoudTest {
 
-    public static final Long VORIGE_A_NUMMER = 3164698657L;
-    public static final Long VOLDENDE_A_NUMMER = 5256891937L;
-    public static final Integer VORIGE_BSN_NUMMER = 102533891;
-    public static final Integer VOLDENDE_BSN_NUMMER = 657184457;
+    private static final String VORIGE_A_NUMMER = "3164698657";
+    private static final String VOLDENDE_A_NUMMER = "5256891937";
+    private static final String VORIGE_BSN_NUMMER = "102533891";
+    private static final String VOLDENDE_BSN_NUMMER = "657184457";
+
+    @Test
+    public void test(){
+        final BrpNummerverwijzingInhoud inhoud = createInhoud();
+        Assert.assertEquals(VOLDENDE_A_NUMMER,inhoud.getVolgendeAdministratienummer().getWaarde());
+    }
 
     public static BrpNummerverwijzingInhoud createInhoud() {
         return new BrpNummerverwijzingInhoud(
-            new BrpLong(VORIGE_A_NUMMER),
-            new BrpLong(VOLDENDE_A_NUMMER),
-            new BrpInteger(VORIGE_BSN_NUMMER),
-            new BrpInteger(VOLDENDE_BSN_NUMMER));
+                new BrpString(VORIGE_A_NUMMER),
+                new BrpString(VOLDENDE_A_NUMMER),
+                new BrpString(VORIGE_BSN_NUMMER),
+                new BrpString(VOLDENDE_BSN_NUMMER));
     }
 
     public static BrpStapel<BrpNummerverwijzingInhoud> createStapel() {

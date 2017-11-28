@@ -1,1 +1,0 @@
-select count(*) as instantietypes from voisc.lo3_mailbox

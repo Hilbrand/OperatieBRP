@@ -91,7 +91,7 @@
                         <datumTijdRegistratie>19940930010000000</datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>true</indicatieOuder>
+                        
                      </inhoud>
                   </brpGroep>
                </ouderStapel>
@@ -173,7 +173,7 @@
                         <datumTijdRegistratie>19940930010000000</datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>true</indicatieOuder>
+                        
                      </inhoud>
                   </brpGroep>
                </ouderStapel>
@@ -551,7 +551,7 @@
                         <datumTijdRegistratie>20040912010000000</datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>true</indicatieOuder>
+                        
                      </inhoud>
                   </brpGroep>
                </ouderStapel>

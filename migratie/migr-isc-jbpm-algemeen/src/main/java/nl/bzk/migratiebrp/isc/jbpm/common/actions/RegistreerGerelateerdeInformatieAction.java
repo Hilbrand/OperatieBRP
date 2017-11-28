@@ -8,14 +8,14 @@ package nl.bzk.migratiebrp.isc.jbpm.common.actions;
 
 import java.util.Map;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.Bericht;
 import nl.bzk.migratiebrp.bericht.model.GerelateerdeInformatie;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.gerelateerd.GerelateerdeInformatieDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.NoSignal;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.springframework.stereotype.Component;
@@ -31,11 +31,20 @@ public final class RegistreerGerelateerdeInformatieAction implements SpringActio
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    @Inject
-    private BerichtenDao berichtenDao;
+    private final BerichtenDao berichtenDao;
 
+    private final GerelateerdeInformatieDao gerelateerdeInformatieDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     * @param gerelateerdeInformatieDao gerelateerde informatie dao
+     */
     @Inject
-    private GerelateerdeInformatieDao gerelateerdeInformatieDao;
+    public RegistreerGerelateerdeInformatieAction(BerichtenDao berichtenDao, GerelateerdeInformatieDao gerelateerdeInformatieDao) {
+        this.berichtenDao = berichtenDao;
+        this.gerelateerdeInformatieDao = gerelateerdeInformatieDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {

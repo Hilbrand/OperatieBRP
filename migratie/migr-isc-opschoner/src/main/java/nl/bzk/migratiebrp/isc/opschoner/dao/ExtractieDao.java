@@ -17,20 +17,15 @@ public interface ExtractieDao {
     /**
      * Haalt de id's op van processen op basis van proces extracties waarvoor geldt: indicatiebeeindigdgeteld = true en
      * einddatum is voor de datumTot. LET OP: deze methode geeft slechts de eerste 100 resultaten terug!
-     * 
-     * @param datumTot
-     *            De datum tot wanneer proces extracties worden meegenomen.
+     * @param datumTot De datum tot wanneer proces extracties worden meegenomen.
      * @return Lijst met de id's van beeindigde processen.
      */
     List<Long> haalProcesIdsOpBasisVanBeeindigdeProcesExtractiesOp(Timestamp datumTot);
 
     /**
      * Past de verwachte verwijderdatum aan voor een proces.
-     * 
-     * @param procesId
-     *            Het id van het proces dat aangepast wordt.
-     * @param verwachteVerwijderDatum
-     *            De verwachte verwijder datum; het proces wordt niet eerder meegenomen voor het opschonen.
+     * @param procesId Het id van het proces dat aangepast wordt.
+     * @param verwachteVerwijderDatum De verwachte verwijder datum; het proces wordt niet eerder meegenomen voor het opschonen.
      */
     void updateVerwachteVerwijderDatum(Long procesId, Timestamp verwachteVerwijderDatum);
 

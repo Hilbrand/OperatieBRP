@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="WARN" shutdownHook="disable">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="INFO">
+        <Root level="WARN">
             <AppenderRef ref="Console"/>
         </Root>
 
-        <!-- logger name="org.jibx" level="DEBUG"/ -->
-        <!-- logger name="nl.bzk.brp" level="DEBUG"/ -->
-        <logger name="org.hibernate" level="INFO"/>
-        <!-- logger name="org.hibernate.SQL" level="DEBUG"/ -->
-		<!-- logger name="org.hibernate.type" level="TRACE"/ -->
-        <logger name="org.dbunit.dataset" level="ERROR"/>
+        <!--<logger name="org.hibernate.SQL" level="DEBUG"/>-->
+        <!--<logger name="org.hibernate.type" level="TRACE"/>-->
     </Loggers>
 </Configuration>

@@ -18,7 +18,6 @@ import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
 
 /**
  * Persistent klasse voor de berichten database tabel in GBA-V.
- *
  */
 @Entity
 @Table(name = "lo3_bericht", schema = "public")
@@ -76,7 +75,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van lo3 bericht id.
-     *
      * @return lo3 bericht id
      */
     public final Long getLo3BerichtId() {
@@ -85,7 +83,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van aanduiding in uit.
-     *
      * @return aanduiding in uit
      */
     public final Character getAanduidingInUit() {
@@ -94,7 +91,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van bericht activiteit id.
-     *
      * @return bericht activiteit id
      */
     public final Long getBerichtActiviteitId() {
@@ -103,7 +99,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van medium.
-     *
      * @return medium
      */
     public final Character getMedium() {
@@ -112,7 +107,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van originator or recipient.
-     *
      * @return originator or recipient
      */
     public final String getOriginatorOrRecipient() {
@@ -121,7 +115,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van spg mailbox instantie.
-     *
      * @return spg mailbox instantie
      */
     public final Integer getSpgMailboxInstantie() {
@@ -130,7 +123,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van eref.
-     *
      * @return eref
      */
     public final String getEref() {
@@ -139,7 +131,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van bref.
-     *
      * @return bref
      */
     public final String getBref() {
@@ -148,7 +139,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van eref2.
-     *
      * @return eref2
      */
     public final String getEref2() {
@@ -157,7 +147,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van berichtcyclus id.
-     *
      * @return berichtcyclus id
      */
     public final Long getBerichtcyclusId() {
@@ -166,7 +155,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van tijdstip verzending ontvangst.
-     *
      * @return tijdstip verzending ontvangst
      */
     public final Timestamp getTijdstipVerzendingOntvangst() {
@@ -175,7 +163,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van dispatch sequence number.
-     *
      * @return dispatch sequence number
      */
     public final Integer getDispatchSequenceNumber() {
@@ -184,7 +171,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van report delivery time.
-     *
      * @return report delivery time
      */
     public final Timestamp getReportDeliveryTime() {
@@ -193,7 +179,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van non delivery reason.
-     *
      * @return non delivery reason
      */
     public final String getNonDeliveryReason() {
@@ -202,7 +187,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van non receipt reason.
-     *
      * @return non receipt reason
      */
     public final String getNonReceiptReason() {
@@ -211,7 +195,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van bericht data.
-     *
      * @return bericht data
      */
     public final String getBerichtData() {
@@ -244,7 +227,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van kop random key.
-     *
      * @return kop random key
      */
     public final Integer getKopRandomKey() {
@@ -253,7 +235,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van kop berichtsoort nummer.
-     *
      * @return kop berichtsoort nummer
      */
     public final String getKopBerichtsoortNummer() {
@@ -262,7 +243,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van kop anummer.
-     *
      * @return kop anummer
      */
     public final Long getKopAnummer() {
@@ -271,7 +251,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van kop oud anummer.
-     *
      * @return kop oud anummer
      */
     public final Long getKopOudAnummer() {
@@ -280,7 +259,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van kop herhaling.
-     *
      * @return kop herhaling
      */
     public final Character getKopHerhaling() {
@@ -289,7 +267,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van kop foutreden.
-     *
      * @return kop foutreden
      */
     public final Character getKopFoutreden() {
@@ -298,7 +275,6 @@ public class GbaBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van kop datum tijd.
-     *
      * @return kop datum tijd
      */
     public final Long getKopDatumTijd() {

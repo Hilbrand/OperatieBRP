@@ -1,4 +1,4 @@
-<project name="migr-init-naarbrp" basedir="." default="fail">
+<project name="IV NaarBRP" basedir="." default="fail">
 
     <!--
      | Algemene properties
@@ -15,8 +15,8 @@
      | Init naar BRP properties
      |
      | jdbc.url
-     | jdbc.username
-     | jdbc.password
+     | jdbc.database.username
+     | jdbc.database.password
      |
      | initQueue.host
      | initQueue.port
@@ -34,13 +34,17 @@
     	<fail unless="jdbc.database.host" message="jdbc.database.host property is verplicht." />
         <fail unless="jdbc.database.port" message="jdbc.database.port property is verplicht." />
         <fail unless="jdbc.database.name" message="jdbc.database.name property is verplicht." />
-        <fail unless="jdbc.username" message="jdbc.databaseName property is verplicht." />
-        <fail unless="jdbc.password" message="jdbc.password property is verplicht." />
+        <fail unless="jdbc.database.username" message="jdbc.database.username property is verplicht." />
+        <fail unless="jdbc.database.password" message="jdbc.database.password property is verplicht." />
 
         <fail unless="initQueue.host" message="initQueue.host property is verplicht." />
         <fail unless="initQueue.port" message="initQueue.port property is verplicht." />
         <fail unless="initQueue.name" message="initQueue.name property is verplicht." />
-        <fail unless="batch.aantal" message="batch.aantal property is verplicht." />
+        <fail unless="batch.persoon" message="batch.persoon property is verplicht." />
+        <fail unless="batch.autorisatie" message="batch.autorisatie property is verplicht." />
+        <fail unless="batch.afnemersindicatie" message="batch.afnemersindicatie property is verplicht." />
+        <fail unless="batch.protocollering" message="batch.protocollering property is verplicht." />
+        <fail unless="aantal.protocollering" message="aantal.protocollering property is verplicht." />
     </target>
 
     <target name="checkInstallProperties" depends="checkProperties">
@@ -60,43 +64,43 @@
                 </not>
             </condition>
         </fail>
-    
+
     </target>
 
     <target name="install" depends="checkInstallProperties,createLocalConfigurationFile">
         <echo message="Installing ${ant.project.name} ...." />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd /tmp; mkdir ${application.directory}; cd ${application.directory}; rm -rf *;" />
-        
+
         <echo message="Copying ${application.file}" />
         <scp todir="${server.username}:${server.password}@${server.host}:/tmp/${application.directory}" trust="true" failonerror="true">
             <fileset dir="${application.source}">
                 <include name="${application.file}" />
             </fileset>
         </scp>
-        
+
         <echo message="Unpacking ${application.file}" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd ~; mkdir ${application.directory}; cd ${application.directory}; unzip -o /tmp/${application.directory}/${application.file} -d .;" />
-        
+
         <echo message="Copying configuration files" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd ${application.directory}; mkdir excel-regressie" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd ~; cd ${application.directory}/conf; rm init-naarbrp.properties; rm log4j2.xml;" />
         <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/conf" trust="true" failonerror="true">
             <fileset dir="tmp">
                 <include name="init-naarbrp.properties" />
             </fileset>
         </scp>
-       	
+
 		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/conf" trust="true" >
 			<fileset dir="deps/algemeen">
 				<include name="log4j2.xml" />
 			</fileset>
 		</scp>
     </target>
-	
+
 	   <target name="createLocalConfigurationFile" depends="checkProperties">
 	    <echo message="Creating configuration ${ant.project.name}" />
 	        <delete dir="tmp" />
@@ -106,34 +110,47 @@ jdbc.driverClassName=org.postgresql.Driver
 jdbc.database.host=${jdbc.database.host}
 jdbc.database.port=${jdbc.database.port}
 jdbc.database.name=${jdbc.database.name}
-jdbc.username=${jdbc.username}
-jdbc.password=${jdbc.password}
+jdbc.database.username=${jdbc.database.username}
+jdbc.database.password=${jdbc.database.password}
+
+brp.jdbc.host=${brp.jdbc.host}
+brp.jdbc.port=${brp.jdbc.port}
+brp.jdbc.name=${brp.jdbc.name}
+brp.jdbc.username=${brp.jdbc.username}
+brp.jdbc.password=${brp.jdbc.password}
 
 # MVI queue verbinding
 initQueue.host=${initQueue.host}
 initQueue.port=${initQueue.port}
 initQueue.name=${initQueue.name}
 
-batch.aantal=${batch.aantal}
+batch.persoon=${batch.persoon}
+batch.autorisatie=${batch.autorisatie}
+batch.afnemersindicatie=${batch.afnemersindicatie}
+batch.protocollering=${batch.protocollering}
+aantal.protocollering=${aantal.protocollering}
 vanaf.plid=0
 ]]></echo>
 	   	</target>
 
     <target name="deinstall" depends="checkProperties">
         <echo message="Removing ${ant.project.name}" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd ~; rm -Rf ${application.directory}" />
     </target>
 
     <target name="start" depends="checkProperties">
         <echo message="Starting ${ant.project.name}" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd ~; cd ${application.directory}; ./runInitVulling.sh" />
+
+        <echo message="Succesfully started ${ant.project.name}" />
     </target>
 
     <target name="stop" depends="checkProperties">
         <echo message="Stopping ${ant.project.name} (and sleeping 15s)" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" failonerror="false" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" failonerror="false"
                  command="cd ~; cd ${application.directory}; ./stopInitVulling.sh" />
     </target>
 
@@ -143,5 +160,5 @@ vanaf.plid=0
     <target name="fail">
         <fail message="Call with valid task" />
     </target>
-    
+
 </project>

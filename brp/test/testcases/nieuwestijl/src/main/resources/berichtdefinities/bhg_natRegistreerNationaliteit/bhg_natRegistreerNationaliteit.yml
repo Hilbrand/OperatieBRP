@@ -22,10 +22,10 @@ verkrijgingNederlandseNationaliteit:
       communicatieID: 'comid.verkrijgingNederlandseNationaliteit.bron1'
       document:
         communicatieID: 'comid.verkrijgingNederlandseNationaliteit.bron1.document'
-        soortNaam: '[]'
-        identificatie: '[]'
+        soortNaam: 'Geschrift vreemde nationaliteit'
+        identificatie: 'AAA-000'
         aktenummer: '[]'
-        partijCode: '[]'
+        partijCode: '036101'
       rechtsgrondCode: '[]'
       rechtsgrondomschrijving: '[]'
   acties:

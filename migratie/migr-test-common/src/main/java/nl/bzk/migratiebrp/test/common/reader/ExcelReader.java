@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
@@ -22,8 +25,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3Lg01BerichtWaarde;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.excel.ExcelAdapter;
 import nl.bzk.migratiebrp.util.excel.ExcelAdapterImpl;
 import nl.bzk.migratiebrp.util.excel.ExcelData;
@@ -89,12 +90,12 @@ public final class ExcelReader implements Reader {
         if (header.isEmpty()) {
             final Lo3Header lo3Header =
                     new Lo3Header(
-                        Lo3HeaderVeld.RANDOM_KEY,
-                        Lo3HeaderVeld.BERICHTNUMMER,
-                        Lo3HeaderVeld.DATUM_TIJD,
-                        Lo3HeaderVeld.A_NUMMER,
-                        Lo3HeaderVeld.OUD_A_NUMMER);
-            final String[] headers = new String[] {null, "Lg01", maakDatumTijd(), getAnummer(berichtDto.getCategorieLijst()), null };
+                            Lo3HeaderVeld.RANDOM_KEY,
+                            Lo3HeaderVeld.BERICHTNUMMER,
+                            Lo3HeaderVeld.DATUM_TIJD,
+                            Lo3HeaderVeld.A_NUMMER,
+                            Lo3HeaderVeld.OUD_A_NUMMER);
+            final String[] headers = new String[]{null, "Lg01", maakDatumTijd(), getAnummer(berichtDto.getCategorieLijst()), null};
             header = lo3Header.formatHeaders(headers);
         }
 

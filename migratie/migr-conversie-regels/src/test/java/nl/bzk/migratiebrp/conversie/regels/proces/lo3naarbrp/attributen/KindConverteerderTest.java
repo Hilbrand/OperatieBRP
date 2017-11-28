@@ -9,17 +9,12 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.inject.Inject;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
@@ -38,9 +33,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KindInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieOnjuist;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
@@ -50,13 +43,13 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenRelatie;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import org.junit.Before;
 import org.junit.Test;
 
 public class KindConverteerderTest extends AbstractRelatieConverteerderTest {
 
-    @Inject
-    private KindConverteerder kindConverteerder;
+    private KindConverteerder kindConverteerder = new KindConverteerder(new Lo3AttribuutConverteerder(new ConversietabelFactoryImpl()));
 
     private Lo3KindInhoud.Builder kindBuilder;
     private final List<ExpectedResult> expectedGerelateerde = new ArrayList<>();
@@ -66,8 +59,8 @@ public class KindConverteerderTest extends AbstractRelatieConverteerderTest {
     @Before
     public void setUp() {
         kindBuilder = new Lo3KindInhoud.Builder();
-        kindBuilder.aNummer(Lo3Long.wrap(A_NUMMER));
-        kindBuilder.burgerservicenummer(Lo3Integer.wrap(BSN));
+        kindBuilder.aNummer(Lo3String.wrap(A_NUMMER));
+        kindBuilder.burgerservicenummer(Lo3String.wrap(BSN));
         kindBuilder.voornamen(Lo3String.wrap(VOORNAAM));
         kindBuilder.geslachtsnaam(Lo3String.wrap(GESLACHTSNAAM));
         kindBuilder.geboortedatum(new Lo3Datum(DATUM_GEBOORTE));
@@ -87,11 +80,10 @@ public class KindConverteerderTest extends AbstractRelatieConverteerderTest {
     }
 
     private Lo3Categorie<Lo3KindInhoud> maakCategorie(
-        final Lo3KindInhoud inhoud,
-        final Lo3Documentatie documentatie,
-        final Lo3Historie historie,
-        final Lo3Herkomst herkomst)
-    {
+            final Lo3KindInhoud inhoud,
+            final Lo3Documentatie documentatie,
+            final Lo3Historie historie,
+            final Lo3Herkomst herkomst) {
         return new Lo3Categorie<>(inhoud, documentatie, historie, herkomst);
     }
 
@@ -691,40 +683,40 @@ public class KindConverteerderTest extends AbstractRelatieConverteerderTest {
     }
 
     @Test
-    public void testControleLeegGevuldNiksVerwijderd(){
+    public void testControleLeegGevuldNiksVerwijderd() {
         List<Lo3Categorie<Lo3KindInhoud>> rijen = new ArrayList<>();
-        rijen.add(createKindRijTBVControleLeegGevuld(510,510));
-        rijen.add(createKindRijTBVControleLeegGevuld(501,501));
-        rijen.add(createKindRijTBVControleLeegGevuld(502,502));
-        kindConverteerder.contoleLeegGevuld(rijen,503);
-        assertEquals("er is niks verwijderd",3,rijen.size());
+        rijen.add(createKindRijTBVControleLeegGevuld(510, 510));
+        rijen.add(createKindRijTBVControleLeegGevuld(501, 501));
+        rijen.add(createKindRijTBVControleLeegGevuld(502, 502));
+        kindConverteerder.contoleLeegGevuld(rijen, 503);
+        assertEquals("er is niks verwijderd", 3, rijen.size());
 
     }
 
     @Test
-    public void testControleLeegGevuldRijenVerwijderd(){
+    public void testControleLeegGevuldRijenVerwijderd() {
         List<Lo3Categorie<Lo3KindInhoud>> rijen = new ArrayList<>();
-        rijen.add(createKindRijTBVControleLeegGevuld(500,500));
-        rijen.add(createKindRijTBVControleLeegGevuld(495,495));
-        rijen.add(createKindRijTBVControleLeegGevuld(490,490));
-        rijen.add(createKindRijTBVControleLeegGevuld(395,395));
-        rijen.add(createKindRijTBVControleLeegGevuld(390,390));
-        rijen.add(createKindRijTBVControleLeegGevuld(295,295));
-        rijen.add(createKindRijTBVControleLeegGevuld(290,290));
-        kindConverteerder.contoleLeegGevuld(rijen,493);
-        assertEquals("er zijn rijen verwijderd",5,rijen.size());
+        rijen.add(createKindRijTBVControleLeegGevuld(500, 500));
+        rijen.add(createKindRijTBVControleLeegGevuld(495, 495));
+        rijen.add(createKindRijTBVControleLeegGevuld(490, 490));
+        rijen.add(createKindRijTBVControleLeegGevuld(395, 395));
+        rijen.add(createKindRijTBVControleLeegGevuld(390, 390));
+        rijen.add(createKindRijTBVControleLeegGevuld(295, 295));
+        rijen.add(createKindRijTBVControleLeegGevuld(290, 290));
+        kindConverteerder.contoleLeegGevuld(rijen, 493);
+        assertEquals("er zijn rijen verwijderd", 5, rijen.size());
 
     }
 
 
-    private Lo3Categorie<Lo3KindInhoud> createKindRijTBVControleLeegGevuld(int geldigheid,int opneming) {
+    private Lo3Categorie<Lo3KindInhoud> createKindRijTBVControleLeegGevuld(int geldigheid, int opneming) {
         Lo3KindInhoud inhoud = new Lo3KindInhoud();
-        Lo3Documentatie documentatie = new Lo3Documentatie(1, Lo3GemeenteCode.ONBEKEND,null,null,null,null,null,null);
+        Lo3Documentatie documentatie = new Lo3Documentatie(1, Lo3GemeenteCode.ONBEKEND, null, null, null, null, null, null);
         Lo3IndicatieOnjuist indicatie = new Lo3IndicatieOnjuist(null);
         Lo3Datum datumGeldigheid = new Lo3Datum(geldigheid);
         Lo3Datum datumOpneming = new Lo3Datum(opneming);
-        Lo3Historie history = new Lo3Historie(indicatie,datumGeldigheid,datumOpneming);
-        Lo3Herkomst herkomst = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01,1,1);
+        Lo3Historie history = new Lo3Historie(indicatie, datumGeldigheid, datumOpneming);
+        Lo3Herkomst herkomst = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 1, 1);
         return new Lo3Categorie<>(inhoud, documentatie, history, herkomst);
     }
 
@@ -774,11 +766,6 @@ public class KindConverteerderTest extends AbstractRelatieConverteerderTest {
             final ExpectedResult expectedResult = expectedRelatie.get(index);
 
             assertNotNull(groep);
-            if (expectedResult.inhoud != null) {
-                assertTrue(BrpBoolean.unwrap(groep.getInhoud().getIndicatieOuder()));
-            } else {
-                assertNull(BrpBoolean.unwrap(groep.getInhoud().getIndicatieOuder()));
-            }
             assertEquals("Ouder stapel historie klopt niet", expectedResult.historie, groep.getHistorie());
             assertEquals("Ouder stapel documentatie klopt niet", expectedResult.documentatie, groep.getDocumentatie());
         }
@@ -838,8 +825,8 @@ public class KindConverteerderTest extends AbstractRelatieConverteerderTest {
             final ExpectedResult expectedResult = expectedGerelateerde.get(index);
 
             assertNotNull(groep);
-            assertEquals(Lo3Long.unwrap(expectedResult.inhoud.getaNummer()), BrpLong.unwrap(groep.getInhoud().getAdministratienummer()));
-            assertEquals(Lo3Integer.unwrap(expectedResult.inhoud.getBurgerservicenummer()), BrpInteger.unwrap(groep.getInhoud().getBurgerservicenummer()));
+            assertEquals(Lo3String.unwrap(expectedResult.inhoud.getaNummer()), BrpString.unwrap(groep.getInhoud().getAdministratienummer()));
+            assertEquals(Lo3String.unwrap(expectedResult.inhoud.getBurgerservicenummer()), BrpString.unwrap(groep.getInhoud().getBurgerservicenummer()));
             assertEquals("Identificatienummers stapel historie klopt niet", expectedResult.historie, groep.getHistorie());
             assertEquals("Identificatienummers stapel documentatie klopt niet", expectedResult.documentatie, groep.getDocumentatie());
         }

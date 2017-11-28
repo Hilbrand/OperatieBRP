@@ -16,8 +16,13 @@ public interface MailboxConfiguratie {
 
     /**
      * Bepaal de te bedienen mailboxen.
-     * 
      * @return mailboxen
      */
     Set<Mailbox> bepaalMailboxen();
+
+    /**
+     * Toon de te bedienen mailboxen.
+     * @return String met daarin de te bedienen mailboxen
+     */
+    String toonMailboxen();
 }

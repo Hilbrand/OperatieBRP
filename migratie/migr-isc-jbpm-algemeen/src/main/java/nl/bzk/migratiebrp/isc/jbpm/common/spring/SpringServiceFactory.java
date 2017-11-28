@@ -15,7 +15,9 @@ import org.springframework.beans.factory.BeanFactory;
  */
 public final class SpringServiceFactory implements ServiceFactory {
 
-    /** Name the service is configured under in JBPM. */
+    /**
+     * Name the service is configured under in JBPM.
+     */
     public static final String SERVICE_NAME = "spring";
 
     private static final long serialVersionUID = 1L;
@@ -24,10 +26,8 @@ public final class SpringServiceFactory implements ServiceFactory {
 
     /**
      * Zet de bean factory. Aangeroepen door {@link
-     * nl.bzk.migratiebrp.isc.runtime.jbpm.configuration..JbpmConfigurationFactoryBean}.
-     *
-     * @param beanFactory
-     *            bean factory
+     * nl.bzk.migratiebrp.isc.runtime.jbpm.configuration.JbpmConfigurationFactoryBean}.
+     * @param beanFactory bean factory
      */
     public void setBeanFactory(final BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
@@ -44,6 +44,7 @@ public final class SpringServiceFactory implements ServiceFactory {
 
     @Override
     public void close() {
+        // methode van interface, hoeft in dit geval niets te doen.
     }
 
 }

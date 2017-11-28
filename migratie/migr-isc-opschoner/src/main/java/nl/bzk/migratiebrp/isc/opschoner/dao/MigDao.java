@@ -17,37 +17,28 @@ public interface MigDao {
     /**
      * Bepaalt op basis van het id en de einddatum van het proces de datum van het laatste bericht dat is binnengekomen
      * voor het meegegeven proces.
-     * 
-     * @param procesId
-     *            Het id van het proces dat is beeindigd.
+     * @param procesId Het id van het proces dat is beeindigd.
      * @return Het aantal berichten dat is binnengekomen na deze datum.
      */
     Timestamp bepaalDatumLaatsteBerichtOntvangenVoorProces(Long procesId);
 
     /**
      * Haalt op basis van het id van het proces de gerelateerde processen op.
-     * 
-     * @param procesId
-     *            Het proces id.
+     * @param procesId Het proces id.
      * @return Lijst met gerelateerdeProcessen.
      */
     List<Long> selecteerGerelateerdeProcessenVoorProces(Long procesId);
 
     /**
      * Verwijdert alle berichten die behoren bij het proces met het meegegeven id.
-     * 
-     * @param procesId
-     *            Het id van het proces.
+     * @param procesId Het id van het proces.
      */
     void verwijderBerichtenVanProces(Long procesId);
 
     /**
      * Verwijdert de verwijziging tussen de twee meegegeven processen.
-     * 
-     * @param procesId
-     *            Het 'hoofd' proces id.
-     * @param gerelateerdProcesId
-     *            Het 'gerelateerde' proces id.
+     * @param procesId Het 'hoofd' proces id.
+     * @param gerelateerdProcesId Het 'gerelateerde' proces id.
      */
     void verwijderGerelateerdProcesVerwijzingVoorProces(Long procesId, Long gerelateerdProcesId);
 

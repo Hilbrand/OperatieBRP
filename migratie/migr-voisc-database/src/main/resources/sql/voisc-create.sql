@@ -9,13 +9,15 @@ create table voisc.bericht(
           bericht_data                     varchar(19000),
           message_id                       varchar(12),
           correlation_id                   varchar(12),
-          tijdstip_ontvangst               timestamp       not null,
-          tijdstip_mailbox                 timestamp,
-          tijdstip_in_verwerking           timestamp,
-          tijdstip_verzonden               timestamp,
+          request_non_receipt_notification boolean,
+          tijdstip_ontvangst               timestamp with time zone not null,
+          tijdstip_mailbox                 timestamp with time zone,
+          tijdstip_in_verwerking           timestamp with time zone,
+          tijdstip_verzonden               timestamp with time zone,
           dispatch_sequence_number         integer,
           non_delivery_reason              varchar(4),
           notification_type                varchar(1),
+          verwerking_code                  varchar(38),
           version                          bigint          not null
 );
 
@@ -29,23 +31,22 @@ create sequence voisc.bericht_id_sequence start with 1 increment by 1;
 
 create table voisc.lo3_mailbox(
           id                       bigint        not null,
-          instantietype            char(1)       not null,
-          instantiecode            integer       not null,
-          mailboxnr                varchar(7)    not null,
+          mailboxnr                char(7)       not null,
+          verzender                char(7),
+          partijcode               char(6)       not null,
+          -- blokkering (verzenden naar)
+          blokkering_start_dt      timestamp with time zone,
+          blokkering_eind_dt       timestamp with time zone,
+          -- overnemen mailbox
           mailboxpwd               varchar(8),
           limitNumber              integer       default 171 not null,
-          blokkering_start_dt      timestamp,
-          blokkering_eind_dt       timestamp,
-          laatste_wijziging_pwd_dt timestamp,
+          laatste_wijziging_pwd_dt timestamp with time zone,
           laatste_msseqnumber      bigint
 );
 
 alter table voisc.lo3_mailbox add constraint lo3_mailbox_pk primary key (id);
 alter table voisc.lo3_mailbox add constraint lo3_mailbox_uk1 unique (mailboxnr);
 
-create index lo3_mailbox_idx_1 on voisc.lo3_mailbox (instantiecode);
+create index lo3_mailbox_idx_1 on voisc.lo3_mailbox (partijcode);
 
 create sequence voisc.lo3_mailbox_id_sequence start with 1 increment by 1;
-
---alter table voisc.lo3_mailbox add constraint instantietype_check check(instantietype in ( 'A', 'G', 'C'));
---alter table voisc.lo3_mailbox add constraint pwd_check check(mailboxpwd is not null = laatste_wijziging_pwd_dt is not null);

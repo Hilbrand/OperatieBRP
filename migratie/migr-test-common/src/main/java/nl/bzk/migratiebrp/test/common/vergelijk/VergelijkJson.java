@@ -21,11 +21,8 @@ public class VergelijkJson {
 
     /**
      * Vergelijk json.
-     *
-     * @param verwacht
-     *            verwachte json
-     * @param actueel
-     *            actuele json
+     * @param verwacht verwachte json
+     * @param actueel actuele json
      * @return true, als de json vergelijkbaar is, anders false
      */
     public static boolean vergelijkJson(final String verwacht, final String actueel) {
@@ -34,13 +31,9 @@ public class VergelijkJson {
 
     /**
      * Vergelijk json.
-     *
-     * @param vergelijkingContext
-     *            vergelijking context
-     * @param verwacht
-     *            verwachte json
-     * @param actueel
-     *            actuele json
+     * @param vergelijkingContext vergelijking context
+     * @param verwacht verwachte json
+     * @param actueel actuele json
      * @return true, als de json vergelijkbaar is, anders false
      */
     public static boolean vergelijkJson(final VergelijkingContext vergelijkingContext, final String verwacht, final String actueel) {

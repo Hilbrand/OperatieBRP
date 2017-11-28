@@ -7,9 +7,8 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -33,7 +32,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 
 /**
  * Deze parser verwerkt de LO3 verblijfsplaats velden in de excel input.
- *
  */
 
 public final class Lo3VerblijfplaatsParser extends AbstractLo3CategorieParser<Lo3VerblijfplaatsInhoud> {
@@ -43,7 +41,8 @@ public final class Lo3VerblijfplaatsParser extends AbstractLo3CategorieParser<Lo
         final List<Lo3Categorie<Lo3VerblijfplaatsInhoud>> verblijfplaatsList = new ArrayList<>();
 
         for (final Lo3CategorieWaarde categorie : categorieen) {
-            final Map<Lo3ElementEnum, String> elementen = new HashMap<>(categorie.getElementen());
+            final EnumMap<Lo3ElementEnum, String> elementen = new EnumMap<>(Lo3ElementEnum.class);
+            elementen.putAll(categorie.getElementen());
             final Lo3Herkomst lo3Herkomst = categorie.getLo3Herkomst();
             final Lo3Onderzoek lo3Onderzoek = parseLo3Onderzoek(elementen, lo3Herkomst);
             final Lo3CategorieEnum herkomstCategorie = lo3Herkomst.getCategorie();
@@ -89,31 +88,31 @@ public final class Lo3VerblijfplaatsParser extends AbstractLo3CategorieParser<Lo
 
             final Lo3Categorie<Lo3VerblijfplaatsInhoud> verblijfplaats =
                     new Lo3Categorie<>(new Lo3VerblijfplaatsInhoud(
-                        gemeenteInschrijving,
-                        datumInschrijving,
-                        functieAdres,
-                        gemeenteDeel,
-                        aanvangAdreshouding,
-                        straatnaam,
-                        naamOpenbareRuimte,
-                        huisnummer,
-                        huisletter,
-                        huisnummertoevoeging,
-                        aanduidingHuisnummer,
-                        postcode,
-                        woonplaatsnaam,
-                        identificatiecodeVerblijfplaats,
-                        identificatiecodeNummeraanduiding,
-                        locatieBeschrijving,
-                        landAdresBuitenland,
-                        vertrekUitNederland,
-                        adresBuitenland1,
-                        adresBuitenland2,
-                        adresBuitenland3,
-                        landVanwaarIngeschreven,
-                        vestigingInNederland,
-                        aangifteAdreshouding,
-                        indicatieDocument), lo3Documentatie, lo3Onderzoek, lo3Historie, categorie.getLo3Herkomst());
+                            gemeenteInschrijving,
+                            datumInschrijving,
+                            functieAdres,
+                            gemeenteDeel,
+                            aanvangAdreshouding,
+                            straatnaam,
+                            naamOpenbareRuimte,
+                            huisnummer,
+                            huisletter,
+                            huisnummertoevoeging,
+                            aanduidingHuisnummer,
+                            postcode,
+                            woonplaatsnaam,
+                            identificatiecodeVerblijfplaats,
+                            identificatiecodeNummeraanduiding,
+                            locatieBeschrijving,
+                            landAdresBuitenland,
+                            vertrekUitNederland,
+                            adresBuitenland1,
+                            adresBuitenland2,
+                            adresBuitenland3,
+                            landVanwaarIngeschreven,
+                            vestigingInNederland,
+                            aangifteAdreshouding,
+                            indicatieDocument), lo3Documentatie, lo3Onderzoek, lo3Historie, categorie.getLo3Herkomst());
             verblijfplaatsList.add(verblijfplaats);
         }
         return verblijfplaatsList.isEmpty() ? null : new Lo3Stapel<>(verblijfplaatsList);

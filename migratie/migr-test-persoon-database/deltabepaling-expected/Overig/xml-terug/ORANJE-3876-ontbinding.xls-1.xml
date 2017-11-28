@@ -338,12 +338,8 @@
             </indicatiePKVolledigGeconverteerdCode>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <documentatie>
             <id>2</id>
@@ -1093,12 +1089,8 @@
             </datumEuropeesKiesrecht>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <documentatie>
             <id>7</id>

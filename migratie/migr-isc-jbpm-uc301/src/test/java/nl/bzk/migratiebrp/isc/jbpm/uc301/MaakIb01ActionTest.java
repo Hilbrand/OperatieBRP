@@ -17,28 +17,19 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3PersoonslijstBuilder;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakIb01ActionTest {
 
-    private MaakIb01Action subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new MaakIb01Action();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakIb01Action subject = new MaakIb01Action(berichtenDao);
 
     @Test
     public void test() {
         // II01
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("1234");
-        ii01Bericht.setDoelGemeente("5678");
+        ii01Bericht.setBronPartijCode("1234");
+        ii01Bericht.setDoelPartijCode("5678");
 
         // Lo3 PL
         final Lo3Persoonslijst lo3Persoonlijst = new Lo3PersoonslijstBuilder().build();
@@ -56,8 +47,8 @@ public class MaakIb01ActionTest {
         final Ib01Bericht ib01Bericht = (Ib01Bericht) berichtenDao.leesBericht((Long) result.get("ib01Bericht"));
         Assert.assertNotNull(ib01Bericht);
         Assert.assertEquals(lo3Persoonlijst, ib01Bericht.getLo3Persoonslijst());
-        Assert.assertEquals("5678", ib01Bericht.getBronGemeente());
-        Assert.assertEquals("1234", ib01Bericht.getDoelGemeente());
+        Assert.assertEquals("5678", ib01Bericht.getBronPartijCode());
+        Assert.assertEquals("1234", ib01Bericht.getDoelPartijCode());
         Assert.assertEquals(ii01Bericht.getMessageId(), ib01Bericht.getCorrelationId());
     }
 
@@ -65,8 +56,8 @@ public class MaakIb01ActionTest {
     public void testHerhaling() {
         // II01
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("1234");
-        ii01Bericht.setDoelGemeente("5678");
+        ii01Bericht.setBronPartijCode("1234");
+        ii01Bericht.setDoelPartijCode("5678");
 
         // IB01
         final Ib01Bericht ib01 = new Ib01Bericht();
@@ -89,10 +80,10 @@ public class MaakIb01ActionTest {
         final Ib01Bericht ib01Bericht = (Ib01Bericht) berichtenDao.leesBericht((Long) result.get("ib01Bericht"));
         Assert.assertNotNull(ib01Bericht);
         Assert.assertEquals(lo3Persoonlijst, ib01Bericht.getLo3Persoonslijst());
-        Assert.assertEquals("5678", ib01Bericht.getBronGemeente());
-        Assert.assertEquals("1234", ib01Bericht.getDoelGemeente());
+        Assert.assertEquals("5678", ib01Bericht.getBronPartijCode());
+        Assert.assertEquals("1234", ib01Bericht.getDoelPartijCode());
         Assert.assertEquals(ii01Bericht.getMessageId(), ib01Bericht.getCorrelationId());
-        Assert.assertEquals("3", ib01Bericht.getHeader(Lo3HeaderVeld.HERHALING));
+        Assert.assertEquals("3", ib01Bericht.getHeaderWaarde(Lo3HeaderVeld.HERHALING));
         Assert.assertEquals(ib01.getMessageId(), ib01Bericht.getMessageId());
     }
 }

@@ -11,17 +11,19 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderlijkGezagHistorie;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderlijkGezagHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.BetrokkenheidRepository;
+
 import org.springframework.stereotype.Repository;
 
 /**
  * Data-access-punt voor alles omtrent BRP-betrokkenheden.
- * 
  */
 @Repository
 public final class BetrokkenheidRepositoryImpl implements BetrokkenheidRepository {
@@ -46,7 +48,6 @@ public final class BetrokkenheidRepositoryImpl implements BetrokkenheidRepositor
             betrokkenheid.removeBetrokkenheidOuderlijkGezagHistorie(ouderlijkGezagHistorie);
             em.remove(ouderlijkGezagHistorie);
         }
-        betrokkenheid.setIndicatieOuder(null);
         betrokkenheid.setIndicatieOuderHeeftGezag(null);
     }
 
@@ -70,7 +71,6 @@ public final class BetrokkenheidRepositoryImpl implements BetrokkenheidRepositor
      */
     @Override
     public void overschrijfBetrokkenheid(final Betrokkenheid doel, final Betrokkenheid bron) {
-        doel.setIndicatieOuder(bron.getIndicatieOuder());
         doel.setIndicatieOuderUitWieKindIsGeboren(bron.getIndicatieOuderUitWieKindIsGeboren());
         doel.setIndicatieOuderHeeftGezag(bron.getIndicatieOuderHeeftGezag());
 
@@ -96,7 +96,6 @@ public final class BetrokkenheidRepositoryImpl implements BetrokkenheidRepositor
                 doelHistorie.setDatumEindeGeldigheid(bronHistorie.getDatumEindeGeldigheid());
                 doelHistorie.setDatumTijdRegistratie(bronHistorie.getDatumTijdRegistratie());
                 doelHistorie.setDatumTijdVerval(bronHistorie.getDatumTijdVerval());
-                doelHistorie.setIndicatieOuder(bronHistorie.getIndicatieOuder());
                 doelHistorie.setIndicatieOuderUitWieKindIsGeboren(bronHistorie.getIndicatieOuderUitWieKindIsGeboren());
             } else {
                 teVerwijderen.add(doelHistorie);

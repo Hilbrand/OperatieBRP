@@ -13,8 +13,19 @@
         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
     ">
 
+    <bean id="ivHornetQJmxConnectorCredentials" class="nl.bzk.algemeenbrp.util.jmx.client.CredentialsFactory">
+		<property name="username" value="${iv.hornetq.jmx.service.username:admin}" />
+		<property name="password" value="${iv.hornetq.jmx.service.password:admin}" />
+	</bean>
+
     <bean id="hornetqJmxConnector" class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean">
-        <property name="serviceUrl" value="${hornetq.jmx.service.url:service:jmx:rmi:///jndi/rmi://localhost:1090/jmxrmi}"/>
+        <property name="environment">
+			<map>
+				<entry key="jmx.remote.credentials" value-ref="ivHornetQJmxConnectorCredentials" />
+				<entry key="jmx.remote.requesttimeout" value="60" />
+			</map>
+    	</property>
+        <property name="serviceUrl" value="service:jmx:simple://${iv.hornetq.jmx.service.host:localhost}:${iv.hornetq.jmx.service.port:3481}"/>
     </bean>
 
 </beans>

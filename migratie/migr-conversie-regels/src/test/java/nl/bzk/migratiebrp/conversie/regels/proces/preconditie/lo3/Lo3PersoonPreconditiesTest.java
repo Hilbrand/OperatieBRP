@@ -6,7 +6,6 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
@@ -20,13 +19,13 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.GemeenteConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.LandConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.VoorvoegselScheidingstekenConversietabel;
@@ -42,15 +41,14 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     private static final Lo3Herkomst LO3_HERKOMST_PERSOON = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0);
     private static final Lo3Herkomst LO3_HERKOMST_PERSOON_1 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 1);
     private static final Lo3Herkomst LO3_HERKOMST_PERSOON_2 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 2);
-    private static final long ANUMMER = 1069532945L;
+    private static final String ANUMMER = "1069532945";
 
-    @Inject
-    private Lo3PersoonPrecondities precondities;
+    private final Lo3PersoonPrecondities precondities = new Lo3PersoonPrecondities(new ConversietabelFactoryImpl());
 
     private Lo3PersoonInhoud.Builder builder() {
         final Lo3PersoonInhoud.Builder builder = new Lo3PersoonInhoud.Builder();
-        builder.setaNummer(Lo3Long.wrap(ANUMMER));
-        builder.setBurgerservicenummer(Lo3Integer.wrap(179543489));
+        builder.setaNummer(Lo3String.wrap(ANUMMER));
+        builder.setBurgerservicenummer(Lo3String.wrap("179543489"));
         builder.setVoornamen(Lo3String.wrap("Jaap"));
         builder.setAdellijkeTitelPredikaatCode(new Lo3AdellijkeTitelPredikaatCode("P"));
         builder.setVoorvoegselGeslachtsnaam(Lo3String.wrap("van"));
@@ -81,10 +79,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
     private Lo3Stapel<Lo3PersoonInhoud> createStapel(final Lo3PersoonInhoud.Builder builder) {
         return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-            builder.build(),
-            Lo3StapelHelper.lo3Akt(1),
-            Lo3StapelHelper.lo3His(20000101),
-            LO3_HERKOMST_PERSOON));
+                builder.build(),
+                Lo3StapelHelper.lo3Akt(1),
+                Lo3StapelHelper.lo3His(20000101),
+                LO3_HERKOMST_PERSOON));
     }
 
     /* ************************************************************************************************************* */
@@ -97,22 +95,22 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     public void testContr104() {
         Lo3Categorie<Lo3PersoonInhoud> onjuist1 =
                 Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_PERSOON_2);
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_PERSOON_2);
         final Lo3Categorie<Lo3PersoonInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990101, 20000101),
-                    LO3_HERKOMST_PERSOON_1);
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990101, 20000101),
+                        LO3_HERKOMST_PERSOON_1);
         final Lo3Categorie<Lo3PersoonInhoud> juist3 =
                 Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(3),
-                    Lo3StapelHelper.lo3His(null, 19990101, 20000101),
-                    LO3_HERKOMST_PERSOON);
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990101, 20000101),
+                        LO3_HERKOMST_PERSOON);
 
         final Lo3Stapel<Lo3PersoonInhoud> stapelOk = Lo3StapelHelper.lo3Stapel(onjuist1, onjuist2, juist3);
 
@@ -135,10 +133,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapelBuitenlandsOk =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapelBuitenlandsOk);
 
@@ -148,10 +146,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapelNok =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapelNok);
 
@@ -163,10 +161,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     public void testContr110() {
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20000101, 20000100),
-                    LO3_HERKOMST_PERSOON));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 20000101, 20000100),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -178,10 +176,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     public void testContr112() {
         final Lo3Stapel<Lo3PersoonInhoud> stapel2 =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEMEENTE_CODE, 0, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEMEENTE_CODE, 0, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel2);
 
@@ -189,10 +187,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEMEENTE_CODE, 20000100, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEMEENTE_CODE, 20000100, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -214,10 +212,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -235,10 +233,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -264,10 +262,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, null, 20010101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, null, 20010101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -281,10 +279,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, null, 20010101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, null, 20010101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -298,10 +296,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 20010101, 20010101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 20010101, 20010101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -321,10 +319,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -339,10 +337,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -357,10 +355,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -375,10 +373,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -399,10 +397,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -413,10 +411,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40121() {
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEMEENTE_CODE, 20050155, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEMEENTE_CODE, 20050155, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -427,10 +425,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40124() {
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20040141, 20010101),
-                    LO3_HERKOMST_PERSOON));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 20040141, 20010101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -441,10 +439,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40125() {
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20010101, 20040141),
-                    LO3_HERKOMST_PERSOON));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 20010101, 20040141),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -459,10 +457,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -476,10 +474,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -494,10 +492,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -509,10 +507,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     public void testContr4063() {
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), "1-x0001", null, null, null),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), "1-x0001", null, null, null),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -524,10 +522,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     public void testContr4064() {
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -548,10 +546,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -566,10 +564,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -584,10 +582,10 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 
@@ -638,7 +636,7 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     @BijzondereSituatie(SoortMeldingCode.BIJZ_CONV_LB005)
     public void testBijzondereSituatieVorigAnummerOngelijkAnummer() {
         final Lo3PersoonInhoud.Builder builder = builder();
-        builder.setVorigANummer(Lo3Long.wrap(4254732321L));
+        builder.setVorigANummer(Lo3String.wrap("4254732321"));
         final Lo3Stapel<Lo3PersoonInhoud> stapel = createStapel(builder);
         precondities.controleerStapel(stapel);
 
@@ -651,7 +649,7 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     @BijzondereSituatie(SoortMeldingCode.BIJZ_CONV_LB006)
     public void testBijzondereSituatieVorigAnummerGelijkAnummer() {
         final Lo3PersoonInhoud.Builder builder = builder();
-        builder.setVorigANummer(Lo3Long.wrap(ANUMMER));
+        builder.setVorigANummer(Lo3String.wrap(ANUMMER));
         final Lo3Stapel<Lo3PersoonInhoud> stapel = createStapel(builder);
         precondities.controleerStapel(stapel);
 
@@ -664,7 +662,7 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     @BijzondereSituatie(SoortMeldingCode.BIJZ_CONV_LB007)
     public void testBijzondereSituatieVolgendAnummerGelijkAnummer() {
         final Lo3PersoonInhoud.Builder builder = builder();
-        builder.setVolgendANummer(Lo3Long.wrap(ANUMMER));
+        builder.setVolgendANummer(Lo3String.wrap(ANUMMER));
         final Lo3Stapel<Lo3PersoonInhoud> stapel = createStapel(builder);
         precondities.controleerStapel(stapel);
 
@@ -677,7 +675,7 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
     @BijzondereSituatie(SoortMeldingCode.BIJZ_CONV_LB008)
     public void testBijzondereSituatieVolgendAnummerOngelijkAnummer() {
         final Lo3PersoonInhoud.Builder builder = builder();
-        builder.setVolgendANummer(Lo3Long.wrap(2801489057L));
+        builder.setVolgendANummer(Lo3String.wrap("2801489057"));
         final Lo3Stapel<Lo3PersoonInhoud> stapel = createStapel(builder);
         precondities.controleerStapel(stapel);
 
@@ -754,11 +752,11 @@ public class Lo3PersoonPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Onderzoek lo3Onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10110), null, null);
         final Lo3Stapel<Lo3PersoonInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEMEENTE_CODE, 20000101, DOC),
-                    lo3Onderzoek,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_PERSOON));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEMEENTE_CODE, 20000101, DOC),
+                        lo3Onderzoek,
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_PERSOON));
 
         precondities.controleerStapel(stapel);
 

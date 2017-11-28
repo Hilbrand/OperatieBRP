@@ -21,7 +21,7 @@ import org.junit.Test;
 public class StapelMatchesTest {
 
     @Test
-    public void testToevoegenMatch () {
+    public void testToevoegenMatch() {
         final String waardeA = "WaardeA";
         final String waardeB = "WaardeB";
         final String waardeC = "WaardeC";

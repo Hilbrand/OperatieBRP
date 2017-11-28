@@ -6,11 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Deze class representeert een LO3Character waarde.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class Lo3Character extends AbstractLo3Element {
@@ -18,9 +18,7 @@ public final class Lo3Character extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3Character object.
-     * 
-     * @param waarde
-     *            de character waarde
+     * @param waarde de character waarde
      */
     public Lo3Character(final Character waarde) {
         this(String.valueOf(waarde), null);
@@ -28,22 +26,17 @@ public final class Lo3Character extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3Character object met onderzoek.
-     * 
-     * @param waarde
-     *            de character waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag null zijn.
+     * @param waarde de character waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag null zijn.
      */
     public Lo3Character(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Geef de waarde van character waarde.
-     *
      * @return character waarde
      */
     public Character getCharacterWaarde() {
@@ -52,9 +45,7 @@ public final class Lo3Character extends AbstractLo3Element {
 
     /**
      * Wrap een bestaande Character in een Lo3Character object.
-     * 
-     * @param waarde
-     *            De te wrappen Character, mag null zijn.
+     * @param waarde De te wrappen Character, mag null zijn.
      * @return Een Lo3Character object, of null als de waarde null was.
      */
     public static Lo3Character wrap(final Character waarde) {
@@ -66,9 +57,7 @@ public final class Lo3Character extends AbstractLo3Element {
 
     /**
      * Unwrap een Lo3Character object om de Character waarde terug te krijgen.
-     * 
-     * @param lo3Character
-     *            De Lo3Character, mag null zijn.
+     * @param lo3Character De Lo3Character, mag null zijn.
      * @return Een Character object, of null als de Lo3Character null was.
      */
     public static Character unwrap(final Lo3Character lo3Character) {

@@ -17,8 +17,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public final class ExtractieDaoImpl implements ExtractieDao {
 
+    private final JdbcTemplate template;
+
+    /**
+     * Constructor.
+     * @param template jdbc template
+     */
     @Inject
-    private JdbcTemplate template;
+    public ExtractieDaoImpl(final JdbcTemplate template) {
+        this.template = template;
+    }
 
     @Override
     public List<Long> haalProcesIdsOpBasisVanBeeindigdeProcesExtractiesOp(final Timestamp datumTot) {

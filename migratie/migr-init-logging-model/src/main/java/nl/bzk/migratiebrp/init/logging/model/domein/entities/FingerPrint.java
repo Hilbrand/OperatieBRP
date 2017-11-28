@@ -23,12 +23,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * The persistent class for the sync log/result database table.
- *
- *
  */
 @Entity
 @Table(name = "fingerprint", schema = "initvul")
-@SuppressWarnings("checkstyle:designforextension")
 public class FingerPrint implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -41,7 +38,7 @@ public class FingerPrint implements Serializable {
     @Column(name = "voorkomen_verschil", insertable = true, updatable = true, nullable = false)
     private String voorkomenVerschil;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "gbav_pl_id", nullable = false)
     private InitVullingLog log;
 
@@ -53,9 +50,7 @@ public class FingerPrint implements Serializable {
 
     /**
      * Maakt een FingerPrint object.
-     *
-     * @param voorkomenVerschil
-     *            het voorkomen verschil
+     * @param voorkomenVerschil het voorkomen verschil
      */
     public FingerPrint(final String voorkomenVerschil) {
         setVoorkomenVerschil(voorkomenVerschil);
@@ -63,7 +58,6 @@ public class FingerPrint implements Serializable {
 
     /**
      * Geef de waarde van id.
-     *
      * @return the id
      */
     public Long getId() {
@@ -72,9 +66,7 @@ public class FingerPrint implements Serializable {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            the id to set
+     * @param id the id to set
      */
     public void setId(final Long id) {
         this.id = id;
@@ -82,7 +74,6 @@ public class FingerPrint implements Serializable {
 
     /**
      * Geef de waarde van voorkomen verschil.
-     *
      * @return the voorkomenVerschil
      */
     public String getVoorkomenVerschil() {
@@ -91,9 +82,7 @@ public class FingerPrint implements Serializable {
 
     /**
      * Zet de waarde van voorkomen verschil.
-     *
-     * @param voorkomenVerschil
-     *            the voorkomenVerschil to set
+     * @param voorkomenVerschil the voorkomenVerschil to set
      */
     public void setVoorkomenVerschil(final String voorkomenVerschil) {
         ValidationUtils.controleerOpNullWaarden("voorkomenVerschil mag niet null zijn", voorkomenVerschil);
@@ -102,7 +91,6 @@ public class FingerPrint implements Serializable {
 
     /**
      * Geef de waarde van log.
-     *
      * @return the log
      */
     public InitVullingLog getLog() {
@@ -111,9 +99,7 @@ public class FingerPrint implements Serializable {
 
     /**
      * Zet de waarde van log.
-     *
-     * @param log
-     *            the log to set
+     * @param log the log to set
      */
     void setLog(final InitVullingLog log) {
         this.log = log;
@@ -121,8 +107,7 @@ public class FingerPrint implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("voorkomenVerschil", voorkomenVerschil)
-                                                                          .toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString()).append("voorkomenVerschil", voorkomenVerschil)
+                .toString();
     }
 }

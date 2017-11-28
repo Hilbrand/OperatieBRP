@@ -10,11 +10,12 @@ import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 
 /**
  * De conversietabel voor de converie van 'Woonplaatsnaam' naar 'BRP woonplaatsnaam' en vice versa.
- * 
  */
 public class WoonplaatsnaamConversietabel implements Conversietabel<String, String> {
 
-    /** Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk). */
+    /**
+     * Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk).
+     */
     public static final String LO3_NIET_VALIDE_UITZONDERING = "xx";
 
     @Override

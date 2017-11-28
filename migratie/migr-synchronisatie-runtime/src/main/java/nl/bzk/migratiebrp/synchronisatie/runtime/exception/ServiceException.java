@@ -15,9 +15,7 @@ public class ServiceException extends RuntimeException {
 
     /**
      * Constructor.
-     *
-     * @param message
-     *            melding
+     * @param message melding
      */
     public ServiceException(final String message) {
         super(message);
@@ -25,9 +23,7 @@ public class ServiceException extends RuntimeException {
 
     /**
      * Constructor.
-     *
-     * @param cause
-     *            oorzaak
+     * @param cause oorzaak
      */
     public ServiceException(final Throwable cause) {
         super(cause);
@@ -35,11 +31,8 @@ public class ServiceException extends RuntimeException {
 
     /**
      * Constructor.
-     *
-     * @param message
-     *            melding
-     * @param cause
-     *            oorzaak
+     * @param message melding
+     * @param cause oorzaak
      */
     public ServiceException(final String message, final Throwable cause) {
         super(message, cause);

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <lo3Persoonslijst>
    <persoonStapel>
       <lo3Categorie>
@@ -7,7 +7,7 @@
                <waarde>7463601953</waarde>
             </aNummer>
             <burgerservicenummer>
-               <waarde>422531881</waarde>
+               <waarde>340393737</waarde>
             </burgerservicenummer>
             <voornamen>
                <waarde>Yevgeni</waarde>
@@ -132,12 +132,8 @@
             </indicatiePKVolledigGeconverteerdCode>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <documentatie>
             <id>6578</id>

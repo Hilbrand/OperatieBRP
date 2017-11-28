@@ -17,6 +17,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.LandConversietabel;
 import org.junit.Test;
 
@@ -28,8 +29,8 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
     private static final String DOC = "Doc";
     private static final String GEM_CODE = "0514";
     private static final Lo3Herkomst LO3_HERKOMST_KIESRECHT = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_13, 0, 0);
-    @Inject
-    private Lo3KiesrechtPrecondities precondities;
+
+    private Lo3KiesrechtPrecondities precondities = new Lo3KiesrechtPrecondities(new ConversietabelFactoryImpl());
 
     private Lo3KiesrechtInhoud.Builder builder() {
         final Lo3KiesrechtInhoud.Builder builder = new Lo3KiesrechtInhoud.Builder();
@@ -47,11 +48,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
     public void testHappy() {
 
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -67,22 +69,24 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr112() {
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel2 =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 00000000, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 00000000, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel2);
 
         assertAantalErrors(0);
 
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -102,11 +106,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
         builder.setDatumEuropeesKiesrecht(new Lo3Datum(20031424));
 
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -119,11 +124,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
         builder.setEinddatumUitsluitingEuropeesKiesrecht(new Lo3Datum(20031424));
 
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -136,11 +142,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
         builder.setEinddatumUitsluitingKiesrecht(new Lo3Datum(20031424));
 
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -150,11 +157,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr40121() {
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -164,11 +172,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr4064() {
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder().build(),
+                                Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -188,11 +197,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
         builder.setAanduidingEuropeesKiesrecht(new Lo3AanduidingEuropeesKiesrecht(9));
 
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -206,11 +216,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
         builder.setAanduidingUitgeslotenKiesrecht(new Lo3AanduidingUitgeslotenKiesrecht("Q"));
 
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -224,11 +235,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
         builder.setAanduidingUitgeslotenKiesrecht(null);
 
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 
@@ -242,11 +254,12 @@ public class Lo3KiesrechtPreconditiesTest extends AbstractPreconditieTest {
         builder.setAanduidingEuropeesKiesrecht(null);
 
         final Lo3Stapel<Lo3KiesrechtInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3Historie.NULL_HISTORIE,
-                    LO3_HERKOMST_KIESRECHT));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                new Lo3Historie(null, null, null),
+                                LO3_HERKOMST_KIESRECHT));
 
         precondities.controleerStapel(stapel);
 

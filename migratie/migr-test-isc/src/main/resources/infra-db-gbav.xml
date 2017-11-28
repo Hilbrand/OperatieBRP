@@ -23,6 +23,6 @@
     </bean>
 
 
-    <bean id="gbavRepository" class="nl.bzk.migratiebrp.test.isc.environment.kanaal.sync.GbavRepository" />
+    <bean id="persoonRepository" class="nl.bzk.migratiebrp.test.isc.environment.kanaal.sync.GbavRepository" />
 
 </beans>

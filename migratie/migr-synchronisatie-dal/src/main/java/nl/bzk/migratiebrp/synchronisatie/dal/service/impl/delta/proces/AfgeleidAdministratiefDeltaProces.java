@@ -8,13 +8,12 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.proces;
 
 import java.sql.Timestamp;
 import java.util.Set;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.HistorieUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 
 /**
@@ -31,34 +30,34 @@ public final class AfgeleidAdministratiefDeltaProces implements DeltaProces {
     public void verwerkVerschillen(final DeltaBepalingContext context) {
         for (final AdministratieveHandeling administratieveHandeling : context.getAdministratieveHandelingen()) {
             voegAfgeleidAdministratiefToe(
-                context.getBestaandePersoon(),
-                context.getNieuwePersoon().getPersoonAfgeleidAdministratiefHistorieSet(),
-                administratieveHandeling);
+                    context.getBestaandePersoon(),
+                    context.getNieuwePersoon().getPersoonAfgeleidAdministratiefHistorieSet(),
+                    administratieveHandeling);
         }
     }
 
     private void voegAfgeleidAdministratiefToe(
-        final Persoon bestaandePersoon,
-        final Set<PersoonAfgeleidAdministratiefHistorie> afgeleidAdministratiefHistorieSet,
-        final AdministratieveHandeling administratieveHandeling)
-    {
-        final BRPActie cat07Actie = HistorieUtil.getActueelHistorieVoorkomen(bestaandePersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
+            final Persoon bestaandePersoon,
+            final Set<PersoonAfgeleidAdministratiefHistorie> afgeleidAdministratiefHistorieSet,
+            final AdministratieveHandeling administratieveHandeling) {
+        final BRPActie cat07Actie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandePersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
         final AdministratieveHandeling cat07AdministratieveHandeling = cat07Actie.getAdministratieveHandeling();
         final PersoonAfgeleidAdministratiefHistorie vorigActueleVoorkomen =
-                HistorieUtil.getActueelHistorieVoorkomen(bestaandePersoon.getPersoonAfgeleidAdministratiefHistorieSet());
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandePersoon.getPersoonAfgeleidAdministratiefHistorieSet());
 
         // Afgeleid administratief historie wordt altijd aangemaakt tijdens conversie
         final PersoonAfgeleidAdministratiefHistorie basisAfgeleidAdministratiefHistorie =
-                HistorieUtil.getActueelHistorieVoorkomen(afgeleidAdministratiefHistorieSet);
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(afgeleidAdministratiefHistorieSet);
 
         final Timestamp tsReg = administratieveHandeling.getDatumTijdRegistratie();
         final PersoonAfgeleidAdministratiefHistorie historie =
                 getPersoonAfgeleidAdministratiefHistorie(
-                    bestaandePersoon,
-                    cat07AdministratieveHandeling,
-                    basisAfgeleidAdministratiefHistorie,
-                    administratieveHandeling,
-                    tsReg);
+                        bestaandePersoon,
+                        cat07AdministratieveHandeling,
+                        basisAfgeleidAdministratiefHistorie,
+                        administratieveHandeling,
+                        tsReg);
         historie.setDatumTijdRegistratie(tsReg);
         historie.setDatumTijdLaatsteWijzigingGba(tsReg);
         historie.setDatumTijdLaatsteWijziging(tsReg);
@@ -69,12 +68,11 @@ public final class AfgeleidAdministratiefDeltaProces implements DeltaProces {
     }
 
     private PersoonAfgeleidAdministratiefHistorie getPersoonAfgeleidAdministratiefHistorie(
-        final Persoon bestaandePersoon,
-        final AdministratieveHandeling cat07AdministratieveHandeling,
-        final PersoonAfgeleidAdministratiefHistorie basisAfgeleidAdministratiefHistorie,
-        final AdministratieveHandeling administratieveHandeling,
-        final Timestamp tsReg)
-    {
+            final Persoon bestaandePersoon,
+            final AdministratieveHandeling cat07AdministratieveHandeling,
+            final PersoonAfgeleidAdministratiefHistorie basisAfgeleidAdministratiefHistorie,
+            final AdministratieveHandeling administratieveHandeling,
+            final Timestamp tsReg) {
         final PersoonAfgeleidAdministratiefHistorie historie;
         if (administratieveHandeling.equals(cat07AdministratieveHandeling)) {
             // Deze administratieve handeling is gekoppeld aan de gegevens uit de cat07 van de LO3
@@ -89,14 +87,7 @@ public final class AfgeleidAdministratiefDeltaProces implements DeltaProces {
             }
         } else {
             final BRPActie actieInhoud = new BRPActie(SoortActie.CONVERSIE_GBA, administratieveHandeling, administratieveHandeling.getPartij(), tsReg);
-
-            historie =
-                    new PersoonAfgeleidAdministratiefHistorie(
-                        (short) 1,
-                        bestaandePersoon,
-                        administratieveHandeling,
-                        tsReg,
-                        basisAfgeleidAdministratiefHistorie.getIndicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig());
+            historie = new PersoonAfgeleidAdministratiefHistorie((short) 1, bestaandePersoon, administratieveHandeling, tsReg);
             historie.setActieInhoud(actieInhoud);
         }
         return historie;

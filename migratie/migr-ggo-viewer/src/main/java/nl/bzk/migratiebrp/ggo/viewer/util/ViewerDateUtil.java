@@ -56,7 +56,6 @@ public final class ViewerDateUtil {
 
     /**
      * Geef de waarde van utc date format.
-     *
      * @return utc date format
      */
     private static DateFormat getUtcDateFormat() {
@@ -80,13 +79,9 @@ public final class ViewerDateUtil {
 
     /**
      * Constructs a Calendar object from an int 'yyyymmdd'.
-     *
-     * @param date
-     *            Given date to convert.
-     * @param lenient
-     *            true: treat given date leniently, false: don't. See Calendar#setLenient.
-     * @return Calendar object with its time set to given date. NB. hours, minutes, secondes and milliseconds are set to
-     *         0.
+     * @param date Given date to convert.
+     * @param lenient true: treat given date leniently, false: don't. See Calendar#setLenient.
+     * @return Calendar object with its time set to given date. NB. hours, minutes, secondes and milliseconds are set to 0.
      */
     private static Calendar intToCalendar(final int date, final boolean lenient) {
         final Calendar cal = Calendar.getInstance();
@@ -106,11 +101,8 @@ public final class ViewerDateUtil {
 
     /**
      * Like {@link #intToCalendar(int, boolean)} but now returns a Date object instead.
-     *
-     * @param date
-     *            Given date to convert.
-     * @param lenient
-     *            true: treat given date leniently, false: don't. See Calendar#setLenient.
+     * @param date Given date to convert.
+     * @param lenient true: treat given date leniently, false: don't. See Calendar#setLenient.
      * @return date
      */
     public static Date intToDate(final int date, final boolean lenient) {
@@ -120,9 +112,7 @@ public final class ViewerDateUtil {
     /**
      * This method takes a Long that contains a date (format YYYYMMDDHHMMSSMMM) and converts it to a Date object. If the
      * format is not correct, the method will return null.
-     *
-     * @param longValueOfDate
-     *            Long
+     * @param longValueOfDate Long
      * @return dateResult a Date
      */
     public static Date longToDate(final Long longValueOfDate) {
@@ -169,9 +159,7 @@ public final class ViewerDateUtil {
 
     /**
      * Return true if the int parameter is a valid representation of an existing date.
-     *
-     * @param yyyymmddDate
-     *            An int representation of a date in the format YYYYMMDD, i.e. "20061231"
+     * @param yyyymmddDate An int representation of a date in the format YYYYMMDD, i.e. "20061231"
      * @return true if the date is a valid date, false otherwise.
      */
     public static boolean isValidDate(final int yyyymmddDate) {
@@ -186,31 +174,27 @@ public final class ViewerDateUtil {
 
     /**
      * Return true if the int parameter is a valid representation of a time of day.
-     *
-     * @param hhMMss
-     *            An int representation of a time of day in the format hhMMss, e.g. "145312"
+     * @param hhMMss An int representation of a time of day in the format hhMMss, e.g. "145312"
      * @return true if the time is a valid time of day, false otherwise.
      */
     public static boolean isValidTime(final int hhMMss) {
         return !(
                 // negative
                 hhMMss < 0
-                ||
-                // seconds not in range [0,60)
-                hhMMss % OMREKENFACTOR_DATUM_CONTROLE_SECONDEN >= AANTAL_SECONDEN_PER_MINUUT
-                ||
-                // minutes not in range [0,60)
-                hhMMss / OMREKENFACTOR_DATUM_CONTROLE_SECONDEN % OMREKENFACTOR_DATUM_CONTROLE_MODULO >= AANTAL_MINUTEN_PER_UUR
-                ||
-                // hours not in range [0,24)
-                hhMMss / OMREKENFACTOR_DATUM_CONTROLE_UREN >= AANTAL_UREN_PER_DAG);
+                        ||
+                        // seconds not in range [0,60)
+                        hhMMss % OMREKENFACTOR_DATUM_CONTROLE_SECONDEN >= AANTAL_SECONDEN_PER_MINUUT
+                        ||
+                        // minutes not in range [0,60)
+                        hhMMss / OMREKENFACTOR_DATUM_CONTROLE_SECONDEN % OMREKENFACTOR_DATUM_CONTROLE_MODULO >= AANTAL_MINUTEN_PER_UUR
+                        ||
+                        // hours not in range [0,24)
+                        hhMMss / OMREKENFACTOR_DATUM_CONTROLE_UREN >= AANTAL_UREN_PER_DAG);
     }
 
     /**
      * Return true if the long parameter is a valid representation of an existing date and a time of day.
-     *
-     * @param yyymmddhhmmss
-     *            long
+     * @param yyymmddhhmmss long
      * @return true if the datetime is valid, false otherwise.
      */
     public static boolean isValidDateTime(final long yyymmddhhmmss) {
@@ -221,9 +205,7 @@ public final class ViewerDateUtil {
 
     /**
      * Format een datum notatie (int yyyymmdd) naar een String notatie (dd-MM-yyyy).
-     *
-     * @param datumYYYYMMDD
-     *            int
+     * @param datumYYYYMMDD int
      * @return formatted datum String (dd-MM-yyyy)
      */
     public static String formatDatum(final int datumYYYYMMDD) {
@@ -242,9 +224,7 @@ public final class ViewerDateUtil {
 
     /**
      * Format een datum-tijd notatie op basis van een Timestamp.
-     *
-     * @param timestamp
-     *            timestamp
+     * @param timestamp timestamp
      * @return formatted datum String (dd-MM-yyyy HH:mm:ss)
      */
     public static String formatDatumTijd(final Timestamp timestamp) {
@@ -253,9 +233,7 @@ public final class ViewerDateUtil {
 
     /**
      * Format een datum-tijd notatie op basis van een Timestamp. Ga ervan uit dat de opgegeven datumtijd in UTC is.
-     *
-     * @param timestamp
-     *            timestamp
+     * @param timestamp timestamp
      * @return formatted datum String (dd-MM-yyyy HH:mm:ss)
      */
     public static String formatDatumTijdUtc(final Timestamp timestamp) {
@@ -264,9 +242,7 @@ public final class ViewerDateUtil {
 
     /**
      * Format een datum-tijd notatie (long yyyymmddhhmmssµµµ) naar een String notatie (dd-MM-yyyy hh:mm:ss).
-     *
-     * @param datumTijdYYYYMMDDHHMMSSMMM
-     *            long
+     * @param datumTijdYYYYMMDDHHMMSSMMM long
      * @return formatted datum String (dd-MM-yyyy HH:mm:ss)
      */
     public static String formatDatumTijd(final long datumTijdYYYYMMDDHHMMSSMMM) {
@@ -280,29 +256,29 @@ public final class ViewerDateUtil {
         } else {
             datumTijd =
                     formatInvalidDatumTijd(StringUtils.leftPad(
-                        String.valueOf(datumTijdYYYYMMDDHHMMSSMMM),
-                        MINIMUM_DATUMTIJD_LENGTE,
-                        DATUM_TIJD_UITVULTEKEN));
+                            String.valueOf(datumTijdYYYYMMDDHHMMSSMMM),
+                            MINIMUM_DATUMTIJD_LENGTE,
+                            DATUM_TIJD_UITVULTEKEN));
         }
         return datumTijd;
     }
 
     private static String formatInvalidDatum(final String datum) {
         return datum.substring(POSITIE_EINDE_MAAND, MINIMUM_DATUM_LENGTE)
-               + DATUM_SCHEIDINGSTEKEN
-               + datum.substring(POSITIE_EINDE_JAAR, POSITIE_EINDE_MAAND)
-               + DATUM_SCHEIDINGSTEKEN
-               + datum.substring(0, POSITIE_EINDE_JAAR);
+                + DATUM_SCHEIDINGSTEKEN
+                + datum.substring(POSITIE_EINDE_JAAR, POSITIE_EINDE_MAAND)
+                + DATUM_SCHEIDINGSTEKEN
+                + datum.substring(0, POSITIE_EINDE_JAAR);
     }
 
     private static String formatInvalidDatumTijd(final String datumTijd) {
         return formatInvalidDatum(datumTijd)
-               + " "
-               + datumTijd.substring(MINIMUM_DATUM_LENGTE, POSITIE_EINDE_UUR)
-               + TIJD_SCHEIDINGSTEKEN
-               + datumTijd.substring(POSITIE_EINDE_UUR, POSITIE_EINDE_MINUUT)
-               + TIJD_SCHEIDINGSTEKEN
-               + datumTijd.substring(POSITIE_EINDE_MINUUT, POSITIE_EINDE_SECONDE);
+                + " "
+                + datumTijd.substring(MINIMUM_DATUM_LENGTE, POSITIE_EINDE_UUR)
+                + TIJD_SCHEIDINGSTEKEN
+                + datumTijd.substring(POSITIE_EINDE_UUR, POSITIE_EINDE_MINUUT)
+                + TIJD_SCHEIDINGSTEKEN
+                + datumTijd.substring(POSITIE_EINDE_MINUUT, POSITIE_EINDE_SECONDE);
     }
 
 }

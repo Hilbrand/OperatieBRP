@@ -18,8 +18,16 @@ import org.springframework.stereotype.Component;
 @Component
 public final class SessionVerzendendeInstantieDao implements VerzendendeInstantieDao {
 
-    @Inject
     private SessionFactory sessionFactory;
+
+    /**
+     * Default constructor.
+     * @param sessionFactory De meegegevens session factory
+     */
+    @Inject
+    public SessionVerzendendeInstantieDao(final SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public Long bepaalVerzendendeInstantie(final long instantiecode) {

@@ -20,11 +20,8 @@ public abstract class AbstractComponentTest {
 
     /**
      * Valideert of de lo3String gelijk is aan de brpString.
-     * 
-     * @param lo3String
-     *            LO3 string
-     * @param brpString
-     *            BRP string
+     * @param lo3String LO3 string
+     * @param brpString BRP string
      */
     public boolean assertLo3BrpEquals(final Lo3String lo3String, final BrpString brpString) {
         boolean result = true;
@@ -45,11 +42,8 @@ public abstract class AbstractComponentTest {
 
     /**
      * Valideert of de lo3Character gelijk is aan de brpCharacter.
-     * 
-     * @param lo3Character
-     *            LO3 character
-     * @param brpCharacter
-     *            BRP character
+     * @param lo3Character LO3 character
+     * @param brpCharacter BRP character
      */
     public boolean assertLo3BrpEquals(final Lo3Character lo3Character, final BrpCharacter brpCharacter) {
         boolean result = true;

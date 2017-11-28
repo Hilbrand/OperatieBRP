@@ -11,32 +11,30 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpVerblijfsrechtCode;
-
 import org.junit.Test;
 
 /**
  * Test het contract van BrpVerblijfsrechtInhoud.
- *
  */
 public class BrpVerblijfsrechtInhoudTest {
 
     private final BrpVerblijfsrechtInhoud inhoud1 = new BrpVerblijfsrechtInhoud(
-        new BrpVerblijfsrechtCode((short) 12),
-        new BrpDatum(20000101, null),
-        new BrpDatum(20000802, null),
+            new BrpVerblijfsrechtCode("12"),
+            new BrpDatum(20000101, null),
+            new BrpDatum(20000802, null),
             new BrpDatum(20000802, null));
-    private final BrpVerblijfsrechtInhoud inhoud2GelijkAan1 = new BrpVerblijfsrechtInhoud(new BrpVerblijfsrechtCode((short) 12), new BrpDatum(
-        20000101,
-        null), new BrpDatum(20000802, null),new BrpDatum(20000802, null));
+    private final BrpVerblijfsrechtInhoud inhoud2GelijkAan1 = new BrpVerblijfsrechtInhoud(new BrpVerblijfsrechtCode("12"), new BrpDatum(
+            20000101,
+            null), new BrpDatum(20000802, null), new BrpDatum(20000802, null));
 
     public static BrpVerblijfsrechtInhoud createInhoud() {
-        return new BrpVerblijfsrechtInhoud(new BrpVerblijfsrechtCode((short) 12), new BrpDatum(20000101, null), new BrpDatum(20000802, null),new BrpDatum(20000802, null));
+        return new BrpVerblijfsrechtInhoud(new BrpVerblijfsrechtCode("12"), new BrpDatum(20000101, null), new BrpDatum(20000802, null),
+                new BrpDatum(20000802, null));
     }
 
     public static BrpStapel<BrpVerblijfsrechtInhoud> createStapel() {

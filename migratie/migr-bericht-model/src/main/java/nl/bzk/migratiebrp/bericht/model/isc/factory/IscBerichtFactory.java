@@ -8,6 +8,9 @@ package nl.bzk.migratiebrp.bericht.model.isc.factory;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.BerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.isc.IscBericht;
 import nl.bzk.migratiebrp.bericht.model.isc.generated.Uc811Type;
@@ -16,8 +19,6 @@ import nl.bzk.migratiebrp.bericht.model.isc.impl.OngeldigBericht;
 import nl.bzk.migratiebrp.bericht.model.isc.impl.Uc811Bericht;
 import nl.bzk.migratiebrp.bericht.model.isc.impl.Uc812Bericht;
 import nl.bzk.migratiebrp.bericht.model.isc.xml.IscXml;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * ISC Bericht factory.
@@ -48,9 +49,7 @@ public enum IscBerichtFactory implements BerichtFactory {
 
     /**
      * Maakt het bericht op basis van de meegegeven value (representatie van het bericht).
-     *
-     * @param value
-     *            De meegegeven value.
+     * @param value De meegegeven value.
      * @return Het bericht.
      */
     private IscBericht maakBericht(final Object value) {

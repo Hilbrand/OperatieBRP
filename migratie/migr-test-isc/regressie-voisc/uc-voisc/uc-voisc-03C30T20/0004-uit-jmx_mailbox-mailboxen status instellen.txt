@@ -1,4 +1,4 @@
 nl.bzk.migratiebrp.mailbox:name=MAILBOX
 setMailboxStatus
-3000200
+3000210
 1

@@ -7,6 +7,9 @@
 package nl.bzk.migratiebrp.test.lo3naarbrp;
 
 import java.io.File;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.LoggingContext;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -16,9 +19,6 @@ import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
 import nl.bzk.migratiebrp.test.dal.AbstractConversieTestCasus;
 import nl.bzk.migratiebrp.test.dal.TestCasusOutputStap;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.LoggingContext;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -32,25 +32,18 @@ public final class Lo3NaarBrpConversieTestCasus extends AbstractConversieTestCas
 
     /**
      * Constructor.
-     *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
-     * @param outputFolder
-     *            output folder
-     * @param expectedFolder
-     *            expected folder
-     * @param lo3Lg01BerichtWaarde
-     *            lo3 bericht waarden
+     * @param thema thema
+     * @param naam naam
+     * @param outputFolder output folder
+     * @param expectedFolder expected folder
+     * @param lo3Lg01BerichtWaarde lo3 bericht waarden
      */
     protected Lo3NaarBrpConversieTestCasus(
-        final String thema,
-        final String naam,
-        final File outputFolder,
-        final File expectedFolder,
-        final Lo3Lg01BerichtWaarde lo3Lg01BerichtWaarde)
-    {
+            final String thema,
+            final String naam,
+            final File outputFolder,
+            final File expectedFolder,
+            final Lo3Lg01BerichtWaarde lo3Lg01BerichtWaarde) {
         super(thema, naam, outputFolder, expectedFolder);
         this.lo3Lg01BerichtWaarde = lo3Lg01BerichtWaarde;
         lse = null;
@@ -58,25 +51,18 @@ public final class Lo3NaarBrpConversieTestCasus extends AbstractConversieTestCas
 
     /**
      * Constructor.
-     *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
-     * @param outputFolder
-     *            output folder
-     * @param expectedFolder
-     *            expected folder
-     * @param lse
-     *            de syntax exception die kan optreden bij het inlezen van de PL
+     * @param thema thema
+     * @param naam naam
+     * @param outputFolder output folder
+     * @param expectedFolder expected folder
+     * @param lse de syntax exception die kan optreden bij het inlezen van de PL
      */
     protected Lo3NaarBrpConversieTestCasus(
-        final String thema,
-        final String naam,
-        final File outputFolder,
-        final File expectedFolder,
-        final Lo3SyntaxException lse)
-    {
+            final String thema,
+            final String naam,
+            final File outputFolder,
+            final File expectedFolder,
+            final Lo3SyntaxException lse) {
         super(thema, naam, outputFolder, expectedFolder);
         lo3Lg01BerichtWaarde = null;
         this.lse = lse;
@@ -98,7 +84,6 @@ public final class Lo3NaarBrpConversieTestCasus extends AbstractConversieTestCas
      * stap {@link TestCasusOutputStap#STAP_SYNTAX_PRECONDITIES}.<br>
      * Als uit de controle op syntax en precondities een dummy persoonslijst komt, dan wordt deze alleen naar BRP
      * geconverteerd en opgeslagen in de database.
-     *
      * @return {@link TestResultaat} met daarin de resultaat van deze testrun.
      */
     @Override
@@ -110,35 +95,7 @@ public final class Lo3NaarBrpConversieTestCasus extends AbstractConversieTestCas
             if (lse != null) {
                 throw lse;
             } else {
-                final String htmlBron = initializeerLogging(lo3Lg01BerichtWaarde.getLo3CategorieWaardeList());
-                result.setBron(htmlBron);
-
-                final Logging logging = Logging.getLogging();
-                try {
-                    // Test syntax en precondities
-                    final Pair<Lo3Persoonslijst, TestStap> syntaxPreResult = testSyntaxPrecondities(lo3Lg01BerichtWaarde.getLo3CategorieWaardeList());
-                    final Lo3Persoonslijst checkedPl = syntaxPreResult.getLeft();
-                    result.setSyntaxPrecondities(syntaxPreResult.getRight());
-
-                    if (checkedPl != null) {
-                        // Test en valideer conversie van lo3 naar brp
-                        final Pair<BrpPersoonslijst, TestStap> lo3NaarBrpConversieResult = testLo3NaarBrp(checkedPl);
-                        final BrpPersoonslijst brp = lo3NaarBrpConversieResult.getLeft();
-                        result.setLo3NaarBrp(lo3NaarBrpConversieResult.getRight());
-
-                        // Test rondverteer
-                        final Pair<TestStap, TestStap> rondVerteerStap = testTerugconversie(brp, checkedPl, TestCasusOutputStap.STAP_ROND, null);
-
-                        result.setRondverteer(rondVerteerStap.getLeft());
-                        result.setRondverteerVerschilAnalyse(rondVerteerStap.getRight());
-
-                        opslaanLezenTerugConversieBrp(result, lo3Lg01BerichtWaarde, checkedPl, brp);
-                    }
-                } finally {
-                    result.setConversieLog(controleerLogging(logging));
-                    LoggingContext.reset();
-                    Logging.destroyContext();
-                }
+                verwerkTestgeval(result);
             }
             // Alle exception worden hier opgevangen en netjes getoond aan de gebruiker ipv dat de tests crashed
         } catch (final Lo3SyntaxException e) {
@@ -151,5 +108,37 @@ public final class Lo3NaarBrpConversieTestCasus extends AbstractConversieTestCas
         LOG.info("Testcase {} took {} seconds", getNaam(), duration);
 
         return result;
+    }
+
+    private void verwerkTestgeval(final Lo3NaarBrpConversieTestResultaat result) {
+        final String htmlBron = initializeerLogging(lo3Lg01BerichtWaarde.getLo3CategorieWaardeList());
+        result.setBron(htmlBron);
+
+        final Logging logging = Logging.getLogging();
+        try {
+            // Test syntax en precondities
+            final Pair<Lo3Persoonslijst, TestStap> syntaxPreResult = testSyntaxPrecondities(lo3Lg01BerichtWaarde.getLo3CategorieWaardeList());
+            final Lo3Persoonslijst checkedPl = syntaxPreResult.getLeft();
+            result.setSyntaxPrecondities(syntaxPreResult.getRight());
+
+            if (checkedPl != null) {
+                // Test en valideer conversie van lo3 naar brp
+                final Pair<BrpPersoonslijst, TestStap> lo3NaarBrpConversieResult = testLo3NaarBrp(checkedPl);
+                final BrpPersoonslijst brp = lo3NaarBrpConversieResult.getLeft();
+                result.setLo3NaarBrp(lo3NaarBrpConversieResult.getRight());
+
+                // Test rondverteer
+                final Pair<TestStap, TestStap> rondVerteerStap = testTerugconversie(brp, checkedPl, TestCasusOutputStap.STAP_ROND, null);
+
+                result.setRondverteer(rondVerteerStap.getLeft());
+                result.setRondverteerVerschilAnalyse(rondVerteerStap.getRight());
+
+                opslaanLezenTerugConversieBrp(result, lo3Lg01BerichtWaarde, checkedPl, brp);
+            }
+        } finally {
+            result.setConversieLog(controleerLogging(logging));
+            LoggingContext.reset();
+            Logging.destroyContext();
+        }
     }
 }

@@ -12,11 +12,12 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * SSH Kanaal.
@@ -66,7 +67,7 @@ public final class SshExecKanaal extends AbstractSchKanaal implements Kanaal {
                 break;
             }
             try {
-                Thread.sleep(SLEEP_TIMEOUT);
+                TimeUnit.MILLISECONDS.sleep(SLEEP_TIMEOUT);
             } catch (final InterruptedException e) {
                 LOG.info("Ignoring interrupt ...");
                 // Ignore

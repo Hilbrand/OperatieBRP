@@ -15,27 +15,18 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakZoekPersoonBinnenGemeenteActionTest {
 
-    private MaakZoekPersoonBinnenGemeenteAction subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new MaakZoekPersoonBinnenGemeenteAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakZoekPersoonBinnenGemeenteAction subject = new MaakZoekPersoonBinnenGemeenteAction(berichtenDao);
 
     @Test
     public void test() {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("1234");
-        ii01Bericht.setDoelGemeente("5678");
+        ii01Bericht.setBronPartijCode("1234");
+        ii01Bericht.setDoelPartijCode("5678");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.BURGERSERVICENUMMER, "1234567891");
 
         final Map<String, Object> parameters = new HashMap<>();

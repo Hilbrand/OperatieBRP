@@ -15,12 +15,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.MaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.util.PersistenceUtil;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.MaterieleHistorie;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 
 /**
@@ -40,10 +38,9 @@ public final class ActieConsolidatieData implements ConsolidatieData {
     }
 
     private ActieConsolidatieData(
-        final Map<BRPActie, Set<BRPActie>> nieuweActieOudeActieMap,
-        final Map<BRPActie, Set<FormeleHistorie>> actieVoorkomenMap,
-        final Map<FormeleHistorie, DeltaStapelMatch> voorkomenStapelMap)
-    {
+            final Map<BRPActie, Set<BRPActie>> nieuweActieOudeActieMap,
+            final Map<BRPActie, Set<FormeleHistorie>> actieVoorkomenMap,
+            final Map<FormeleHistorie, DeltaStapelMatch> voorkomenStapelMap) {
         this.nieuweActieOudeActieMap = nieuweActieOudeActieMap;
         this.actieVoorkomenMap = actieVoorkomenMap;
         this.voorkomenStapelMap = voorkomenStapelMap;
@@ -82,7 +79,7 @@ public final class ActieConsolidatieData implements ConsolidatieData {
         final Map<BRPActie, Set<BRPActie>> aangepasteNieuweActieOudeActieMap = kopieer(nieuweActieOudeActieMap);
         // verwijder alle acties die alleen in m-rijen voorkomen
         for (final Set<BRPActie> brpActies : aangepasteNieuweActieOudeActieMap.values()) {
-            for (final Iterator<BRPActie> actieIterator = brpActies.iterator(); actieIterator.hasNext();) {
+            for (final Iterator<BRPActie> actieIterator = brpActies.iterator(); actieIterator.hasNext(); ) {
                 final BRPActie actie = actieIterator.next();
                 if (mRijen.containsAll(actieVoorkomenMap.get(actie)) && !bevatNieuweWaarde(actie, nieuweRijAanpassingen)) {
                     actieIterator.remove();
@@ -108,21 +105,25 @@ public final class ActieConsolidatieData implements ConsolidatieData {
     public ConsolidatieData verwijderCat07Cat13Acties() {
         final Map<BRPActie, Set<BRPActie>> aangepasteNieuweActieOudeActieMap = kopieer(nieuweActieOudeActieMap);
 
-        for (final Iterator<Map.Entry<BRPActie, Set<BRPActie>>> mapIterator = aangepasteNieuweActieOudeActieMap.entrySet().iterator(); mapIterator.hasNext();)
-        {
+        for (final Iterator<Map.Entry<BRPActie, Set<BRPActie>>> mapIterator =
+             aangepasteNieuweActieOudeActieMap.entrySet().iterator(); mapIterator.hasNext(); ) {
             final Map.Entry<BRPActie, Set<BRPActie>> entry = mapIterator.next();
             if (entry.getKey().isCat07Of13Actie()) {
                 mapIterator.remove();
             } else {
-                for (final Iterator<BRPActie> setIterator = entry.getValue().iterator(); setIterator.hasNext();) {
-                    final BRPActie actie = setIterator.next();
-                    if (actie.isCat07Of13Actie()) {
-                        setIterator.remove();
-                    }
-                }
+                filterCat07Of13Actie(entry);
             }
         }
         return new ActieConsolidatieData(aangepasteNieuweActieOudeActieMap, actieVoorkomenMap, voorkomenStapelMap);
+    }
+
+    private void filterCat07Of13Actie(final Map.Entry<BRPActie, Set<BRPActie>> entry) {
+        for (final Iterator<BRPActie> setIterator = entry.getValue().iterator(); setIterator.hasNext(); ) {
+            final BRPActie actie = setIterator.next();
+            if (actie.isCat07Of13Actie()) {
+                setIterator.remove();
+            }
+        }
     }
 
     @Override
@@ -143,15 +144,19 @@ public final class ActieConsolidatieData implements ConsolidatieData {
         for (final BRPActie actie : acties) {
             final Set<FormeleHistorie> histories = actieVoorkomenMap.get(actie);
             if (histories != null) {
-                for (final FormeleHistorie historie : histories) {
-                    final DeltaStapelMatch deltaStapelMatch = voorkomenStapelMap.get(historie);
-                    if (!teVervangenStapels.contains(deltaStapelMatch)) {
-                        teVervangenStapels.add(deltaStapelMatch);
-                        // Zoek de acties in het bestaande historie en verzamel de stapels waar de acties ook in voor
-                        // komen.
-                        verzamelTeVervangenStapels(teVervangenStapels, verzamelActies(deltaStapelMatch, actie));
-                    }
-                }
+                verwerkHistories(teVervangenStapels, actie, histories);
+            }
+        }
+    }
+
+    private void verwerkHistories(final Set<DeltaStapelMatch> teVervangenStapels, final BRPActie actie, final Set<FormeleHistorie> histories) {
+        for (final FormeleHistorie historie : histories) {
+            final DeltaStapelMatch deltaStapelMatch = voorkomenStapelMap.get(historie);
+            if (!teVervangenStapels.contains(deltaStapelMatch)) {
+                teVervangenStapels.add(deltaStapelMatch);
+                // Zoek de acties in het bestaande historie en verzamel de stapels waar de acties ook in voor
+                // komen.
+                verzamelTeVervangenStapels(teVervangenStapels, verzamelActies(deltaStapelMatch, actie));
             }
         }
     }
@@ -185,12 +190,12 @@ public final class ActieConsolidatieData implements ConsolidatieData {
     }
 
     private <T> T getPojoFromObject(final T object) {
-        return PersistenceUtil.getPojoFromObject(object);
+        return Entiteit.convertToPojo(object);
     }
 
     private Set<DeltaStapelMatch> convertObjectInDeltaStapelMatchSetToPojo(final Set<DeltaStapelMatch> deltaStapelMatches) {
         final Set<DeltaStapelMatch> results = new HashSet<>(deltaStapelMatches.size());
-        for (DeltaStapelMatch deltaStapelMatch : deltaStapelMatches) {
+        for (final DeltaStapelMatch deltaStapelMatch : deltaStapelMatches) {
             results.add(convertObjectInDeltaStapelMatchToPojo(deltaStapelMatch));
         }
         return results;
@@ -199,13 +204,13 @@ public final class ActieConsolidatieData implements ConsolidatieData {
     private DeltaStapelMatch convertObjectInDeltaStapelMatchToPojo(final DeltaStapelMatch deltaStapelMatchParam) {
         final Collection<FormeleHistorie> opgeslagenRijen = convertObjectInCollectionToPojo(deltaStapelMatchParam.getOpgeslagenRijen());
         final Collection<FormeleHistorie> nieuweRijen = convertObjectInCollectionToPojo(deltaStapelMatchParam.getNieuweRijen());
-        final DeltaEntiteit eigenaarDeltaEntiteit = getPojoFromObject(deltaStapelMatchParam.getEigenaarDeltaEntiteit());
+        final Entiteit eigenaarDeltaEntiteit = getPojoFromObject(deltaStapelMatchParam.getEigenaarDeltaEntiteit());
         return new DeltaStapelMatch(
-            opgeslagenRijen,
-            nieuweRijen,
-            eigenaarDeltaEntiteit,
-            deltaStapelMatchParam.getEigenaarSleutel(),
-            deltaStapelMatchParam.getEigenaarVeld());
+                opgeslagenRijen,
+                nieuweRijen,
+                eigenaarDeltaEntiteit,
+                deltaStapelMatchParam.getEigenaarSleutel(),
+                deltaStapelMatchParam.getEigenaarVeld());
     }
 
     private <T> Collection<T> convertObjectInCollectionToPojo(final Collection<T> objecten) {

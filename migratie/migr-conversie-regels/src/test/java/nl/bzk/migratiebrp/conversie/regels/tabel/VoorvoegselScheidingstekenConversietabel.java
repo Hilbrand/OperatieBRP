@@ -14,7 +14,9 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 
 public class VoorvoegselScheidingstekenConversietabel implements Conversietabel<Lo3String, VoorvoegselScheidingstekenPaar> {
 
-    /** Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk). */
+    /**
+     * Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk).
+     */
     public static final String LO3_NIET_VALIDE_UITZONDERING = "qqq";
 
     @Override

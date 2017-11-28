@@ -8,17 +8,17 @@ package nl.bzk.migratiebrp.isc.jbpm.uc301;
 
 import java.util.Map;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ii01Bericht;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Gemeente;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegister;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
 import nl.bzk.migratiebrp.bericht.model.sync.register.Stelsel;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringDecision;
-import nl.bzk.migratiebrp.register.client.GemeenteService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.register.client.PartijService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,11 +32,19 @@ public final class ControleerIi01Decision implements SpringDecision {
     private static final String FOUT_BIJHOUDER_NIET_CORRECT = "2b. fout (nieuwe bijhouder is BRP)";
     private static final String FOUT_VERVOLG_PAD_ZOEKCRITERIA_FOUT = "2c. fout (zoekcriteria voldoen niet aan eisen)";
 
-    @Inject
-    private BerichtenDao berichtenDao;
+    private final BerichtenDao berichtenDao;
+    private final PartijService partijRegisterService;
 
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     * @param partijRegisterService partij register service
+     */
     @Inject
-    private GemeenteService gemeenteRegisterService;
+    public ControleerIi01Decision(final BerichtenDao berichtenDao, final PartijService partijRegisterService) {
+        this.berichtenDao = berichtenDao;
+        this.partijRegisterService = partijRegisterService;
+    }
 
     @Override
     public String execute(final Map<String, Object> parameters) {
@@ -44,15 +52,15 @@ public final class ControleerIi01Decision implements SpringDecision {
 
         final Ii01Bericht ii01Bericht = (Ii01Bericht) berichtenDao.leesBericht((Long) parameters.get("input"));
 
-        final GemeenteRegister gemeenteRegister = gemeenteRegisterService.geefRegister();
-        final Gemeente bron = gemeenteRegister.zoekGemeenteOpGemeenteCode(ii01Bericht.getBronGemeente());
-        final Gemeente doel = gemeenteRegister.zoekGemeenteOpGemeenteCode(ii01Bericht.getDoelGemeente());
+        final PartijRegister partijRegister = partijRegisterService.geefRegister();
+        final Partij bron = partijRegister.zoekPartijOpPartijCode(ii01Bericht.getBronPartijCode());
+        final Partij doel = partijRegister.zoekPartijOpPartijCode(ii01Bericht.getDoelPartijCode());
 
         final String result;
-        if (bron == null || bron.getStelsel() != Stelsel.GBA) {
+        if (bron == null || !bron.isBijhouder() || bron.getStelsel() != Stelsel.GBA) {
             LOG.info("Bron gemeente valt niet in het GBA stelsel.");
             result = FOUT_BIJHOUDER_NIET_CORRECT;
-        } else if (doel == null || doel.getStelsel() != Stelsel.BRP) {
+        } else if (doel == null || !doel.isBijhouder() || doel.getStelsel() != Stelsel.BRP) {
             LOG.info("Doel gemeente valt niet in het BRP stelsel.");
             result = FOUT_BIJHOUDER_NIET_CORRECT;
         } else if (!zoekCriteriaOk(ii01Bericht)) {

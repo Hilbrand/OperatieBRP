@@ -1,10 +1,8 @@
 Oplevering ISC
 
 Component ISC:
-bin\migr-init-naarisc.zip
 bin\migr-isc-console-webapp.war
 bin\migr-isc-runtime.zip
-sql\naarisc\*.sql
 sql\isc\*.sql
 
 Component Routering:

@@ -21,8 +21,7 @@ public final class BrpXml extends AbstractXml {
      */
     public static final BrpXml SINGLETON = new BrpXml();
 
-    private static final String BRP_XSD_PATH = "/xsd/brp/";
-    private static final String MIGRATIE_XSD_PATH = "/xsd/";
+    private static final String BRP_XSD_PATH = "/xsd/BRP0200/";
 
     /**
      * Constructor.
@@ -42,19 +41,14 @@ public final class BrpXml extends AbstractXml {
     public static final class LocalLSResourceResolver implements LSResourceResolver {
         @Override
         public LSInput resolveResource(final String type, final String namespaceURI, final String publicId, final String systemId, final String baseURI) {
-            InputStream resourceAsStream = getClass().getResourceAsStream(MIGRATIE_XSD_PATH + systemId);
+            InputStream resourceAsStream = getClass().getResourceAsStream("/" + systemId);
 
             if (resourceAsStream == null) {
                 resourceAsStream = getClass().getResourceAsStream(BRP_XSD_PATH + systemId);
             }
-
-            // if (resourceAsStream == null) {
-            // // Deze case is nodig voor hoe BRP verwijst naar de STUF xsd's (met relatieve paden)
-            // final int lastIndex = systemId.lastIndexOf('/');
-            // if (lastIndex > 0) {
-            // return resolveResource(type, namespaceURI, publicId, systemId.substring(lastIndex + 1), baseURI);
-            // }
-            // }
+            if (resourceAsStream == null) {
+                throw new IllegalArgumentException("Kan XSD resource '" + systemId + "' niet vinden.");
+            }
 
             return new SimpleLSInput(publicId, systemId, resourceAsStream);
         }

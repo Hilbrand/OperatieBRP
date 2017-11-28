@@ -9,9 +9,11 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.isc;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
+
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
@@ -38,19 +40,19 @@ public class DeleteProcessenKanaal extends LazyLoadingKanaal {
     public static final class Worker extends AbstractKanaal {
 
         private static final String[] VERWIJDER_PROCESSEN_STATEMENTS = {"truncate jbpm_taskinstance cascade",
-                                                                        "truncate jbpm_variableinstance cascade",
-                                                                        "truncate jbpm_processinstance cascade",
-                                                                        "truncate jbpm_log cascade",
-                                                                        "truncate jbpm_job cascade",
-                                                                        "truncate jbpm_moduleinstance cascade",
-                                                                        "truncate jbpm_tokenvariablemap cascade",
-                                                                        "truncate jbpm_comment cascade",
-                                                                        "truncate jbpm_swimlaneinstance cascade",
-                                                                        "truncate jbpm_runtimeaction cascade",
-                                                                        "truncate jbpm_taskactorpool cascade",
-                                                                        "truncate mig_virtueel_proces cascade",
-                                                                        "truncate mig_telling_bericht cascade",
-                                                                        "truncate mig_telling_proces cascade", };
+                "truncate jbpm_variableinstance cascade",
+                "truncate jbpm_processinstance cascade",
+                "truncate jbpm_log cascade",
+                "truncate jbpm_job cascade",
+                "truncate jbpm_moduleinstance cascade",
+                "truncate jbpm_tokenvariablemap cascade",
+                "truncate jbpm_comment cascade",
+                "truncate jbpm_swimlaneinstance cascade",
+                "truncate jbpm_runtimeaction cascade",
+                "truncate jbpm_taskactorpool cascade",
+                "truncate mig_virtueel_proces cascade",
+                "truncate mig_telling_bericht cascade",
+                "truncate mig_telling_proces cascade",};
 
         @Inject
         @Named("iscDataSource")
@@ -58,7 +60,7 @@ public class DeleteProcessenKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -74,9 +76,8 @@ public class DeleteProcessenKanaal extends LazyLoadingKanaal {
 
                 verwijderProcessen(connection);
             } catch (final
-                SQLException
-                | HerhaalException e)
-            {
+            SQLException
+                    | HerhaalException e) {
                 throw new KanaalException("Probleem bij verwijderen processen.", e);
             }
         }

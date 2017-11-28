@@ -8,12 +8,11 @@ package nl.bzk.migratiebrp.conversie.regels.expressie.impl;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
@@ -21,10 +20,7 @@ import nl.bzk.migratiebrp.conversie.regels.expressie.ConverteerNaarExpressieServ
 import nl.bzk.migratiebrp.conversie.regels.expressie.Lo3VoorwaardeRegelOnvertaalbaarExceptie;
 import nl.bzk.migratiebrp.conversie.regels.expressie.mapping.RubriekMapping;
 import nl.bzk.migratiebrp.conversie.regels.expressie.mapping.RubriekMapping.Expressie;
-import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3.Foutmelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 import org.springframework.stereotype.Service;
 
 /**
@@ -37,36 +33,50 @@ public final class ConverteerNaarExpressieServiceImpl implements ConverteerNaarE
     private static final String EXCEPTIE_MESSAGE_END_MARKER = "]]";
     private static final String SLEUTEL_EXPRESSIE = "GEWIJZIGD(oud, nieuw, [%s])";
     private static final String SLEUTEL_EXPRESSIE_FUNCTIE = "GEWIJZIGD(%s, %s)";
-    private static final String SLEUTEL_EXPRESSIE_PARENT_LIJST = "GEWIJZIGD(oud, nieuw, [%s], [%s])";
+    private static final String SLEUTEL_EXPRESSIE_PARENT_LIJST = "GEWIJZIGD(oud, nieuw, [%s.%s])";
     private static final String SLEUTEL_EXPRESSIE_PARENT_FUNCTIE = "GEWIJZIGD(%s, %s, [%s])";
     private static final Logger LOG = LoggerFactory.getLogger();
     private static final String ENKELE_SPATIE = " ";
     private static final String DUBBELE_SPATIE = "  ";
 
-    private static final List<String> SPATIE_PATTERNS = Arrays.asList(
-        "(ENVWD)",
-        "(OFVWD)",
-        "(ENVGL)",
-        "(OFVGL)",
-        "(?<![\\(])(KV)",
-        "(?<![\\(])(KNV)",
-        "(?<!O)(GA1)",
-        "(?<!O)(GAA)",
-        "(OGA1)",
-        "(OGAA)",
-        "(GD1)",
-        "(GDA)",
-        "(KD1)",
-        "(KDA)",
-        "(GDOG1)",
-        "(GDOGA)",
-        "(KDOG1)",
-        "(KDOGA)",
-        "([\\-])",
-        "([\\+])");
+    private static final List<String> SPATIE_PATTERNS =
+            Arrays.asList(
+                    "(ENVWD)",
+                    "(OFVWD)",
+                    "(ENVGL)",
+                    "(OFVGL)",
+                    "(?<![\\(])(KV)",
+                    "(?<![\\(])(KNV)",
+                    "(?<!O)(GA1)",
+                    "(?<!O)(GAA)",
+                    "(OGA1)",
+                    "(OGAA)",
+                    "(GD1)",
+                    "(GDA)",
+                    "(KD1)",
+                    "(KDA)",
+                    "(GDOG1)",
+                    "(GDOGA)",
+                    "(KDOG1)",
+                    "(KDOGA)",
+                    "([\\-])",
+                    "([\\+])");
+    private static final String END_PARENTHESIS = ")";
+    private static final String REGEX_ADELLIJKE_TITEL_OF_PREDICAAT = "^(01|02|03|05|09|51|52|53|55|59)\\.02\\.20.*";
+    private static final String OF = " OF ";
+    private static final int INDEX_ADELLIJKE_TITEL = 0;
+    private static final int INDEX_PREDIKAAT = 1;
 
+    private final GbaVoorwaardeRegelFactory gbaVoorwaardeRegelFactory;
+
+    /**
+     * Constructor.
+     * @param gbaVoorwaardeRegelFactory factory voor voorwaarde regels
+     */
     @Inject
-    private GbaVoorwaardeRegelFactory gbaVoorwaardeRegelFactory;
+    public ConverteerNaarExpressieServiceImpl(final GbaVoorwaardeRegelFactory gbaVoorwaardeRegelFactory) {
+        this.gbaVoorwaardeRegelFactory = gbaVoorwaardeRegelFactory;
+    }
 
     @Override
     public String converteerSleutelRubrieken(final String autorisatieRubrieken, final Lo3Herkomst herkomst) {
@@ -97,11 +107,14 @@ public final class ConverteerNaarExpressieServiceImpl implements ConverteerNaarE
 
         if (lo3Rubriek != null && !"".equals(lo3Rubriek)) {
             final List<Expressie> brpExpressies = RubriekMapping.getExpressiesVoorRubriek(lo3Rubriek);
-            if (brpExpressies != null) {
+            if (brpExpressies != null && !lo3Rubriek.matches(REGEX_ADELLIJKE_TITEL_OF_PREDICAAT)) {
                 for (final Expressie brpExpressie : brpExpressies) {
                     wrapAndAppend(attenderingsCriterium, brpExpressie);
                     result = true;
                 }
+            } else if (brpExpressies != null && lo3Rubriek.matches(REGEX_ADELLIJKE_TITEL_OF_PREDICAAT)) {
+                maakAdellijkeTitelOfPredicaatAttenderingsCriterium(attenderingsCriterium, brpExpressies);
+
             } else {
                 LOG.warn("Er kan geen expressie gevonden worden voor sleutelrubriek  {}", lo3Rubriek);
                 result = false;
@@ -111,27 +124,53 @@ public final class ConverteerNaarExpressieServiceImpl implements ConverteerNaarE
         return result;
     }
 
-    private void wrapAndAppend(final StringBuilder attenderingsCriterium, final Expressie brpExpressie) {
+    private void maakAdellijkeTitelOfPredicaatAttenderingsCriterium(StringBuilder attenderingsCriterium, List<Expressie> brpExpressies) {
+        // gewijzigd adellijke titel OF gewijzigd predicaat OF (gewijzigd geslacht en (kv adellijke titel OF kv predicaat))
+        plaatsOfIndienNodig(attenderingsCriterium);
+        attenderingsCriterium.append(String.format(SLEUTEL_EXPRESSIE, brpExpressies.get(INDEX_ADELLIJKE_TITEL).getExpressie()));
+        attenderingsCriterium.append(OF);
+        attenderingsCriterium.append(String.format(SLEUTEL_EXPRESSIE, brpExpressies.get(INDEX_PREDIKAAT).getExpressie()));
+    }
+
+    private void plaatsOfIndienNodig(final StringBuilder attenderingsCriterium) {
         if (attenderingsCriterium.length() > 0) {
-            attenderingsCriterium.append(" OF ");
+            attenderingsCriterium.append(OF);
         }
+    }
+
+    private void wrapAndAppend(final StringBuilder attenderingsCriterium, final Expressie brpExpressie) {
+        plaatsOfIndienNodig(attenderingsCriterium);
 
         if (brpExpressie.getParent() == null) {
-            if (brpExpressie.getExpressie().endsWith(")")) {
-                // Expressie is functie (bv ALS(x,y,z))
-                final int indexHaakjeOpenen = brpExpressie.getExpressie().indexOf('(') + 1;
-                final String functieStart = brpExpressie.getExpressie().substring(0, indexHaakjeOpenen);
-                final String functieParametersEnd = brpExpressie.getExpressie().substring(indexHaakjeOpenen);
+            if (brpExpressie.getExpressie().endsWith(END_PARENTHESIS)) {
+                final String oud;
+                final String nieuw;
+                if (!brpExpressie.getExpressie().contains("FILTER") && !brpExpressie.getExpressie().contains("ACTIE")) {
+                    // Expressie is functie (bv ALS(x,y,z))
+                    final int indexHaakjeOpenen = brpExpressie.getExpressie().indexOf('(') + 1;
+                    final String functieStart = brpExpressie.getExpressie().substring(0, indexHaakjeOpenen);
+                    final String functieParametersEnd = brpExpressie.getExpressie().substring(indexHaakjeOpenen);
 
-                final String oud = functieStart + functieParametersEnd.replaceAll("(^|,)(?!NULL)", "$1oud.");
-                final String nieuw = functieStart + functieParametersEnd.replaceAll("(^|,)(?!NULL)", "$1nieuw.");
-
+                    final String regex = "(^|, )(?!\\{})";
+                    oud = functieStart + functieParametersEnd.replaceAll(regex, "$1oud.");
+                    nieuw = functieStart + functieParametersEnd.replaceAll(regex, "$1nieuw.");
+                } else if (brpExpressie.getExpressie().contains("ACTIE")) {
+                    // Expressie is actie functie (bv ACTIE(veld, object))
+                    final int indexHaakjeOpenen = brpExpressie.getExpressie().indexOf('(') + 1;
+                    final String functieStart = brpExpressie.getExpressie().substring(0, indexHaakjeOpenen);
+                    final String functieParametersEnd = brpExpressie.getExpressie().substring(indexHaakjeOpenen);
+                    oud = functieStart + "oud." + functieParametersEnd;
+                    nieuw = functieStart + "nieuw." + functieParametersEnd;
+                } else {
+                    oud = brpExpressie.getExpressie().replace("FILTER(", "FILTER(oud.");
+                    nieuw = brpExpressie.getExpressie().replace("FILTER(", "FILTER(nieuw.");
+                }
                 attenderingsCriterium.append(String.format(SLEUTEL_EXPRESSIE_FUNCTIE, oud, nieuw));
             } else {
                 attenderingsCriterium.append(String.format(SLEUTEL_EXPRESSIE, brpExpressie.getExpressie()));
             }
-        } else {
-            if (brpExpressie.getParent().endsWith(")")) {
+        } else if (!brpExpressie.getExpressie().contains("FILTER")) {
+            if (brpExpressie.getParent().endsWith(END_PARENTHESIS)) {
                 // Parent is functie (bv attribuut uit HUWELIJKEN())
                 final int indexHaakjeOpenen = brpExpressie.getParent().indexOf('(') + 1;
                 final String functieStart = brpExpressie.getParent().substring(0, indexHaakjeOpenen);
@@ -161,7 +200,8 @@ public final class ConverteerNaarExpressieServiceImpl implements ConverteerNaarE
 
     @Override
     public String converteerVoorwaardeRegel(final String lo3Voorwaarderegel) {
-        String brpExpressieResultaat = null;
+        String brpExpressieResultaat;
+        LOG.debug("Converteren Lo3 voorwaarderegel: {}", lo3Voorwaarderegel);
 
         if (lo3Voorwaarderegel != null && !"".equals(lo3Voorwaarderegel)) {
             final VoorwaardeRegelNaarEnkelvoudigeVoorwaarde naarEnkelvoudig =
@@ -169,36 +209,40 @@ public final class ConverteerNaarExpressieServiceImpl implements ConverteerNaarE
             brpExpressieResultaat = naarEnkelvoudig.getVoorwaardeRegel();
             final Map<String, String> gbaVoorwaarden = naarEnkelvoudig.getGbaVoorwaardeMap();
             boolean indicatieMislukt = false;
-            new HashMap<>();
 
             GbaVoorwaardeOnvertaalbaarExceptie oorzaak = null;
             for (final Map.Entry<String, String> gbaVoorwaarde : gbaVoorwaarden.entrySet()) {
                 try {
-                    final GbaVoorwaardeRegel regel = gbaVoorwaardeRegelFactory.maakGbaVoorwaardeRegel(gbaVoorwaarde.getValue());
+                    LOG.debug("Converteren enkelvoudige voorwaarde: {}", gbaVoorwaarde.getValue());
+                    final RubriekWaarde rubriekWaarde = new RubriekWaarde(gbaVoorwaarde.getValue());
+                    final GbaVoorwaardeRegel regel = gbaVoorwaardeRegelFactory.maakGbaVoorwaardeRegel(rubriekWaarde);
+                    LOG.debug("Regel: {}", regel);
                     brpExpressieResultaat =
-                            maakBrpExpressie(brpExpressieResultaat, gbaVoorwaarde.getKey(), regel.getBrpExpressie(gbaVoorwaarde.getValue()));
+                            maakBrpExpressie(brpExpressieResultaat, gbaVoorwaarde.getKey(), regel.getBrpExpressie(rubriekWaarde).getBrpExpressie());
                 } catch (final GbaVoorwaardeOnvertaalbaarExceptie gvoe) {
                     indicatieMislukt = true;
                     oorzaak = gvoe;
                     brpExpressieResultaat =
-                            maakBrpExpressie(brpExpressieResultaat, gbaVoorwaarde.getKey(), EXCEPTIE_MESSAGE_START_MARKER
-                                                                                            + gbaVoorwaarde.getValue()
-                                                                                            + EXCEPTIE_MESSAGE_END_MARKER);
+                            maakBrpExpressie(
+                                    brpExpressieResultaat,
+                                    gbaVoorwaarde.getKey(),
+                                    EXCEPTIE_MESSAGE_START_MARKER + gbaVoorwaarde.getValue() + EXCEPTIE_MESSAGE_END_MARKER);
                 } catch (final IllegalArgumentException e) {
                     indicatieMislukt = true;
-                    oorzaak = new GbaVoorwaardeOnvertaalbaarExceptie(e.getMessage());
+                    oorzaak = new GbaVoorwaardeOnvertaalbaarExceptie(e.getMessage(), e);
                     brpExpressieResultaat =
-                            maakBrpExpressie(brpExpressieResultaat, gbaVoorwaarde.getKey(), EXCEPTIE_MESSAGE_START_MARKER
-                                                                                            + gbaVoorwaarde.getValue()
-                                                                                            + EXCEPTIE_MESSAGE_END_MARKER);
+                            maakBrpExpressie(
+                                    brpExpressieResultaat,
+                                    gbaVoorwaarde.getKey(),
+                                    EXCEPTIE_MESSAGE_START_MARKER + gbaVoorwaarde.getValue() + EXCEPTIE_MESSAGE_END_MARKER);
                 }
             }
 
             if (indicatieMislukt) {
                 throw new Lo3VoorwaardeRegelOnvertaalbaarExceptie(
-                    String.format("Voorwaarderegel: [%s] is onvertaalbaar", lo3Voorwaarderegel),
-                    brpExpressieResultaat,
-                    oorzaak);
+                        String.format("Voorwaarderegel: [%s] is onvertaalbaar", lo3Voorwaarderegel),
+                        brpExpressieResultaat,
+                        oorzaak);
 
             }
         } else {
@@ -212,16 +256,16 @@ public final class ConverteerNaarExpressieServiceImpl implements ConverteerNaarE
 
     /**
      * Normaliseer de spaties in een voorwaarde regel.
-     *
-     * @param lo3VoorwaardeRegel
-     *            voorwaarde regel
+     * @param lo3VoorwaardeRegel voorwaarde regel
      * @return voorwaarde regel met genormaliseerde spaties
      */
     public static String normaliseerSpaties(final String lo3VoorwaardeRegel) {
         final TekstHelper tekstHelper = new TekstHelper(lo3VoorwaardeRegel);
         if (tekstHelper.getVeiligeRegel().indexOf('\"') > -1) {
-            throw new Lo3VoorwaardeRegelOnvertaalbaarExceptie(lo3VoorwaardeRegel, null, new IllegalArgumentException(
-                "Onsamenhangend aantal quotes om tekst aan te duiden"));
+            throw new Lo3VoorwaardeRegelOnvertaalbaarExceptie(
+                    lo3VoorwaardeRegel,
+                    null,
+                    new IllegalArgumentException("Onsamenhangend aantal quotes om tekst aan te duiden"));
         }
 
         String result = tekstHelper.getVeiligeRegel();
@@ -245,7 +289,7 @@ public final class ConverteerNaarExpressieServiceImpl implements ConverteerNaarE
 
     private String maakBrpExpressie(final String volledigeBrpExpressie, final String sleutel, final String brpExpressie) {
         final int start = volledigeBrpExpressie.indexOf(sleutel);
-        while (start > -1) {
+        if (start > -1) {
             final StringBuilder resultBuilder = new StringBuilder(volledigeBrpExpressie.substring(0, start));
             resultBuilder.append(brpExpressie);
             resultBuilder.append(volledigeBrpExpressie.substring(start + sleutel.length()));
@@ -253,5 +297,4 @@ public final class ConverteerNaarExpressieServiceImpl implements ConverteerNaarE
         }
         return volledigeBrpExpressie;
     }
-
 }

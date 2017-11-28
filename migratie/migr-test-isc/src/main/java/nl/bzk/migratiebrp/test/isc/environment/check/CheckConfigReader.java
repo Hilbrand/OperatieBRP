@@ -17,12 +17,9 @@ public interface CheckConfigReader {
 
     /**
      * Lees de configuratie.
-     *
-     * @param file
-     *            configuratie bestand
+     * @param file configuratie bestand
      * @return lijst van configuratie regels
-     * @throws IOException
-     *             bij lees fouten
+     * @throws IOException bij lees fouten
      */
     List<CheckConfig> readConfig(File file) throws IOException;
 }

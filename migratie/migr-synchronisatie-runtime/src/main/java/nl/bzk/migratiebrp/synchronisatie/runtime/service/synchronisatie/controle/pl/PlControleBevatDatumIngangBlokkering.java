@@ -11,12 +11,10 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-import org.springframework.stereotype.Component;
 
 /**
  * Controle dat de aangeboden persoonslijst een gevuld datum ingang blokkering PL bevat.
  */
-@Component(value = "plControleBevatDatumIngangBlokkering")
 public final class PlControleBevatDatumIngangBlokkering implements PlControle {
 
     @Override
@@ -36,10 +34,9 @@ public final class PlControleBevatDatumIngangBlokkering implements PlControle {
 
     private String bepaalDatumIngangBlokkering(final Lo3Persoonslijst lo3Persoonslijst) {
         if (lo3Persoonslijst != null
-            && lo3Persoonslijst.getInschrijvingStapel() != null
-            && lo3Persoonslijst.getInschrijvingStapel().getLo3ActueelVoorkomen().getInhoud() != null
-            && lo3Persoonslijst.getInschrijvingStapel().getLo3ActueelVoorkomen().getInhoud().getDatumIngangBlokkering() != null)
-        {
+                && lo3Persoonslijst.getInschrijvingStapel() != null
+                && lo3Persoonslijst.getInschrijvingStapel().getLo3ActueelVoorkomen().getInhoud() != null
+                && lo3Persoonslijst.getInschrijvingStapel().getLo3ActueelVoorkomen().getInhoud().getDatumIngangBlokkering() != null) {
             return lo3Persoonslijst.getInschrijvingStapel().getLo3ActueelVoorkomen().getInhoud().getDatumIngangBlokkering().getWaarde();
         }
         return null;

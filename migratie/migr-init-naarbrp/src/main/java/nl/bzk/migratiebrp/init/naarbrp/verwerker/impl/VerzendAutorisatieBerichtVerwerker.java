@@ -8,57 +8,45 @@ package nl.bzk.migratiebrp.init.naarbrp.verwerker.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBerichtType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.AutorisatieBericht;
 import nl.bzk.migratiebrp.init.naarbrp.domein.ConversieResultaat;
 import nl.bzk.migratiebrp.init.naarbrp.repository.AutorisatieRepository;
-import nl.bzk.migratiebrp.init.naarbrp.verwerker.AutorisatieBerichtVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.init.naarbrp.verwerker.BerichtVerwerker;
+import nl.bzk.migratiebrp.util.common.logging.InitieleVullingVeld;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.ProducerCallback;
 
 /**
  * Verstuurt AutorisatieBerichten.
  */
-public class VerzendAutorisatieBerichtVerwerker implements AutorisatieBerichtVerwerker {
+public class VerzendAutorisatieBerichtVerwerker implements BerichtVerwerker<AutorisatieBericht> {
 
+    private static final String BERICHTEN_ZIJN_AL_VERZONDEN = "Berichten zijn al verzonden";
     private static final Logger LOG = LoggerFactory.getLogger();
     private static final String MSG_ID_FORMAT = "%s-%s";
 
     private final AutorisatieRepository autorisatieRepository;
     private final List<AutorisatieBericht> autorisatieBerichten;
-    private final ConversieResultaat verwerktStatus;
     private final Destination destination;
     private final JmsTemplate jmsTemplate;
-    private boolean verzonden = false;
+    private final AtomicLong aantalVerzonden = new AtomicLong(0);
+    private boolean verzonden;
 
     /**
      * Constructor.
-     *
-     * @param destination
-     *            {@link Destination} queue waarop berichten geplaatst moeten worden.
-     * @param jmsTemplate
-     *            {@link JmsTemplate}
-     * @param autorisatieRepository
-     *            De AutorisatieRepository waaruit de autorisatie berichten moeten worden gelezen
-     * @param verwerktStatus
-     *            {@link ConversieResultaat} status die na afloop gezet moet worden.
+     * @param destination {@link Destination} queue waarop berichten geplaatst moeten worden.
+     * @param jmsTemplate {@link JmsTemplate}
+     * @param autorisatieRepository De AutorisatieRepository waaruit de autorisatie berichten moeten worden gelezen
      */
-    public VerzendAutorisatieBerichtVerwerker(
-        final Destination destination,
-        final JmsTemplate jmsTemplate,
-        final AutorisatieRepository autorisatieRepository,
-        final ConversieResultaat verwerktStatus)
-    {
+    public VerzendAutorisatieBerichtVerwerker(final Destination destination, final JmsTemplate jmsTemplate, final AutorisatieRepository autorisatieRepository) {
         autorisatieBerichten = new ArrayList<>();
-        this.verwerktStatus = verwerktStatus;
         this.destination = destination;
         this.jmsTemplate = jmsTemplate;
         this.autorisatieRepository = autorisatieRepository;
@@ -67,7 +55,7 @@ public class VerzendAutorisatieBerichtVerwerker implements AutorisatieBerichtVer
     @Override
     public final void voegBerichtToe(final AutorisatieBericht autorisatieBericht) {
         if (verzonden) {
-            throw new IllegalStateException("Berichten zijn al verzonden");
+            throw new IllegalStateException(BERICHTEN_ZIJN_AL_VERZONDEN);
         }
         autorisatieBerichten.add(autorisatieBericht);
     }
@@ -80,7 +68,7 @@ public class VerzendAutorisatieBerichtVerwerker implements AutorisatieBerichtVer
     @Override
     public final void verwerkBerichten() {
         if (verzonden) {
-            throw new IllegalStateException("Berichten zijn al verzonden");
+            throw new IllegalStateException(BERICHTEN_ZIJN_AL_VERZONDEN);
         }
         verzonden = true;
 
@@ -89,31 +77,37 @@ public class VerzendAutorisatieBerichtVerwerker implements AutorisatieBerichtVer
             LOG.info("Versturen berichten");
             verstuurAutorisatieBericht(autorisatieBerichten);
 
-            LOG.info("Update status naar {}", verwerktStatus);
-            final List<Integer> afnemerCodes = new ArrayList<>(autorisatieBerichten.size());
+            LOG.info("Update status naar verzonden");
+            final List<String> afnemerCodes = new ArrayList<>(autorisatieBerichten.size());
             for (final AutorisatieBericht autorisatieBericht : autorisatieBerichten) {
                 afnemerCodes.add(autorisatieBericht.getAutorisatie().getAfnemersindicatie());
             }
-            autorisatieRepository.updateAutorisatieBerichtStatus(afnemerCodes, verwerktStatus);
+            autorisatieRepository.updateAutorisatieBerichtStatus(afnemerCodes, ConversieResultaat.VERZONDEN);
         }
         LOG.info("Berichten verwerkt");
     }
 
     private void verstuurAutorisatieBericht(final List<AutorisatieBericht> teVersturenBerichten) {
-        jmsTemplate.execute(destination, new ProducerCallback<Object>() {
-            @Override
-            public Object doInJms(final Session session, final MessageProducer producer) throws JMSException {
-                LOG.info("aantal te versturen berichten: {}", teVersturenBerichten.size());
-                for (final AutorisatieBericht autorisatieBericht : teVersturenBerichten) {
-                    final Message message = session.createTextMessage(autorisatieBericht.format());
-                    message.setStringProperty(
-                        JMSConstants.BERICHT_REFERENTIE,
-                        String.format(MSG_ID_FORMAT, SyncBerichtType.AUTORISATIE.getType(), autorisatieBericht.getMessageId()));
-                    producer.send(message);
-                }
-                LOG.info("Berichten verstuurd");
-                return null;
+        jmsTemplate.execute(destination, (session, producer) -> {
+            LOG.info("aantal te versturen berichten: {}", teVersturenBerichten.size());
+            for (final AutorisatieBericht autorisatieBericht : teVersturenBerichten) {
+                MDCProcessor.startVerwerking().metVeld(InitieleVullingVeld.MDC_AFNEMERSINDICATIE, autorisatieBericht.getAutorisatie().getAfnemersindicatie()).
+                        run(() -> {
+                            final Message message = session.createTextMessage(autorisatieBericht.format());
+                            MDCProcessor.registreerVerwerkingsCode(message);
+                            message.setStringProperty(JMSConstants.BERICHT_REFERENTIE,
+                                    String.format(MSG_ID_FORMAT, SyncBerichtType.AUTORISATIE.getType(), autorisatieBericht.getMessageId()));
+                            producer.send(message);
+                            aantalVerzonden.getAndIncrement();
+                        });
             }
+            LOG.info("Berichten verstuurd");
+            return null;
         });
+    }
+
+    @Override
+    public final long aantalVerzonden() {
+        return aantalVerzonden.get();
     }
 }

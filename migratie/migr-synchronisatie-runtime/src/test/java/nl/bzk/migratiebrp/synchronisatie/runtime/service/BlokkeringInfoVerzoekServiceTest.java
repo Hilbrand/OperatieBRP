@@ -14,52 +14,51 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.sql.Timestamp;
 import java.util.UUID;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.RedenBlokkering;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.BlokkeringInfoVerzoekType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoVerzoekBericht;
 import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstException;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.Blokkering;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.RedenBlokkering;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BlokkeringInfoVerzoekServiceTest {
 
-    private static final Long ANUMMER = 186512465L;
+    private static final String ANUMMER = "1865124650";
     private static final Long PROCESS_ID = 14L;
-    private static final String GEMEENTE_NAAR = "1904";
-    private static final String GEMEENTE_REGISTRATIE = "1905";
-    private static final Blokkering DUMMY_BLOKKERING = Blokkering.newInstance(
-        ANUMMER,
-        PROCESS_ID,
-        GEMEENTE_NAAR,
-        GEMEENTE_REGISTRATIE,
-        RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
+    private static final String GEMEENTE_NAAR = "190401";
+    private static final String GEMEENTE_REGISTRATIE = "190501";
 
     @Mock
     private BrpDalService brpDalService;
 
-    @InjectMocks
-    private final BlokkeringInfoVerzoekService blokkeringInfoVerzoekService = new BlokkeringInfoVerzoekService();
+    private BlokkeringInfoVerzoekService blokkeringInfoVerzoekService;
 
     @Before
     public void setup() throws OngeldigePersoonslijstException {
-        when(brpDalService.vraagOpBlokkering(ANUMMER)).thenReturn(DUMMY_BLOKKERING);
+        final nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering blokkering = new Blokkering(ANUMMER, new Timestamp(System.currentTimeMillis()));
+        blokkering.setProcessId(PROCESS_ID);
+        blokkering.setGemeenteCodeNaar(GEMEENTE_NAAR);
+        blokkering.setRegistratieGemeente(GEMEENTE_REGISTRATIE);
+        blokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
+        when(brpDalService.vraagOpBlokkering(ANUMMER)).thenReturn(blokkering);
+        blokkeringInfoVerzoekService = new BlokkeringInfoVerzoekService(brpDalService);
     }
 
     @Test
     public void testBlokkeringInfoAntwoordOK() {
         final BlokkeringInfoVerzoekType blokkeringInfoVerzoekType = new BlokkeringInfoVerzoekType();
 
-        blokkeringInfoVerzoekType.setANummer(ANUMMER.toString());
+        blokkeringInfoVerzoekType.setANummer(ANUMMER);
 
         final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = new BlokkeringInfoVerzoekBericht(blokkeringInfoVerzoekType);
         blokkeringInfoVerzoek.setMessageId(UUID.randomUUID().toString());
@@ -82,6 +81,7 @@ public class BlokkeringInfoVerzoekServiceTest {
         blokkeringInfoVerzoek.setMessageId(UUID.randomUUID().toString());
 
         try {
+            when(brpDalService.vraagOpBlokkering(null)).thenCallRealMethod();
             blokkeringInfoVerzoekService.verwerkBericht(blokkeringInfoVerzoek);
             fail("Er zou een technische fout op moeten treden.");
         } catch (final Exception e) {

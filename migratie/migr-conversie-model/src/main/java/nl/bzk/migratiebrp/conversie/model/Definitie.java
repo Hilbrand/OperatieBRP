@@ -14,9 +14,6 @@ import java.lang.annotation.RetentionPolicy;
  * Deze annotatie dient te worden gebruikt om de verantwoording van de code te verbeteren. Code verwijst naar
  * definities, deze moeten explicitiet worden genoemd in de javadoc van de class of methode zodat men kan herleiden
  * welke definities in de code voorkomen.
- * 
- * 
- * 
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -24,6 +21,7 @@ public @interface Definitie {
 
     /**
      * Een unieke verwijzing naar een gedocumenteerde definitie die door de code wordt geimplementeerd.
+     * @return lijst van gedocumenteerde definities
      */
     Definities[] value();
 }

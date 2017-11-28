@@ -6,12 +6,14 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.List;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.test.dal.DBUnit;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
-import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.ggo.viewer.Lo3PersoonslijstTestHelper;
@@ -24,15 +26,11 @@ import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoStapel;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoVoorkomen;
 import nl.bzk.migratiebrp.ggo.viewer.service.ViewerService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit;
+import nl.bzk.migratiebrp.ggo.viewer.util.PortInitializer;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -42,17 +40,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 /**
  * Test de GgoBrpBuilder klasse
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class })
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class})
 @DirtiesContext
-@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml" })
+@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml"}, initializers = {PortInitializer.class})
 public class GgoBrpBuilderTest {
 
     @Inject
@@ -65,40 +59,9 @@ public class GgoBrpBuilderTest {
         SynchronisatieLogging.init();
     }
 
-    @Ignore
-    @Test
-    public void testBuildSuccess() throws Exception {
-        verwerk("PL_alle_cats.xls", "/PL_alle_cats-expected.txt");
-    }
-
-    /**
-     * Deze tweede test bevat een aantal scenario's die door wederzijdse uitsluiting niet in de eerste PL verwerkt
-     * konden worden.
-     *
-     * Daarnaast zijn hier ook een aantal onderzoeken ingevuld.
-     *
-     * @throws Exception
-     */
-    @Ignore
-    @Test
-    public void testBuildExtraBrpSuccess() throws Exception {
-        verwerk("PL_alle_cats_extra_brp.xls", "/PL_alle_cats_extra_brp-expected2.txt");
-    }
-
     @Test
     public void testBuildNullPL() {
         final List<GgoStapel> viewerModel = builder.build(null, null);
-
-        Assert.assertEquals("Model is anders dan verwacht.", "null", createJsonString(viewerModel));
-    }
-
-    @Test
-    public void testBuildLeegPL() {
-        final BrpPersoonslijstBuilder brpModelBuilder = new BrpPersoonslijstBuilder();
-        final BrpPersoonslijst brpPersoonslijst = brpModelBuilder.build();
-        final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
-
-        final List<GgoStapel> viewerModel = builder.build(brpPersoonslijst, persoon);
 
         Assert.assertEquals("Model is anders dan verwacht.", "[ ]", createJsonString(viewerModel));
     }

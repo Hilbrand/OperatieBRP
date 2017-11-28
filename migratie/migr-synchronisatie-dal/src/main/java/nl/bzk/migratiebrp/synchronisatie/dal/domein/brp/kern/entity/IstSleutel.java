@@ -9,7 +9,10 @@ package nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity;
 import java.util.HashMap;
 import java.util.Map;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -29,11 +32,8 @@ public final class IstSleutel implements Sleutel {
 
     /**
      * Constructor voor een IST-sleutel op basis van een stapel.
-     * 
-     * @param stapel
-     *            stapel waarvoor een sleutel gemaakt moet worden
-     * @param isBestaandeStapel
-     *            true als het een bestaande stapel betreft
+     * @param stapel stapel waarvoor een sleutel gemaakt moet worden
+     * @param isBestaandeStapel true als het een bestaande stapel betreft
      */
     public IstSleutel(final Stapel stapel, final boolean isBestaandeStapel) {
         this.categorie = stapel.getCategorie();
@@ -45,13 +45,9 @@ public final class IstSleutel implements Sleutel {
 
     /**
      * Constructor voor een IST-sleutel op basis van een stapel met als toevoeging welk veld van waarde is veranderd.
-     * 
-     * @param stapel
-     *            stapel waarvoor een sleutel gemaakt moet worden
-     * @param veld
-     *            het veld waar de wijziging op is gevonden
-     * @param isBestaandeStapel
-     *            true als het een bestaande stapel betreft
+     * @param stapel stapel waarvoor een sleutel gemaakt moet worden
+     * @param veld het veld waar de wijziging op is gevonden
+     * @param isBestaandeStapel true als het een bestaande stapel betreft
      */
     public IstSleutel(final Stapel stapel, final String veld, final boolean isBestaandeStapel) {
         this.categorie = stapel.getCategorie();
@@ -63,13 +59,9 @@ public final class IstSleutel implements Sleutel {
 
     /**
      * Constructor voor een IST-sleutel op basis van een stapel voorkomen.
-     *
-     * @param voorkomen
-     *            voorkomen waarvoor een sleutel gemaakt moet worden
-     * @param veld
-     *            het veld waar de wijziging op is gevonden
-     * @param isBestaandVoorkomen
-     *            true als het een bestaand voorkomen betreft
+     * @param voorkomen voorkomen waarvoor een sleutel gemaakt moet worden
+     * @param veld het veld waar de wijziging op is gevonden
+     * @param isBestaandVoorkomen true als het een bestaand voorkomen betreft
      */
     public IstSleutel(final StapelVoorkomen voorkomen, final String veld, final boolean isBestaandVoorkomen) {
         this(voorkomen.getStapel(), veld, isBestaandVoorkomen);
@@ -81,21 +73,33 @@ public final class IstSleutel implements Sleutel {
         delen.put(naam, sleuteldeel);
     }
 
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel#getDelen()
+     */
     @Override
     public Map<String, Object> getDelen() {
         return delen;
     }
 
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel#getId()
+     */
     @Override
     public Long getId() {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel#setId(java.lang.Long)
+     */
     @Override
     public void setId(final Long id) {
         throw new IllegalStateException("ID is geen veld voor een IST-sleutel");
     }
 
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel#getVeld()
+     */
     @Override
     public String getVeld() {
         return veld;
@@ -107,21 +111,24 @@ public final class IstSleutel implements Sleutel {
     }
 
     /**
-     * @return De categorie.
+     * Geef de waarde van categorie van IstSleutel.
+     * @return de waarde van categorie van IstSleutel
      */
     public String getCategorie() {
         return categorie;
     }
 
     /**
-     * @return Het voorkomennummer.
+     * Geef de waarde van voorkomennummer van IstSleutel.
+     * @return de waarde van voorkomennummer van IstSleutel
      */
     public Integer getVoorkomennummer() {
         return voorkomennummer;
     }
 
     /**
-     * @return Het stapelnummer.
+     * Geef de waarde van stapelnummer van IstSleutel.
+     * @return de waarde van stapelnummer van IstSleutel
      */
     public int getStapelnummer() {
         return stapelnummer;
@@ -130,12 +137,12 @@ public final class IstSleutel implements Sleutel {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("categorie", categorie)
-                                                                          .append("stapel", stapelnummer)
-                                                                          .append("voorkomen", voorkomennummer)
-                                                                          .append("veld", veld)
-                                                                          .append("isBestaandeStapel", isBestaandeStapel)
-                                                                          .append("delen", delen)
-                                                                          .toString();
+                .append("stapel", stapelnummer)
+                .append("voorkomen", voorkomennummer)
+                .append("veld", veld)
+                .append("isBestaandeStapel", isBestaandeStapel)
+                .append("delen", delen)
+                .toString();
     }
 
     @Override
@@ -148,29 +155,28 @@ public final class IstSleutel implements Sleutel {
         }
         final IstSleutel castOther = (IstSleutel) other;
         return new EqualsBuilder().append(categorie, castOther.categorie)
-                                  .append(stapelnummer, castOther.stapelnummer)
-                                  .append(voorkomennummer, castOther.voorkomennummer)
-                                  .append(veld, castOther.veld)
-                                  .append(delen, castOther.delen)
-                                  .append(isBestaandeStapel, castOther.isBestaandeStapel)
-                                  .isEquals();
+                .append(stapelnummer, castOther.stapelnummer)
+                .append(voorkomennummer, castOther.voorkomennummer)
+                .append(veld, castOther.veld)
+                .append(delen, castOther.delen)
+                .append(isBestaandeStapel, castOther.isBestaandeStapel)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(categorie)
-                                    .append(stapelnummer)
-                                    .append(voorkomennummer)
-                                    .append(veld)
-                                    .append(isBestaandeStapel)
-                                    .append(delen)
-                                    .toHashCode();
+                .append(stapelnummer)
+                .append(voorkomennummer)
+                .append(veld)
+                .append(isBestaandeStapel)
+                .append(delen)
+                .toHashCode();
     }
 
     /**
-     * Geeft aan of deze sleutel voor een stapelvoorkomen is gemaakt of niet.
-     * 
-     * @return true als het {@link #voorkomennummer} is ingevuld en het dus een sleutel is voor een stapelvoorkomen.
+     * Checks if is voorkomen sleutel.
+     * @return true, if is voorkomen sleutel
      */
     public boolean isVoorkomenSleutel() {
         return getVoorkomennummer() != null;

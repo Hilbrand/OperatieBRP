@@ -14,7 +14,6 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
@@ -28,20 +27,19 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVastgesteldNietNederlande
 import nl.bzk.migratiebrp.conversie.model.exceptions.PreconditieException;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.BrpStapelHelper;
-
 import org.junit.Test;
 
 public class BrpPersoonslijstValidatorTest {
 
     private static final BrpSamengesteldeNaamInhoud SAMENGESTELDE_NAAM_INHOUD = new BrpSamengesteldeNaamInhoud(
-        null,
-        new BrpString("Pietje"),
-        null,
-        null,
-        null,
-        new BrpString("Jansen"),
-        new BrpBoolean(false),
-        new BrpBoolean(false));
+            null,
+            new BrpString("Pietje"),
+            null,
+            null,
+            null,
+            new BrpString("Jansen"),
+            new BrpBoolean(false),
+            new BrpBoolean(false));
 
     @Test(expected = AssertionError.class)
     public void testPrivateConstructor() throws Throwable {
@@ -64,8 +62,8 @@ public class BrpPersoonslijstValidatorTest {
                 maakVastgesteldNietNederlanderStapel(true, historie);
         try {
             BrpPersoonslijstValidator.valideerBehandeldAlsNederlanderVastgesteldNietNederlander(
-                behandeldAlsNederlanderIndicatieStapel,
-                vastgesteldNietNederlanderIndicatieStapel);
+                    behandeldAlsNederlanderIndicatieStapel,
+                    vastgesteldNietNederlanderIndicatieStapel);
             fail("Exceptie verwacht omdat behandeld en vastgesteld beiden tegelijk geldig zijn.");
         } catch (final PreconditieException e) {
             assertTrue(e.getMessage().contains(SoortMeldingCode.PRE058.name()));
@@ -104,8 +102,8 @@ public class BrpPersoonslijstValidatorTest {
         final BrpStapel<BrpVastgesteldNietNederlanderIndicatieInhoud> vastgesteldNietNederlanderIndicatieStapel =
                 maakVastgesteldNietNederlanderStapel(false, historie);
         BrpPersoonslijstValidator.valideerBehandeldAlsNederlanderVastgesteldNietNederlander(
-            behandeldAlsNederlanderIndicatieStapel,
-            vastgesteldNietNederlanderIndicatieStapel);
+                behandeldAlsNederlanderIndicatieStapel,
+                vastgesteldNietNederlanderIndicatieStapel);
     }
 
     @Test
@@ -120,8 +118,8 @@ public class BrpPersoonslijstValidatorTest {
         final BrpStapel<BrpVastgesteldNietNederlanderIndicatieInhoud> vastgesteldNietNederlanderIndicatieStapel =
                 maakVastgesteldNietNederlanderStapel(true, historieNietActueel);
         BrpPersoonslijstValidator.valideerBehandeldAlsNederlanderVastgesteldNietNederlander(
-            behandeldAlsNederlanderIndicatieStapel,
-            vastgesteldNietNederlanderIndicatieStapel);
+                behandeldAlsNederlanderIndicatieStapel,
+                vastgesteldNietNederlanderIndicatieStapel);
         // Dit zou gewoon goed moeten gaan
     }
 
@@ -177,8 +175,8 @@ public class BrpPersoonslijstValidatorTest {
         try {
             BrpPersoonslijstValidator.valideerGeprivilegieerde(null, BrpNationaliteitInhoudTest.createList(true));
             BrpPersoonslijstValidator.valideerGeprivilegieerde(
-                BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoudTest.createStapel(),
-                BrpNationaliteitInhoudTest.createList(false));
+                    BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoudTest.createStapel(),
+                    BrpNationaliteitInhoudTest.createList(false));
         } catch (final PreconditieException pe) {
             assertEquals(SoortMeldingCode.PRE017.name(), pe.getPreconditieNaam());
         }
@@ -200,9 +198,8 @@ public class BrpPersoonslijstValidatorTest {
     }
 
     private BrpStapel<BrpVastgesteldNietNederlanderIndicatieInhoud> maakVastgesteldNietNederlanderStapel(
-        final boolean indicatie,
-        final BrpHistorie... histories)
-    {
+            final boolean indicatie,
+            final BrpHistorie... histories) {
         final List<BrpGroep<BrpVastgesteldNietNederlanderIndicatieInhoud>> groepen = new ArrayList<>();
         final BrpVastgesteldNietNederlanderIndicatieInhoud inhoud =
                 new BrpVastgesteldNietNederlanderIndicatieInhoud(new BrpBoolean(indicatie), null, null);

@@ -10,12 +10,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.jmx.UseDynamicDomain;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -25,34 +27,48 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * JMX Service.
  */
 @UseDynamicDomain
-@ManagedResource(objectName = VoiscJMX.OBJECT_NAME, description = "JMX Service voor VOISC")
-public final class VoiscJMXImpl implements VoiscJMX {
+@ManagedResource(objectName = VoiscJMXImpl.OBJECT_NAME, description = "JMX Service voor VOISC")
+public final class VoiscJMXImpl implements VoiscJMX, ApplicationContextAware {
 
+    /**
+     * Object name to bind JMX object to.
+     */
+    static final String OBJECT_NAME = "nl.bzk.migratiebrp.voisc:name=VOISC";
     private static final Logger LOGGER = LoggerFactory.getLogger();
-
     private static final ExecutorService EXECUTOR_SERVICE_ISC = Executors.newSingleThreadExecutor();
     private static final ExecutorService EXECUTOR_SERVICE_MAILBOX = Executors.newSingleThreadExecutor();
     private static final ExecutorService EXECUTOR_SERVICE_OPSCHONEN = Executors.newSingleThreadExecutor();
     private static final ExecutorService EXECUTOR_SERVICE_HERSTELLEN = Executors.newSingleThreadExecutor();
-
     private static final int DEFAULT_AANTAL_UREN_SINDS_VERWERKT = 75;
     private static final int DEFAULT_AANTAL_UREN_SINDS_IN_VERWERKING = 6;
-
     private static final String QUARTZ_SCHEDULER = "scheduler";
     private static final String INBOUND_LISTENER = "voiscBerichtListenerContainer";
-
-    @Autowired
-    private VoiscService voiscService;
-
+    private final VoiscService voiscService;
+    private final MailboxConfiguratie voiscConfiguratie;
+    private ApplicationContext applicationContext;
     private int aantalUrenSindsVerwerkt = DEFAULT_AANTAL_UREN_SINDS_VERWERKT;
 
     private int aantalUrenSindsInVerwerking = DEFAULT_AANTAL_UREN_SINDS_IN_VERWERKING;
 
     /**
+     * Constructor.
+     * @param voiscService service
+     * @param voiscConfiguratie configuratie
+     */
+    @Inject
+    public VoiscJMXImpl(final VoiscService voiscService, final MailboxConfiguratie voiscConfiguratie) {
+        this.voiscService = voiscService;
+        this.voiscConfiguratie = voiscConfiguratie;
+    }
+
+    @Override
+    public void setApplicationContext(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    /**
      * Zet de waarde van aantal uren sinds verwerkt.
-     *
-     * @param aantalUrenSindsVerwerkt
-     *            aantal uren sinds verwerkt
+     * @param aantalUrenSindsVerwerkt aantal uren sinds verwerkt
      */
     public void setAantalUrenSindsVerwerkt(final int aantalUrenSindsVerwerkt) {
         this.aantalUrenSindsVerwerkt = aantalUrenSindsVerwerkt;
@@ -60,78 +76,60 @@ public final class VoiscJMXImpl implements VoiscJMX {
 
     /**
      * Zet de waarde van aantal uren sinds in verwerking.
-     *
-     * @param aantalUrenSindsInVerwerking
-     *            aantal uren sinds in verwerking
+     * @param aantalUrenSindsInVerwerking aantal uren sinds in verwerking
      */
     public void setAantalUrenSindsInVerwerking(final int aantalUrenSindsInVerwerking) {
         this.aantalUrenSindsInVerwerking = aantalUrenSindsInVerwerking;
     }
 
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
     @ManagedOperation(description = "Verstuur berichten van VOISC (database) naar ISC.")
     public void berichtenVerzendenNaarIsc() {
         LOGGER.info("Verzenden berichten naar ISC.");
-        EXECUTOR_SERVICE_ISC.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    voiscService.berichtenVerzendenNaarIsc();
-                } catch (final Exception e /* Catch throwable voor logging; wordt gerethrowed */) {
-                    LOGGER.error("Fout bij verzenden berichten naar ISC.", e);
-                    throw e;
-                }
+        EXECUTOR_SERVICE_ISC.submit(() -> {
+            try {
+                voiscService.berichtenVerzendenNaarIsc();
+            } catch (final Exception e /* Catch throwable voor logging; wordt gerethrowed */) {
+                LOGGER.error("Fout bij verzenden berichten naar ISC.", e);
+                throw e;
             }
         });
     }
 
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
     @ManagedOperation(description = "Verstuur berichten van VOISC (database) naar mailbox en ontvang berichten van mailbox.")
     public void berichtenVerzendenNaarEnOntvangenVanMailbox() {
         LOGGER.info("Verzenden naar en ontvangen van mailbox.");
-        EXECUTOR_SERVICE_MAILBOX.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    voiscService.berichtenVerzendenNaarEnOntvangenVanMailbox();
-                } catch (final Exception e /* Catch throwable voor logging; wordt gerethrowed */) {
-                    LOGGER.error("Fout bij verzenden naar en ontvangen van mailbox.", e);
-                    throw e;
-                }
+        EXECUTOR_SERVICE_MAILBOX.submit(() -> {
+            try {
+                voiscService.berichtenVerzendenNaarEnOntvangenVanMailbox();
+            } catch (final Exception e /* Catch throwable voor logging; wordt gerethrowed */) {
+                LOGGER.error("Fout bij verzenden naar en ontvangen van mailbox.", e);
+                throw e;
             }
         });
     }
 
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
     @ManagedOperation(description = "Opschonen verzonden berichten.")
     public void opschonenVoiscBerichten() {
         LOGGER.info("Opschonen berichten.");
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR_OF_DAY, -aantalUrenSindsVerwerkt);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
         final Date ouderDan = cal.getTime();
+        LOGGER.info("Controleren op berichten van voor {}.", ouderDan);
 
-        EXECUTOR_SERVICE_OPSCHONEN.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    voiscService.opschonenVoiscBerichten(ouderDan);
-                } catch (final Exception e /* Catch throwable voor logging; wordt gerethrowed */) {
-                    LOGGER.error("Fout bij opschonen berichten.", e);
-                    throw e;
-                }
+        EXECUTOR_SERVICE_OPSCHONEN.submit(() -> {
+            try {
+                voiscService.opschonenVoiscBerichten(ouderDan);
+            } catch (final Exception e /* Catch throwable voor logging; wordt gerethrowed */) {
+                LOGGER.error("Fout bij opschonen berichten.", e);
+                throw e;
             }
         });
     }
 
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
     @ManagedOperation(description = "Herstellen in verwerking zijnde berichten.")
     public void herstellenVoiscBerichten() {
         LOGGER.info("Herstellen berichten.");
@@ -139,17 +137,20 @@ public final class VoiscJMXImpl implements VoiscJMX {
         cal.add(Calendar.HOUR_OF_DAY, -aantalUrenSindsInVerwerking);
         final Date ouderDan = cal.getTime();
 
-        EXECUTOR_SERVICE_HERSTELLEN.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    voiscService.herstellenVoiscBerichten(ouderDan);
-                } catch (final Exception e /* Catch throwable voor logging; wordt gerethrowed */) {
-                    LOGGER.error("Fout bij herstellen berichten.", e);
-                    throw e;
-                }
+        EXECUTOR_SERVICE_HERSTELLEN.submit(() -> {
+            try {
+                voiscService.herstellenVoiscBerichten(ouderDan);
+            } catch (final Exception e /* Catch throwable voor logging; wordt gerethrowed */) {
+                LOGGER.error("Fout bij herstellen berichten.", e);
+                throw e;
             }
         });
+    }
+
+    @Override
+    @ManagedOperation(description = "VOISC mailbox configuratie.")
+    public String toonMailboxConfiguratie() {
+        return voiscConfiguratie.toonMailboxen();
     }
 
     /* *************************************************************************************** */
@@ -159,7 +160,7 @@ public final class VoiscJMXImpl implements VoiscJMX {
     @Override
     @ManagedOperation(description = "VOISC proces afsluiten.")
     public void afsluiten() {
-        VoiscMain.stop();
+        applicationContext.getBean(VoiscMain.BEAN_NAME, VoiscMain.class).stop();
     }
 
     /**
@@ -167,7 +168,7 @@ public final class VoiscJMXImpl implements VoiscJMX {
      */
     @ManagedAttribute(description = "Applicatie actief")
     public boolean isGestart() {
-        return VoiscMain.getContext().isActive();
+        return true;
     }
 
     /* *************************************************************************************** */
@@ -176,34 +177,30 @@ public final class VoiscJMXImpl implements VoiscJMX {
 
     /**
      * @return is verwerking gestart.
-     * @throws SchedulerException
-     *             Foutmelding bij het schedulen van een taak met Quartz.
+     * @throws SchedulerException Foutmelding bij het schedulen van een taak met Quartz.
      */
     @ManagedAttribute(description = "Versturen en ontvangen van berichten van de mailbox")
     public boolean isMailboxGestart() throws SchedulerException {
-        return VoiscMain.getContext().getBean(QUARTZ_SCHEDULER, Scheduler.class).isStarted();
+        final Scheduler scheduler = applicationContext.getBean(QUARTZ_SCHEDULER, Scheduler.class);
+        return scheduler.isStarted() && !scheduler.isInStandbyMode();
     }
 
     /**
      * Start verwerking.
-     *
-     * @throws SchedulerException
-     *             Foutmelding bij het schedulen van een taak met Quartz.
+     * @throws SchedulerException Foutmelding bij het schedulen van een taak met Quartz.
      */
     @ManagedOperation(description = "Start versturen en ontvangen van berichten van de mailbox")
     public void startMailbox() throws SchedulerException {
-        VoiscMain.getContext().getBean(QUARTZ_SCHEDULER, Scheduler.class).start();
+        applicationContext.getBean(QUARTZ_SCHEDULER, Scheduler.class).start();
     }
 
     /**
      * Stop verwerking.
-     *
-     * @throws SchedulerException
-     *             Foutmelding bij het schedulen van een taak met Quartz.
+     * @throws SchedulerException Foutmelding bij het schedulen van een taak met Quartz.
      */
     @ManagedOperation(description = "Stop versturen en ontvangen van berichten van de mailbox")
     public void stopMailbox() throws SchedulerException {
-        VoiscMain.getContext().getBean(QUARTZ_SCHEDULER, Scheduler.class).standby();
+        applicationContext.getBean(QUARTZ_SCHEDULER, Scheduler.class).standby();
     }
 
     /* *************************************************************************************** */
@@ -212,34 +209,30 @@ public final class VoiscJMXImpl implements VoiscJMX {
 
     /**
      * @return is verwerking gestart.
-     * @throws SchedulerException
-     *             Foutmelding bij het schedulen van een taak met Quartz.
+     * @throws SchedulerException Foutmelding bij het schedulen van een taak met Quartz.
      */
     @ManagedAttribute(description = "Versturen van berichten naar ISC")
     public boolean isIscVersturenGestart() throws SchedulerException {
-        return VoiscMain.getContext().getBean(QUARTZ_SCHEDULER, Scheduler.class).isStarted();
+        final Scheduler scheduler = applicationContext.getBean(QUARTZ_SCHEDULER, Scheduler.class);
+        return scheduler.isStarted() && !scheduler.isInStandbyMode();
     }
 
     /**
      * Start verwerking.
-     *
-     * @throws SchedulerException
-     *             Foutmelding bij het schedulen van een taak met Quartz.
+     * @throws SchedulerException Foutmelding bij het schedulen van een taak met Quartz.
      */
     @ManagedOperation(description = "Start versturen van berichten naar ISC")
-    public void startIscVersturenGestart() throws SchedulerException {
-        VoiscMain.getContext().getBean(QUARTZ_SCHEDULER, Scheduler.class).start();
+    public void startIscVersturen() throws SchedulerException {
+        applicationContext.getBean(QUARTZ_SCHEDULER, Scheduler.class).start();
     }
 
     /**
      * Stop verwerking.
-     *
-     * @throws SchedulerException
-     *             Foutmelding bij het schedulen van een taak met Quartz.
+     * @throws SchedulerException Foutmelding bij het schedulen van een taak met Quartz.
      */
     @ManagedOperation(description = "Stop versturen van berichten naar ISC")
-    public void stopIscVersturenGestart() throws SchedulerException {
-        VoiscMain.getContext().getBean(QUARTZ_SCHEDULER, Scheduler.class).standby();
+    public void stopIscVersturen() throws SchedulerException {
+        applicationContext.getBean(QUARTZ_SCHEDULER, Scheduler.class).standby();
     }
 
     /* *************************************************************************************** */
@@ -248,12 +241,10 @@ public final class VoiscJMXImpl implements VoiscJMX {
 
     /**
      * @return is verwerking gestart.
-     * @throws SchedulerException
-     *             Foutmelding bij het schedulen van een taak met Quartz.
      */
     @ManagedAttribute(description = "Ontvangen van berichten naar ISC")
     public boolean isIscOntvangenGestart() {
-        return VoiscMain.getContext().getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).isRunning();
+        return applicationContext.getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).isRunning();
     }
 
     /**
@@ -261,7 +252,7 @@ public final class VoiscJMXImpl implements VoiscJMX {
      */
     @ManagedOperation(description = "Start ontvangen ISC berichten")
     public void startIscOntvangen() {
-        VoiscMain.getContext().getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).start();
+        applicationContext.getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).start();
     }
 
     /**
@@ -269,7 +260,7 @@ public final class VoiscJMXImpl implements VoiscJMX {
      */
     @ManagedOperation(description = "Stop ontvangen ISC berichten")
     public void stopIscOntvangen() {
-        VoiscMain.getContext().getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).stop();
+        applicationContext.getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).stop();
     }
 
     /**
@@ -277,18 +268,16 @@ public final class VoiscJMXImpl implements VoiscJMX {
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor ISC berichten")
     public int getAantalIscOntvangenVerwerkers() {
-        return VoiscMain.getContext().getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).getMaxConcurrentConsumers();
+        return applicationContext.getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).getMaxConcurrentConsumers();
     }
 
     /**
      * Zet het aantal verwerkers.
-     *
-     * @param aantal
-     *            het aantal te zetten verwerkers
+     * @param aantal het aantal te zetten verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor ISC berichten")
     public void setAantalIscOntvangenVerwerkers(final int aantal) {
-        VoiscMain.getContext().getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).setMaxConcurrentConsumers(aantal);
+        applicationContext.getBean(INBOUND_LISTENER, DefaultMessageListenerContainer.class).setMaxConcurrentConsumers(aantal);
     }
 
 }

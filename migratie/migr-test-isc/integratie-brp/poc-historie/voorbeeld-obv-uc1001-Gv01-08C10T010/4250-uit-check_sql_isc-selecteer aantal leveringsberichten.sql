@@ -1,1 +1,0 @@
-select count(*) as aantal from mig_bericht where kanaal='VOSPG' and richting='U' and naam='Levering';

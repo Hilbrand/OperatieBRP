@@ -7,7 +7,8 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen;
 
 import java.util.List;
-import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
@@ -17,22 +18,21 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerblijfstitelInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * Overlijden converteerder.
  */
-@Component
 public final class BrpVerblijfstitelConverteerder extends AbstractBrpImmaterieleCategorienConverteerder<Lo3VerblijfstitelInhoud> {
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    @Inject
-    private VerblijfstitelConverteerder verblijfstitelConverteerder;
-
-    @Inject
-    private BrpDocumentatieConverteerder brpDocumentatieConverteerder;
+    private final BrpAttribuutConverteerder attribuutConverteerder;
+    /**
+     * Constructor.
+     * @param attribuutConverteerder attribuut converteerder
+     */
+    public BrpVerblijfstitelConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+        this.attribuutConverteerder = attribuutConverteerder;
+    }
 
     @Override
     protected <T extends BrpGroepInhoud> BrpGroep<T> bepaalGroep(final BrpStapel<T> brpStapel) {
@@ -48,7 +48,7 @@ public final class BrpVerblijfstitelConverteerder extends AbstractBrpImmateriele
             return null;
         }
 
-        return brpDocumentatieConverteerder.maakDocumentatie(groepen.get(0).getActieInhoud());
+        return new BrpDocumentatieConverteerder(attribuutConverteerder).maakDocumentatie(groepen.get(0).getActieInhoud());
     }
 
     @Override
@@ -61,8 +61,6 @@ public final class BrpVerblijfstitelConverteerder extends AbstractBrpImmateriele
         }
         return groepen.get(0).getActieInhoud().getLo3Herkomst();
     }
-
-
 
     @Override
     protected Lo3Historie bepaalHistorie(final List<BrpGroep<? extends BrpGroepInhoud>> groepen) {
@@ -83,37 +81,33 @@ public final class BrpVerblijfstitelConverteerder extends AbstractBrpImmateriele
         return new Lo3Historie(null, ingang, opneming);
     }
 
-
-
-
-
-
-
     @Override
     protected <B extends BrpGroepInhoud> BrpGroepConverteerder<B, Lo3VerblijfstitelInhoud> bepaalConverteerder(final B inhoud) {
         if (inhoud instanceof BrpVerblijfsrechtInhoud) {
-            return (BrpGroepConverteerder<B, Lo3VerblijfstitelInhoud>) verblijfstitelConverteerder;
+            return (BrpGroepConverteerder<B, Lo3VerblijfstitelInhoud>) new VerblijfstitelConverteerder(attribuutConverteerder);
         }
 
         throw new IllegalArgumentException("BrpOverlijdenConverteerder bevat geen Groep converteerder voor: " + inhoud);
     }
 
-
     /**
      * Converteerder die weet hoe je een Lo3VerblijfstitelInhoud rij moet aanmaken en hoe een BrpOverlijdenInhoud
      * omgezet moet worden naar Lo3VerblijfstitelInhoud.
      */
-    @Component
-    public static final class VerblijfstitelConverteerder extends BrpGroepConverteerder<BrpVerblijfsrechtInhoud, Lo3VerblijfstitelInhoud> {
+    public static final class VerblijfstitelConverteerder extends AbstractBrpGroepConverteerder<BrpVerblijfsrechtInhoud, Lo3VerblijfstitelInhoud> {
 
         private static final Logger LOG = LoggerFactory.getLogger();
-
-        @Inject
-        private BrpAttribuutConverteerder converteerder;
+        /**
+         * Constructor.
+         * @param attribuutConverteerder attribuut converteerder
+         */
+        public VerblijfstitelConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+            super(attribuutConverteerder);
+        }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder#getLogger()
          */
         @Override
@@ -128,10 +122,9 @@ public final class BrpVerblijfstitelConverteerder extends AbstractBrpImmateriele
 
         @Override
         public Lo3VerblijfstitelInhoud vulInhoud(
-            final Lo3VerblijfstitelInhoud lo3Inhoud,
-            final BrpVerblijfsrechtInhoud brpInhoud,
-            final BrpVerblijfsrechtInhoud brpVorigeInhoud)
-        {
+                final Lo3VerblijfstitelInhoud lo3Inhoud,
+                final BrpVerblijfsrechtInhoud brpInhoud,
+                final BrpVerblijfsrechtInhoud brpVorigeInhoud) {
 
             final Lo3VerblijfstitelInhoud.Builder builder = new Lo3VerblijfstitelInhoud.Builder(lo3Inhoud);
 
@@ -140,15 +133,13 @@ public final class BrpVerblijfstitelConverteerder extends AbstractBrpImmateriele
                 builder.setDatumEindeVerblijfstitel(null);
                 builder.setDatumAanvangVerblijfstitel(null);
             } else {
-                builder.setAanduidingVerblijfstitelCode(converteerder.converteerAanduidingVerblijfsrecht(brpInhoud.getAanduidingVerblijfsrechtCode()));
-                builder.setDatumEindeVerblijfstitel(converteerder.converteerDatum(brpInhoud.getDatumVoorzienEindeVerblijfsrecht()));
-                builder.setDatumAanvangVerblijfstitel(converteerder.converteerDatum(brpInhoud.getDatumAanvangVerblijfstitel()));
+                builder.setAanduidingVerblijfstitelCode(
+                        getAttribuutConverteerder().converteerAanduidingVerblijfsrecht(brpInhoud.getAanduidingVerblijfsrechtCode()));
+                builder.setDatumEindeVerblijfstitel(getAttribuutConverteerder().converteerDatum(brpInhoud.getDatumVoorzienEindeVerblijfsrecht()));
+                builder.setDatumAanvangVerblijfstitel(getAttribuutConverteerder().converteerDatum(brpInhoud.getDatumAanvangVerblijfstitel()));
             }
 
             return builder.build();
         }
-
-
-
     }
 }

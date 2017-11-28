@@ -6,21 +6,20 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.service.impl;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.ggo.viewer.service.BrpStamtabelService;
-import nl.bzk.migratiebrp.ggo.viewer.util.VerwerkerUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,6 +28,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements BrpStamtabelService {
     private static final Logger LOG = LoggerFactory.getLogger();
+
+    /**
+     * Constructor.
+     * @param dynamischeStamtabelRepository de repository voor de dynamische stamtabel
+     */
+    public BrpStamtabelServiceImpl(final DynamischeStamtabelRepository dynamischeStamtabelRepository) {
+        super(dynamischeStamtabelRepository);
+    }
 
     /**
      * {@inheritDoc}
@@ -41,7 +48,7 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
             result = String.format(STRING_FORMAT, aangever.getCode(), aangever.getNaam());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "Aangever", brpAangeverCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = String.valueOf(brpAangeverCode);
         }
         return result;
@@ -58,7 +65,7 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
             result = String.format(STRING_FORMAT_GESL, adelijkeTitel.getCode(), adelijkeTitel.getNaamMannelijk(), adelijkeTitel.getNaamVrouwelijk());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "AdellijkeTitel", brpAdellijkeTitelCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = brpAdellijkeTitelCode;
         }
         return result;
@@ -75,7 +82,7 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
             result = String.format(STRING_FORMAT, bijhoudingsaard.getCode(), bijhoudingsaard.getNaam());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "Bijhoudingsaard", brpBijhoudingsaardCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = brpBijhoudingsaardCode;
         }
         return result;
@@ -89,7 +96,7 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
             result = String.format(STRING_FORMAT, nadereBijhoudingsaard.getCode(), nadereBijhoudingsaard.getNaam());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "Nadere Bijhoudingsaard", brpNadereBijhoudingsaard);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = brpNadereBijhoudingsaard;
         }
         return result;
@@ -99,16 +106,15 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
      * {@inheritDoc}
      */
     @Override
-    public final String getPartij(final int brpPartijCode) {
-        final int partijCodeSize = 4;
+    public final String getPartij(final String brpPartijCode) {
         String result;
         try {
             final Partij partij = getDynamischeStamtabelRepository().getPartijByCode(brpPartijCode);
-            final String partijCode = VerwerkerUtil.zeroPad(Integer.toString(partij.getCode()), partijCodeSize);
+            final String partijCode = partij.getCode();
             result = String.format(STRING_FORMAT, partijCode, partij.getNaam());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "PartijCode", brpPartijCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = String.valueOf(brpPartijCode);
         }
         return result;
@@ -125,7 +131,7 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
             result = String.format(STRING_FORMAT_GESL, predikaat.getCode(), predikaat.getNaamMannelijk(), predikaat.getNaamVrouwelijk());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "Predicaat", brpPredicaatCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = brpPredicaatCode;
         }
         return result;
@@ -142,7 +148,7 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
             result = String.format(STRING_FORMAT, redenOpschorting.getCode(), redenOpschorting.getNaam());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "RedenOpschorting", brpRedenOpschortingBijhoudingCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = brpRedenOpschortingBijhoudingCode;
         }
         return result;
@@ -159,12 +165,12 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
                     getDynamischeStamtabelRepository().getAanduidingInhoudingOfVermissingReisdocumentByCode(brpReisdocumentRedenOntbreken.charAt(0));
             result =
                     String.format(
-                        STRING_FORMAT,
-                        aanduidingInhoudingOfVermissingReisdocument.getCode(),
-                        aanduidingInhoudingOfVermissingReisdocument.getNaam());
+                            STRING_FORMAT,
+                            aanduidingInhoudingOfVermissingReisdocument.getCode(),
+                            aanduidingInhoudingOfVermissingReisdocument.getNaam());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "ReisdocumentRedenOntbreken", brpReisdocumentRedenOntbreken);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = brpReisdocumentRedenOntbreken;
         }
         return result;
@@ -182,7 +188,7 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
             result = String.format(STRING_FORMAT, redenWijzigingVerblijf.getCode(), redenWijzigingVerblijf.getNaam());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "RedenWijzigingVerblijf", brpRedenWijzigingVerblijfCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = String.valueOf(brpRedenWijzigingVerblijfCode);
         }
         return result;
@@ -192,18 +198,17 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
      * {@inheritDoc}
      */
     @Override
-    public final String getGemeenteByPartij(final int gemeentePartijCode) {
-        final int gemeenteCodeSize = 4;
+    public final String getGemeenteByPartij(final String gemeentePartijCode) {
         String result;
         try {
             final Gemeente gemeente =
                     getDynamischeStamtabelRepository().getGemeenteByPartij(getDynamischeStamtabelRepository().getPartijByCode(gemeentePartijCode));
-            final String gemeenteCodePadded = VerwerkerUtil.zeroPad(Integer.toString(gemeente.getCode()), gemeenteCodeSize);
+            final String gemeenteCodePadded = gemeente.getCode();
             result = String.format(STRING_FORMAT, gemeenteCodePadded, gemeente.getNaam());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "GemeentePartijCode", gemeentePartijCode);
-            LOG.warn(logMsg);
-            result = VerwerkerUtil.zeroPad(String.valueOf(gemeentePartijCode), gemeenteCodeSize);
+            LOG.warn(logMsg, iae);
+            result = gemeentePartijCode;
         }
         return result;
     }
@@ -212,16 +217,15 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
      * {@inheritDoc}
      */
     @Override
-    public final String getGemeenteCodeByPartij(final int gemeentePartijCode) {
-        final int gemeenteCodeSize = 4;
+    public final String getGemeenteCodeByPartij(final String gemeentePartijCode) {
         String result;
         try {
             final Gemeente gemeente =
                     getDynamischeStamtabelRepository().getGemeenteByPartij(getDynamischeStamtabelRepository().getPartijByCode(gemeentePartijCode));
-            result = VerwerkerUtil.zeroPad(Integer.toString(gemeente.getCode()), gemeenteCodeSize);
+            result = gemeente.getCode();
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "Gemeente-PartijCode", gemeentePartijCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = null;
         }
         return result;
@@ -235,7 +239,7 @@ public class BrpStamtabelServiceImpl extends StamtabelServiceImpl implements Brp
             result = String.format(STRING_FORMAT, soortMigratie.getCode(), soortMigratie.getNaam());
         } catch (final IllegalArgumentException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "Soort migratie", brpSoortMigratieCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = brpSoortMigratieCode;
         }
         return result;

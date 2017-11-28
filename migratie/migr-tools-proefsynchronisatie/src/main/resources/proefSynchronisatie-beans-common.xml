@@ -19,7 +19,10 @@
 
     <context:component-scan base-package="nl.bzk.migratiebrp.tools.proefsynchronisatie" />
         
-    <bean name="proefSynchronisatieService" class="nl.bzk.migratiebrp.tools.proefsynchronisatie.service.impl.ProefSynchronisatieServiceImpl" />
+    <bean name="proefSynchronisatieService" class="nl.bzk.migratiebrp.tools.proefsynchronisatie.service.impl.ProefSynchronisatieServiceImpl">
+    	<property name="maxThreadPoolSize" value="${proefsync.pool.max.threads:32}"/>
+    	<property name="threadPoolWaitTime" value="${proefsync.pool.wait.time:10}"/>
+    </bean>
     <bean name="proefSynchronisatieRepository" class="nl.bzk.migratiebrp.tools.proefsynchronisatie.repository.jdbc.JdbcProefSynchronisatieRepository" />
     
 </beans>

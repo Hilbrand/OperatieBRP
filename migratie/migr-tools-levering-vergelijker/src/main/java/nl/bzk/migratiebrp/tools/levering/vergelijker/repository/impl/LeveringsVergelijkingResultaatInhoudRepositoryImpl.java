@@ -28,8 +28,7 @@ public final class LeveringsVergelijkingResultaatInhoudRepositoryImpl implements
     @Override
     @Transactional(value = "leveringVergelijkerTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public LeveringsVergelijkingResultaatInhoud opslaanLeveringsVergelijkingInhoudResultaat(
-        final LeveringsVergelijkingResultaatInhoud leveringsVergelijkingResultaatInhoud)
-    {
+            final LeveringsVergelijkingResultaatInhoud leveringsVergelijkingResultaatInhoud) {
         if (leveringsVergelijkingResultaatInhoud.getId() == null) {
             em.persist(leveringsVergelijkingResultaatInhoud);
             return leveringsVergelijkingResultaatInhoud;
@@ -41,8 +40,7 @@ public final class LeveringsVergelijkingResultaatInhoudRepositoryImpl implements
     @Override
     @Transactional(value = "leveringVergelijkerTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public List<LeveringsVergelijkingResultaatInhoud> opslaanLeveringsVergelijkingInhoudResultaten(
-        final List<LeveringsVergelijkingResultaatInhoud> vergelijkingResultaten)
-    {
+            final List<LeveringsVergelijkingResultaatInhoud> vergelijkingResultaten) {
 
         final List<LeveringsVergelijkingResultaatInhoud> opgeslagenVergelijkingResultaten = new ArrayList<>();
 

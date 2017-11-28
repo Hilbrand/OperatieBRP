@@ -7,36 +7,48 @@
 package nl.bzk.migratiebrp.init.logging.model;
 
 /**
- * De VerschilType enum bestaat uit de types voortkomend uit de verschil analyse. De kortere 'code' wordt gebruikt in de
- * vingerafdruk.
+ * De VerschilType enum bestaat uit de types voortkomend uit de verschil analyse. De kortere 'code'
+ * wordt gebruikt in de vingerafdruk.
  */
 public enum VerschilType {
-    /** Geen unieke match. */
+
+    /**
+     * Geen unieke match.
+     */
     NON_UNIQUE_MATCHED("NON_UNIQUE_MATCHED"),
-    /** Toegevoegd. */
+    /**
+     * Toegevoegd.
+     */
     ADDED("A"),
-    /** Verwijderd. */
+    /**
+     * Verwijderd.
+     */
     REMOVED("R"),
-    /** Aangepast. */
+    /**
+     * Aangepast.
+     */
     MODIFIED("M"),
-    /** Niet als actueel terug geconverteerd. */
+    /**
+     * Niet als actueel terug geconverteerd.
+     */
     NOT_ACTUAL("NOT_ACTUAL"),
-    /** Match gevonden. */
-    MATCHED("MATCHED");
+    /**
+     * Match gevonden.
+     */
+    MATCHED("MATCHED"),
+    /**
+     * Als actueel onjuist blijkt te zijn (mag niet volgens LO3).
+     */
+    ACTUAL_ONJUIST("ACTUAL_ONJUIST");
 
     private final String code;
 
-    private VerschilType() {
-        code = this.toString();
-    }
-
-    private VerschilType(final String code) {
+    VerschilType(final String code) {
         this.code = code;
     }
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {

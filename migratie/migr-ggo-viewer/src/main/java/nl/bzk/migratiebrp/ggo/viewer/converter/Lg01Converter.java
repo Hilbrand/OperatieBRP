@@ -6,13 +6,14 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.converter;
 
+import java.util.Collections;
 import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.AbstractOngeldigLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.OnbekendBericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.OngeldigBericht;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.ggo.viewer.log.FoutMelder;
@@ -27,32 +28,27 @@ public class Lg01Converter {
 
     /**
      * Converteert de Lg01 body naar een een lijst van Lo3CategorieWaarde.
-     *
-     * @param lg01
-     *            String
-     * @param foutMelder
-     *            FoutMelder
+     * @param lg01 String
+     * @param foutMelder FoutMelder
      * @return lo3Inhoud List<Lo3CategorieWaarde>
-     * @throws BerichtSyntaxException
-     *             berichtSyntaxException
+     * @throws BerichtSyntaxException berichtSyntaxException
      */
     public final List<Lo3CategorieWaarde> converteerLg01NaarLo3CategorieWaarde(final String lg01, final FoutMelder foutMelder)
-        throws BerichtSyntaxException
-    {
+            throws BerichtSyntaxException {
         if (lg01 == null || "".equals(lg01)) {
             foutMelder.log(LogSeverity.ERROR, "Fout bij het lezen van lg01", "Bestand is leeg.");
         } else {
             final Lo3BerichtFactory bf = new Lo3BerichtFactory();
             final Lo3Bericht lo3Bericht = bf.getBericht(lg01);
 
-            if (lo3Bericht instanceof OngeldigBericht) {
-                foutMelder.log(LogSeverity.ERROR, "Ongeldig bericht", ((OngeldigBericht) lo3Bericht).getMelding());
+            if (lo3Bericht instanceof AbstractOngeldigLo3Bericht) {
+                foutMelder.log(LogSeverity.ERROR, "Ongeldig bericht", ((AbstractOngeldigLo3Bericht) lo3Bericht).getMelding());
             } else if (lo3Bericht instanceof OnbekendBericht) {
                 foutMelder.log(LogSeverity.ERROR, "Onbekend bericht", ((OnbekendBericht) lo3Bericht).getMelding());
             } else {
                 return Lo3Inhoud.parseInhoud(lg01.substring(LG01_BODY_OFFSET));
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 }

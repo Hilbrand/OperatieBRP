@@ -15,13 +15,14 @@ import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
 import java.util.Map;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import org.junit.Before;
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 
 /**
  * Unit tests voor {@link IstSleutel}.

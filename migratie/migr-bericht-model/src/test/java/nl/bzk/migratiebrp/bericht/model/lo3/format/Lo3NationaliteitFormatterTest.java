@@ -6,14 +6,16 @@
 
 package nl.bzk.migratiebrp.bericht.model.lo3.format;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3NationaliteitInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingBijzonderNederlandschapEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingBijzonderNederlandschap;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
+
 import org.junit.Test;
 
 public class Lo3NationaliteitFormatterTest {
@@ -25,7 +27,7 @@ public class Lo3NationaliteitFormatterTest {
         lo3Formatter.categorie(Lo3CategorieEnum.CATEGORIE_04);
         lo3NationaliteitFormatter.format(nationaliteitInhoud, lo3Formatter);
         final String formatted = Lo3Inhoud.formatInhoud(lo3Formatter.getList());
-        Assert.assertEquals("000440403905100043010631000301064100030206510001B", formatted);
+        Assert.assertEquals("000620405705100043010631000301064100030206510001B73100111 2+a-f/Z.D", formatted);
     }
 
     private static Lo3NationaliteitInhoud maakLo3NationaliteitInhoud() {
@@ -35,13 +37,15 @@ public class Lo3NationaliteitFormatterTest {
         final Lo3RedenNederlandschapCode redenVerliesNederlandschapCode = new Lo3RedenNederlandschapCode("020");
         final Lo3AanduidingBijzonderNederlandschap aanduidingBijzonderNederlandschap =
                 new Lo3AanduidingBijzonderNederlandschap(Lo3AanduidingBijzonderNederlandschapEnum.BEHANDELD_ALS_NEDERLANDER.getCode());
+        final Lo3String euPersoonsnummer = new Lo3String("1 2+a-f/Z.D");
 
         final Lo3NationaliteitInhoud lo3NationaliteitInhoud =
                 new Lo3NationaliteitInhoud(
-                    nationaliteitCode,
-                    redenVerkrijgingNederlandschapCode,
-                    redenVerliesNederlandschapCode,
-                    aanduidingBijzonderNederlandschap);
+                        nationaliteitCode,
+                        redenVerkrijgingNederlandschapCode,
+                        redenVerliesNederlandschapCode,
+                        aanduidingBijzonderNederlandschap,
+                        euPersoonsnummer);
         return lo3NationaliteitInhoud;
     }
 }

@@ -13,7 +13,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.test.dal.DBUnit;
+import nl.bzk.algemeenbrp.test.dal.DBUnit.InsertBefore;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3ReisdocumentInhoud;
@@ -32,7 +33,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Huisnummer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieOnjuist;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RNIDeelnemerCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOntbindingHuwelijkOfGpCode;
@@ -40,9 +40,8 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOpschortingBijhoud
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
+import nl.bzk.migratiebrp.ggo.viewer.util.PortInitializer;
 import nl.bzk.migratiebrp.ggo.viewer.util.VerwerkerUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -57,30 +56,30 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class })
-@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml" })
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class})
+@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml"}, initializers = {PortInitializer.class})
 public class GgoLo3GegevensgroepenBuilderTest {
 
     @Inject
     private GgoLo3GegevensgroepenBuilder builder;
     @Inject
     private GgoLo3ValueConvert lo3ValueConvert;
-    
+
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep01Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
-        final Lo3Long aNummer = Lo3Long.wrap(1653648353L);
-        final Lo3Integer burgerServiceNummer = Lo3Integer.wrap(427389033);
+        final Lo3String aNummer = Lo3String.wrap("1653648353");
+        final Lo3String burgerServiceNummer = Lo3String.wrap("427389033");
         builder.addGroep01(voorkomen, aNummer, burgerServiceNummer);
 
-        assertContains(voorkomen, Lo3ElementEnum.ELEMENT_0110, String.valueOf(Lo3Long.unwrap(aNummer)));
-        assertContains(voorkomen, Lo3ElementEnum.ELEMENT_0120, String.valueOf(Lo3Integer.unwrap(burgerServiceNummer)));
+        assertContains(voorkomen, Lo3ElementEnum.ELEMENT_0110, String.valueOf(Lo3String.unwrap(aNummer)));
+        assertContains(voorkomen, Lo3ElementEnum.ELEMENT_0120, String.valueOf(Lo3String.unwrap(burgerServiceNummer)));
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep01EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -91,7 +90,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep02Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -100,23 +99,23 @@ public class GgoLo3GegevensgroepenBuilderTest {
         final String voorvoegselGeslachtsnaam = "van";
         final String geslachtsnaam = "Achternaam";
         builder.addGroep02(
-            voorkomen,
-            Lo3String.wrap(voornamen),
-            adellijkeTitelPredikaatCode,
-            Lo3String.wrap(voorvoegselGeslachtsnaam),
-            Lo3String.wrap(geslachtsnaam));
+                voorkomen,
+                Lo3String.wrap(voornamen),
+                adellijkeTitelPredikaatCode,
+                Lo3String.wrap(voorvoegselGeslachtsnaam),
+                Lo3String.wrap(geslachtsnaam));
 
         assertContains(voorkomen, Lo3ElementEnum.ELEMENT_0210, voornamen);
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_0220,
-            lo3ValueConvert.convertToViewerValue(adellijkeTitelPredikaatCode, Lo3ElementEnum.ELEMENT_0220));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_0220,
+                lo3ValueConvert.convertToViewerValue(adellijkeTitelPredikaatCode, Lo3ElementEnum.ELEMENT_0220));
         assertContains(voorkomen, Lo3ElementEnum.ELEMENT_0230, voorvoegselGeslachtsnaam);
         assertContains(voorkomen, Lo3ElementEnum.ELEMENT_0240, geslachtsnaam);
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep02EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -129,7 +128,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep03Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -144,7 +143,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep03EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -156,7 +155,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep04Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -167,7 +166,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep04EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -177,7 +176,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep06Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -187,15 +186,15 @@ public class GgoLo3GegevensgroepenBuilderTest {
         builder.addGroep06(voorkomen, datumSluitingHuwelijkOfAangaanGp, lo3GemeenteCode, lo3LandCode);
 
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_0610,
-            lo3ValueConvert.convertToViewerValue(datumSluitingHuwelijkOfAangaanGp, Lo3ElementEnum.ELEMENT_0610));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_0610,
+                lo3ValueConvert.convertToViewerValue(datumSluitingHuwelijkOfAangaanGp, Lo3ElementEnum.ELEMENT_0610));
         assertContains(voorkomen, Lo3ElementEnum.ELEMENT_0620, lo3ValueConvert.convertToViewerValue(lo3GemeenteCode, Lo3ElementEnum.ELEMENT_0620));
         assertContains(voorkomen, Lo3ElementEnum.ELEMENT_0630, lo3ValueConvert.convertToViewerValue(lo3LandCode, Lo3ElementEnum.ELEMENT_0630));
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep06EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -207,7 +206,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep07Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -216,32 +215,32 @@ public class GgoLo3GegevensgroepenBuilderTest {
         final Lo3LandCode landCodeOntbindingHuwelijkOfGp = new Lo3LandCode("5002");
         final Lo3RedenOntbindingHuwelijkOfGpCode redenOntbindingHuwelijkOfGpCode = new Lo3RedenOntbindingHuwelijkOfGpCode("A");
         builder.addGroep07(
-            voorkomen,
-            datumOntbindingHuwelijkOfGp,
-            gemeenteCodeOntbindingHuwelijkOfGp,
-            landCodeOntbindingHuwelijkOfGp,
-            redenOntbindingHuwelijkOfGpCode);
+                voorkomen,
+                datumOntbindingHuwelijkOfGp,
+                gemeenteCodeOntbindingHuwelijkOfGp,
+                landCodeOntbindingHuwelijkOfGp,
+                redenOntbindingHuwelijkOfGpCode);
 
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_0710,
-            lo3ValueConvert.convertToViewerValue(datumOntbindingHuwelijkOfGp, Lo3ElementEnum.ELEMENT_0710));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_0710,
+                lo3ValueConvert.convertToViewerValue(datumOntbindingHuwelijkOfGp, Lo3ElementEnum.ELEMENT_0710));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_0720,
-            lo3ValueConvert.convertToViewerValue(gemeenteCodeOntbindingHuwelijkOfGp, Lo3ElementEnum.ELEMENT_0720));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_0720,
+                lo3ValueConvert.convertToViewerValue(gemeenteCodeOntbindingHuwelijkOfGp, Lo3ElementEnum.ELEMENT_0720));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_0730,
-            lo3ValueConvert.convertToViewerValue(landCodeOntbindingHuwelijkOfGp, Lo3ElementEnum.ELEMENT_0730));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_0730,
+                lo3ValueConvert.convertToViewerValue(landCodeOntbindingHuwelijkOfGp, Lo3ElementEnum.ELEMENT_0730));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_0740,
-            lo3ValueConvert.convertToViewerValue(redenOntbindingHuwelijkOfGpCode, Lo3ElementEnum.ELEMENT_0740));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_0740,
+                lo3ValueConvert.convertToViewerValue(redenOntbindingHuwelijkOfGpCode, Lo3ElementEnum.ELEMENT_0740));
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep07EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -254,7 +253,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep09Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -267,7 +266,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep09EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -278,7 +277,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep10Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -293,7 +292,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep10EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -305,7 +304,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep11Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -322,31 +321,31 @@ public class GgoLo3GegevensgroepenBuilderTest {
 
         final Lo3VerblijfplaatsInhoud inhoud =
                 new Lo3VerblijfplaatsInhoud(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    straatnaam,
-                    naamOpenbareRuimte,
-                    huisnummer,
-                    huisletter,
-                    huisnummertoevoeging,
-                    aanduidingHuisnummer,
-                    postcode,
-                    woonplaatsnaam,
-                    identificatiecodeVerblijfplaats,
-                    identificatiecodeNummeraanduiding,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        straatnaam,
+                        naamOpenbareRuimte,
+                        huisnummer,
+                        huisletter,
+                        huisnummertoevoeging,
+                        aanduidingHuisnummer,
+                        postcode,
+                        woonplaatsnaam,
+                        identificatiecodeVerblijfplaats,
+                        identificatiecodeNummeraanduiding,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
 
         builder.addGroep11(voorkomen, inhoud);
 
@@ -359,47 +358,47 @@ public class GgoLo3GegevensgroepenBuilderTest {
         assertContains(voorkomen, Lo3ElementEnum.ELEMENT_1160, lo3ValueConvert.convertToViewerValue(postcode, Lo3ElementEnum.ELEMENT_1160));
         assertContains(voorkomen, Lo3ElementEnum.ELEMENT_1170, lo3ValueConvert.convertToViewerValue(woonplaatsnaam, Lo3ElementEnum.ELEMENT_1170));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_1180,
-            lo3ValueConvert.convertToViewerValue(identificatiecodeVerblijfplaats, Lo3ElementEnum.ELEMENT_1180));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_1180,
+                lo3ValueConvert.convertToViewerValue(identificatiecodeVerblijfplaats, Lo3ElementEnum.ELEMENT_1180));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_1190,
-            lo3ValueConvert.convertToViewerValue(identificatiecodeNummeraanduiding, Lo3ElementEnum.ELEMENT_1190));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_1190,
+                lo3ValueConvert.convertToViewerValue(identificatiecodeNummeraanduiding, Lo3ElementEnum.ELEMENT_1190));
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep11EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
         final Lo3VerblijfplaatsInhoud inhoud =
                 new Lo3VerblijfplaatsInhoud(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
 
         builder.addGroep11(voorkomen, inhoud);
 
@@ -416,7 +415,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep13Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -435,7 +434,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep13EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -449,7 +448,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep14Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -462,7 +461,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep14EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -473,7 +472,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep35Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -488,45 +487,45 @@ public class GgoLo3GegevensgroepenBuilderTest {
                 new Lo3AanduidingInhoudingVermissingNederlandsReisdocument("V");
         final Lo3ReisdocumentInhoud inhoud =
                 new Lo3ReisdocumentInhoud(
-                    soortNederlandsReisdocument,
-                    nummerNederlandsReisdocument,
-                    datumUitgifteNederlandsReisdocument,
-                    autoriteitVanAfgifteNederlandsReisdocument,
-                    datumEindeGeldigheidNederlandsReisdocument,
-                    datumInhoudingVermissingNederlandsReisdocument,
-                    aanduidingInhoudingNederlandsReisdocument,
-                    null);
+                        soortNederlandsReisdocument,
+                        nummerNederlandsReisdocument,
+                        datumUitgifteNederlandsReisdocument,
+                        autoriteitVanAfgifteNederlandsReisdocument,
+                        datumEindeGeldigheidNederlandsReisdocument,
+                        datumInhoudingVermissingNederlandsReisdocument,
+                        aanduidingInhoudingNederlandsReisdocument,
+                        null);
         builder.addGroep35(voorkomen, inhoud);
 
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_3510,
-            lo3ValueConvert.convertToViewerValue(soortNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3510));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_3510,
+                lo3ValueConvert.convertToViewerValue(soortNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3510));
         assertContains(voorkomen, Lo3ElementEnum.ELEMENT_3520, Lo3String.unwrap(nummerNederlandsReisdocument));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_3530,
-            lo3ValueConvert.convertToViewerValue(datumUitgifteNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3530));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_3530,
+                lo3ValueConvert.convertToViewerValue(datumUitgifteNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3530));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_3540,
-            lo3ValueConvert.convertToViewerValue(autoriteitVanAfgifteNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3540));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_3540,
+                lo3ValueConvert.convertToViewerValue(autoriteitVanAfgifteNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3540));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_3550,
-            lo3ValueConvert.convertToViewerValue(datumEindeGeldigheidNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3550));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_3550,
+                lo3ValueConvert.convertToViewerValue(datumEindeGeldigheidNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3550));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_3560,
-            lo3ValueConvert.convertToViewerValue(datumInhoudingVermissingNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3560));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_3560,
+                lo3ValueConvert.convertToViewerValue(datumInhoudingVermissingNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3560));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_3570,
-            lo3ValueConvert.convertToViewerValue(aanduidingInhoudingNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3570));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_3570,
+                lo3ValueConvert.convertToViewerValue(aanduidingInhoudingNederlandsReisdocument, Lo3ElementEnum.ELEMENT_3570));
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep35EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -544,7 +543,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep67Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -553,17 +552,17 @@ public class GgoLo3GegevensgroepenBuilderTest {
         builder.addGroep67(voorkomen, datumOpschortingBijhouding, redenOpschortingBijhoudingCode);
 
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_6710,
-            lo3ValueConvert.convertToViewerValue(datumOpschortingBijhouding, Lo3ElementEnum.ELEMENT_6710));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_6710,
+                lo3ValueConvert.convertToViewerValue(datumOpschortingBijhouding, Lo3ElementEnum.ELEMENT_6710));
         assertContains(
-            voorkomen,
-            Lo3ElementEnum.ELEMENT_6720,
-            lo3ValueConvert.convertToViewerValue(redenOpschortingBijhoudingCode, Lo3ElementEnum.ELEMENT_6720));
+                voorkomen,
+                Lo3ElementEnum.ELEMENT_6720,
+                lo3ValueConvert.convertToViewerValue(redenOpschortingBijhoudingCode, Lo3ElementEnum.ELEMENT_6720));
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep67EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -574,7 +573,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep71Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -587,7 +586,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep71EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -598,7 +597,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep80Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -611,7 +610,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep80EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -622,7 +621,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep8182Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -646,7 +645,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep8182EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -664,7 +663,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep83Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -681,7 +680,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep83EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -695,7 +694,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep848586Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
         final Lo3IndicatieOnjuist indicatieOnjuist = new Lo3IndicatieOnjuist("O");
@@ -711,7 +710,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep848586EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
         final Lo3Historie historie = new Lo3Historie(null, null, null);
@@ -724,7 +723,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep88Success() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 
@@ -739,7 +738,7 @@ public class GgoLo3GegevensgroepenBuilderTest {
     }
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testAddGroep88EmptySuccess() {
         final Map<String, String> voorkomen = new LinkedHashMap<>();
 

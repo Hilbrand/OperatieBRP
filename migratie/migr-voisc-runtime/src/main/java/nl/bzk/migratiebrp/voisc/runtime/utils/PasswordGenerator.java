@@ -6,69 +6,69 @@
 
 package nl.bzk.migratiebrp.voisc.runtime.utils;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
- *
+ * Password generator.
  */
 public final class PasswordGenerator {
 
     private static final int PWD_LENGTH = 8;
 
-    private static final char[] UPPER_CHARS = new char[] {'A',
-                                                          'B',
-                                                          'C',
-                                                          'D',
-                                                          'E',
-                                                          'F',
-                                                          'G',
-                                                          'H',
-                                                          'I',
-                                                          'J',
-                                                          'K',
-                                                          'L',
-                                                          'M',
-                                                          'N',
-                                                          'O',
-                                                          'P',
-                                                          'Q',
-                                                          'R',
-                                                          'S',
-                                                          'T',
-                                                          'U',
-                                                          'V',
-                                                          'W',
-                                                          'X',
-                                                          'Y',
-                                                          'Z', };
-    private static final char[] LOWER_CHARS = new char[] {'a',
-                                                          'b',
-                                                          'c',
-                                                          'd',
-                                                          'e',
-                                                          'f',
-                                                          'g',
-                                                          'h',
-                                                          'i',
-                                                          'j',
-                                                          'k',
-                                                          'l',
-                                                          'm',
-                                                          'n',
-                                                          'o',
-                                                          'p',
-                                                          'q',
-                                                          'r',
-                                                          's',
-                                                          't',
-                                                          'u',
-                                                          'v',
-                                                          'w',
-                                                          'x',
-                                                          'y',
-                                                          'z', };
-    private static final char[] NUM_CHARS = new char[] {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
-    private static final char[] SPEC_CHARS = new char[] {'%', '&', '#', '(', ')', '+', '@' };
+    private static final char[] UPPER_CHARS = new char[]{'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
+            'K',
+            'L',
+            'M',
+            'N',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'S',
+            'T',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',};
+    private static final char[] LOWER_CHARS = new char[]{'a',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+            'g',
+            'h',
+            'i',
+            'j',
+            'k',
+            'l',
+            'm',
+            'n',
+            'o',
+            'p',
+            'q',
+            'r',
+            's',
+            't',
+            'u',
+            'v',
+            'w',
+            'x',
+            'y',
+            'z',};
+    private static final char[] NUM_CHARS = new char[]{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+    private static final char[] SPEC_CHARS = new char[]{'%', '&', '#', '(', ')', '+', '@'};
 
     private static final int UC_INDEX = 0;
     private static final int LC_INDEX = 1;
@@ -93,12 +93,11 @@ public final class PasswordGenerator {
      * (decimaal 48...57). <br>
      * 7. Een wachtwoord met tenminste 3 tekens anders dan letters, cijfers en spaties wordt beschouwd als door een
      * computer gegenereerd. De regels 4, 5 en 6 zijn in dat geval niet van toepassing.
-     * 
      * @return Het gegenereerde wachtwoord
      */
     public static String generate() {
         int nrOfSpecChars = 0;
-        final Random random = new Random(System.currentTimeMillis());
+        final SecureRandom random = new SecureRandom();
         final char[] pwd = new char[PWD_LENGTH];
         for (int i = 0; i < pwd.length; i++) {
             final int caseIndex = random.nextInt(4);

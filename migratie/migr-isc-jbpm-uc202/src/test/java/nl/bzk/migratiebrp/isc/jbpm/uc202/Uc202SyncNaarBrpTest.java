@@ -6,28 +6,20 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc202;
 
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf03Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.Vb01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoVerzoekBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpVerzoekBericht;
-import nl.bzk.migratiebrp.isc.jbpm.common.locking.LockService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 
 /**
  * Test de technische flows rondom het synchroniseren naar BRP.
  */
 public class Uc202SyncNaarBrpTest extends AbstractUc202Test {
-
-    @Inject
-    private LockService lockService;
 
     @BeforeClass
     public static void outputTestIscBerichten() {
@@ -37,16 +29,8 @@ public class Uc202SyncNaarBrpTest extends AbstractUc202Test {
 
     @Before
     public void startProces() throws Exception {
-        Mockito.reset(lockService);
-        Mockito.when(lockService.verkrijgLockVoorAnummers(Matchers.anySetOf(Long.class), Matchers.anyLong())).thenReturn(5678L);
-
         // Start
-        startProcess(maakLg01(1231231234L, 1231231234L, null, null, "0599", "0599"));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, null, null, null));
+        startProcess(maakLg01("1231231234", "1231231234", null, null, "059901", "0599"));
     }
 
     @After
@@ -92,19 +76,41 @@ public class Uc202SyncNaarBrpTest extends AbstractUc202Test {
     }
 
     @Test
+    public void wachtOpLeveringBericht() {
+        controleerBerichten(0, 0, 1);
+        SynchroniseerNaarBrpVerzoekBericht syncVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
+
+        // Nog niet geleverd bericht
+        final SyncBericht nogNietGeleverdBericht = maakSynchroniseerNaarBrpAntwoordBericht(syncVerzoek, StatusType.VORIGE_HANDELINGEN_NIET_GELEVERD, null);
+        signalSync(nogNietGeleverdBericht);
+
+        controleerNode("IV-3. Wachten");
+        this.signalProcess("timeout");
+
+        controleerBerichten(0, 0, 1);
+        syncVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
+
+        // Afbreken
+        signalProcess("afbreken");
+
+        // Beheerderskeuze: end
+        checkVariabele("foutafhandelingFout", "uc202.syncnaarbrp.afgebroken");
+        signalHumanTask("endWithoutPf03");
+    }
+
+    @Test
     public void foutiefBeeindigen() {
         controleerBerichten(0, 0, 1);
         getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
 
-        // Verwacht twee output berichten (pf03 en vb01) om de lg01 cyclus netjes af te ronden
+        // Afbreken
         signalProcess("afbreken");
 
         // Beheerderskeuze: end
         signalHumanTask("end");
 
-        // Verwacht twee output berichten (pf03 en vb01) om de lg01 cyclus netjes af te ronden
-        controleerBerichten(0, 2, 0);
+        // Verwacht een output berichten (pf03) om de lg01 cyclus netjes af te ronden
+        controleerBerichten(0, 1, 0);
         getBericht(Pf03Bericht.class);
-        getBericht(Vb01Bericht.class);
     }
 }

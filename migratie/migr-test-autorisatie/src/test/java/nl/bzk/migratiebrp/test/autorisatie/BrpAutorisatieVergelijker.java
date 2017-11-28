@@ -13,7 +13,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpDienstbundel;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpDienstbundelLo3Rubriek;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpLeveringsautorisatie;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpPartij;
-import nl.bzk.migratiebrp.conversie.model.brp.util.BrpVergelijker;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpStapelVergelijker;
 
 /**
  * Vergleijk autorisaties.
@@ -28,36 +28,29 @@ public final class BrpAutorisatieVergelijker {
 
     /**
      * Vergelijk autorisaties.
-     *
-     * @param verschillenLog
-     *            log
-     * @param expected
-     *            verwacht
-     * @param actual
-     *            gevonden
-     * @param skipPartij
-     *            sla partijen over in de vergelijking
+     * @param verschillenLog log
+     * @param expected verwacht
+     * @param actual gevonden
+     * @param skipPartij sla partijen over in de vergelijking
      * @return false, als verschillen zijn gevonden, anders true
      */
     public static boolean vergelijkAutorisaties(
-        final StringBuilder verschillenLog,
-        final BrpAutorisatie expected,
-        final BrpAutorisatie actual,
-        final boolean skipPartij)
-    {
+            final StringBuilder verschillenLog,
+            final BrpAutorisatie expected,
+            final BrpAutorisatie actual,
+            final boolean skipPartij) {
         boolean result = true;
 
         // Partij
-        if (!skipPartij && !BrpAutorisatieVergelijker.vergelijkPartij(verschillenLog, expected.getPartij(), actual.getPartij())) {
+        if (!skipPartij && !BrpAutorisatieVergelijker.equals(verschillenLog, "partij", expected.getPartij(), actual.getPartij())) {
             result = false;
         }
 
         // Leveringsautorisatie
         if (!BrpAutorisatieVergelijker.vergelijkLeveringsautorisaties(
-            verschillenLog,
-            expected.getLeveringsAutorisatieLijst(),
-            actual.getLeveringsAutorisatieLijst()))
-        {
+                verschillenLog,
+                expected.getLeveringsAutorisatieLijst(),
+                actual.getLeveringsAutorisatieLijst())) {
             result = false;
         }
 
@@ -66,13 +59,9 @@ public final class BrpAutorisatieVergelijker {
 
     /**
      * Vergelijk partij.
-     *
-     * @param verschillenLog
-     *            log
-     * @param expected
-     *            verwacht
-     * @param actual
-     *            gevonden
+     * @param verschillenLog log
+     * @param expected verwacht
+     * @param actual gevonden
      * @return false, als verschillen zijn gevonden, anders true
      */
     public static boolean vergelijkPartij(final StringBuilder verschillenLog, final BrpPartij expected, final BrpPartij actual) {
@@ -87,13 +76,12 @@ public final class BrpAutorisatieVergelijker {
             }
         } else {
             if (!BrpAutorisatieVergelijker.equals(lokaalVerschillenLog, AUTORISATIE_PARTIJ_NAAM, expected.getNaam(), actual.getNaam())
-                || !BrpAutorisatieVergelijker.equals(
+                    || !BrpAutorisatieVergelijker.equals(
                     lokaalVerschillenLog,
                     AUTORISATIE_PARTIJ_CODE,
                     expected.getPartijCode().getWaarde(),
                     actual.getPartijCode().getWaarde())
-                || !BrpVergelijker.vergelijkStapels(lokaalVerschillenLog, expected.getPartijStapel(), actual.getPartijStapel(), false, false))
-            {
+                    || !BrpStapelVergelijker.vergelijkStapels(lokaalVerschillenLog, expected.getPartijStapel(), actual.getPartijStapel(), false, false)) {
                 equal = false;
             }
         }
@@ -107,20 +95,15 @@ public final class BrpAutorisatieVergelijker {
 
     /**
      * Vergelijk autorisatie besluiten.
-     *
-     * @param verschillenLog
-     *            log
-     * @param expected
-     *            verwacht
-     * @param actual
-     *            gevonden
+     * @param verschillenLog log
+     * @param expected verwacht
+     * @param actual gevonden
      * @return false, als verschillen zijn gevonden, anders true
      */
     public static boolean vergelijkLeveringsautorisaties(
-        final StringBuilder verschillenLog,
-        final List<BrpLeveringsautorisatie> expected,
-        final List<BrpLeveringsautorisatie> actual)
-    {
+            final StringBuilder verschillenLog,
+            final List<BrpLeveringsautorisatie> expected,
+            final List<BrpLeveringsautorisatie> actual) {
         boolean equal = true;
         final StringBuilder lokaalVerschillenLog = new StringBuilder();
         lokaalVerschillenLog.append("Vergelijk leveringsautorisaties:\n ");
@@ -133,7 +116,7 @@ public final class BrpAutorisatieVergelijker {
         } else {
             if (expected.size() != actual.size()) {
                 lokaalVerschillenLog.append(
-                    String.format("Lijsten bevatten niet even veel leveringsautorisaties (expected=%s, actual=%s)%n", expected.size(), actual.size()));
+                        String.format("Lijsten bevatten niet even veel leveringsautorisaties (expected=%s, actual=%s)%n", expected.size(), actual.size()));
                 equal = false;
             }
             for (int index = 0; index < expected.size(); index++) {
@@ -145,17 +128,16 @@ public final class BrpAutorisatieVergelijker {
                 final BrpLeveringsautorisatie actualItem = actual.get(index);
 
                 if (!BrpAutorisatieVergelijker.equals(lokaalVerschillenLog, "stelsel", expectedItem.getStelsel(), actualItem.getStelsel())
-                    || !BrpAutorisatieVergelijker.equals(
+                        || !BrpAutorisatieVergelijker.equals(
                         lokaalVerschillenLog,
                         "indicatieModelautorisatie",
                         expectedItem.getIndicatieModelautorisatie(),
                         actualItem.getIndicatieModelautorisatie())
-                    || !BrpVergelijker.vergelijkStapels(
+                        || !BrpStapelVergelijker.vergelijkStapels(
                         lokaalVerschillenLog,
                         expectedItem.getLeveringsautorisatieStapel(),
                         actualItem.getLeveringsautorisatieStapel())
-                    || !BrpAutorisatieVergelijker.vergelijkDienstbundels(verschillenLog, expectedItem.getDienstbundels(), actualItem.getDienstbundels()))
-                {
+                        || !BrpAutorisatieVergelijker.vergelijkDienstbundels(verschillenLog, expectedItem.getDienstbundels(), actualItem.getDienstbundels())) {
                     equal = false;
                 }
             }
@@ -169,10 +151,9 @@ public final class BrpAutorisatieVergelijker {
     }
 
     private static boolean vergelijkDienstbundels(
-        final StringBuilder verschillenLog,
-        final List<BrpDienstbundel> expected,
-        final List<BrpDienstbundel> actual)
-    {
+            final StringBuilder verschillenLog,
+            final List<BrpDienstbundel> expected,
+            final List<BrpDienstbundel> actual) {
         boolean equal = true;
         final StringBuilder lokaalVerschillenLog = new StringBuilder();
         lokaalVerschillenLog.append("Vergelijk dienstbundels:\n ");
@@ -185,7 +166,7 @@ public final class BrpAutorisatieVergelijker {
         } else {
             if (expected.size() != actual.size()) {
                 lokaalVerschillenLog.append(
-                    String.format("Lijsten bevatten niet even veel dienstbundels (expected=%s, actual=%s)%n", expected.size(), actual.size()));
+                        String.format("Lijsten bevatten niet even veel dienstbundels (expected=%s, actual=%s)%n", expected.size(), actual.size()));
                 equal = false;
             }
             for (int index = 0; index < expected.size(); index++) {
@@ -209,11 +190,10 @@ public final class BrpAutorisatieVergelijker {
     }
 
     private static boolean vergelijkDienstbundel(
-        final StringBuilder verschillenLog,
-        final int index,
-        final BrpDienstbundel expected,
-        final BrpDienstbundel actual)
-    {
+            final StringBuilder verschillenLog,
+            final int index,
+            final BrpDienstbundel expected,
+            final BrpDienstbundel actual) {
         boolean equal = true;
         final StringBuilder lokaalVerschillenLog = new StringBuilder();
         lokaalVerschillenLog.append("Vergelijk dienstbundel (").append(index).append("):\n    ");
@@ -225,14 +205,8 @@ public final class BrpAutorisatieVergelijker {
             }
         } else {
             if (!BrpAutorisatieVergelijker.vergelijkDiensten(lokaalVerschillenLog, expected.getDiensten(), actual.getDiensten())
-                || !BrpAutorisatieVergelijker.vergelijkDienstbundelLo3Rubrieken(lokaalVerschillenLog, expected.getLo3Rubrieken(), actual.getLo3Rubrieken())
-                || !BrpVergelijker.vergelijkStapels(
-                    lokaalVerschillenLog,
-                    expected.getDienstbundelStapel(),
-                    actual.getDienstbundelStapel() /*
-                                                    * , new DienstbundelInhoudVergelijker(), true, true
-                                                    */))
-            {
+                    || !BrpAutorisatieVergelijker.vergelijkDienstbundelLo3Rubrieken(lokaalVerschillenLog, expected.getLo3Rubrieken(), actual.getLo3Rubrieken())
+                    || !BrpStapelVergelijker.vergelijkStapels(lokaalVerschillenLog, expected.getDienstbundelStapel(), actual.getDienstbundelStapel())) {
                 equal = false;
             }
 
@@ -258,7 +232,7 @@ public final class BrpAutorisatieVergelijker {
         } else {
             if (expected.size() != actual.size()) {
                 lokaalVerschillenLog.append(
-                    String.format("Lijsten bevatten niet even veel diensten (expected=%s, actual=%s)%n", expected.size(), actual.size()));
+                        String.format("Lijsten bevatten niet even veel diensten (expected=%s, actual=%s)%n", expected.size(), actual.size()));
                 equal = false;
             }
             for (int index = 0; index < expected.size(); index++) {
@@ -293,15 +267,14 @@ public final class BrpAutorisatieVergelijker {
             }
         } else {
             if (!BrpAutorisatieVergelijker.equals(
-                lokaalVerschillenLog,
-                "effectAfnemersindicatie",
-                expected.getEffectAfnemersindicatie(),
-                actual.getEffectAfnemersindicatie())
-                || !BrpAutorisatieVergelijker.equals(lokaalVerschillenLog, "soort", expected.getSoortDienstCode(), actual.getSoortDienstCode())
-                || !BrpVergelijker.vergelijkStapels(lokaalVerschillenLog, expected.getDienstStapel(), actual.getDienstStapel())
-                || !BrpVergelijker.vergelijkStapels(lokaalVerschillenLog, expected.getDienstAttenderingStapel(), actual.getDienstAttenderingStapel())
-                || !BrpVergelijker.vergelijkStapels(lokaalVerschillenLog, expected.getDienstSelectieStapel(), actual.getDienstSelectieStapel()))
-            {
+                    lokaalVerschillenLog,
+                    "effectAfnemersindicatie",
+                    expected.getEffectAfnemersindicatie(),
+                    actual.getEffectAfnemersindicatie())
+                    || !BrpAutorisatieVergelijker.equals(lokaalVerschillenLog, "soort", expected.getSoortDienstCode(), actual.getSoortDienstCode())
+                    || !BrpStapelVergelijker.vergelijkStapels(lokaalVerschillenLog, expected.getDienstStapel(), actual.getDienstStapel())
+                    || !BrpStapelVergelijker.vergelijkStapels(lokaalVerschillenLog, expected.getDienstAttenderingStapel(), actual.getDienstAttenderingStapel())
+                    || !BrpStapelVergelijker.vergelijkStapels(lokaalVerschillenLog, expected.getDienstSelectieStapel(), actual.getDienstSelectieStapel())) {
                 equal = false;
             }
         }
@@ -314,10 +287,9 @@ public final class BrpAutorisatieVergelijker {
     }
 
     private static boolean vergelijkDienstbundelLo3Rubrieken(
-        final StringBuilder verschillenLog,
-        final List<BrpDienstbundelLo3Rubriek> expected,
-        final List<BrpDienstbundelLo3Rubriek> actual)
-    {
+            final StringBuilder verschillenLog,
+            final List<BrpDienstbundelLo3Rubriek> expected,
+            final List<BrpDienstbundelLo3Rubriek> actual) {
         boolean equal = true;
         final StringBuilder lokaalVerschillenLog = new StringBuilder();
         lokaalVerschillenLog.append("Vergelijk dienstbundello3rubrieken:\n ");
@@ -330,7 +302,7 @@ public final class BrpAutorisatieVergelijker {
         } else {
             if (expected.size() != actual.size()) {
                 lokaalVerschillenLog.append(
-                    String.format("Lijsten bevatten niet even veel dienstbundello3rubrieken (expected=%s, actual=%s)%n", expected.size(), actual.size()));
+                        String.format("Lijsten bevatten niet even veel dienstbundello3rubrieken (expected=%s, actual=%s)%n", expected.size(), actual.size()));
                 equal = false;
             }
             for (int index = 0; index < expected.size(); index++) {
@@ -358,11 +330,10 @@ public final class BrpAutorisatieVergelijker {
     }
 
     private static boolean vergelijkDienstbundelLo3Rubriek(
-        final StringBuilder verschillenLog,
-        final int index,
-        final BrpDienstbundelLo3Rubriek expected,
-        final BrpDienstbundelLo3Rubriek actual)
-    {
+            final StringBuilder verschillenLog,
+            final int index,
+            final BrpDienstbundelLo3Rubriek expected,
+            final BrpDienstbundelLo3Rubriek actual) {
         boolean equal = true;
         final StringBuilder lokaalVerschillenLog = new StringBuilder();
         lokaalVerschillenLog.append("Vergelijk dienstbundello3rubriek (").append(index).append("):\n ");
@@ -373,13 +344,7 @@ public final class BrpAutorisatieVergelijker {
                 equal = false;
             }
         } else {
-            if (!equals(lokaalVerschillenLog, "conversieRubriek", expected.getConversieRubriek(), actual.getConversieRubriek())
-                || !equals(lokaalVerschillenLog, "actief", expected.getActief(), actual.getActief())
-                || !BrpVergelijker.vergelijkStapels(
-                    lokaalVerschillenLog,
-                    expected.getDienstbundelLo3RubriekStapel(),
-                    actual.getDienstbundelLo3RubriekStapel()))
-            {
+            if (!equals(lokaalVerschillenLog, "conversieRubriek", expected.getConversieRubriek(), actual.getConversieRubriek())) {
                 equal = false;
             }
         }

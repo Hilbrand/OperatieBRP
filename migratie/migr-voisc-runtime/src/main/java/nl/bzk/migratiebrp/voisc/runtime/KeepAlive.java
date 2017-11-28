@@ -7,8 +7,8 @@
 package nl.bzk.migratiebrp.voisc.runtime;
 
 import java.util.concurrent.CountDownLatch;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Keep alive.
@@ -29,6 +29,7 @@ public final class KeepAlive implements Runnable {
         } catch (final InterruptedException e) {
             // Ignore
             LOGGER.info("Interrupted", e);
+            Thread.currentThread().interrupt();
         }
     }
 

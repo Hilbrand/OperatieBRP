@@ -9,8 +9,11 @@ package nl.bzk.migratiebrp.isc.console.mig4jsf.filter;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.faces.event.ActionListener;
+
 import nl.bzk.migratiebrp.isc.console.mig4jsf.AbstractTagTest;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.junit.Assert;
@@ -27,6 +30,8 @@ public class ProcessInstancesFilterTest extends AbstractTagTest {
         addTagAttribute("running", true);
         addTagAttribute("suspended", false);
         addTagAttribute("ended", false);
+        addTagAttribute("processInstanceId", "1");
+        addTagAttribute("processDefinition", "uc202");
         addTagAttribute("target", null);
 
         // Execute
@@ -42,19 +47,23 @@ public class ProcessInstancesFilterTest extends AbstractTagTest {
         final Boolean running = getProperty(filter, "running", Boolean.class);
         final Boolean suspended = getProperty(filter, "suspended", Boolean.class);
         final Boolean ended = getProperty(filter, "ended", Boolean.class);
+        final String processInstanceId = getProperty(filter, "processInstanceId", String.class);
+        final String processDefinition = getProperty(filter, "processDefinition", String.class);
 
         Assert.assertEquals("sleutel", key);
         Assert.assertEquals("12-02-2004", new SimpleDateFormat("dd-MM-yyyy").format(startDate));
         Assert.assertEquals(Boolean.TRUE, running);
         Assert.assertEquals(Boolean.FALSE, suspended);
         Assert.assertEquals(Boolean.FALSE, ended);
+        Assert.assertEquals("1", processInstanceId);
+        Assert.assertEquals("uc202", processDefinition);
 
         // Check filter
         final Criteria criteria = Mockito.mock(Criteria.class);
         filter.applyFilter(criteria);
 
         final ArgumentCaptor<Criterion> criterionCaptor = ArgumentCaptor.forClass(Criterion.class);
-        Mockito.verify(criteria, Mockito.times(3)).add(criterionCaptor.capture());
+        Mockito.verify(criteria, Mockito.times(5)).add(criterionCaptor.capture());
 
         final Criterion keyCriterion = criterionCaptor.getAllValues().get(0);
         Assert.assertEquals("key=sleutel", keyCriterion.toString());

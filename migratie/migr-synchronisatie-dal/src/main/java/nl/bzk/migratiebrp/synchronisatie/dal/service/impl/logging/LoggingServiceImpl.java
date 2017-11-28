@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.logging;
 import java.util.Date;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.Lo3BerichtRepository;
 
 /**
@@ -21,9 +21,7 @@ public final class LoggingServiceImpl implements LoggingService {
 
     /**
      * Constructor waar een repository voor de berichten en logging wordt meegegeven.
-     *
-     * @param berichtLogRepository
-     *            een repository voor berichten en logging
+     * @param berichtLogRepository een repository voor berichten en logging
      */
     public LoggingServiceImpl(final Lo3BerichtRepository berichtLogRepository) {
         this.berichtLogRepository = berichtLogRepository;
@@ -38,12 +36,12 @@ public final class LoggingServiceImpl implements LoggingService {
     }
 
     @Override
-    public Lo3Bericht zoekLo3PersoonslijstBerichtOpAnummer(final long administratienummer) {
+    public Lo3Bericht zoekLo3PersoonslijstBerichtOpAnummer(final String administratienummer) {
         return berichtLogRepository.findLaatsteLo3PersoonslijstBerichtVoorANummer(administratienummer);
     }
 
     @Override
-    public Set<Long> zoekBerichtLogAnrs(final Date vanaf, final Date tot) {
+    public Set<String> zoekBerichtLogAnrs(final Date vanaf, final Date tot) {
         return berichtLogRepository.findLaatsteBerichtLogAnrs(vanaf, tot);
     }
 }

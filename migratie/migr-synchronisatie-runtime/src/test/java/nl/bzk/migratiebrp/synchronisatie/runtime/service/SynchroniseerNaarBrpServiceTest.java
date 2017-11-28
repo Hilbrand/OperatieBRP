@@ -7,18 +7,22 @@
 package nl.bzk.migratiebrp.synchronisatie.runtime.service;
 
 import java.lang.reflect.Field;
+
 import javax.inject.Named;
+
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.SynchroniseerNaarBrpAntwoordType.Kandidaat;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpVerzoekBericht;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.SyncParameters;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.SynchronisatieVerwerker;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.exception.SynchronisatieVerwerkerException;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.pl.PlService;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,22 +39,18 @@ public class SynchroniseerNaarBrpServiceTest {
     private final SyncParameters syncParameters = new SyncParameters();
 
     @Mock
-    @Named("initieleVullingSynchronisatieVerwerker")
     private SynchronisatieVerwerker initieleVullingSynchronisatieVerwerker;
     @Mock
-    @Named("synchronisatieVerwerker")
     private SynchronisatieVerwerker synchronisatieVerwerker;
     @Mock
     private PlService plService;
-    @InjectMocks
+
     private SynchroniseerNaarBrpService subject;
 
     @Before
     public void setupSynchronisatieParameters() throws Exception {
-        final Field syncParametersField = SynchroniseerNaarBrpService.class.getDeclaredField("syncParameters");
-        syncParametersField.setAccessible(true);
-        syncParametersField.set(subject, syncParameters);
         SynchronisatieLogging.init();
+        subject = new SynchroniseerNaarBrpService(syncParameters,initieleVullingSynchronisatieVerwerker,synchronisatieVerwerker,plService);
     }
 
     @Test
@@ -59,9 +59,9 @@ public class SynchroniseerNaarBrpServiceTest {
 
         final SynchroniseerNaarBrpVerzoekBericht verzoek = new SynchroniseerNaarBrpVerzoekBericht();
         verzoek.setMessageId("verzoek-msg-id");
-        verzoek.setLo3BerichtAsTeletexString("data");
+        verzoek.setLo3PersoonslijstAlsTeletexString("data");
         final SynchroniseerNaarBrpAntwoordBericht antwoord = new SynchroniseerNaarBrpAntwoordBericht();
-        Mockito.when(initieleVullingSynchronisatieVerwerker.verwerk(Matchers.eq(verzoek), Matchers.<Lo3Bericht>any())).thenReturn(antwoord);
+        Mockito.when(initieleVullingSynchronisatieVerwerker.verwerk(Matchers.any(SynchroniseerNaarBrpVerzoekBericht.class), Matchers.any(Lo3Bericht.class))).thenReturn(antwoord);
 
         Assert.assertSame(antwoord, subject.verwerkBericht(verzoek));
 
@@ -75,7 +75,7 @@ public class SynchroniseerNaarBrpServiceTest {
 
         final SynchroniseerNaarBrpVerzoekBericht verzoek = new SynchroniseerNaarBrpVerzoekBericht();
         verzoek.setMessageId("verzoek-msg-id");
-        verzoek.setLo3BerichtAsTeletexString("data");
+        verzoek.setLo3PersoonslijstAlsTeletexString("data");
         final SynchroniseerNaarBrpAntwoordBericht antwoord = new SynchroniseerNaarBrpAntwoordBericht();
         Mockito.when(synchronisatieVerwerker.verwerk(Matchers.eq(verzoek), Matchers.<Lo3Bericht>any())).thenReturn(antwoord);
 
@@ -91,13 +91,17 @@ public class SynchroniseerNaarBrpServiceTest {
 
         final SynchroniseerNaarBrpVerzoekBericht verzoek = new SynchroniseerNaarBrpVerzoekBericht();
         verzoek.setMessageId("verzoek-msg-id");
-        verzoek.setLo3BerichtAsTeletexString("data");
+        verzoek.setLo3PersoonslijstAlsTeletexString("data");
 
         final BrpPersoonslijst kandidaat = new BrpPersoonslijstBuilder().build();
         final SynchronisatieVerwerkerException exception = new SynchronisatieVerwerkerException(StatusType.ONDUIDELIJK, kandidaat);
 
         Mockito.when(synchronisatieVerwerker.verwerk(Matchers.eq(verzoek), Matchers.<Lo3Bericht>any())).thenThrow(exception);
-        Mockito.when(plService.converteerKandidaten(Matchers.anyListOf(BrpPersoonslijst.class))).thenReturn(new String[] {"LO3PL" });
+        final Kandidaat dummyKandidaat = new Kandidaat();
+        dummyKandidaat.setPersoonId(1);
+        dummyKandidaat.setVersie(1);
+        dummyKandidaat.setLo3PersoonslijstAlsTeletexString("LO3PL");
+        Mockito.when(plService.converteerKandidaten(Matchers.anyListOf(BrpPersoonslijst.class))).thenReturn(new Kandidaat[]{dummyKandidaat});
 
         final SynchroniseerNaarBrpAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
         Assert.assertEquals(verzoek.getMessageId(), antwoord.getCorrelationId());

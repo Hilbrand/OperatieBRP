@@ -9,14 +9,13 @@ package nl.bzk.migratiebrp.conversie.regels.tabel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingInhoudingVermissingNederlandsReisdocument;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 public class AanduidingInhoudingVermissingReisdocumentConversietabel implements
-        Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode>
-{
+        Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode> {
     @Override
     public BrpAanduidingInhoudingOfVermissingReisdocumentCode converteerNaarBrp(final Lo3AanduidingInhoudingVermissingNederlandsReisdocument input) {
-        return !Validatie.isElementGevuld(input) ? null : new BrpAanduidingInhoudingOfVermissingReisdocumentCode(input.getWaarde().charAt(0));
+        return !Lo3Validatie.isElementGevuld(input) ? null : new BrpAanduidingInhoudingOfVermissingReisdocumentCode(input.getWaarde().charAt(0));
     }
 
     @Override

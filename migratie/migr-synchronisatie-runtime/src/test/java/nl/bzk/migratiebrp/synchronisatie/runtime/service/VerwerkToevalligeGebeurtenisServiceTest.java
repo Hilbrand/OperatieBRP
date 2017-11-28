@@ -6,882 +6,840 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
-
 import javax.jms.Destination;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
-import nl.bzk.migratiebrp.bericht.model.sync.generated.AdellijkeTitelPredicaatType;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.services.objectsleutel.ObjectSleutel;
+import nl.bzk.algemeenbrp.services.objectsleutel.ObjectSleutelService;
+import nl.bzk.algemeenbrp.services.objectsleutel.ObjectSleutelServiceImpl;
+import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
+import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.FoutredenType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.GeslachtsaanduidingType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.NaamGroepType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.SoortRelatieType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkToevalligeGebeurtenisAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkToevalligeGebeurtenisVerzoekBericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpRelatie;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBijhoudingsaardCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenEindeRelatieCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenis;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenisFamilierechtelijkeBetrekking;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenisFamilierechtelijkeBetrekkingAdoptie;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenisNaamGeslacht;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenisOverlijden;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenisPersoon;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenisVerbintenis;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenisVerbintenisOntbinding;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenisVerbintenisSluiting;
+import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstException;
+import nl.bzk.migratiebrp.conversie.model.lo3.Lo3ToevalligeGebeurtenis;
+import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
+import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.BrpStapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerLo3NaarBrpService;
+import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpAttribuutConverteerder;
+import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.Lo3SyntaxControle;
+import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.PreconditiesService;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.PersoonControle;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.RelatieVinder;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.ToevalligeGebeurtenisControle;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.ToevalligeGebeurtenisVerwerker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.ToevalligeGebeurtenisVerzender;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.VerwerkToevalligeGebeurtenisVerzoekHelper;
-
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.controle.ControleException;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.controle.GeboorteVergelijker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.controle.GeslachtVergelijker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.controle.IdentificatieNummerVergelijker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.controle.SamengesteldeNaamVergelijker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.utils.AttribuutMaker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.utils.BerichtMaker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.utils.PersoonMaker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.utils.RelatieMaker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.utils.VerbintenisMaker;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.jms.core.JmsTemplate;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({PersoonControle.class,
+        ToevalligeGebeurtenisControle.class,
+        ToevalligeGebeurtenisVerzender.class,
+        BrpToevalligeGebeurtenis.class,
+        RelatieVinder.class,
+        BrpPersoonslijst.class})
 public class VerwerkToevalligeGebeurtenisServiceTest {
 
     @Mock
-    private ToevalligeGebeurtenisControle omzettingHuwelijkOfGeregistreerdPartnerschapControle;
+    private Lo3SyntaxControle syntaxControle;
 
     @Mock
-    private ToevalligeGebeurtenisVerwerker omzettingHuwelijkOfGeregistreerdPartnerschapVerwerker;
+    private PersoonControle persoonControle;
 
     @Mock
-    private ToevalligeGebeurtenisControle ontbindingHuwelijkOfGeregistreerdPartnerschapControle;
+    private PreconditiesService preconditiesService;
 
     @Mock
-    private ToevalligeGebeurtenisVerwerker ontbindingHuwelijkOfGeregistreerdPartnerschapVerwerker;
+    private ConverteerLo3NaarBrpService converteerLo3NaarBrpService;
 
     @Mock
-    private ToevalligeGebeurtenisControle sluitingHuwelijkOfGeregistreerdPartnerschapControle;
-
-    @Mock
-    private ToevalligeGebeurtenisVerwerker sluitingHuwelijkOfGeregistreerdPartnerschapVerwerker;
-
-    @Mock
-    private ToevalligeGebeurtenisControle naamGeslachtControle;
-
-    @Mock
-    private ToevalligeGebeurtenisVerwerker naamGeslachtVerwerker;
-
-    @Mock
-    private ToevalligeGebeurtenisControle overlijdenControle;
-
-    @Mock
-    private ToevalligeGebeurtenisVerwerker overlijdenVerwerker;
+    private BrpPersoonslijstService persoonslijstService;
 
     @Mock
     private BrpDalService brpDalService;
 
     @Mock
-    private Persoon persoon;
+    private BrpToevalligeGebeurtenis brpToevalligeGebeurtenis;
 
-    @Mock(name = "gbaToevalligeGebeurtenissen")
-    private Destination gbaToevalligeGebeurtenissenQueue;
-    @Mock(name = "brpQueueJmsTemplate")
+    @Mock
+    private BrpPersoonslijst brpPersoonslijst;
+
+    @Mock
+    private BrpPersoonslijst brpPersoonslijstPartner;
+
+    @Mock
+    private ObjectSleutelService objectSleutelService;
+
+    @Mock
     private JmsTemplate jmsTemplate;
     @Mock
-    private Session jmsSession;
+    private Destination destination;
 
-    @InjectMocks
+    private SyncBerichtFactory factory = SyncBerichtFactory.SINGLETON;
+
     private VerwerkToevalligeGebeurtenisService subject;
-
-    @Mock
-    private TextMessage messageToBrp;
-
-    @Test
-    public void testCorrecteSluiting() throws Exception {
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(true);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final NaamGroepType persoon2 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieSluitingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-                BigInteger.valueOf(19561005L),
-                "0630",
-                "0323",
-                GeslachtsaanduidingType.V,
-                "123456789",
-                "5245212343",
-                persoon2)));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        // Antwoord moet null zijn als de verwerking correct is en er geen foutreden N is opgetreden. Het BRP-bericht
-        // wordt vanuit de verwerker verstuurd.
-        Assert.assertNull(antwoord);
-    }
-
-    @Test
-    public void testCorrecteOntbinding() throws Exception {
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(true);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieOntbindingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            BigInteger.valueOf(20150901L),
-            "0630",
-                "0600"));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        // Antwoord moet null zijn als de verwerking correct is en er geen foutreden N is opgetreden. Het BRP-bericht
-        // wordt vanuit de verwerker verstuurd.
-        Assert.assertNull(antwoord);
-    }
-
-    @Test
-    public void testOntbindingAntwoordBerichtFoutredenN() throws Exception {
-        setupToevalligeGebeurtenisControles(false);
-        setupToevalligeGebeurtenisVerwerkers(true);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieOntbindingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            BigInteger.valueOf(20150901L),
-            "0630",
-                "0600"));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        Assert.assertNotNull(antwoord);
-        Assert.assertEquals(StatusType.FOUT, antwoord.getStatus());
-        Assert.assertNotNull(antwoord.getFoutreden());
-        Assert.assertEquals(FoutredenType.N, antwoord.getFoutreden());
-    }
-
-    @Test
-    public void testCorrecteOmzetting() throws Exception {
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(true);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieOmzettingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            BigInteger.valueOf(20150905L),
-            SoortRelatieType.P));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        Assert.assertNull(antwoord);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testOntbindingIllegalArgumentException() throws Exception {
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(false);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieOntbindingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            BigInteger.valueOf(20150901L),
-            "0630",
-                "0600"));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        subject.verwerkBericht(verzoek);
-
-    }
-
-    @Test
-    public void testOmzettingAntwoordBerichtFoutredenN() throws Exception {
-        setupToevalligeGebeurtenisControles(false);
-        setupToevalligeGebeurtenisVerwerkers(true);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieOmzettingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            BigInteger.valueOf(20150905L),
-            SoortRelatieType.P));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        // Antwoord moet null zijn als de verwerking correct is en er geen foutreden N is opgetreden. Het BRP-bericht
-        // wordt vanuit de verwerker verstuurd.
-
-        Assert.assertNotNull(antwoord);
-        Assert.assertEquals(StatusType.FOUT, antwoord.getStatus());
-        Assert.assertNotNull(antwoord.getFoutreden());
-        Assert.assertEquals(FoutredenType.N, antwoord.getFoutreden());
-    }
-
-    @Test
-    public void testSluitingAntwoordBerichtFoutredenN() throws Exception {
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        setupToevalligeGebeurtenisControles(false);
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final NaamGroepType persoon2 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieSluitingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-                BigInteger.valueOf(19561005L),
-                "0630",
-                "0323",
-                GeslachtsaanduidingType.V,
-                "123456789",
-                "5245212343",
-                persoon2)));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        Assert.assertNotNull(antwoord);
-        Assert.assertEquals(StatusType.FOUT, antwoord.getStatus());
-        Assert.assertNotNull(antwoord.getFoutreden());
-        Assert.assertEquals(FoutredenType.N, antwoord.getFoutreden());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testIllegalArgumentSluiting() throws Exception {
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(false);
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final NaamGroepType persoon2 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieSluitingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-                BigInteger.valueOf(19561005L),
-                "0630",
-                "0323",
-                GeslachtsaanduidingType.V,
-                "123456789",
-                "5245212343",
-                persoon2)));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        subject.verwerkBericht(verzoek);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testOmzettingIllegalArgument() throws Exception {
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(false);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieOmzettingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            BigInteger.valueOf(20150905L),
-            SoortRelatieType.P));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        subject.verwerkBericht(verzoek);
-
-    }
-
-    @Test
-    public void testAntwoordBerichtFoutredenV() throws Exception {
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final NaamGroepType persoon2 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setRelatie(VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatieSluitingHuwelijk(
-            SoortRelatieType.H,
-            BigInteger.valueOf(20150901L),
-            "0630",
-            "0600",
-            VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-                BigInteger.valueOf(19561005L),
-                "0630",
-                "0323",
-                GeslachtsaanduidingType.V,
-                "123456789",
-                "5245212343",
-                persoon2)));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        Assert.assertNotNull(antwoord);
-        Assert.assertEquals(StatusType.FOUT, antwoord.getStatus());
-        Assert.assertNotNull(antwoord.getFoutreden());
-        Assert.assertEquals(FoutredenType.V, antwoord.getFoutreden());
-    }
-
-    @Test
-    public void testCorrecteNaamGeslachtWijziging() throws Exception {
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(true);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final NaamGroepType persoon2 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setUpdatePersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaamGeslacht(GeslachtsaanduidingType.V, persoon2));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        // Antwoord moet null zijn als de verwerking correct is en er geen foutreden N is opgetreden. Het BRP-bericht
-        // wordt vanuit de verwerker verstuurd.
-        Assert.assertNull(antwoord);
-    }
-
-    @Test
-    public void testNaamGeslachtWijzigingAntwoordBerichtFoutredenN() throws Exception {
-        setupToevalligeGebeurtenisControles(false);
-        setupToevalligeGebeurtenisVerwerkers(true);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final NaamGroepType persoon2 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setUpdatePersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaamGeslacht(GeslachtsaanduidingType.V, persoon2));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        Assert.assertNotNull(antwoord);
-        Assert.assertEquals(StatusType.FOUT, antwoord.getStatus());
-        Assert.assertNotNull(antwoord.getFoutreden());
-        Assert.assertEquals(FoutredenType.N, antwoord.getFoutreden());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNaamGeslachtWijzigingIllegalArgumentException() throws Exception {
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(false);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final NaamGroepType persoon2 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.BS, "Vries", "Truus", "de");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setUpdatePersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaamGeslacht(GeslachtsaanduidingType.V, persoon2));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        subject.verwerkBericht(verzoek);
-    }
-
-    @Test
-    public void testCorrectOverlijden() throws Exception {
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(true);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setOverlijden(VerwerkToevalligeGebeurtenisVerzoekHelper.maakOverlijden(BigInteger.valueOf(20150929L), "0630", "0599"));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        // Antwoord moet null zijn als de verwerking correct is en er geen foutreden N is opgetreden. Het BRP-bericht
-        // wordt vanuit de verwerker verstuurd.
-        Assert.assertNull(antwoord);
-    }
-
-    @Test
-    public void testOverlijdenAntwoordBerichtFoutredenN() throws Exception {
-        setupToevalligeGebeurtenisControles(false);
-        setupToevalligeGebeurtenisVerwerkers(true);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setOverlijden(VerwerkToevalligeGebeurtenisVerzoekHelper.maakOverlijden(BigInteger.valueOf(20150929L), "0630", "0599"));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        Assert.assertNotNull(antwoord);
-        Assert.assertEquals(StatusType.FOUT, antwoord.getStatus());
-        Assert.assertNotNull(antwoord.getFoutreden());
-        Assert.assertEquals(FoutredenType.N, antwoord.getFoutreden());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testOverlijdenIllegalArgumentException() throws Exception {
-        setupToevalligeGebeurtenisControles(true);
-        setupToevalligeGebeurtenisVerwerkers(false);
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setOverlijden(VerwerkToevalligeGebeurtenisVerzoekHelper.maakOverlijden(BigInteger.valueOf(20150929L), "0630", "0599"));
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        subject.verwerkBericht(verzoek);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testAdoptieUnsupportedOperationException() throws Exception {
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setFamilieRechtelijkeBetrekking(VerwerkToevalligeGebeurtenisVerzoekHelper.maakFamilierechtelijkeBetrekking());
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        subject.verwerkBericht(verzoek);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testNietsUnsupportedOperationException() throws Exception {
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setAkte(VerwerkToevalligeGebeurtenisVerzoekHelper.maakAkteGroep("12312B23", "0599"));
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-        verzoek.setDoelGemeente("0600");
-
-        Mockito.when(persoon.getBijhoudingspartij()).thenReturn(new Partij("Amsterdam", 600));
-
-        // Execute voor subject
-        subject.verwerkBericht(verzoek);
-    }
-
-    @Test
-    public void testFoutredenU() throws Exception {
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-
-        final List<Persoon> personen = new ArrayList<>();
-        personen.add(persoon);
-        personen.add(persoon);
-
-        Mockito.when(brpDalService.zoekPersonenOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyLong())).thenReturn(
-            Collections.checkedList(personen, Persoon.class));
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        Assert.assertNotNull(antwoord);
-        Assert.assertEquals(StatusType.FOUT, antwoord.getStatus());
-        Assert.assertNotNull(antwoord.getFoutreden());
-        Assert.assertEquals(FoutredenType.U, antwoord.getFoutreden());
-    }
-
-    @Test
-    public void testFoutredenG() throws Exception {
-        Assert.assertEquals(VerwerkToevalligeGebeurtenisVerzoekBericht.class, subject.getVerzoekType());
-        Assert.assertNotNull(subject.getServiceNaam());
-
-        final NaamGroepType persoon1 = VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaam(AdellijkeTitelPredicaatType.B, "Heusden", "Jan", "van");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
-        verzoek.setCorrelationId("correlatie");
-        verzoek.setGeldigheid(VerwerkToevalligeGebeurtenisVerzoekHelper.maakGeldigheid(BigInteger.valueOf(20150915L)));
-        verzoek.setMessageId("messageId");
-        verzoek.setPersoon(VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
-            BigInteger.valueOf(19610115L),
-            "0630",
-            "0323",
-            GeslachtsaanduidingType.M,
-            "987654321",
-            "8421513215",
-            persoon1));
-
-        Mockito.when(brpDalService.zoekPersonenOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyLong())).thenReturn(Collections.<Persoon>emptyList());
-
-        // Execute voor subject
-        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
-
-        Assert.assertNotNull(antwoord);
-        Assert.assertEquals(StatusType.FOUT, antwoord.getStatus());
-        Assert.assertNotNull(antwoord.getFoutreden());
-        Assert.assertEquals(FoutredenType.G, antwoord.getFoutreden());
-    }
-
-    public void setupToevalligeGebeurtenisControles(final boolean resultaatwaarde) {
-        Mockito.when(
-            omzettingHuwelijkOfGeregistreerdPartnerschapControle.controleer(
-                Matchers.any(Persoon.class),
-                Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class))).thenReturn(resultaatwaarde);
-        Mockito.when(
-            ontbindingHuwelijkOfGeregistreerdPartnerschapControle.controleer(
-                Matchers.any(Persoon.class),
-                Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class))).thenReturn(resultaatwaarde);
-        Mockito.when(
-            sluitingHuwelijkOfGeregistreerdPartnerschapControle.controleer(
-                Matchers.any(Persoon.class),
-                Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class))).thenReturn(resultaatwaarde);
-        Mockito.when(naamGeslachtControle.controleer(Matchers.any(Persoon.class), Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class)))
-        .thenReturn(resultaatwaarde);
-        Mockito.when(overlijdenControle.controleer(Matchers.any(Persoon.class), Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class)))
-        .thenReturn(resultaatwaarde);
-
-    }
-
-    public void setupToevalligeGebeurtenisVerwerkers(final boolean resultaatwaarde) {
-        Mockito.when(
-            omzettingHuwelijkOfGeregistreerdPartnerschapVerwerker.verwerk(
-                Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class),
-                Matchers.any(Persoon.class))).thenReturn(resultaatwaarde);
-        Mockito.when(
-            ontbindingHuwelijkOfGeregistreerdPartnerschapVerwerker.verwerk(
-                Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class),
-                Matchers.any(Persoon.class))).thenReturn(resultaatwaarde);
-        Mockito.when(
-            sluitingHuwelijkOfGeregistreerdPartnerschapVerwerker.verwerk(
-                Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class),
-                Matchers.any(Persoon.class))).thenReturn(resultaatwaarde);
-        Mockito.when(naamGeslachtVerwerker.verwerk(Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class), Matchers.any(Persoon.class)))
-        .thenReturn(resultaatwaarde);
-        Mockito.when(overlijdenVerwerker.verwerk(Matchers.any(VerwerkToevalligeGebeurtenisVerzoekBericht.class), Matchers.any(Persoon.class))).thenReturn(
-            resultaatwaarde);
-    }
 
     @Before
     public void setup() {
-        Mockito.when(brpDalService.zoekPersonenOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyLong())).thenReturn(
-            Collections.<Persoon>singletonList(persoon));
+        MockitoAnnotations.initMocks(this);
+        final ToevalligeGebeurtenisVerzender toevalligeGebeurtenisVerzender = new ToevalligeGebeurtenisVerzender(jmsTemplate, destination);
+
+        final IdentificatieNummerVergelijker identificatieNummerVergelijker = new IdentificatieNummerVergelijker();
+        final SamengesteldeNaamVergelijker samengesteldeNaamVergelijker = new SamengesteldeNaamVergelijker();
+        final GeboorteVergelijker geboorteVergelijker = new GeboorteVergelijker();
+        final GeslachtVergelijker geslachtVergelijker = new GeslachtVergelijker();
+        final RelatieVinder relatieVinder =
+                new RelatieVinder(identificatieNummerVergelijker, samengesteldeNaamVergelijker, geboorteVergelijker, geslachtVergelijker);
+
+        final AttribuutMaker attribuutMaker = new AttribuutMaker();
+        final PersoonMaker persoonMaker = new PersoonMaker(attribuutMaker);
+        final RelatieMaker relatieMaker = new RelatieMaker(attribuutMaker);
+        final VerbintenisMaker verbintenisMaker = new VerbintenisMaker(relatieMaker, persoonMaker, objectSleutelService);
+        final BerichtMaker berichtMaker = new BerichtMaker(objectSleutelService, attribuutMaker, verbintenisMaker, relatieMaker, persoonMaker);
+
+        final BrpAttribuutConverteerder brpAttribuutConverteerder = new BrpAttribuutConverteerder(new ConversietabelFactoryImpl());
+
+        final ToevalligeGebeurtenisVerwerker toevalligeGebeurtenisVerwerker = new ToevalligeGebeurtenisVerwerker(berichtMaker);
+
+        final ObjectSleutel persoonObjectSleutel = new ObjectSleutelServiceImpl().maakPersoonObjectSleutel(1, 1);
+        final ObjectSleutel relatieObjectSleutel = new ObjectSleutelServiceImpl().maakRelatieObjectSleutel(1);
+        Mockito.when(objectSleutelService.maakPersoonObjectSleutel(Matchers.anyInt(), Matchers.anyInt())).thenReturn(persoonObjectSleutel);
+        Mockito.when(objectSleutelService.maakRelatieObjectSleutel(Matchers.anyInt())).thenReturn(relatieObjectSleutel);
+
+        maakPersoon();
+        subject = new VerwerkToevalligeGebeurtenisService(syntaxControle, toevalligeGebeurtenisVerwerker, persoonControle, toevalligeGebeurtenisVerzender,
+                relatieVinder, preconditiesService, converteerLo3NaarBrpService, brpDalService, persoonslijstService, brpAttribuutConverteerder, berichtMaker);
+    }
+
+    @Test
+    public void testHappyFlowOverlijden() throws Exception {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "van",
+                        ' ',
+                        null,
+                        "Heusden",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+        final BrpToevalligeGebeurtenisOverlijden overlijden = VerwerkToevalligeGebeurtenisVerzoekHelper.maakOverlijden(20161101, "0599", null, "6030");
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getOverlijden()).thenReturn(overlijden);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDatumAanvang()).thenReturn(new BrpDatum(20161001, null));
+        PowerMockito.when(brpToevalligeGebeurtenis.getRegisterGemeente()).thenReturn(new BrpPartijCode("060001"));
+        PowerMockito.when(brpToevalligeGebeurtenis.getNummerAkte()).thenReturn(new BrpString("2A", null));
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        Assert.assertNull(antwoord);
+    }
+
+    @Test
+    public void testHappyFlowNaamGeslacht() throws Exception {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "van",
+                        ' ',
+                        null,
+                        "Heusden",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+        final BrpToevalligeGebeurtenisNaamGeslacht naamGeslacht =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakNaamGeslacht(
+                        new BrpPredicaatCode(Predicaat.J.getCode()),
+                        "Henk",
+                        "de baron van",
+                        ' ',
+                        null,
+                        "Heusden",
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getGeslachtsaanduiding()).thenReturn(naamGeslacht);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDatumAanvang()).thenReturn(new BrpDatum(20161001, null));
+        PowerMockito.when(brpToevalligeGebeurtenis.getRegisterGemeente()).thenReturn(new BrpPartijCode("060001"));
+        PowerMockito.when(brpToevalligeGebeurtenis.getNummerAkte()).thenReturn(new BrpString("1H", null));
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        Assert.assertNull(antwoord);
+    }
+
+    @Test
+    public void testHappyFlowOmzetting() throws Exception {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "van",
+                        ' ',
+                        null,
+                        "Heusden",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+        final BrpToevalligeGebeurtenisPersoon partner =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        null,
+                        null,
+                        null,
+                        "Truus",
+                        null,
+                        null,
+                        new BrpAdellijkeTitelCode(AdellijkeTitel.M.getCode()),
+                        "Vries",
+                        19581501,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.VROUW.getCode()));
+        final BrpToevalligeGebeurtenisVerbintenisSluiting sluiting =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakSluiting(BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP, 20110101, "0599", null, "6030");
+
+        final BrpToevalligeGebeurtenisVerbintenisSluiting omzetting =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakSluiting(BrpSoortRelatieCode.HUWELIJK, 20161001, "0600", null, "6030");
+        final BrpToevalligeGebeurtenisVerbintenis verbintenis = new BrpToevalligeGebeurtenisVerbintenis(partner, sluiting, null, omzetting);
+
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getVerbintenis()).thenReturn(verbintenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDatumAanvang()).thenReturn(new BrpDatum(20161001, null));
+        PowerMockito.when(brpToevalligeGebeurtenis.getRegisterGemeente()).thenReturn(new BrpPartijCode("060001"));
+        PowerMockito.when(brpToevalligeGebeurtenis.getNummerAkte()).thenReturn(new BrpString("5H", null));
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        Assert.assertNull(antwoord);
+    }
+
+    @Test
+    public void testHappyFlowSluiting() throws Exception {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "van",
+                        ' ',
+                        null,
+                        "Heusden",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+        final BrpToevalligeGebeurtenisPersoon partner =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Truus",
+                        null,
+                        null,
+                        new BrpAdellijkeTitelCode(AdellijkeTitel.M.getCode()),
+                        "Vries",
+                        19581501,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.VROUW.getCode()));
+        final BrpToevalligeGebeurtenisVerbintenisSluiting sluiting =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakSluiting(BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP, 20110101, "0599", null, "6030");
+        final BrpToevalligeGebeurtenisVerbintenis verbintenis = new BrpToevalligeGebeurtenisVerbintenis(partner, sluiting, null, null);
+        VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatie(
+                2L,
+                BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP,
+                new BrpDatum(20110101, null),
+                new BrpGemeenteCode("0599"),
+                new BrpLandOfGebiedCode("6030"),
+                null,
+                new BrpDatum(20161001, null),
+                new BrpGemeenteCode("0600"),
+                new BrpLandOfGebiedCode("6030"),
+                null,
+                null,
+                brpPersoonslijstPartner.getGeboorteStapel(),
+                brpPersoonslijstPartner.getGeslachtsaanduidingStapel(),
+                brpPersoonslijstPartner.getSamengesteldeNaamStapel(),
+                true,
+                false);
+
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getVerbintenis()).thenReturn(verbintenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDatumAanvang()).thenReturn(new BrpDatum(20161001, null));
+        PowerMockito.when(brpToevalligeGebeurtenis.getRegisterGemeente()).thenReturn(new BrpPartijCode("060001"));
+        PowerMockito.when(brpToevalligeGebeurtenis.getNummerAkte()).thenReturn(new BrpString("5H", null));
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        Assert.assertNull(antwoord);
+    }
+
+    @Test
+    public void testHappyFlowOntbinding() throws Exception {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "van",
+                        ' ',
+                        null,
+                        "Heusden",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+        final BrpToevalligeGebeurtenisPersoon partner =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        null,
+                        null,
+                        null,
+                        "Truus",
+                        null,
+                        null,
+                        new BrpAdellijkeTitelCode(AdellijkeTitel.M.getCode()),
+                        "Vries",
+                        19581501,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.VROUW.getCode()));
+        final BrpToevalligeGebeurtenisVerbintenisSluiting sluiting =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakSluiting(BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP, 20110101, "0599", null, "6030");
+        final BrpToevalligeGebeurtenisVerbintenisOntbinding ontbinding =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakOntbinding(new BrpRedenEindeRelatieCode('B'), 20161001, "0600", null, "6030");
+        final BrpToevalligeGebeurtenisVerbintenis verbintenis = new BrpToevalligeGebeurtenisVerbintenis(partner, sluiting, ontbinding, null);
+
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getVerbintenis()).thenReturn(verbintenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDatumAanvang()).thenReturn(new BrpDatum(20161001, null));
+        PowerMockito.when(brpToevalligeGebeurtenis.getRegisterGemeente()).thenReturn(new BrpPartijCode("060001"));
+        PowerMockito.when(brpToevalligeGebeurtenis.getNummerAkte()).thenReturn(new BrpString("5B", null));
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        Assert.assertNull(antwoord);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGeenWijziging() throws IOException, OngeldigePersoonslijstException, BerichtSyntaxException {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "de",
+                        ' ',
+                        null,
+                        "Vries",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+        subject.verwerkBericht(verzoek);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testIllegalArgumentAdoptie() throws IOException, OngeldigePersoonslijstException, BerichtSyntaxException, ControleException {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "de",
+                        ' ',
+                        null,
+                        "Vries",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getFamilierechtelijkeBetrekking()).thenReturn(
+                new BrpToevalligeGebeurtenisFamilierechtelijkeBetrekking(
+                        null,
+                        null,
+                        null,
+                        new BrpToevalligeGebeurtenisFamilierechtelijkeBetrekkingAdoptie(null, null),
+                        null));
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+        subject.verwerkBericht(verzoek);
+    }
+
+    @Test
+    public void testAfgekeurd() throws IOException, BerichtSyntaxException, OngeldigePersoonslijstException {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final OngeldigePersoonslijstException exception = new OngeldigePersoonslijstException("Preconditie afgegaan.");
+
+        PowerMockito.when(syntaxControle.controleer(Matchers.anyListOf(Lo3CategorieWaarde.class))).thenThrow(exception);
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        assertNotNull(antwoord);
+        assertEquals("Status komt niet overeen.", StatusType.AFGEKEURD, antwoord.getStatus());
+    }
+
+    @Test
+    public void testFoutredenG() throws IOException, OngeldigePersoonslijstException, BerichtSyntaxException {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "de",
+                        ' ',
+                        null,
+                        "Vries",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(null);
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        assertNotNull(antwoord);
+        assertEquals("Status komt niet overeen.", StatusType.FOUT, antwoord.getStatus());
+        assertEquals("Foutreden komt niet overeen.", FoutredenType.G, antwoord.getFoutreden());
+    }
+
+    @Test
+    public void testFoutredenV() throws IOException, OngeldigePersoonslijstException, BerichtSyntaxException {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "de",
+                        ' ',
+                        null,
+                        "Vries",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("059901"));
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        Assert.assertNotNull(antwoord);
+        assertEquals("Status komt niet overeen.", StatusType.FOUT, antwoord.getStatus());
+        assertEquals("Foutreden komt niet overeen.", FoutredenType.V, antwoord.getFoutreden());
+    }
+
+    @Test
+    public void testFoutredenB() throws IOException, OngeldigePersoonslijstException, BerichtSyntaxException {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "de",
+                        ' ',
+                        null,
+                        "Vries",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+
+        final nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering blokkering = new Blokkering("2354545000", new Timestamp(System.currentTimeMillis()));
+        blokkering.setProcessId(123354L);
+        blokkering.setGemeenteCodeNaar("059901");
+        blokkering.setRedenBlokkering(nl.bzk.algemeenbrp.dal.domein.brp.enums.RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
+        PowerMockito.when(brpDalService.vraagOpBlokkering(Matchers.anyString())).thenReturn(blokkering);
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        Assert.assertNotNull(antwoord);
+        assertEquals("Status komt niet overeen.", StatusType.FOUT, antwoord.getStatus());
+        assertEquals("Foutreden komt niet overeen.", FoutredenType.B, antwoord.getFoutreden());
+    }
+
+    @Test
+    public void testFoutredenN() throws IOException, OngeldigePersoonslijstException, BerichtSyntaxException, ControleException {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "de",
+                        ' ',
+                        null,
+                        "Vries",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+        final BrpToevalligeGebeurtenisPersoon partner =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "de",
+                        ' ',
+                        null,
+                        "Vries",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+        final BrpToevalligeGebeurtenisVerbintenisSluiting sluiting =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakSluiting(BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP, 20110101, "0600", null, "6030");
+        final BrpToevalligeGebeurtenisVerbintenisSluiting omzetting =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakSluiting(BrpSoortRelatieCode.HUWELIJK, 20161001, "0600", null, "6030");
+        final BrpToevalligeGebeurtenisVerbintenis verbintenis = new BrpToevalligeGebeurtenisVerbintenis(partner, sluiting, null, omzetting);
+        VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatie(
+                2L,
+                BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP,
+                new BrpDatum(20110101, null),
+                new BrpGemeenteCode("0599"),
+                new BrpLandOfGebiedCode("6030"),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                brpPersoonslijstPartner.getGeboorteStapel(),
+                brpPersoonslijstPartner.getGeslachtsaanduidingStapel(),
+                brpPersoonslijstPartner.getSamengesteldeNaamStapel(),
+                false,
+                false);
+
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(brpToevalligeGebeurtenis.getVerbintenis()).thenReturn(verbintenis);
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.when(persoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString())).thenReturn(brpPersoonslijst);
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        Assert.assertNotNull(antwoord);
+        assertEquals("Status komt niet overeen.", StatusType.FOUT, antwoord.getStatus());
+        assertEquals("Foutreden komt niet overeen.", FoutredenType.N, antwoord.getFoutreden());
+    }
+
+    @Test
+    public void testFoutredenU() throws IOException, OngeldigePersoonslijstException, BerichtSyntaxException, ControleException {
+        final String bericht =
+                IOUtils.toString(VerwerkToevalligeGebeurtenisService.class.getResourceAsStream("VerwerkToevalligeGebeurtenisVerzoekBericht.xml"));
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek = (VerwerkToevalligeGebeurtenisVerzoekBericht) factory.getBericht(bericht);
+        final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getTb02InhoudAlsTeletex());
+        final BrpToevalligeGebeurtenisPersoon tgbPersoon =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakPersoon(
+                        "2354545000",
+                        "456245245",
+                        null,
+                        "Henk",
+                        "de",
+                        ' ',
+                        null,
+                        "Vries",
+                        19581512,
+                        "0599",
+                        "6030",
+                        null,
+                        null,
+                        new BrpGeslachtsaanduidingCode(Geslachtsaanduiding.MAN.getCode()));
+
+        PowerMockito.when(syntaxControle.controleer(lo3Inhoud)).thenReturn(lo3Inhoud);
+        PowerMockito.when(converteerLo3NaarBrpService.converteerLo3ToevalligeGebeurtenis(Matchers.any(Lo3ToevalligeGebeurtenis.class)))
+                .thenReturn(brpToevalligeGebeurtenis);
+        PowerMockito.doThrow(new ControleException(FoutredenType.U))
+                .when(persoonControle)
+                .controleer(Matchers.any(BrpPersoonslijst.class), Matchers.any(BrpToevalligeGebeurtenis.class));
+        PowerMockito.when(brpToevalligeGebeurtenis.getPersoon()).thenReturn(tgbPersoon);
+        PowerMockito.doThrow(new IllegalStateException("Meerdere personen gevonden."))
+                .when(persoonslijstService)
+                .zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(Matchers.anyString());
+        PowerMockito.when(brpToevalligeGebeurtenis.getDoelPartijCode()).thenReturn(new BrpPartijCode("060001"));
+        final VerwerkToevalligeGebeurtenisAntwoordBericht antwoord = subject.verwerkBericht(verzoek);
+        Assert.assertNotNull(antwoord);
+        assertEquals("Status komt niet overeen.", StatusType.FOUT, antwoord.getStatus());
+        assertEquals("Foutreden komt niet overeen.", FoutredenType.U, antwoord.getFoutreden());
+    }
+
+    private void maakPersoon() {
+        final BrpPersoonslijstBuilder builderPersoon = new BrpPersoonslijstBuilder();
+        final BrpHistorie hisPersoon = BrpStapelHelper.his(19581512);
+        final BrpActie actiePersoon = BrpStapelHelper.act(2, 20161501);
+        final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaamPartner =
+                BrpStapelHelper.stapel(
+                        BrpStapelHelper.groep(BrpStapelHelper.samengesteldnaam("Truus", "Vries", null, AdellijkeTitel.M.getCode()), hisPersoon, actiePersoon));
+        final BrpStapel<BrpGeboorteInhoud> geboortePartner =
+                BrpStapelHelper.stapel(BrpStapelHelper.groep(BrpStapelHelper.geboorte(19581501, "0599"), hisPersoon, actiePersoon));
+        final BrpStapel<BrpGeslachtsaanduidingInhoud> geslachtPartner =
+                BrpStapelHelper.stapel(BrpStapelHelper.groep(BrpStapelHelper.geslacht("V"), hisPersoon, actiePersoon));
+        final BrpStapel<BrpBijhoudingInhoud> bijhoudingPartner =
+                BrpStapelHelper.stapel(BrpStapelHelper.groep(BrpStapelHelper.bijhouding("060001", null, null), hisPersoon, actiePersoon));
+        builderPersoon.geboorteStapel(geboortePartner);
+        builderPersoon.geslachtsaanduidingStapel(geslachtPartner);
+        builderPersoon.samengesteldeNaamStapel(samengesteldeNaamPartner);
+        builderPersoon.bijhoudingStapel(bijhoudingPartner);
+        builderPersoon.persoonVersie(4L);
+        brpPersoonslijstPartner = builderPersoon.build();
+
+        final BrpRelatie relatieSluiting =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatie(
+                        1L,
+                        BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP,
+                        new BrpDatum(20110101, null),
+                        new BrpGemeenteCode("0599"),
+                        new BrpLandOfGebiedCode("6030"),
+                        null,
+                        new BrpDatum(20160101, null),
+                        new BrpGemeenteCode("0600"),
+                        new BrpLandOfGebiedCode("6030"),
+                        null,
+                        null,
+                        geboortePartner,
+                        geslachtPartner,
+                        samengesteldeNaamPartner,
+                        false,
+                        false);
+        final BrpRelatie relatieOmzetting =
+                VerwerkToevalligeGebeurtenisVerzoekHelper.maakRelatie(
+                        2L,
+                        BrpSoortRelatieCode.HUWELIJK,
+                        new BrpDatum(20160101, null),
+                        new BrpGemeenteCode("0600"),
+                        new BrpLandOfGebiedCode("6030"),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        geboortePartner,
+                        geslachtPartner,
+                        samengesteldeNaamPartner,
+                        false,
+                        false);
+        Arrays.asList(relatieSluiting, relatieOmzetting);
+        builderPersoon.persoonId(1L);
+        builderPersoon.geboorteStapel(BrpStapelHelper.stapel(BrpStapelHelper.groep(BrpStapelHelper.geboorte(19581512, "0599"), hisPersoon, actiePersoon)));
+        builderPersoon.geslachtsaanduidingStapel(BrpStapelHelper.stapel(BrpStapelHelper.groep(BrpStapelHelper.geslacht("M"), hisPersoon, actiePersoon)));
+        builderPersoon.identificatienummersStapel(
+                BrpStapelHelper.stapel(BrpStapelHelper.groep(BrpStapelHelper.identificatie("12345", "56246242"), hisPersoon, actiePersoon)));
+        builderPersoon.samengesteldeNaamStapel(
+                BrpStapelHelper.stapel(
+                        BrpStapelHelper.groep(
+                                BrpStapelHelper.samengesteldnaam("Jan", "Heusden", Predicaat.H.getCode(), AdellijkeTitel.B.getCode()),
+                                hisPersoon,
+                                actiePersoon)));
+        final BrpStapel<BrpBijhoudingInhoud> bijhouding =
+                BrpStapelHelper.stapel(
+                        BrpStapelHelper.groep(
+                                BrpStapelHelper.bijhouding("060001", BrpBijhoudingsaardCode.INGEZETENE, BrpNadereBijhoudingsaardCode.ACTUEEL),
+                                hisPersoon,
+                                actiePersoon));
+
+        builderPersoon.bijhoudingStapel(bijhouding);
+        builderPersoon.relaties(Arrays.asList(relatieSluiting, relatieOmzetting));
+        brpPersoonslijst = builderPersoon.build();
     }
 }

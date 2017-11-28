@@ -1,3 +1,0 @@
-nl.bzk.migratiebrp.isc:name=TELLING
-bijwerkenTellingen
--27

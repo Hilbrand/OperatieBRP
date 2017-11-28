@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>nl.bzk.brp</groupId>
-        <artifactId>brp-parent</artifactId>
-        <version>96-SNAPSHOT</version>
-        <relativePath>../../brp-parent</relativePath>
+        <groupId>nl.bzk.algemeenbrp</groupId>
+        <artifactId>alg</artifactId>
+        <version>146-SNAPSHOT</version>
+        <relativePath>../../../algemeen/alg</relativePath>
     </parent>
 
     <groupId>nl.bzk.brp.test</groupId>
@@ -22,9 +22,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <environment>LOCALHOST</environment>
-
-        <brp.release.version>94</brp.release.version>
-        <jvm.beheer.version>1.0.3</jvm.beheer.version>
     </properties>
     <profiles>
         <profile>
@@ -38,29 +35,14 @@
                 <bijhouding.versie>${project.version}</bijhouding.versie>
                 <bevraging.versie>${project.version}</bevraging.versie>
                 <levering.versie>${project.version}</levering.versie>
-                <routering-centrale.versie>${project.version}</routering-centrale.versie>
+                <vrijbericht.versie>${project.version}</vrijbericht.versie>
+                <message-broker.versie>${project.version}</message-broker.versie>
                 <protocollering.versie>${project.version}</protocollering.versie>
-                <blobifier.versie>${project.version}</blobifier.versie>
                 <beheer.versie>${project.version}</beheer.versie>
-                <jvm.beheer.versie>${jvm.beheer.version}</jvm.beheer.versie>
-            </properties>
-        </profile>
-        <profile>
-            <id>release</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <!--GEEN LATEST MEER GEBRUIKEN AUB-->
-                <activemq.versie>${brp.release.version}</activemq.versie>
-                <bijhouding.versie>${brp.release.version}</bijhouding.versie>
-                <bevraging.versie>${brp.release.version}</bevraging.versie>
-                <levering.versie>${brp.release.version}</levering.versie>
-                <routering-centrale.versie>${brp.release.version}</routering-centrale.versie>
-                <protocollering.versie>${brp.release.version}</protocollering.versie>
-                <blobifier.versie>${brp.release.version}</blobifier.versie>
-                <beheer.versie>${brp.release.version}</beheer.versie>
-                <jvm.beheer.versie>${jvm.beheer.version}</jvm.beheer.versie>
+                <admhnd-publicatie.versie>${project.version}</admhnd-publicatie.versie>
+                <selectie.versie>${project.version}</selectie.versie>
+                <selectie-verwerker.versie>${project.version}</selectie-verwerker.versie>
+                <archivering.versie>${project.version}</archivering.versie>
             </properties>
         </profile>
 
@@ -75,13 +57,13 @@
             <dependencies>
                 <dependency>
                     <groupId>nl.bzk.brp.bijhouding</groupId>
-                    <artifactId>brp-bijhouding-webservice</artifactId>
+                    <artifactId>brp-bijhouding-delivery-ws</artifactId>
                     <version>${bijhouding.versie}</version>
                     <type>war</type>
                 </dependency>
                 <dependency>
-                    <groupId>nl.bzk.brp.levering.services</groupId>
-                    <artifactId>brp-levering-services-verzending</artifactId>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-verzending</artifactId>
                     <version>${levering.versie}</version>
                     <type>war</type>
                 </dependency>
@@ -97,8 +79,8 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>nl.bzk.brp.bevraging</groupId>
-                    <artifactId>brp-bevraging-webservice</artifactId>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-bevraging</artifactId>
                     <version>${bevraging.versie}</version>
                     <type>war</type>
                 </dependency>
@@ -114,10 +96,9 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>nl.bzk.brp.levering.protocollering</groupId>
-                    <artifactId>brp-levering-protocollering</artifactId>
+                    <groupId>nl.bzk.brp</groupId>
+                    <artifactId>protocollering-delivery-dal</artifactId>
                     <version>${protocollering.versie}</version>
-                    <type>war</type>
                 </dependency>
             </dependencies>
         </profile>
@@ -131,21 +112,21 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>nl.bzk.brp.levering.services</groupId>
-                    <artifactId>brp-levering-services-mutatielevering</artifactId>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-mutatielevering</artifactId>
                     <version>${levering.versie}</version>
                     <type>war</type>
                 </dependency>
                 <dependency>
-                    <groupId>nl.bzk.brp.levering.services</groupId>
-                    <artifactId>brp-levering-services-verzending</artifactId>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-verzending</artifactId>
                     <version>${levering.versie}</version>
                     <type>war</type>
                 </dependency>
 
                 <dependency>
-                    <groupId>nl.bzk.brp.levering.services</groupId>
-                    <artifactId>brp-levering-services-afnemer-voorbeeld</artifactId>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-afnemervoorbeeld</artifactId>
                     <version>${levering.versie}</version>
                     <type>war</type>
                 </dependency>
@@ -162,8 +143,8 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>nl.bzk.brp.levering.services</groupId>
-                    <artifactId>brp-levering-services-synchronisatie</artifactId>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-synchronisatie</artifactId>
                     <version>${levering.versie}</version>
                     <type>war</type>
                 </dependency>
@@ -179,31 +160,30 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>nl.bzk.brp.levering.services</groupId>
-                    <artifactId>brp-levering-services-onderhoud-afnemerindicaties</artifactId>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-afnemerindicatie</artifactId>
                     <version>${levering.versie}</version>
                     <type>war</type>
                 </dependency>
             </dependencies>
         </profile>
         <profile>
-            <id>bezemwagen</id>
+            <id>admhnd-publicatie</id>
             <activation>
                 <property>
-                    <name>bezemwagen</name>
+                    <name>admhnd-publicatie</name>
                     <value>true</value>
                 </property>
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>nl.bzk.brp.levering.services</groupId>
-                    <artifactId>brp-levering-services-bezemwagen</artifactId>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-ah-publicatie</artifactId>
                     <version>${levering.versie}</version>
                     <type>war</type>
                 </dependency>
             </dependencies>
         </profile>
-        <!-- Deprecated: vanaf 94-SNAPSHOT zouden de uitgesplitste profielen eronder gebruikt dienen te worden -->
         <profile>
             <id>routering</id>
             <activation>
@@ -213,9 +193,9 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>nl.bzk.brp.levering.routering</groupId>
-                    <artifactId>brp-levering-routering-centrale</artifactId>
-                    <version>${routering-centrale.versie}</version>
+                    <groupId>nl.bzk.brp</groupId>
+                    <artifactId>brp-message-broker</artifactId>
+                    <version>${message-broker.versie}</version>
                     <type>war</type>
                 </dependency>
             </dependencies>
@@ -236,56 +216,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <!--<profile>
-            <id>routering-gba</id>
-            <activation>
-                <property>
-                    <name>nieuwste</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>nl.bzk.brp.levering.routering</groupId>
-                    <artifactId>gba-levering-routering-centrale</artifactId>
-                    <version>${routering-centrale.versie}</version>
-                    <type>war</type>
-                </dependency>
-            </dependencies>
-        </profile>-->
-        <profile>
-            <id>jvm-beheer</id>
-            <activation>
-                <property>
-                    <name>jvm-beheer</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>nl.bzk.brp.utils</groupId>
-                    <artifactId>brp-utils-jvm-beheer</artifactId>
-                    <version>${jvm.beheer.versie}</version>
-                    <type>war</type>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>blobifier</id>
-            <activation>
-                <property>
-                    <name>blobifier</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>nl.bzk.brp.beheer.blobify</groupId>
-                    <artifactId>brp-beheer-blobify-persoon</artifactId>
-                    <version>${blobifier.versie}</version>
-                    <type>war</type>
-                </dependency>
-            </dependencies>
-        </profile>
 
         <profile>
             <id>beheer</id>
@@ -300,6 +230,77 @@
                     <groupId>nl.bzk.brp.beheer</groupId>
                     <artifactId>brp-beheer-api</artifactId>
                     <version>${beheer.versie}</version>
+                    <type>war</type>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>vrijbericht</id>
+            <activation>
+                <property>
+                    <name>vrijbericht</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-vrijbericht</artifactId>
+                    <version>${vrijbericht.versie}</version>
+                    <type>war</type>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>selectie</id>
+            <activation>
+                <property>
+                    <name>selectie</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-selectie</artifactId>
+                    <version>${selectie.versie}</version>
+                    <type>war</type>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>selectie-verwerker</id>
+            <activation>
+                <property>
+                    <name>selectie-verwerker</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>nl.bzk.brp.leveren</groupId>
+                    <artifactId>brp-delivery-selectie-verwerker</artifactId>
+                    <version>${selectie-verwerker.versie}</version>
+                    <type>war</type>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>archivering</id>
+            <activation>
+                <property>
+                    <name>archivering</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>nl.bzk.brp</groupId>
+                    <artifactId>archivering</artifactId>
+                    <version>${archivering.versie}</version>
                     <type>war</type>
                 </dependency>
             </dependencies>
@@ -382,12 +383,16 @@
                 <maven.jdbc.protocollering.password>brp</maven.jdbc.protocollering.password>
                 <maven.jdbc.master.password>brp</maven.jdbc.master.password>
 
-                <maven.bijhouding.security.public.keystore.wachtwoord>publicstore</maven.bijhouding.security.public.keystore.wachtwoord>
+                <maven.bijhouding.security.public.keystore.wachtwoord>publicstore
+                </maven.bijhouding.security.public.keystore.wachtwoord>
                 <maven.bijhouding.security.public.keystore>publicstore.jks</maven.bijhouding.security.public.keystore>
-                <maven.bijhouding.security.private.keystore>privatestore.jks</maven.bijhouding.security.private.keystore>
-                <maven.bijhouding.security.private.keystore.wachtwoord>privatestore</maven.bijhouding.security.private.keystore.wachtwoord>
+                <maven.bijhouding.security.private.keystore>privatestore.jks
+                </maven.bijhouding.security.private.keystore>
+                <maven.bijhouding.security.private.keystore.wachtwoord>privatestore
+                </maven.bijhouding.security.private.keystore.wachtwoord>
                 <maven.bijhouding.security.privatekey.alias>serverkey</maven.bijhouding.security.privatekey.alias>
-                <maven.bijhouding.security.privatekey.wachtwoord>serverkeypassword</maven.bijhouding.security.privatekey.wachtwoord>
+                <maven.bijhouding.security.privatekey.wachtwoord>serverkeypassword
+                </maven.bijhouding.security.privatekey.wachtwoord>
 
             </properties>
         </profile>
@@ -503,7 +508,8 @@
                                 <home>${project.build.directory}/tomcat</home>
                                 <properties>
                                     <cargo.servlet.port>8080</cargo.servlet.port>
-                                    <cargo.jvmargs>-Djava.awt.headless=true -server -Xms1G -XX:PermSize=128m -XX:ReservedCodeCacheSize=64M
+                                    <cargo.jvmargs>-Djava.awt.headless=true -server -Xms1G -XX:PermSize=128m
+                                        -XX:ReservedCodeCacheSize=64M
                                     </cargo.jvmargs>
                                 </properties>
                             </configuration>
@@ -521,7 +527,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>2.8</version>
                         <executions>
                             <execution>
                                 <id>copy</id>
@@ -534,7 +539,7 @@
                                         <artifactItem>
                                             <groupId>org.postgresql</groupId>
                                             <artifactId>postgresql</artifactId>
-                                            <version>${postgres.version}</version>
+                                            <version>${postgresql.version}</version>
                                             <type>jar</type>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>
@@ -577,27 +582,27 @@
                                             </fileset>
                                         </copy>
                                         <copy todir="${project.build.directory}/tomcat/apache-tomcat-7.0.65/apache-tomcat-7.0.65/webapps">
-                                            <fileset dir="${project.build.directory}/deployment-artefacten"
+                                            <fileset dir="${project.build.directory}/${project.build.finalName}-artefacten"
                                                      includes="*.war">
                                                 <filename regex="^*.war"/>
                                             </fileset>
 
                                         </copy>
                                         <copy todir="${project.build.directory}/tomcat/apache-tomcat-7.0.65/apache-tomcat-7.0.65/lib">
-                                            <fileset dir="${project.build.directory}/deployment-artefacten/configuratie"
+                                            <fileset dir="${project.build.directory}/${project.build.finalName}-artefacten/configuratie"
                                                      includes="*.properties">
                                                 <filename regex="^*.properties"/>
 
                                             </fileset>
                                         </copy>
                                         <copy todir="${project.build.directory}/tomcat/apache-tomcat-7.0.65/apache-tomcat-7.0.65/lib">
-                                            <fileset dir="${project.build.directory}/deployment-artefacten/configuratie"
+                                            <fileset dir="${project.build.directory}/${project.build.finalName}-artefacten/configuratie"
                                                      includes="*.xml">
                                                 <filename regex="^*.xml"/>
                                             </fileset>
                                         </copy>
                                         <copy todir="${project.build.directory}/tomcat/apache-tomcat-7.0.65/apache-tomcat-7.0.65/lib">
-                                            <fileset dir="${project.build.directory}/deployment-artefacten/keystores"
+                                            <fileset dir="${project.build.directory}/${project.build.finalName}-artefacten/keystores"
                                                      includes="*.jks">
                                                 <filename regex="^*.jks"/>
                                             </fileset>
@@ -645,11 +650,10 @@
 
     </profiles>
 
-
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>nl.bzk.brp.properties</groupId>
+            <artifactId>brp-test-properties</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -676,7 +680,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.2-1004-jdbc41</version>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -776,7 +779,8 @@
                                 <include>**/*Test.java</include>
                             </includes>
                             <additionalClasspathElements>
-                                <additionalClasspathElement>./target/properties/localhost/brp.properties</additionalClasspathElement>
+                                <additionalClasspathElement>./target/properties/localhost/brp.properties
+                                </additionalClasspathElement>
                             </additionalClasspathElements>
                         </configuration>
                     </execution>
@@ -802,7 +806,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.7</version>
                 <executions>
                     <execution>
                         <id>unpack-properties</id>
@@ -840,11 +843,13 @@
                             <fileSets>
                                 <fileSet>
                                     <sourceFile>target/config/brp-alles-${environment}.properties</sourceFile>
-                                    <destinationFile>target/properties/${environment}/brp-alles.properties</destinationFile>
+                                    <destinationFile>target/properties/${environment}/brp-alles.properties
+                                    </destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>target/config/beheer-${environment}.properties</sourceFile>
-                                    <destinationFile>target/properties/${environment}/beheer.properties</destinationFile>
+                                    <destinationFile>target/properties/${environment}/beheer.properties
+                                    </destinationFile>
                                 </fileSet>
                                 <fileSet>
                                     <sourceFile>src/main/config/log4j2.xml</sourceFile>
@@ -894,7 +899,6 @@
                         <descriptor>src/main/assembly/deployment.xml</descriptor>
                     </descriptors>
                     <outputDirectory>${project.build.directory}</outputDirectory>
-                    <finalName>deployment</finalName>
                 </configuration>
                 <executions>
                     <execution>
@@ -923,19 +927,14 @@
                                 <echo>====== Versie nummers in de deployment pom ====</echo>
                                 <echo>Levering versie: ${levering.versie}</echo>
                                 <echo>Bijhouding versie: ${bijhouding.versie}</echo>
-                                <echo>Routering-centrale versie: ${routering-centrale.versie}</echo>
+                                <echo>Message-broker versie: ${message-broker.versie}</echo>
                                 <echo>Bevraging versie: ${bevraging.versie}</echo>
                                 <echo>Protocollering versie: ${protocollering.versie}</echo>
-                                <echo>JVM Beheer versie: ${jvm.beheer.versie}</echo>
-                                <echo>Blobifier versie: ${blobifier.versie}</echo>
                                 <echo>Synchronisatie versie: ${levering.versie}</echo>
                                 <echo>Afnemerindicaties versie: ${levering.versie}</echo>
-                                <echo>beheer versie: ${beheer.versie}</echo>
-                                <echo>====== Profiel selectie ====</echo>
-                                <echo>Bevraging: ${bevraging}</echo>
-                                <echo>Bijhouding: ${bijhouding}</echo>
-                                <echo>Levering: ${levering}</echo>
-                                <echo>Bezemwagen: ${bezemwagen}</echo>
+                                <echo>Beheer versie: ${beheer.versie}</echo>
+                                <echo>Vrijbericht versie: ${vrijbericht.versie}</echo>
+                                <echo>Archivering versie: ${archivering.versie}</echo>
                             </tasks>
                         </configuration>
                     </execution>
@@ -948,50 +947,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.7</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>dependencies</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.1</version>
-                <configuration>
-                    <processProperties>true</processProperties>
-                    <allowMinorUpdates>true</allowMinorUpdates>
-                    <allowSnapshots>true</allowSnapshots>
-                    <detail>false</detail>
-                    <processDependencyManagement>false</processDependencyManagement>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>dependency-updates-report</report>
-                            <report>property-updates-report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
-
-
 </project>

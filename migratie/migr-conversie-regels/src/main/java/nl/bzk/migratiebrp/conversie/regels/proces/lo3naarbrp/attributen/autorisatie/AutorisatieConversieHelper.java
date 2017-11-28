@@ -23,9 +23,7 @@ public final class AutorisatieConversieHelper {
 
     /**
      * Bepaal de meeste recente niet lege inhoud op basis van datum ingang van een stapel.
-     *
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      * @return inhoud
      */
     public Lo3AutorisatieInhoud bepaalMeesteRecenteNietLegeInhoud(final Lo3Stapel<Lo3AutorisatieInhoud> stapel) {
@@ -38,8 +36,7 @@ public final class AutorisatieConversieHelper {
                 }
 
                 if (result == null
-                    || result.getHistorie().getIngangsdatumGeldigheid().compareTo(categorie.getHistorie().getIngangsdatumGeldigheid()) < 0)
-                {
+                        || result.getHistorie().getIngangsdatumGeldigheid().compareTo(categorie.getHistorie().getIngangsdatumGeldigheid()) < 0) {
                     result = categorie;
                 }
             }
@@ -48,32 +45,8 @@ public final class AutorisatieConversieHelper {
     }
 
     /**
-     * Bepaal de categorie met de oudste datum ingang van een stapel.
-     *
-     * @param stapel
-     *            stapel
-     * @return Lo3Categorie<Lo3AutorisatieInhoud>
-     */
-    public Lo3Categorie<Lo3AutorisatieInhoud> bepaalOudsteDatumIngangCategorie(final Lo3Stapel<Lo3AutorisatieInhoud> stapel) {
-        Lo3Categorie<Lo3AutorisatieInhoud> result = null;
-
-        if (stapel != null) {
-            for (final Lo3Categorie<Lo3AutorisatieInhoud> categorie : stapel) {
-                if (result == null
-                    || result.getHistorie().getIngangsdatumGeldigheid().compareTo(categorie.getHistorie().getIngangsdatumGeldigheid()) > 0)
-                {
-                    result = categorie;
-                }
-            }
-        }
-        return result == null ? null : result;
-    }
-
-    /**
      * Maakt van rubrieken uit een autorisatie (filter/sleutel) een lijst van rubrieknummers.
-     *
-     * @param autorisatieRubrieken
-     *            Een String van rubrieken gescheiden door een '#'.
+     * @param autorisatieRubrieken Een String van rubrieken gescheiden door een '#'.
      * @return lo3Rubrieken Een lijst van string rubrieknummers.
      */
     public Set<String> bepaalRubrieken(final String autorisatieRubrieken) {
@@ -82,23 +55,19 @@ public final class AutorisatieConversieHelper {
         }
 
         final String[] rubrieknummers = autorisatieRubrieken.split("#");
-        return new HashSet<String>(Arrays.asList(rubrieknummers));
+        return new HashSet<>(Arrays.asList(rubrieknummers));
     }
 
     /**
      * Maakt een unieke String op basis van de gegeven afnemerindicatie en het versieNr. Indien gevuld word ook de
      * suffix gebruikt.
-     *
-     * @param afnemerindicatie
-     *            de afnemer code
-     * @param versieNr
-     *            het versienummer van de autorisatietabelregel
-     * @param suffix
-     *            de eventuele suffix
+     * @param afnemerindicatie de afnemer code
+     * @param versieNr het versienummer van de autorisatietabelregel
+     * @param suffix de eventuele suffix
      * @return uniekeNaam 'afnemerindicatie(versieNr) suffix'.
      */
-    public String maakNaamUniek(final Integer afnemerindicatie, final Integer versieNr, final String suffix) {
-        String afnemerCode = String.valueOf(afnemerindicatie);
+    public String maakNaamUniek(final String afnemerindicatie, final Integer versieNr, final String suffix) {
+        String afnemerCode = afnemerindicatie;
         if (versieNr - 1 > 0) {
             afnemerCode = afnemerCode + "(" + (versieNr - 1) + ")";
         }

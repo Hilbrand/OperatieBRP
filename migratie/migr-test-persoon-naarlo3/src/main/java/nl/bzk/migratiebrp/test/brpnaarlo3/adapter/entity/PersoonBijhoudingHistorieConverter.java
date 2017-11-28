@@ -8,16 +8,19 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
+
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.PartijConverter;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,7 +33,6 @@ public final class PersoonBijhoudingHistorieConverter extends AbstractEntityHist
     private static final String HEADER_BIJHOUDINGSPARTIJ = "bijhpartij";
     private static final String HEADER_BIJHOUDINGSAARD = "bijhaard";
     private static final String HEADER_NADERE_BIJHOUDINGSAARD = "naderebijhaard";
-    private static final String HEADER_INDICATIE_ONVERWERKT_DOCUMENT_AANWEZIG = "indonverwdocaanw";
 
     @Inject
     private PartijConverter partijConverter;
@@ -39,7 +41,6 @@ public final class PersoonBijhoudingHistorieConverter extends AbstractEntityHist
     private Integer datumEindeGeldigheid;
     private Bijhoudingsaard bijhoudingsaard;
     private NadereBijhoudingsaard nadereBijhoudingsaard;
-    private Boolean indicatieOnverwerktDocumentAanwezig;
     private Timestamp datumTijdRegistratie;
     private Timestamp datumTijdVerval;
     private BRPActie actieAanpassingGeldigheid;
@@ -61,7 +62,6 @@ public final class PersoonBijhoudingHistorieConverter extends AbstractEntityHist
         partij = null;
         bijhoudingsaard = null;
         nadereBijhoudingsaard = null;
-        indicatieOnverwerktDocumentAanwezig = null;
 
         datumAanvangGeldigheid = null;
         datumEindeGeldigheid = null;
@@ -75,7 +75,7 @@ public final class PersoonBijhoudingHistorieConverter extends AbstractEntityHist
     @Override
     protected void maakHistorieEntity(final ConverterContext context) {
         final PersoonBijhoudingHistorie persoonBijhoudingHistorie =
-                new PersoonBijhoudingHistorie(persoon, partij, bijhoudingsaard, nadereBijhoudingsaard, indicatieOnverwerktDocumentAanwezig);
+                new PersoonBijhoudingHistorie(persoon, partij, bijhoudingsaard, nadereBijhoudingsaard);
         persoonBijhoudingHistorie.setDatumAanvangGeldigheid(datumAanvangGeldigheid);
         persoonBijhoudingHistorie.setDatumEindeGeldigheid(datumEindeGeldigheid);
         persoonBijhoudingHistorie.setDatumTijdRegistratie(datumTijdRegistratie);
@@ -99,13 +99,10 @@ public final class PersoonBijhoudingHistorieConverter extends AbstractEntityHist
                 partij = partijConverter.convert(value);
                 break;
             case HEADER_BIJHOUDINGSAARD:
-                bijhoudingsaard = Bijhoudingsaard.parseId(Short.valueOf(value));
+                bijhoudingsaard = Bijhoudingsaard.parseId(Integer.valueOf(value));
                 break;
             case HEADER_NADERE_BIJHOUDINGSAARD:
-                nadereBijhoudingsaard = NadereBijhoudingsaard.parseId(Short.valueOf(value));
-                break;
-            case HEADER_INDICATIE_ONVERWERKT_DOCUMENT_AANWEZIG:
-                indicatieOnverwerktDocumentAanwezig = Boolean.valueOf(value);
+                nadereBijhoudingsaard = NadereBijhoudingsaard.parseId(Integer.valueOf(value));
                 break;
             case HEADER_DATUM_AANVANG_GELDIGHEID:
                 datumAanvangGeldigheid = Integer.valueOf(value);

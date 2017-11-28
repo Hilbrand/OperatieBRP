@@ -7,7 +7,11 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel;
 
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
@@ -41,8 +45,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocu
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.ConversietabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.StamtabelRepository;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -62,17 +65,24 @@ public final class DalConversietabelFactory extends AbstractConversietabelFactor
     private static final String CACHE_MANAGER = "cacheManager";
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    @Inject
-    private ConversietabelRepository conversietabelRepository;
+    private final ConversietabelRepository conversietabelRepository;
+    private final StamtabelRepository stamtabelRepository;
 
+    /**
+     * Constructor.
+     * @param conversietabelRepository conversietabel repository
+     * @param stamtabelRepository stamtabel repository
+     */
     @Inject
-    private StamtabelRepository stamtabelRepository;
+    public DalConversietabelFactory(final ConversietabelRepository conversietabelRepository,
+                                    final StamtabelRepository stamtabelRepository) {
+        this.conversietabelRepository = conversietabelRepository;
+        this.stamtabelRepository = stamtabelRepository;
+    }
 
     /**
      * event Listner welke na het laden van de Context het lezen van de caches triggerd.
-     * 
-     * @param contextRefreshedEvent
-     *            event
+     * @param contextRefreshedEvent event
      */
     @Override
     public void onApplicationEvent(final ContextRefreshedEvent contextRefreshedEvent) {
@@ -82,7 +92,6 @@ public final class DalConversietabelFactory extends AbstractConversietabelFactor
     /**
      * Alle laden van alle Spring caches.
      */
-    @SuppressWarnings("checkstyle:illegalcatch")
     @Transactional(value = "syncDalTransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public void loadCaches() {
         try {
@@ -107,8 +116,8 @@ public final class DalConversietabelFactory extends AbstractConversietabelFactor
             createLo3RubriekConversietabel();
             createVerstrekkingsbeperkingConversietabel();
             LOGGER.info("Klaar met laden Caches");
-        } catch (Exception e) {
-            LOGGER.info("Caches konden niet geladen worden!");
+        } catch (final Exception e) {
+            LOGGER.error("Caches konden niet geladen worden!", e);
         }
     }
 
@@ -156,7 +165,8 @@ public final class DalConversietabelFactory extends AbstractConversietabelFactor
 
     @Cacheable(cacheNames = CACHE_LOCATION, key = CACHE_KEY, cacheManager = CACHE_MANAGER)
     @Override
-    public Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode> createAanduidingInhoudingVermissingReisdocumentConversietabel() {
+    public Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode>
+    createAanduidingInhoudingVermissingReisdocumentConversietabel() {
         return new AanduidingInhoudingVermissingReisdocumentConversietabel(conversietabelRepository.findAllAanduidingInhoudingVermissingReisdocument());
     }
 
@@ -212,13 +222,19 @@ public final class DalConversietabelFactory extends AbstractConversietabelFactor
     @Override
     public Conversietabel<Character, BrpSoortDocumentCode> createSoortRegisterSoortDocumentConversietabel() {
         return new SoortRegisterSoortDocumentConversietabel(
-            stamtabelRepository.findSoortDocumentConversie(SoortRegisterSoortDocumentConversietabel.CONVERSIE_SOORT_DOCUMENT));
+                stamtabelRepository.findSoortDocumentConversie(SoortRegisterSoortDocumentConversietabel.CONVERSIE_SOORT_DOCUMENT));
     }
 
     @Cacheable(cacheNames = CACHE_LOCATION, key = CACHE_KEY, cacheManager = CACHE_MANAGER)
     @Override
     public Conversietabel<String, String> createLo3RubriekConversietabel() {
         return new Lo3RubriekConversietabel(conversietabelRepository.findAllLo3Rubrieken());
+    }
+
+    @Cacheable(cacheNames = CACHE_LOCATION, key = CACHE_KEY, cacheManager = CACHE_MANAGER)
+    @Override
+    public Conversietabel<Lo3NationaliteitCode, BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer> createAutoriteitVanAfgifteBuitenlandsPersoonsnummertabel() {
+        return new AutorisatieVanAfgifteBuitenlandsPersoonsnummerConversietabel(stamtabelRepository.findAllAutorisatiesVanAfgifteBuitenlandsPersoonsnummer());
     }
 
     @Cacheable(cacheNames = CACHE_LOCATION, key = CACHE_KEY, cacheManager = CACHE_MANAGER)

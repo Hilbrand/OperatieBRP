@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.isc.runtime.jbpm.job;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.logging.FunctioneleMelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.quartz.JobDataMap;
 import org.springframework.context.ApplicationContext;
 
@@ -17,7 +17,9 @@ import org.springframework.context.ApplicationContext;
  */
 public final class ExecuteJobJob extends AbstractExecuteJob {
 
-    /** Job data map key waaronder het JOB id wordt opgeslagen. */
+    /**
+     * Job data map key waaronder het JOB id wordt opgeslagen.
+     */
     public static final String JOB_ID_KEY = "jbpm.job.id";
 
     private static final Logger LOG = LoggerFactory.getLogger();

@@ -17,18 +17,12 @@ public interface Check {
 
     /**
      * Voer een controle uit.
-     *
-     * @param context
-     *            context
-     * @param bericht
-     *            ontvangen bericht
-     * @param testbericht
-     *            test bericht
-     * @param config
-     *            config (uit configuratie)
+     * @param context context
+     * @param bericht ontvangen bericht
+     * @param testbericht test bericht
+     * @param config config (uit configuratie)
      * @return true, als de controle is geslaagd, anders false
-     * @throws TestException
-     *             bij fouten
+     * @throws TestException bij fouten
      */
     boolean check(CheckContext context, Bericht bericht, TestBericht testbericht, String config) throws TestException;
 }

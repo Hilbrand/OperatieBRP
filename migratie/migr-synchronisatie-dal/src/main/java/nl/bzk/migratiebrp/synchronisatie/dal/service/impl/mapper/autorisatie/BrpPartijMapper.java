@@ -6,15 +6,14 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PartijHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpPartij;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpPartijInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PartijHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.AbstractBrpMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.BrpMapperUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,11 +24,8 @@ public final class BrpPartijMapper extends AbstractBrpMapper<PartijHistorie, Brp
 
     /**
      * Map een database entiteit partij naar een BRP conversie model object.
-     *
-     * @param partij
-     *            database entiteit
-     * @param brpOnderzoekMapper
-     *            De mapper voor onderzoeken
+     * @param partij database entiteit
+     * @param brpOnderzoekMapper De mapper voor onderzoeken
      * @return conversie model object
      */
     public BrpPartij mapPartij(final Partij partij, final BrpOnderzoekMapper brpOnderzoekMapper) {
@@ -41,9 +37,9 @@ public final class BrpPartijMapper extends AbstractBrpMapper<PartijHistorie, Brp
     protected BrpPartijInhoud mapInhoud(final PartijHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         // @formatter:off
         return new BrpPartijInhoud(BrpMapperUtil.mapDatum(historie.getDatumIngang()),
-            BrpMapperUtil.mapDatum(historie.getDatumEinde()),
-            historie.isIndicatieVerstrekkingsbeperkingMogelijk(),
-            true);
+                BrpMapperUtil.mapDatum(historie.getDatumEinde()),
+                historie.isIndicatieVerstrekkingsbeperkingMogelijk(),
+                true);
         // @formatter:on
     }
 

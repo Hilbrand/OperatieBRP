@@ -14,20 +14,14 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 
 /**
  * Bevat hulpmethodes voor conversie mapping functionaliteit voor eenvoudige Lo3 en Brp attributen.
- * 
- * @param <L>
- *            de LO3 waarde
- * @param <B>
- *            de BRP waarde
+ * @param <L> de LO3 waarde
+ * @param <B> de BRP waarde
  */
 public abstract class AbstractAttribuutConversietabel<L extends AbstractLo3Element, B extends AbstractBrpAttribuutMetOnderzoek> extends
-        AbstractConversietabel<L, B>
-{
+        AbstractConversietabel<L, B> {
     /**
      * Maakt een AbstractAttribuutConversietabel object.
-     * 
-     * @param conversieLijst
-     *            de lijst met conversies.
+     * @param conversieLijst de lijst met conversies.
      */
     public AbstractAttribuutConversietabel(final List<Map.Entry<L, B>> conversieLijst) {
         super(conversieLijst);

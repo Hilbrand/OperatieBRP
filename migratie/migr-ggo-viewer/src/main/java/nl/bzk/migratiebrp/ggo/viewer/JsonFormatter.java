@@ -21,9 +21,7 @@ public class JsonFormatter {
 
     /**
      * Response object alvast omzetten naar JSON.
-     *
-     * @param uploadResponse
-     *            ViewerResponse
+     * @param uploadResponse ViewerResponse
      * @return ResponseEntity<String> JSON
      */
     public final ResponseEntity<String> format(final ViewerResponse uploadResponse) {

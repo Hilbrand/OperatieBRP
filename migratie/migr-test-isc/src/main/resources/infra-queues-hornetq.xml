@@ -13,18 +13,29 @@
         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
     ">
 
-    <!-- HornetQ: QUEUE -->
-
-
-	<bean name="hornetQVerzoek" class="org.hornetq.jms.client.HornetQQueue">
-	   <constructor-arg value="${hornet.queue.verzoek}" />
+    <!-- HornetQ: QUEUE naar BRP -->
+	<bean name="naarBrp" class="org.hornetq.jms.client.HornetQQueue">
+		<constructor-arg value="${hornet.queue.naarBrp}" />
 	</bean>
 
-	<bean name="hornetQAntwoord" class="org.hornetq.jms.client.HornetQQueue">
-	   <constructor-arg value="${hornet.queue.antwoord}" />
+	<bean name="naarBrpAntwoord" class="org.hornetq.jms.client.HornetQQueue">
+		<constructor-arg value="${hornet.queue.naarBrpAntwoord}" />
 	</bean>
 
-        <bean name="hornetQDlqQueue" class="org.hornetq.jms.client.HornetQQueue">
-	   <constructor-arg value="${hornet.queue.dlq}" />
+	<bean name="naarBrpDlqQueue" class="org.hornetq.jms.client.HornetQQueue">
+		<constructor-arg value="${hornet.queue.naarBrpDlq}" />
+	</bean>
+
+	<!-- HornetQ: QUEUE naar LO3 -->
+	<bean name="naarLo3" class="org.hornetq.jms.client.HornetQQueue">
+		<constructor-arg value="${hornet.queue.naarLo3}" />
+	</bean>
+
+	<bean name="naarLo3Antwoord" class="org.hornetq.jms.client.HornetQQueue">
+		<constructor-arg value="${hornet.queue.naarLo3Antwoord}" />
+	</bean>
+
+	<bean name="naarLo3DlqQueue" class="org.hornetq.jms.client.HornetQQueue">
+		<constructor-arg value="${hornet.queue.naarLo3Dlq}" />
 	</bean>
 </beans>

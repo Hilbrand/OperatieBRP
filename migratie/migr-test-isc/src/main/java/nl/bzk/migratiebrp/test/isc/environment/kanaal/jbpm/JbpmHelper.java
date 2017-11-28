@@ -12,12 +12,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
-
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -33,10 +31,10 @@ public final class JbpmHelper {
 
     private static final String ID_COLUMN = "id_";
     private static final String SELECT_PROCESSINSTANCEID_OBV_MESSAGEID = "select distinct process_instance_id from mig_bericht "
-                                                                         + "where message_id = ? and process_instance_id is not null";
+            + "where message_id = ? and process_instance_id is not null";
     private static final String SELECT_MESSAGEID_OBV_PROCESSINSTANCEID_AND_NAAM = "select distinct message_id from mig_bericht "
-                                                                                  + "where process_instance_id = ? and naam = ? "
-                                                                                  + "and message_id is not null";
+            + "where process_instance_id = ? and naam = ? "
+            + "and message_id is not null";
 
     private static final String SELECT_ROOTTOKEN_FROM_PROCESSINSTANCE = "select roottoken_ from jbpm_processinstance where id_= ?";
 
@@ -59,7 +57,7 @@ public final class JbpmHelper {
                 return jdbcTemplate.queryForObject(sql, params, clazz);
             } catch (final EmptyResultDataAccessException e) {
                 try {
-                    Thread.sleep(TIMEOUT * count);
+                    TimeUnit.MILLISECONDS.sleep(TIMEOUT * count);
                 } catch (final InterruptedException e1) {
                     LOG.debug("sleep() interrupted in queryForLong().", e1);
                 }
@@ -78,7 +76,7 @@ public final class JbpmHelper {
                 return result;
             }
             try {
-                Thread.sleep(TIMEOUT * count);
+                TimeUnit.MILLISECONDS.sleep(TIMEOUT * count);
             } catch (final InterruptedException e1) {
                 LOG.debug("sleep() interrupted in queryForLongs().", e1);
             }
@@ -89,12 +87,9 @@ public final class JbpmHelper {
 
     /**
      * Controleer of een proces 'wacht' op een handmatige actie (dus in een TaskNode zit).
-     *
-     * @param berichtId
-     *            bericht id (om juiste proces te selecteren)
+     * @param berichtId bericht id (om juiste proces te selecteren)
      * @return true, als proces 'wacht' op een handmatig actie
-     * @throws JbpmHelperException
-     *             bij fouten
+     * @throws JbpmHelperException bij fouten
      */
     public boolean controleerOpHandmatigeActie(final String berichtId) throws JbpmHelperException {
         return getTaskId(berichtId) != null;
@@ -102,12 +97,9 @@ public final class JbpmHelper {
 
     /**
      * Bepaal het task id. bericht id (om juiste proces te selecteren)
-     *
-     * @param berichtId
-     *            het Id van het bericht waarop de taak wordt gezocht
+     * @param berichtId het Id van het bericht waarop de taak wordt gezocht
      * @return task id, als dit process in een task node zit (of null)
-     * @throws JbpmHelperException
-     *             bij fouten
+     * @throws JbpmHelperException bij fouten
      */
     public Long getTaskId(final String berichtId) throws JbpmHelperException {
         // Process instance id bepalen via database
@@ -141,7 +133,7 @@ public final class JbpmHelper {
             }
 
             try {
-                Thread.sleep(TIMEOUT * count);
+                TimeUnit.MILLISECONDS.sleep(TIMEOUT * count);
             } catch (final InterruptedException e1) {
                 LOG.debug("sleep() interrupted in getTasks().", e1);
             }
@@ -193,8 +185,8 @@ public final class JbpmHelper {
     private List<Long> getTasks(final Long processInstanceId) {
         final List<Long> result = new ArrayList<>();
 
-        final List<Map<String, Object>> childTokens =
-                jdbcTemplate.queryForList("select id_ from jbpm_taskinstance where procinst_ = ? and end_ is null", processInstanceId);
+        final List<Map<String, Object>> childTokens
+                = jdbcTemplate.queryForList("select id_ from jbpm_taskinstance where procinst_ = ? and end_ is null", processInstanceId);
 
         for (final Map<String, Object> childToken : childTokens) {
             LOG.info("Task id {} found for process instance id {}", childToken.get(ID_COLUMN), processInstanceId);
@@ -206,14 +198,10 @@ public final class JbpmHelper {
 
     /**
      * Controleer of een proces zich in een bepaalde node bevind.
-     *
-     * @param berichtId
-     *            bericht id (om juiste proces te selecteren)
-     * @param node
-     *            node naam
+     * @param berichtId bericht id (om juiste proces te selecteren)
+     * @param node node naam
      * @return true, als het proces zich in een node bevind met de gegeven naam.
-     * @throws JbpmHelperException
-     *             bij fouten
+     * @throws JbpmHelperException bij fouten
      */
     public boolean checkNodeActie(final String berichtId, final String node) throws JbpmHelperException {
         // Zoek proces in MIG_BERICHTEN
@@ -223,9 +211,9 @@ public final class JbpmHelper {
         final Long processTokenId = queryForLong(SELECT_ROOTTOKEN_FROM_PROCESSINSTANCE, 1, processInstanceId);
         LOG.info("checkNodeActie: processTokenId: {}", processTokenId);
 
-        final Long nodeId =
-                queryForLong("select node_ from jbpm_token, jbpm_node "
-                             + "where jbpm_token.id_= ? and jbpm_token.node_ = jbpm_node.id_ and jbpm_node.name_ = ?", 1, processTokenId, node);
+        final Long nodeId
+                = queryForLong("select node_ from jbpm_token, jbpm_node "
+                + "where jbpm_token.id_= ? and jbpm_token.node_ = jbpm_node.id_ and jbpm_node.name_ = ?", 1, processTokenId, node);
 
         return nodeId != null;
     }
@@ -242,14 +230,12 @@ public final class JbpmHelper {
      * Opschonen anummer-locks.
      */
     public void cleanLocks() {
-        jdbcTemplate.execute("truncate mig_lock cascade");
+        //jdbcTemplate.execute("truncate mig_lock cascade");
     }
 
     /**
      * Bepaal alle processen.
-     *
-     * @param messageIds
-     *            bericht ids
+     * @param messageIds bericht ids
      * @return lijst met proces ids
      */
     public Set<Long> bepaalAlleProcessen(final List<String> messageIds) {
@@ -259,11 +245,11 @@ public final class JbpmHelper {
             final List<Long> berichtIds = queryForLongs("select distinct id from mig_bericht where message_id = ?", HERHALINGEN, messageId);
 
             for (final Long berichtId : berichtIds) {
-                final Long procesId =
-                        queryForLong(
-                            "select process_instance_id from mig_bericht where id = ? and process_instance_id is not null",
-                            HERHALINGEN,
-                            berichtId);
+                final Long procesId
+                        = queryForLong(
+                        "select process_instance_id from mig_bericht where id = ? and process_instance_id is not null",
+                        HERHALINGEN,
+                        berichtId);
                 if (procesId != null) {
                     result.add(procesId);
                 }
@@ -276,9 +262,7 @@ public final class JbpmHelper {
 
     /**
      * Bepaal proces obv bericht id.
-     *
-     * @param berichtId
-     *            bericht id
+     * @param berichtId bericht id
      * @return proces id
      */
     public Long bepaalProces(final String berichtId) {
@@ -287,11 +271,8 @@ public final class JbpmHelper {
 
     /**
      * Bepaalt het token op basis van het bericht.
-     * 
-     * @param berichtId
-     *            het bericht Id waarop wordt gezocht
-     * @param bepaalTokenOpCorrelatie
-     *            indicator of het een gecorreleerd bericht betreft
+     * @param berichtId het bericht Id waarop wordt gezocht
+     * @param bepaalTokenOpCorrelatie indicator of het een gecorreleerd bericht betreft
      * @return het ID van het token
      */
     public Long bepaalToken(final String berichtId, final boolean bepaalTokenOpCorrelatie) {
@@ -301,19 +282,16 @@ public final class JbpmHelper {
             return tokenOpCorrelatie;
         } else {
             final Long procesInstanceId = bepaalProces(berichtId);
-            final Long tokenOpProces =
-                    queryForLong("select id_ from jbpm_token where parent_ is null and processinstance_ = ?", HERHALINGEN, procesInstanceId);
+            final Long tokenOpProces
+                    = queryForLong("select id_ from jbpm_token where parent_ is null and processinstance_ = ?", HERHALINGEN, procesInstanceId);
             return tokenOpProces;
         }
     }
 
     /**
      * Bepaalt het bericht op basis van een proces instantie en het bericht type.
-     * 
-     * @param processInstanceId
-     *            de proces instantie
-     * @param berichtType
-     *            het bericht type
+     * @param processInstanceId de proces instantie
+     * @param berichtType het bericht type
      * @return string representatie van het messageID van het bericht
      */
     public String bepaalBericht(final Long processInstanceId, final String berichtType) {
@@ -322,37 +300,28 @@ public final class JbpmHelper {
 
     /**
      * Controleer of het proces is beeindigd.
-     *
-     * @param processInstanceId
-     *            proces id
+     * @param processInstanceId proces id
      * @return true, als het proces gevonden en beeindigd is, anders false
      */
-
     public boolean controleerProcesBeeindigd(final Long processInstanceId) {
         if (processInstanceId == null) {
             throw new IllegalArgumentException("Proces ID mag niet null zijn.");
         }
 
-        final Long endedProcessInstanceId =
-                queryForLong("select id_ from jbpm_processinstance where id_= ? and end_ is not null", HERHALINGEN, processInstanceId);
+        final Long endedProcessInstanceId
+                = queryForLong("select id_ from jbpm_processinstance where id_= ? and end_ is not null", HERHALINGEN, processInstanceId);
 
         return endedProcessInstanceId != null;
     }
 
     /**
      * Controleer of een proces een bepaalde transitie heeft doorlopen.
-     *
-     * @param berichtId
-     *            bericht id
-     * @param node
-     *            node
-     * @param transitie
-     *            transitie
-     * @param aantal
-     *            aantal keer controleren
+     * @param berichtId bericht id
+     * @param node node
+     * @param transitie transitie
+     * @param aantal aantal keer controleren
      * @return true, als de transitie is doorlopen
-     * @throws JbpmHelperException
-     *             bij fouten
+     * @throws JbpmHelperException bij fouten
      */
     public boolean checkTransActie(final String berichtId, final String node, final String transitie, final int aantal) throws JbpmHelperException {
         LOG.info("checkTransActie: berichtId: {}", berichtId);
@@ -363,16 +332,16 @@ public final class JbpmHelper {
         LOG.info("checkTransActie: procesInstanceId: {}", processInstanceId);
         final Long processDefinitionId = queryForLong("select processdefinition_ from jbpm_processinstance where id_ = ?", 1, processInstanceId);
         LOG.info("checkTransActie: processDefinitionId: {}", processDefinitionId);
-        final Long transitieId =
-                queryForLong("select t.id_ from jbpm_node n, jbpm_transition t where n.processdefinition_ = ? "
-                             + "and n.id_ = t.from_ and n.name_ = ?  and COALESCE(t.name_, '') = ?", 1, processDefinitionId, node, transitie);
+        final Long transitieId
+                = queryForLong("select t.id_ from jbpm_node n, jbpm_transition t where n.processdefinition_ = ? "
+                + "and n.id_ = t.from_ and n.name_ = ?  and COALESCE(t.name_, '') = ?", 1, processDefinitionId, node, transitie);
         LOG.info("checkTransActie: transitieId: {}", transitieId);
 
         final Long processTokenId = queryForLong(SELECT_ROOTTOKEN_FROM_PROCESSINSTANCE, 1, processInstanceId);
         LOG.info("checkTransActie: processTokenId: {}", processTokenId);
 
-        final List<Long> logRegelIds =
-                queryForLongs("select id_ from jbpm_log where class_ = 'T' and token_ = ? and transition_ = ?", HERHALINGEN, processTokenId, transitieId);
+        final List<Long> logRegelIds
+                = queryForLongs("select id_ from jbpm_log where class_ = 'T' and token_ = ? and transition_ = ?", HERHALINGEN, processTokenId, transitieId);
 
         return logRegelIds.size() == aantal;
     }

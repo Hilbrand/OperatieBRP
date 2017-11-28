@@ -6,22 +6,24 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.validatie.Periode;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert het BRP datum type.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 @Requirement(Requirements.CAP002)
 public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements Comparable<BrpDatum> {
 
-    /** De onbekende datum (0). */
+    /**
+     * De onbekende datum (0).
+     */
     public static final BrpDatum ONBEKEND = new BrpDatum(0, null);
     private static final long serialVersionUID = 1L;
     private static final int MINIMAL_LENGTH_WITH_YEAR = 5;
@@ -33,26 +35,19 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
 
     /**
      * Maakt een BrpDatum object met onderzoek.
-     * 
-     * @param waarde
-     *            de datum als integer in de vorm van jjjjmmdd.
-     * @param onderzoek
-     *            het onderzoek waar deze datum onder valt. Mag NULL zijn.
+     * @param waarde de datum als integer in de vorm van jjjjmmdd.
+     * @param onderzoek het onderzoek waar deze datum onder valt. Mag NULL zijn.
      */
     public BrpDatum(
-        @Element(name = "waarde", required = false) final Integer waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final Integer waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Wrap de waarde en onderzoek naar een BrpDatum.
-     * 
-     * @param waarde
-     *            de Integer waarde
-     * @param onderzoek
-     *            het Lo3 onderzoek
+     * @param waarde de Integer waarde
+     * @param onderzoek het Lo3 onderzoek
      * @return BrpDatum object met daarin waarde en onderzoek
      */
     public static BrpDatum wrap(final Integer waarde, final Lo3Onderzoek onderzoek) {
@@ -64,9 +59,7 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
 
     /**
      * Unwrap een BrpDatum object om de Integer waarde terug te krijgen.
-     * 
-     * @param attribuut
-     *            De BrpDatum, mag null zijn.
+     * @param attribuut De BrpDatum, mag null zijn.
      * @return Een Integer object, of null als de BrpDatum null was.
      */
     public static Integer unwrap(final BrpDatum attribuut) {
@@ -75,11 +68,8 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
 
     /**
      * Maak een periode adhv BrpDatum object.
-     *
-     * @param beginDatum
-     *            De begin datum. Als deze null is wordt Long.MIN_VALUE ingevuld.
-     * @param eindDatum
-     *            De eind datum. Als deze null is wordt Long.MAX_VALUE ingevuld.
+     * @param beginDatum De begin datum. Als deze null is wordt Long.MIN_VALUE ingevuld.
+     * @param eindDatum De eind datum. Als deze null is wordt Long.MAX_VALUE ingevuld.
      * @return de nieuwe Periode
      */
     public static Periode createPeriode(final BrpDatum beginDatum, final BrpDatum eindDatum) {
@@ -87,9 +77,8 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
     }
 
     /**
+     * @param lo3Datum de LO3 datum
      * @return het BRP equivalent van deze LO3 datum
-     * @param lo3Datum
-     *            de LO3 datum
      */
     public static BrpDatum fromLo3Datum(final Lo3Datum lo3Datum) {
         final Integer datum = lo3Datum.getWaarde() == null ? null : Integer.valueOf(lo3Datum.getWaarde());
@@ -97,9 +86,8 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
     }
 
     /**
+     * @param lo3Datum de LO3 datum
      * @return het BRP equivalent van deze LO3 datum zonder onderzoek
-     * @param lo3Datum
-     *            de LO3 datum
      */
     public static BrpDatum fromLo3DatumZonderOnderzoek(final Lo3Datum lo3Datum) {
         final Integer datum = lo3Datum.getWaarde() == null ? null : Integer.valueOf(lo3Datum.getWaarde());
@@ -108,7 +96,7 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -119,16 +107,17 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
 
     @Override
     public int compareTo(final BrpDatum andereDatum) {
-        if (!Validatie.isAttribuutGevuld(andereDatum)) {
+        if (!BrpValidatie.isAttribuutGevuld(andereDatum)) {
             throw new NullPointerException("Andere datum is null");
         }
 
         return getWaarde() - andereDatum.getWaarde();
     }
 
+
+
     /**
      * Converteer naar lo3 datum.
-     * 
      * @return lo3 datum
      */
     public Lo3Datum converteerNaarLo3Datum() {
@@ -137,9 +126,7 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
 
     /**
      * Converteer naar lo3 datum.
-     * 
-     * @param stripOnderzoek
-     *            true als de datum naar Lo3Datum geconverteerd moet worden zonder onderzoek
+     * @param stripOnderzoek true als de datum naar Lo3Datum geconverteerd moet worden zonder onderzoek
      * @return lo3 datum
      */
     public Lo3Datum converteerNaarLo3Datum(final boolean stripOnderzoek) {
@@ -152,19 +139,29 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
     /**
      * Is een gedeelte van deze datum onbekend? Een gedeelte (jaar, maand of dag) van een datum is onbekend als er 0000
      * (jaar) of 00 (maand of dag) als waarde is ingevuld.
-     * 
-     * Bijvoorbeeld:
-     * <ul>
-     * <li>19000101 -> false</li>
-     * <li>19000100 -> true</li>
-     * <li>19000001 -> true</li>
-     * <li>00000101 -> true</li>
-     * <li>00000100 -> true</li>
-     * <li>00000001 -> true</li>
-     * <li>19000000 -> true</li>
-     * <li>00000000 -> true</li>
-     * </ul>
      *
+     * Bijvoorbeeld: {@literal
+     *
+     * <ul>
+     *
+     * <li>19000101 -> false</li>
+     *
+     * <li>19000100 -> true</li>
+     *
+     * <li>19000001 -> true</li>
+     *
+     * <li>00000101 -> true</li>
+     *
+     * <li>00000100 -> true</li>
+     *
+     * <li>00000001 -> true</li>
+     *
+     * <li>19000000 -> true</li>
+     *
+     * <li>00000000 -> true</li>
+     *
+     * </ul>
+     * }
      * @return true als een gedeelte van de datum onbekend is, anders false
      */
     public boolean isOnbekend() {
@@ -176,8 +173,8 @@ public final class BrpDatum extends AbstractBrpAttribuutMetOnderzoek implements 
             waarde = String.format(DATE_FORMAT, getWaarde());
         }
         return waarde.length() < MINIMAL_LENGTH_WITH_YEAR
-               || waarde.substring(START_POSITION_MAAND, EIND_POSITIE_MAAND).equals(INDICATIE_ONBEKEND)
-               || waarde.endsWith(INDICATIE_ONBEKEND);
+                || waarde.substring(START_POSITION_MAAND, EIND_POSITIE_MAAND).equals(INDICATIE_ONBEKEND)
+                || waarde.endsWith(INDICATIE_ONBEKEND);
 
     }
 }

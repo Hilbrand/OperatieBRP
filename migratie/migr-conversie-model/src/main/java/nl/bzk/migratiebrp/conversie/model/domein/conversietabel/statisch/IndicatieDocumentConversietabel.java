@@ -7,11 +7,12 @@
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieDocumentEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieDocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Dit is een statische conversie (er wordt geen tabel gebruikt) tussen de LO3 en BRP code.
@@ -23,7 +24,7 @@ public final class IndicatieDocumentConversietabel implements Conversietabel<Lo3
         final BrpBoolean resultaat;
         if (input == null) {
             resultaat = new BrpBoolean(false);
-        } else if (!Validatie.isElementGevuld(input)) {
+        } else if (!Lo3Validatie.isElementGevuld(input)) {
             resultaat = new BrpBoolean(false, input.getOnderzoek());
         } else {
             resultaat = new BrpBoolean(Lo3IndicatieDocumentEnum.INDICATIE.equalsElement(input), input.getOnderzoek());
@@ -37,7 +38,7 @@ public final class IndicatieDocumentConversietabel implements Conversietabel<Lo3
 
         if (input == null) {
             resultaat = null;
-        } else if (!nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie.isAttribuutGevuld(input)) {
+        } else if (!BrpValidatie.isAttribuutGevuld(input)) {
             resultaat = new Lo3IndicatieDocument(null, input.getOnderzoek());
         } else {
             final Lo3Onderzoek onderzoek = input.getOnderzoek();
@@ -54,7 +55,7 @@ public final class IndicatieDocumentConversietabel implements Conversietabel<Lo3
 
     @Override
     public boolean valideerLo3(final Lo3IndicatieDocument input) {
-        return !Validatie.isElementGevuld(input) || Lo3IndicatieDocumentEnum.getByCode(input.getIntegerWaarde()) != null;
+        return !Lo3Validatie.isElementGevuld(input) || Lo3IndicatieDocumentEnum.getByCode(input.getIntegerWaarde()) != null;
     }
 
     @Override

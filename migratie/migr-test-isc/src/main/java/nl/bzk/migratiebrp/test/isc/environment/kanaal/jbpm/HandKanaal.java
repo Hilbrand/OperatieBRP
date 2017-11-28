@@ -6,11 +6,12 @@
 
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.jbpm;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.command.client.CommandClient;
 import nl.bzk.migratiebrp.isc.jbpm.command.exception.CommandException;
 import nl.bzk.migratiebrp.isc.jbpm.command.impl.JbpmTaakCommand;
@@ -21,15 +22,15 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * Hand kanaal.
  */
 public class HandKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "hand";
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -38,12 +39,8 @@ public class HandKanaal extends LazyLoadingKanaal {
      * Constructor.
      */
     public HandKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-jms-isc.xml",
-            "classpath:infra-jmx-isc.xml",
-            "classpath:infra-jbpm.xml"));
+        super(new Worker(), new Configuration("classpath:configuratie.xml", "classpath:infra-db-isc.xml", "classpath:infra-jms-isc.xml",
+                "classpath:infra-jmx-isc.xml", "classpath:infra-jbpm.xml"));
     }
 
     /**
@@ -85,7 +82,7 @@ public class HandKanaal extends LazyLoadingKanaal {
             }
             LOGGER.info("taskId: {}", taskId);
 
-            final Map<String, Object> variabelen = new HashMap<>();
+            final Map<String, Serializable> variabelen = new HashMap<>();
             variabelen.put(FoutafhandelingConstants.RESTART, bericht.getInhoud());
 
             final JbpmTaakCommand command = new JbpmTaakCommand(taskId, null, variabelen, null, "ok");

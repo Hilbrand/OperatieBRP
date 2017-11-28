@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.ConnectionFactory;
@@ -15,22 +15,22 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.jms.Session;
 import javax.jms.TextMessage;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Richting;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBericht;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
+import nl.bzk.algemeenbrp.util.common.serialisatie.JsonStringSerializer;
+import nl.bzk.brp.archivering.domain.algemeen.ArchiveringOpdracht;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.ArchiveringVerzoekBericht;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
-import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.Lo3AttribuutConverteerder;
-import nl.bzk.migratiebrp.synchronisatie.runtime.bericht.brp.GbaArchiveringVerzoek;
 import nl.bzk.migratiebrp.util.common.logging.FunctioneleMelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.MDC;
-import nl.bzk.migratiebrp.util.common.logging.MDC.MDCCloser;
 import org.springframework.jms.UncategorizedJmsException;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 /**
  * Message handler voor archivering verzoeken. Deze worden 'vertaald' en doorgestuurd naar BRP.
@@ -38,109 +38,103 @@ import org.springframework.jms.core.MessageCreator;
 public final class ArchiveringMessageHandler implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger();
-    private static final Logger VERKEER_LOG = LoggerFactory.getBerichtVerkeerLogger();
+    private static final Logger LOGGER = LoggerFactory.getBerichtVerkeerLogger();
 
-    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private final Destination gbaArchiefQueue;
+    private final ConnectionFactory connectionFactory;
+    private final DynamischeStamtabelRepository dynamischeStamtabelRepository;
 
+    /**
+     * Constructor.
+     * @param gbaArchiefQueue gba archief queue
+     * @param connectionFactory queue connection factory
+     * @param dynamischeStamtabelRepository dynamischeStamtabelRepository voor stamgegevens
+     */
     @Inject
-    @Named("gbaArchief")
-    private Destination gbaArchiefQueue;
-
-    @Inject
-    @Named("brpQueueConnectionFactory")
-    private ConnectionFactory connectionFactory;
-
-    @Inject
-    private Lo3AttribuutConverteerder converteerder;
-
-    @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
-    public void onMessage(final Message message) {
-        try (MDCCloser verwerkingCloser = MDC.startVerwerking()) {
-            LOG.info("Verwerken bericht");
-            VERKEER_LOG.info("Lees bericht inhoud ...");
-            final String berichtInhoud = bepaalBerichtInhoud(message);
-
-            VERKEER_LOG.info("Parse bericht inhoud ...");
-            final SyncBericht syncBericht = SyncBerichtFactory.SINGLETON.getBericht(berichtInhoud);
-            if (syncBericht instanceof ArchiveringVerzoekBericht) {
-                VERKEER_LOG.info("Converteren bericht ...");
-                final GbaArchiveringVerzoek brpBericht = converteerVerzoek((ArchiveringVerzoekBericht) syncBericht);
-
-                VERKEER_LOG.info("Versturen bericht naar BRP");
-                verstuurVerzoekNaarBrp(brpBericht);
-                VERKEER_LOG.info("Gereed");
-            } else {
-                throw new IllegalArgumentException("Onbekend type bericht ontvangen.");
-            }
-            LOG.info(FunctioneleMelding.SYNC_ARCHIVERING_VERWERKT);
-
-        } catch (final Exception e) {
-            LOG.error("Er is een fout opgetreden.", e);
-            VERKEER_LOG.info("Gereed (exceptie)", e);
-            throw e;
-        }
+    public ArchiveringMessageHandler(@Named("gbaArchief") final Destination gbaArchiefQueue,
+                                     @Named("brpQueueConnectionFactory") final ConnectionFactory connectionFactory,
+                                     final DynamischeStamtabelRepository dynamischeStamtabelRepository) {
+        this.gbaArchiefQueue = gbaArchiefQueue;
+        this.connectionFactory = connectionFactory;
+        this.dynamischeStamtabelRepository = dynamischeStamtabelRepository;
     }
 
-    private GbaArchiveringVerzoek converteerVerzoek(final ArchiveringVerzoekBericht syncBericht) {
-        final GbaArchiveringVerzoek resultaat = new GbaArchiveringVerzoek();
-        resultaat.setSoortBericht(syncBericht.getSoortBericht());
-        resultaat.setRichting(syncBericht.getRichting().name());
+    @Override
+    public void onMessage(final Message message) {
+        LOG.info("Verwerken bericht");
+        LOGGER.info("Lees bericht inhoud ...");
+        final String berichtInhoud = bepaalBerichtInhoud(message);
 
-        resultaat.setZendendePartijCode(converteerNaarPartijCode(syncBericht.getZendendeAfnemerCode(), syncBericht.getZendendeGemeenteCode()));
-        resultaat.setZendendeSysteem(syncBericht.getZendendeSysteem().value());
-        resultaat.setOntvangendePartijCode(converteerNaarPartijCode(syncBericht.getOntvangendeAfnemerCode(), syncBericht.getOntvangendeGemeenteCode()));
-        resultaat.setOntvangendeSysteem(syncBericht.getOntvangendeSysteem().value());
+        LOGGER.info("Parse bericht inhoud ...");
+        final SyncBericht syncBericht = SyncBerichtFactory.SINGLETON.getBericht(berichtInhoud);
+        if (syncBericht instanceof ArchiveringVerzoekBericht) {
+            LOGGER.info("Converteren bericht ...");
+            final ArchiveringOpdracht brpBericht = converteerVerzoek((ArchiveringVerzoekBericht) syncBericht);
+
+            LOGGER.info("Versturen bericht naar BRP");
+            verstuurVerzoekNaarBrp(brpBericht);
+            LOGGER.info("Gereed");
+        } else {
+            throw new IllegalArgumentException("Onbekend type bericht ontvangen.");
+        }
+        LOG.info(FunctioneleMelding.SYNC_ARCHIVERING_VERWERKT);
+
+    }
+
+    private ArchiveringOpdracht converteerVerzoek(final ArchiveringVerzoekBericht syncBericht) {
+        final ZonedDateTime
+                tijdstipOntvangst =
+                syncBericht.getTijdstipOntvangst() != null ? ZonedDateTime.ofInstant(syncBericht.getTijdstipOntvangst().toInstant(), ZoneId.systemDefault())
+                        : null;
+        final ZonedDateTime
+                tijdstipVerzending =
+                syncBericht.getTijdstipVerzending() != null ? ZonedDateTime.ofInstant(syncBericht.getTijdstipVerzending().toInstant(), ZoneId.systemDefault())
+                        : null;
+
+        final ZonedDateTime tijdstipRegistratie = tijdstipOntvangst != null ? tijdstipOntvangst : tijdstipVerzending;
+
+        final ArchiveringOpdracht resultaat = new ArchiveringOpdracht(Richting.valueOf(syncBericht.getRichting().toString()), tijdstipRegistratie);
+        resultaat.setSoortBericht(SoortBericht.parseIdentifier(syncBericht.getSoortBericht()));
+
+        resultaat.setZendendePartijId(converteerNaarPartijId(syncBericht.getZendendePartij()));
+        resultaat.setOntvangendePartijId(converteerNaarPartijId(syncBericht.getOntvangendePartij()));
         resultaat.setReferentienummer(syncBericht.getReferentienummer());
         resultaat.setCrossReferentienummer(syncBericht.getCrossReferentienummer());
-        resultaat.setTijdstipOntvangst(syncBericht.getTijdstipOntvangst());
-        resultaat.setTijdstipVerzending(syncBericht.getTijdstipVerzending());
+        resultaat.setTijdstipOntvangst(tijdstipOntvangst);
+        resultaat.setTijdstipVerzending(tijdstipVerzending);
         resultaat.setData(syncBericht.getData());
 
         return resultaat;
     }
 
-    private Integer converteerNaarPartijCode(final String afnemerCode, final String gemeenteCode) {
-        final Integer resultaat;
-        if (afnemerCode != null && !"".equals(afnemerCode)) {
-            // Afnemercode is een partijcode
-            resultaat = Integer.valueOf(afnemerCode);
-        } else if (gemeenteCode != null && !"".equals(gemeenteCode)) {
-            // Converteer gemeentecode naar partijcode
-            resultaat = converteerder.converteerLo3GemeenteCodeNaarBrpPartijCode(new Lo3GemeenteCode(gemeenteCode)).getWaarde();
-        } else {
-            resultaat = null;
+    private Short converteerNaarPartijId(final String partijcode) {
+        if (partijcode == null) {
+            return null;
         }
-        return resultaat;
+
+        Partij partij = dynamischeStamtabelRepository.getPartijByCode(partijcode);
+        if (partij == null) {
+            throw new IllegalStateException("Geen partij gevonden.");
+        }
+        return partij.getId();
     }
 
-    @SuppressWarnings("PMD.PreserveStackTrace")
-    private void verstuurVerzoekNaarBrp(final GbaArchiveringVerzoek brpBericht) {
+    private void verstuurVerzoekNaarBrp(final ArchiveringOpdracht brpBericht) {
         final JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
-        jmsTemplate.send(gbaArchiefQueue, new MessageCreator() {
-            @Override
-            public Message createMessage(final Session session) throws JMSException {
-                final String berichtTekst;
-                try {
-                    berichtTekst = JSON_MAPPER.writeValueAsString(brpBericht);
-                } catch (final IOException e) {
-                    final JMSException jmsException = new JMSException("Kan bericht niet serializeren", e.getMessage());
-                    jmsException.setLinkedException(e);
-                    throw jmsException;
-                }
-                return session.createTextMessage(berichtTekst);
-            }
+        jmsTemplate.send(gbaArchiefQueue, session -> {
+            final String berichtTekst = new JsonStringSerializer().serialiseerNaarString(brpBericht);
+            Message resultaat = session.createTextMessage(berichtTekst);
+            MDCProcessor.registreerVerwerkingsCode(resultaat);
+            return resultaat;
         });
     }
 
     /**
      * Lees bericht inhoud.
-     *
-     * @param message
-     *            message
+     * @param message message
      * @return inhoud
      */
-    protected String bepaalBerichtInhoud(final Message message) {
+    private String bepaalBerichtInhoud(final Message message) {
         final String result;
         try {
             if (message instanceof TextMessage) {

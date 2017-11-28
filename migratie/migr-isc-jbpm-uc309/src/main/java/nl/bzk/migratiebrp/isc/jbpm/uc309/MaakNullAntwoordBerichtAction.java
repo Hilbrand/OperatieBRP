@@ -11,12 +11,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.NullBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Tb02Bericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 import org.springframework.stereotype.Component;
 
@@ -28,8 +28,16 @@ public final class MaakNullAntwoordBerichtAction implements SpringAction {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakNullAntwoordBerichtAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -38,8 +46,8 @@ public final class MaakNullAntwoordBerichtAction implements SpringAction {
 
         final NullBericht nullBericht = new NullBericht();
         nullBericht.setCorrelationId(tb02Bericht.getMessageId());
-        nullBericht.setBronGemeente(tb02Bericht.getDoelGemeente());
-        nullBericht.setDoelGemeente(tb02Bericht.getBronGemeente());
+        nullBericht.setBronPartijCode(tb02Bericht.getDoelPartijCode());
+        nullBericht.setDoelPartijCode(tb02Bericht.getBronPartijCode());
 
         final Map<String, Object> result = new HashMap<>();
         result.put("nullBericht", berichtenDao.bewaarBericht(nullBericht));

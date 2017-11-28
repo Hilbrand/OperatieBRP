@@ -3,9 +3,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <bean id="loggingDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
+    <bean id="loggingDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init"
+          destroy-method="close">
         <property name="uniqueResourceName">
-            <bean class="nl.bzk.migratiebrp.util.common.UniqueName">
+            <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName">
                 <property name="baseName" value="loggingDatabase"/>
             </bean>
         </property>
@@ -24,9 +25,10 @@
         <property name="testQuery" value="select 41+1"/>
     </bean>
 
-    <bean id="syncDalDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
+    <bean id="syncDalDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init"
+          destroy-method="close">
         <property name="uniqueResourceName">
-            <bean class="nl.bzk.migratiebrp.util.common.UniqueName">
+            <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName">
                 <property name="baseName" value="syncDalDatabase"/>
             </bean>
         </property>

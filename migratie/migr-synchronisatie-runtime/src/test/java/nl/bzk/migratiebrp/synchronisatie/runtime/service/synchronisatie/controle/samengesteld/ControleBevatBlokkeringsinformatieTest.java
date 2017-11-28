@@ -6,91 +6,66 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.samengesteld;
 
-import javax.inject.Named;
-
+import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpVerzoekBericht;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
-import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.lijst.LijstControle;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControle;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.verzoek.VerzoekControle;
-import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.zoeker.PlZoeker;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ControleBevatBlokkeringsinformatieTest {
 
     @Mock
-    @Named(value = "verzoekControleOudAnummerIsNietGevuld")
-    private VerzoekControle verzoekControleOudAnummerIsNietGevuld;
-
+    private VerzoekControle verzoekControleBerichtVanSoortLg01;
     @Mock
-    @Named(value = "plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummer")
-    private PlZoeker plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummer;
-
-    @Mock
-    @Named(value = "lijstControleEen")
-    private LijstControle lijstControleEen;
-
-    @Mock
-    @Named(value = "plControleBijhoudingsPartijOngelijk")
-    private PlControle plControleBijhoudingsPartijOngelijk;
-    @Mock
-    @Named(value = "plControleVorigAnummerGelijk")
-    private PlControle plControleVorigAnummerGelijk;
-    @Mock
-    @Named(value = "plControleHistorieAnummerGelijk")
-    private PlControle plControleHistorieAnummerGelijk;
-    @Mock
-    @Named(value = "plControleDezelfdePersoon")
-    private PlControle plControleDezelfdePersoon;
-    @Mock
-    @Named(value = "plControleBevatDatumIngangBlokkering")
     private PlControle plControleBevatDatumIngangBlokkering;
-    @Mock
-    @Named(value = "plControleAangebodenAdressenKomenVoorInHistorieGevondenAdressen")
-    private PlControle plControleAangebodenAdressenKomenVoorinHistorieGevondenAdressen;
-    @Mock
-    @Named(value = "plControleGevondenVersienummerGelijkOfGroter")
-    private PlControle plControleGevondenVersienummerGelijkOfGroter;
-    @Mock
-    @Named(value = "plControleVolledigGelijkMuvAdressenDatumtijdstempelEnVersienummer")
-    private PlControle plControleVolledigGelijkMuvAdressenDatumtijdstempelEnVersienummer;
 
-    @InjectMocks
     private ControleBevatBlokkeringsinformatie subject;
 
     @Before
     public void setupLogging() {
         SynchronisatieLogging.init();
+        subject = new ControleBevatBlokkeringsinformatie();
+        ReflectionTestUtils.setField(subject, "verzoekControleBerichtVanSoortLg01", verzoekControleBerichtVanSoortLg01);
+        ReflectionTestUtils.setField(subject, "plControleBevatDatumIngangBlokkering", plControleBevatDatumIngangBlokkering);
     }
 
     @Test
     public void testOk() {
         new BrpPersoonslijstBuilder().build();
-        setup(true);
+        setup(true, true);
         Assert.assertTrue(subject.controleer(new VerwerkingsContext(null, null, null, null)));
+    }
+
+    @Test
+    public void testControleVerzoekLg01Nok() {
+        new BrpPersoonslijstBuilder().build();
+        setup(true, false);
+        Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
     public void testPlControleBevatDatumIngangBlokkeringNok() {
         new BrpPersoonslijstBuilder().build();
-        setup(false);
+        setup(true, false);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
-    private void setup(final boolean plControleBevatDatumIngangBlokkeringResult) {
+    private void setup(final boolean berichtVerzoekControleBerichtVanSoortLg01, final boolean plControleBevatDatumIngangBlokkeringResult) {
+        Mockito.when(verzoekControleBerichtVanSoortLg01.controleer(Matchers.any(SynchroniseerNaarBrpVerzoekBericht.class)))
+                .thenReturn(berichtVerzoekControleBerichtVanSoortLg01);
         Mockito.when(plControleBevatDatumIngangBlokkering.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
-               .thenReturn(plControleBevatDatumIngangBlokkeringResult);
+                .thenReturn(plControleBevatDatumIngangBlokkeringResult);
     }
 }

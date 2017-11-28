@@ -7,9 +7,8 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -23,7 +22,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 
 /**
  * Deze parser verwerkt de LO3 verblijfsplaats velden in de excel input.
- * 
  */
 public class Lo3KiesrechtParser extends AbstractLo3CategorieParser<Lo3KiesrechtInhoud> {
 
@@ -32,7 +30,8 @@ public class Lo3KiesrechtParser extends AbstractLo3CategorieParser<Lo3KiesrechtI
         final List<Lo3Categorie<Lo3KiesrechtInhoud>> kiesrechtList = new ArrayList<>();
 
         for (final Lo3CategorieWaarde categorie : categorieen) {
-            final Map<Lo3ElementEnum, String> elementen = new HashMap<>(categorie.getElementen());
+            final EnumMap<Lo3ElementEnum, String> elementen = new EnumMap<>(Lo3ElementEnum.class);
+            elementen.putAll(categorie.getElementen());
 
             final Lo3AanduidingEuropeesKiesrecht aanduidingEuropeesKiesrecht =
                     Parser.parseLo3AanduidingEuropeesKiesrecht(elementen, Lo3ElementEnum.ELEMENT_3110, null, null);
@@ -50,12 +49,17 @@ public class Lo3KiesrechtParser extends AbstractLo3CategorieParser<Lo3KiesrechtI
             }
 
             final Lo3Categorie<Lo3KiesrechtInhoud> kiesrecht =
-                    new Lo3Categorie<>(new Lo3KiesrechtInhoud(
-                        aanduidingEuropeesKiesrecht,
-                        datumEuropeesKiesrecht,
-                        einddatumUitsluitingEuropeesKiesrecht,
-                        aanduidingUitgeslotenKiesrecht,
-                        einddatumUitsluitingKiesrecht), lo3Documentatie, null, Lo3Historie.NULL_HISTORIE, categorie.getLo3Herkomst());
+                    new Lo3Categorie<>(
+                            new Lo3KiesrechtInhoud(
+                                    aanduidingEuropeesKiesrecht,
+                                    datumEuropeesKiesrecht,
+                                    einddatumUitsluitingEuropeesKiesrecht,
+                                    aanduidingUitgeslotenKiesrecht,
+                                    einddatumUitsluitingKiesrecht),
+                            lo3Documentatie,
+                            null,
+                            new Lo3Historie(null, null, null),
+                            categorie.getLo3Herkomst());
 
             kiesrechtList.add(kiesrecht);
         }

@@ -6,20 +6,19 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP Persoonskaart.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpPersoonskaartInhoud extends AbstractBrpGroepInhoud {
     @Element(name = "gemeentePKCode", required = false)
@@ -29,42 +28,37 @@ public final class BrpPersoonskaartInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een BrpPersoonskaartInhoud.
-     * 
-     * @param gemeentePKCode
-     *            gemeente PK
-     * @param indPKVolledigGeconverteerd
-     *            PK volledig geconverteerd
+     * @param gemeentePKCode gemeente PK
+     * @param indPKVolledigGeconverteerd PK volledig geconverteerd
      */
-    public BrpPersoonskaartInhoud(@Element(name = "gemeentePKCode", required = false) final BrpPartijCode gemeentePKCode, @Element(
-            name = "indicatiePKVolledigGeconverteerd", required = false) final BrpBoolean indPKVolledigGeconverteerd)
-    {
+    public BrpPersoonskaartInhoud(
+            @Element(name = "gemeentePKCode", required = false) final BrpPartijCode gemeentePKCode,
+            @Element(name = "indicatiePKVolledigGeconverteerd", required = false) final BrpBoolean indPKVolledigGeconverteerd) {
         this.gemeentePKCode = gemeentePKCode;
         indicatiePKVolledigGeconverteerd = indPKVolledigGeconverteerd;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(gemeentePKCode, indicatiePKVolledigGeconverteerd);
+        return !BrpValidatie.isEenParameterGevuld(gemeentePKCode, indicatiePKVolledigGeconverteerd);
     }
 
     /**
-     * Geef de waarde van gemeente pk code.
-     *
-     * @return the gemeentePKCode
+     * Geef de waarde van gemeente pk code van BrpPersoonskaartInhoud.
+     * @return de waarde van gemeente pk code van BrpPersoonskaartInhoud
      */
     public BrpPartijCode getGemeentePKCode() {
         return gemeentePKCode;
     }
 
     /**
-     * Geef de waarde van indicatie pk volledig geconverteerd.
-     *
-     * @return the indicatiePKVolledigGeconverteerd
+     * Geef de waarde van indicatie pk volledig geconverteerd van BrpPersoonskaartInhoud.
+     * @return de waarde van indicatie pk volledig geconverteerd van BrpPersoonskaartInhoud
      */
     public BrpBoolean getIndicatiePKVolledigGeconverteerd() {
         return indicatiePKVolledigGeconverteerd;
@@ -80,8 +74,8 @@ public final class BrpPersoonskaartInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpPersoonskaartInhoud castOther = (BrpPersoonskaartInhoud) other;
         return new EqualsBuilder().append(gemeentePKCode, castOther.gemeentePKCode)
-                                  .append(indicatiePKVolledigGeconverteerd, castOther.indicatiePKVolledigGeconverteerd)
-                                  .isEquals();
+                .append(indicatiePKVolledigGeconverteerd, castOther.indicatiePKVolledigGeconverteerd)
+                .isEquals();
     }
 
     @Override
@@ -92,9 +86,9 @@ public final class BrpPersoonskaartInhoud extends AbstractBrpGroepInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("gemeentePKCode", gemeentePKCode)
-                                                                          .append("indicatiePKVolledigGeconverteerd", indicatiePKVolledigGeconverteerd)
-                                                                          .toString();
+                .append("gemeentePKCode", gemeentePKCode)
+                .append("indicatiePKVolledigGeconverteerd", indicatiePKVolledigGeconverteerd)
+                .toString();
     }
 
 }

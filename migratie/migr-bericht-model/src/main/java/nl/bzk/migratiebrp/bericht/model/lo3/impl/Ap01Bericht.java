@@ -14,6 +14,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.AbstractParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
@@ -32,13 +33,12 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
      * Constructor.
      */
     public Ap01Bericht() {
-        super(HEADER, "Ap01", "uc1003-plaatsen");
-
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Ap01", "uc1003-plaatsen");
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3Bericht#getGerelateerdeAnummers()
      */
     @Override
@@ -47,11 +47,11 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
     }
 
     @Override
-    protected void parseInhoud(final List<Lo3CategorieWaarde> lo3Categorieen) throws BerichtInhoudException {
+    protected void parseCategorieen(final List<Lo3CategorieWaarde> lo3Categorieen) throws BerichtInhoudException {
         categorieen = lo3Categorieen;
-        if (!bevatActueleZoekGegevens() && !bevatHistorischeZoekGegevens()) {
+        if (!PersoonsidentificatieValidator.valideerActueel(lo3Categorieen) && !PersoonsidentificatieValidator.valideerHistorisch(lo3Categorieen)) {
             throw new BerichtInhoudException(
-                "Bericht bevat geen van de verplichte zoekcriteria (01.01.10, 01.01.20, 01.02.40, 08.11.60, 51.01.10, 51.01.20 of 51.02.40).");
+                    "Bericht bevat geen van de verplichte zoekcriteria (01.01.10, 01.01.20, 01.02.40, 08.11.60, 51.01.10, 51.01.20 of 51.02.40).");
         }
     }
 
@@ -62,7 +62,6 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de categorieen.
-     *
      * @return categorieen
      */
     public List<Lo3CategorieWaarde> getCategorieen() {
@@ -71,9 +70,7 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Zet de categorieen.
-     *
-     * @param categorieen
-     *            categorieen
+     * @param categorieen categorieen
      */
     public void setCategorieen(final List<Lo3CategorieWaarde> categorieen) {
         this.categorieen = categorieen;
@@ -91,7 +88,6 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de waarde van actueel anummer.
-     *
      * @return actueel a-nummer (01.01.10)
      */
     public String getActueelAnummer() {
@@ -100,7 +96,6 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de waarde van actueel burgerservicenummer.
-     *
      * @return actueel burgerservicenummer (01.01.20)
      */
     public String getActueelBurgerservicenummer() {
@@ -109,7 +104,6 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de waarde van actuele geslachtsnaam.
-     *
      * @return actuele geslachtsnaam (01.02.40)
      */
     public String getActueleGeslachtsnaam() {
@@ -118,7 +112,6 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de waarde van actuele postcode.
-     *
      * @return actuele postcode (08.11.60)
      */
     public String getActuelePostcode() {
@@ -127,7 +120,6 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de waarde van historisch anummer.
-     *
      * @return historisch a-nummer (51.01.10)
      */
     public String getHistorischAnummer() {
@@ -136,7 +128,6 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de waarde van historisch burgerservicenummer.
-     *
      * @return historisch burgerservicenummer (51.01.20)
      */
     public String getHistorischBurgerservicenummer() {
@@ -145,7 +136,6 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de waarde van historische geslachtsnaam.
-     *
      * @return historische geslachtsnaam (51.02.40)
      */
     public String getHistorischeGeslachtsnaam() {
@@ -154,26 +144,17 @@ public final class Ap01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Bepaal of het bericht actuele zoekgegevens bevat (zie LO III.1.5.2).
-     *
      * @return true, als 01.01.10 of 01.01.20 of 01.02.40 of 08.11.60 voorkomt in het bericht
      */
     public boolean bevatActueleZoekGegevens() {
-        return isGevuld(getActueelAnummer())
-               || isGevuld(getActueelBurgerservicenummer())
-               || isGevuld(getActueleGeslachtsnaam())
-               || isGevuld(getActuelePostcode());
+        return PersoonsidentificatieValidator.valideerActueel(getCategorieen());
     }
 
     /**
      * Bepaal of het bericht historische zoekgegevens bevat (zie LO III.1.5.2).
-     *
      * @return true, als 51.01.10 of 51.01.20 of 51.02.40 voorkomt in het bericht
      */
     public boolean bevatHistorischeZoekGegevens() {
-        return isGevuld(getHistorischAnummer()) || isGevuld(getHistorischBurgerservicenummer()) || isGevuld(getHistorischeGeslachtsnaam());
-    }
-
-    private static boolean isGevuld(final String waarde) {
-        return waarde != null && !"".equals(waarde);
+        return PersoonsidentificatieValidator.valideerHistorisch(getCategorieen());
     }
 }

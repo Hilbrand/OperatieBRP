@@ -12,13 +12,13 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaam;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaamHistorie;
-
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaam;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaamHistorie;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
 
 /**
  * Unittest voor {@link DeltaStapelMatch}.
@@ -46,7 +46,9 @@ public class DeltaStapelMatchTest extends AbstractDeltaTest {
         assertEquals(veld, match.getEigenaarVeld());
 
         assertEquals(
-            "DeltaStapelMatch[aantal opgeslagenRijen=1,aantal nieuweRijen=1,eigenaarEntiteit=Persoon,eigenaarSleutel=EntiteitSleutel[Entiteit=class nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon,Veld=versienummer,EigenaarSleutel=<null>],eigenaarVeld=private java.lang.Long nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon.versienummer]",
-            match.toString());
+                "DeltaStapelMatch[aantal opgeslagenRijen=1,aantal nieuweRijen=1,eigenaarEntiteit=Persoon,eigenaarSleutel=EntiteitSleutel[Entiteit=class nl"
+                        + ".bzk.algemeenbrp.dal.domein.brp.entity.Persoon,Veld=versienummer,EigenaarSleutel=<null>],eigenaarVeld=private java.lang.Long nl"
+                        + ".bzk.algemeenbrp.dal.domein.brp.entity.Persoon.versienummer]",
+                match.toString());
     }
 }

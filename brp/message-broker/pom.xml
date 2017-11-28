@@ -4,28 +4,37 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>brp-parent</artifactId>
-        <groupId>nl.bzk.brp</groupId>
-        <version>96-SNAPSHOT</version>
-        <relativePath>../brp-parent</relativePath>
+        <groupId>nl.bzk.algemeenbrp</groupId>
+        <artifactId>alg</artifactId>
+        <version>145.3</version>
+        <relativePath>../../algemeen/alg</relativePath>
     </parent>
 
-
+    <groupId>nl.bzk.brp</groupId>
     <artifactId>brp-message-broker</artifactId>
     <packaging>war</packaging>
 
     <name>BRP Message Broker</name>
     <description>Dit is het centrale message broker voor de BRP</description>
 
-    <scm>
-        <connection>scm:svn:https://www.modernodam.nl/svn/brp-code/trunk/activemq</connection>
-        <developerConnection>scm:svn:https://www.modernodam.nl/svn/brp-code/trunk/activemq</developerConnection>
-    </scm>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <docker.build.finalName>brp/brp-message-broker</docker.build.finalName>
+        <maven.brp.jms.broker.url>tcp://localhost:61616</maven.brp.jms.broker.url>
+
+        <!-- Overblijfsel uit verwijderen BRP-PARENT (nodig voor unittest) -->
+        <maven.jdbc.driverClassName>org.postgresql.Driver</maven.jdbc.driverClassName>
+        <maven.jdbc.url>jdbc:postgresql://localhost/brpjunit</maven.jdbc.url>
+        <maven.jdbc.username>brp</maven.jdbc.username>
+        <maven.jdbc.password>brp</maven.jdbc.password>
+
+        <maven.jdbc.activemq.driverClassName>${maven.jdbc.driverClassName}</maven.jdbc.activemq.driverClassName>
+        <maven.jdbc.activemq.url>${maven.jdbc.url}</maven.jdbc.activemq.url>
+        <maven.jdbc.activemq.username>${maven.jdbc.username}</maven.jdbc.activemq.username>
+        <maven.jdbc.activemq.password>${maven.jdbc.password}</maven.jdbc.activemq.password>
+
+        <maven.berichtcentrale.data.directory>${project.build.directory}/activemq-data</maven.berichtcentrale.data.directory>
+        <maven.berichtcentrale.kahadb.directory>${project.build.directory}/activemq-kahadb</maven.berichtcentrale.kahadb.directory>
     </properties>
 
     <dependencies>
@@ -34,47 +43,33 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-client</artifactId>
-            <version>${activemq.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-camel</artifactId>
-            <version>${activemq.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-pool</artifactId>
-            <version>${activemq.version}</version>
         </dependency>
 
         <!-- the ActiveMQ broker is optional and can be removed if connecting to a remote broker only -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
-            <version>${activemq.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-spring</artifactId>
-            <version>${activemq.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-kahadb-store</artifactId>
-            <version>${activemq.version}</version>
         </dependency>
 
-<!--    <dependency>
-            <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-spring</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
+        <!-- OWASP validation filter -->
+        <dependency>
+            <groupId>com.matthewcasperson</groupId>
+            <artifactId>parameter_validation_filter</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -87,52 +82,62 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
         </dependency>
-        <!-- JPA/Hibernate -->
-        <!--<dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>-->
 
         <!-- Database -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-jdbc-store</artifactId>
-            <version>${activemq.version}</version>
         </dependency>
 
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
         </dependency>
+        <dependency>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-util-jmx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-util-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- dependency voor de reactor om te forceren dat dit gebuild is voor het gebruikt wordt in een multithreaded build -->
+        <dependency>
+            <groupId>nl.bzk.brp.properties</groupId>
+            <artifactId>brp-test-properties</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <defaultGoal>install</defaultGoal>
         <finalName>${project.artifactId}</finalName>
-
         <resources>
             <resource>
                 <filtering>false</filtering>
                 <directory>src/main/resources</directory>
             </resource>
-            <!--<resource>-->
-            <!--<filtering>true</filtering>-->
-            <!--<directory>src/main/webapp</directory>-->
-            <!--<includes>-->
-            <!--<include>**/*.html</include>-->
-            <!--</includes>-->
-            <!--</resource>-->
+            <resource>
+                <directory>target/test-resources</directory>
+                <includes>
+                    <include>brp-test.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
         </resources>
 
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -173,24 +178,72 @@
                 </executions>
             </plugin>
             <plugin>
+                <!--properties voor test uitpakken-->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <!--properties voor test uitpakken-->
                     <execution>
                         <id>unpack-test-properties</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
                         <phase>generate-test-resources</phase>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>nl.bzk.brp.properties</groupId>
+                                    <artifactId>brp-test-properties</artifactId>
+                                    <version>${project.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>
+                                        ${project.build.directory}/test-resources/template
+                                    </outputDirectory>
+                                    <includes>config/brp-test.properties</includes>
+                                </artifactItem>
+                            </artifactItems>
+
+                        </configuration>
                     </execution>
-                    <!--properties voor docker uitpakken-->
+                </executions>
+            </plugin>
+            <plugin>
+                <!--properties voor test uitpakken filteren zodat ze gevuld worden -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
                     <execution>
-                        <id>unpack-docker-properties</id>
-                        <phase>generate-test-resources</phase>
+                        <id>filter-test-properties</id>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <resources>
+                                <resource>
+                                    <directory>
+                                        ${project.build.directory}/test-resources/template/config
+                                    </directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>*.properties</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <overwrite>true</overwrite>
+                            <outputDirectory>${project.build.directory}/test-classes
+                            </outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    <!-- attachClasses is nodig voor integratie-tests -->
+                    <attachClasses>true</attachClasses>
+                    <!-- classesClassifier is nodig voor integratie-tests -->
+                    <classesClassifier>classes</classesClassifier>
                     <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
                     <webResources>
                         <resource>
@@ -213,90 +266,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-
-        <profile>
-            <id>docker</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>docker-assembly</id>
-                                <phase>pre-integration-test</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.4.0</version>
-                        <executions>
-                            <execution>
-                                <id>docker-build</id>
-                                <phase>install</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>docker-publish</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>docker-tag-image</id>
-                                <phase>install</phase>
-                            </execution>
-                            <execution>
-                                <id>docker-push-tag</id>
-                                <phase>deploy</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>docker-release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>docker-tag-image</id>
-                                <phase>install</phase>
-                            </execution>
-                            <execution>
-                                <id>docker-push-tag</id>
-                                <phase>deploy</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Bean factory om een refertie naar een andere bean te maken obv de naam.
- *
- * @param <T>
- *            bean type
+ * @param <T> bean type
  */
 public final class RefBeanFactory<T> implements FactoryBean<T> {
 
@@ -21,9 +19,7 @@ public final class RefBeanFactory<T> implements FactoryBean<T> {
 
     /**
      * Zet de bean.
-     * 
-     * @param bean
-     *            de te zetten bean
+     * @param bean de te zetten bean
      */
     @Required
     public void setBean(final T bean) {

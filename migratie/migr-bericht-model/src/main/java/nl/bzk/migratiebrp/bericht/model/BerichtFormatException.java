@@ -14,9 +14,7 @@ public final class BerichtFormatException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            message
+     * @param message message
      */
     public BerichtFormatException(final String message) {
         super(message);
@@ -24,11 +22,8 @@ public final class BerichtFormatException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            message
-     * @param cause
-     *            cause
+     * @param message message
+     * @param cause cause
      */
     public BerichtFormatException(final String message, final Throwable cause) {
         super(message, cause);

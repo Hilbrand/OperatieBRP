@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [bijhouding.nadere_bijhoudingsaard])
+GEWIJZIGD(oud, nieuw, [Persoon.Bijhouding.NadereBijhoudingsaardCode])

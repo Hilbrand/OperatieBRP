@@ -13,12 +13,10 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.ggo.viewer.log.FoutMelder;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoPersoonslijstGroep;
-
+import nl.bzk.migratiebrp.ggo.viewer.util.PortInitializer;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.mgt.SecurityManager;
@@ -46,11 +44,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 
+ *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml" })
+@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml"}, initializers = {PortInitializer.class})
 public class ViewerControllerTest {
 
     private static final String RESULTAAT_MAG_NIET_NULL_ZIJN = "Resultaat mag niet null zijn";
@@ -74,7 +72,7 @@ public class ViewerControllerTest {
     @Test
     public final void zoekOpAnummerHappyWelPL() {
         final FoutMelder foutMelder = new FoutMelder();
-        final Long aNummer = (long) 42;
+        final String aNummer = "42";
         final List<GgoPersoonslijstGroep> persoonslijstGroepen = new ArrayList<>();
         when(zoekAnummerVerwerker.zoekOpAnummer(aNummer, foutMelder)).thenReturn(persoonslijstGroepen);
 
@@ -85,7 +83,7 @@ public class ViewerControllerTest {
     @Test
     public final void zoekOpAnummerHappyGeenPL() {
         final FoutMelder foutMelder = new FoutMelder();
-        final Long aNummer = (long) 42;
+        final String aNummer = "42";
 
         Mockito.when(zoekAnummerVerwerker.zoekOpAnummer(aNummer, foutMelder)).thenReturn(null);
 
@@ -112,7 +110,7 @@ public class ViewerControllerTest {
 
     @Test
     public final void uploadRequestMSIE() {
-        final MultipartFile multipartFile = new MockMultipartFile("asdf", new byte[] {});
+        final MultipartFile multipartFile = new MockMultipartFile("asdf", new byte[]{});
         final ResponseEntity<String> result = viewerController.uploadRequestMSIE(multipartFile);
 
         assertNotNull(RESULTAAT_MAG_NIET_NULL_ZIJN, result);
@@ -136,4 +134,5 @@ public class ViewerControllerTest {
         final UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         currentUser.login(token);
     }
+
 }

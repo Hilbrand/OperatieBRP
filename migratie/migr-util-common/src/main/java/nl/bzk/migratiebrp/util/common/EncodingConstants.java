@@ -15,11 +15,17 @@ import java.util.Locale;
  */
 public final class EncodingConstants {
 
-    /** De UTF-8 Charset. */
+    /**
+     * De UTF-8 Charset.
+     */
     public static final Charset CHARSET = StandardCharsets.UTF_8;
-    /** De naam van de UTF-8 Charset. */
+    /**
+     * De naam van de UTF-8 Charset.
+     */
     public static final String CHARSET_NAAM = CHARSET.name();
-    /** De locale voor Nederland en de nederlandse taal. */
+    /**
+     * De locale voor Nederland en de nederlandse taal.
+     */
     public static final Locale LOCALE = Locale.forLanguageTag("nl-NL");
 
     /*

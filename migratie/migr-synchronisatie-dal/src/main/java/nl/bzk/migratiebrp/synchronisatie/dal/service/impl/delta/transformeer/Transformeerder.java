@@ -6,19 +6,19 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.ALaagHistorieVerzameling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ALaagHistorieVerzameling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Verwerkt verschilgroepen door middel van een lijst transformaties en log de resultaten. De eerste toepasbare
@@ -36,7 +36,6 @@ public final class Transformeerder {
 
     /**
      * Maak een Transformeerder instantie met alle normale transformaties.
-     *
      * @return de nieuwe Tranformeerder
      */
     public static Transformeerder maakTransformeerder() {
@@ -68,20 +67,15 @@ public final class Transformeerder {
      * Verwerk een verzameling verschilgroepen door middel van de beschikbare tranformaties. De resultaten van de
      * transformaties worden gelogd in de SynchronisatieLogging. De eerste toepasbare transformatie wordt gebruikt om
      * een verschilgroep te transformeren.
-     *
-     * @param verschilGroepen
-     *            de te transformeren verschilgroepen
-     * @param actieVervalTbvLeveringMuts
-     *            de actie te gebruiken als actie verval t.b.v. levering mutaties
-     * @param deltaBepalingContext
-     *            de delta context
+     * @param verschilGroepen de te transformeren verschilgroepen
+     * @param actieVervalTbvLeveringMuts de actie te gebruiken als actie verval t.b.v. levering mutaties
+     * @param deltaBepalingContext de delta context
      * @return de getransformeerde verschilgroepen
      */
     public List<VerschilGroep> transformeer(
-        final Collection<VerschilGroep> verschilGroepen,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final DeltaBepalingContext deltaBepalingContext)
-    {
+            final Collection<VerschilGroep> verschilGroepen,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final DeltaBepalingContext deltaBepalingContext) {
         final List<VerschilGroep> result = new ArrayList<>();
         final List<String> logList = new ArrayList<>();
 
@@ -92,7 +86,7 @@ public final class Transformeerder {
                 result.add(transformeerALaag(verschilGroep));
             }
         }
-        result.removeAll(stapelDeltaWijzigingenMap.verwijderTeNegerenVerschilGroepenEnDw901Wijzigingen());
+        result.removeAll(stapelDeltaWijzigingenMap.verwijderTeNegerenVerschilGroepenEnDw901Wijzigingen(deltaBepalingContext));
         logResultaten(logList);
 
         return result;
@@ -100,7 +94,6 @@ public final class Transformeerder {
 
     /**
      * Geeft een {@link StapelDeltaWijzigingenMap} terug.
-     *
      * @return een @{link StapelDeltaWijzigingenMap}
      */
     public StapelDeltaWijzigingenMap getStapelDeltaWijzigingenMap() {
@@ -111,14 +104,7 @@ public final class Transformeerder {
         final List<DeltaWijziging> deltaWijzigingen = new ArrayList<>();
         for (Verschil verschil : verschilGroep.getVerschillen()) {
             if (VerschilType.RIJ_TOEGEVOEGD.equals(verschil.getVerschilType()) && (verschil.getNieuweWaarde() instanceof ALaagHistorieVerzameling)) {
-                final ALaagHistorieVerzameling aLaagWaarde = (ALaagHistorieVerzameling) verschil.getNieuweWaarde();
-                for (FormeleHistorie formeleHistorie : StapelDeltaWijzigingenMap.verzamelAlleFormeleHistorie(aLaagWaarde)) {
-                    if (formeleHistorie.isActueel()) {
-                        deltaWijzigingen.add(DeltaWijziging.DW_002_ACT);
-                    } else {
-                        deltaWijzigingen.add(DeltaWijziging.DW_002);
-                    }
-                }
+                bepaalRijToegevoegdVoorHistorieVanALaag(deltaWijzigingen, verschil);
             } else if (VerschilType.RIJ_VERWIJDERD.equals(verschil.getVerschilType()) && (verschil.getOudeWaarde() instanceof ALaagHistorieVerzameling)) {
                 final int aantalVerwijderdeRijen =
                         StapelDeltaWijzigingenMap.verzamelAlleFormeleHistorie((ALaagHistorieVerzameling) verschil.getOudeWaarde()).size();
@@ -133,12 +119,22 @@ public final class Transformeerder {
         return verschilGroep;
     }
 
+    private void bepaalRijToegevoegdVoorHistorieVanALaag(final List<DeltaWijziging> deltaWijzigingen, final Verschil verschil) {
+        final ALaagHistorieVerzameling aLaagWaarde = (ALaagHistorieVerzameling) verschil.getNieuweWaarde();
+        for (FormeleHistorie formeleHistorie : StapelDeltaWijzigingenMap.verzamelAlleFormeleHistorie(aLaagWaarde)) {
+            if (formeleHistorie.isActueel()) {
+                deltaWijzigingen.add(DeltaWijziging.DW_002_ACT);
+            } else {
+                deltaWijzigingen.add(DeltaWijziging.DW_002);
+            }
+        }
+    }
+
     private VerschilGroep transformeerCDLaag(
-        final VerschilGroep verschilGroep,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final List<String> logList,
-        final DeltaBepalingContext deltaBepalingContext)
-    {
+            final VerschilGroep verschilGroep,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final List<String> logList,
+            final DeltaBepalingContext deltaBepalingContext) {
         final VerschilGroep result;
         final Transformatie transformatie = bepaalTransformatie(verschilGroep);
 

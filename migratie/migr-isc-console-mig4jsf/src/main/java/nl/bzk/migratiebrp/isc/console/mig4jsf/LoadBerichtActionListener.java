@@ -34,11 +34,8 @@ public final class LoadBerichtActionListener extends AbstractActionListener {
 
     /**
      * Constructor.
-     *
-     * @param idExpression
-     *            id expression
-     * @param targetExpression
-     *            target expression
+     * @param idExpression id expression
+     * @param targetExpression target expression
      */
     public LoadBerichtActionListener(final ValueExpression idExpression, final ValueExpression targetExpression) {
         super("loadBericht");

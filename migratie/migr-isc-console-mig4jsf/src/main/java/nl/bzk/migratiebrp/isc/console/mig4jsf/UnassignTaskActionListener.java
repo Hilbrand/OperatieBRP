@@ -13,6 +13,8 @@ import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.JbpmSqlHelper.Sql;
 import nl.bzk.migratiebrp.util.common.JdbcConstants;
 import org.hibernate.Session;
@@ -27,13 +29,13 @@ public final class UnassignTaskActionListener extends AbstractActionListener {
 
     private static final String ERROR_MESSAGE = "Fout opgetreden bij het ongedaan maken van de toewijzing van de taak";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final ValueExpression taskInstanceExpression;
 
     /**
      * Constructor.
-     *
-     * @param taskInstanceExpression
-     *            task instance expression
+     * @param taskInstanceExpression task instance expression
      */
     public UnassignTaskActionListener(final ValueExpression taskInstanceExpression) {
         super("unassignTask");
@@ -71,11 +73,8 @@ public final class UnassignTaskActionListener extends AbstractActionListener {
 
     /**
      * Unassigned de meegegeven actor van de meegegeven taak en maakt de taak weer beschikbaar voor andere beheerders.
-     *
-     * @param jbpmContext
-     *            De Jbpm context.
-     * @param taskInstance
-     *            De instantie van de taak die geunassigned dient te worden.
+     * @param jbpmContext De Jbpm context.
+     * @param taskInstance De instantie van de taak die geunassigned dient te worden.
      * @return true indien de taak geunassigned kon worden, false in alle andere gevallen.
      */
     private static Boolean unassignTask(final JbpmContext jbpmContext, final TaskInstance taskInstance) {
@@ -104,6 +103,7 @@ public final class UnassignTaskActionListener extends AbstractActionListener {
 
                 return true;
             } catch (final SQLException exception) {
+                LOGGER.debug("Er is een fout opgetreden bij het uitvoeren van 'unassign'.", exception);
                 return false;
             }
         }

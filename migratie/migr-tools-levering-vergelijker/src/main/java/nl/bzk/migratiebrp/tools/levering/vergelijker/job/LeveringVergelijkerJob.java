@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.entity.BrpBericht;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.entity.GbaBericht;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.entity.LeveringsVergelijkingBerichtCorrelatieBrp;
@@ -24,13 +27,11 @@ import nl.bzk.migratiebrp.tools.levering.vergelijker.repository.LeveringsVergeli
 import nl.bzk.migratiebrp.tools.levering.vergelijker.repository.LeveringsVergelijkingResultaatInhoudRepository;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.repository.LeveringsVergelijkingResultaatKopRepository;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.service.LeveringsVergelijkingService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Main klasse voor het starten van het levering vergelijker proces.
- *
  */
 public final class LeveringVergelijkerJob {
 
@@ -38,9 +39,7 @@ public final class LeveringVergelijkerJob {
 
     /**
      * Main methode.
-     *
-     * @param context
-     *            De meegegeven context.
+     * @param context De meegegeven context.
      */
     public void execute(final ConfigurableApplicationContext context) {
 
@@ -65,14 +64,15 @@ public final class LeveringVergelijkerJob {
         final List<Runnable> inputs = new ArrayList<>();
 
         for (final LeveringsVergelijkingBerichtCorrelatieGbav huidigeLeveringVergelijkerBerichtenCorrelatie : leveringsVergelijkingBerichtCorrelatieGbav) {
-            inputs.add(new LeveringVergelijkerVerwerker(
-                brpBerichtRepository,
-                gbaBerichtRepository,
-                leveringsVergelijkingResultaatInhoudRepository,
-                leveringsVergelijkingResultaatKopRepository,
-                leveringsVergelijkingBerichtCorrelatieBrpRepository,
-                huidigeLeveringVergelijkerBerichtenCorrelatie,
-                leveringVergelijkerService));
+            inputs.add(
+                    new LeveringVergelijkerVerwerker(
+                            brpBerichtRepository,
+                            gbaBerichtRepository,
+                            leveringsVergelijkingResultaatInhoudRepository,
+                            leveringsVergelijkingResultaatKopRepository,
+                            leveringsVergelijkingBerichtCorrelatieBrpRepository,
+                            huidigeLeveringVergelijkerBerichtenCorrelatie,
+                            leveringVergelijkerService));
         }
 
         try {
@@ -113,31 +113,22 @@ public final class LeveringVergelijkerJob {
 
         /**
          * Default constructor.
-         *
-         * @param brpBerichtRepository
-         *            De BRP bericht repository.
-         * @param gbaBerichtRepository
-         *            De GBAV bericht repository.
-         * @param leveringsVergelijkingResultaatInhoudRepository
-         *            De repository voor het inhoudelijke vergelijkingsresultaat.
-         * @param leveringsVergelijkingResultaatKopRepository
-         *            De repository voor het kop vergelijkingsresultaat.
-         * @param leveringsVergelijkingBerichtCorrelatieBrpRepository
-         *            De repository voor de BRP bericht correlatie.
-         * @param leveringsVergelijkingBerichtCorrelatieGbav
-         *            De repository voor de GBAV bericht correlatie.
-         * @param leveringsVergelijkingService
-         *            De vergelijkings service.
+         * @param brpBerichtRepository De BRP bericht repository.
+         * @param gbaBerichtRepository De GBAV bericht repository.
+         * @param leveringsVergelijkingResultaatInhoudRepository De repository voor het inhoudelijke vergelijkingsresultaat.
+         * @param leveringsVergelijkingResultaatKopRepository De repository voor het kop vergelijkingsresultaat.
+         * @param leveringsVergelijkingBerichtCorrelatieBrpRepository De repository voor de BRP bericht correlatie.
+         * @param leveringsVergelijkingBerichtCorrelatieGbav De repository voor de GBAV bericht correlatie.
+         * @param leveringsVergelijkingService De vergelijkings service.
          */
         public LeveringVergelijkerVerwerker(
-            final BrpBerichtRepository brpBerichtRepository,
-            final GbaBerichtRepository gbaBerichtRepository,
-            final LeveringsVergelijkingResultaatInhoudRepository leveringsVergelijkingResultaatInhoudRepository,
-            final LeveringsVergelijkingResultaatKopRepository leveringsVergelijkingResultaatKopRepository,
-            final LeveringsVergelijkingBerichtCorrelatieBrpRepository leveringsVergelijkingBerichtCorrelatieBrpRepository,
-            final LeveringsVergelijkingBerichtCorrelatieGbav leveringsVergelijkingBerichtCorrelatieGbav,
-            final LeveringsVergelijkingService leveringsVergelijkingService)
-        {
+                final BrpBerichtRepository brpBerichtRepository,
+                final GbaBerichtRepository gbaBerichtRepository,
+                final LeveringsVergelijkingResultaatInhoudRepository leveringsVergelijkingResultaatInhoudRepository,
+                final LeveringsVergelijkingResultaatKopRepository leveringsVergelijkingResultaatKopRepository,
+                final LeveringsVergelijkingBerichtCorrelatieBrpRepository leveringsVergelijkingBerichtCorrelatieBrpRepository,
+                final LeveringsVergelijkingBerichtCorrelatieGbav leveringsVergelijkingBerichtCorrelatieGbav,
+                final LeveringsVergelijkingService leveringsVergelijkingService) {
             this.brpBerichtRepository = brpBerichtRepository;
             this.gbaBerichtRepository = gbaBerichtRepository;
             this.leveringsVergelijkingResultaatInhoudRepository = leveringsVergelijkingResultaatInhoudRepository;
@@ -154,8 +145,8 @@ public final class LeveringVergelijkerJob {
                 // GBAV.
                 final List<LeveringsVergelijkingBerichtCorrelatieBrp> leveringsVergelijkingBerichtCorrelatieBrp =
                         leveringsVergelijkingBerichtCorrelatieBrpRepository.haalLeveringsVergelijkingBerichtCorrelatiesBrpOp(
-                            leveringsVergelijkingBerichtCorrelatieGbav.getBijhoudingBerichtId(),
-                            leveringsVergelijkingBerichtCorrelatieGbav.getAfnemerCode());
+                                leveringsVergelijkingBerichtCorrelatieGbav.getBijhoudingBerichtId(),
+                                leveringsVergelijkingBerichtCorrelatieGbav.getAfnemerCode());
 
                 final GbaBericht gbaLeveringBericht = gbaBerichtRepository.haalGbaLeveringBerichtOp(leveringsVergelijkingBerichtCorrelatieGbav);
 
@@ -169,26 +160,27 @@ public final class LeveringVergelijkerJob {
 
                         if (gbaLeveringBericht != null
                                 && brpLeveringBericht != null
-                                && gbaLeveringBericht.getBerichtType().equals(brpLeveringBericht.getBerichtType()))
-                        {
+                                && gbaLeveringBericht.getBerichtType().equals(brpLeveringBericht.getBerichtType())) {
                             gevondenVerschillenInhoudLevering =
                                     leveringsVergelijkingService.vergelijkInhoudLeveringsBerichten(
-                                        gbaLeveringBericht.getBerichtInhoud(),
-                                        brpLeveringBericht.getBerichtInhoud());
+                                            gbaLeveringBericht.getBerichtInhoud(),
+                                            brpLeveringBericht.getBerichtInhoud());
 
                             for (final LeveringsVergelijkingResultaatInhoud huidigGevondenVerschilLevering : gevondenVerschillenInhoudLevering) {
                                 huidigGevondenVerschilLevering.setAfnemerCode(huidigeBerichtCorrelatieBrp.getAfnemerCode());
                                 huidigGevondenVerschilLevering.setBijhoudingBerichtEref(huidigeBerichtCorrelatieBrp.getBijhoudingBerichtMessageId());
-                                huidigGevondenVerschilLevering.setBijhoudingBerichtIdGbav(leveringsVergelijkingBerichtCorrelatieGbav.getBijhoudingBerichtId());
+                                huidigGevondenVerschilLevering.setBijhoudingBerichtIdGbav(
+                                        leveringsVergelijkingBerichtCorrelatieGbav.getBijhoudingBerichtId());
                                 huidigGevondenVerschilLevering.setBijhoudingBerichtIdBrp(huidigeBerichtCorrelatieBrp.getBijhoudingBerichtId());
                                 huidigGevondenVerschilLevering.setLeveringBerichtIdBrp(huidigeBerichtCorrelatieBrp.getLeveringBerichtId());
                                 huidigGevondenVerschilLevering.setLeveringBerichtIdGbav(leveringsVergelijkingBerichtCorrelatieGbav.getLeveringBerichtId());
                                 huidigGevondenVerschilLevering.setBerichtNummer(brpLeveringBericht.getBerichtType());
                             }
 
-                            gevondenVerschillenKopLevering.setAfwijkingen(leveringsVergelijkingService.vergelijkKopLeveringsBerichten(
-                                gbaLeveringBericht.getBericht(),
-                                brpLeveringBericht.getBericht()));
+                            gevondenVerschillenKopLevering.setAfwijkingen(
+                                    leveringsVergelijkingService.vergelijkKopLeveringsBerichten(
+                                            gbaLeveringBericht.getBericht(),
+                                            brpLeveringBericht.getBericht()));
                         }
 
                         if (gevondenVerschillenKopLevering.getAfwijkingen() != null && !"".equals(gevondenVerschillenKopLevering.getAfwijkingen())) {
@@ -206,9 +198,10 @@ public final class LeveringVergelijkerJob {
                     }
                 }
             } finally {
-                LOG.debug("Vergelijking voor leveringsVergelijkingBerichtCorrelatieGbav met id "
-                        + leveringsVergelijkingBerichtCorrelatieGbav.getId()
-                        + " voltooid.");
+                LOG.debug(
+                        "Vergelijking voor leveringsVergelijkingBerichtCorrelatieGbav met id "
+                                + leveringsVergelijkingBerichtCorrelatieGbav.getId()
+                                + " voltooid.");
             }
         }
     }

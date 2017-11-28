@@ -13,7 +13,6 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
 
 /**
  * Vergelijker voor taken.
- *
  */
 public final class TaskComparator implements Comparator<TaskInstance>, Serializable {
 
@@ -53,11 +52,8 @@ public final class TaskComparator implements Comparator<TaskInstance>, Serializa
 
     /**
      * Vergelijk methode voor Strings veilig met elkaar te vergelijken.
-     *
-     * @param one
-     *            String één.
-     * @param two
-     *            String twee.
+     * @param one String één.
+     * @param two String twee.
      * @return Zie standaard comparator-gedrag: -1 als één voor twee, 0 als gelijk en 1 als twee voor één.
      */
     public int nullSafeStringComparator(final String one, final String two) {
@@ -76,11 +72,8 @@ public final class TaskComparator implements Comparator<TaskInstance>, Serializa
 
     /**
      * Vergelijk methode voor datums veilig met elkaar te vergelijken.
-     *
-     * @param one
-     *            Datum één.
-     * @param two
-     *            Datum twee.
+     * @param one Datum één.
+     * @param two Datum twee.
      * @return Zie standaard comparator-gedrag: -1 als één voor twee, 0 als gelijk en 1 als twee voor één.
      */
     public int nullSafeDateComparator(final Date one, final Date two) {
@@ -100,9 +93,7 @@ public final class TaskComparator implements Comparator<TaskInstance>, Serializa
 
     /**
      * Zet de waarde van current actor id.
-     *
-     * @param currentActorId
-     *            current actor id
+     * @param currentActorId current actor id
      */
     public void setCurrentActorId(final String currentActorId) {
         this.currentActorId = currentActorId;
@@ -110,9 +101,7 @@ public final class TaskComparator implements Comparator<TaskInstance>, Serializa
 
     /**
      * Zet de waarde van oudste eerst.
-     *
-     * @param oudsteEerst
-     *            oudste eerst
+     * @param oudsteEerst oudste eerst
      */
     public void setOudsteEerst(final boolean oudsteEerst) {
         this.oudsteEerst = oudsteEerst;

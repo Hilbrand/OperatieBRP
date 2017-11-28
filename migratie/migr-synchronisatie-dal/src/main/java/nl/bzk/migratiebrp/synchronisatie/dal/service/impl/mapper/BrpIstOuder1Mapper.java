@@ -8,24 +8,21 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.List;
 import java.util.Set;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstRelatieGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
 import org.springframework.stereotype.Component;
 
 /**
  * Mapped IST stapels van een Persoon op de IST Ouder1 stapel van de BrpPersoonslijst.
- * 
  */
 @Component
 public final class BrpIstOuder1Mapper extends AbstractBrpIstRelatieMapper {
 
     /**
      * Mapped van de set met stapels de categorie 2 stapels op een BrpStapel met BrpIstRelatieGroepInhoud.
-     * 
-     * @param stapels
-     *            de set met IST stapels
+     * @param stapels de set met IST stapels
      * @return een stapel van BrpIstRelatieGroepInhoud
      */
     public BrpStapel<BrpIstRelatieGroepInhoud> map(final Set<Stapel> stapels) {

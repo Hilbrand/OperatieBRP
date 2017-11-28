@@ -18,14 +18,16 @@ public final class BzmBrpServiceImpl implements BzmBrpService {
 
     private final DispatchClient dispatchClient;
 
+    private BzmSoapUtil bzmSoapUtil;
+
     /**
      * Constructor.
-     *
-     * @param dispatchClient
-     *            dispatch client
+     * @param dispatchClient dispatch client
+     * @param bzmSoapUtil soaputil
      */
-    public BzmBrpServiceImpl(final DispatchClient dispatchClient) {
+    public BzmBrpServiceImpl(final DispatchClient dispatchClient, final BzmSoapUtil bzmSoapUtil) {
         this.dispatchClient = dispatchClient;
+        this.bzmSoapUtil = bzmSoapUtil;
     }
 
     /**
@@ -36,7 +38,7 @@ public final class BzmBrpServiceImpl implements BzmBrpService {
         String result = null;
 
         // Maak SOAP bericht met xmlBody
-        final SOAPMessage request = BzmSoapUtil.maakSOAPBericht(xmlBody);
+        final SOAPMessage request = bzmSoapUtil.maakSOAPBericht(xmlBody);
         if (request == null) {
             throw new IllegalArgumentException("Parameter xmlBody geen geldige XML");
         }
@@ -44,7 +46,7 @@ public final class BzmBrpServiceImpl implements BzmBrpService {
         // Verstuur SOAP bericht
         final SOAPMessage response = dispatchClient.doInvokeService(request, oinTransporteur, oinOndertekenaar);
         if (response != null) {
-            result = BzmSoapUtil.getSOAPResultaat(response);
+            result = bzmSoapUtil.getSOAPResultaat(response);
         }
         return result;
     }

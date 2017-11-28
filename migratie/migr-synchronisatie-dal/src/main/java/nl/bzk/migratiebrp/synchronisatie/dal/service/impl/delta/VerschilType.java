@@ -11,18 +11,32 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta;
  */
 public enum VerschilType {
 
-    /** Rij verwijderd van PL. */
+    /**
+     * Rij verwijderd van PL.
+     */
     RIJ_VERWIJDERD,
-    /** Element binnen een rij verwijderd. */
+    /**
+     * Element binnen een rij verwijderd.
+     */
     ELEMENT_VERWIJDERD,
-    /** Rij toegevoegd aan PL. */
+    /**
+     * Rij toegevoegd aan PL.
+     */
     RIJ_TOEGEVOEGD,
-    /** Element nieuw binnen een rij. */
+    /**
+     * Element nieuw binnen een rij.
+     */
     ELEMENT_NIEUW,
-    /** Element binnen een rij aangepast. */
+    /**
+     * Element binnen een rij aangepast.
+     */
     ELEMENT_AANGEPAST,
-    /** Element binnen een nieuw toegevoegde rij aangepast. */
+    /**
+     * Element binnen een nieuw toegevoegde rij aangepast.
+     */
     NIEUWE_RIJ_ELEMENT_AANGEPAST,
-    /** Onderzoek moet worden gekopieerd van de bestaande rij naar nieuwe rij. */
+    /**
+     * Onderzoek moet worden gekopieerd van de bestaande rij naar nieuwe rij.
+     */
     KOPIEER_ONDERZOEK_NAAR_NIEUWE_RIJ
 }

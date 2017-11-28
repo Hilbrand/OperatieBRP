@@ -10,7 +10,6 @@
  * van de Spring Data JpaRepository interface.
  *
  * Een implementatie in deze package heeft altijd een bijbehorende interface in de bovenliggende repository-package.
- *
  * @since 1.0
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.repository.jpa;

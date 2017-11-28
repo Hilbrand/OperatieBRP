@@ -22,9 +22,9 @@ verhuizingBinnengemeentelijk:
       communicatieID: 'comid.verhuizingBinnengemeentelijk.bron1'
       document:
         communicatieID: 'comid.verhuizingBinnengemeentelijk.bron1.document'
-        soortNaam: 'Aangifte met betrekking tot verblijfplaats'
+        soortNaam: 'Aangifte verblijfplaats'
         identificatie: '1234'
-        aktenummer: '1234567'
+        aktenummer: '[]'
         partijCode: '017401'
       rechtsgrondCode: '[]'
       rechtsgrondomschrijving: '[]'
@@ -95,9 +95,9 @@ verhuizingIntergemeentelijk:
       communicatieID: 'comid.verhuizingIntergemeentelijk.bron1'
       document:
         communicatieID: 'comid.verhuizingIntergemeentelijk.bron1.document'
-        soortNaam: 'Aangifte met betrekking tot verblijfplaats'
+        soortNaam: 'Aangifte verblijfplaats'
         identificatie: '031'
-        aktenummer: '5678901'
+        aktenummer: '[]'
         partijCode: '017401'
       rechtsgrondCode: '[]'
       rechtsgrondomschrijving: '[]'

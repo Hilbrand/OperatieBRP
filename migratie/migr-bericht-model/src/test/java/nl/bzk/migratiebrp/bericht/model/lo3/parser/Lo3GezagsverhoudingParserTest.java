@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -37,8 +37,8 @@ public class Lo3GezagsverhoudingParserTest extends AbstractParserTest {
         final List<Lo3Categorie<Lo3GezagsverhoudingInhoud>> categorieInhoudLijst = new ArrayList<>();
         final Lo3GezagsverhoudingInhoud gezagsverhoudingInhoud =
                 new Lo3GezagsverhoudingInhoud(new Lo3IndicatieGezagMinderjarige(WAARDE_ELEMENT_3210, onderzoek), new Lo3IndicatieCurateleregister(
-                    WAARDE_ELEMENT_3310,
-                    onderzoek));
+                        WAARDE_ELEMENT_3310,
+                        onderzoek));
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(gezagsverhoudingInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_11, 0, 0));
         categorieInhoudLijst.add(categorieInhoudCategorie);

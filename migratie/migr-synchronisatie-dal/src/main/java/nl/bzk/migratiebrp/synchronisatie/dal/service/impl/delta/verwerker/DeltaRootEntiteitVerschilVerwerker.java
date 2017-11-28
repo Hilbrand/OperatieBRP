@@ -6,45 +6,38 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.verwerker;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util.DeltaRootEntiteitModus;
 
 /**
- * Verwerker van de gevonden verschillen tussen de bestaande en de nieuwe versie van een {@link DeltaRootEntiteit}. Deze
- * class is stateful en moet voor elke {@link DeltaRootEntiteit} opnieuw worden geconstrueerd.
+ * Verwerker van de gevonden verschillen tussen de bestaande en de nieuwe versie van een {@link RootEntiteit}. Deze
+ * class is stateful en moet voor elke {@link RootEntiteit} opnieuw worden geconstrueerd.
  */
 public final class DeltaRootEntiteitVerschilVerwerker extends AbstractDeltaVerschilVerwerker {
 
     /**
      * Maakt een verschil verwerker en zet de modus waar deze verwerker in werkt.
-     * 
-     * @param modus
-     *            een {@link DeltaRootEntiteitModus} waarmee aangegeven wordt voor welke {@link DeltaRootEntiteit} deze
-     *            verwerker werkt.
+     * @param modus een {@link DeltaRootEntiteitModus} waarmee aangegeven wordt voor welke {@link RootEntiteit} deze verwerker werkt.
      */
     public DeltaRootEntiteitVerschilVerwerker(final DeltaRootEntiteitModus modus) {
         super(modus);
     }
 
     /**
-     * Verwerk de wijzigingen op de bestaande versie van de {@link DeltaRootEntiteit}.
-     *
-     * @param verschillen
-     *            de lijst met verschillen
-     * @param deltaRootEntiteit
-     *            de bestaande entiteit waar de verschillen in wordt verwerkt
-     * @param administratieveHandeling
-     *            de administratieve handeling die aan deze wijzigingen is gekoppeld.
+     * Verwerk de wijzigingen op de bestaande versie van de {@link RootEntiteit}.
+     * @param verschillen de lijst met verschillen
+     * @param rootEntiteit de bestaande entiteit waar de verschillen in wordt verwerkt
+     * @param administratieveHandeling de administratieve handeling die aan deze wijzigingen is gekoppeld.
      */
+    @Override
     public void verwerkWijzigingen(
-        final VergelijkerResultaat verschillen,
-        final DeltaRootEntiteit deltaRootEntiteit,
-        final AdministratieveHandeling administratieveHandeling)
-    {
+            final VergelijkerResultaat verschillen,
+            final RootEntiteit rootEntiteit,
+            final AdministratieveHandeling administratieveHandeling) {
         try {
-            verwerkWijzigingen(verschillen, deltaRootEntiteit, null, null, administratieveHandeling);
+            verwerkWijzigingen(verschillen, rootEntiteit, null, null, administratieveHandeling);
         } catch (final ReflectiveOperationException e) {
             throw new IllegalStateException(e);
         }

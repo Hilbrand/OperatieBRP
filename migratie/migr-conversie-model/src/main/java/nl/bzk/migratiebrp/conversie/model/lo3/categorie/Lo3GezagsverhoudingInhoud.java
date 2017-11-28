@@ -6,22 +6,21 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieCurateleregister;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGezagMinderjarige;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de LO3 categorie Gezagsverhouding (11).
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class Lo3GezagsverhoudingInhoud implements Lo3CategorieInhoud {
 
@@ -33,6 +32,9 @@ public final class Lo3GezagsverhoudingInhoud implements Lo3CategorieInhoud {
     @Element(name = "indicatieCurateleregister", required = false)
     private final Lo3IndicatieCurateleregister indicatieCurateleregister;
 
+    private boolean isVoorkomenGebruiktVoorOuder1;
+    private boolean isVoorkomenGebruiktVoorOuder2;
+
     /**
      * Default constructor (alles null).
      */
@@ -42,57 +44,73 @@ public final class Lo3GezagsverhoudingInhoud implements Lo3CategorieInhoud {
 
     /**
      * Maakt een Lo3GezagsverhoudingInhoud.
-     * 
-     * @param indicatieGezagMinderjarige
-     *            indicatie gezag minderjarige
-     * @param indicatieCurateleregister
-     *            indicatie curatele register
-     * @throws IllegalArgumentException
-     *             als niet aan inhoudelijke voorwaarden is voldaan
-     *             {@link Lo3CategorieValidator#valideerCategorie11Gezagsverhouding}
-     * @throws NullPointerException
-     *             als verplichte velden niet aanwezig zijn
-     *             {@link Lo3CategorieValidator#valideerCategorie11Gezagsverhouding}
+     * @param indicatieGezagMinderjarige indicatie gezag minderjarige
+     * @param indicatieCurateleregister indicatie curatele register
+     * @throws IllegalArgumentException als niet aan inhoudelijke voorwaarden is voldaan Lo3CategorieValidator#valideerCategorie11Gezagsverhouding
+     * @throws NullPointerException als verplichte velden niet aanwezig zijn Lo3CategorieValidator#valideerCategorie11Gezagsverhouding
      */
     public Lo3GezagsverhoudingInhoud(
-        @Element(name = "indicatieGezagMinderjarige", required = false) final Lo3IndicatieGezagMinderjarige indicatieGezagMinderjarige,
-        @Element(name = "indicatieCurateleregister", required = false) final Lo3IndicatieCurateleregister indicatieCurateleregister)
-    {
+            @Element(name = "indicatieGezagMinderjarige", required = false) final Lo3IndicatieGezagMinderjarige indicatieGezagMinderjarige,
+            @Element(name = "indicatieCurateleregister", required = false) final Lo3IndicatieCurateleregister indicatieCurateleregister) {
         this.indicatieGezagMinderjarige = indicatieGezagMinderjarige;
         this.indicatieCurateleregister = indicatieCurateleregister;
+        this.isVoorkomenGebruiktVoorOuder1 = false;
+        this.isVoorkomenGebruiktVoorOuder2 = false;
     }
 
     private Lo3GezagsverhoudingInhoud(final Builder builder) {
         indicatieGezagMinderjarige = builder.indicatieGezagMinderjarige;
         indicatieCurateleregister = builder.indicatieCurateleregister;
+        this.isVoorkomenGebruiktVoorOuder1 = false;
+        this.isVoorkomenGebruiktVoorOuder2 = false;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.Lo3CategorieInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(indicatieCurateleregister, indicatieGezagMinderjarige);
+        return !Lo3Validatie.isEenParameterGevuld(indicatieCurateleregister, indicatieGezagMinderjarige);
     }
 
     /**
-     * Geef de waarde van indicatie curateleregister.
-     *
-     * @return indicatie curateleregister
+     * Geef de waarde van indicatie curateleregister van Lo3GezagsverhoudingInhoud.
+     * @return de waarde van indicatie curateleregister van Lo3GezagsverhoudingInhoud
      */
     public Lo3IndicatieCurateleregister getIndicatieCurateleregister() {
         return indicatieCurateleregister;
     }
 
     /**
-     * Geef de waarde van indicatie gezag minderjarige.
-     *
-     * @return indicatie gezag minderjarige
+     * Geef de waarde van indicatie gezag minderjarige van Lo3GezagsverhoudingInhoud.
+     * @return de waarde van indicatie gezag minderjarige van Lo3GezagsverhoudingInhoud
      */
     public Lo3IndicatieGezagMinderjarige getIndicatieGezagMinderjarige() {
         return indicatieGezagMinderjarige;
+    }
+
+    public boolean isVoorkomenGebruiktVoorOuder1() {
+        return isVoorkomenGebruiktVoorOuder1;
+    }
+
+    public boolean isVoorkomenGebruiktVoorOuder2() {
+        return isVoorkomenGebruiktVoorOuder2;
+    }
+
+    /**
+     * Geeft aan of deze inhoud gebruikt is tijdens conversie voor ouder1.
+     */
+    public void setVoorkomenGebruiktVoorOuder1() {
+        this.isVoorkomenGebruiktVoorOuder1 = true;
+    }
+
+    /**
+     * Geeft aan of deze inhoud gebruikt is tijdens conversie voor ouder2.
+     */
+    public void setVoorkomenGebruiktVoorOuder2() {
+        this.isVoorkomenGebruiktVoorOuder2 = true;
     }
 
     @Override
@@ -105,8 +123,8 @@ public final class Lo3GezagsverhoudingInhoud implements Lo3CategorieInhoud {
         }
         final Lo3GezagsverhoudingInhoud castOther = (Lo3GezagsverhoudingInhoud) other;
         return new EqualsBuilder().append(indicatieGezagMinderjarige, castOther.indicatieGezagMinderjarige)
-                                  .append(indicatieCurateleregister, castOther.indicatieCurateleregister)
-                                  .isEquals();
+                .append(indicatieCurateleregister, castOther.indicatieCurateleregister)
+                .isEquals();
     }
 
     @Override
@@ -117,25 +135,28 @@ public final class Lo3GezagsverhoudingInhoud implements Lo3CategorieInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("indicatieGezagMinderjarige", indicatieGezagMinderjarige)
-                                                                          .append("indicatieCurateleregister", indicatieCurateleregister)
-                                                                          .toString();
+                .append("indicatieCurateleregister", indicatieCurateleregister)
+                .toString();
     }
 
-    /** Builder. */
+    /**
+     * Builder.
+     */
     public static final class Builder {
 
         private Lo3IndicatieGezagMinderjarige indicatieGezagMinderjarige;
         private Lo3IndicatieCurateleregister indicatieCurateleregister;
 
-        /** Maak een lege builder. */
+        /**
+         * Maak een lege builder.
+         */
         public Builder() {
+            // Een lege builder.
         }
 
         /**
          * Maak een initeel gevulde builder.
-         * 
-         * @param inhoud
-         *            initiele vulling
+         * @param inhoud initiele vulling
          */
         public Builder(final Lo3GezagsverhoudingInhoud inhoud) {
             indicatieGezagMinderjarige = inhoud.indicatieGezagMinderjarige;
@@ -144,7 +165,6 @@ public final class Lo3GezagsverhoudingInhoud implements Lo3CategorieInhoud {
 
         /**
          * Build.
-         * 
          * @return inhoud
          */
         public Lo3GezagsverhoudingInhoud build() {
@@ -152,8 +172,7 @@ public final class Lo3GezagsverhoudingInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the indicatieGezagMinderjarige to set
+         * @param param the indicatieGezagMinderjarige to set
          * @return de builder
          */
         public Builder indicatieGezagMinderjarige(final Lo3IndicatieGezagMinderjarige param) {
@@ -162,8 +181,7 @@ public final class Lo3GezagsverhoudingInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the indicatieCurateleregister to set
+         * @param param the indicatieCurateleregister to set
          * @return de builder
          */
         public Builder indicatieCurateleregister(final Lo3IndicatieCurateleregister param) {

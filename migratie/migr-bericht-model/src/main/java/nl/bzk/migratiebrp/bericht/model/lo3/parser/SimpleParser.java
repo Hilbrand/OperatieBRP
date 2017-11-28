@@ -16,120 +16,90 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
 /**
  * Vereenvoudigde parser utility methoden voor persoonslijst elementen. Deze parsers verwerken geen onderzoek.
  */
-public final class SimpleParser {
-
-    private SimpleParser() {
-    }
+public interface SimpleParser {
 
     /**
      * Parse een Lo3Datum.
-     * 
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return Lo3Datum of null als de waarde null is
-     * @throws NumberFormatException
-     *             als de waarde niet alleen cijfers bevat
+     * @throws NumberFormatException als de waarde niet alleen cijfers bevat
      */
-    public static Lo3Datum parseLo3Datum(final String waarde) {
+    static Lo3Datum parseLo3Datum(final String waarde) {
         return waarde == null ? null : new Lo3Datum(Integer.valueOf(waarde));
     }
 
     /**
      * Parse een Lo3GemeenteCode.
-     * 
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return Lo3GemeenteCode of null als de waarde null is
-     * @throws IllegalArgumentException
-     *             als de waarde niet voldoet aan de inhoudelijke eisen van
-     *             {@link nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode#Lo3GemeenteCode}
+     * @throws IllegalArgumentException als de waarde niet voldoet aan de inhoudelijke eisen van
+     * {@link nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode#Lo3GemeenteCode}
      */
-    public static Lo3GemeenteCode parseLo3GemeenteCode(final String waarde) {
+    static Lo3GemeenteCode parseLo3GemeenteCode(final String waarde) {
         return waarde == null ? null : new Lo3GemeenteCode(waarde);
     }
 
     /**
      * Parse een Lo3LandCode.
-     * 
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return Lo3LandCode of null als de waarde null is
-     * @throws IllegalArgumentException
-     *             als de waarde niet voldoet aan de inhoudelijke eisen van
-     *             {@link nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode#Lo3LandCode}
+     * @throws IllegalArgumentException als de waarde niet voldoet aan de inhoudelijke eisen van
+     * {@link nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode#Lo3LandCode}
      */
-    public static Lo3LandCode parseLo3LandCode(final String waarde) {
+    static Lo3LandCode parseLo3LandCode(final String waarde) {
         return waarde == null ? null : new Lo3LandCode(waarde);
     }
 
     /**
      * Parse een Integer.
-     * 
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return Integer of null als de waarde null is
-     * @throws NumberFormatException
-     *             als de waarde niet alleen cijfers bevat
+     * @throws NumberFormatException als de waarde niet alleen cijfers bevat
      */
-    public static Integer parseInteger(final String waarde) {
+    static Integer parseInteger(final String waarde) {
         return waarde == null ? null : Integer.valueOf(waarde);
     }
 
     /**
      * Parse een Long.
-     * 
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return Long of null als de waarde null is
-     * @throws NumberFormatException
-     *             als de waarde niet alleen cijfers bevat
+     * @throws NumberFormatException als de waarde niet alleen cijfers bevat
      */
-    public static Long parseLong(final String waarde) {
+    static Long parseLong(final String waarde) {
         return waarde == null ? null : Long.valueOf(waarde);
     }
 
     /**
      * Parse een Lo3Huisnummer.
-     * 
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return Lo3Huisnummer of null als de waarde null is
-     * @throws IllegalArgumentException
-     *             als de waarde niet voldoet aan de inhoudelijke eisen van
-     *             {@link nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Huisnummer#Lo3Huisnummer}
-     * @throws NumberFormatException
-     *             als de waarde niet alleen cijfers bevat
+     * @throws IllegalArgumentException als de waarde niet voldoet aan de inhoudelijke eisen van
+     * {@link nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Huisnummer#Lo3Huisnummer}
+     * @throws NumberFormatException als de waarde niet alleen cijfers bevat
      */
-    public static Lo3Huisnummer parseLo3Huisnummer(final String waarde) {
+    static Lo3Huisnummer parseLo3Huisnummer(final String waarde) {
         return waarde == null ? null : new Lo3Huisnummer(Integer.valueOf(waarde));
     }
 
     /**
      * Parse een Lo3IndicatieGeheimCode.
-     * 
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return Lo3IndicatieGeheimCode of null als de waarde null is
-     * @throws IllegalArgumentException
-     *             als de waarde niet voorkomt in
-     *             {@link nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGeheimCode}
-     * @throws NumberFormatException
-     *             als de waarde niet alleen cijfers bevat
+     * @throws IllegalArgumentException als de waarde niet voorkomt in {@link nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGeheimCode}
+     * @throws NumberFormatException als de waarde niet alleen cijfers bevat
      */
-    public static Lo3IndicatieGeheimCode parseLo3IndicatieGeheimCode(final String waarde) {
+    static Lo3IndicatieGeheimCode parseLo3IndicatieGeheimCode(final String waarde) {
         return waarde == null ? null : new Lo3IndicatieGeheimCode(Integer.valueOf(waarde));
     }
 
     /**
      * Parse een Lo3Datumtijdstempel.
-     * 
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return Lo3Datumtijdstempel of null als de waarde null is
-     * @throws NumberFormatException
-     *             als de waarde niet alleen cijfers bevat
+     * @throws NumberFormatException als de waarde niet alleen cijfers bevat
      */
-    public static Lo3Datumtijdstempel parseLo3Datumtijdstempel(final String waarde) {
+    static Lo3Datumtijdstempel parseLo3Datumtijdstempel(final String waarde) {
         return waarde == null ? null : new Lo3Datumtijdstempel(Long.valueOf(waarde));
     }
 }

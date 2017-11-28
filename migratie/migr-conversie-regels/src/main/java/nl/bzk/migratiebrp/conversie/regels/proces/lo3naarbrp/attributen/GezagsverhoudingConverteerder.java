@@ -8,9 +8,6 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
@@ -23,35 +20,31 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Deze class bevat de logica om een LO3 gezagsverhouding te converteren naar BRP. Deze converteerder converteert de
  * 'helft' van de gegevens, te weten de indicatoren.
- * 
- * 
- * 
  */
-@Component
 @Requirement(Requirements.CCA11)
 public class GezagsverhoudingConverteerder {
 
-    @Inject
-    private Lo3AttribuutConverteerder converteerder;
+    private final Lo3AttribuutConverteerder converteerder;
+
+    /**
+     * Constructor.
+     * @param lo3AttribuutConverteerder Lo3AttribuutConverteerder
+     */
+    public GezagsverhoudingConverteerder(final Lo3AttribuutConverteerder lo3AttribuutConverteerder) {
+        this.converteerder = lo3AttribuutConverteerder;
+    }
 
     /**
      * Converteert de LO3 gezagsverhouding stapel naar de corresponderende BRP groepen en vult hiermee de migratie
      * builder aan.
-     * 
-     * @param gezagsverhoudingStapel
-     *            de gezagsverhoudingstapel
-     * @param tussenPersoonslijstBuilder
-     *            de migratie persoonslijst builder
+     * @param gezagsverhoudingStapel de gezagsverhoudingstapel
+     * @param tussenPersoonslijstBuilder de migratie persoonslijst builder
      */
-    public final void converteer(
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
-        final TussenPersoonslijstBuilder tussenPersoonslijstBuilder)
-    {
+    public final void converteer(final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
+                                 final TussenPersoonslijstBuilder tussenPersoonslijstBuilder) {
         if (gezagsverhoudingStapel == null) {
             return;
         }
@@ -64,9 +57,8 @@ public class GezagsverhoudingConverteerder {
     }
 
     private void converteerDerdeHeeftGezag(
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
-        final TussenPersoonslijstBuilder tussenPersoonslijstBuilder)
-    {
+            final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
+            final TussenPersoonslijstBuilder tussenPersoonslijstBuilder) {
         final List<TussenGroep<BrpDerdeHeeftGezagIndicatieInhoud>> migratieDerdeHeeftGezagIndicatieList = new ArrayList<>();
 
         for (final Lo3Categorie<Lo3GezagsverhoudingInhoud> lo3GezagsverhoudingCategorie : gezagsverhoudingStapel) {
@@ -76,10 +68,10 @@ public class GezagsverhoudingConverteerder {
             final BrpDerdeHeeftGezagIndicatieInhoud inhoud = new BrpDerdeHeeftGezagIndicatieInhoud(derdeHeeftGezag, null, null);
 
             migratieDerdeHeeftGezagIndicatieList.add(new TussenGroep<>(
-                inhoud,
-                lo3GezagsverhoudingCategorie.getHistorie(),
-                lo3GezagsverhoudingCategorie.getDocumentatie(),
-                lo3GezagsverhoudingCategorie.getLo3Herkomst()));
+                    inhoud,
+                    lo3GezagsverhoudingCategorie.getHistorie(),
+                    lo3GezagsverhoudingCategorie.getDocumentatie(),
+                    lo3GezagsverhoudingCategorie.getLo3Herkomst()));
         }
 
         if (!migratieDerdeHeeftGezagIndicatieList.isEmpty()) {
@@ -89,9 +81,8 @@ public class GezagsverhoudingConverteerder {
     }
 
     private void converteerOnderCuratele(
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
-        final TussenPersoonslijstBuilder tussenPersoonslijstBuilder)
-    {
+            final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
+            final TussenPersoonslijstBuilder tussenPersoonslijstBuilder) {
         final List<TussenGroep<BrpOnderCurateleIndicatieInhoud>> migratieOnderCurateleIndicatieList = new ArrayList<>();
 
         for (final Lo3Categorie<Lo3GezagsverhoudingInhoud> lo3GezagsverhoudingCategorie : gezagsverhoudingStapel) {
@@ -101,10 +92,10 @@ public class GezagsverhoudingConverteerder {
             final BrpOnderCurateleIndicatieInhoud inhoud = new BrpOnderCurateleIndicatieInhoud(onderCuratele, null, null);
 
             migratieOnderCurateleIndicatieList.add(new TussenGroep<>(
-                inhoud,
-                lo3GezagsverhoudingCategorie.getHistorie(),
-                lo3GezagsverhoudingCategorie.getDocumentatie(),
-                lo3GezagsverhoudingCategorie.getLo3Herkomst()));
+                    inhoud,
+                    lo3GezagsverhoudingCategorie.getHistorie(),
+                    lo3GezagsverhoudingCategorie.getDocumentatie(),
+                    lo3GezagsverhoudingCategorie.getLo3Herkomst()));
         }
 
         if (!migratieOnderCurateleIndicatieList.isEmpty()) {

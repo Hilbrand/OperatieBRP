@@ -6,12 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDerdeHeeftGezagIndicatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,7 +22,7 @@ public final class BrpDerdeHeeftGezagIndicatieMapper extends AbstractBrpMapper<P
     @Override
     protected BrpDerdeHeeftGezagIndicatieInhoud mapInhoud(final PersoonIndicatieHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         final BrpBoolean indicatie =
-                BrpBoolean.wrap(historie.getWaarde(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INDICATIE_DERDEHEEFTGEZAG, true));
+                BrpBoolean.wrap(historie.getWaarde(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INDICATIE_DERDEHEEFTGEZAG_WAARDE, true));
 
         return new BrpDerdeHeeftGezagIndicatieInhoud(indicatie, null, null);
     }

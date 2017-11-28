@@ -7,14 +7,12 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.DienstbundelHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstbundelInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.DienstbundelHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.AbstractBrpMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.BrpMapperUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,9 +23,7 @@ public final class BrpDienstbundelMapper extends AbstractBrpMapper<DienstbundelH
 
     /**
      * Map een database entiteit dienstbundel naar een BRP conversie model object.
-     *
-     * @param leveringsautorisatieHistorieSet
-     *            database entiteit
+     * @param leveringsautorisatieHistorieSet database entiteit
      * @return conversie model object
      */
     public BrpStapel<BrpDienstbundelInhoud> mapDienstbundel(final Set<DienstbundelHistorie> leveringsautorisatieHistorieSet) {
@@ -37,12 +33,12 @@ public final class BrpDienstbundelMapper extends AbstractBrpMapper<DienstbundelH
     @Override
     protected BrpDienstbundelInhoud mapInhoud(final DienstbundelHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         return new BrpDienstbundelInhoud(
-            historie.getNaam(),
-            BrpMapperUtil.mapDatum(historie.getDatumIngang()),
-            BrpMapperUtil.mapDatum(historie.getDatumEinde()),
-            historie.getNaderePopulatiebeperking(),
-            historie.getIndicatieNaderePopulatiebeperkingVolledigGeconverteerd(),
-            historie.getToelichting(),
-            historie.getIndicatieGeblokkeerd());
+                historie.getNaam(),
+                BrpMapperUtil.mapDatum(historie.getDatumIngang()),
+                BrpMapperUtil.mapDatum(historie.getDatumEinde()),
+                historie.getNaderePopulatiebeperking(),
+                historie.getIndicatieNaderePopulatiebeperkingVolledigGeconverteerd(),
+                historie.getToelichting(),
+                historie.getIndicatieGeblokkeerd());
     }
 }

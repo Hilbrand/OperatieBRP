@@ -11,7 +11,7 @@
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="properties">
 			<props>
-				<prop key="jbpm.hibernate.dialect">nl.bzk.migratiebrp.isc.jbpm.hibernate.H2JbpmDialect</prop>
+				<prop key="jbpm.hibernate.dialect">nl.bzk.migratiebrp.isc.jbpm.hibernate.HSQLJbpmDialect</prop>
 			</props>
 		</property>
 	</bean>
@@ -22,23 +22,27 @@
              | Tijdens jUnit testen kan de ApplicationContext meerdere keren worden geinstantieerd.
              | Elke keer dient een unique naam gebruikt te worden, anders gaat Atomikos fout.
               -->
-            <bean class="nl.bzk.migratiebrp.util.common.UniqueName" >
+            <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName" >
             	<property name="baseName" value="iscDatabase" />
             </bean>
         </property>
+		<property name="url" value="jdbc:hsqldb:mem:isc" />
+		<property name="driverClassName" value="org.hsqldb.jdbc.JDBCDriver" />
+		<!-- 
         <property name="url" value="jdbc:h2:mem:isc;DB_CLOSE_DELAY=-1"/>
         <property name="driverClassName" value="org.h2.Driver"/>
+        -->
         <property name="user" value="sa"/>
         <property name="password" value="" />
         <property name="maxPoolSize" value="20" />
-        <property name="minPoolSize" value="10"/>
+        <property name="minPoolSize" value="1"/>
     </bean>
 
     <jdbc:initialize-database ignore-failures="ALL" data-source="iscDataSource">
         <jdbc:script location="classpath:sql/mig-drop.sql"  />
         <jdbc:script location="classpath:sql/jbpm-drop.sql"  />
         <jdbc:script location="classpath:sql/qrtz-drop.sql"  />
-        <jdbc:script location="classpath:sql/postgres.sql"  />
+        <jdbc:script location="classpath:sql/hsqldb4postgres.sql"  />
     </jdbc:initialize-database>
     <jdbc:initialize-database data-source="iscDataSource">
         <jdbc:script location="classpath:sql/jbpm-create.sql" />

@@ -23,13 +23,13 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "listProcessInstances", description = "Read a list of process instances from a process definition.",
         attributes = {@TldAttribute(name = "target", description = "An EL expression into which the process instance list should be stored.",
-                              required = true, deferredType = List.class),
-                      @TldAttribute(name = "processId", description = "The numeric ID of the process definition whose instances are to be read.",
-                              required = false, deferredType = long.class),
-                      @TldAttribute(name = "pager", description = "An EL expression of the PagerBean to be used.", required = true,
-                              deferredType = PagerBean.class),
-                      @TldAttribute(name = "filter", description = "An EL expression of the filter to be used.", required = true,
-                              deferredType = Filter.class) })
+                required = true, deferredType = List.class),
+                @TldAttribute(name = "processId", description = "The numeric ID of the process definition whose instances are to be read.",
+                        required = false, deferredType = long.class),
+                @TldAttribute(name = "pager", description = "An EL expression of the PagerBean to be used.", required = true,
+                        deferredType = PagerBean.class),
+                @TldAttribute(name = "filter", description = "An EL expression of the filter to be used.", required = true,
+                        deferredType = Filter.class)})
 public final class ListProcessInstancesHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute processIdTagAttribute;
@@ -38,9 +38,7 @@ public final class ListProcessInstancesHandler extends AbstractHandler {
 
     /**
      * Constructor waarbij de tag configuratie meegegeven kan worden.
-     * 
-     * @param config
-     *            Tag configuratie waarin o.a. migratie tags staan.
+     * @param config Tag configuratie waarin o.a. migratie tags staan.
      */
     public ListProcessInstancesHandler(final TagConfig config) {
         super(config);

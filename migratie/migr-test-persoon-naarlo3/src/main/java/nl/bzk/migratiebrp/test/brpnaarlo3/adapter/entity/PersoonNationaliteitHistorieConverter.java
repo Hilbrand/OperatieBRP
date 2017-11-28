@@ -9,13 +9,13 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 import java.sql.Timestamp;
 import java.util.Set;
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteitHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerkrijgingNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteitHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerkrijgingNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.NationaliteitConverter;
@@ -104,7 +104,6 @@ public final class PersoonNationaliteitHistorieConverter extends AbstractEntityH
 
     /**
      * Geef de waarde van or create nationaliteit.
-     *
      * @return or create nationaliteit
      */
     private PersoonNationaliteit getOrCreateNationaliteit() {

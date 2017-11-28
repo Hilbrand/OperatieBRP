@@ -13,13 +13,12 @@ import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -261,7 +260,14 @@ public class PeriodeTest {
         final Periode anderePeriode = new Periode(3L, 9L);
         final Set<Periode> testResult = Periode.removeFromSet(testSet, anderePeriode);
         assertEquals(2, testResult.size());
-        final Iterator<Periode> resultIterator = testResult.iterator();
+        final List<Periode> testLijst = new ArrayList<>(testResult);
+        Collections.sort(testLijst, new Comparator<Periode>() {
+            @Override
+            public int compare(final Periode o1, final Periode o2) {
+                return Long.valueOf(o1.getBegin()).compareTo(o2.getBegin());
+            }
+        });
+        final Iterator<Periode> resultIterator = testLijst.iterator();
         final Periode resultPeriode1 = resultIterator.next();
         assertEquals(2L, resultPeriode1.getBegin());
         assertEquals(3L, resultPeriode1.getEinde());

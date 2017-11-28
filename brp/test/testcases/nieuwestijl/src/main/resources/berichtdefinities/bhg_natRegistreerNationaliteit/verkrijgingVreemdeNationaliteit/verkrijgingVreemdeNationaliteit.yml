@@ -6,9 +6,9 @@ verkrijgingVreemdeNationaliteit:
       communicatieID: 'comid.verkrijgingVreemdeNationaliteit.bron1'
       document:
         communicatieID: 'comid.verkrijgingVreemdeNationaliteit.bron1.document1'
-        soortNaam: 'Geboorteakte'
+        soortNaam: 'Geschrift vreemde nationaliteit'
         identificatie: 'identificatieTC'
-        aktenummer: '1234567'
+        aktenummer: '[]'
         partijCode: '017401'
       rechtsgrondCode: '[]'
       rechtsgrondomschrijving: '[]'

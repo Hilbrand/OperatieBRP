@@ -11,13 +11,11 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-import org.springframework.stereotype.Component;
 
 /**
  * Controleer dat het versienummer van de gevonden persoonslijst kleiner is dan het versienummer van de aangeboden
  * persoonslijst.
  */
-@Component(value = "plControleGevondenVersienummerKleiner")
 public final class PlControleGevondenVersienummerKleiner implements PlControle {
 
     @Override

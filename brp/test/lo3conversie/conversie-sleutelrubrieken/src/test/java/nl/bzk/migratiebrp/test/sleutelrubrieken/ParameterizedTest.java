@@ -23,6 +23,11 @@ public class ParameterizedTest extends ConversieTestConfiguratie {
     }
 
     @Override
+    public File getInputFolder() {
+        return new File(getProperty("test.directory", "./test"));
+    }
+
+    @Override
     public FilenameFilter getThemaFilter() {
         return new EqualsFilter(getProperty("test.thema", null), FilterType.DIRECTORY);
     }
@@ -30,11 +35,6 @@ public class ParameterizedTest extends ConversieTestConfiguratie {
     @Override
     public FilenameFilter getCasusFilter() {
         return new StartsWithFilter(getProperty("test.casus", null), FilterType.FILE);
-    }
-
-    @Override
-    public File getInputFolder() {
-        return new File(getProperty("test.directory", "./test"));
     }
 
     private String getProperty(final String name, final String defaultValue) {

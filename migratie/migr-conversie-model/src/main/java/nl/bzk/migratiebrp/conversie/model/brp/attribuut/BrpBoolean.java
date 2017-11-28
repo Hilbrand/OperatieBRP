@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een BRP Boolean waarde.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class BrpBoolean extends AbstractBrpAttribuutMetOnderzoek {
@@ -19,9 +19,7 @@ public final class BrpBoolean extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpBoolean object .
-     * 
-     * @param waarde
-     *            de boolean waarde
+     * @param waarde de boolean waarde
      */
     public BrpBoolean(final Boolean waarde) {
         this(waarde, null);
@@ -29,26 +27,19 @@ public final class BrpBoolean extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpBoolean object met onderzoek.
-     * 
-     * @param waarde
-     *            de boolean waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde de boolean waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpBoolean(
-        @Element(name = "waarde", required = false) final Boolean waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final Boolean waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Wrap de waarde en onderzoek naar een BrpBoolean.
-     * 
-     * @param waarde
-     *            de boolean waarde
-     * @param onderzoek
-     *            het Lo3 onderzoek
+     * @param waarde de boolean waarde
+     * @param onderzoek het Lo3 onderzoek
      * @return BrpBoolean object met daarin waarde en onderzoek
      */
     public static BrpBoolean wrap(final Boolean waarde, final Lo3Onderzoek onderzoek) {
@@ -60,9 +51,7 @@ public final class BrpBoolean extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Unwrap een BrpBoolean object om de Boolean waarde terug te krijgen.
-     * 
-     * @param brpBoolean
-     *            De BrpBoolean, mag null zijn.
+     * @param brpBoolean De BrpBoolean, mag null zijn.
      * @return Een String object, of null als de BrpString null was.
      */
     public static Boolean unwrap(final BrpBoolean brpBoolean) {
@@ -71,7 +60,7 @@ public final class BrpBoolean extends AbstractBrpAttribuutMetOnderzoek {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -82,9 +71,7 @@ public final class BrpBoolean extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Controleer of de brpBoolean niet-null is en bovendien de waarde 'true' heeft.
-     * 
-     * @param brpBoolean
-     *            De brpBoolean, mag null zijn.
+     * @param brpBoolean De brpBoolean, mag null zijn.
      * @return of de brpBoolean niet-null is en bovendien de waarde 'true' heeft.
      */
     public static boolean isTrue(final BrpBoolean brpBoolean) {
@@ -96,7 +83,6 @@ public final class BrpBoolean extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Geeft een kopie van het attribuut terug zonder onderzoek.
-     * 
      * @return Geeft een kopie van het attribuut terug zonder onderzoek
      */
     public BrpBoolean verwijderOnderzoek() {

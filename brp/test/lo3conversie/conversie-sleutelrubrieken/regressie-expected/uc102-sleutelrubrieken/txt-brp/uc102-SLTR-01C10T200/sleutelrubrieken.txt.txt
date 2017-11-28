@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [adressen], [datum_aanvang_geldigheid])
+GEWIJZIGD(oud, nieuw, [Persoon.Adres.DatumAanvangAdreshouding])

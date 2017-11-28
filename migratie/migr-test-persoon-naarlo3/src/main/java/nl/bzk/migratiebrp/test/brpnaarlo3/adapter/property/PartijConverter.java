@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.PropertyConverter;
 import org.springframework.stereotype.Component;
 

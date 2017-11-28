@@ -1,6 +1,5 @@
 {
 	"effectAfnemerindicatie": "VERWIJDERING",
-	"persoonId": 1,
-	"toegangLeveringsautorisatieId": 580001,
-	"dienstId": 1
+	"partijCode": "580010",
+	"bsn": "123456789"
 }

@@ -11,13 +11,12 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingHuisnummer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 public class AanduidingHuisnummerConversietabelTest {
     private final AanduidingHuisnummerConversietabel subject = new AanduidingHuisnummerConversietabel();
-    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), Lo3Datum.NULL_DATUM, null);
+    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), new Lo3Datum(0), null);
 
     @Test
     public void converteerNaarBrp() {

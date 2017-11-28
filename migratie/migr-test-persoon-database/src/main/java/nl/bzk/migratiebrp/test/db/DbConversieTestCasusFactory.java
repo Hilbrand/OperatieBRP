@@ -13,8 +13,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import javax.inject.Inject;
 import javax.sql.DataSource;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3Lg01BerichtWaarde;
 import nl.bzk.migratiebrp.test.common.reader.Reader;
@@ -23,8 +27,7 @@ import nl.bzk.migratiebrp.test.common.util.BaseFilter;
 import nl.bzk.migratiebrp.test.common.util.FilterType;
 import nl.bzk.migratiebrp.test.dal.AbstractTestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
@@ -42,9 +45,7 @@ public final class DbConversieTestCasusFactory extends AbstractTestCasusFactory 
     /**
      * Constructor waarin een Spring context meegegeven wordt. Als de hele DB niet gereset hoeft te worden, omdat deze
      * bv al helemaal ingericht is, dan kan er de optie -DnoResetDB=true worden meegegeven aan het java proces.
-     * 
-     * @param context
-     *            spring context.
+     * @param context spring context.
      */
     protected DbConversieTestCasusFactory(final GenericXmlApplicationContext context) {
         super(context);
@@ -58,9 +59,7 @@ public final class DbConversieTestCasusFactory extends AbstractTestCasusFactory 
         final String thema = getThema();
         final String inputName = input.getName();
 
-        if (sqlQueriesPerThema.get(thema) == null) {
-            sqlQueriesPerThema.put(thema, leesSqlBestandenBijTestCasus());
-        }
+        sqlQueriesPerThema.putIfAbsent(thema, leesSqlBestandenBijTestCasus());
         LOG.info("leesTestCasussen(thema={}, input={})", thema, inputName);
         if (!input.isFile()) {
             LOG.error("Bestand '{}' is geen bestand.", input.getName());
@@ -76,12 +75,12 @@ public final class DbConversieTestCasusFactory extends AbstractTestCasusFactory 
 
                 final TestCasus testCasus =
                         new DbConversieTestCasus(
-                            thema,
-                            maakNaam(inputName, 0),
-                            getOutputFolder(),
-                            getExpectedFolder(),
-                            lo3Lg01BerichtWaardes,
-                            sqlQueriesPerThema);
+                                thema,
+                                maakNaam(inputName, 0),
+                                getOutputFolder(),
+                                getExpectedFolder(),
+                                lo3Lg01BerichtWaardes,
+                                sqlQueriesPerThema);
                 autowireBeanFactory.autowireBean(testCasus);
                 result.add(testCasus);
             }
@@ -95,7 +94,6 @@ public final class DbConversieTestCasusFactory extends AbstractTestCasusFactory 
 
     /**
      * Geef de waarde van sync dal data source.
-     *
      * @return sync dal data source
      */
     DataSource getSyncDalDataSource() {

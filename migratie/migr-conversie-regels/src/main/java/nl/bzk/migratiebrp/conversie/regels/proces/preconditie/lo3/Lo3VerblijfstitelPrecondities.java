@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -18,21 +19,26 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Preconditie controles voor categorie 10: Verblijfstitel.
- * 
+ *
  * Maakt gebruik van de {@link nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging#log Logging.log} methode.
  */
-@Component
 public final class Lo3VerblijfstitelPrecondities extends AbstractLo3Precondities {
 
     /**
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
+     */
+    public Lo3VerblijfstitelPrecondities(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
+
+    /**
      * Controleer precondities op stapel niveau.
-     * 
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      */
     public void controleerStapel(final Lo3Stapel<Lo3VerblijfstitelInhoud> stapel) {
         if (stapel == null || stapel.isEmpty()) {
@@ -45,7 +51,6 @@ public final class Lo3VerblijfstitelPrecondities extends AbstractLo3Precondities
         controleerGeldigheidDatumActueel(stapel);
         controleerOnderzoek(stapel);
 
-        controleerPreconditie050(stapel);
         controleerPreconditie055(stapel);
 
         for (final Lo3Categorie<Lo3VerblijfstitelInhoud> categorie : stapel) {
@@ -59,10 +64,10 @@ public final class Lo3VerblijfstitelPrecondities extends AbstractLo3Precondities
 
         if (Lo3GroepUtil.isGroepAanwezig(Lo3GroepEnum.GROEP39, inhoud)) {
             controleerGroep39Verblijfstitel(
-                inhoud.getAanduidingVerblijfstitelCode(),
-                inhoud.getDatumEindeVerblijfstitel(),
-                inhoud.getDatumAanvangVerblijfstitel(),
-                herkomst);
+                    inhoud.getAanduidingVerblijfstitelCode(),
+                    inhoud.getDatumEindeVerblijfstitel(),
+                    inhoud.getDatumAanvangVerblijfstitel(),
+                    herkomst);
         }
 
         final Lo3Documentatie documentatie = categorie.getDocumentatie();
@@ -71,10 +76,10 @@ public final class Lo3VerblijfstitelPrecondities extends AbstractLo3Precondities
         }
         if (isDocumentAanwezig(documentatie)) {
             controleerGroep82Document(
-                documentatie.getGemeenteDocument(),
-                documentatie.getDatumDocument(),
-                documentatie.getBeschrijvingDocument(),
-                herkomst);
+                    documentatie.getGemeenteDocument(),
+                    documentatie.getDatumDocument(),
+                    documentatie.getBeschrijvingDocument(),
+                    herkomst);
         }
     }
 
@@ -85,28 +90,27 @@ public final class Lo3VerblijfstitelPrecondities extends AbstractLo3Precondities
     /* ************************************************************************************************************ */
 
     private void controleerGroep39Verblijfstitel(
-        final Lo3AanduidingVerblijfstitelCode aanduidingVerblijfstitelCode,
-        final Lo3Datum datumEindeVerblijfstitel,
-        final Lo3Datum ingangsdatumVerblijfstitel,
-        final Lo3Herkomst herkomst)
-    {
+            final Lo3AanduidingVerblijfstitelCode aanduidingVerblijfstitelCode,
+            final Lo3Datum datumEindeVerblijfstitel,
+            final Lo3Datum ingangsdatumVerblijfstitel,
+            final Lo3Herkomst herkomst) {
         controleerAanwezig(
-            aanduidingVerblijfstitelCode,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE012, Lo3ElementEnum.ELEMENT_3910));
+                aanduidingVerblijfstitelCode,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE012, Lo3ElementEnum.ELEMENT_3910));
         controleerCode(
-            aanduidingVerblijfstitelCode,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_3910));
+                aanduidingVerblijfstitelCode,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_3910));
 
         controleerDatum(
-            datumEindeVerblijfstitel,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3920));
+                datumEindeVerblijfstitel,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3920));
 
         controleerAanwezig(
-            ingangsdatumVerblijfstitel,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE012, Lo3ElementEnum.ELEMENT_3930));
+                ingangsdatumVerblijfstitel,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE012, Lo3ElementEnum.ELEMENT_3930));
         controleerDatum(
-            ingangsdatumVerblijfstitel,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3930));
+                ingangsdatumVerblijfstitel,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3930));
     }
 
 }

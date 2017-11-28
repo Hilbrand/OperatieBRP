@@ -26,13 +26,16 @@ public class SingleTest extends LeveringMutatieberichtTestConfiguratie {
 
     @Override
     public FilenameFilter getThemaFilter() {
-        return DirectoryFilters.notEndsWith("NOK", "NO TEST");
+        final FilenameFilter startsWith = new CompositeFilter(Type.OR, DirectoryFilters.startsWith(""));
+        final FilenameFilter notEndsWith = DirectoryFilters.notEndsWith("NO TEST");
+
+        return new CompositeFilter(Type.AND, startsWith, notEndsWith);
     }
 
     @Override
     public FilenameFilter getCasusFilter() {
-        final FilenameFilter startsWith = DirectoryFilters.startsWith("uc1001-Gv01-08C70T0");
-        final FilenameFilter notEndsWith = DirectoryFilters.notEndsWith("NOK", "NO TEST");
+        final FilenameFilter startsWith = new CompositeFilter(Type.OR, DirectoryFilters.startsWith(""));
+        final FilenameFilter notEndsWith = DirectoryFilters.notEndsWith("NO TEST");
 
         return new CompositeFilter(Type.AND, startsWith, notEndsWith);
     }

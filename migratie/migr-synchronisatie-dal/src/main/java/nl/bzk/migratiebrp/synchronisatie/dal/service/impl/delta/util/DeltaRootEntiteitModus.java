@@ -6,42 +6,40 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit;
 
 /**
  * Enumeratie met daarin de modi waarin de vergelijker of verwerker kan werken.
  */
 public enum DeltaRootEntiteitModus {
     /**
-     * Modus voor als de {@link DeltaRootEntiteit} een {@link Persoon} is.
+     * Modus voor als de {@link RootEntiteit} een {@link Persoon} is.
      */
     PERSOON,
     /**
-     * Modus voor als de {@link DeltaRootEntiteit} een {@link Relatie} is.
+     * Modus voor als de {@link RootEntiteit} een {@link Relatie} is.
      */
     RELATIE,
     /**
-     * Modus voor als de {@link DeltaRootEntiteit} een {@link Betrokkenheid} is.
+     * Modus voor als de {@link RootEntiteit} een {@link Betrokkenheid} is.
      */
     BETROKKENHEID;
 
     /**
      * Bepaalt de modus adhv de meegegeven deltaRootEntiteit.
-     * 
-     * @param deltaRootEntiteit
-     *            de entiteit die de modus bepaald
+     * @param rootEntiteit de entiteit die de modus bepaald
      * @return de modus die bij de betreffende entiteit hoort.
      */
-    public static DeltaRootEntiteitModus bepaalModus(final DeltaRootEntiteit deltaRootEntiteit) {
+    public static DeltaRootEntiteitModus bepaalModus(final RootEntiteit rootEntiteit) {
         final DeltaRootEntiteitModus modus;
-        if (deltaRootEntiteit instanceof Persoon) {
+        if (rootEntiteit instanceof Persoon) {
             modus = PERSOON;
-        } else if (deltaRootEntiteit instanceof Relatie) {
+        } else if (rootEntiteit instanceof Relatie) {
             modus = RELATIE;
-        } else if (deltaRootEntiteit instanceof Betrokkenheid) {
+        } else if (rootEntiteit instanceof Betrokkenheid) {
             modus = BETROKKENHEID;
         } else {
             throw new IllegalStateException("Onbekende delta root entiteit aangeboden. Kan geen modus aanwijzen");

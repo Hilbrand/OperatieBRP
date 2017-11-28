@@ -9,35 +9,31 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpRelatie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 public class BrpPersoonslijstRelatieMapperTest extends BrpAbstractTest {
 
-    private final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(new ArrayList<Onderzoek>());
+    private final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(new ArrayList<>());
 
     @Inject
     private BrpPersoonslijstMapper mapper;
@@ -88,7 +84,7 @@ public class BrpPersoonslijstRelatieMapperTest extends BrpAbstractTest {
         return relatie;
     }
 
-    private Persoon maakPersoon(final int id) {
+    private Persoon maakPersoon(final long id) {
         final Persoon result = new Persoon(SoortPersoon.INGESCHREVENE);
         result.setId(id);
 
@@ -109,15 +105,15 @@ public class BrpPersoonslijstRelatieMapperTest extends BrpAbstractTest {
         result.setId(persoon.getId());
         result.setPersoon(persoon);
 
-        final Partij partij = new Partij("naam", 1);
+        final Partij partij = new Partij("naam", "000001");
         final AdministratieveHandeling administratieveHandeling =
-                new AdministratieveHandeling(partij, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
+                new AdministratieveHandeling(partij, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL, new Timestamp(System.currentTimeMillis()));
         final Timestamp timestamp = timestamp("20000101000000");
 
         final BRPActie actie = new BRPActie(SoortActie.CONVERSIE_GBA, administratieveHandeling, partij, timestamp);
-        actie.setId(1l);
+        actie.setId(1L);
 
-        final BetrokkenheidOuderHistorie betrokkenheidOuderHistorie = new BetrokkenheidOuderHistorie(result, true);
+        final BetrokkenheidOuderHistorie betrokkenheidOuderHistorie = new BetrokkenheidOuderHistorie(result);
         betrokkenheidOuderHistorie.setDatumTijdRegistratie(timestamp);
         betrokkenheidOuderHistorie.setActieInhoud(actie);
 

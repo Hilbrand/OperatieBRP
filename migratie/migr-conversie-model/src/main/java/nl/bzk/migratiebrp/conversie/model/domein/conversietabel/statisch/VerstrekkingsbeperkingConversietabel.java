@@ -14,6 +14,8 @@ import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
  */
 public final class VerstrekkingsbeperkingConversietabel implements Conversietabel<Integer, BrpProtocolleringsniveauCode> {
 
+    public static final int INT_2 = 2;
+
     @Override
     public BrpProtocolleringsniveauCode converteerNaarBrp(final Integer input) {
         if (input == null) {
@@ -26,7 +28,7 @@ public final class VerstrekkingsbeperkingConversietabel implements Conversietabe
             case 1:
                 result = BrpProtocolleringsniveauCode.GEEN_BEPERKINGEN;
                 break;
-            case 2:
+            case INT_2:
                 result = BrpProtocolleringsniveauCode.GEHEIM;
                 break;
             default:
@@ -46,7 +48,7 @@ public final class VerstrekkingsbeperkingConversietabel implements Conversietabe
 
     @Override
     public boolean valideerLo3(final Integer input) {
-        return input == null || input >= 0 && input <= 2;
+        return input == null || input >= 0 && input <= INT_2;
     }
 
     @Override

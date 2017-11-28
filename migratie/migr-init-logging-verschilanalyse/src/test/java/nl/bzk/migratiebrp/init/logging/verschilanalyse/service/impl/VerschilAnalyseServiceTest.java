@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:synchronisatie-logging-beans-test.xml" })
+@ContextConfiguration(locations = {"classpath:synchronisatie-logging-beans-test.xml"})
 public class VerschilAnalyseServiceTest {
 
     private static final String DATA_FOLDER_NAME = "data/";
@@ -64,7 +64,7 @@ public class VerschilAnalyseServiceTest {
 
     @Test
     public void testGeenBrpLo3Bericht() {
-        final InitVullingLog log = maakBasisInitVullingLog(2102970797L);
+        final InitVullingLog log = maakBasisInitVullingLog("2102970797");
         log.setLo3Bericht("dummy_bericht");
         verschilAnalyseService.bepaalVerschillen(log);
         assertTrue(log.getVerschilAnalyseRegels().isEmpty());
@@ -72,14 +72,14 @@ public class VerschilAnalyseServiceTest {
 
     @Test
     public void testGeenLo3EnBrpLo3Bericht() {
-        final InitVullingLog log = maakBasisInitVullingLog(7696126369L);
+        final InitVullingLog log = maakBasisInitVullingLog("7696126369");
         verschilAnalyseService.bepaalVerschillen(log);
         assertTrue(log.getVerschilAnalyseRegels().isEmpty());
     }
 
     @Test
     public void testGeenLo3Bericht() {
-        final InitVullingLog log = maakBasisInitVullingLog(7696126369L);
+        final InitVullingLog log = maakBasisInitVullingLog("7696126369");
         log.setBerichtNaTerugConversie("dummy_bericht");
         verschilAnalyseService.bepaalVerschillen(log);
         assertTrue(log.getVerschilAnalyseRegels().isEmpty());
@@ -87,7 +87,7 @@ public class VerschilAnalyseServiceTest {
 
     @Test
     public void testFoutInLo3Bericht() {
-        final InitVullingLog log = maakBasisInitVullingLog(7696126369L);
+        final InitVullingLog log = maakBasisInitVullingLog("7696126369");
         log.setLo3Bericht("dummy_bericht");
         log.setBerichtNaTerugConversie("dummy_bericht");
         verschilAnalyseService.bepaalVerschillen(log);
@@ -109,7 +109,7 @@ public class VerschilAnalyseServiceTest {
 
                 final String brpLo3Xml = frl.getInputBrpLo3File();
 
-                final InitVullingLog log = maakBasisInitVullingLog(aNr);
+                final InitVullingLog log = maakBasisInitVullingLog(Long.toString(aNr));
                 log.setLo3Bericht(frl.getInputLo3());
                 log.setBerichtNaTerugConversie(brpLo3Xml);
                 verschilAnalyseService.bepaalVerschillen(log);
@@ -153,12 +153,12 @@ public class VerschilAnalyseServiceTest {
         }
     }
 
-    private InitVullingLog maakBasisInitVullingLog(final long aNr) {
+    private InitVullingLog maakBasisInitVullingLog(final String aNr) {
         final InitVullingLog log = new InitVullingLog();
         final Date now = new Date();
         log.setAnummer(aNr);
         log.setBerichtId(1024);
-        log.setBerichtType(1111);
+        log.setBerichtType("Lg01");
         log.setDatumTijdOpnameGbav(now);
         log.setGemeenteVanInschrijving("1904");
         log.setPlId(112);

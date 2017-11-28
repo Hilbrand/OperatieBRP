@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [nationaliteiten], [nationaliteit])
+GEWIJZIGD(oud, nieuw, [Persoon.Nationaliteit.NationaliteitCode])

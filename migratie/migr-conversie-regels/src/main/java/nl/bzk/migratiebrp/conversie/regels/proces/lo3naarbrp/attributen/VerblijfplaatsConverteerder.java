@@ -8,129 +8,156 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.Definitie;
 import nl.bzk.migratiebrp.conversie.model.Definities;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortAdresCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortMigratieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpMigratieInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnverwerktDocumentAanwezigIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerblijfplaatsInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Deze service levert de functionaliteit om de LO3 categorie inhoud Verblijfplaats naar BRP inhoud te converteren.
- *
  */
-@Component
-@Requirement({Requirements.CCA08, Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB03, Requirements.CCA08_LB04 })
-public class VerblijfplaatsConverteerder extends AbstractConverteerder {
-    @Inject
-    private Lo3AttribuutConverteerder converteerder;
+@Requirement({Requirements.CCA08, Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB03, Requirements.CCA08_LB04})
+public class VerblijfplaatsConverteerder extends Converteerder {
+
+    /**
+     * Constructor.
+     * @param lo3AttribuutConverteerder Lo3AttribuutConverteerder
+     */
+    public VerblijfplaatsConverteerder(final Lo3AttribuutConverteerder lo3AttribuutConverteerder) {
+        super(lo3AttribuutConverteerder);
+    }
 
     /**
      * Converteer de verblijfplaats. Alle voorkomens wordt eerst gesorteerd van oud naar nieuw op basis van 85.10.
-     *
-     * @param verblijfplaatsStapel
-     *            de LO3 verblijfplaats stapel
-     * @param tussenPersoonslijstBuilder
-     *            migratie persoonlijst builder
-     * @throws NullPointerException
-     *             als verblijfplaatsStapel of tussenPersoonslijstBuilder null is
+     * @param verblijfplaatsStapel de LO3 verblijfplaats stapel
+     * @param tussenPersoonslijstBuilder migratie persoonlijst builder
+     * @throws NullPointerException als verblijfplaatsStapel of tussenPersoonslijstBuilder null is
      */
-    public final void converteer(final Lo3Stapel<Lo3VerblijfplaatsInhoud> verblijfplaatsStapel, final TussenPersoonslijstBuilder tussenPersoonslijstBuilder)
-    {
+    public final void converteer(final Lo3Stapel<Lo3VerblijfplaatsInhoud> verblijfplaatsStapel, final TussenPersoonslijstBuilder tussenPersoonslijstBuilder) {
         if (tussenPersoonslijstBuilder == null) {
             throw new NullPointerException("tussenPersoonslijstBuilder mag niet null zijn.");
         }
 
         final List<Lo3Categorie<Lo3VerblijfplaatsInhoud>> voorkomens = verblijfplaatsStapel.getCategorieen();
         // Sorteer eerst op 85.10 van oud naar nieuw.
-        Collections.sort(voorkomens, new IngangsdatumGeldigheidComparator());
+        voorkomens.sort(new IngangsdatumGeldigheidComparator());
 
-        // Deze LO3 stapel converteert naar 2 stapels in het BRP model
+        // Deze LO3 stapel converteert naar 3 stapels in het BRP model
         final List<TussenGroep<BrpAdresInhoud>> tussenAdresList = new ArrayList<>();
         final List<TussenGroep<BrpMigratieInhoud>> tussenMigratieList = new ArrayList<>();
+        final List<TussenGroep<BrpOnverwerktDocumentAanwezigIndicatieInhoud>> onverwerktDocumentAanwezigIndicatieGroepen = new ArrayList<>();
 
         TussenGroep<BrpMigratieInhoud> oudsteVoorkomenInSetje = null;
         for (final Lo3Categorie<Lo3VerblijfplaatsInhoud> voorkomen : voorkomens) {
-            tussenAdresList.add(converteerAdres(voorkomen));
-
-            final TussenGroep<BrpMigratieInhoud> tussenMigratieGroep = converteerMigratieInhoud(voorkomen);
-            // - tussenMigratieGroep is null -> geen immigratie of emigratie
-            // - tussenMigratieGroep is niet null -> wel immigratie of emigratie.
-            // Indien soort migratie IMMIGRATIE: gelijk toevoegen en evt. oudsteVoorkomenInSetje toevoegen
-            // Indien soort migratie EMIGRATIE: Eerst verwerkt voorkomen is het oudst, dus tijdelijk opslaan.
-            // - als tussenMigratieGroep weer null wordt (wat niet zou mogen in Lo3) of van soort migratie wisselt,
-            // tijdelijk opgeslagen tussengroep toevoegen aan de lijst.
-
-            // Als de tussen migratie lijst nog leeg is en de groep is leeg, niet toevoegen.
-            // Als de lijst niet leeg is, altijd toevoegen
-
-            if (tussenMigratieGroep.isInhoudelijkLeeg()) {
-                // Lege rij. Alleen toevoegen als er al een (immigratie)groep is toegevoegd. Als er nog geen groepen
-                // zijn toegevoegd, controleren of er emigratie groepen zijn gevonden. Dan deze toevoegen + de lege rij.
-
-                if (!tussenMigratieList.isEmpty() || oudsteVoorkomenInSetje != null) {
-                    oudsteVoorkomenInSetje = voegEmigratieToe(tussenMigratieList, oudsteVoorkomenInSetje);
-                    tussenMigratieList.add(tussenMigratieGroep);
-                }
-            } else {
-                if (BrpSoortMigratieCode.IMMIGRATIE.equals(tussenMigratieGroep.getInhoud().getSoortMigratieCode())) {
-                    oudsteVoorkomenInSetje = voegEmigratieToe(tussenMigratieList, oudsteVoorkomenInSetje);
-                    tussenMigratieList.add(tussenMigratieGroep);
-                } else {
-                    if (oudsteVoorkomenInSetje == null && !voorkomen.getHistorie().isOnjuist()) {
-                        oudsteVoorkomenInSetje = tussenMigratieGroep;
-                    }
-                }
-            }
+            oudsteVoorkomenInSetje =
+                    getBrpMigratieInhoudTussenGroep(tussenAdresList, tussenMigratieList, onverwerktDocumentAanwezigIndicatieGroepen, oudsteVoorkomenInSetje,
+                            voorkomen);
         }
 
         voegEmigratieToe(tussenMigratieList, oudsteVoorkomenInSetje);
 
         tussenPersoonslijstBuilder.adresStapel(new TussenStapel<>(tussenAdresList));
+        if (!getUtils().isLijstMetAlleenLegeInhoud(onverwerktDocumentAanwezigIndicatieGroepen)) {
+            tussenPersoonslijstBuilder.onverwerktDocumentAanwezigIndicatieStapel(new TussenStapel<>(onverwerktDocumentAanwezigIndicatieGroepen));
+        }
         if (!getUtils().isLijstMetAlleenLegeInhoud(tussenMigratieList)) {
             tussenPersoonslijstBuilder.migratieStapel(new TussenStapel<>(tussenMigratieList));
         }
     }
 
+    private TussenGroep<BrpMigratieInhoud> getBrpMigratieInhoudTussenGroep(final List<TussenGroep<BrpAdresInhoud>> tussenAdresList,
+                                                                           final List<TussenGroep<BrpMigratieInhoud>> tussenMigratieList,
+                                                                           final List<TussenGroep<BrpOnverwerktDocumentAanwezigIndicatieInhoud>>
+                                                                                   onverwerktDocumentAanwezigIndicatieGroepen,
+                                                                           TussenGroep<BrpMigratieInhoud> vorigeOudsteVoorkomenInSetje,
+                                                                           final Lo3Categorie<Lo3VerblijfplaatsInhoud> voorkomen) {
+        TussenGroep<BrpMigratieInhoud> oudsteVoorkomenInSetje = vorigeOudsteVoorkomenInSetje;
+        converteerOnverwerktDocumentAanwezig(onverwerktDocumentAanwezigIndicatieGroepen, voorkomen);
+        tussenAdresList.add(converteerAdres(voorkomen));
+
+        final TussenGroep<BrpMigratieInhoud> tussenMigratieGroep = converteerMigratieInhoud(voorkomen);
+        // - tussenMigratieGroep is null -> geen immigratie of emigratie
+        // - tussenMigratieGroep is niet null -> wel immigratie of emigratie.
+        // Indien soort migratie IMMIGRATIE: gelijk toevoegen en evt. oudsteVoorkomenInSetje toevoegen
+        // Indien soort migratie EMIGRATIE: Eerst verwerkt voorkomen is het oudst, dus tijdelijk opslaan.
+        // - als tussenMigratieGroep weer null wordt (wat niet zou mogen in Lo3) of van soort migratie wisselt,
+        // tijdelijk opgeslagen tussengroep toevoegen aan de lijst.
+
+        // Als de tussen migratie lijst nog leeg is en de groep is leeg, niet toevoegen.
+        // Als de lijst niet leeg is, altijd toevoegen
+
+        if (tussenMigratieGroep.isInhoudelijkLeeg()) {
+            // Lege rij. Alleen toevoegen als er al een (immigratie)groep is toegevoegd. Als er nog geen groepen
+            // zijn toegevoegd, controleren of er emigratie groepen zijn gevonden. Dan deze toevoegen + de lege rij.
+
+            if (!tussenMigratieList.isEmpty() || oudsteVoorkomenInSetje != null) {
+                oudsteVoorkomenInSetje = voegEmigratieToe(tussenMigratieList, oudsteVoorkomenInSetje);
+                tussenMigratieList.add(tussenMigratieGroep);
+            }
+        } else {
+            if (BrpSoortMigratieCode.IMMIGRATIE.equals(tussenMigratieGroep.getInhoud().getSoortMigratieCode())) {
+                oudsteVoorkomenInSetje = voegEmigratieToe(tussenMigratieList, oudsteVoorkomenInSetje);
+                tussenMigratieList.add(tussenMigratieGroep);
+            } else {
+                if (oudsteVoorkomenInSetje == null && !voorkomen.getHistorie().isOnjuist()) {
+                    oudsteVoorkomenInSetje = tussenMigratieGroep;
+                }
+            }
+        }
+        return oudsteVoorkomenInSetje;
+    }
+
     private TussenGroep<BrpMigratieInhoud> voegEmigratieToe(
-        final List<TussenGroep<BrpMigratieInhoud>> tussenMigratieList,
-        final TussenGroep<BrpMigratieInhoud> oudsteVoorkomenInSetje)
-    {
+            final List<TussenGroep<BrpMigratieInhoud>> tussenMigratieList,
+            final TussenGroep<BrpMigratieInhoud> oudsteVoorkomenInSetje) {
         if (oudsteVoorkomenInSetje != null) {
             tussenMigratieList.add(oudsteVoorkomenInSetje);
         }
         return null;
     }
 
-    @Definitie({Definities.DEF021, Definities.DEF022, Definities.DEF033, Definities.DEF034 })
-    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB03, Requirements.CCA08_LB04 })
+    private void converteerOnverwerktDocumentAanwezig(
+            final List<TussenGroep<BrpOnverwerktDocumentAanwezigIndicatieInhoud>> collectie,
+            final Lo3Categorie<Lo3VerblijfplaatsInhoud> voorkomen) {
+        final BrpBoolean indicatieOnverwerktDocument = getLo3AttribuutConverteerder().converteerIndicatieDocument(voorkomen.getInhoud().getIndicatieDocument());
+
+        final BrpOnverwerktDocumentAanwezigIndicatieInhoud indicatieInhoud;
+        if (indicatieOnverwerktDocument.getWaarde()) {
+            indicatieInhoud = new BrpOnverwerktDocumentAanwezigIndicatieInhoud(indicatieOnverwerktDocument, null, null);
+        } else {
+            indicatieInhoud = new BrpOnverwerktDocumentAanwezigIndicatieInhoud(null, null, null);
+        }
+        collectie.add(new TussenGroep<>(indicatieInhoud, voorkomen.getHistorie(), voorkomen.getDocumentatie(), voorkomen.getLo3Herkomst()));
+    }
+
+    @Definitie({Definities.DEF021, Definities.DEF022, Definities.DEF033, Definities.DEF034})
+    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB03, Requirements.CCA08_LB04})
     private TussenGroep<BrpAdresInhoud> converteerAdres(final Lo3Categorie<Lo3VerblijfplaatsInhoud> voorkomen) {
+        final Lo3AttribuutConverteerder converteerder = getLo3AttribuutConverteerder();
         final Lo3VerblijfplaatsInhoud lo3Inhoud = voorkomen.getInhoud();
 
         // ORANJE-1213 Zet alleen adres op Nederland als er niet ook iets anders is opgegeven
         // (ook al is dat niet conform Lo3)
         final BrpLandOfGebiedCode landOfGebiedCode;
-        if (lo3Inhoud.isNederlandsAdres() && !Validatie.isElementGevuld(lo3Inhoud.getLandAdresBuitenland())) {
+        if (lo3Inhoud.isNederlandsAdres() && !Lo3Validatie.isElementGevuld(lo3Inhoud.getLandAdresBuitenland())) {
             landOfGebiedCode = BrpLandOfGebiedCode.NEDERLAND;
         } else {
             landOfGebiedCode = converteerder.converteerLo3LandCode(lo3Inhoud.getLandAdresBuitenland());
@@ -163,6 +190,7 @@ public class VerblijfplaatsConverteerder extends AbstractConverteerder {
     }
 
     private BrpAdresInhoud.Builder converteerNederlandsAdres(final Lo3VerblijfplaatsInhoud lo3Inhoud, final BrpLandOfGebiedCode landOfGebiedCode) {
+        final Lo3AttribuutConverteerder converteerder = getLo3AttribuutConverteerder();
         final BrpAdresInhoud.Builder adresBuilder = new BrpAdresInhoud.Builder(converteerder.converteerLo3FunctieAdres(lo3Inhoud.getFunctieAdres()));
         adresBuilder.datumAanvangAdreshouding(converteerder.converteerDatum(lo3Inhoud.getAanvangAdreshouding()));
 
@@ -194,11 +222,8 @@ public class VerblijfplaatsConverteerder extends AbstractConverteerder {
     /**
      * Converteert de historie. Voor Emigratie wordt de historie voor zowel de Migratiestapel als Adresstapel aangepast.
      * Bij Immigratie alleen de Migratiestapel.
-     *
-     * @param voorkomen
-     *            voorkomen met historie
-     * @param isMigratieHistorie
-     *            true als het voor de BRP Migratie stapel wordt geconverteerd.
+     * @param voorkomen voorkomen met historie
+     * @param isMigratieHistorie true als het voor de BRP Migratie stapel wordt geconverteerd.
      * @return lo3 historie
      */
     private Lo3Historie converteerHistorie(final Lo3Categorie<Lo3VerblijfplaatsInhoud> voorkomen, final boolean isMigratieHistorie) {
@@ -207,16 +232,17 @@ public class VerblijfplaatsConverteerder extends AbstractConverteerder {
         Lo3Historie historie = oudeHistorie;
 
         if (lo3Inhoud.isEmigratie()) {
-            historie = Lo3Historie.build(oudeHistorie.getIndicatieOnjuist(), lo3Inhoud.getDatumVertrekUitNederland(), oudeHistorie.getDatumVanOpneming());
+            historie = new Lo3Historie(oudeHistorie.getIndicatieOnjuist(), lo3Inhoud.getDatumVertrekUitNederland(), oudeHistorie.getDatumVanOpneming());
         } else if (isMigratieHistorie && lo3Inhoud.isImmigratie()) {
-            historie = Lo3Historie.build(oudeHistorie.getIndicatieOnjuist(), lo3Inhoud.getVestigingInNederland(), oudeHistorie.getDatumVanOpneming());
+            historie = new Lo3Historie(oudeHistorie.getIndicatieOnjuist(), lo3Inhoud.getVestigingInNederland(), oudeHistorie.getDatumVanOpneming());
         }
         return historie;
     }
 
-    @Definitie({Definities.DEF033, Definities.DEF034 })
-    @Requirement({Requirements.CCA08_LB03, Requirements.CCA08_LB04 })
+    @Definitie({Definities.DEF033, Definities.DEF034})
+    @Requirement({Requirements.CCA08_LB03, Requirements.CCA08_LB04})
     private TussenGroep<BrpMigratieInhoud> converteerMigratieInhoud(final Lo3Categorie<Lo3VerblijfplaatsInhoud> voorkomen) {
+        final Lo3AttribuutConverteerder converteerder = getLo3AttribuutConverteerder();
         final Lo3VerblijfplaatsInhoud lo3Inhoud = voorkomen.getInhoud();
         // Opties: of 13, of 14 of niets
         final BrpMigratieInhoud.Builder migratieBuilder;
@@ -224,9 +250,7 @@ public class VerblijfplaatsConverteerder extends AbstractConverteerder {
             migratieBuilder = new BrpMigratieInhoud.Builder(null, null);
         } else if (lo3Inhoud.isImmigratie()) {
             migratieBuilder =
-                    new BrpMigratieInhoud.Builder(
-                        BrpSoortMigratieCode.IMMIGRATIE,
-                        converteerder.converteerLo3LandCode(lo3Inhoud.getLandVanwaarIngeschreven()));
+                    new BrpMigratieInhoud.Builder(BrpSoortMigratieCode.IMMIGRATIE, converteerder.converteerLo3LandCode(lo3Inhoud.getLandVanwaarIngeschreven()));
         } else {
             migratieBuilder =
                     new BrpMigratieInhoud.Builder(BrpSoortMigratieCode.EMIGRATIE, converteerder.converteerLo3LandCode(lo3Inhoud.getLandAdresBuitenland()));
@@ -240,10 +264,11 @@ public class VerblijfplaatsConverteerder extends AbstractConverteerder {
                 migratieBuilder.buitenlandsAdresRegel2(converteerder.converteerString(lo3Inhoud.getAdresBuitenland2()));
                 migratieBuilder.buitenlandsAdresRegel3(converteerder.converteerString(lo3Inhoud.getAdresBuitenland3()));
             }
+            migratieBuilder.redenWijzigingMigratieCode(
+                    converteerder.converteerLo3AangifteAdreshoudingNaarBrpRedenWijziging(lo3Inhoud.getAangifteAdreshouding()));
+            migratieBuilder.aangeverMigratieCode(
+                    converteerder.converteerLo3AangifteAdreshoudingNaarBrpAangeverAdreshouding(lo3Inhoud.getAangifteAdreshouding()));
         }
-
-        migratieBuilder.redenWijzigingMigratieCode(converteerder.converteerLo3AangifteAdreshoudingNaarBrpRedenWijziging(lo3Inhoud.getAangifteAdreshouding()));
-        migratieBuilder.aangeverMigratieCode(converteerder.converteerLo3AangifteAdreshoudingNaarBrpAangeverAdreshouding(lo3Inhoud.getAangifteAdreshouding()));
 
         return new TussenGroep<>(migratieBuilder.build(), converteerHistorie(voorkomen, true), voorkomen.getDocumentatie(), voorkomen.getLo3Herkomst());
     }

@@ -9,24 +9,20 @@ package nl.bzk.brp.gba.dataaccess;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
-import nl.bzk.brp.model.algemeen.stamgegeven.autaut.Dienstbundel;
+import nl.bzk.algemeenbrp.test.dal.DBUnit;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class Lo3FilterRubriekRepositoryTest extends AbstractIntegratieTest {
 
     @Autowired
     private Lo3FilterRubriekRepository lo3FilterRubriekRepository;
 
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
     @Test
-    public final void haalLo3FilterRubriekenVoorDienstbundel() {
-        final Dienstbundel dienstbundel = new Dienstbundel() {
-        };
-        ReflectionTestUtils.setField(dienstbundel, "iD", 1);
-
-        final List<String> rubrieken = lo3FilterRubriekRepository.haalLo3FilterRubriekenVoorDienstbundel(dienstbundel);
+    public final void haalLo3FilterRubriekenVoorDienstbundelOpId() {
+        final List<String> rubrieken = lo3FilterRubriekRepository.haalLo3FilterRubriekenVoorDienstbundel(1);
         assertThat(rubrieken.size(), CoreMatchers.is(5));
     }
 }

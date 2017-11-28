@@ -13,7 +13,7 @@
 		<brp:bronnen>
 			<brp:bron brp:objecttype="ActieBron" brp:communicatieID="identificatie03B">
 				<brp:document brp:objecttype="Document" brp:communicatieID="Document1">
-					<brp:soortNaam>Aangifte met betrekking tot verblijfplaats</brp:soortNaam>
+					<brp:soortNaam>Aangifte verblijfplaats</brp:soortNaam>
 					<brp:identificatie>123</brp:identificatie>
 					<brp:aktenummer>4567890</brp:aktenummer>
 					<brp:partijCode>059901</brp:partijCode>

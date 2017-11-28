@@ -13,38 +13,26 @@ public interface FoutenDao {
 
     /**
      * Registreer een fout.
-     * 
-     * @param foutcode
-     *            foutcode
-     * @param foutmelding
-     *            melding
-     * @param proces
-     *            proces
-     * @param processId
-     *            process instance id
-     * @param bronGemeente
-     *            bron gemeente
-     * @param doelGemeente
-     *            doel gemeente
+     * @param foutcode foutcode
+     * @param foutmelding melding
+     * @param proces proces
+     * @param processId process instance id
+     * @param bronPartijCode bron gemeente
+     * @param doelPartijCode doel gemeente
      * @return id
      */
-    long registreerFout(String foutcode, String foutmelding, String proces, long processId, String bronGemeente, String doelGemeente);
+    long registreerFout(String foutcode, String foutmelding, String proces, long processId, String bronPartijCode, String doelPartijCode);
 
     /**
      * Voeg de beheerders actie toe aan een fout registratie.
-     * 
-     * @param id
-     *            id
-     * @param resolutie
-     *            beheerders actie
+     * @param id id
+     * @param resolutie beheerders actie
      */
     void voegResolutieToe(long id, String resolutie);
 
     /**
      * Haalt op basis van het foutid de foutcode op die is opgeslagen bij een fout.
-     * 
-     * @param foutId
-     *            Het id van de fout waarvoor de foutcode wordt opgehaald.
+     * @param foutId Het id van de fout waarvoor de foutcode wordt opgehaald.
      * @return De foutcode behorend bij de fout waarvan het id is meegegeven.
      */
     String haalFoutcodeOp(long foutId);

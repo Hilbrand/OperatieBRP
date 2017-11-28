@@ -8,7 +8,8 @@ package nl.bzk.migratiebrp.isc.jbpm.uc301;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ib01Bericht;
@@ -16,8 +17,6 @@ import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ii01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,8 +29,15 @@ public final class MaakIb01Action implements SpringAction {
 
     private static final String IB01_BERICHT = "ib01Bericht";
 
-    @Inject
-    private BerichtenDao berichtenDao;
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
+    protected MaakIb01Action(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -52,8 +58,8 @@ public final class MaakIb01Action implements SpringAction {
         }
 
         final Ii01Bericht ii01Bericht = (Ii01Bericht) berichtenDao.leesBericht((Long) parameters.get("input"));
-        ib01Bericht.setBronGemeente(ii01Bericht.getDoelGemeente());
-        ib01Bericht.setDoelGemeente(ii01Bericht.getBronGemeente());
+        ib01Bericht.setBronPartijCode(ii01Bericht.getDoelPartijCode());
+        ib01Bericht.setDoelPartijCode(ii01Bericht.getBronPartijCode());
         ib01Bericht.setCorrelationId(ii01Bericht.getMessageId());
 
         final Map<String, Object> result = new HashMap<>();

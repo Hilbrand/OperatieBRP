@@ -6,22 +6,29 @@
     <parent>
         <groupId>nl.bzk.brp.relateren</groupId>
         <artifactId>brp-relateren</artifactId>
-        <version>96-SNAPSHOT</version>
+        <version>145.3</version>
     </parent>
 
-    <artifactId>relateren-business</artifactId>
-    <version>96-SNAPSHOT</version>
+    <artifactId>brp-relateren-business</artifactId>
+    <packaging>jar</packaging>
+
+    <name>BRP Relateren - Business</name>
 
     <dependencies>
         <dependency>
-            <artifactId>brp-algemeen-util-logging</artifactId>
-            <groupId>nl.bzk.brp.algemeen.util</groupId>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-util-common</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
     </dependencies>
-    
+
 </project>

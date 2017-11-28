@@ -7,12 +7,14 @@
 package nl.bzk.migratiebrp.isc.runtime.service;
 
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.JbpmService;
 import nl.bzk.migratiebrp.isc.runtime.message.Acties;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -43,21 +45,21 @@ public final class ControleerMsSequenceNumberAction implements Action {
             berichtenDao.updateActie(message.getBerichtId(), Acties.ACTIE_FOUTAFHANDELING_GESTART);
             final Long processInstanceId =
                     jbpmService.startFoutmeldingProces(
-                        message.getBericht(),
-                        message.getBerichtId(),
-                        message.getRecipient(),
-                        message.getOriginator(),
-                        "esb.mssequencenumber.leeg",
-                        "Geen MSSequenceNumber ontvangen",
-                        true,
-                        true);
+                            message.getBericht(),
+                            message.getBerichtId(),
+                            message.getRecipient(),
+                            message.getOriginator(),
+                            "esb.mssequencenumber.leeg",
+                            "Geen MSSequenceNumber ontvangen",
+                            true,
+                            true);
             berichtenDao.updateProcessInstance(message.getBerichtId(), processInstanceId);
             return false;
         }
 
         final List<nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht> berichten =
                 berichtenDao.zoekOpMsSequenceNumberBehalveId(msSequenceNumber, message.getBerichtId());
-        if (berichten.size() > 0) {
+        if (!berichten.isEmpty()) {
             final String originator = message.getOriginator();
             final String messageId = message.getMessageId();
             final String berichtType = message.getBerichtType();
@@ -65,22 +67,21 @@ public final class ControleerMsSequenceNumberAction implements Action {
             // Controleer dat alle gevonden berichten dezelfde afzender, msgid en berichttype hebben.
             for (final nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht bericht : berichten) {
                 if (!isEqual(originator, bericht.getVerzendendePartij())
-                    || !isEqual(messageId, bericht.getMessageId())
-                    || !isEqual(berichtType, bericht.getNaam()))
-                {
+                        || !isEqual(messageId, bericht.getMessageId())
+                        || !isEqual(berichtType, bericht.getNaam())) {
                     LOG.info("[Bericht: {}]: Alarm obv mssequencenumber", message.getBerichtId());
                     // Alarm
                     berichtenDao.updateActie(message.getBerichtId(), Acties.ACTIE_FOUTAFHANDELING_GESTART);
                     final Long processInstanceId =
                             jbpmService.startFoutmeldingProces(
-                                message.getBericht(),
-                                message.getBerichtId(),
-                                message.getRecipient(),
-                                message.getOriginator(),
-                                "esb.mssequencenumber.fout",
-                                "MSSequenceNumber ontvangen wat al " + "ontvangen is met andere originator, message-id of berichttype",
-                                true,
-                                true);
+                                    message.getBericht(),
+                                    message.getBerichtId(),
+                                    message.getRecipient(),
+                                    message.getOriginator(),
+                                    "esb.mssequencenumber.fout",
+                                    "MSSequenceNumber ontvangen wat al " + "ontvangen is met andere originator, message-id of berichttype",
+                                    true,
+                                    true);
                     berichtenDao.updateProcessInstance(message.getBerichtId(), processInstanceId);
                     return false;
                 }

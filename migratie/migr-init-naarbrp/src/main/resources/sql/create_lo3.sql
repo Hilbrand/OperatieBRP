@@ -20,6 +20,13 @@ alter table SPG_mailbox add
     constraint SPG_mailbox_pl primary key (spg_mailbox_instantie);
 create unique index SPG_mailbox_nr on SPG_mailbox (spg_mailbox_nummer);
 
+insert into spg_mailbox(spg_mailbox_instantie, spg_mailbox_nummer) values (1, '3000200');
+insert into spg_mailbox(spg_mailbox_instantie, spg_mailbox_nummer) values (2, '3000210');
+insert into spg_mailbox(spg_mailbox_instantie, spg_mailbox_nummer) values (3, '3000220');
+insert into spg_mailbox(spg_mailbox_instantie, spg_mailbox_nummer) values (4, '3000230');
+insert into spg_mailbox(spg_mailbox_instantie, spg_mailbox_nummer) values (5, '3000250');
+insert into spg_mailbox(spg_mailbox_instantie, spg_mailbox_nummer) values (6, '3000270');
+
 create table lo3_adres(
           adres_id                                bigint not null,
           gemeente_code                           smallint not null,

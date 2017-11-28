@@ -20,18 +20,16 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "loadBericht", description = "Pretty print a bericht.",
         attributes = {@TldAttribute(name = "bericht", description = "The bericht to pretty print.", required = true,
-                              deferredType = long.class),
-                      @TldAttribute(name = "target", description = "An EL expression into which the pretty html should be stored.",
-                              required = true, deferredType = Bericht.class) })
+                deferredType = long.class),
+                @TldAttribute(name = "target", description = "An EL expression into which the pretty html should be stored.",
+                        required = true, deferredType = Bericht.class)})
 public final class PrettyPrintBerichtHandler extends AbstractHandler {
     private final TagAttribute berichtTagAttribute;
     private final TagAttribute targetTagAttribute;
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public PrettyPrintBerichtHandler(final TagConfig config) {
         super(config);
@@ -42,8 +40,8 @@ public final class PrettyPrintBerichtHandler extends AbstractHandler {
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new PrettyPrintBerichtActionListener(getValueExpression(berichtTagAttribute, ctx, Bericht.class), getValueExpression(
-            targetTagAttribute,
-            ctx,
-            String.class));
+                targetTagAttribute,
+                ctx,
+                String.class));
     }
 }

@@ -6,11 +6,10 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -22,14 +21,14 @@ public final class BrpIdentificatienummersMapper extends AbstractBrpMapper<Perso
 
     @Override
     protected BrpIdentificatienummersInhoud mapInhoud(final PersoonIDHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
-        final BrpLong administratienummer =
-                BrpLong.wrap(
-                    historie.getAdministratienummer(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER, true));
-        final BrpInteger burgerservicenummer =
-                BrpInteger.wrap(
-                    historie.getBurgerservicenummer(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER, true));
+        final BrpString administratienummer =
+                BrpString.wrap(
+                        historie.getAdministratienummer(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER, true));
+        final BrpString burgerservicenummer =
+                BrpString.wrap(
+                        historie.getBurgerservicenummer(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER, true));
         return new BrpIdentificatienummersInhoud(administratienummer, burgerservicenummer);
     }
 

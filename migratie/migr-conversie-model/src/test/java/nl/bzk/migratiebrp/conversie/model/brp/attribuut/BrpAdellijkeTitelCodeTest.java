@@ -13,15 +13,14 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Test;
 
 public class BrpAdellijkeTitelCodeTest {
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testGetWaarde() throws Exception {
-        BrpAdellijkeTitelCode titel = new BrpAdellijkeTitelCode("B", null);
+        final BrpAdellijkeTitelCode titel = new BrpAdellijkeTitelCode("B", null);
         titel.setGeslachtsaanduiding(BrpGeslachtsaanduidingCode.MAN);
         assertEquals("B", titel.getWaarde());
         assertEquals("M", titel.getGeslachtsaanduiding().getWaarde());
@@ -29,13 +28,13 @@ public class BrpAdellijkeTitelCodeTest {
 
     @Test
     public void testVerwijderOnderzoekMetWaarde() throws Exception {
-        BrpAdellijkeTitelCode titel = new BrpAdellijkeTitelCode("B", onderzoek);
+        final BrpAdellijkeTitelCode titel = new BrpAdellijkeTitelCode("B", onderzoek);
         assertNotNull(titel.verwijderOnderzoek());
     }
 
     @Test
     public void testVerwijderOnderzoekZonderWaarde() throws Exception {
-        BrpAdellijkeTitelCode titel = new BrpAdellijkeTitelCode(null, onderzoek);
+        final BrpAdellijkeTitelCode titel = new BrpAdellijkeTitelCode(null, onderzoek);
         assertNull(titel.verwijderOnderzoek());
     }
 
@@ -46,14 +45,14 @@ public class BrpAdellijkeTitelCodeTest {
 
     @Test
     public void testWrapMetWaardeEnZonderOnderzoek() throws Exception {
-        BrpAdellijkeTitelCode titel = BrpAdellijkeTitelCode.wrap("B", null);
+        final BrpAdellijkeTitelCode titel = BrpAdellijkeTitelCode.wrap("B", null);
         assertNull(titel.getOnderzoek());
         assertEquals("B", titel.getWaarde());
     }
 
     @Test
     public void testWrapZonderWaardeEnMetOnderzoek() throws Exception {
-        BrpAdellijkeTitelCode titel = BrpAdellijkeTitelCode.wrap(null, onderzoek);
+        final BrpAdellijkeTitelCode titel = BrpAdellijkeTitelCode.wrap(null, onderzoek);
         assertNotNull(titel.getOnderzoek());
         assertNull(titel.getWaarde());
     }

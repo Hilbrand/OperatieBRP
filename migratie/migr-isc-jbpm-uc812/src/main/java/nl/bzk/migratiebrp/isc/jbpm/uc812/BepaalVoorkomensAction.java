@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.isc.impl.Uc811Bericht;
 import nl.bzk.migratiebrp.bericht.model.isc.impl.Uc812Bericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.NoSignal;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
 import org.springframework.stereotype.Component;
@@ -31,9 +31,13 @@ import org.springframework.stereotype.Component;
 @Component("uc812BepaalVoorkomensAction")
 public final class BepaalVoorkomensAction implements SpringAction, NoSignal {
 
-    /** Lock voor het token als de 'fork' wordt gedaan. */
+    /**
+     * Lock voor het token als de 'fork' wordt gedaan.
+     */
     public static final String LOCK = "uc812BepaalGemeentenAction";
-    /** Prefix voor de child tokens. */
+    /**
+     * Prefix voor de child tokens.
+     */
     public static final String TOKEN_PREFIX = "gemeente-";
 
     private static final Logger LOG = LoggerFactory.getLogger();
@@ -42,8 +46,16 @@ public final class BepaalVoorkomensAction implements SpringAction, NoSignal {
     private static final String NIEUWE_REGEL_MET_ENTER = "\r\n";
     private static final String NIEUWE_REGEL = "\n";
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public BepaalVoorkomensAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {

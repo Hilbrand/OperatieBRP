@@ -19,8 +19,16 @@ import org.springframework.stereotype.Component;
 @Component
 public final class SessionVirtueelProcesDao implements VirtueelProcesDao {
 
+    private final SessionFactory sessionFactory;
+
+    /**
+     * Constructor.
+     * @param sessionFactory session factory
+     */
     @Inject
-    private SessionFactory sessionFactory;
+    public SessionVirtueelProcesDao(final SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public long maak() {
@@ -42,8 +50,6 @@ public final class SessionVirtueelProcesDao implements VirtueelProcesDao {
         gerelateerd.setGegeven(gegeven);
 
         sessionFactory.getCurrentSession().persist(gerelateerd);
-
-        // virtueelProces.getGerelateerdeGegevens().add(gerelateerd);
     }
 
     @Override

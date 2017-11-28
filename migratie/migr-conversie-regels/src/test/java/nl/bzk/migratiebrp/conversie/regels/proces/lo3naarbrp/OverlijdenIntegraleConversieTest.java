@@ -55,8 +55,8 @@ public class OverlijdenIntegraleConversieTest extends AbstractConversieTest {
 
     @Test
     public void testCasus01() throws OngeldigePersoonslijstException {
-        maakLegeRij(JUIST, 20120101, 20120102);
-        maakGevuldeRij(JUIST, 20120101, 20130102);
+        maakLegeRij(JUIST, 20120102);
+        maakGevuldeRij(JUIST, 20130102);
 
         converteer();
 
@@ -65,8 +65,8 @@ public class OverlijdenIntegraleConversieTest extends AbstractConversieTest {
 
     @Test
     public void testCasus02() throws OngeldigePersoonslijstException {
-        maakLegeRij(JUIST, 20120101, 20120102);
-        maakGevuldeRij(ONJUIST, 20120101, 20130102);
+        maakLegeRij(JUIST, 20120102);
+        maakGevuldeRij(ONJUIST, 20130102);
 
         converteer();
 
@@ -75,8 +75,8 @@ public class OverlijdenIntegraleConversieTest extends AbstractConversieTest {
 
     @Test
     public void testCasus03() throws OngeldigePersoonslijstException {
-        maakGevuldeRij(JUIST, 20120101, 20120102);
-        maakLegeRij(JUIST, 20120101, 20130102);
+        maakGevuldeRij(JUIST, 20120102);
+        maakLegeRij(JUIST, 20130102);
 
         converteer();
 
@@ -85,8 +85,8 @@ public class OverlijdenIntegraleConversieTest extends AbstractConversieTest {
 
     @Test
     public void testCasus04() throws OngeldigePersoonslijstException {
-        maakGevuldeRij(JUIST, 20120101, 20120102);
-        maakLegeRij(ONJUIST, 20120101, 20130102);
+        maakGevuldeRij(JUIST, 20120102);
+        maakLegeRij(ONJUIST, 20130102);
 
         converteer();
 
@@ -95,9 +95,9 @@ public class OverlijdenIntegraleConversieTest extends AbstractConversieTest {
 
     @Test
     public void testCasus05() throws OngeldigePersoonslijstException {
-        maakLegeRij(JUIST, 20120101, 20120102);
-        maakGevuldeRij(JUIST, 20120101, 20130102);
-        maakGevuldeRij(ONJUIST, 20120101, 20110102);
+        maakLegeRij(JUIST, 20120102);
+        maakGevuldeRij(JUIST, 20130102);
+        maakGevuldeRij(ONJUIST, 20110102);
 
         converteer();
 
@@ -106,26 +106,26 @@ public class OverlijdenIntegraleConversieTest extends AbstractConversieTest {
 
     @Test
     public void testCasus06() throws OngeldigePersoonslijstException {
-        maakLegeRij(JUIST, 20120101, 20120102);
-        maakGevuldeRij(ONJUIST, 20120101, 20130102);
-        maakGevuldeRij(ONJUIST, 20120101, 20110102);
+        maakLegeRij(JUIST, 20120102);
+        maakGevuldeRij(ONJUIST, 20130102);
+        maakGevuldeRij(ONJUIST, 20110102);
 
         converteer();
 
         assertFalse(brpPl.getOverlijdenStapel().bevatActueel());
     }
 
-    private void maakLegeRij(final Lo3IndicatieOnjuistEnum onjuist, final int geldigheid, final int opneming) {
+    private void maakLegeRij(final Lo3IndicatieOnjuistEnum onjuist, final int opneming) {
         lo3Categorieen.add(new Lo3Categorie<>(new Lo3OverlijdenInhoud(null, null, null), null, new Lo3Historie(onjuist != null ? onjuist.asElement()
-                                                                                                                              : null, new Lo3Datum(
-            geldigheid), new Lo3Datum(opneming)), volgendeHerkomst()));
+                : null, new Lo3Datum(
+                20120101), new Lo3Datum(opneming)), volgendeHerkomst()));
     }
 
-    private void maakGevuldeRij(final Lo3IndicatieOnjuistEnum onjuist, final int geldigheid, final int opneming) {
-        lo3Categorieen.add(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(geldigheid), GEMEENTE_CODE, LAND_CODE), null, new Lo3Historie(
-            onjuist != null ? onjuist.asElement() : null,
-            new Lo3Datum(geldigheid),
-            new Lo3Datum(opneming)), volgendeHerkomst()));
+    private void maakGevuldeRij(final Lo3IndicatieOnjuistEnum onjuist, final int opneming) {
+        lo3Categorieen.add(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(20120101), GEMEENTE_CODE, LAND_CODE), null, new Lo3Historie(
+                onjuist != null ? onjuist.asElement() : null,
+                new Lo3Datum(20120101),
+                new Lo3Datum(opneming)), volgendeHerkomst()));
     }
 
     private void converteer() throws OngeldigePersoonslijstException {
@@ -142,49 +142,49 @@ public class OverlijdenIntegraleConversieTest extends AbstractConversieTest {
 
     private Lo3Persoonslijst maakLo3Pl() {
         return new Lo3PersoonslijstBuilder().persoonStapel(
-                                                lo3Stapel(lo3Cat(
-                                                    lo3Persoon(
-                                                        1111111111L,
-                                                        "voornaam",
-                                                        "geslNaam",
-                                                        19620101,
-                                                        GEMEENTE_CODE.getWaarde(),
-                                                        LAND_CODE.getWaarde(),
-                                                        "M"),
-                                                    Lo3CategorieEnum.CATEGORIE_01)))
-                                            .ouder1Stapel(
-                                                lo3Stapel(lo3Cat(
-                                                    lo3Ouder(
-                                                        2222222222L,
-                                                        "ouder1",
-                                                        "geslNaam",
-                                                        19320101,
-                                                        GEMEENTE_CODE.getWaarde(),
-                                                        LAND_CODE.getWaarde(),
-                                                        "V",
-                                                        19620101),
-                                                    Lo3CategorieEnum.CATEGORIE_02)))
-                                            .ouder2Stapel(
-                                                lo3Stapel(lo3Cat(
-                                                    lo3Ouder(
-                                                        3333333333L,
-                                                        "ouder2",
-                                                        "geslNaam",
-                                                        19320101,
-                                                        GEMEENTE_CODE.getWaarde(),
-                                                        LAND_CODE.getWaarde(),
-                                                        "M",
-                                                        19620101),
-                                                    Lo3CategorieEnum.CATEGORIE_03)))
-                                            .inschrijvingStapel(
-                                                lo3Stapel(lo3Cat(
-                                                    lo3Inschrijving(null, null, null, 19620101, null, 0, 2, 20130101000000000L, null),
-                                                    Lo3CategorieEnum.CATEGORIE_07)))
-                                            .verblijfplaatsStapel(
-                                                lo3Stapel(lo3Cat(
-                                                    lo3Verblijfplaats(GEMEENTE_CODE.getWaarde(), 19620101, 19620101, "straat", 1, "1111AA", "A"),
-                                                    Lo3CategorieEnum.CATEGORIE_08)))
-                                            .overlijdenStapel(new Lo3Stapel<>(lo3Categorieen))
-                                            .build();
+                lo3Stapel(lo3Cat(
+                        lo3Persoon(
+                                "1111111111",
+                                "voornaam",
+                                "geslNaam",
+                                19620101,
+                                GEMEENTE_CODE.getWaarde(),
+                                LAND_CODE.getWaarde(),
+                                "M"),
+                        Lo3CategorieEnum.CATEGORIE_01)))
+                .ouder1Stapel(
+                        lo3Stapel(lo3Cat(
+                                lo3Ouder(
+                                        "2222222222",
+                                        "ouder1",
+                                        "geslNaam",
+                                        19320101,
+                                        GEMEENTE_CODE.getWaarde(),
+                                        LAND_CODE.getWaarde(),
+                                        "V",
+                                        19620101),
+                                Lo3CategorieEnum.CATEGORIE_02)))
+                .ouder2Stapel(
+                        lo3Stapel(lo3Cat(
+                                lo3Ouder(
+                                        "3333333333",
+                                        "ouder2",
+                                        "geslNaam",
+                                        19320101,
+                                        GEMEENTE_CODE.getWaarde(),
+                                        LAND_CODE.getWaarde(),
+                                        "M",
+                                        19620101),
+                                Lo3CategorieEnum.CATEGORIE_03)))
+                .inschrijvingStapel(
+                        lo3Stapel(lo3Cat(
+                                lo3Inschrijving(null, null, null, 19620101, null, 0, 2, 20130101000000000L, null),
+                                Lo3CategorieEnum.CATEGORIE_07)))
+                .verblijfplaatsStapel(
+                        lo3Stapel(lo3Cat(
+                                lo3Verblijfplaats(GEMEENTE_CODE.getWaarde(), 19620101, 19620101, "straat", 1, "1111AA", "A"),
+                                Lo3CategorieEnum.CATEGORIE_08)))
+                .overlijdenStapel(new Lo3Stapel<>(lo3Categorieen))
+                .build();
     }
 }

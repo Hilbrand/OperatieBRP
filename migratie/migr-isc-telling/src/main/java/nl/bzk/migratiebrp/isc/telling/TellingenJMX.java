@@ -19,10 +19,7 @@ public interface TellingenJMX {
 
     /**
      * Service voor het bijwerken van tellingen.
-     *
-     * @param aantalUren
-     *            aantal uren
-     *
+     * @param aantalUren aantal uren
      */
     void bijwerkenTellingen(final int aantalUren);
 

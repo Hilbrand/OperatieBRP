@@ -7,15 +7,15 @@
 package nl.bzk.migratiebrp.conversie.model.lo3.syntax;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
+import nl.bzk.algemeenbrp.util.xml.annotation.Attribute;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementMap;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.ElementMap;
 
 /**
  * Een categorie met zijn elementen. <b>Let op:</b> de equals() methode vergelijkt alleen op categorie, niet op de
@@ -23,9 +23,13 @@ import org.simpleframework.xml.ElementMap;
  */
 public final class Lo3CategorieWaarde implements Serializable {
 
-    /** Default stapelnummer. */
+    /**
+     * Default stapelnummer.
+     */
     public static final int DEFAULT_STAPEL = -1;
-    /** Default voorkomenvolgnummer. */
+    /**
+     * Default voorkomenvolgnummer.
+     */
     public static final int DEFAULT_VOORKOMEN = -1;
 
     private static final long serialVersionUID = 1L;
@@ -39,26 +43,23 @@ public final class Lo3CategorieWaarde implements Serializable {
 
     /**
      * Maak een CategorieWaarde.
-     *
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            stapel voorkomen
-     * @param voorkomen
-     *            categorie voorkomen (binnen de stapel)
-     * @param elementen
-     *            elementen
+     * @param categorie categorie
+     * @param stapel stapel voorkomen
+     * @param voorkomen categorie voorkomen (binnen de stapel)
+     * @param elementen elementen
      */
-    public Lo3CategorieWaarde(@Attribute(name = "categorie", required = false) final Lo3CategorieEnum categorie, @Attribute(name = "stapel",
-            required = false) final int stapel, @Attribute(name = "voorkomen", required = false) final int voorkomen, @ElementMap(inline = true,
-            entry = ELEMENT_LABEL, key = ELEMENT_LABEL, attribute = true, value = "waarde", required = false) final Map<Lo3ElementEnum, String> elementen)
-    {
+    public Lo3CategorieWaarde(
+            @Attribute(name = "categorie") final Lo3CategorieEnum categorie,
+            @Attribute(name = "stapel") final int stapel,
+            @Attribute(name = "voorkomen") final int voorkomen,
+            @ElementMap(name = "elementen", inline = true, entry = ELEMENT_LABEL, key = ELEMENT_LABEL, keyType = Lo3ElementEnum.class, attribute = true,
+                    value = "waarde", valueType = String.class) final Map<Lo3ElementEnum, String> elementen) {
         this.categorie = categorie;
         this.stapel = stapel;
         this.voorkomen = voorkomen;
 
         if (elementen == null) {
-            this.elementen = new HashMap<>();
+            this.elementen = new EnumMap<>(Lo3ElementEnum.class);
         } else {
             this.elementen = elementen;
         }
@@ -66,28 +67,21 @@ public final class Lo3CategorieWaarde implements Serializable {
 
     /**
      * Maakt een CategorieWaarde.
-     *
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            stapel voorkomen
-     * @param voorkomen
-     *            categorie voorkomen (binnen de stapel)
+     * @param categorie categorie
+     * @param stapel stapel voorkomen
+     * @param voorkomen categorie voorkomen (binnen de stapel)
      */
     public Lo3CategorieWaarde(final Lo3CategorieEnum categorie, final int stapel, final int voorkomen) {
         this.categorie = categorie;
         this.stapel = stapel;
         this.voorkomen = voorkomen;
-        elementen = new HashMap<>();
+        elementen = new EnumMap<>(Lo3ElementEnum.class);
     }
 
     /**
      * Voeg een element toe met de meegegeven waarde.
-     *
-     * @param element
-     *            het element type
-     * @param waarde
-     *            de waarde
+     * @param element het element type
+     * @param waarde de waarde
      */
     public void addElement(final Lo3ElementEnum element, final String waarde) {
         if (waarde == null) {
@@ -99,9 +93,7 @@ public final class Lo3CategorieWaarde implements Serializable {
 
     /**
      * Geef de waarde van een specifiek element.
-     *
-     * @param element
-     *            het element type
+     * @param element het element type
      * @return de waarde
      */
     public String getElement(final Lo3ElementEnum element) {
@@ -110,27 +102,24 @@ public final class Lo3CategorieWaarde implements Serializable {
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return the categorie
      */
-    @Attribute(name = "categorie", required = false)
+    @Attribute(name = "categorie")
     public Lo3CategorieEnum getCategorie() {
         return categorie;
     }
 
     /**
      * Geef de waarde van stapel.
-     *
      * @return the stapel
      */
-    @Attribute(name = "stapel", required = false)
+    @Attribute(name = "stapel")
     public int getStapel() {
         return stapel;
     }
 
     /**
      * Geeft de Lo3 herkomst terug.
-     *
      * @return de Lo3 herkomst.
      */
     public Lo3Herkomst getLo3Herkomst() {
@@ -139,17 +128,15 @@ public final class Lo3CategorieWaarde implements Serializable {
 
     /**
      * Geef de waarde van voorkomen.
-     *
      * @return the voorkomen
      */
-    @Attribute(name = "voorkomen", required = false)
+    @Attribute(name = "voorkomen")
     public int getVoorkomen() {
         return voorkomen;
     }
 
     /**
      * Geef de empty.
-     *
      * @return true als deze categoriewaarde geen elementen bevat, anders false.
      */
     public boolean isEmpty() {
@@ -158,7 +145,6 @@ public final class Lo3CategorieWaarde implements Serializable {
 
     /**
      * Geef de gevuld.
-     *
      * @return true als deze categorie minimaal 1 element bevat met een gevulde waarde.
      */
     public boolean isGevuld() {
@@ -173,10 +159,10 @@ public final class Lo3CategorieWaarde implements Serializable {
 
     /**
      * Geef de waarde van elementen.
-     *
      * @return elementen
      */
-    @ElementMap(inline = true, entry = ELEMENT_LABEL, key = ELEMENT_LABEL, attribute = true, value = "waarde", required = false)
+    @ElementMap(name = "elementen", inline = true, entry = ELEMENT_LABEL, key = ELEMENT_LABEL, keyType = Lo3ElementEnum.class, attribute = true,
+            value = "waarde", valueType = String.class)
     public Map<Lo3ElementEnum, String> getElementen() {
         return elementen;
     }
@@ -186,7 +172,7 @@ public final class Lo3CategorieWaarde implements Serializable {
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -202,7 +188,7 @@ public final class Lo3CategorieWaarde implements Serializable {
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -210,22 +196,16 @@ public final class Lo3CategorieWaarde implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
+
         if (!(obj instanceof Lo3CategorieWaarde)) {
             return false;
         }
         final Lo3CategorieWaarde other = (Lo3CategorieWaarde) obj;
-        if (categorie != other.categorie) {
-            return false;
-        }
-        return true;
+        return categorie == other.categorie;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("categorie", categorie).append("elementen", elementen).toString();
     }
-
 }

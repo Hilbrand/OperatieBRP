@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.bericht.model.sync.impl;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ZoekPersoonOpActueleGegevensVerzoekBerichtTest extends AbstractSyncBerichtTest {
+public class ZoekPersoonOpActueleGegevensVerzoekBerichtTest extends AbstractSyncBerichtTestBasis {
 
     @Test
     public void test() throws Exception {

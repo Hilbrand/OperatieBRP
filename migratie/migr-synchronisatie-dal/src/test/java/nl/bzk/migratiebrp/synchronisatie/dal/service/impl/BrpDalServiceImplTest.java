@@ -15,125 +15,39 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNationaliteitCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNationaliteitInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.Blokkering;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.RedenBlokkering;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.RedenBlokkering;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.BlokkeringRepository;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.Lo3BerichtRepository;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.PersoonRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.StamtabelRepository;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.SyncParameters;
-
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BrpDalServiceImplTest {
 
-    private static final String GEMEENTE_0599 = "0599";
-    private static final String GEMEENTE_0600 = "0600";
-    private static final RedenBlokkering VERHUIZEND_VAN_LO3_NAAR_BRP = RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP;
+    private static final String GEMEENTE_0599 = "059901";
+    private static final String GEMEENTE_0600 = "060001";
 
-    @Mock
-    private PersoonRepository repoMock;
-    @Mock
-    private DynamischeStamtabelRepository dynamischeStamtabelRepositoryMock;
     @Mock
     private Lo3BerichtRepository berichtLogRepositoryMock;
     @Mock
     private StamtabelRepository stamtabelRepositoryMock;
     @Mock
     private BlokkeringRepository blokkeringRepository;
-    //TODO BRM44
-//    @Mock
-//    private AbonnementRepository abonnementRepositoryMock;
-    @Spy
-    private final SyncParameters syncParameters = new SyncParameters();
+
     @InjectMocks
     private BrpDalServiceImpl service;
-
-    private Lo3Bericht lo3Bericht;
-
-    @Before
-    public void setup() {
-        syncParameters.setInitieleVulling(false);
-        lo3Bericht =
-                new Lo3Bericht("BrpDalServiceImplTest", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()), "TEST_DATA", true);
-    }
-
-    @Test
-    @Ignore("Test uitgezet ivm aanpassingen 3.1 situatie. Aanzetten als 3.1 ontwikkeleing klaar is")
-    public void testPersisteerPersoon() {
-        Mockito.when(dynamischeStamtabelRepositoryMock.getPartijByCode(BrpPartijCode.MIGRATIEVOORZIENING.getWaarde())).thenReturn(
-            new Partij("Migratievoorziening", BrpPartijCode.MIGRATIEVOORZIENING.getWaarde()));
-        Mockito.when(dynamischeStamtabelRepositoryMock.getNationaliteitByNationaliteitcode((short) 1)).thenReturn(new Nationaliteit("One",
-                                                                                                                                    (short) 1));
-
-        final BrpPersoonslijst brpPersoonslijst = maakBrpPersoonslijst();
-        service.persisteerPersoonslijst(brpPersoonslijst, lo3Bericht);
-
-        final ArgumentCaptor<Persoon> persoonArgument = ArgumentCaptor.forClass(Persoon.class);
-        Mockito.verify(repoMock).save(persoonArgument.capture());
-        controleerPersoonEntiteit(persoonArgument.getValue(), null);
-    }
-
-    @Test
-    @Ignore("Test uitgezet ivm aanpassingen 3.1 situatie. Aanzetten als 3.1 ontwikkeleing klaar is")
-    public void persisteerPersoonslijstAnummerVervangenIllegalArgument() {
-        Mockito.when(dynamischeStamtabelRepositoryMock.getPartijByCode(BrpPartijCode.MIGRATIEVOORZIENING.getWaarde())).thenReturn(
-            new Partij("Migratievoorziening", BrpPartijCode.MIGRATIEVOORZIENING.getWaarde()));
-        Mockito.when(dynamischeStamtabelRepositoryMock.getNationaliteitByNationaliteitcode((short) 1)).thenReturn(new Nationaliteit("One", (short) 1));
-        final long anummer = 1234567890L;
-        try {
-            service.persisteerPersoonslijst(maakBrpPersoonslijst(), anummer, false, lo3Bericht);
-        } catch (final IllegalArgumentException iae) {
-            Assert.assertNull(iae.getMessage());
-        }
-    }
-
-    @Test
-    @Ignore("Test uitgezet ivm aanpassingen 3.1 situatie. Aanzetten als 3.1 ontwikkeleing klaar is")
-    public void persisteerPersoonslijstAnummerVervangen() {
-        Mockito.when(dynamischeStamtabelRepositoryMock.getPartijByCode(BrpPartijCode.MIGRATIEVOORZIENING.getWaarde())).thenReturn(
-            new Partij("Migratievoorziening", BrpPartijCode.MIGRATIEVOORZIENING.getWaarde()));
-        Mockito.when(dynamischeStamtabelRepositoryMock.getNationaliteitByNationaliteitcode((short) 1)).thenReturn(new Nationaliteit("One", (short) 1));
-        final long anummer = 1234567890L;
-        try {
-
-            service.persisteerPersoonslijst(maakBrpPersoonslijst(), anummer, false, lo3Bericht);
-            final ArgumentCaptor<Persoon> persoonArgument = ArgumentCaptor.forClass(Persoon.class);
-            Mockito.verify(repoMock).save(persoonArgument.capture());
-            controleerPersoonEntiteit(persoonArgument.getValue(), anummer);
-        } catch (final IllegalArgumentException iae) {
-            Assert.assertNull(iae.getMessage());
-        }
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void persisteerPersoonslijstAnummerNull() {
-        service.persisteerPersoonslijst(maakBrpPersoonslijst(), null);
-        Assert.fail("Er wordt een NullPointerException verwacht");
-    }
 
     @Test
     public void testPersisteerBerichtLog() {
@@ -151,13 +65,13 @@ public class BrpDalServiceImplTest {
             dateFormat.setLenient(false);
             final Date vanaf = dateFormat.parse("20020708");
             final Date tot = dateFormat.parse("20120709");
-            final Set<Long> anummers = new HashSet<>();
-            anummers.add((long) 123456789);
+            final Set<String> anummers = new HashSet<>();
+            anummers.add("123456789");
             Mockito.when(berichtLogRepositoryMock.findLaatsteBerichtLogAnrs(vanaf, tot)).thenReturn(anummers);
-            final Set<Long> gevondenAnrs = service.zoekBerichtLogAnrs(vanaf, tot);
+            final Set<String> gevondenAnrs = service.zoekBerichtLogAnrs(vanaf, tot);
             Assert.assertNotNull(gevondenAnrs);
             Assert.assertEquals(1, gevondenAnrs.size());
-            Assert.assertTrue(gevondenAnrs.contains(Long.valueOf(123456789L)));
+            Assert.assertTrue(gevondenAnrs.contains("123456789"));
         } catch (final ParseException e) {
             Assert.fail("Er zou geen fout op moeten treden.");
         }
@@ -165,10 +79,9 @@ public class BrpDalServiceImplTest {
 
     @Test
     public void testZoekBerichtLogOpAnummer() {
-        final long anummer = 123456789L;
+        final String anummer = "123456789";
         Mockito.when(berichtLogRepositoryMock.findLaatsteLo3PersoonslijstBerichtVoorANummer(anummer))
-               .thenReturn(
-            new Lo3Bericht("Referentie", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()), " ", true));
+                .thenReturn(new Lo3Bericht("Referentie", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()), " ", true));
         final Lo3Bericht gevondenLog = service.zoekLo3PeroonslijstBerichtOpAnummer(anummer);
         Assert.assertNotNull(gevondenLog);
         Assert.assertEquals(gevondenLog.getReferentie(), "Referentie");
@@ -183,14 +96,18 @@ public class BrpDalServiceImplTest {
     @Test
     public void testPersisteerBlokkeringAlGeblokkeerd() {
 
-        final Long aNummerTePersisterenBlokkering = 1234567890L;
-        final Blokkering tePersisterenBlokkering =
-                new Blokkering(aNummerTePersisterenBlokkering, 1L, GEMEENTE_0599, GEMEENTE_0600, VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
+        final String aNummerTePersisterenBlokkering = "1234567890";
+        final Blokkering tePersisterenBlokkering = new Blokkering(aNummerTePersisterenBlokkering, new Timestamp(System.currentTimeMillis()));
+        tePersisterenBlokkering.setProcessId(1L);
+        tePersisterenBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        tePersisterenBlokkering.setRegistratieGemeente(GEMEENTE_0600);
+        tePersisterenBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
-        final Blokkering gepersisteerdeBlokkering =
-                new Blokkering(aNummerTePersisterenBlokkering, 1L, GEMEENTE_0599, GEMEENTE_0600, VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
+        final Blokkering gepersisteerdeBlokkering = new Blokkering(aNummerTePersisterenBlokkering, new Timestamp(System.currentTimeMillis()));
+        gepersisteerdeBlokkering.setProcessId(1L);
+        gepersisteerdeBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        gepersisteerdeBlokkering.setRegistratieGemeente(GEMEENTE_0600);
+        gepersisteerdeBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
         Mockito.when(blokkeringRepository.statusBlokkering(aNummerTePersisterenBlokkering)).thenReturn(gepersisteerdeBlokkering);
 
@@ -204,11 +121,12 @@ public class BrpDalServiceImplTest {
     @Test
     public void testVraagOpBlokkering() {
 
-        final Long aNummerTePersisterenBlokkering = 1234567890L;
-        final Blokkering gepersisteerdeBlokkering =
-                new Blokkering(aNummerTePersisterenBlokkering, 1L, GEMEENTE_0599, GEMEENTE_0600, VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
-
+        final String aNummerTePersisterenBlokkering = "1234567890";
+        final Blokkering gepersisteerdeBlokkering = new Blokkering(aNummerTePersisterenBlokkering, new Timestamp(System.currentTimeMillis()));
+        gepersisteerdeBlokkering.setProcessId(1L);
+        gepersisteerdeBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        gepersisteerdeBlokkering.setRegistratieGemeente(GEMEENTE_0600);
+        gepersisteerdeBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
         Mockito.when(blokkeringRepository.statusBlokkering(aNummerTePersisterenBlokkering)).thenReturn(gepersisteerdeBlokkering);
 
         Assert.assertNotNull(service.vraagOpBlokkering(aNummerTePersisterenBlokkering));
@@ -227,15 +145,18 @@ public class BrpDalServiceImplTest {
 
     @Test
     public void testVerwijderBlokkering() {
+        final String aNummerTeVerwijderenBlokkering = "1234567890";
+        final Blokkering teVerwijderenBlokkering = new Blokkering(aNummerTeVerwijderenBlokkering, new Timestamp(System.currentTimeMillis()));
+        teVerwijderenBlokkering.setProcessId(1L);
+        teVerwijderenBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        teVerwijderenBlokkering.setRegistratieGemeente(GEMEENTE_0600);
+        teVerwijderenBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
-        final Long aNummerTeVerwijderenBlokkering = 1234567890L;
-        final Blokkering teVerwijderenBlokkering =
-                new Blokkering(aNummerTeVerwijderenBlokkering, 1L, GEMEENTE_0599, GEMEENTE_0600, VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
-
-        final Blokkering controleBlokkering =
-                new Blokkering(aNummerTeVerwijderenBlokkering, 1L, GEMEENTE_0599, GEMEENTE_0600, VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
+        final Blokkering controleBlokkering = new Blokkering(aNummerTeVerwijderenBlokkering, new Timestamp(System.currentTimeMillis()));
+        controleBlokkering.setProcessId(1L);
+        controleBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        controleBlokkering.setRegistratieGemeente(GEMEENTE_0600);
+        controleBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
         Mockito.when(blokkeringRepository.statusBlokkering(aNummerTeVerwijderenBlokkering)).thenReturn(controleBlokkering);
 
@@ -244,10 +165,12 @@ public class BrpDalServiceImplTest {
 
     @Test
     public void testVerwijderBlokkeringGeenBlokkering() {
-        final Long aNummerTeVerwijderenBlokkering = 1234567890L;
-        final Blokkering teVerwijderenBlokkering =
-                new Blokkering(aNummerTeVerwijderenBlokkering, 1L, GEMEENTE_0599, GEMEENTE_0600, VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
+        final String aNummerTeVerwijderenBlokkering = "1234567890";
+        final Blokkering teVerwijderenBlokkering = new Blokkering(aNummerTeVerwijderenBlokkering, new Timestamp(System.currentTimeMillis()));
+        teVerwijderenBlokkering.setProcessId(1L);
+        teVerwijderenBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        teVerwijderenBlokkering.setRegistratieGemeente(GEMEENTE_0600);
+        teVerwijderenBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
         Mockito.when(blokkeringRepository.statusBlokkering(aNummerTeVerwijderenBlokkering)).thenReturn(null);
 
@@ -260,14 +183,18 @@ public class BrpDalServiceImplTest {
 
     @Test
     public void testVerwijderBlokkeringOngeldigProcesId() {
-        final Long aNummerTeVerwijderenBlokkering = 1234567890L;
-        final Blokkering teVerwijderenBlokkering =
-                new Blokkering(aNummerTeVerwijderenBlokkering, 2L, GEMEENTE_0599, GEMEENTE_0600, VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
+        final String aNummerTeVerwijderenBlokkering = "1234567890";
+        final Blokkering teVerwijderenBlokkering = new Blokkering(aNummerTeVerwijderenBlokkering, new Timestamp(System.currentTimeMillis()));
+        teVerwijderenBlokkering.setProcessId(2L);
+        teVerwijderenBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        teVerwijderenBlokkering.setRegistratieGemeente(GEMEENTE_0600);
+        teVerwijderenBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
-        final Blokkering controleBlokkering =
-                new Blokkering(aNummerTeVerwijderenBlokkering, 1L, GEMEENTE_0599, GEMEENTE_0600, VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
+        final Blokkering controleBlokkering = new Blokkering(aNummerTeVerwijderenBlokkering, new Timestamp(System.currentTimeMillis()));
+        controleBlokkering.setProcessId(1L);
+        controleBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        controleBlokkering.setRegistratieGemeente(GEMEENTE_0600);
+        controleBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
         Mockito.when(blokkeringRepository.statusBlokkering(aNummerTeVerwijderenBlokkering)).thenReturn(controleBlokkering);
 
@@ -280,14 +207,18 @@ public class BrpDalServiceImplTest {
 
     @Test
     public void testVerwijderBlokkeringOngeldigeRegistratiegemeente() {
-        final Long aNummerTeVerwijderenBlokkering = 1234567890L;
-        final Blokkering teVerwijderenBlokkering =
-                new Blokkering(aNummerTeVerwijderenBlokkering, 1L, GEMEENTE_0599, GEMEENTE_0600, VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
+        final String aNummerTeVerwijderenBlokkering = "1234567890";
+        final Blokkering teVerwijderenBlokkering = new Blokkering(aNummerTeVerwijderenBlokkering, new Timestamp(System.currentTimeMillis()));
+        teVerwijderenBlokkering.setProcessId(1L);
+        teVerwijderenBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        teVerwijderenBlokkering.setRegistratieGemeente(GEMEENTE_0600);
+        teVerwijderenBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
-        final Blokkering controleBlokkering =
-                new Blokkering(aNummerTeVerwijderenBlokkering, 1L, GEMEENTE_0599, "1906", VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    System.currentTimeMillis()));
+        final Blokkering controleBlokkering = new Blokkering(aNummerTeVerwijderenBlokkering, new Timestamp(System.currentTimeMillis()));
+        controleBlokkering.setProcessId(1L);
+        controleBlokkering.setGemeenteCodeNaar(GEMEENTE_0599);
+        controleBlokkering.setRegistratieGemeente("1906");
+        controleBlokkering.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
         Mockito.when(blokkeringRepository.statusBlokkering(aNummerTeVerwijderenBlokkering)).thenReturn(controleBlokkering);
 
@@ -295,38 +226,14 @@ public class BrpDalServiceImplTest {
             service.verwijderBlokkering(teVerwijderenBlokkering);
         } catch (final IllegalStateException exception) {
             Assert.assertEquals(
-                "De registratiegemeente komt niet overeen met de registratiegemeent die de persoonslijst " + "heeft geblokkeerd.",
-                exception.getMessage());
+                    "De registratiegemeente komt niet overeen met de registratiegemeent die de persoonslijst " + "heeft geblokkeerd.", exception.getMessage());
         }
-    }
-
-    private BrpPersoonslijst maakBrpPersoonslijst() {
-        return new BrpPersoonslijstTestDataBuilder().addDefaultTestStapels()
-                                                    .addGroepMetHistorieA(
-                                                        new BrpNationaliteitInhoud(
-                                                            new BrpNationaliteitCode(Short.parseShort("1")),
-                                                            null,
-                                                            null,
-                                                            null,
-                                                            null,
-                                                            null,
-                                                            null))
-                                                    .build();
-    }
-
-    private void controleerPersoonEntiteit(final Persoon persoon, final Long anummer) {
-        Assert.assertNotNull(persoon);
-        Long expected = BrpPersoonslijstTestDataBuilder.DEFAULT_ADMINISTRATIENUMMER.getWaarde();
-        if (anummer != null) {
-            expected = anummer;
-        }
-        Assert.assertEquals(expected, persoon.getAdministratienummer());
     }
 
     @Test
     public void testGeefAlleGemeenten() {
         final List<Gemeente> gemeenten = new ArrayList<>();
-        gemeenten.add(new Gemeente((short) 1, "Gemeente", (short) 599, new Partij("Partij", 599010)));
+        gemeenten.add(new Gemeente((short) 1, "Gemeente", "0599", new Partij("Partij", "599010")));
 
         Mockito.when(stamtabelRepositoryMock.findAllGemeentes()).thenReturn(gemeenten);
 
@@ -335,20 +242,4 @@ public class BrpDalServiceImplTest {
         Assert.assertSame(gemeenten, result);
 
     }
-
-    @Test
-    @Ignore
-    public void testGeefAlleAbonnementen() {
-        //TODO BRM44
-//        final List<ToegangAbonnement> abonnementen = new ArrayList<>();
-//        abonnementen.add(new ToegangAbonnement(new Partij("Partij", 599010), new Abonnement("Test Abonnement")));
-//
-//        Mockito.when(abonnementRepositoryMock.findAllActieveLo3Abonnementen()).thenReturn(abonnementen);
-//
-//        final Collection<ToegangAbonnement> result = service.geefAlleAbonnementen();
-//
-//        Assert.assertSame(abonnementen, result);
-
-    }
-
 }

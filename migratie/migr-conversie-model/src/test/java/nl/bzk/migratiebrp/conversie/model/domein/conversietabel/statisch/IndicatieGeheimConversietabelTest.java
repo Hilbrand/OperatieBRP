@@ -9,20 +9,19 @@ package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGeheimCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class IndicatieGeheimConversietabelTest {
     private static final Lo3IndicatieGeheimCode INDICATIE_GEHEIM_CODE_7 = new Lo3IndicatieGeheimCode(7);
     private static final Lo3IndicatieGeheimCode INDICATIE_GEHEIM_CODE_0 = new Lo3IndicatieGeheimCode(0);
-    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), Lo3Datum.NULL_DATUM, null);
+    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), new Lo3Datum(0), null);
     private static final BrpBoolean EXPECTED_TRUE_ZONDER_ONDERZOEK = new BrpBoolean(true, null);
     private static final BrpBoolean EXPECTED_FALSE_ZONDER_ONDERZOEK = new BrpBoolean(false, null);
     private final IndicatieGeheimConversietabel subject = new IndicatieGeheimConversietabel();

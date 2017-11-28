@@ -11,12 +11,11 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.AbstractBrpAttribuutMetO
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 
 /**
  * Valideer de verschillende groepen.
- *
  */
 public final class BrpGroepValidator {
 
@@ -26,58 +25,42 @@ public final class BrpGroepValidator {
 
     /**
      * Valideer dat het landOfGebiedCode Nederland is in het geval gemeente is gevuld.
-     *
-     * @param gemeente
-     *            de te valideren gemeentecode
-     * @param landOfGebiedCode
-     *            de te valideren landcode
-     * @param groep
-     *            de groep waarop de validatie wordt uitgevoerd
+     * @param gemeente de te valideren gemeentecode
+     * @param landOfGebiedCode de te valideren landcode
+     * @param groep de groep waarop de validatie wordt uitgevoerd
      */
     @Preconditie(SoortMeldingCode.PRE003)
-    public static void valideerGemeenteInNederland(final BrpGemeenteCode gemeente, final BrpLandOfGebiedCode landOfGebiedCode, final BrpGroepInhoud groep)
-    {
-        if (Validatie.isAttribuutGevuld(gemeente)
-            && (!Validatie.isAttribuutGevuld(landOfGebiedCode) || !AbstractBrpAttribuutMetOnderzoek.equalsWaarde(
+    public static void valideerGemeenteInNederland(final BrpGemeenteCode gemeente, final BrpLandOfGebiedCode landOfGebiedCode, final BrpGroepInhoud groep) {
+        if (BrpValidatie.isAttribuutGevuld(gemeente)
+                && (!BrpValidatie.isAttribuutGevuld(landOfGebiedCode) || !AbstractBrpAttribuutMetOnderzoek.equalsWaarde(
                 BrpLandOfGebiedCode.NEDERLAND,
-                landOfGebiedCode)))
-        {
+                landOfGebiedCode))) {
             FoutmeldingUtil.gooiValidatieExceptie(SoortMeldingCode.PRE003, groep);
         }
     }
 
     /**
      * Valideer dat wanneer Buitenlandse plaats is gevuld, de landcode ongelijk is aan Nederland.
-     *
-     * @param buitenlandsePlaats
-     *            de te valideren buitenlandse plaats
-     * @param landOfGebiedCode
-     *            de te valideren landcode
-     * @param groep
-     *            de groep waarop de validatie wordt uitgevoerd
+     * @param buitenlandsePlaats de te valideren buitenlandse plaats
+     * @param landOfGebiedCode de te valideren landcode
+     * @param groep de groep waarop de validatie wordt uitgevoerd
      */
     @Preconditie(SoortMeldingCode.PRE004)
     public static void valideerBuitenlandsePlaatsNietNederland(
-        final BrpString buitenlandsePlaats,
-        final BrpLandOfGebiedCode landOfGebiedCode,
-        final BrpGroepInhoud groep)
-    {
-        if (Validatie.isAttribuutGevuld(buitenlandsePlaats)
-            && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(BrpLandOfGebiedCode.NEDERLAND, landOfGebiedCode))
-        {
+            final BrpString buitenlandsePlaats,
+            final BrpLandOfGebiedCode landOfGebiedCode,
+            final BrpGroepInhoud groep) {
+        if (BrpValidatie.isAttribuutGevuld(buitenlandsePlaats)
+                && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(BrpLandOfGebiedCode.NEDERLAND, landOfGebiedCode)) {
             FoutmeldingUtil.gooiValidatieExceptie(SoortMeldingCode.PRE004, groep);
         }
     }
 
     /**
      * Valideer dat voorvoegsel en scheidingsteken of allebei gevuld, of allebei leeg zijn.
-     *
-     * @param voorvoegsel
-     *            het te valideren voorvoegsel
-     * @param scheidingsteken
-     *            het te valideren scheidingsteken
-     * @param groep
-     *            de groep waarop de validatie wordt uitgevoerd
+     * @param voorvoegsel het te valideren voorvoegsel
+     * @param scheidingsteken het te valideren scheidingsteken
+     * @param groep de groep waarop de validatie wordt uitgevoerd
      */
     @Preconditie(SoortMeldingCode.PRE022)
     public static void valideerVoorvoegselScheidingsteken(final String voorvoegsel, final Character scheidingsteken, final BrpGroepInhoud groep) {

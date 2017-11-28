@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.isc.jbpm.foutafhandeling;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden;
 import org.junit.Test;
 
@@ -17,8 +17,8 @@ public class VerwerkBeheerderKeuzeActionTest {
 
     private FoutafhandelingPaden maakPaden() {
         final FoutafhandelingPaden result = new FoutafhandelingPaden();
-        result.put("end", "Afbreken", true, true, true);
-        result.put("restart", "Opnieuw", false, false, false);
+        result.put("end", "Afbreken", true, false);
+        result.put("restart", "Opnieuw", false, false);
         return result;
     }
 
@@ -42,10 +42,8 @@ public class VerwerkBeheerderKeuzeActionTest {
 
         final Map<String, Object> result = new VerwerkBeheerderKeuzeAction().execute(params);
 
-        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(1, result.size());
         Assert.assertEquals(Boolean.TRUE, result.get(FoutafhandelingConstants.INDICATIE_PF));
-        Assert.assertEquals(Boolean.TRUE, result.get(FoutafhandelingConstants.INDICATIE_DEBLOKKERING));
-        Assert.assertEquals(Boolean.TRUE, result.get(FoutafhandelingConstants.INDICATIE_ANTWOORD));
     }
 
     @Test
@@ -56,10 +54,8 @@ public class VerwerkBeheerderKeuzeActionTest {
 
         final Map<String, Object> result = new VerwerkBeheerderKeuzeAction().execute(params);
 
-        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(1, result.size());
         Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_PF));
-        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_DEBLOKKERING));
-        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_ANTWOORD));
     }
 
 }

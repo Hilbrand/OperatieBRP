@@ -6,8 +6,7 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker;
 
-import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpAntwoordBericht;
-import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.exception.SynchronisatieVerwerkerException;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleUitkomst;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
 
 /**
@@ -17,13 +16,9 @@ public interface PlVerwerker {
 
     /**
      * Verwerk een persoonslijst.
-     *
-     * @param context
-     *            verwerkingscontext
+     * @param context verwerkingscontext
      * @return antwoord
-     * @throws SynchronisatieVerwerkerException
-     *             bij verwerkingsfouten
      */
-    SynchroniseerNaarBrpAntwoordBericht verwerk(VerwerkingsContext context) throws SynchronisatieVerwerkerException;
+    ControleUitkomst controle(final VerwerkingsContext context);
 
 }

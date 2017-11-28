@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.pl;
 
 import javax.inject.Inject;
+
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
@@ -19,7 +20,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
  */
 public class CheckPlResultKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "check_pl_result";
 
     /**
@@ -27,13 +30,13 @@ public class CheckPlResultKanaal extends LazyLoadingKanaal {
      */
     public CheckPlResultKanaal() {
         super(new Worker(),
-              new Configuration(
-                  "classpath:configuratie.xml",
-                  "classpath:infra-db-sync.xml",
-                  "classpath:infra-em-sync.xml",
-                  "classpath:infra-jta.xml",
-                  "classpath:beans-sync.xml",
-                  "classpath:infra-pl.xml"));
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-db-sync.xml",
+                        "classpath:infra-em-sync.xml",
+                        "classpath:infra-jta.xml",
+                        "classpath:beans-sync.xml",
+                        "classpath:infra-pl.xml"));
     }
 
     /**

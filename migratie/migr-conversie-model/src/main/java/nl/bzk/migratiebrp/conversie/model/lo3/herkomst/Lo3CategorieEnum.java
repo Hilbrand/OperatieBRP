@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.conversie.model.lo3.herkomst;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,8 +37,8 @@ public enum Lo3CategorieEnum {
     /**
      * Nationaliteit.
      */
-    CATEGORIE_04("Nationaliteit", Lo3GroepEnum.GROEP05, Lo3GroepEnum.GROEP63, Lo3GroepEnum.GROEP64, Lo3GroepEnum.GROEP65, Lo3GroepEnum.GROEP82,
-            Lo3GroepEnum.GROEP83, Lo3GroepEnum.GROEP85, Lo3GroepEnum.GROEP86, Lo3GroepEnum.GROEP88),
+    CATEGORIE_04("Nationaliteit", Lo3GroepEnum.GROEP05, Lo3GroepEnum.GROEP63, Lo3GroepEnum.GROEP64, Lo3GroepEnum.GROEP65, Lo3GroepEnum.GROEP73,
+            Lo3GroepEnum.GROEP82, Lo3GroepEnum.GROEP83, Lo3GroepEnum.GROEP85, Lo3GroepEnum.GROEP86, Lo3GroepEnum.GROEP88),
     /**
      * Huwelijk/geregistreerd partnerschap.
      */
@@ -92,7 +93,9 @@ public enum Lo3CategorieEnum {
      */
     CATEGORIE_15(false, Lo3GroepEnum.GROEP42),
     /**
-     * Verwijzing. TODO: In LO 3.8 zijn groepen 11 en 12 niet meer toegestaan in categorie 21/71
+     * Verwijzing.
+     * In LO 3.8 zijn groepen 11 en 12 niet meer toegestaan in categorie 21/71.
+     * echter, we kunnen niet uitsluiten dat deze in oude berichten nog voorkomen bij initiele vulling en worden ze hier nog ondersteund.
      */
     CATEGORIE_21(Lo3GroepEnum.GROEP01, Lo3GroepEnum.GROEP02, Lo3GroepEnum.GROEP03, Lo3GroepEnum.GROEP09, Lo3GroepEnum.GROEP11, Lo3GroepEnum.GROEP12,
             Lo3GroepEnum.GROEP70, Lo3GroepEnum.GROEP83, Lo3GroepEnum.GROEP85, Lo3GroepEnum.GROEP86),
@@ -127,8 +130,8 @@ public enum Lo3CategorieEnum {
     /**
      * Nationaliteit (historisch).
      */
-    CATEGORIE_54(Lo3GroepEnum.GROEP05, Lo3GroepEnum.GROEP63, Lo3GroepEnum.GROEP64, Lo3GroepEnum.GROEP65, Lo3GroepEnum.GROEP82, Lo3GroepEnum.GROEP83,
-            Lo3GroepEnum.GROEP84, Lo3GroepEnum.GROEP85, Lo3GroepEnum.GROEP86, Lo3GroepEnum.GROEP88),
+    CATEGORIE_54(Lo3GroepEnum.GROEP05, Lo3GroepEnum.GROEP63, Lo3GroepEnum.GROEP64, Lo3GroepEnum.GROEP65, Lo3GroepEnum.GROEP73, Lo3GroepEnum.GROEP82,
+            Lo3GroepEnum.GROEP83, Lo3GroepEnum.GROEP84, Lo3GroepEnum.GROEP85, Lo3GroepEnum.GROEP86, Lo3GroepEnum.GROEP88),
     /**
      * Huwelijk/geregistreerd partnerschap (historisch).
      */
@@ -194,47 +197,42 @@ public enum Lo3CategorieEnum {
      */
     CATEGORIE_85();
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* *** LEESBARE NAMEN *************************************************************************************** */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-
-    /** Persoon. */
+    /**
+     * Persoon.
+     */
     public static final Lo3CategorieEnum PERSOON = CATEGORIE_01;
-    /** Ouder 1. */
+    /**
+     * Ouder 1.
+     */
     public static final Lo3CategorieEnum OUDER_1 = CATEGORIE_02;
-    /** Ouder 2. */
+    /**
+     * Ouder 2.
+     */
     public static final Lo3CategorieEnum OUDER_2 = CATEGORIE_03;
-    /** Nationaliteit. */
-    public static final Lo3CategorieEnum NATIONALITEIT = CATEGORIE_04;
-    /** Huwelijk. */
+    /**
+     * Huwelijk.
+     */
     public static final Lo3CategorieEnum HUWELIJK = CATEGORIE_05;
-    /** Overlijden. */
+    /**
+     * Overlijden.
+     */
     public static final Lo3CategorieEnum OVERLIJDEN = CATEGORIE_06;
-    /** Inschrijving. */
+    /**
+     * Inschrijving.
+     */
     public static final Lo3CategorieEnum INSCHRIJVING = CATEGORIE_07;
-    /** Verblijfplaats. */
+    /**
+     * Verblijfplaats.
+     */
     public static final Lo3CategorieEnum VERBLIJFPLAATS = CATEGORIE_08;
-    /** Kind. */
+    /**
+     * Kind.
+     */
     public static final Lo3CategorieEnum KIND = CATEGORIE_09;
-    /** Verblijfstitel. */
-    public static final Lo3CategorieEnum VERBLIJFSTITEL = CATEGORIE_10;
-    /** Gezagsverhouding. */
-    public static final Lo3CategorieEnum GEZAGSVERHOUDING = CATEGORIE_11;
-    /** Reisdocument. */
-    public static final Lo3CategorieEnum REISDOCUMENT = CATEGORIE_12;
-    /** Kiesrecht. */
-    public static final Lo3CategorieEnum KIESRECHT = CATEGORIE_13;
-
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
 
     private static final int HISTORIE_OFFSET = 50;
     private static final String CATEGORIE_PREFIX = "CATEGORIE_";
+    private static final int AANTAL_KARAKTERS_CATEGORIE = 2;
 
     private final List<Lo3GroepEnum> groepen;
     private final String categorie;
@@ -243,49 +241,37 @@ public enum Lo3CategorieEnum {
 
     /**
      * Constructor met standaard historie toegestaan.
-     * 
-     * @param groepen
-     *            Toegestane groepen
+     * @param groepen Toegestane groepen
      */
-    private Lo3CategorieEnum(final Lo3GroepEnum... groepen) {
+    Lo3CategorieEnum(final Lo3GroepEnum... groepen) {
         this(true, groepen);
     }
 
     /**
      * Constructor met standaard historie toegestaan.
-     * 
-     * @param label
-     *            Label van de categorie.
-     * @param groepen
-     *            Toegestane groepen
+     * @param label Label van de categorie.
+     * @param groepen Toegestane groepen
      */
-    private Lo3CategorieEnum(final String label, final Lo3GroepEnum... groepen) {
+    Lo3CategorieEnum(final String label, final Lo3GroepEnum... groepen) {
         this(true, label, groepen);
     }
 
     /**
      * Constructor.
-     * 
-     * @param heeftHistorie
-     *            true als de categorie historie mag hebben
-     * @param groepen
-     *            Toegestane groepen
+     * @param heeftHistorie true als de categorie historie mag hebben
+     * @param groepen Toegestane groepen
      */
-    private Lo3CategorieEnum(final boolean heeftHistorie, final Lo3GroepEnum... groepen) {
+    Lo3CategorieEnum(final boolean heeftHistorie, final Lo3GroepEnum... groepen) {
         this(heeftHistorie, null, groepen);
     }
 
     /**
      * Constructor.
-     * 
-     * @param heeftHistorie
-     *            true als de categorie historie mag hebben
-     * @param label
-     *            Label van de categorie.
-     * @param groepen
-     *            Toegestane groepen
+     * @param heeftHistorie true als de categorie historie mag hebben
+     * @param label Label van de categorie.
+     * @param groepen Toegestane groepen
      */
-    private Lo3CategorieEnum(final boolean heeftHistorie, final String label, final Lo3GroepEnum... groepen) {
+    Lo3CategorieEnum(final boolean heeftHistorie, final String label, final Lo3GroepEnum... groepen) {
         this.heeftHistorie = heeftHistorie;
         final String[] enumName = name().split(CATEGORIE_PREFIX);
         categorie = enumName[1];
@@ -297,40 +283,7 @@ public enum Lo3CategorieEnum {
     }
 
     /**
-     * Geef de waarde van categorie.
-     *
-     * @return the categorie
-     */
-    public final String getCategorie() {
-        return categorie;
-    }
-
-    /**
-     * Geef de waarde van categorie as int.
-     *
-     * @return the categorie
-     */
-    public final int getCategorieAsInt() {
-        return Integer.parseInt(categorie);
-    }
-
-    /**
-     * Geef de waarde van groepen.
-     *
-     * @return groepen
-     */
-    public final List<Lo3GroepEnum> getGroepen() {
-        return groepen;
-    }
-
-    @Override
-    public final String toString() {
-        return categorie;
-    }
-
-    /**
-     * @param categorie
-     *            de categorie naam
+     * @param categorie de categorie naam
      * @return de coressponderende LO3 categorie
      */
     public static Lo3CategorieEnum getLO3Categorie(final int categorie) {
@@ -338,11 +291,9 @@ public enum Lo3CategorieEnum {
     }
 
     /**
-     * @param categorie
-     *            de categorie naam
+     * @param categorie de categorie naam
      * @return de corresponderende LO3 categorie
-     * @throws nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException
-     *             Wordt gegooid als de gevraagde categorie niet in de enumeratie voor komt.
+     * @throws nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException Wordt gegooid als de gevraagde categorie niet in de enumeratie voor komt.
      */
     public static Lo3CategorieEnum getLO3Categorie(final String categorie) throws Lo3SyntaxException {
         try {
@@ -358,9 +309,7 @@ public enum Lo3CategorieEnum {
 
     /**
      * Geeft aan of het meegegeven categorienummer een geldige categorie is.
-     * 
-     * @param categorie
-     *            de categorie code als String
+     * @param categorie de categorie code als String
      * @return true als er bij de code een bijbehorende categorie is gedefinieerd
      */
     public static boolean isValidCategorie(final String categorie) {
@@ -368,15 +317,14 @@ public enum Lo3CategorieEnum {
             Lo3CategorieEnum.getLO3Categorie(categorie);
             return true;
         } catch (final Lo3SyntaxException lso) {
+            LoggerFactory.getLogger().debug("Fout tijdens valideren categorie", lso);
             return false;
         }
     }
 
     /**
      * Geeft aan of het meegegeven categorienummer een geldige categorie is.
-     * 
-     * @param categorie
-     *            de categorie code als int
+     * @param categorie de categorie code als int
      * @return true als er bij de code een bijbehorende categorie is gedefinieerd
      */
     public static boolean isValidCategorie(final int categorie) {
@@ -385,9 +333,7 @@ public enum Lo3CategorieEnum {
 
     /**
      * Geef op basis van een actuele categorie zijn historische categorie terug.
-     * 
-     * @param categorie
-     *            de actuele categorie
+     * @param categorie de actuele categorie
      * @return de historische categorie of null
      */
     public static Lo3CategorieEnum bepaalHistorischeCategorie(final Lo3CategorieEnum categorie) {
@@ -396,11 +342,8 @@ public enum Lo3CategorieEnum {
 
     /**
      * Geef op basis van een actuele categorie zijn historische categorie terug.
-     * 
-     * @param categorie
-     *            de actuele categorie
-     * @param negeerHeeftHistorie
-     *            indien true, dan kunnen ook de 'ongeldige' historische categorieen zoals 57 worden teruggegeven
+     * @param categorie de actuele categorie
+     * @param negeerHeeftHistorie indien true, dan kunnen ook de 'ongeldige' historische categorieen zoals 57 worden teruggegeven
      * @return de historische categorie of null
      */
     public static Lo3CategorieEnum bepaalHistorischeCategorie(final Lo3CategorieEnum categorie, final boolean negeerHeeftHistorie) {
@@ -409,7 +352,7 @@ public enum Lo3CategorieEnum {
             result = categorie;
         } else {
             if (categorie.heeftHistorie || negeerHeeftHistorie) {
-                result = Lo3CategorieEnum.getEnumFromString("" + (Integer.parseInt(categorie.getCategorie()) + HISTORIE_OFFSET));
+                result = Lo3CategorieEnum.getEnumFromString(Integer.toString(categorie.getCategorieAsInt() + HISTORIE_OFFSET));
             }
         }
         return result;
@@ -418,9 +361,7 @@ public enum Lo3CategorieEnum {
     /**
      * Geef op basis van een categorie zijn actuele categorie terug. Als de gegeven categorie al actueel is dan wordt de
      * categorie teruggegeven.
-     * 
-     * @param categorie
-     *            de categorie
+     * @param categorie de categorie
      * @return de meegegeven categorie als deze actueel is, anders de gevonden actuele categorie
      */
     public static Lo3CategorieEnum bepaalActueleCategorie(final Lo3CategorieEnum categorie) {
@@ -433,22 +374,49 @@ public enum Lo3CategorieEnum {
         return Lo3CategorieEnum.getEnumFromString(Lo3CategorieEnum.categorieAsIntToString(actueel));
     }
 
+    private static String categorieAsIntToString(final int categorie) {
+        return String.valueOf(StringUtils.leftPad(String.valueOf(categorie), AANTAL_KARAKTERS_CATEGORIE, '0'));
+    }
+
+    /**
+     * Geef de waarde van categorie.
+     * @return the categorie
+     */
+    public final String getCategorie() {
+        return categorie;
+    }
+
+    /**
+     * Geef de waarde van categorie as int.
+     * @return the categorie
+     */
+    public final int getCategorieAsInt() {
+        return Integer.parseInt(categorie);
+    }
+
+    /**
+     * Geef de waarde van groepen.
+     * @return groepen
+     */
+    public final List<Lo3GroepEnum> getGroepen() {
+        return groepen;
+    }
+
+    @Override
+    public final String toString() {
+        return categorie;
+    }
+
     /**
      * Geef de actueel.
-     *
      * @return true als de categorie actueel is, false als de categorie historisch is
      */
     public boolean isActueel() {
         return Integer.parseInt(getCategorie()) < HISTORIE_OFFSET;
     }
 
-    private static String categorieAsIntToString(final int categorie) {
-        return String.valueOf(StringUtils.leftPad(String.valueOf(categorie), 2, '0'));
-    }
-
     /**
      * Geef de waarde van label.
-     *
      * @return Label voor de categorie.
      */
     public String getLabel() {

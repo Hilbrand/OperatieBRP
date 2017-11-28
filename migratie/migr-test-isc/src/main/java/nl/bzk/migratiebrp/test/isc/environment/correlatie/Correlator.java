@@ -29,13 +29,9 @@ public final class Correlator {
 
     /**
      * Registreer een uitgaand bericht referentie.
-     *
-     * @param volgnummer
-     *            volgnummer (uit de test files)
-     * @param kanaal
-     *            kanaal
-     * @param berichtReferentie
-     *            'echte' bericht referentie
+     * @param volgnummer volgnummer (uit de test files)
+     * @param kanaal kanaal
+     * @param berichtReferentie 'echte' bericht referentie
      */
     public void registreerUitgaand(final String volgnummer, final String kanaal, final String berichtReferentie) {
         correlatieMap.put(volgnummer, berichtReferentie);
@@ -48,11 +44,8 @@ public final class Correlator {
 
     /**
      * Controleer of een uitgaand volgnummer geregistreerd is voor een kanaal.
-     *
-     * @param volgnummer
-     *            volgnummer
-     * @param kanaal
-     *            kanaal
+     * @param volgnummer volgnummer
+     * @param kanaal kanaal
      */
     public void controleerUitgaand(final String volgnummer, final String kanaal) {
         if (!(uitgaand.containsKey(kanaal) && uitgaand.get(kanaal).contains(volgnummer))) {
@@ -62,13 +55,9 @@ public final class Correlator {
 
     /**
      * Registreer een inkomende bericht referentie.
-     *
-     * @param volgnummer
-     *            volgnummer (uit de test files)
-     * @param kanaal
-     *            kanaal
-     * @param berichtReferentie
-     *            'echte' bericht referentie
+     * @param volgnummer volgnummer (uit de test files)
+     * @param kanaal kanaal
+     * @param berichtReferentie 'echte' bericht referentie
      */
     public void registreerInkomend(final String volgnummer, final String kanaal, final String berichtReferentie) {
         correlatieMap.put(volgnummer, berichtReferentie);
@@ -81,11 +70,8 @@ public final class Correlator {
 
     /**
      * Controleer of een inkomend volgnummer geregistreerd is voor een kanaal.
-     *
-     * @param volgnummer
-     *            volgnummer
-     * @param kanaal
-     *            kanaal
+     * @param volgnummer volgnummer
+     * @param kanaal kanaal
      */
     public void controleerInkomend(final String volgnummer, final String kanaal) {
         if (!(inkomend.containsKey(kanaal) && inkomend.get(kanaal).contains(volgnummer))) {
@@ -95,9 +81,7 @@ public final class Correlator {
 
     /**
      * Geef de bericht referentie die bij een volgnummer is geregistreerd.
-     *
-     * @param volgnummer
-     *            volgnummer
+     * @param volgnummer volgnummer
      * @return bericht referentie, null als niet gevonden
      */
     public String getBerichtReferentie(final String volgnummer) {
@@ -106,9 +90,7 @@ public final class Correlator {
 
     /**
      * Geef een ingekomen bericht referentie die bij een volgnummer is geregistreerd.
-     *
-     * @param volgnummer
-     *            volgnummer
+     * @param volgnummer volgnummer
      * @return bericht referentie, null als niet gevonden
      */
     public String getInkomendBerichtReferentie(final String volgnummer) {
@@ -122,9 +104,7 @@ public final class Correlator {
 
     /**
      * Geef een ingekomen bericht referentie die bij een volgnummer is geregistreerd.
-     *
-     * @param volgnummer
-     *            volgnummer
+     * @param volgnummer volgnummer
      * @return bericht referentie, null als niet gevonden
      */
     public String getUitgaandBerichtReferentie(final String volgnummer) {
@@ -138,7 +118,6 @@ public final class Correlator {
 
     /**
      * Geef de eerste geregistreerde bericht referenties.
-     *
      * @return bericht referentie
      */
     public String getFirstBerichtReferentie() {
@@ -148,7 +127,6 @@ public final class Correlator {
 
     /**
      * Geef de laatste geregistreerde bericht referenties.
-     *
      * @return bericht referentie
      */
     public String getLastBerichtReferentie() {
@@ -167,7 +145,6 @@ public final class Correlator {
 
     /**
      * Geef alle geregistreerde bericht referenties.
-     *
      * @return alle geregistreerde bericht referenties
      */
     public List<String> getAlleBerichtReferenties() {

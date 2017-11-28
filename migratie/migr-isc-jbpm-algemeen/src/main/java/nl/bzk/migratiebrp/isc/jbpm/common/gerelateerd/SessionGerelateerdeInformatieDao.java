@@ -20,16 +20,21 @@ import org.springframework.stereotype.Component;
 @Component
 public final class SessionGerelateerdeInformatieDao implements GerelateerdeInformatieDao {
 
+    private final SessionFactory sessionFactory;
+
+    /**
+     * Constructor.
+     * @param sessionFactory session factory
+     */
     @Inject
-    private SessionFactory sessionFactory;
+    public SessionGerelateerdeInformatieDao(final SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     /**
      * Toevoegen van gerelateerde informatie aan een proces.
-     *
-     * @param processInstanceId
-     *            proces instance id
-     * @param gerelateerdeInformatie
-     *            gerelateerd informatie
+     * @param processInstanceId proces instance id
+     * @param gerelateerdeInformatie gerelateerd informatie
      */
     @Override
     public void toevoegenGerelateerdeGegevens(final long processInstanceId, final GerelateerdeInformatie gerelateerdeInformatie) {

@@ -26,9 +26,7 @@ public final class OutboundMessageHandler implements OutboundHandler {
 
     /**
      * Zet de outbound service voor SYNC.
-     *
-     * @param syncOutboundService
-     *            de te zetten outbound service voor SYNC
+     * @param syncOutboundService de te zetten outbound service voor SYNC
      */
     @Required
     public void setSyncOutboundService(final Service syncOutboundService) {
@@ -37,9 +35,7 @@ public final class OutboundMessageHandler implements OutboundHandler {
 
     /**
      * Zet de outbound service voor VOISC.
-     *
-     * @param voiscOutboundService
-     *            de te zetten outbound service voor VOISC
+     * @param voiscOutboundService de te zetten outbound service voor VOISC
      */
     @Required
     public void setVoiscOutboundService(final Service voiscOutboundService) {
@@ -52,7 +48,7 @@ public final class OutboundMessageHandler implements OutboundHandler {
 
         final Service outbound;
         switch (serviceName) {
-            case "VOSPG-Outbound":
+            case "VOISC-Outbound":
                 outbound = voiscOutboundService;
                 break;
             case "Sync-Outbound":

@@ -22,61 +22,61 @@ public class AdellijkeTitelPredikaatConversietabel extends AbstractAdellijkeTite
 
     static {
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("B"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('B'),
-            null,
-            BrpGeslachtsaanduidingCode.MAN)));
+                new BrpCharacter('B'),
+                null,
+                BrpGeslachtsaanduidingCode.MAN)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("BS"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('B'),
-            null,
-            BrpGeslachtsaanduidingCode.VROUW)));
+                new BrpCharacter('B'),
+                null,
+                BrpGeslachtsaanduidingCode.VROUW)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("G"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('G'),
-            null,
-            BrpGeslachtsaanduidingCode.MAN)));
+                new BrpCharacter('G'),
+                null,
+                BrpGeslachtsaanduidingCode.MAN)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("GI"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('G'),
-            null,
-            BrpGeslachtsaanduidingCode.VROUW)));
+                new BrpCharacter('G'),
+                null,
+                BrpGeslachtsaanduidingCode.VROUW)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("H"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('H'),
-            null,
-            BrpGeslachtsaanduidingCode.MAN)));
+                new BrpCharacter('H'),
+                null,
+                BrpGeslachtsaanduidingCode.MAN)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("HI"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('H'),
-            null,
-            BrpGeslachtsaanduidingCode.VROUW)));
+                new BrpCharacter('H'),
+                null,
+                BrpGeslachtsaanduidingCode.VROUW)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("M"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('M'),
-            null,
-            BrpGeslachtsaanduidingCode.MAN)));
+                new BrpCharacter('M'),
+                null,
+                BrpGeslachtsaanduidingCode.MAN)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("MI"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('M'),
-            null,
-            BrpGeslachtsaanduidingCode.VROUW)));
+                new BrpCharacter('M'),
+                null,
+                BrpGeslachtsaanduidingCode.VROUW)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("P"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('P'),
-            null,
-            BrpGeslachtsaanduidingCode.MAN)));
+                new BrpCharacter('P'),
+                null,
+                BrpGeslachtsaanduidingCode.MAN)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("PS"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('P'),
-            null,
-            BrpGeslachtsaanduidingCode.VROUW)));
+                new BrpCharacter('P'),
+                null,
+                BrpGeslachtsaanduidingCode.VROUW)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("R"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('R'),
-            null,
-            BrpGeslachtsaanduidingCode.MAN)));
+                new BrpCharacter('R'),
+                null,
+                BrpGeslachtsaanduidingCode.MAN)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("R"), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('R'),
-            null,
-            BrpGeslachtsaanduidingCode.VROUW)));
+                new BrpCharacter('R'),
+                null,
+                BrpGeslachtsaanduidingCode.VROUW)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("JH"), new AdellijkeTitelPredikaatPaar(
-            null,
-            new BrpCharacter('J'),
-            BrpGeslachtsaanduidingCode.MAN)));
+                null,
+                new BrpCharacter('J'),
+                BrpGeslachtsaanduidingCode.MAN)));
         CONVERSIE_LIJST.add(new ConversieMapEntry<>(new Lo3AdellijkeTitelPredikaatCode("JV"), new AdellijkeTitelPredikaatPaar(
-            null,
-            new BrpCharacter('J'),
-            BrpGeslachtsaanduidingCode.VROUW)));
+                null,
+                new BrpCharacter('J'),
+                BrpGeslachtsaanduidingCode.VROUW)));
     }
 
     public AdellijkeTitelPredikaatConversietabel() {

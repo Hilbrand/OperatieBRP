@@ -10,8 +10,10 @@ import static org.junit.Assert.assertNotNull;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.ExpectedAfter;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
+
+import nl.bzk.algemeenbrp.test.dal.DBUnit.ExpectedAfter;
+import nl.bzk.algemeenbrp.test.dal.DBUnit.InsertBefore;
+
 import org.junit.Test;
 
 public class TestOmgevingTest extends AbstractDatabaseTest {

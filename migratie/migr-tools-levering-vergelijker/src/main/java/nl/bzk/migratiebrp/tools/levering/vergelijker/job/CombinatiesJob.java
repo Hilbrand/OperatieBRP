@@ -19,9 +19,7 @@ public final class CombinatiesJob {
 
     /**
      * Main execute methode voor het uitvoeren van de job.
-     *
-     * @param context
-     *            De context van de job.
+     * @param context De context van de job.
      */
     public void execute(final ConfigurableApplicationContext context) {
         final DataSource dataSource = context.getBean("leveringVergelijkerDataSource", DataSource.class);

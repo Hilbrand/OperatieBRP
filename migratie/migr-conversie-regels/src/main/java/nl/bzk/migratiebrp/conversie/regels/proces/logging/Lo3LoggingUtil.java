@@ -22,13 +22,9 @@ public final class Lo3LoggingUtil {
 
     /**
      * Controle of er een logregel voor de gegeven herkomst is waar de gegeven preconditie in gelogd is.
-     * 
-     * @param soortMeldingCode
-     *            de preconditie waarop gecontroleerd moet worden
-     * @param herkomst
-     *            de herkomst waarvoor de gegeven preconditie al voor gelogd is
-     * @return true als de preconditie in de logregel staat en de gelogde herkomst volledig overeenkomt met de gegeven
-     *         herkomst.
+     * @param soortMeldingCode de preconditie waarop gecontroleerd moet worden
+     * @param herkomst de herkomst waarvoor de gegeven preconditie al voor gelogd is
+     * @return true als de preconditie in de logregel staat en de gelogde herkomst volledig overeenkomt met de gegeven herkomst.
      */
     public static boolean bevatLogPreconditie(final SoortMeldingCode soortMeldingCode, final Lo3Herkomst herkomst) {
         boolean result = false;
@@ -45,23 +41,25 @@ public final class Lo3LoggingUtil {
 
     /**
      * Geeft de logregels terug waarin de precondities voorkomt.
-     * 
-     * @param soortMeldingCodes
-     *            de precondities waarop gecontroleerd moet worden
+     * @param soortMeldingCodes de precondities waarop gecontroleerd moet worden
      * @return de logregels die de opgegeven precondities bevatten
      */
     public static Set<LogRegel> getLogRegels(final SoortMeldingCode... soortMeldingCodes) {
         final Set<LogRegel> gevondenRegels = new HashSet<>();
         final Set<LogRegel> regels = Logging.getLogging().getRegels();
         for (final LogRegel regel : regels) {
-            if (regel.getSoortMeldingCode().isPreconditie()) {
-                for (final SoortMeldingCode soortMeldingCode : soortMeldingCodes) {
-                    if (soortMeldingCode.name().equals(regel.getSoortMeldingCode().name())) {
-                        gevondenRegels.add(regel);
-                    }
+            filterPrecondities(gevondenRegels, regel, soortMeldingCodes);
+        }
+        return gevondenRegels;
+    }
+
+    private static void filterPrecondities(final Set<LogRegel> gevondenRegels, final LogRegel regel, final SoortMeldingCode[] soortMeldingCodes) {
+        if (regel.getSoortMeldingCode().isPreconditie()) {
+            for (final SoortMeldingCode soortMeldingCode : soortMeldingCodes) {
+                if (soortMeldingCode.name().equals(regel.getSoortMeldingCode().name())) {
+                    gevondenRegels.add(regel);
                 }
             }
         }
-        return gevondenRegels;
     }
 }

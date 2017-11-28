@@ -20,7 +20,7 @@ public class SingleTest extends ConversieTestConfiguratie {
 
     @Override
     public File getInputFolder() {
-        return new File("./test");
+        return new File("./regressie");
     }
 
     @Override
@@ -32,5 +32,4 @@ public class SingleTest extends ConversieTestConfiguratie {
     public FilenameFilter getCasusFilter() {
         return new StartsWithFilter("", FilterType.FILE);
     }
-
 }

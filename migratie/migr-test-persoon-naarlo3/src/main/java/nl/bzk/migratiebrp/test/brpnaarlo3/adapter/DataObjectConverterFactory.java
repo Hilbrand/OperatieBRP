@@ -21,9 +21,7 @@ public final class DataObjectConverterFactory {
 
     /**
      * Constructor.
-     * 
-     * @param dataConverters
-     *            lijst van data object converters.
+     * @param dataConverters lijst van data object converters.
      */
     @Inject
     public DataObjectConverterFactory(final List<DataObjectConverter> dataConverters) {
@@ -35,12 +33,9 @@ public final class DataObjectConverterFactory {
     /**
      * Geef de converter voor het gegevens data object. De converter wordt bepaalt aan de hand van de waarde van de
      * eerste header.
-     * 
-     * @param dataObject
-     *            data object
+     * @param dataObject data object
      * @return converter
-     * @throws IllegalArgumentException
-     *             als er geen converter beschikbaar is
+     * @throws IllegalArgumentException als er geen converter beschikbaar is
      */
     public DataObjectConverter getConverter(final DataObject dataObject) {
         final String discriminator = dataObject.getHeaders().get(0);

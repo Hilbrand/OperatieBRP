@@ -8,10 +8,8 @@ package nl.bzk.migratiebrp.conversie.model.validatie;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
-import junit.framework.Assert;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
-
+import org.junit.Assert;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import org.junit.Test;
 
 public class ValidationUtilsTest {
@@ -24,7 +22,7 @@ public class ValidationUtilsTest {
     public void testControleerOpLegeWaarden() {
         try {
             final String waarde = "";
-            Validatie.controleerOpLegeWaarden("waarde mag niet leeg zijn", waarde);
+            BrpValidatie.controleerOpLegeWaarden("waarde mag niet leeg zijn", waarde);
             Assert.fail("IllegalArgumentException verwacht");
         } catch (final IllegalArgumentException npe) {
             Assert.assertEquals("waarde mag niet leeg zijn", npe.getMessage());

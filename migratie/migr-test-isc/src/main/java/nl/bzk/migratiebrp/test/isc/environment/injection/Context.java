@@ -18,11 +18,8 @@ public final class Context {
 
     /**
      * Constructor.
-     *
-     * @param testCasus
-     *            test casus
-     * @param environment
-     *            test omgeving
+     * @param correlator correlator
+     * @param jbpmHelperKanaal jbpm helper kanaal
      */
     public Context(final Correlator correlator, final JbpmHelperKanaal jbpmHelperKanaal) {
         this.correlator = correlator;
@@ -31,7 +28,6 @@ public final class Context {
 
     /**
      * Geef de waarde van correlator.
-     *
      * @return correlator
      */
     public Correlator getCorrelator() {
@@ -40,7 +36,6 @@ public final class Context {
 
     /**
      * Geef de waarde van jbpmHelperKanaal.
-     *
      * @return jbpmHelperKanaal
      */
     public JbpmHelperKanaal getJbpmHelperKanaal() {

@@ -6,15 +6,11 @@
 
 package nl.bzk.migratiebrp.isc.runtime.service;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
-
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 /**
  * Berichten verzenden via JMS.
@@ -25,9 +21,7 @@ public final class VerzendenAction implements Action {
 
     /**
      * Zet het JMS Template.
-     *
-     * @param jmsTemplate
-     *            het te zetten JMS Template
+     * @param jmsTemplate het te zetten JMS Template
      */
     @Required
     public void setJmsTemplate(final JmsTemplate jmsTemplate) {
@@ -41,18 +35,18 @@ public final class VerzendenAction implements Action {
 
     @Override
     public boolean verwerk(final Message message) {
-        jmsTemplate.send(new MessageCreator() {
-            @Override
-            public javax.jms.Message createMessage(final Session session) throws JMSException {
-                final javax.jms.Message result = session.createTextMessage(message.getContent());
-                result.setStringProperty(JMSConstants.BERICHT_REFERENTIE, message.getMessageId());
-                result.setStringProperty(JMSConstants.CORRELATIE_REFERENTIE, message.getCorrelatieId());
-                result.setStringProperty(JMSConstants.BERICHT_ORIGINATOR, message.getOriginator());
-                result.setStringProperty(JMSConstants.BERICHT_RECIPIENT, message.getRecipient());
-                return result;
+        jmsTemplate.send(session -> {
+            final javax.jms.Message result = session.createTextMessage(message.getContent());
+            MDCProcessor.registreerVerwerkingsCode(result);
+            result.setStringProperty(JMSConstants.BERICHT_REFERENTIE, message.getMessageId());
+            result.setStringProperty(JMSConstants.CORRELATIE_REFERENTIE, message.getCorrelatieId());
+            result.setStringProperty(JMSConstants.BERICHT_ORIGINATOR, message.getOriginator());
+            result.setStringProperty(JMSConstants.BERICHT_RECIPIENT, message.getRecipient());
+            if (message.isRequestNonReceiptNotification()) {
+                result.setStringProperty(JMSConstants.REQUEST_NON_RECEIPT_NOTIFICATION, "true");
             }
+            return result;
         });
         return true;
     }
-
 }

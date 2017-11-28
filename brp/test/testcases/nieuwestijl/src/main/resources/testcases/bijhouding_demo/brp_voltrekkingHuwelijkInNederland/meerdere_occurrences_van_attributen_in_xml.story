@@ -8,7 +8,7 @@ en actie registratie aanvang huwelijk geregistreerd partnerschap
 
 Scenario: Personen Sandy Olsson en Danny Zuko gaan trouwen, extra waardes (bsn) wordt toegevoegd dmv example
 
-Given bijhoudingautorisatie uit /bijhoudingsautorisaties/Gemeente_Tiel.txt
+Gemeente BRP 1
 Given bijhoudingsverzoek voor partij 'Gemeente Tiel'
 
 Given de personen 826933129,526521673,141901317,631512457,651712713,176434057 zijn verwijderd

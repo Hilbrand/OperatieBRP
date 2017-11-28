@@ -27,9 +27,7 @@ public final class GerelateerdGegevenComparator implements Comparator<Gerelateer
 
     /**
      * Constructor.
-     *
-     * @param ascending
-     *            indicatie sortering aflopend
+     * @param ascending indicatie sortering aflopend
      */
     public GerelateerdGegevenComparator(final boolean ascending) {
         if (ascending) {

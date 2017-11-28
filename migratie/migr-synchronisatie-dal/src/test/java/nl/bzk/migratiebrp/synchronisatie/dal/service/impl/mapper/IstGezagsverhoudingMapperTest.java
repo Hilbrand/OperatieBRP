@@ -6,29 +6,33 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstGezagsVerhoudingGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstStandaardGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+
 import org.junit.Before;
 import org.junit.Test;
 
 public final class IstGezagsverhoudingMapperTest extends AbstractIstMapperTest<BrpIstGezagsVerhoudingGroepInhoud> {
     private static final AdministratieveHandeling ADMINISTRATIEVE_HANDELING = new AdministratieveHandeling(
-        new Partij("Bierum", 8),
-        SoortAdministratieveHandeling.GBA_INITIELE_VULLING);
+            new Partij("Bierum", "000008"),
+            SoortAdministratieveHandeling.GBA_INITIELE_VULLING,
+            new Timestamp(System.currentTimeMillis()));
 
     private IstGezagsverhoudingMapper mapper;
     private boolean heeftOnderzoek;
@@ -45,7 +49,6 @@ public final class IstGezagsverhoudingMapperTest extends AbstractIstMapperTest<B
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return inhoud
      */
     private BrpIstGezagsVerhoudingGroepInhoud getInhoud() {

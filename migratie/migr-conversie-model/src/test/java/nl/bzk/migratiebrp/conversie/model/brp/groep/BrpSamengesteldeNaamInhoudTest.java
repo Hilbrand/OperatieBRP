@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -17,7 +16,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-
 import org.junit.Test;
 
 public class BrpSamengesteldeNaamInhoudTest {
@@ -28,12 +26,13 @@ public class BrpSamengesteldeNaamInhoudTest {
     public static final String STAMNAAM = "Adel";
 
     public static BrpSamengesteldeNaamInhoud createInhoud() {
-        return createInhoud(VOORNAMEN,VOORVOEGSEL,TITEL,STAMNAAM);
+        return createInhoud(VOORNAMEN, VOORVOEGSEL, TITEL, STAMNAAM);
     }
-    public static BrpSamengesteldeNaamInhoud createInhoud(String voornamen,String voorvoegsel,String titel,String stamnaam) {
+
+    public static BrpSamengesteldeNaamInhoud createInhoud(String voornamen, String voorvoegsel, String titel, String stamnaam) {
         BrpPredicaatCode predicaatCode = null;
 
-        BrpString vnamen = voornamen != null ?  new BrpString(voornamen) : null;
+        BrpString vnamen = voornamen != null ? new BrpString(voornamen) : null;
         BrpString vvoegsel = new BrpString(voorvoegsel);
         BrpCharacter scheidingsteken = new BrpCharacter(' ');
         BrpAdellijkeTitelCode adellijkeTitelCode = new BrpAdellijkeTitelCode(titel);
@@ -41,19 +40,21 @@ public class BrpSamengesteldeNaamInhoudTest {
         BrpBoolean indNamenReeks = null;
         BrpBoolean indAfgeleid = null;
         return new BrpSamengesteldeNaamInhoud(
-            predicaatCode,
-            vnamen,
-            vvoegsel,
-            scheidingsteken,
-            adellijkeTitelCode,
-            gNaamStam,
-            indNamenReeks,
-            indAfgeleid);
+                predicaatCode,
+                vnamen,
+                vvoegsel,
+                scheidingsteken,
+                adellijkeTitelCode,
+                gNaamStam,
+                indNamenReeks,
+                indAfgeleid);
     }
 
-    public static BrpStapel<BrpSamengesteldeNaamInhoud> createStapel(String voornamen,String voorvoegsel,String titel,String stamnaam) {
+    public static BrpStapel<BrpSamengesteldeNaamInhoud> createStapel(String voornamen, String voorvoegsel, String titel, String stamnaam) {
         List<BrpGroep<BrpSamengesteldeNaamInhoud>> groepen = new ArrayList<>();
-        BrpGroep<BrpSamengesteldeNaamInhoud> groep = new BrpGroep<>(createInhoud(voornamen,voorvoegsel,titel,stamnaam), BrpHistorieTest.createdefaultInhoud(), null, null, null);
+        BrpGroep<BrpSamengesteldeNaamInhoud>
+                groep =
+                new BrpGroep<>(createInhoud(voornamen, voorvoegsel, titel, stamnaam), BrpHistorieTest.createdefaultInhoud(), null, null, null);
         groepen.add(groep);
         return new BrpStapel<>(groepen);
     }

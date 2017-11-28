@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
@@ -11,22 +11,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3GezagsverhoudingFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3KindFormatter;
-import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3OuderFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3OverlijdenFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3PersoonFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3VerblijfstitelFormatter;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3CategorieInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3GezagsverhoudingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3HuwelijkOfGpInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3InschrijvingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KiesrechtInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KindInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3NationaliteitInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OuderInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OverlijdenInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3ReisdocumentInhoud;
@@ -45,21 +42,20 @@ public final class Lo3Mutaties {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final Lo3PersoonFormatter PERSOON_FORMATTER = new Lo3PersoonFormatter();
-    private static final Lo3OuderFormatter OUDER_FORMATTER = new Lo3OuderFormatter();
     private static final Lo3OverlijdenFormatter OVERLIJDEN_FORMATTER = new Lo3OverlijdenFormatter();
     private static final Lo3KindFormatter KIND_FORMATTER = new Lo3KindFormatter();
     private static final Lo3VerblijfstitelFormatter VERBLIJFSTITEL_FORMATTER = new Lo3VerblijfstitelFormatter();
     private static final Lo3GezagsverhoudingFormatter GEZAGSVERHOUDING_FORMATTER = new Lo3GezagsverhoudingFormatter();
 
     private final Lo3Wijzigingen<Lo3PersoonInhoud> persoon = new Lo3Wijzigingen<>(Lo3CategorieEnum.CATEGORIE_01, PERSOON_FORMATTER);
-    private final Lo3Wijzigingen<Lo3OuderInhoud> ouder1 = new Lo3Wijzigingen<>(Lo3CategorieEnum.CATEGORIE_02, OUDER_FORMATTER);
-    private final Lo3Wijzigingen<Lo3OuderInhoud> ouder2 = new Lo3Wijzigingen<>(Lo3CategorieEnum.CATEGORIE_03, OUDER_FORMATTER);
+    private final Lo3WijzigingenCategorieOuder ouder1 = new Lo3WijzigingenCategorieOuder(Lo3CategorieEnum.CATEGORIE_02);
+    private final Lo3WijzigingenCategorieOuder ouder2 = new Lo3WijzigingenCategorieOuder(Lo3CategorieEnum.CATEGORIE_03);
 
-    private final List<Lo3Wijzigingen<Lo3NationaliteitInhoud>> nationaliteiten = new ArrayList<>();
     private final Map<String, Lo3WijzigingenCategorie05> huwelijken = new HashMap<>();
+    private final Map<String, Lo3Wijzigingen<Lo3NationaliteitInhoud>> nationaliteiten = new HashMap<>();
 
     private final Lo3Wijzigingen<Lo3OverlijdenInhoud> overlijden = new Lo3Wijzigingen<>(Lo3CategorieEnum.CATEGORIE_06, OVERLIJDEN_FORMATTER);
-    private final Lo3Wijzigingen<Lo3InschrijvingInhoud> inschrijving = new Lo3WijzigingenCategorie07();
+    private final Lo3WijzigingenCategorie07 inschrijving = new Lo3WijzigingenCategorie07();
     private final Lo3Wijzigingen<Lo3VerblijfplaatsInhoud> adres = new Lo3WijzigingenCategorie08();
     private final List<Lo3Wijzigingen<Lo3KindInhoud>> kinderen = new ArrayList<>();
     private final Lo3Wijzigingen<Lo3VerblijfstitelInhoud> verblijfstitel = new Lo3Wijzigingen<>(Lo3CategorieEnum.CATEGORIE_10, VERBLIJFSTITEL_FORMATTER);
@@ -70,7 +66,6 @@ public final class Lo3Mutaties {
 
     /**
      * Geef wijzigingen voor categorie 01 (persoon).
-     *
      * @return wijzigingen.
      */
     public Lo3Wijzigingen<Lo3PersoonInhoud> geefPersoonWijziging() {
@@ -79,39 +74,38 @@ public final class Lo3Mutaties {
 
     /**
      * Geef wijzigingen voor categorie 02 (ouder 1).
-     *
      * @return wijzigingen.
      */
-    public Lo3Wijzigingen<Lo3OuderInhoud> geefOuder1Wijziging() {
+    public Lo3WijzigingenCategorieOuder geefOuder1Wijziging() {
         return ouder1;
     }
 
     /**
      * Geef wijzigingen voor categorie 03 (ouder 2).
-     *
      * @return wijzigingen.
      */
-    public Lo3Wijzigingen<Lo3OuderInhoud> geefOuder2Wijziging() {
+    public Lo3WijzigingenCategorieOuder geefOuder2Wijziging() {
         return ouder2;
     }
 
     /**
-     * Geef nieuwe wijzigingen voor categorie 04 (nationaliteit).
-     *
-     * @return wijzigingen.
+     * Geef wijzigingen voor categorie 04 (nationaliteit).
+     * @param nationaliteitCode nationaliteit code
+     * @return wijzigingen
      */
-
-    public Lo3Wijzigingen<Lo3NationaliteitInhoud> geefNieuweNationaliteitWijziging() {
-        final Lo3Wijzigingen<Lo3NationaliteitInhoud> resultaat = new Lo3WijzigingenCategorie04();
-        nationaliteiten.add(resultaat);
-        return resultaat;
+    public Lo3Wijzigingen<Lo3NationaliteitInhoud> geefNieuweOfBestaandeNationaliteitWijziging(final String nationaliteitCode) {
+        if (nationaliteiten.containsKey(nationaliteitCode)) {
+            return nationaliteiten.get(nationaliteitCode);
+        } else {
+            final Lo3Wijzigingen<Lo3NationaliteitInhoud> resultaat = new Lo3WijzigingenCategorie04();
+            nationaliteiten.put(nationaliteitCode, resultaat);
+            return resultaat;
+        }
     }
 
     /**
      * Geef wijzigingen voor categorie 05 (huwelijk).
-     *
-     * @param relatieIdentificatie
-     *            relatie identificatie (om meerdere relatie samen te voegen in 1 categorie 05)
+     * @param relatieIdentificatie relatie identificatie (om meerdere relatie samen te voegen in 1 categorie 05)
      * @return wijzigingen.
      */
 
@@ -127,7 +121,6 @@ public final class Lo3Mutaties {
 
     /**
      * Geef wijzigingen voor categorie 06 (overlijden).
-     *
      * @return wijzigingen.
      */
     public Lo3Wijzigingen<Lo3OverlijdenInhoud> geefOverlijdenWijziging() {
@@ -136,16 +129,14 @@ public final class Lo3Mutaties {
 
     /**
      * Geef wijzigingen voor categorie 07 (inschrijving).
-     *
      * @return wijzigingen.
      */
-    public Lo3Wijzigingen<Lo3InschrijvingInhoud> geefInschrijvingWijziging() {
+    public Lo3WijzigingenCategorie07 geefInschrijvingWijziging() {
         return inschrijving;
     }
 
     /**
      * Geef wijzigingen voor categorie 08 (verblijfsplaats).
-     *
      * @return wijzigingen.
      */
     public Lo3Wijzigingen<Lo3VerblijfplaatsInhoud> geefVerblijfsplaatsWijziging() {
@@ -154,7 +145,6 @@ public final class Lo3Mutaties {
 
     /**
      * Geef nieuwe wijzigingen voor categorie 09 (kind).
-     *
      * @return wijzigingen.
      */
     public Lo3Wijzigingen<Lo3KindInhoud> geefNieuweKindWijziging() {
@@ -165,7 +155,6 @@ public final class Lo3Mutaties {
 
     /**
      * Geef wijzigingen voor categorie 10 (verblijfstitel).
-     *
      * @return wijzigingen.
      */
     public Lo3Wijzigingen<Lo3VerblijfstitelInhoud> geefVerblijfstitelWijziging() {
@@ -174,7 +163,6 @@ public final class Lo3Mutaties {
 
     /**
      * Geef wijzigingen voor categorie 11 (gezagsverhouding).
-     *
      * @return wijzigingen.
      */
     public Lo3Wijzigingen<Lo3GezagsverhoudingInhoud> geefGezagsverhoudingWijziging() {
@@ -183,7 +171,6 @@ public final class Lo3Mutaties {
 
     /**
      * Geef nieuwe wijzigingen voor categorie 12 (reisdocument).
-     *
      * @return wijzigingen.
      */
     public Lo3Wijzigingen<Lo3ReisdocumentInhoud> geefNieuweReisdocumentWijziging() {
@@ -194,7 +181,6 @@ public final class Lo3Mutaties {
 
     /**
      * Geef wijzigingen voor categorie 13 (kiesrecht).
-     *
      * @return wijzigingen.
      */
     public Lo3Wijzigingen<Lo3KiesrechtInhoud> geefKiesrechtWijziging() {
@@ -203,7 +189,6 @@ public final class Lo3Mutaties {
 
     /**
      * Geef alle categorieen.
-     *
      * @return categorien
      */
     public List<Lo3CategorieWaarde> geefCategorieen() {
@@ -218,7 +203,7 @@ public final class Lo3Mutaties {
         voegToe(result, persoon);
         voegToe(result, ouder1);
         voegToe(result, ouder2);
-        voegToe(result, nationaliteiten);
+        voegToe(result, nationaliteiten.values());
         voegToe(result, huwelijken.values());
         voegToe(result, overlijden);
         voegToe(result, inschrijving);
@@ -253,19 +238,19 @@ public final class Lo3Mutaties {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("persoon", persoon)
-                                                                          .append("ouder1", ouder1)
-                                                                          .append("ouder2", ouder2)
-                                                                          .append("nationaliteiten", nationaliteiten)
-                                                                          .append("huwelijken", huwelijken)
-                                                                          .append("overlijden", overlijden)
-                                                                          .append("inschrijving", inschrijving)
-                                                                          .append("adres", adres)
-                                                                          .append("kinderen", kinderen)
-                                                                          .append("verblijfstitel", verblijfstitel)
-                                                                          .append("gezagsverhouding", gezagsverhouding)
-                                                                          .append("reisdocumenten", reisdocumenten)
-                                                                          .append("kiesrecht", kiesrecht)
-                                                                          .toString();
+                .append("persoon", persoon)
+                .append("ouder1", ouder1)
+                .append("ouder2", ouder2)
+                .append("nationaliteiten", nationaliteiten)
+                .append("huwelijken", huwelijken)
+                .append("overlijden", overlijden)
+                .append("inschrijving", inschrijving)
+                .append("adres", adres)
+                .append("kinderen", kinderen)
+                .append("verblijfstitel", verblijfstitel)
+                .append("gezagsverhouding", gezagsverhouding)
+                .append("reisdocumenten", reisdocumenten)
+                .append("kiesrecht", kiesrecht)
+                .toString();
     }
 }

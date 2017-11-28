@@ -15,7 +15,7 @@
                  index="PGD_IX1"/>
 
     <property name="procesInitGemeente" column="PROCES_INIT_GEMEENTE" />
-    <property name="procesDoelGemeente" column="PROCES_DOEL_GEMEENTE"/>
+    <property name="procesDoelPartijCode" column="PROCES_DOEL_GEMEENTE"/>
 
     <property name="code" column="CODE"/>
     <property name="melding" column="MELDING"/>

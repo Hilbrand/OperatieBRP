@@ -20,9 +20,7 @@ public final class SpringService implements Service {
 
     /**
      * Constructor.
-     *
-     * @param beanFactory
-     *            the spring bean factory to use.
+     * @param beanFactory the spring bean factory to use.
      */
     public SpringService(final BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
@@ -30,9 +28,7 @@ public final class SpringService implements Service {
 
     /**
      * Get a bean from the spring bean factory.
-     *
-     * @param name
-     *            bean name
+     * @param name bean name
      * @return the bean
      * @see BeanFactory#getBean(String)
      */
@@ -42,13 +38,9 @@ public final class SpringService implements Service {
 
     /**
      * Get a bean from the spring bean factory.
-     *
-     * @param <T>
-     *            bean type
-     * @param name
-     *            bean name
-     * @param clazz
-     *            bean class
+     * @param <T> bean type
+     * @param name bean name
+     * @param clazz bean class
      * @return the bean
      * @see BeanFactory#getBean(String, Class)
      */
@@ -58,11 +50,8 @@ public final class SpringService implements Service {
 
     /**
      * Get a bean from the spring bean factory.
-     *
-     * @param <T>
-     *            bean type
-     * @param clazz
-     *            bean class
+     * @param <T> bean type
+     * @param clazz bean class
      * @return the bean
      * @see BeanFactory#getBean(Class)
      */

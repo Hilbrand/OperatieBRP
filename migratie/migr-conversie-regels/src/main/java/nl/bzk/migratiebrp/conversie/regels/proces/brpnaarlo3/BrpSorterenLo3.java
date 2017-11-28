@@ -19,9 +19,7 @@ public class BrpSorterenLo3 {
 
     /**
      * Sorteer de LO3 stapels.
-     * 
-     * @param persoonslijst
-     *            persoonslijst
+     * @param persoonslijst persoonslijst
      * @return persoonslijst (met gesorteerde stapels)
      */
     public final Lo3Persoonslijst converteer(final Lo3Persoonslijst persoonslijst) {

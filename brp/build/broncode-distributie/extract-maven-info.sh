@@ -1,1 +1,0 @@
-find . -type f -name pom.xml | xargs xsltproc ~/extract-maven-info.xslt

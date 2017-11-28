@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
@@ -13,13 +14,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de BRP groep Inschrijving.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpInschrijvingInhoud extends AbstractBrpGroepInhoud {
 
@@ -35,33 +34,23 @@ public final class BrpInschrijvingInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een BrpInschrijvingInhoud object.
-     * 
-     * @param datumInschrijving
-     *            de datum inschrijving, mag niet null zijn
-     * @param versienummer
-     *            het versienummer, moet een getal tussen 0 - 9999 zijn
-     * @param datumtijdstempel
-     *            de datum/tijdstempel
-     * @throws IllegalArgumentException
-     *             als versienummer geen getal tussen de 0 en 9999 is
-     * @throws NullPointerException
-     *             als datumInschrijving null is
+     * @param datumInschrijving de datum inschrijving, mag niet null zijn
+     * @param versienummer het versienummer, moet een getal tussen 0 - 9999 zijn
+     * @param datumtijdstempel de datum/tijdstempel
+     * @throws IllegalArgumentException als versienummer geen getal tussen de 0 en 9999 is
+     * @throws NullPointerException als datumInschrijving null is
      */
     public BrpInschrijvingInhoud(
-        @Element(name = "datumInschrijving", required = true) final BrpDatum datumInschrijving,
-        @Element(name = "versienummer", required = true) final BrpLong versienummer,
-        @Element(name = "datumtijdstempel", required = true) final BrpDatumTijd datumtijdstempel)
-    {
+            @Element(name = "datumInschrijving", required = true) final BrpDatum datumInschrijving,
+            @Element(name = "versienummer", required = true) final BrpLong versienummer,
+            @Element(name = "datumtijdstempel", required = true) final BrpDatumTijd datumtijdstempel) {
         if (datumInschrijving == null) {
             throw new NullPointerException("Datum inschrijving mag niet null zijn.");
         }
         final Long unwrappedVersienummer = BrpLong.unwrap(versienummer);
         if (unwrappedVersienummer < MIN_VERSIENUMMER || unwrappedVersienummer > MAX_VERSIENUMMER) {
-            throw new IllegalArgumentException(String.format(
-                "versienummer moet een getal tussen %d en %d zijn maar is %d",
-                MIN_VERSIENUMMER,
-                MAX_VERSIENUMMER,
-                unwrappedVersienummer));
+            throw new IllegalArgumentException(
+                    String.format("versienummer moet een getal tussen %d en %d zijn maar is %d", MIN_VERSIENUMMER, MAX_VERSIENUMMER, unwrappedVersienummer));
         }
         if (datumtijdstempel == null) {
             throw new NullPointerException("Datumtijdstempel mag niet null zijn.");
@@ -72,36 +61,33 @@ public final class BrpInschrijvingInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van datum inschrijving.
-     *
-     * @return the datumInschrijving
+     * Geef de waarde van datum inschrijving van BrpInschrijvingInhoud.
+     * @return de waarde van datum inschrijving van BrpInschrijvingInhoud
      */
     public BrpDatum getDatumInschrijving() {
         return datumInschrijving;
     }
 
     /**
-     * Geef de waarde van versienummer.
-     *
-     * @return the versienummer
+     * Geef de waarde van versienummer van BrpInschrijvingInhoud.
+     * @return de waarde van versienummer van BrpInschrijvingInhoud
      */
     public BrpLong getVersienummer() {
         return versienummer;
     }
 
     /**
-     * Geef de waarde van datumtijdstempel.
-     *
-     * @return datum/tijdstempel
+     * Geef de waarde van datumtijdstempel van BrpInschrijvingInhoud.
+     * @return de waarde van datumtijdstempel van BrpInschrijvingInhoud
      */
     public BrpDatumTijd getDatumtijdstempel() {
         return datumtijdstempel;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false, omdat datumInschrijving en versienummer verplicht zijn is dit object nooit leeg
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -118,9 +104,9 @@ public final class BrpInschrijvingInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpInschrijvingInhoud castOther = (BrpInschrijvingInhoud) other;
         return new EqualsBuilder().append(datumInschrijving, castOther.datumInschrijving)
-                                  .append(versienummer, castOther.versienummer)
-                                  .append(datumtijdstempel, castOther.datumtijdstempel)
-                                  .isEquals();
+                .append(versienummer, castOther.versienummer)
+                .append(datumtijdstempel, castOther.datumtijdstempel)
+                .isEquals();
     }
 
     @Override
@@ -131,9 +117,9 @@ public final class BrpInschrijvingInhoud extends AbstractBrpGroepInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("datumInschrijving", datumInschrijving)
-                                                                          .append("versienummer", versienummer)
-                                                                          .append("datumtijdstempel", datumtijdstempel)
-                                                                          .toString();
+                .append("datumInschrijving", datumInschrijving)
+                .append("versienummer", versienummer)
+                .append("datumtijdstempel", datumtijdstempel)
+                .toString();
     }
 }

@@ -6,10 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie;
 
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortPartijCode;
-import org.junit.Assert;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortPartijCode;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class BrpSoortPartijCodeTest {

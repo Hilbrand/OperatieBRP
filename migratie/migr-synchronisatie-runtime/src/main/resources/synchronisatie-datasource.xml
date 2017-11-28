@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-	   	http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
-	">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-   <bean id="syncDalDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
+    <bean id="syncDalDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
         <property name="uniqueResourceName">
             <!--
              | Tijdens jUnit testen kan de ApplicationContext meerdere keren worden geinstantieerd.
              | Elke keer dient een unique naam gebruikt te worden, anders gaat Atomikos fout.
               -->
-            <bean class="nl.bzk.migratiebrp.util.common.UniqueName" >
-            	<property name="baseName" value="syncDatabase" />
+            <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName">
+                <property name="baseName" value="syncDatabase"/>
             </bean>
         </property>
-        <property name="xaDataSourceClassName" value="${sync.database.driver:org.postgresql.xa.PGXADataSource}" />
+        <property name="xaDataSourceClassName" value="${sync.database.driver:org.postgresql.xa.PGXADataSource}"/>
         <property name="xaProperties">
             <props>
                 <prop key="ServerName">${sync.database.host:localhost}</prop>
@@ -34,9 +23,9 @@
                 <prop key="Password">${sync.database.password:postgres}</prop>
             </props>
         </property>
-        <property name="maxPoolSize" value="${sync.database.maxpool:20}" />
-        <property name="minPoolSize" value="${sync.database.minpool:3}"/>
-        <!-- 
+        <property name="maxPoolSize" value="${sync.database.maxpool:20}"/>
+        <property name="minPoolSize" value="${sync.database.minpool:1}"/>
+        <!--
         <property name="testQuery" value="select now()"/>
         -->
     </bean>
@@ -46,5 +35,4 @@
         <property name="generateDdl" value="false"/>
         <property name="databasePlatform" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
     </bean>
-
 </beans>

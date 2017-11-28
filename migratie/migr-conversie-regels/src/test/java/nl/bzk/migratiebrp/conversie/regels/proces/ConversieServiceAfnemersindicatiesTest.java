@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.conversie.regels.proces;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAfnemersindicaties;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Afnemersindicatie;
@@ -26,14 +26,14 @@ public class ConversieServiceAfnemersindicatiesTest extends AbstractConversieSer
         final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersIndicatieStapels = new ArrayList<>();
 
         // @formatter:off
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(7, 19920101, 0, 0)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000007", 19920101, 0, 0)));
 
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(null, 19960101, 1, 0), maakLo3Categorie(8, 19920601, 1, 1)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(null, 19960101, 1, 0), maakLo3Categorie("000008", 19920601, 1, 1)));
 
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(9, 19920501, 2, 0)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000009", 19920501, 2, 0)));
         // @formatter:on
 
-        final BrpAfnemersindicaties resultaat = test("OUD-VOORBEELD-1", new Lo3Afnemersindicatie(9734838049L, afnemersIndicatieStapels));
+        final BrpAfnemersindicaties resultaat = test("OUD-VOORBEELD-1", new Lo3Afnemersindicatie("9734838049", afnemersIndicatieStapels));
         Assert.assertEquals(3, resultaat.getAfnemersindicaties().size());
     }
 
@@ -42,14 +42,14 @@ public class ConversieServiceAfnemersindicatiesTest extends AbstractConversieSer
         final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersIndicatieStapels = new ArrayList<>();
 
         // @formatter:off
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(7, 20010101, 0, 0)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000007", 20010101, 0, 0)));
 
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(null, 19950101, 1, 0), maakLo3Categorie(7, 19940101, 1, 1)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(null, 19950101, 1, 0), maakLo3Categorie("000007", 19940101, 1, 1)));
 
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(9, 19920501, 2, 0)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000009", 19920501, 2, 0)));
         // @formatter:on
 
-        final BrpAfnemersindicaties resultaat = test("OUD-VOORBEELD-2", new Lo3Afnemersindicatie(7396715809L, afnemersIndicatieStapels));
+        final BrpAfnemersindicaties resultaat = test("OUD-VOORBEELD-2", new Lo3Afnemersindicatie("7396715809", afnemersIndicatieStapels));
         Assert.assertEquals(2, resultaat.getAfnemersindicaties().size());
     }
 
@@ -58,13 +58,13 @@ public class ConversieServiceAfnemersindicatiesTest extends AbstractConversieSer
         final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersIndicatieStapels = new ArrayList<>();
 
         // @formatter:off
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(7, 20010101, 0, 0),
-                                                               maakLo3Categorie(7, 19960101, 0, 1),
-                                                               maakLo3Categorie(null, 19940101, 0, 2),
-                                                               maakLo3Categorie(7, 19930101, 0, 3)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000007", 20010101, 0, 0),
+                maakLo3Categorie("000007", 19960101, 0, 1),
+                maakLo3Categorie(null, 19940101, 0, 2),
+                maakLo3Categorie("000007", 19930101, 0, 3)));
         // @formatter:on
 
-        final BrpAfnemersindicaties resultaat = test("OUD-VOORBEELD-3", new Lo3Afnemersindicatie(4862398753L, afnemersIndicatieStapels));
+        final BrpAfnemersindicaties resultaat = test("OUD-VOORBEELD-3", new Lo3Afnemersindicatie("4862398753", afnemersIndicatieStapels));
         Assert.assertEquals(1, resultaat.getAfnemersindicaties().size());
     }
 
@@ -73,16 +73,16 @@ public class ConversieServiceAfnemersindicatiesTest extends AbstractConversieSer
         final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersIndicatieStapels = new ArrayList<>();
 
         // @formatter:off
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(7, 19920101, 0, 0)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000007", 19920101, 0, 0)));
 
         afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(null, 19960101, 1, 0),
-                                                               maakLo3Categorie(8, 19930601, 1, 1),
-                                                               maakLo3Categorie(8, 19920501, 1, 2)));
+                maakLo3Categorie("000008", 19930601, 1, 1),
+                maakLo3Categorie("000008", 19920501, 1, 2)));
 
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(9, 19920501, 2, 0)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000009", 19920501, 2, 0)));
         // @formatter:on
 
-        final BrpAfnemersindicaties resultaat = test("VOORBEELD-1", new Lo3Afnemersindicatie(9734838049L, afnemersIndicatieStapels));
+        final BrpAfnemersindicaties resultaat = test("VOORBEELD-1", new Lo3Afnemersindicatie("9734838049", afnemersIndicatieStapels));
         Assert.assertEquals(3, resultaat.getAfnemersindicaties().size());
     }
 
@@ -91,14 +91,14 @@ public class ConversieServiceAfnemersindicatiesTest extends AbstractConversieSer
         final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersIndicatieStapels = new ArrayList<>();
 
         // @formatter:off
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(7, 19970601, 0, 0), maakLo3Categorie(7, 19960101, 0, 1)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000007", 19970601, 0, 0), maakLo3Categorie("000007", 19960101, 0, 1)));
 
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(null, 19950101, 1, 0), maakLo3Categorie(7, 19940101, 1, 1)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(null, 19950101, 1, 0), maakLo3Categorie("000007", 19940101, 1, 1)));
 
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(9, 19920501, 2, 0)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000009", 19920501, 2, 0)));
         // @formatter:on
 
-        final BrpAfnemersindicaties resultaat = test("VOORBEELD-2", new Lo3Afnemersindicatie(7396715809L, afnemersIndicatieStapels));
+        final BrpAfnemersindicaties resultaat = test("VOORBEELD-2", new Lo3Afnemersindicatie("7396715809", afnemersIndicatieStapels));
         Assert.assertEquals(2, resultaat.getAfnemersindicaties().size());
     }
 
@@ -107,15 +107,15 @@ public class ConversieServiceAfnemersindicatiesTest extends AbstractConversieSer
         final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersIndicatieStapels = new ArrayList<>();
 
         // @formatter:off
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(7, 20010101, 0, 0),
-                                                               maakLo3Categorie(7, 19960101, 0, 1),
-                                                               maakLo3Categorie(7, 19930101, 0, 2)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000007", 20010101, 0, 0),
+                maakLo3Categorie("000007", 19960101, 0, 1),
+                maakLo3Categorie("000007", 19930101, 0, 2)));
 
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie(7, 19950101, 1, 0), maakLo3Categorie(7, 19920101, 1, 1)));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(maakLo3Categorie("000007", 19950101, 1, 0), maakLo3Categorie("000007", 19920101, 1, 1)));
 
         // @formatter:on
 
-        final BrpAfnemersindicaties resultaat = test("VOORBEELD-3", new Lo3Afnemersindicatie(4862398753L, afnemersIndicatieStapels));
+        final BrpAfnemersindicaties resultaat = test("VOORBEELD-3", new Lo3Afnemersindicatie("4862398753", afnemersIndicatieStapels));
         Assert.assertEquals(1, resultaat.getAfnemersindicaties().size());
     }
 

@@ -75,26 +75,6 @@
                              indouder="true"/>
     <kern.his_betrouderschap id="4" betr="8" dataanvgel="19610101" tsreg="1961-01-02 01:00:00.0" actieinh="11"
                              indouder="true"/>
-    <kern.his_doc id="1" doc="1" tsreg="1960-01-02 01:00:00.0" actieinh="1" aktenr="Geb-01" partij="519"/>
-    <kern.his_doc id="2" doc="2" tsreg="1960-01-02 01:00:00.0" actieinh="1" partij="9999"/>
-    <kern.his_doc id="3" doc="3" tsreg="1960-01-02 01:00:00.0" actieinh="2" aktenr="Geb-01" partij="519"/>
-    <kern.his_doc id="4" doc="4" tsreg="1960-01-02 01:00:00.0" actieinh="2" partij="9999"/>
-    <kern.his_doc id="5" doc="5" tsreg="1980-01-02 01:00:00.0" actieinh="3" aktenr="Trw-01" partij="519"/>
-    <kern.his_doc id="6" doc="6" tsreg="1980-01-02 01:00:00.0" actieinh="3" partij="9999"/>
-    <kern.his_doc id="7" doc="7" tsreg="1990-01-02 01:00:00.0" actieinh="4" aktenr="Ont-01" partij="519"/>
-    <kern.his_doc id="8" doc="8" tsreg="1990-01-02 01:00:00.0" actieinh="4" partij="9999"/>
-    <kern.his_doc id="9" doc="9" tsreg="1991-01-02 01:00:00.0" actieinh="5" aktenr="Naam-02" partij="519"/>
-    <kern.his_doc id="10" doc="10" tsreg="1984-01-02 01:00:00.0" actieinh="6" aktenr="Naam-01" partij="519"/>
-    <kern.his_doc id="11" doc="11" tsreg="1960-01-02 01:00:00.0" actieinh="7" aktenr="Geb-01" partij="519"/>
-    <kern.his_doc id="12" doc="12" tsreg="1961-01-02 01:00:00.0" actieinh="10" aktenr="Geb-02" partij="519"/>
-    <kern.his_doc id="13" doc="13" tsreg="1961-01-02 01:00:00.0" actieinh="10" partij="9999"/>
-    <kern.his_doc id="14" doc="14" tsreg="1961-01-02 01:00:00.0" actieinh="11" aktenr="Geb-02" partij="519"/>
-    <kern.his_doc id="15" doc="15" tsreg="1961-01-02 01:00:00.0" actieinh="11" partij="9999"/>
-    <kern.his_doc id="16" doc="16" tsreg="1980-01-02 01:00:00.0" actieinh="12" aktenr="Trw-01" partij="519"/>
-    <kern.his_doc id="17" doc="17" tsreg="1980-01-02 01:00:00.0" actieinh="12" partij="9999"/>
-    <kern.his_doc id="18" doc="18" tsreg="1990-01-02 01:00:00.0" actieinh="13" aktenr="Ont-01" partij="519"/>
-    <kern.his_doc id="19" doc="19" tsreg="1990-01-02 01:00:00.0" actieinh="13" partij="9999"/>
-    <kern.his_doc id="20" doc="20" tsreg="1961-01-02 01:00:00.0" actieinh="14" aktenr="Geb-02" partij="519"/>
     <kern.his_persaanschr id="1" pers="1" dataanvgel="19910101" tsreg="1991-01-02 01:00:00.0" actieinh="5"
                           indaanschralgoritmischafgele="true" voornamenaanschr="Klaas" geslnaamaanschr="Jansen"/>
     <kern.his_persaanschr id="2" pers="1" dataanvgel="19840101" tsreg="1984-01-02 01:00:00.0" actieinh="6"

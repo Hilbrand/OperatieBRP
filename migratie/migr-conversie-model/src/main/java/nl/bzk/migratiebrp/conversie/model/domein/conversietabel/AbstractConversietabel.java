@@ -15,11 +15,8 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 
 /**
  * Bevat conversie mapping functionaliteit.
- * 
- * @param <L>
- *            de LO3 waarde
- * @param <B>
- *            de BRP waarde
+ * @param <L> de LO3 waarde
+ * @param <B> de BRP waarde
  */
 public abstract class AbstractConversietabel<L, B> implements Conversietabel<L, B> {
 
@@ -28,9 +25,7 @@ public abstract class AbstractConversietabel<L, B> implements Conversietabel<L, 
 
     /**
      * Maakt een AbstractConversietabel object.
-     * 
-     * @param conversieLijst
-     *            de lijst met conversies.
+     * @param conversieLijst de lijst met conversies.
      */
     public AbstractConversietabel(final List<Map.Entry<L, B>> conversieLijst) {
         mapLo3NaarBrp = new HashMap<>();
@@ -43,7 +38,6 @@ public abstract class AbstractConversietabel<L, B> implements Conversietabel<L, 
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -54,9 +48,9 @@ public abstract class AbstractConversietabel<L, B> implements Conversietabel<L, 
             if (genormalizeerdeInput != null) {
                 if (!mapLo3NaarBrp.containsKey(genormalizeerdeInput)) {
                     throw FoutmeldingUtil.getValidatieExceptie(String.format(
-                        "Er is geen mapping naar BRP voor LO3 waarde '%s' in conversietabel %s",
-                        genormalizeerdeInput,
-                        this.getClass().getSimpleName()), SoortMeldingCode.PRE054, null);
+                            "Er is geen mapping naar BRP voor LO3 waarde '%s' in conversietabel %s",
+                            genormalizeerdeInput,
+                            this.getClass().getSimpleName()), SoortMeldingCode.PRE054, null);
                 }
                 result = voegOnderzoekToeBrp(mapLo3NaarBrp.get(genormalizeerdeInput), bepaalOnderzoekLo3(input));
             } else {
@@ -80,9 +74,9 @@ public abstract class AbstractConversietabel<L, B> implements Conversietabel<L, 
             if (genormalizeerdeInput != null) {
                 if (!mapBrpNaarLo3.containsKey(genormalizeerdeInput)) {
                     throw FoutmeldingUtil.getValidatieExceptie(String.format(
-                        "Er is geen mapping naar LO3 voor BRP waarde '%s' in conversietabel %s",
-                        genormalizeerdeInput,
-                        this.getClass().getSimpleName()), SoortMeldingCode.PRE054, null);
+                            "Er is geen mapping naar LO3 voor BRP waarde '%s' in conversietabel %s",
+                            genormalizeerdeInput,
+                            this.getClass().getSimpleName()), SoortMeldingCode.PRE054, null);
                 }
                 result = voegOnderzoekToeLo3(mapBrpNaarLo3.get(genormalizeerdeInput), bepaalOnderzoekBrp(input));
             } else {
@@ -109,9 +103,7 @@ public abstract class AbstractConversietabel<L, B> implements Conversietabel<L, 
 
     /**
      * Maak een kopie van de L (Lo3) input parameter waarbij een eventueel Lo3Onderzoek niet wordt meegekopieerd.
-     * 
-     * @param input
-     *            een L (Lo3) input waarde met mogelijk onderzoek
+     * @param input een L (Lo3) input waarde met mogelijk onderzoek
      * @return een kopie van de input waarde zonder onderzoek
      */
     protected final L verwijderOnderzoekLo3(final L input) {
@@ -120,9 +112,7 @@ public abstract class AbstractConversietabel<L, B> implements Conversietabel<L, 
 
     /**
      * Maak een kopie van de B (Brp) input parameter waarbij een eventueel Lo3Onderzoek niet wordt meegekopieerd.
-     * 
-     * @param input
-     *            een B (Brp) input waarde met mogelijk onderzoek
+     * @param input een B (Brp) input waarde met mogelijk onderzoek
      * @return een kopie van de input waarde zonder onderzoek
      */
     protected final B verwijderOnderzoekBrp(final B input) {
@@ -131,40 +121,30 @@ public abstract class AbstractConversietabel<L, B> implements Conversietabel<L, 
 
     /**
      * Geef het onderzoek terug dat behoort bij de L (Lo3) input parameter.
-     * 
-     * @param input
-     *            een L (Lo3) input waarde met mogelijk onderzoek
+     * @param input een L (Lo3) input waarde met mogelijk onderzoek
      * @return een eventueel onderzoek dat aan de input parameter gekoppeld was, of null als er geen onderzoek was
      */
     protected abstract Lo3Onderzoek bepaalOnderzoekLo3(final L input);
 
     /**
      * Geef het onderzoek terug dat behoort bij de B (Brp) input parameter.
-     * 
-     * @param input
-     *            een B (Brp) input waarde met mogelijk onderzoek
+     * @param input een B (Brp) input waarde met mogelijk onderzoek
      * @return een eventueel onderzoek dat aan de input parameter gekoppeld was, of null als er geen onderzoek was
      */
     protected abstract Lo3Onderzoek bepaalOnderzoekBrp(final B input);
 
     /**
      * Voeg een onderzoek toe aan een L (Lo3) waarde.
-     * 
-     * @param input
-     *            een L (Lo3) input waarde
-     * @param onderzoek
-     *            het onderzoek dat toegevoegd moet worden aan de input waarde
+     * @param input een L (Lo3) input waarde
+     * @param onderzoek het onderzoek dat toegevoegd moet worden aan de input waarde
      * @return een kopie van de L (Lo3) input waarde met daaraan toegevoegd het onderzoek
      */
     protected abstract L voegOnderzoekToeLo3(final L input, final Lo3Onderzoek onderzoek);
 
     /**
      * Voeg een onderzoek toe aan een B (Brp) waarde.
-     * 
-     * @param input
-     *            een B (Brp) input waarde
-     * @param onderzoek
-     *            het onderzoek dat toegevoegd moet worden aan de input waarde
+     * @param input een B (Brp) input waarde
+     * @param onderzoek het onderzoek dat toegevoegd moet worden aan de input waarde
      * @return een kopie van de B (Brp) input waarde met daaraan toegevoegd het onderzoek
      */
     protected abstract B voegOnderzoekToeBrp(final B input, final Lo3Onderzoek onderzoek);

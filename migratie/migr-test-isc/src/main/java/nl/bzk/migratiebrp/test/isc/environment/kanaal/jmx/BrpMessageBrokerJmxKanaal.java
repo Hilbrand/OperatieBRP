@@ -29,7 +29,7 @@ public final class BrpMessageBrokerJmxKanaal extends LazyLoadingKanaal {
     public static final class Worker extends AbstractJmxKanaal {
 
         @Inject
-        @Named("brpJmxConnector")
+        @Named("brpMessagebrokerJmxConnector")
         private MBeanServerConnection connection;
 
         /*

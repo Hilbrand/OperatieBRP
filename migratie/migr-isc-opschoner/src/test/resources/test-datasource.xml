@@ -8,9 +8,10 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-    <jdbc:embedded-database id="opschonerDataSource" type="H2" />
+    <jdbc:embedded-database id="opschonerDataSource" type="HSQL" />
 
     <jdbc:initialize-database ignore-failures="ALL" data-source="opschonerDataSource">
+        <jdbc:script location="classpath:sql/hsqldb4postgres.sql"  />
         <jdbc:script location="classpath:sql/mig-drop.sql"  />
         <jdbc:script location="classpath:sql/jbpm-drop.sql"  />
         <jdbc:script location="classpath:sql/jbpm-create.sql"  />

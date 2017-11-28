@@ -8,4 +8,3 @@
  * Package die alle classes bevat die voor de verschilanalyse nodig zijn.
  */
 package nl.bzk.migratiebrp.init.logging.verschilanalyse;
-

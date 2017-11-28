@@ -48,9 +48,7 @@ public class GgoLo3Builder {
 
     /**
      * Build de persoonslijst en geef een viewer model terug.
-     * 
-     * @param lo3Persoonslijst
-     *            Lo3Persoonslijst
+     * @param lo3Persoonslijst Lo3Persoonslijst
      * @return Map met de categorie.
      */
     public final List<GgoStapel> build(final Lo3Persoonslijst lo3Persoonslijst) {
@@ -97,17 +95,17 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3PersoonInhoud> categorie) {
                 return lo3CategorieBuilder.createPersoonInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
         };
         maakInhoudCallback.createEnkelvoudigeStapel(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getPersoonStapel(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_01);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getPersoonStapel(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_01);
     }
 
     // Create Ouder1stapel
@@ -117,17 +115,17 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3OuderInhoud> categorie) {
                 return lo3CategorieBuilder.createOuderInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
         };
         maakInhoudCallback.createEnkelvoudigeStapel(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getOuder1Stapel(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_02);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getOuder1Stapel(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_02);
     }
 
     // Create Ouder2stapel
@@ -137,17 +135,17 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3OuderInhoud> categorie) {
                 return lo3CategorieBuilder.createOuderInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
         };
         maakInhoudCallback.createEnkelvoudigeStapel(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getOuder2Stapel(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_03);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getOuder2Stapel(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_03);
     }
 
     // Create nationaliteitstapel
@@ -157,10 +155,10 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3NationaliteitInhoud> categorie) {
                 return lo3CategorieBuilder.createNationaliteitInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
 
             @Override
@@ -174,10 +172,10 @@ public class GgoLo3Builder {
             }
         };
         maakInhoudCallback.createMeervoudigeStapels(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getNationaliteitStapels(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_04);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getNationaliteitStapels(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_04);
     }
 
     // Create huwelijkstapel
@@ -187,17 +185,17 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3HuwelijkOfGpInhoud> categorie) {
                 return lo3CategorieBuilder.createHuwelijkInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
         };
         maakInhoudCallback.createMeervoudigeStapels(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getHuwelijkOfGpStapels(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_05);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getHuwelijkOfGpStapels(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_05);
     }
 
     // Create overlijdenstapel
@@ -207,17 +205,17 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3OverlijdenInhoud> categorie) {
                 return lo3CategorieBuilder.createOverlijdenInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
         };
         maakInhoudCallback.createEnkelvoudigeStapel(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getOverlijdenStapel(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_06);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getOverlijdenStapel(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_06);
     }
 
     // Create inschrijvingstapel
@@ -229,10 +227,10 @@ public class GgoLo3Builder {
             }
         };
         maakInhoudCallback.createEnkelvoudigeStapel(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getInschrijvingStapel(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_07);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getInschrijvingStapel(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_07);
     }
 
     // Create verblijfplaatsstapel
@@ -242,17 +240,17 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3VerblijfplaatsInhoud> categorie) {
                 return lo3CategorieBuilder.createVerblijfplaatsInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
         };
         maakInhoudCallback.createEnkelvoudigeStapel(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getVerblijfplaatsStapel(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_08);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getVerblijfplaatsStapel(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_08);
     }
 
     // Create kindstapel
@@ -262,17 +260,17 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3KindInhoud> categorie) {
                 return lo3CategorieBuilder.createKindInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
         };
         maakInhoudCallback.createMeervoudigeStapels(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getKindStapels(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_09);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getKindStapels(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_09);
     }
 
     // Create verblijfstitel stapel.
@@ -282,17 +280,17 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3VerblijfstitelInhoud> categorie) {
                 return lo3CategorieBuilder.createVerblijfstitelInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
         };
         maakInhoudCallback.createEnkelvoudigeStapel(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getVerblijfstitelStapel(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_10);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getVerblijfstitelStapel(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_10);
     }
 
     // Create gezagsverhouding.
@@ -302,17 +300,17 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3GezagsverhoudingInhoud> categorie) {
                 return lo3CategorieBuilder.createGezagsverhoudingInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
         };
         maakInhoudCallback.createEnkelvoudigeStapel(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getGezagsverhoudingStapel(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_11);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getGezagsverhoudingStapel(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_11);
     }
 
     // Create reisdocument.
@@ -322,10 +320,10 @@ public class GgoLo3Builder {
             @Override
             public Map<String, String> maakInhoud(final Lo3Categorie<Lo3ReisdocumentInhoud> categorie) {
                 return lo3CategorieBuilder.createReisdocumentInhoud(
-                    categorie.getInhoud(),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getOnderzoek());
+                        categorie.getInhoud(),
+                        categorie.getHistorie(),
+                        categorie.getDocumentatie(),
+                        categorie.getOnderzoek());
             }
 
             @Override
@@ -339,10 +337,10 @@ public class GgoLo3Builder {
             }
         };
         maakInhoudCallback.createMeervoudigeStapels(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getReisdocumentStapels(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_12);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getReisdocumentStapels(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_12);
     }
 
     // Create kiesrecht.
@@ -355,10 +353,10 @@ public class GgoLo3Builder {
             }
         };
         maakInhoudCallback.createEnkelvoudigeStapel(
-            ggoLo3Persoonslijst,
-            lo3Persoonslijst.getKiesrechtStapel(),
-            lo3Persoonslijst.getActueelAdministratienummer(),
-            Lo3CategorieEnum.CATEGORIE_13);
+                ggoLo3Persoonslijst,
+                lo3Persoonslijst.getKiesrechtStapel(),
+                lo3Persoonslijst.getActueelAdministratienummer(),
+                Lo3CategorieEnum.CATEGORIE_13);
     }
 
     /**
@@ -372,24 +370,23 @@ public class GgoLo3Builder {
          * Bouwt een GGO Stapel op op basis van een Lo3 Stapel.
          */
         void createEnkelvoudigeStapel(
-            final List<GgoStapel> ggoLo3Persoonslijst,
-            final Lo3Stapel<T> lo3Stapel,
-            final Long aNummer,
-            final Lo3CategorieEnum catEnum);
+                final List<GgoStapel> ggoLo3Persoonslijst,
+                final Lo3Stapel<T> lo3Stapel,
+                final String aNummer,
+                final Lo3CategorieEnum catEnum);
 
         /**
          * Bouwt een GGO Stapel op op basis van een lijst van Lo3 Stapel.
          */
         void createMeervoudigeStapels(
-            final List<GgoStapel> ggoLo3Persoonslijst,
-            final List<Lo3Stapel<T>> lo3Stapels,
-            final Long aNummer,
-            final Lo3CategorieEnum catEnum);
+                final List<GgoStapel> ggoLo3Persoonslijst,
+                final List<Lo3Stapel<T>> lo3Stapels,
+                final String aNummer,
+                final Lo3CategorieEnum catEnum);
 
         /**
          * Bepaalt de omschrijving van de Stapel. Bij sommige Stapels zoals Reisdocument is een omschrijving vereist
          * bijvoorbeeld om het soort reisdocument te tonen in de label van de stapel.
-         * 
          * @return omschrijving
          */
         String bepaalStapelOmschrijving(final Lo3Categorie<T> categorie);
@@ -409,11 +406,10 @@ public class GgoLo3Builder {
          * Bouwt een GGO Stapel op op basis van een Lo3 Stapel.
          */
         public void createEnkelvoudigeStapel(
-            final List<GgoStapel> ggoLo3Persoonslijst,
-            final Lo3Stapel<T> lo3Stapel,
-            final Long aNummer,
-            final Lo3CategorieEnum catEnum)
-        {
+                final List<GgoStapel> ggoLo3Persoonslijst,
+                final Lo3Stapel<T> lo3Stapel,
+                final String aNummer,
+                final Lo3CategorieEnum catEnum) {
 
             createStapel(ggoLo3Persoonslijst, lo3Stapel, aNummer, catEnum, 0);
         }
@@ -422,11 +418,10 @@ public class GgoLo3Builder {
          * Bouwt een GGO Stapel op op basis van een lijst van Lo3 Stapel.
          */
         public void createMeervoudigeStapels(
-            final List<GgoStapel> ggoLo3Persoonslijst,
-            final List<Lo3Stapel<T>> lo3Stapels,
-            final Long aNummer,
-            final Lo3CategorieEnum catEnum)
-        {
+                final List<GgoStapel> ggoLo3Persoonslijst,
+                final List<Lo3Stapel<T>> lo3Stapels,
+                final String aNummer,
+                final Lo3CategorieEnum catEnum) {
             if (lo3Stapels != null) {
                 int vermoedelijkStapelNr = 0;
                 for (final Lo3Stapel<T> lo3Stapel : lo3Stapels) {
@@ -437,12 +432,11 @@ public class GgoLo3Builder {
         }
 
         private void createStapel(
-            final List<GgoStapel> ggoLo3Persoonslijst,
-            final Lo3Stapel<T> lo3Stapel,
-            final Long aNummer,
-            final Lo3CategorieEnum catEnum,
-            final int vermoedelijkStapelNr)
-        {
+                final List<GgoStapel> ggoLo3Persoonslijst,
+                final Lo3Stapel<T> lo3Stapel,
+                final String aNummer,
+                final Lo3CategorieEnum catEnum,
+                final int vermoedelijkStapelNr) {
             if (lo3Stapel != null) {
                 final List<Lo3Categorie<T>> categorieen = lo3Stapel.getCategorieen();
                 Collections.reverse(categorieen);
@@ -482,7 +476,6 @@ public class GgoLo3Builder {
         /**
          * Bepaalt de omschrijving van de Stapel. Bij sommige Stapels zoals Reisdocument is een omschrijving vereist
          * bijvoorbeeld om het soort reisdocument te tonen in de label van de stapel.
-         * 
          * @return omschrijving
          */
         public String bepaalStapelOmschrijving(final Lo3Categorie<T> categorie) {

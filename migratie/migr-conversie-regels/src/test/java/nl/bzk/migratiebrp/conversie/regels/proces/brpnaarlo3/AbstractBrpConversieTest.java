@@ -28,21 +28,19 @@ import nl.bzk.migratiebrp.conversie.regels.AbstractComponentTest;
  */
 public abstract class AbstractBrpConversieTest extends AbstractComponentTest {
     protected void vulNationaliteit(
-        final BrpPersoonslijstBuilder builder,
-        final String natCode,
-        final String verkrijgCode,
-        final String verliesCode)
-    {
+            final BrpPersoonslijstBuilder builder,
+            final String natCode,
+            final String verkrijgCode,
+            final String verliesCode) {
         vulNationaliteit(builder, natCode, verkrijgCode, verliesCode, his(20100101, 20100102000000L));
     }
 
     protected void vulNationaliteit(
-        final BrpPersoonslijstBuilder builder,
-        final String natCode,
-        final String verkrijgCode,
-        final String verliesCode,
-        final BrpHistorie historie)
-    {
+            final BrpPersoonslijstBuilder builder,
+            final String natCode,
+            final String verkrijgCode,
+            final String verliesCode,
+            final BrpHistorie historie) {
         final List<BrpGroep<BrpNationaliteitInhoud>> natGroepen = new ArrayList<>();
         final BrpGroep<BrpNationaliteitInhoud> natGroep =
                 new BrpGroep<>(nationaliteit(natCode, verkrijgCode, verliesCode), historie, act(1, 20100102), null, null);
@@ -68,7 +66,7 @@ public abstract class AbstractBrpConversieTest extends AbstractComponentTest {
 
     private void addGeboorteStapel(final BrpPersoonslijstBuilder builder) {
         final List<BrpGroep<BrpGeboorteInhoud>> groepen = new ArrayList<>();
-        final BrpGeboorteInhoud geboorte = geboorte(19800101, "042");
+        final BrpGeboorteInhoud geboorte = geboorte(19800101, "0042");
         final BrpGroep<BrpGeboorteInhoud> groep = new BrpGroep<>(geboorte, his(19800101, 19800102000000L), act(1, 19800102), null, null);
         groepen.add(groep);
         final BrpStapel<BrpGeboorteInhoud> geboorteStapel = new BrpStapel<>(groepen);

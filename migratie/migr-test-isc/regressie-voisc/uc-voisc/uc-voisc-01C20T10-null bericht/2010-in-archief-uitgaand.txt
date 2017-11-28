@@ -2,15 +2,10 @@
 <ArchiveerInBrpVerzoek xmlns="http://www.bzk.nl/migratiebrp/SYNC/0001">
 	<soortBericht>Null</soortBericht>
 	<richting>UITGAAND</richting>
-	<zender>
-		<afnemer>199902</afnemer>
-		<systeem>Migratievoorzieningen</systeem>
-	</zender>
-	<ontvanger>
-		<gemeente>0610</gemeente>
-		<systeem>GBANetwerk</systeem>
-	</ontvanger>
+	<zendendePartij>199902</zendendePartij>
+	<ontvangendePartij>061001</ontvangendePartij>
 	<referentienummer>{eref}</referentienummer>
 	<crossReferentienummer>{eref}</crossReferentienummer>
+        <tijdstipVerzending>{timestamp}</tijdstipVerzending>
 	<data></data>
 </ArchiveerInBrpVerzoek>

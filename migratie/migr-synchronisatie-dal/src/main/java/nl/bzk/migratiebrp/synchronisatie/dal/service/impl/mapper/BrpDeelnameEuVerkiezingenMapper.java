@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonDeelnameEuVerkiezingenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDeelnameEuVerkiezingenInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonDeelnameEuVerkiezingenHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -22,13 +22,12 @@ import org.springframework.stereotype.Component;
 public final class BrpDeelnameEuVerkiezingenMapper extends AbstractBrpMapper<PersoonDeelnameEuVerkiezingenHistorie, BrpDeelnameEuVerkiezingenInhoud> {
 
     @Override
-    protected BrpDeelnameEuVerkiezingenInhoud mapInhoud(final PersoonDeelnameEuVerkiezingenHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper)
-    {
+    protected BrpDeelnameEuVerkiezingenInhoud mapInhoud(final PersoonDeelnameEuVerkiezingenHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         final BrpBoolean indDeelnameEuVerkiezingen;
         indDeelnameEuVerkiezingen =
                 BrpMapperUtil.mapBrpBoolean(
-                    historie.getIndicatieDeelnameEuVerkiezingen(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_DEELNAMEEUVERKIEZINGEN_INDICATIEDEELNAME, true));
+                        historie.getIndicatieDeelnameEuVerkiezingen(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_DEELNAMEEUVERKIEZINGEN_INDICATIEDEELNAME, true));
         final BrpDatum datumAanleidingAanpassingDeelnameEuVerkiezingen;
         final Lo3Onderzoek onderzoekDatumAanleidingAanpassing;
         onderzoekDatumAanleidingAanpassing =
@@ -43,9 +42,9 @@ public final class BrpDeelnameEuVerkiezingenMapper extends AbstractBrpMapper<Per
                 BrpMapperUtil.mapDatum(historie.getDatumVoorzienEindeUitsluitingEuVerkiezingen(), onderzoekDatumVoorzienEindeUitsluiting);
 
         return new BrpDeelnameEuVerkiezingenInhoud(
-            indDeelnameEuVerkiezingen,
-            datumAanleidingAanpassingDeelnameEuVerkiezingen,
-            datumVoorzienEindeUitsluitingEuVerkiezingen);
+                indDeelnameEuVerkiezingen,
+                datumAanleidingAanpassingDeelnameEuVerkiezingen,
+                datumVoorzienEindeUitsluitingEuVerkiezingen);
     }
 
 }

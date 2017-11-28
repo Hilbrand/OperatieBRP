@@ -6,41 +6,52 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocumentHistorie;
-import org.springframework.stereotype.Component;
+
+import java.util.Set;
+
+import javax.inject.Inject;
 
 /**
  * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
  */
-@Component
 public class GgoBrpReisdocumentMapper extends AbstractGgoBrpMapper<PersoonReisdocumentHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpReisdocumentMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+                                    final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(final GgoBrpVoorkomen voorkomen, final PersoonReisdocumentHistorie brpInhoud, final GgoBrpGroepEnum brpGroepEnum) {
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.SOORT,
-            brpInhoud.getPersoonReisdocument().getSoortNederlandsReisdocument());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.NUMMER, brpInhoud.getNummer());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.DATUM_INGANG_DOCUMENT, brpInhoud.getDatumIngangDocument());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.DATUM_UITGIFTE, brpInhoud.getDatumUitgifte());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.AUTORITEIT_VAN_AFGIFTE, brpInhoud.getAutoriteitVanAfgifte());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.DATUM_EINDE_DOCUMENT, brpInhoud.getDatumEindeDocument());
+                voorkomen,
+                GgoBrpElementEnum.SOORT,
+                brpInhoud.getPersoonReisdocument().getSoortNederlandsReisdocument());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.NUMMER, brpInhoud.getNummer());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.DATUM_INGANG_DOCUMENT, brpInhoud.getDatumIngangDocument());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.DATUM_UITGIFTE, brpInhoud.getDatumUitgifte());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.AUTORITEIT_VAN_AFGIFTE, brpInhoud.getAutoriteitVanAfgifte());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.DATUM_EINDE_DOCUMENT, brpInhoud.getDatumEindeDocument());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.DATUM_INHOUDING_OF_VERMISSING,
-            brpInhoud.getDatumInhoudingOfVermissing());
+                voorkomen,
+                GgoBrpElementEnum.DATUM_INHOUDING_OF_VERMISSING,
+                brpInhoud.getDatumInhoudingOfVermissing());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.AANDUIDING_INHOUDING_OF_VERMISSING,
-            brpInhoud.getAanduidingInhoudingOfVermissingReisdocument());
+                voorkomen,
+                GgoBrpElementEnum.AANDUIDING_INHOUDING_OF_VERMISSING,
+                brpInhoud.getAanduidingInhoudingOfVermissingReisdocument());
     }
 
     @Override

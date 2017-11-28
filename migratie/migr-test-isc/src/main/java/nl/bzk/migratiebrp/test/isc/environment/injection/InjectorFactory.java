@@ -13,9 +13,7 @@ public final class InjectorFactory {
 
     /**
      * Bepaal de injector.
-     * 
-     * @param type
-     *            type
+     * @param type type
      * @return injector, null bij een onbekend type
      */
     public Injector getInjector(final String type) {

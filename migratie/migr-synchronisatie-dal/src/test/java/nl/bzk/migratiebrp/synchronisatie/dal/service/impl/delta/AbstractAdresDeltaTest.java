@@ -8,20 +8,21 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta;
 
 import java.sql.Timestamp;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
 
 public abstract class AbstractAdresDeltaTest extends AbstractDeltaTest {
 
-    protected static final LandOfGebied NEDERLAND = new LandOfGebied((short) 6030, "Nederland");
+    protected static final LandOfGebied NEDERLAND = new LandOfGebied("6030", "Nederland");
     protected static final Aangever AANGEVER_INGESCHREVENE = new Aangever('I', "Ingeschrevene", "De ingeschrevene zelf");
     protected static final RedenWijzigingVerblijf REDEN_WIJZIGING_PERSOON = new RedenWijzigingVerblijf('P', "Aangifte door persoon");
     protected static final RedenWijzigingVerblijf REDEN_WIJZIGING_AMBTSHALVE = new RedenWijzigingVerblijf('A', "Ambtshalve");
@@ -44,7 +45,6 @@ public abstract class AbstractAdresDeltaTest extends AbstractDeltaTest {
 
     /**
      * Geef de waarde van db persoon.
-     *
      * @return db persoon
      */
     public Persoon getDbPersoon() {
@@ -53,7 +53,6 @@ public abstract class AbstractAdresDeltaTest extends AbstractDeltaTest {
 
     /**
      * Geef de waarde van kluizenaar.
-     *
      * @return kluizenaar
      */
     public Persoon getKluizenaar() {
@@ -64,7 +63,7 @@ public abstract class AbstractAdresDeltaTest extends AbstractDeltaTest {
      * Deze method aanroepen in de @Before van de implementerende classes.
      */
     public void setUp() {
-        gemeente = new Gemeente((short) 521, "'s-Gravenhage", (short) 518, maakPartij());
+        gemeente = new Gemeente((short) 521, "'s-Gravenhage", "0518", maakPartij());
         aangeverAdreshouding = new Aangever('I', "Ingeschrevene", "De ingeschrevene zelf");
         dbPersoon = maakPersoon(true);
         kluizenaar = maakPersoon(false);
@@ -72,25 +71,25 @@ public abstract class AbstractAdresDeltaTest extends AbstractDeltaTest {
 
     /**
      * Voegt aan A-laag adres met 1 historie toe aan de persoon
-     *
-     * @param persoon
-     *            persoon waar het adres aangekoppeld gaat worden
-     * @param isDbPersoon
-     *            true als de persoon al bestaat (oude persoon).
+     * @param persoon persoon waar het adres aangekoppeld gaat worden
+     * @param isDbPersoon true als de persoon al bestaat (oude persoon).
      */
     protected final void voegAdresToeAanPersoon(final Persoon persoon, final boolean isDbPersoon) {
         final PersoonAdres adres = new PersoonAdres(persoon);
+        final AdministratieveHandeling administratieveHandeling =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(persoon.getPersoonAfgeleidAdministratiefHistorieSet())
+                        .getAdministratieveHandeling();
 
         final PersoonAdresHistorie historie =
                 maakPersoonAdresHistorie(
-                    adres,
-                    isDbPersoon,
-                    isDbPersoon ? REDEN_WIJZIGING_PERSOON : REDEN_WIJZIGING_AMBTSHALVE,
-                    persoon.getAdministratieveHandeling());
+                        adres,
+                        isDbPersoon,
+                        isDbPersoon ? REDEN_WIJZIGING_PERSOON : REDEN_WIJZIGING_AMBTSHALVE,
+                        administratieveHandeling);
         adres.addPersoonAdresHistorie(historie);
 
         adres.setLandOfGebied(NEDERLAND);
-        adres.setSoortAdres(FunctieAdres.WOONADRES);
+        adres.setSoortAdres(SoortAdres.WOONADRES);
         adres.setGemeente(gemeente);
         adres.setAangeverAdreshouding(aangeverAdreshouding);
 
@@ -110,12 +109,11 @@ public abstract class AbstractAdresDeltaTest extends AbstractDeltaTest {
     }
 
     protected final PersoonAdresHistorie maakPersoonAdresHistorie(
-        final PersoonAdres adres,
-        final boolean isDbPersoon,
-        final RedenWijzigingVerblijf redenWijziging,
-        final AdministratieveHandeling administratieveHandeling)
-    {
-        final PersoonAdresHistorie historie = new PersoonAdresHistorie(adres, FunctieAdres.WOONADRES, NEDERLAND, redenWijziging);
+            final PersoonAdres adres,
+            final boolean isDbPersoon,
+            final RedenWijzigingVerblijf redenWijziging,
+            final AdministratieveHandeling administratieveHandeling) {
+        final PersoonAdresHistorie historie = new PersoonAdresHistorie(adres, SoortAdres.WOONADRES, NEDERLAND, redenWijziging);
         final Timestamp timestamp = isDbPersoon ? DATUMTIJD_STEMPEL_OUD : DATUMTIJD_STEMPEL_NIEUW;
         final BRPActie actieInhoud = maakBrpActie(administratieveHandeling, timestamp);
 
@@ -131,7 +129,7 @@ public abstract class AbstractAdresDeltaTest extends AbstractDeltaTest {
             historie.setDatumAanvangAdreshouding(DATUM_AANVANG_ADRESHOUDING_OUD);
             historie.setDatumAanvangGeldigheid(DATUM_AANVANG_ADRESHOUDING_OUD);
         } else {
-            historie.setSoortAdres(FunctieAdres.BRIEFADRES);
+            historie.setSoortAdres(SoortAdres.BRIEFADRES);
             historie.setAfgekorteNaamOpenbareRuimte(STRAATNAAM_NIEUW);
             historie.setHuisnummer(HUISNUMMER_NIEUW);
             historie.setPostcode(POSTCODE_NIEUW);
@@ -144,19 +142,23 @@ public abstract class AbstractAdresDeltaTest extends AbstractDeltaTest {
     }
 
     protected final PersoonAdresHistorie voerActueleBijhoudingUitOpAdres(final Persoon persoon) {
+        final AdministratieveHandeling administratieveHandeling =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(persoon.getPersoonAfgeleidAdministratiefHistorieSet())
+                        .getAdministratieveHandeling();
+
         final PersoonAdres adres = persoon.getPersoonAdresSet().iterator().next();
         final PersoonAdresHistorie huidigAdresVoorkomen = adres.getPersoonAdresHistorieSet().iterator().next();
-        final Timestamp nieuweTsReg = new Timestamp(persoon.getAdministratieveHandeling().getDatumTijdRegistratie().getTime() + 3600000);
+        final Timestamp nieuweTsReg = new Timestamp(administratieveHandeling.getDatumTijdRegistratie().getTime() + 3600000);
         final AdministratieveHandeling nieuweAdministratieveHandeling = maakAdministratieveHandeling(false, nieuweTsReg);
         final Integer nieuweGeldigheid = huidigAdresVoorkomen.getDatumAanvangGeldigheid() + 1;
         final BRPActie nieuweActie = maakBrpActie(nieuweAdministratieveHandeling, nieuweTsReg);
 
         final PersoonAdresHistorie resultaat =
                 new PersoonAdresHistorie(
-                    huidigAdresVoorkomen.getPersoonAdres(),
-                    huidigAdresVoorkomen.getSoortAdres(),
-                    huidigAdresVoorkomen.getLandOfGebied(),
-                    huidigAdresVoorkomen.getRedenWijziging());
+                        huidigAdresVoorkomen.getPersoonAdres(),
+                        huidigAdresVoorkomen.getSoortAdres(),
+                        huidigAdresVoorkomen.getLandOfGebied(),
+                        huidigAdresVoorkomen.getRedenWijziging());
         adres.addPersoonAdresHistorie(resultaat);
 
         // nieuwe historie

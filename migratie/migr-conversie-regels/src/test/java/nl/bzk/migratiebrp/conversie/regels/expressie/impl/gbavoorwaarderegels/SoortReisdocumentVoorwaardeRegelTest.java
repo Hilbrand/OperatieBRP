@@ -7,12 +7,12 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,12 +27,20 @@ public class SoortReisdocumentVoorwaardeRegelTest {
 
     @Inject
     private SoortReisdocumentVoorwaardeRegel instance;
+
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test of vertaalWaardeVanRubriek method, of class SoortReisdocumentVoorwaardeRegel.
      */
     @Test
     public void testVertaalWaardeVanRubriek() throws GbaVoorwaardeOnvertaalbaarExceptie {
-        testVoorwaarde("12.35.10 GA1 \"NI\"", "ER_IS(RMAP(reisdocumenten, x, x.soort), v, v = \"NI\")");
+        testUtil.testVoorwaarde("12.35.10 GA1 \"NI\"", "Persoon.Reisdocument.SoortCode E= \"NI\"");
     }
 
     /**
@@ -46,11 +54,6 @@ public class SoortReisdocumentVoorwaardeRegelTest {
     @Test
     public void testFilterFalse() {
         assertFalse(instance.filter("12.35.20 GA1 \"NI\""));
-    }
-
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
     }
 
 }

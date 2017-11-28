@@ -8,25 +8,23 @@ package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch;
 
 import java.util.Collections;
 import java.util.Map.Entry;
-
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 public class AbstractSoortNlReisdocumentConversietabelTest {
-    private final AbstractSoortNlReisdocumentConversietabel subject = new AbstractSoortNlReisdocumentConversietabel(
-        Collections.<Entry<Lo3SoortNederlandsReisdocument, BrpSoortNederlandsReisdocumentCode>>emptyList())
-    {
-    };
+    private final AbstractSoortNlReisdocumentConversietabel subject =
+            new AbstractSoortNlReisdocumentConversietabel(
+                    Collections.<Entry<Lo3SoortNederlandsReisdocument, BrpSoortNederlandsReisdocumentCode>>emptyList()) {
+            };
 
     private static final Lo3SoortNederlandsReisdocument LO3 = new Lo3SoortNederlandsReisdocument("S");
     private static final BrpSoortNederlandsReisdocumentCode BRP = new BrpSoortNederlandsReisdocumentCode("S");
-    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), Lo3Datum.NULL_DATUM, null);
+    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), new Lo3Datum(0), null);
 
     @Test
     public void voegOnderzoekToeLo3() {

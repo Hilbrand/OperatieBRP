@@ -6,13 +6,12 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP DienstBundelGroepInhoud.
@@ -30,28 +29,24 @@ public final class BrpDienstbundelGroepInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maak een BrpDienstBundelGroepInhoud object.
-     *
-     * @param indicatieFormeleHistorie
-     *            indicatieFormeleHistorie
-     * @param indicatieMaterieleHistorie
-     *            indicatieMaterieleHistorie
-     * @param indicatieVerantwoording
-     *            indicatieVerantwoording
+     * @param indicatieFormeleHistorie indicatieFormeleHistorie
+     * @param indicatieMaterieleHistorie indicatieMaterieleHistorie
+     * @param indicatieVerantwoording indicatieVerantwoording
      */
-    public BrpDienstbundelGroepInhoud(@Element(name = "indformelehistorie", required = false) final Boolean indicatieFormeleHistorie, @Element(
-            name = "indmaterielehistorie", required = false) final Boolean indicatieMaterieleHistorie, @Element(name = "indverantwoording",
-            required = false) final Boolean indicatieVerantwoording)
-    {
+    public BrpDienstbundelGroepInhoud(
+            @Element(name = "indformelehistorie", required = false) final Boolean indicatieFormeleHistorie,
+            @Element(name = "indmaterielehistorie", required = false) final Boolean indicatieMaterieleHistorie,
+            @Element(name = "indverantwoording", required = false) final Boolean indicatieVerantwoording) {
         super();
         this.indicatieFormeleHistorie = indicatieFormeleHistorie;
         this.indicatieMaterieleHistorie = indicatieMaterieleHistorie;
         this.indicatieVerantwoording = indicatieVerantwoording;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -59,27 +54,24 @@ public final class BrpDienstbundelGroepInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van indicatieFormeleHistorie.
-     *
-     * @return indicatieFormeleHistorie
+     * Geef de waarde van indicatie formele historie van BrpDienstbundelGroepInhoud.
+     * @return de waarde van indicatie formele historie van BrpDienstbundelGroepInhoud
      */
     public Boolean getIndicatieFormeleHistorie() {
         return indicatieFormeleHistorie;
     }
 
     /**
-     * Geef de waarde van indicatieMaterieleHistorie.
-     *
-     * @return indicatieMaterieleHistorie
+     * Geef de waarde van indicatie materiele historie van BrpDienstbundelGroepInhoud.
+     * @return de waarde van indicatie materiele historie van BrpDienstbundelGroepInhoud
      */
     public Boolean getIndicatieMaterieleHistorie() {
         return indicatieMaterieleHistorie;
     }
 
     /**
-     * Geef de waarde van indicatieVerantwoording.
-     *
-     * @return indicatieVerantwoording
+     * Geef de waarde van indicatie verantwoording van BrpDienstbundelGroepInhoud.
+     * @return de waarde van indicatie verantwoording van BrpDienstbundelGroepInhoud
      */
     public Boolean getIndicatieVerantwoording() {
         return indicatieVerantwoording;
@@ -95,9 +87,9 @@ public final class BrpDienstbundelGroepInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpDienstbundelGroepInhoud castOther = (BrpDienstbundelGroepInhoud) other;
         return new EqualsBuilder().append(indicatieFormeleHistorie, castOther.indicatieFormeleHistorie)
-                                  .append(indicatieMaterieleHistorie, castOther.indicatieMaterieleHistorie)
-                                  .append(indicatieVerantwoording, castOther.indicatieVerantwoording)
-                                  .isEquals();
+                .append(indicatieMaterieleHistorie, castOther.indicatieMaterieleHistorie)
+                .append(indicatieVerantwoording, castOther.indicatieVerantwoording)
+                .isEquals();
     }
 
     @Override
@@ -108,8 +100,8 @@ public final class BrpDienstbundelGroepInhoud extends AbstractBrpGroepInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("indicatieFormeleHistorie", indicatieFormeleHistorie)
-                                                                          .append("indicatieMaterieleHistorie", indicatieMaterieleHistorie)
-                                                                          .append("indicatieVerantwoording", indicatieVerantwoording)
-                                                                          .toString();
+                .append("indicatieMaterieleHistorie", indicatieMaterieleHistorie)
+                .append("indicatieVerantwoording", indicatieVerantwoording)
+                .toString();
     }
 }

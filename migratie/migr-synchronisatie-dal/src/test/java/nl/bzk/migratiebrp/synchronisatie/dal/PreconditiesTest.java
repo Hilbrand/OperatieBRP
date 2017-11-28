@@ -15,8 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
+
 import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
@@ -56,12 +58,12 @@ public class PreconditiesTest {
     private Map<SoortMeldingCode, List<String>> maakOverzicht() {
         final Reflections reflections =
                 new Reflections(new ConfigurationBuilder().filterInputsBy(new FilterBuilder.Include(FilterBuilder.prefix(ROOT_PACKAGE)))
-                                                          .setUrls(ClasspathHelper.forPackage(ROOT_PACKAGE))
-                                                          .setScanners(
-                                                              new SubTypesScanner(),
-                                                              new TypeAnnotationsScanner(),
-                                                              new ResourcesScanner(),
-                                                              new MethodAnnotationsScanner()));
+                        .setUrls(ClasspathHelper.forPackage(ROOT_PACKAGE))
+                        .setScanners(
+                                new SubTypesScanner(),
+                                new TypeAnnotationsScanner(),
+                                new ResourcesScanner(),
+                                new MethodAnnotationsScanner()));
 
         final Map<SoortMeldingCode, List<String>> overzicht = new HashMap<>();
 

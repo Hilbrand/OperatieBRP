@@ -21,6 +21,7 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 public @interface BijzondereSituatie {
     /**
      * Een unieke verwijzing naar een gedocumenteerde bijzondere situatie die door de code wordt geimplementeerd.
+     * @return lijst van soort melding codes
      */
     SoortMeldingCode[] value();
 }

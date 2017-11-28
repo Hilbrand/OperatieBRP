@@ -11,8 +11,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -33,20 +33,16 @@ public final class CheckDatabase implements Check {
 
     /**
      * Constructor.
-     *
-     * @param protocol
-     *            protocol
-     * @param host
-     *            host
-     * @param database
-     *            database
+     * @param protocol protocol
+     * @param host host
+     * @param database database
      */
     public CheckDatabase(final String protocol, final String host, final String database) {
         try {
             loadDriver(protocol);
         } catch (final ClassNotFoundException e) {
             LOG.error("DATABASE: Database driver niet geladen.");
-            e.printStackTrace();
+            LOG.error(ExceptionUtils.getStackTrace(e));
         }
 
         ping = new CheckPing(host);
@@ -68,9 +64,7 @@ public final class CheckDatabase implements Check {
 
     /**
      * Zet de waarde van user.
-     *
-     * @param user
-     *            user
+     * @param user user
      */
     public void setUser(final String user) {
         this.user = user;
@@ -78,9 +72,7 @@ public final class CheckDatabase implements Check {
 
     /**
      * Zet de waarde van password.
-     *
-     * @param password
-     *            password
+     * @param password password
      */
     public void setPassword(final String password) {
         this.password = password;

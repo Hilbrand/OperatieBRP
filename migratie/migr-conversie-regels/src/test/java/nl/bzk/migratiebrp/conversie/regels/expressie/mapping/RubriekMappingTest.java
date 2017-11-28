@@ -15,13 +15,13 @@ public class RubriekMappingTest {
     public void test() {
         Assert.assertNull(RubriekMapping.getExpressiesVoorRubriek("99.99.99"));
         Assert.assertEquals(1, RubriekMapping.getExpressiesVoorRubriek("01.01.10").size());
-        Assert.assertEquals(2, RubriekMapping.getExpressiesVoorRubriek("01.02.20").size());
+        Assert.assertEquals(3, RubriekMapping.getExpressiesVoorRubriek("01.02.20").size());
 
         Assert.assertNull(RubriekMapping.getExpressiesVoorRubriek("01.01.10").get(0).getParent());
         Assert.assertNull(RubriekMapping.getExpressiesVoorRubriek("01.02.20").get(0).getParent());
         Assert.assertNull(RubriekMapping.getExpressiesVoorRubriek("01.02.20").get(1).getParent());
-        Assert.assertEquals("nationaliteiten", RubriekMapping.getExpressiesVoorRubriek("04.05.10").get(0).getParent());
-        Assert.assertNotNull(RubriekMapping.getExpressiesVoorRubriek("05.06.30").get(0).getParent());
-        Assert.assertNotNull(RubriekMapping.getExpressiesVoorRubriek("05.06.30").get(1).getParent());
+        Assert.assertEquals("Persoon.Nationaliteit", RubriekMapping.getExpressiesVoorRubriek("04.05.10").get(0).getParent());
+        Assert.assertNull(RubriekMapping.getExpressiesVoorRubriek("05.06.30").get(0).getParent());
+        Assert.assertNull(RubriekMapping.getExpressiesVoorRubriek("05.06.30").get(1).getParent());
     }
 }

@@ -28,7 +28,6 @@ public class GgoBrpRelatie extends GgoBrpVoorkomen {
 
     /**
      * Geef de waarde van relatie inhoud.
-     *
      * @return the relatieInhoud
      */
     public final GgoStapel getRelatieInhoud() {
@@ -37,9 +36,7 @@ public class GgoBrpRelatie extends GgoBrpVoorkomen {
 
     /**
      * Zet de waarde van relatie inhoud.
-     *
-     * @param relatieInhoud
-     *            the relatieInhoud to set
+     * @param relatieInhoud the relatieInhoud to set
      */
     public final void setRelatieInhoud(final GgoStapel relatieInhoud) {
         this.relatieInhoud = relatieInhoud;
@@ -47,7 +44,6 @@ public class GgoBrpRelatie extends GgoBrpVoorkomen {
 
     /**
      * Geef de waarde van relatie afgeleid administratief.
-     *
      * @return de Relatie \ Afgeleid Administratief stapel
      */
     public final GgoStapel getRelatieAfgeleidAdministratief() {
@@ -56,9 +52,7 @@ public class GgoBrpRelatie extends GgoBrpVoorkomen {
 
     /**
      * Zet de waarde van relatie afgeleid administratief.
-     *
-     * @param relatieAfgeleidAdministratief
-     *            de Relatie \ Afgeleid Administratief stapel
+     * @param relatieAfgeleidAdministratief de Relatie \ Afgeleid Administratief stapel
      */
     public final void setRelatieAfgeleidAdministratief(final GgoStapel relatieAfgeleidAdministratief) {
         this.relatieAfgeleidAdministratief = relatieAfgeleidAdministratief;
@@ -66,7 +60,6 @@ public class GgoBrpRelatie extends GgoBrpVoorkomen {
 
     /**
      * Geef de waarde van betrokkenheden.
-     *
      * @return the betrokkenheden
      */
     public final List<GgoBetrokkenheid> getBetrokkenheden() {
@@ -75,9 +68,7 @@ public class GgoBrpRelatie extends GgoBrpVoorkomen {
 
     /**
      * Zet de waarde van betrokkenheden.
-     *
-     * @param betrokkenheden
-     *            the betrokkenheden to set
+     * @param betrokkenheden the betrokkenheden to set
      */
     public final void setBetrokkenheden(final List<GgoBetrokkenheid> betrokkenheden) {
         this.betrokkenheden = betrokkenheden;
@@ -85,7 +76,6 @@ public class GgoBrpRelatie extends GgoBrpVoorkomen {
 
     /**
      * Geef de waarde van ist inhoud.
-     *
      * @return the istInhoud
      */
     public final List<GgoStapel> getIstInhoud() {
@@ -94,9 +84,7 @@ public class GgoBrpRelatie extends GgoBrpVoorkomen {
 
     /**
      * Zet de waarde van ist inhoud.
-     *
-     * @param istInhoud
-     *            the istInhoud to set
+     * @param istInhoud the istInhoud to set
      */
     public final void setIstInhoud(final List<GgoStapel> istInhoud) {
         this.istInhoud = istInhoud;

@@ -15,43 +15,91 @@ import static nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.BrpStapelHelp
 import static nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.BrpStapelHelper.uitsluiting;
 import static nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper.lo3Doc;
 import static nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper.lo3Kiesrecht;
+import static org.mockito.Mockito.when;
 
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDeelnameEuVerkiezingenInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpUitsluitingKiesrechtInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KiesrechtInhoud;
-import nl.bzk.migratiebrp.conversie.regels.AbstractComponentTest;
+import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingEuropeesKiesrechtEnum;
+import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingUitgeslotenKiesrechtEnum;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-public class BrpKiesrechtConverteerderTest extends AbstractComponentTest {
+@RunWith(MockitoJUnitRunner.class)
+public class BrpKiesrechtConverteerderTest {
 
     private static final String DOC = "Euro-Doc";
-    @Inject
+    private static final int DATUM_TIJD_REGISTRATIE = 2004_01_02;
+    private static final int DATUM_VOORZIEN_EINDE_UITSLUITING_KIESRECHT = 2009_01_01;
+    private static final int DATUM_AANLEIDING_AANPASSING_DEELNAME_EU_VERKIEZINGEN = 2004_01_01;
+    private static final int DATUM_VOORZIEN_EINDE_UITSLUITING_EU_VERKIEZINGEN = 2010_01_01;
+    private static final String BRP_PARTIJ_CODE = "059901";
+    private static final String LO3_GEMEENTE_CODE = "0599";
+    @Mock
+    private BrpAttribuutConverteerder attribuutConverteerder;
     private BrpKiesrechtConverteerder subject;
 
+
+    @Before
+    public void setUp() {
+        subject = new BrpKiesrechtConverteerder(attribuutConverteerder);
+        // Uitsluiting Kiesrecht
+        when(attribuutConverteerder.converteerAanduidingUitgeslotenKiesrecht(new BrpBoolean(true)))
+                .thenReturn(Lo3AanduidingUitgeslotenKiesrechtEnum.UITGESLOTEN_KIESRECHT.asElement());
+        when(attribuutConverteerder.converteerDatum(new BrpDatum(DATUM_VOORZIEN_EINDE_UITSLUITING_KIESRECHT, null)))
+                .thenReturn(new Lo3Datum(DATUM_VOORZIEN_EINDE_UITSLUITING_KIESRECHT));
+
+        // Deelname EU Verkiezing
+        when(attribuutConverteerder.converteerAanduidingEuropeesKiesrecht(new BrpBoolean(true)))
+                .thenReturn(Lo3AanduidingEuropeesKiesrechtEnum.ONTVANGT_OPROEP.asElement());
+        when(attribuutConverteerder.converteerDatum(new BrpDatum(DATUM_AANLEIDING_AANPASSING_DEELNAME_EU_VERKIEZINGEN, null)))
+                .thenReturn(new Lo3Datum(DATUM_AANLEIDING_AANPASSING_DEELNAME_EU_VERKIEZINGEN));
+        when(attribuutConverteerder.converteerDatum(new BrpDatum(DATUM_VOORZIEN_EINDE_UITSLUITING_EU_VERKIEZINGEN, null)))
+                .thenReturn(new Lo3Datum(DATUM_VOORZIEN_EINDE_UITSLUITING_EU_VERKIEZINGEN));
+
+        // Documentatie
+        final BrpPartijCode brpPartijCode = new BrpPartijCode(BRP_PARTIJ_CODE);
+        when(attribuutConverteerder.valideerRNIDeelnemerTegenBrp(brpPartijCode)).thenReturn(false);
+        when(attribuutConverteerder.converteerGemeenteCode(brpPartijCode)).thenReturn(new Lo3GemeenteCode(LO3_GEMEENTE_CODE));
+        when(attribuutConverteerder.converteerDatum(new BrpDatum(DATUM_TIJD_REGISTRATIE, null))).thenReturn(new Lo3Datum(DATUM_TIJD_REGISTRATIE));
+        when(attribuutConverteerder.converteerString(new BrpString(DOC))).thenReturn(new Lo3String(DOC));
+
+    }
+
+
     @Test
-    
     public void test() {
-        final int datumTijdRegistratie = 20040102;
         final BrpStapel<BrpDeelnameEuVerkiezingenInhoud> deelnameEuVerkiezingen =
                 stapel(groep(
-                    deelnameEuVerkiezingen(true, 20040101, 20100101),
-                    his(20040101),
-                    act(7, datumTijdRegistratie, doc(DOC, "059901"))));
+                        deelnameEuVerkiezingen(true, DATUM_AANLEIDING_AANPASSING_DEELNAME_EU_VERKIEZINGEN, DATUM_VOORZIEN_EINDE_UITSLUITING_EU_VERKIEZINGEN),
+                        his(DATUM_AANLEIDING_AANPASSING_DEELNAME_EU_VERKIEZINGEN),
+                        act(7, DATUM_TIJD_REGISTRATIE, doc(DOC, BRP_PARTIJ_CODE))));
 
         final BrpStapel<BrpUitsluitingKiesrechtInhoud> uitsluitingKiesrechtStapel =
-                stapel(groep(uitsluiting(true, 20090101), his(20090101), act(3, 20090102)));
+                stapel(groep(uitsluiting(true, DATUM_VOORZIEN_EINDE_UITSLUITING_KIESRECHT), his(DATUM_VOORZIEN_EINDE_UITSLUITING_KIESRECHT),
+                        act(3, 2009_01_02)));
 
         // Execute
 
         final Lo3Stapel<Lo3KiesrechtInhoud> result = subject.converteer(deelnameEuVerkiezingen, uitsluitingKiesrechtStapel);
 
-        final Lo3KiesrechtInhoud expected = lo3Kiesrecht(true, 20040101, 20100101, true, 20090101);
-        final Lo3Documentatie expectedDoc = lo3Doc(7L, "0599", datumTijdRegistratie, DOC);
+        final Lo3KiesrechtInhoud expected = lo3Kiesrecht(true, DATUM_AANLEIDING_AANPASSING_DEELNAME_EU_VERKIEZINGEN,
+                DATUM_VOORZIEN_EINDE_UITSLUITING_EU_VERKIEZINGEN, true, DATUM_VOORZIEN_EINDE_UITSLUITING_KIESRECHT);
+        final Lo3Documentatie expectedDoc = lo3Doc(7L, LO3_GEMEENTE_CODE, DATUM_TIJD_REGISTRATIE, DOC);
 
         // Check
         Assert.assertNotNull("Stapel is null", result);
@@ -63,17 +111,18 @@ public class BrpKiesrechtConverteerderTest extends AbstractComponentTest {
     }
 
     @Test
-    
+
     public void testUitsluitingOnly() {
-        final int datumTijdRegistratie = 20040102;
+        final int datumTijdRegistratie = 2004_01_02;
         final BrpStapel<BrpUitsluitingKiesrechtInhoud> uitsluitingKiesrechtStapel =
-                stapel(groep(uitsluiting(true, 20090101), his(20090101), act(3, datumTijdRegistratie, doc(DOC, "059901"))));
+                stapel(groep(uitsluiting(true, DATUM_VOORZIEN_EINDE_UITSLUITING_KIESRECHT), his(DATUM_VOORZIEN_EINDE_UITSLUITING_KIESRECHT),
+                        act(3, datumTijdRegistratie, doc(DOC, BRP_PARTIJ_CODE))));
 
         // Execute
 
         final Lo3Stapel<Lo3KiesrechtInhoud> result = subject.converteer(uitsluitingKiesrechtStapel);
 
-        final Lo3KiesrechtInhoud expected = lo3Kiesrecht(null, null, null, true, 20090101);
+        final Lo3KiesrechtInhoud expected = lo3Kiesrecht(null, null, null, true, DATUM_VOORZIEN_EINDE_UITSLUITING_KIESRECHT);
         final Lo3Documentatie expectedDoc = lo3Doc(7L, "0599", datumTijdRegistratie, DOC);
 
         // Check

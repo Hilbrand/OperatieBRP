@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.configuratie;
@@ -18,18 +18,36 @@ public final class ControllerConstants {
     public static final String ADMINISTRATIEVE_HANDELING_URI = "/administratievehandelingen";
     /** Base URI for administratieve handeling controller. */
     public static final String ACTIE_URI = "/actie";
+    /** Base URI for attributen. */
+    public static final String ATTRIBUUT_URI = "/attributen";
 
     /** Base URI for persoon controller. */
     public static final String PERSOON_URI = "/persoon";
     /** Base URI for persoonvolledig controller. */
     public static final String PERSOON_VOLLEDIG_URI = "/persoonvolledig";
 
+    /** Base URI for Bijhoudingsautorisatie. */
+    public static final String BIJHOUDINGSAUTORISATIE_URI = "/bijhoudingsautorisaties";
+    /** Base URI for BijhoudingsautorisatieSoortAdministratieveHandeling. */
+    public static final String BIJHOUDINGSAUTORISATIE_SOORT_ADMINISTRATIEVE_HANDELING_URI = "/bijhoudingsautorisatiesoortadministratievehandelingen";
+    /** Base URI for Bijhoudingsautorisatie. */
+    public static final String BIJHOUDER_FIATTERINGSUITZONDERING_URI = "/bijhouderfiatteringsuitzonderingen";
     /** Base URI for Leveringsautorisatie. */
     public static final String LEVERINGSAUTORISATIE_URI = "/leveringsautorisaties";
     /** Base Uri voor autaut.Dienst. */
-    public static final String DIENST_URI = "/dienst";
+    public static final String DIENST_URI = "/diensten";
+    /** Base Uri voor autaut.Dienstbundel. */
+    public static final String DIENSTBUNDEL_URI = "/dienstbundels";
+    /** Base URI for attributen. */
+    public static final String DIENSTBUNDEL_GROEP_ATTRIBUUT_URI = "/dienstbundelgroepattributen";
+    /** Base Uri voor autaut.DienstbundelGroep. */
+    public static final String DIENSTBUNDEL_GROEP_URI = "/dienstbundelgroepen";
+    /** Base Uri voor autaut.DienstbundelGroep. */
+    public static final String GROEP_URI = "/groepen";
     /** Base URI for toegangabonnement. */
     public static final String TOEGANGABONNEMENT_URI = "/toegangen";
+    /** Base URI for toegangabonnement. */
+    public static final String TOEGANGBIJHOUDINGAUTORISATIE_URI = "/toegangbijhoudingsautorisaties";
     /** Base URI for afleverwijze. */
     public static final String AFLEVERWIJZE_URI = "/afleverwijze";
     /** Base URI for afleverwijze. */
@@ -48,18 +66,28 @@ public final class ControllerConstants {
     public static final String CATALOGUS_OPTIE_URI = "/catalogusoptie";
     /** Base URI for (autaut) categorie dienst controller. */
     public static final String CATEGORIE_DIENST_URI = "/categoriedienst";
+    /** Base URI for (autaut) eenheid selectie interval controller. */
+    public static final String EENHEID_SELECTIE_INTERVAL_URI = "/eenheidselectieinterval";
     /** Base URI for (autaut) effect afnemerindicaties controller. */
     public static final String EFFECT_AFNEMERINDICATIES_URI = "/effectafnemerindicaties";
     /** Base URI for (autaut) functie controller. */
     public static final String FUNCTIE_URI = "/functie";
     /** Base URI for (autaut) kanaal controller. */
     public static final String KANAAL_URI = "/kanaal";
+    /** Base URI for (autaut) leverwijze selectie controller. */
+    public static final String LEVERWIJZE_SELECTIE_URI = "/leverwijzeselectie";
     /** Base URI for (autaut) protocolleringsniveau controller. */
     public static final String PROTOCOLLERINGSNIVEAU_URI = "/protocolleringsniveau";
     /** Base URI for (autaut) soort autorisatiebesluit controller. */
     public static final String SOORT_AUTORISATIEBESLUIT_URI = "/soortautorisatiebesluit";
     /** Base URI for (autaut) soortbevoegdheid controller. */
     public static final String SOORT_BEVOEGDHEID_URI = "/soortbevoegdheid";
+    /** Base URI for (autaut) soortdienst controller. */
+    public static final String SOORT_DIENST_URI = "/soortdienst";
+    /** Base URI for soort diensten op dienst. */
+    public static final String SOORT_DIENSTEN_URI = "/soorten";
+    /** Base URI for soort selecties op dienst. */
+    public static final String SOORT_SELECTIE_URI = "/soortselectie";
     /** Base URI for (autaut) toestand controller. */
     public static final String TOESTAND_URI = "/toestand";
 
@@ -67,8 +95,6 @@ public final class ControllerConstants {
     public static final String BIJHOUDINGSRESULTAAT_URI = "/bijhoudingsresultaat";
     /** Base URI for (ber) bijhoudingssituatie. */
     public static final String BIJHOUDINGSSITUATIE_URI = "/bijhoudingssituatie";
-    /** Base URI for (ber) historievorm. */
-    public static final String HISTORIEVORM_URI = "/historievorm";
     /** Base URI for (ber) richting. */
     public static final String RICHTING_URI = "/richting";
     /** Base URI for (ber) soort bericht. */
@@ -81,9 +107,11 @@ public final class ControllerConstants {
     public static final String VERWERKINGSRESULTAAT_URI = "/verwerkingsresultaat";
     /** Base URI for (ber) verwerkingswijze. */
     public static final String VERWERKINGSWIJZE_URI = "/verwerkingswijze";
+    /** Base URI for (ber) . */
+    public static final String VERANTWOORDING_CATEGORIE_URI = "/verantwoordingcategorie";
+    /** Base URI for (ber) . */
+    public static final String VERANTWOORDING_URI = "/verantwoording";
 
-    /** Base URI for (brm) regelsituatie . */
-    public static final String REGELSITUATIE_URI = "/regelsituatie";
     /** Base URI for (brm) regel soort bericht. */
     public static final String REGEL_SOORT_BERICHT_URI = "/regelsoortbericht";
     /** Base URI for (brm) regeleffect. */
@@ -115,9 +143,6 @@ public final class ControllerConstants {
     /** Base URI for (conv) conversie LO3 rubriek. */
     public static final String CONVERSIE_LO3_RUBRIEK_URI = "/conversielo3rubriek";
 
-    /** Base URI for (ist) autorisatietabel. */
-    public static final String AUTORISATIETABEL_URI = "/autorisatietabel";
-
     /** Base URI for (kern) aanduiding inhouding vermissing reisdocument. */
     public static final String AANDUIDING_INHOUDING_VERMISSING_REISDOCUMENT_URI = "/aanduidinginhoudingvermissingreisdocument";
     /** Base URI for (kern) aanduiding verblijfsrecht. */
@@ -146,6 +171,10 @@ public final class ControllerConstants {
     public static final String GEMEENTE_URI = "/gemeente";
     /** Base URI for (kern) geslachtsaanduiding. */
     public static final String GESLACHTSAANDUIDING_URI = "/geslachtsaanduiding";
+    /** Base URI for (kern) historievorm. */
+    public static final String HISTORIEVORM_URI = "/historievorm";
+    /** Base URI for (kern) koppelvlak. */
+    public static final String KOPPELVLAK_URI = "/koppelvlak";
     /** Base URI for (kern) land/gebied. */
     public static final String LAND_GEBIED_URI = "/landgebied";
     /** Base URI for (kern) naamgebruik. */
@@ -157,7 +186,7 @@ public final class ControllerConstants {
     /** Base URI for (kern) partij. */
     public static final String PARTIJ_URI = "/partij";
     /** Base URI for (kern) partijrol. */
-    public static final String PARTIJROL_URI = "/partijrol";
+    public static final String PARTIJROL_URI = "/partijrollen";
     /** Base URI for (kern) plaats. */
     public static final String PLAATS_URI = "/plaats";
     /** Base URI for (kern) predicaat controller. */
@@ -181,6 +210,8 @@ public final class ControllerConstants {
     /** Base URI for (kern) . */
     public static final String SOORT_ACTIE_URI = "/soortactie";
     /** Base URI for (kern) . */
+    public static final String SOORT_ACTIE_BRON_GEBRUIK_URI = "/soortactiebrongebruik";
+    /** Base URI for (kern) . */
     public static final String SOORT_ADMINISTRATIEVE_HANDELING_URI = "/soortadministratievehandeling";
     /** Base URI for (kern) . */
     public static final String SOORT_BETROKKENHEID_URI = "/soortbetrokkenheid";
@@ -199,6 +230,8 @@ public final class ControllerConstants {
     /** Base URI for (kern) . */
     public static final String SOORT_PARTIJ_URI = "/soortpartij";
     /** Base URI for (kern) . */
+    public static final String SOORT_VRIJ_BERICHT_URI = "/soortvrijber";
+    /** Base URI for (kern) . */
     public static final String SOORT_PARTIJ_ONDERZOEK_URI = "/soortpartijonderzoek";
     /** Base URI for (kern) . */
     public static final String SOORT_PERSOON_URI = "/soortpersoon";
@@ -213,8 +246,12 @@ public final class ControllerConstants {
     /** Base URI for (kern) . */
     public static final String STATUS_TERUGMELDING_URI = "/statusterugmelding";
     /** Base URI for (kern) . */
+    public static final String STELSEL = "/stelsel";
+    /** Base URI for (kern) . */
     public static final String VOORVOEGSEL_URI = "/voorvoegsel";
 
+    /** Base URI for (migblok) blokkering. */
+    public static final String BLOKKERING_URI = "/blokkering";
     /** Base URI for (migblok) reden blokkering. */
     public static final String REDEN_BLOKKERING_URI = "/redenblokkering";
 
@@ -228,6 +265,11 @@ public final class ControllerConstants {
     public static final String LO3_SOORT_AANDUIDING_OUDER_URI = "/lo3soortaanduidingouder";
     /** Base URI for (verconv) lo3 soort melding. */
     public static final String LO3_SOORT_MELDING_URI = "/lo3soortmelding";
+
+    /** Base URI for (beh) vrij vericht. */
+    public static final String VRIJ_BERICHT = "/vrijbericht";
+    /** Base URI for (beh) soort bericht vrij bericht. */
+    public static final String SOORT_BERICHT_VRIJ_BERICHT_URI = "/soortbervrijber";
 
     /** Logout URI. */
     public static final String LOGOUT = "logout";

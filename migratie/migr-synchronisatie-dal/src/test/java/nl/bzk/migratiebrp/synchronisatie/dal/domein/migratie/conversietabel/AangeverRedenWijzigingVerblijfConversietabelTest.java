@@ -11,21 +11,22 @@ import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblijfCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AangeverRedenWijzigingVerblijfPaar;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AangifteAdreshoudingEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AangifteAdreshouding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.AangeverRedenWijzigingVerblijfConversietabel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.AangifteAdreshouding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AangifteAdreshouding;
+
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Test de AangeverRedenWijzigingVerblijfConversietabel.
- * 
  */
 public class AangeverRedenWijzigingVerblijfConversietabelTest {
 
@@ -58,9 +59,9 @@ public class AangeverRedenWijzigingVerblijfConversietabelTest {
         testVerwachtBrpResultaat('P', 'P', conversietabel.converteerNaarBrp(Lo3AangifteAdreshoudingEnum.PARTNER.asElement()));
         testVerwachtBrpResultaat(null, 'B', conversietabel.converteerNaarBrp(Lo3AangifteAdreshoudingEnum.TECHNISCHE_WIJZIGING.asElement()));
         testVerwachtBrpResultaat(
-            null,
-            'I',
-            conversietabel.converteerNaarBrp(Lo3AangifteAdreshoudingEnum.INFRASTRUCTURELE_WIJZIGING.asElement()));
+                null,
+                'I',
+                conversietabel.converteerNaarBrp(Lo3AangifteAdreshoudingEnum.INFRASTRUCTURELE_WIJZIGING.asElement()));
         testVerwachtBrpResultaat(null, null, conversietabel.converteerNaarBrp(Lo3AangifteAdreshoudingEnum.ONBEKEND.asElement()));
     }
 
@@ -105,10 +106,9 @@ public class AangeverRedenWijzigingVerblijfConversietabelTest {
     }
 
     private void testVerwachtBrpResultaat(
-        final Character expectedBrpAangeverAdreshoudingCode,
-        final Character expectedBrpRedenwijzigingAdresCode,
-        final AangeverRedenWijzigingVerblijfPaar brpPaar)
-    {
+            final Character expectedBrpAangeverAdreshoudingCode,
+            final Character expectedBrpRedenwijzigingAdresCode,
+            final AangeverRedenWijzigingVerblijfPaar brpPaar) {
         if (brpPaar.getBrpAangeverCode() == null) {
             assertNull(expectedBrpAangeverAdreshoudingCode);
         } else {
@@ -122,9 +122,8 @@ public class AangeverRedenWijzigingVerblijfConversietabelTest {
     }
 
     private AangeverRedenWijzigingVerblijfPaar maakBrpPaar(
-        final Character brpAangeverAdreshoudingCode,
-        final Character brpRedenwijzigingAdresCode)
-    {
+            final Character brpAangeverAdreshoudingCode,
+            final Character brpRedenwijzigingAdresCode) {
         BrpAangeverCode brpAangeverAdreshouding = null;
         if (brpAangeverAdreshoudingCode != null) {
             brpAangeverAdreshouding = new BrpAangeverCode(brpAangeverAdreshoudingCode);
@@ -137,16 +136,15 @@ public class AangeverRedenWijzigingVerblijfConversietabelTest {
     }
 
     private AangifteAdreshouding maakTestAangifteAdreshouding(
-        final Character lo3Code,
-        final Character brpAangeverAdreshoudingCode,
-        final Character brpRedenwijzigingAdresCode) throws NoSuchFieldException, IllegalAccessException
-    {
+            final Character lo3Code,
+            final Character brpAangeverAdreshoudingCode,
+            final Character brpRedenwijzigingAdresCode) throws NoSuchFieldException, IllegalAccessException {
         final AangifteAdreshouding result = new AangifteAdreshouding(lo3Code);
         if (brpAangeverAdreshoudingCode != null) {
             result.setAangever(new Aangever(
-                brpAangeverAdreshoudingCode,
-                brpAangeverAdreshoudingCode.toString(),
-                brpAangeverAdreshoudingCode.toString()));
+                    brpAangeverAdreshoudingCode,
+                    brpAangeverAdreshoudingCode.toString(),
+                    brpAangeverAdreshoudingCode.toString()));
         }
         if (brpRedenwijzigingAdresCode != null) {
             result.setRedenWijzigingVerblijf(new RedenWijzigingVerblijf(brpRedenwijzigingAdresCode, brpRedenwijzigingAdresCode.toString()));

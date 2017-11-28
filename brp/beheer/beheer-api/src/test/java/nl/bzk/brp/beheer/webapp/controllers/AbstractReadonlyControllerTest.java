@@ -15,9 +15,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
 import nl.bzk.brp.beheer.webapp.controllers.query.Filter;
 import nl.bzk.brp.beheer.webapp.repository.ReadonlyRepository;
-import nl.bzk.brp.model.beheer.kern.Partij;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
@@ -44,7 +46,7 @@ public class AbstractReadonlyControllerTest {
     public final void setup() {
         final ReadonlyRepository mockReadOnlyRepository = mock(ReadonlyRepository.class);
         final Partij een = mock(Partij.class);
-        when(een.getID()).thenReturn(ID);
+        when(een.getId()).thenReturn(ID);
         when(mockReadOnlyRepository.findOne(ID)).thenReturn(een);
         final List<Partij> partijLijst = mock(List.class);
         when(partijLijst.get(0)).thenReturn(een);
@@ -60,13 +62,14 @@ public class AbstractReadonlyControllerTest {
     /**
      * Test of get method, of class AbstractReadonlyController.
      *
-     * @throws java.lang.Exception test exception
+     * @throws java.lang.Exception
+     *             test exception
      */
     @Test
     public final void testGet() throws Exception {
         final Partij partij = instance.get(ID);
         assertNotNull(partij);
-        assertEquals(ID, partij.getID());
+        assertEquals(ID, partij.getId());
     }
 
     /**
@@ -87,8 +90,10 @@ public class AbstractReadonlyControllerTest {
         /**
          * test.
          *
-         * @param repository repo
-         * @param filters filter
+         * @param repository
+         *            repo
+         * @param filters
+         *            filter
          */
         public ReadonlyControllerImpl(final ReadonlyRepository<Partij, Short> repository, final List<Filter<?>> filters) {
             super(repository, filters);

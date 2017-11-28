@@ -11,9 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * Dummy implementatie voor UserDetailsService voor controller testen.
@@ -23,13 +21,6 @@ public class DummySecurityConfiguratie {
 
     @Bean
     public UserDetailsService userDetailsServiceBean() throws Exception {
-        return new UserDetailsService() {
-
-            @Override
-            public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-                return new User(username, "password", Collections.<GrantedAuthority>emptyList());
-            }
-        };
+        return username -> new User(username, "password", Collections.<GrantedAuthority>emptyList());
     }
-
 }

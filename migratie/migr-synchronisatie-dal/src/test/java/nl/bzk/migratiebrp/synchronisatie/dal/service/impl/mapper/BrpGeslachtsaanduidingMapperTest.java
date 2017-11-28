@@ -7,17 +7,20 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.ArrayList;
+
 import javax.inject.Inject;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
+
 import org.junit.Test;
 
 public class BrpGeslachtsaanduidingMapperTest extends BrpAbstractTest {

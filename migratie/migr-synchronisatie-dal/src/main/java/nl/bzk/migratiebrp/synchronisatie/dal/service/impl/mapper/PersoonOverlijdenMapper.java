@@ -6,13 +6,13 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonOverlijdenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoud;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonOverlijdenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractPersoonHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
@@ -26,19 +26,14 @@ public final class PersoonOverlijdenMapper extends AbstractPersoonHistorieMapper
 
     /**
      * Maakt een PersoonOverlijdenMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonOverlijdenMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -54,26 +49,12 @@ public final class PersoonOverlijdenMapper extends AbstractPersoonHistorieMapper
      * {@inheritDoc}
      */
     @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonOverlijdenHistorie historie, final Persoon persoon) {
-        persoon.setWoonplaatsOverlijden(historie.getWoonplaatsnaamOverlijden());
-        persoon.setLandOfGebiedOverlijden(historie.getLandOfGebied());
-        persoon.setOmschrijvingLocatieOverlijden(historie.getOmschrijvingLocatieOverlijden());
-        persoon.setDatumOverlijden(historie.getDatumOverlijden());
-        persoon.setBuitenlandsePlaatsOverlijden(historie.getBuitenlandsePlaatsOverlijden());
-        persoon.setBuitenlandseRegioOverlijden(historie.getBuitenlandseRegioOverlijden());
-        persoon.setGemeenteOverlijden(historie.getGemeente());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected PersoonOverlijdenHistorie mapHistorischeGroep(final BrpOverlijdenInhoud groepInhoud, final Persoon persoon) {
         final PersoonOverlijdenHistorie result =
                 new PersoonOverlijdenHistorie(
-                    persoon,
-                    MapperUtil.mapBrpDatumToInteger(groepInhoud.getDatum()),
-                    getStamtabelMapping().findLandOfGebiedByCode(groepInhoud.getLandOfGebiedCode(), SoortMeldingCode.PRE010));
+                        persoon,
+                        MapperUtil.mapBrpDatumToInteger(groepInhoud.getDatum()),
+                        getStamtabelMapping().findLandOfGebiedByCode(groepInhoud.getLandOfGebiedCode(), SoortMeldingCode.PRE010));
 
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getDatum(), Element.PERSOON_OVERLIJDEN_DATUM);
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getLandOfGebiedCode(), Element.PERSOON_OVERLIJDEN_LANDGEBIEDCODE);

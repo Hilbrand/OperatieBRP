@@ -13,12 +13,12 @@
             <script>
                 <expression>
                     functioneleStap="uc811.start.stap";
-                    bronGemeente = "BRP";
-                    doelGemeente = "GBAV";
+                    bronPartijCode = "BRP";
+                    doelPartijCode = "GBAV";
                 </expression>
                 <variable name='functioneleStap' access='write' />
-                <variable name='bronGemeente' access='write' />
-                <variable name='doelGemeente' access='write' />
+                <variable name='bronPartijCode' access='write' />
+                <variable name='doelPartijCode' access='write' />
             </script>
         </transition>
     </start-state>

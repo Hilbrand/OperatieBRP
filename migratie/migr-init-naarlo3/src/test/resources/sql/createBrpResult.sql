@@ -65,7 +65,6 @@ CREATE TABLE kern.pers
   opschortingstatushis character varying(1) NOT NULL,
   bijhgem smallint,
   datinschringem integer,
-  indonverwdocaanw boolean,
   bijhgemstatushis character varying(1) NOT NULL,
   gempk smallint,
   indpkvollediggeconv boolean,

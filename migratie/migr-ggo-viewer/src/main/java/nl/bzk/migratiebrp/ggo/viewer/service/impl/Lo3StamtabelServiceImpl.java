@@ -8,6 +8,12 @@ package nl.bzk.migratiebrp.ggo.viewer.service.impl;
 
 import javax.inject.Inject;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingBijzonderNederlandschapEnum;
@@ -27,25 +33,30 @@ import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3SignaleringEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3SoortVerbintenisEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RNIDeelnemerCode;
 import nl.bzk.migratiebrp.ggo.viewer.service.Lo3StamtabelService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Component;
 
 /**
  * Implementatie van Lo3StamtabelService.
- *
  */
 @Component
 public class Lo3StamtabelServiceImpl extends StamtabelServiceImpl implements Lo3StamtabelService {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private final ConversietabelFactory conversietabellen;
+
+    /**
+     * Constructor.
+     * @param dynamischeStamtabelRepository de repository voor de dynamische stamtabel
+     * @param conversietabellen conversie tabellen
+     */
     @Inject
-    private ConversietabelFactory conversietabellen;
+    public Lo3StamtabelServiceImpl(final DynamischeStamtabelRepository dynamischeStamtabelRepository, final ConversietabelFactory conversietabellen) {
+        super(dynamischeStamtabelRepository);
+        this.conversietabellen = conversietabellen;
+    }
 
     @Override
     public final String getAanduidingInhoudingVermissingNlReisdocument(final String loAanduidingInhVermNlReisdoc) {
@@ -79,18 +90,19 @@ public class Lo3StamtabelServiceImpl extends StamtabelServiceImpl implements Lo3
             if (adellijkeTitel != null) {
                 formattedCode =
                         String.format(
-                            STRING_FORMAT_GESL,
-                            lo3AdellijkeTitelPredikaatCode,
-                            adellijkeTitel.getNaamMannelijk(),
-                            adellijkeTitel.getNaamVrouwelijk());
+                                STRING_FORMAT_GESL,
+                                lo3AdellijkeTitelPredikaatCode,
+                                adellijkeTitel.getNaamMannelijk(),
+                                adellijkeTitel.getNaamVrouwelijk());
             }
         } catch (final IllegalArgumentException e) {
+            LOG.debug("Code is geen adellijke titel, proberen predikaat te vinden", e);
             try {
                 final Predicaat predikaat = Predicaat.parseCode(lo3AdellijkeTitelPredikaatCode.substring(0, 1));
                 formattedCode =
                         String.format(STRING_FORMAT_GESL, lo3AdellijkeTitelPredikaatCode, predikaat.getNaamMannelijk(), predikaat.getNaamVrouwelijk());
             } catch (final IllegalArgumentException iae) {
-                LOG.debug("Adellijketitel: " + lo3AdellijkeTitelPredikaatCode + " niet gevonden.");
+                LOG.debug("Adellijketitel: " + lo3AdellijkeTitelPredikaatCode + " niet gevonden.", iae);
             }
         }
 
@@ -122,7 +134,7 @@ public class Lo3StamtabelServiceImpl extends StamtabelServiceImpl implements Lo3
     @Override
     public final String getAanduidingEuropeesKiesrecht(final String aanduiding) {
         if (aanduiding != null) {
-            Lo3AanduidingEuropeesKiesrechtEnum aanduidingEnum = null;
+            Lo3AanduidingEuropeesKiesrechtEnum aanduidingEnum;
             try {
                 aanduidingEnum = Lo3AanduidingEuropeesKiesrechtEnum.getByCode(Integer.parseInt(aanduiding));
 
@@ -255,11 +267,8 @@ public class Lo3StamtabelServiceImpl extends StamtabelServiceImpl implements Lo3
 
     /**
      * Zoek RNI deelnemer op in de BRP RNI-deelnemer conversietabel. Als dit niet lukt wordt de code geretourneerd.
-     *
-     * @param lo3RniDeelnemerCode
-     *            de lo3RniDeelnemerCode
-     * @return De omschrijving van de RNI deelnemer volgens BRP, of de waarde van de code wanneer deze niet wordt
-     *         gevonden.
+     * @param lo3RniDeelnemerCode de lo3RniDeelnemerCode
+     * @return De omschrijving van de RNI deelnemer volgens BRP, of de waarde van de code wanneer deze niet wordt gevonden.
      */
     @Override
     public final String getRNIDeelnemer(final Lo3RNIDeelnemerCode lo3RniDeelnemerCode) {
@@ -276,20 +285,20 @@ public class Lo3StamtabelServiceImpl extends StamtabelServiceImpl implements Lo3
             }
         } catch (final IllegalArgumentException e) {
             // Dit kan gewoon gebeuren. De PL levert dan precondities op.
-            LOG.debug("Geen RNI deelnemer gevonden voor code " + result);
+            LOG.debug("Geen RNI deelnemer gevonden voor code " + result, e);
         }
 
         return result;
     }
 
-    private String getPartij(final int brpPartijCode, final String lo3RniDeelnemerCode) {
+    private String getPartij(final String brpPartijCode, final String lo3RniDeelnemerCode) {
         String result;
         try {
             final Partij partij = getDynamischeStamtabelRepository().getPartijByCode(brpPartijCode);
             result = String.format(STRING_FORMAT, lo3RniDeelnemerCode, partij.getNaam());
         } catch (final InvalidDataAccessApiUsageException iae) {
             final String logMsg = String.format(LOG_MSG_FORMAT, "PartijCode", brpPartijCode);
-            LOG.warn(logMsg);
+            LOG.warn(logMsg, iae);
             result = String.valueOf(lo3RniDeelnemerCode);
         }
         return result;

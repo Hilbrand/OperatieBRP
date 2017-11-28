@@ -14,15 +14,15 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 
 /**
  * Unit test voor {@link BetrokkenheidDecorator}.
@@ -55,7 +55,7 @@ public class BetrokkenheidDecoratorTest {
         assertNull(matchingDecorator);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testZoekMatchendeOuderBetrokkenheidMeerdereExactMatches() throws Exception {
         final BetrokkenheidDecorator decorator = maakBetrokkenheid(20150101, null);
         final BetrokkenheidDecorator mogelijkeMatch = maakBetrokkenheid(20150101, null);
@@ -130,7 +130,7 @@ public class BetrokkenheidDecoratorTest {
     private BetrokkenheidDecorator maakBetrokkenheid(final Integer datumAanvangGeldigheid, final Integer datumEindeGeldigheid) {
         final Relatie relatie = new Relatie(SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
         final Betrokkenheid betrokkenheid = new Betrokkenheid(SoortBetrokkenheid.OUDER, relatie);
-        final BetrokkenheidOuderHistorie ouderHistorie = new BetrokkenheidOuderHistorie(betrokkenheid, true);
+        final BetrokkenheidOuderHistorie ouderHistorie = new BetrokkenheidOuderHistorie(betrokkenheid);
         ouderHistorie.setDatumAanvangGeldigheid(datumAanvangGeldigheid);
         ouderHistorie.setDatumEindeGeldigheid(datumEindeGeldigheid);
 

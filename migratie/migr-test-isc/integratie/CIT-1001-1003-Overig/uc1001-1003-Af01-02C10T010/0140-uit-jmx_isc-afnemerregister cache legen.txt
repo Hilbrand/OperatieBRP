@@ -1,2 +1,0 @@
-nl.bzk.migratiebrp.isc:name=AUTORISATIE
-clearRegister

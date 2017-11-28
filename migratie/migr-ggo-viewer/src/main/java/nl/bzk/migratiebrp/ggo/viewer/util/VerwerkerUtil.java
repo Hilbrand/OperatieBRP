@@ -29,11 +29,8 @@ public final class VerwerkerUtil {
      * Voegt zeros(nullen) toe aan de voorkant van de String tot de opgegeven lengte.
      *
      * "4" wordt "004" als de aangegeven lengte 3 is.
-     *
-     * @param string
-     *            String
-     * @param size
-     *            int
+     * @param string String
+     * @param size int
      * @return aangevulde String
      */
     public static String zeroPad(final String string, final int size) {
@@ -42,11 +39,8 @@ public final class VerwerkerUtil {
 
     /**
      * Maakt de catNr historisch indien nodig (als volgNr groter is dan 0).
-     *
-     * @param catNr
-     *            int
-     * @param volgNr
-     *            int
+     * @param catNr int
+     * @param volgNr int
      * @return historischCatNr (of actueel)
      */
     public static int maakCatNrHistorisch(final int catNr, final int volgNr) {
@@ -59,11 +53,8 @@ public final class VerwerkerUtil {
 
     /**
      * Maakt de catNr historisch indien nodig (als volgNr groter is dan 0).
-     *
-     * @param catNr
-     *            Lo3CategorieEnum
-     * @param volgNr
-     *            int
+     * @param catNr Lo3CategorieEnum
+     * @param volgNr int
      * @return historischCatNr (of actueel)
      */
     public static Lo3CategorieEnum maakCatNrHistorisch(final Lo3CategorieEnum catNr, final int volgNr) {
@@ -74,9 +65,7 @@ public final class VerwerkerUtil {
     /**
      * Kopieert de meegegeven Lo3Persoonslijst naar een nieuwe Lo3Persoonslijst. Stapels en Categorien worden nieuw
      * aangemaakt en gevuld met dezelfde inhoud.
-     *
-     * @param lo3Persoonslijst
-     *            origineel
+     * @param lo3Persoonslijst origineel
      * @return gekopieerde lo3Persoonslijst
      */
     public static Lo3Persoonslijst kopieerLo3Persoonslijst(final Lo3Persoonslijst lo3Persoonslijst) {
@@ -102,9 +91,7 @@ public final class VerwerkerUtil {
 
     /**
      * Kopieert de gegevens in de meegegeven lo3Stapels naar een nieuwe List<Lo3Stapel>.
-     *
-     * @param lo3Stapels
-     *            List<Lo3Stapel>
+     * @param lo3Stapels List<Lo3Stapel>
      * @return gekopieerde lo3Stapels
      */
     private static <T extends Lo3CategorieInhoud> List<Lo3Stapel<T>> kopieerStapels(final List<Lo3Stapel<T>> lo3Stapels) {
@@ -117,9 +104,7 @@ public final class VerwerkerUtil {
 
     /**
      * Kopieert de gegevens in de meegegeven lo3Stapel naar een nieuwe Lo3Stapel.
-     *
-     * @param lo3Stapel
-     *            Lo3Stapel
+     * @param lo3Stapel Lo3Stapel
      * @return gekopieerde lo3Stapel
      */
     private static <T extends Lo3CategorieInhoud> Lo3Stapel<T> kopieerStapel(final Lo3Stapel<T> lo3Stapel) {
@@ -130,11 +115,11 @@ public final class VerwerkerUtil {
         final List<Lo3Categorie<T>> categorieen = new ArrayList<>();
         for (final Lo3Categorie<T> categorie : lo3Stapel.getCategorieen()) {
             categorieen.add(new Lo3Categorie<>(
-                categorie.getInhoud(),
-                categorie.getDocumentatie(),
-                categorie.getOnderzoek(),
-                categorie.getHistorie(),
-                categorie.getLo3Herkomst()));
+                    categorie.getInhoud(),
+                    categorie.getDocumentatie(),
+                    categorie.getOnderzoek(),
+                    categorie.getHistorie(),
+                    categorie.getLo3Herkomst()));
         }
         return new Lo3Stapel<>(categorieen);
     }

@@ -8,6 +8,7 @@ package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -23,28 +24,33 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Huisnummer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieDocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.groep.Lo3GroepUtil;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Preconditie controles voor categorie 08: Verblijfplaats.
  *
  * Maakt gebruik van de {@link nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging#log Logging.log} methode.
  */
-@Component
 public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities {
 
     /**
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
+     */
+    public Lo3VerblijfplaatsPrecondities(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
+
+    /**
      * Controleer precondities op stapel niveau.
-     *
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      */
     public void controleerStapel(final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel) {
         if (stapel == null) {
@@ -67,9 +73,7 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
 
     /**
      * Controleer precondities op categorie niveau.
-     *
-     * @param categorie
-     *            categorie
+     * @param categorie categorie
      */
     private void controleerCategorie(final Lo3Categorie<Lo3VerblijfplaatsInhoud> categorie) {
         final Lo3VerblijfplaatsInhoud inhoud = categorie.getInhoud();
@@ -107,11 +111,11 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
         // Groep 11: Adres
         if (groep11Aanwezig) {
             controleerGroep11Adres(
-                new BasisAdres(inhoud),
-                inhoud.getNaamOpenbareRuimte(),
-                inhoud.getIdentificatiecodeVerblijfplaats(),
-                inhoud.getIdentificatiecodeNummeraanduiding(),
-                herkomst);
+                    new BasisAdres(inhoud),
+                    inhoud.getNaamOpenbareRuimte(),
+                    inhoud.getIdentificatiecodeVerblijfplaats(),
+                    inhoud.getIdentificatiecodeNummeraanduiding(),
+                    herkomst);
         }
 
         // Groep 12: Locatie
@@ -142,7 +146,7 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
 
     private void controleerGroep10GerelateerdeElementen(final Lo3VerblijfplaatsInhoud inhoud, final Lo3Herkomst herkomst) {
         final Foutmelding pre084Melding = Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE084, null);
-        if (!(Validatie.isElementGevuld(inhoud.getStraatnaam()) ^ Validatie.isElementGevuld(inhoud.getLocatieBeschrijving()))) {
+        if (!(Lo3Validatie.isElementGevuld(inhoud.getStraatnaam()) ^ Lo3Validatie.isElementGevuld(inhoud.getLocatieBeschrijving()))) {
             pre084Melding.log();
         }
     }
@@ -170,10 +174,10 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
         }
         if (isDocumentAanwezig(documentatie)) {
             controleerGroep82Document(
-                documentatie.getGemeenteDocument(),
-                documentatie.getDatumDocument(),
-                documentatie.getBeschrijvingDocument(),
-                herkomst);
+                    documentatie.getGemeenteDocument(),
+                    documentatie.getDatumDocument(),
+                    documentatie.getBeschrijvingDocument(),
+                    herkomst);
         }
         if (isRNIDeelnemerAanwezig(documentatie)) {
             controleerGroep88RNIDeelnemer(documentatie.getRniDeelnemerCode(), herkomst);
@@ -188,80 +192,77 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
                 Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_0910);
 
         controleerAanwezig(
-            gemeenteInschrijving,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE036, Lo3ElementEnum.ELEMENT_0910));
+                gemeenteInschrijving,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE036, Lo3ElementEnum.ELEMENT_0910));
 
         controleerCode(gemeenteInschrijving, false, inhoud.isNederlandsAdres(), pre054GemeenteInschrijving);
 
         controleerAanwezig(
-            datumInschrijving,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE036, Lo3ElementEnum.ELEMENT_0920));
+                datumInschrijving,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE036, Lo3ElementEnum.ELEMENT_0920));
         controleerDatum(
-            datumInschrijving,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_0920));
+                datumInschrijving,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_0920));
     }
 
     @Preconditie(SoortMeldingCode.PRE100)
     private void controleerGroep10Adreshouding(
-        final Lo3FunctieAdres functieAdres,
-        final Lo3String gemeenteDeel,
-        final Lo3Datum aanvangAdreshouding,
-        final Lo3Herkomst herkomst)
-    {
+            final Lo3FunctieAdres functieAdres,
+            final Lo3String gemeenteDeel,
+            final Lo3Datum aanvangAdreshouding,
+            final Lo3Herkomst herkomst) {
         controleerAanwezig(functieAdres, Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE100, null));
         Lo3PreconditieEnumCodeChecks.controleerCode(
-            functieAdres,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_1010));
+                functieAdres,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_1010));
 
         controleerMaximumLengte(
-            gemeenteDeel,
-            Lo3ElementEnum.ELEMENT_1020,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1020));
+                gemeenteDeel,
+                Lo3ElementEnum.ELEMENT_1020,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1020));
 
         controleerAanwezig(
-            aanvangAdreshouding,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_1030));
+                aanvangAdreshouding,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_1030));
         controleerDatum(
-            aanvangAdreshouding,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_1030));
+                aanvangAdreshouding,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_1030));
     }
 
     private void controleerGroep11Adres(
-        final BasisAdres basisAdres,
-        final Lo3String naamOpenbareRuimte,
-        final Lo3String identificatiecodeVerblijfplaats,
-        final Lo3String identificatiecodeNummeraanduiding,
-        final Lo3Herkomst herkomst)
-    {
+            final BasisAdres basisAdres,
+            final Lo3String naamOpenbareRuimte,
+            final Lo3String identificatiecodeVerblijfplaats,
+            final Lo3String identificatiecodeNummeraanduiding,
+            final Lo3Herkomst herkomst) {
         controleerIndividueleAdresElementen(basisAdres, naamOpenbareRuimte, identificatiecodeVerblijfplaats, identificatiecodeNummeraanduiding, herkomst);
 
-        final boolean element1115Aanwezig = Validatie.isElementGevuld(naamOpenbareRuimte);
-        final boolean element1120Aanwezig = Validatie.isElementGevuld(basisAdres.getHuisnummer());
-        final boolean element1170Aanwezig = Validatie.isElementGevuld(basisAdres.getWoonplaatsnaam());
-        final boolean element1180Aanwezig = Validatie.isElementGevuld(identificatiecodeVerblijfplaats);
-        final boolean element1190Aanwezig = Validatie.isElementGevuld(identificatiecodeNummeraanduiding);
+        final boolean element1115Aanwezig = Lo3Validatie.isElementGevuld(naamOpenbareRuimte);
+        final boolean element1120Aanwezig = Lo3Validatie.isElementGevuld(basisAdres.getHuisnummer());
+        final boolean element1170Aanwezig = Lo3Validatie.isElementGevuld(basisAdres.getWoonplaatsnaam());
+        final boolean element1180Aanwezig = Lo3Validatie.isElementGevuld(identificatiecodeVerblijfplaats);
+        final boolean element1190Aanwezig = Lo3Validatie.isElementGevuld(identificatiecodeNummeraanduiding);
 
         if (element1115Aanwezig || element1170Aanwezig || element1180Aanwezig || element1190Aanwezig) {
             controleerVerplichteAdresElementen(
-                element1115Aanwezig,
-                element1120Aanwezig,
-                element1170Aanwezig,
-                element1180Aanwezig,
-                element1190Aanwezig,
-                herkomst);
+                    element1115Aanwezig,
+                    element1120Aanwezig,
+                    element1170Aanwezig,
+                    element1180Aanwezig,
+                    element1190Aanwezig,
+                    herkomst);
         }
 
         controleerBijzondereSituaties(basisAdres, herkomst, element1115Aanwezig, element1170Aanwezig, element1180Aanwezig, element1190Aanwezig);
     }
 
     private void controleerBijzondereSituaties(
-        final BasisAdres basisAdres,
-        final Lo3Herkomst herkomst,
-        final boolean element1115Aanwezig,
-        final boolean element1170Aanwezig,
-        final boolean element1180Aanwezig,
-        final boolean element1190Aanwezig)
-    {
+            final BasisAdres basisAdres,
+            final Lo3Herkomst herkomst,
+            final boolean element1115Aanwezig,
+            final boolean element1170Aanwezig,
+            final boolean element1180Aanwezig,
+            final boolean element1190Aanwezig) {
         final boolean heeftWoonplaatsStandaardwaarde = element1170Aanwezig && ".".equals(basisAdres.getWoonplaatsnaam().getWaarde());
         final boolean zijnBagGegevenIncompleet = !element1115Aanwezig || !element1180Aanwezig || !element1190Aanwezig;
         if (heeftWoonplaatsStandaardwaarde && zijnBagGegevenIncompleet) {
@@ -275,80 +276,78 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
     }
 
     private void controleerIndividueleAdresElementen(
-        final BasisAdres basisAdres,
-        final Lo3String naamOpenbareRuimte,
-        final Lo3String identificatiecodeVerblijfplaats,
-        final Lo3String identificatiecodeNummeraanduiding,
-        final Lo3Herkomst herkomst)
-    {
+            final BasisAdres basisAdres,
+            final Lo3String naamOpenbareRuimte,
+            final Lo3String identificatiecodeVerblijfplaats,
+            final Lo3String identificatiecodeNummeraanduiding,
+            final Lo3Herkomst herkomst) {
         controleerAanwezig(
-            basisAdres.getStraatnaam(),
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_1110));
+                basisAdres.getStraatnaam(),
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_1110));
         controleerMaximumLengte(
-            basisAdres.getStraatnaam(),
-            Lo3ElementEnum.ELEMENT_1110,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1110));
+                basisAdres.getStraatnaam(),
+                Lo3ElementEnum.ELEMENT_1110,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1110));
 
         controleerMaximumLengte(
-            naamOpenbareRuimte,
-            Lo3ElementEnum.ELEMENT_1115,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1115));
+                naamOpenbareRuimte,
+                Lo3ElementEnum.ELEMENT_1115,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1115));
 
         controleerMaximumLengte(
-            basisAdres.getHuisnummertoevoeging(),
-            Lo3ElementEnum.ELEMENT_1140,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1140));
+                basisAdres.getHuisnummertoevoeging(),
+                Lo3ElementEnum.ELEMENT_1140,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1140));
 
         controleerAanduidingHuisnummer(
-            basisAdres.aanduidingHuisnummer,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE091, null));
+                basisAdres.aanduidingHuisnummer,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE091, null));
 
         controleerMinimumLengte(
-            basisAdres.getPostcode(),
-            Lo3ElementEnum.ELEMENT_1160,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1160));
+                basisAdres.getPostcode(),
+                Lo3ElementEnum.ELEMENT_1160,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1160));
 
         controleerMaximumLengte(
-            basisAdres.getPostcode(),
-            Lo3ElementEnum.ELEMENT_1160,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1160));
+                basisAdres.getPostcode(),
+                Lo3ElementEnum.ELEMENT_1160,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1160));
         controleerMaximumLengte(
-            basisAdres.getWoonplaatsnaam(),
-            Lo3ElementEnum.ELEMENT_1170,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1170));
+                basisAdres.getWoonplaatsnaam(),
+                Lo3ElementEnum.ELEMENT_1170,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1170));
 
         if (basisAdres.isNederlandsVerblijfadres()) {
             controleerWoonplaatsnaam(
-                basisAdres.getWoonplaatsnaam(),
-                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE057, null));
+                    basisAdres.getWoonplaatsnaam(),
+                    Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE057, null));
         }
 
         controleerMinimumLengte(
-            identificatiecodeVerblijfplaats,
-            Lo3ElementEnum.ELEMENT_1180,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1180));
+                identificatiecodeVerblijfplaats,
+                Lo3ElementEnum.ELEMENT_1180,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1180));
         controleerMaximumLengte(
-            identificatiecodeVerblijfplaats,
-            Lo3ElementEnum.ELEMENT_1180,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1180));
+                identificatiecodeVerblijfplaats,
+                Lo3ElementEnum.ELEMENT_1180,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1180));
         controleerMinimumLengte(
-            identificatiecodeNummeraanduiding,
-            Lo3ElementEnum.ELEMENT_1190,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1190));
+                identificatiecodeNummeraanduiding,
+                Lo3ElementEnum.ELEMENT_1190,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1190));
         controleerMaximumLengte(
-            identificatiecodeNummeraanduiding,
-            Lo3ElementEnum.ELEMENT_1190,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1190));
+                identificatiecodeNummeraanduiding,
+                Lo3ElementEnum.ELEMENT_1190,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1190));
     }
 
     private void controleerVerplichteAdresElementen(
-        final boolean element1115Aanwezig,
-        final boolean element1120Aanwezig,
-        final boolean element1170Aanwezig,
-        final boolean element1180Aanwezig,
-        final boolean element1190Aanwezig,
-        final Lo3Herkomst herkomst)
-    {
+            final boolean element1115Aanwezig,
+            final boolean element1120Aanwezig,
+            final boolean element1170Aanwezig,
+            final boolean element1180Aanwezig,
+            final boolean element1190Aanwezig,
+            final Lo3Herkomst herkomst) {
         if (!element1115Aanwezig) {
             Foutmelding.logMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_1115);
         }
@@ -372,14 +371,14 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
 
     private void controleerGroep12Locatie(final Lo3String locatieBeschrijving, final Lo3Herkomst herkomst) {
         controleerMaximumLengte(
-            locatieBeschrijving,
-            Lo3ElementEnum.ELEMENT_1210,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1210));
+                locatieBeschrijving,
+                Lo3ElementEnum.ELEMENT_1210,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1210));
 
     }
 
     @BijzondereSituatie(SoortMeldingCode.BIJZ_CONV_LB028)
-    @Preconditie({SoortMeldingCode.PRE054, SoortMeldingCode.PRE081 })
+    @Preconditie({SoortMeldingCode.PRE054, SoortMeldingCode.PRE081})
     private void controleerGroep13Emigratie(final Lo3VerblijfplaatsInhoud inhoud, final Lo3Herkomst herkomst, final Lo3Historie historie) {
         final Lo3LandCode landAdresBuitenland = inhoud.getLandAdresBuitenland();
         final Lo3Datum datumVertrekUitNederland = inhoud.getDatumVertrekUitNederland();
@@ -390,23 +389,23 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
         final Lo3Datum datumIngangGeldigheid = historie.getIngangsdatumGeldigheid();
 
         controleerAanwezig(
-            landAdresBuitenland,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE081, Lo3ElementEnum.ELEMENT_1310));
+                landAdresBuitenland,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE081, Lo3ElementEnum.ELEMENT_1310));
 
         controleerCode(landAdresBuitenland, Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_1310));
 
         controleerAanwezig(
-            datumVertrekUitNederland,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE081, Lo3ElementEnum.ELEMENT_1320));
+                datumVertrekUitNederland,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE081, Lo3ElementEnum.ELEMENT_1320));
         controleerDatum(
-            datumVertrekUitNederland,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_1320));
+                datumVertrekUitNederland,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_1320));
 
         controleerBijzondereSituatie(herkomst, datumVertrekUitNederland, datumInschrijvingGemeente, datumIngangGeldigheid);
 
-        final boolean isAdresBuitenland1Aanwezig = Validatie.isElementGevuld(adresBuitenland1);
-        final boolean isAdresBuitenland2Aanwezig = Validatie.isElementGevuld(adresBuitenland2);
-        final boolean isAdresBuitenland3Aanwezig = Validatie.isElementGevuld(adresBuitenland3);
+        final boolean isAdresBuitenland1Aanwezig = Lo3Validatie.isElementGevuld(adresBuitenland1);
+        final boolean isAdresBuitenland2Aanwezig = Lo3Validatie.isElementGevuld(adresBuitenland2);
+        final boolean isAdresBuitenland3Aanwezig = Lo3Validatie.isElementGevuld(adresBuitenland3);
 
         if (isAdresBuitenland1Aanwezig || isAdresBuitenland2Aanwezig || isAdresBuitenland3Aanwezig) {
             if (!isAdresBuitenland2Aanwezig) {
@@ -416,26 +415,25 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
                 Foutmelding.logMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.BIJZ_CONV_LB033, null);
             }
             controleerMaximumLengte(
-                adresBuitenland1,
-                Lo3ElementEnum.ELEMENT_1330,
-                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1330));
+                    adresBuitenland1,
+                    Lo3ElementEnum.ELEMENT_1330,
+                    Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1330));
             controleerMaximumLengte(
-                adresBuitenland2,
-                Lo3ElementEnum.ELEMENT_1340,
-                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1340));
+                    adresBuitenland2,
+                    Lo3ElementEnum.ELEMENT_1340,
+                    Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1340));
             controleerMaximumLengte(
-                adresBuitenland3,
-                Lo3ElementEnum.ELEMENT_1350,
-                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1350));
+                    adresBuitenland3,
+                    Lo3ElementEnum.ELEMENT_1350,
+                    Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.LENGTE, Lo3ElementEnum.ELEMENT_1350));
         }
     }
 
     private void controleerBijzondereSituatie(
-        final Lo3Herkomst herkomst,
-        final Lo3Datum datumVertrekUitNederland,
-        final Lo3Datum datumInschrijvingGemeente,
-        final Lo3Datum datumIngangGeldigheid)
-    {
+            final Lo3Herkomst herkomst,
+            final Lo3Datum datumVertrekUitNederland,
+            final Lo3Datum datumInschrijvingGemeente,
+            final Lo3Datum datumIngangGeldigheid) {
 
         // Bijzondere situatie LB028
         if (datumVertrekUitNederland != null) {
@@ -451,28 +449,28 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
     }
 
     private void controleerGroep14Immigratie(final Lo3LandCode landVanwaarIngeschreven, final Lo3Datum vestigingInNederland, final Lo3Herkomst herkomst) {
-        if (!Validatie.isElementGevuld(landVanwaarIngeschreven) || !Validatie.isElementGevuld(vestigingInNederland)) {
+        if (!Lo3Validatie.isElementGevuld(landVanwaarIngeschreven) || !Lo3Validatie.isElementGevuld(vestigingInNederland)) {
             Foutmelding.logMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE079, null);
         }
 
         controleerCode(
-            landVanwaarIngeschreven,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_1410));
+                landVanwaarIngeschreven,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_1410));
         controleerDatum(
-            vestigingInNederland,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_1420));
+                vestigingInNederland,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_1420));
     }
 
     private void controleerGroep72Adresaangifte(final Lo3AangifteAdreshouding aangifteAdreshouding, final Lo3Herkomst herkomst) {
         Lo3PreconditieEnumCodeChecks.controleerCode(
-            aangifteAdreshouding,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_7210));
+                aangifteAdreshouding,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_7210));
     }
 
     private void controleerGroep75Documentindicatie(final Lo3IndicatieDocument indicatieDocument, final Lo3Herkomst herkomst) {
         Lo3PreconditieEnumCodeChecks.controleerCode(
-            indicatieDocument,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_7510));
+                indicatieDocument,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_7510));
     }
 
     /**
@@ -499,7 +497,6 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
 
         /**
          * Geef de nederlands verblijfadres.
-         *
          * @return nederlands verblijfadres
          */
         private boolean isNederlandsVerblijfadres() {
@@ -508,7 +505,6 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
 
         /**
          * Geef de waarde van straatnaam.
-         *
          * @return straatnaam
          */
         private Lo3String getStraatnaam() {
@@ -517,7 +513,6 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
 
         /**
          * Geef de waarde van huisnummer.
-         *
          * @return huisnummer
          */
         private Lo3Huisnummer getHuisnummer() {
@@ -526,7 +521,6 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
 
         /**
          * Geef de waarde van woonplaatsnaam.
-         *
          * @return woonplaatsnaam
          */
         private Lo3String getWoonplaatsnaam() {
@@ -535,7 +529,6 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
 
         /**
          * Geef de waarde van huisnummertoevoeging.
-         *
          * @return huisnummertoevoeging
          */
         private Lo3String getHuisnummertoevoeging() {
@@ -544,7 +537,6 @@ public final class Lo3VerblijfplaatsPrecondities extends AbstractLo3Precondities
 
         /**
          * Geef de waarde van postcode.
-         *
          * @return postcode
          */
         private Lo3String getPostcode() {

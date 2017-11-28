@@ -15,35 +15,65 @@ import java.util.List;
  */
 public enum DeltaWijziging {
 
-    /** DW-001, een verwijderde rij die een M-rij wordt. */
+    /**
+     * DW-001, een verwijderde rij die een M-rij wordt.
+     */
     DW_001(),
-    /** DW-002, een toegevoegde rij. */
+    /**
+     * DW-002, een toegevoegde rij.
+     */
     DW_002(),
-    /** DW-002-ACT, een toegevoegde rij waarbij DEG en tsverval beide leeg zijn. */
+    /**
+     * DW-002-ACT, een toegevoegde rij waarbij DEG en tsverval beide leeg zijn.
+     */
     DW_002_ACT(),
-    /** DW-003, een combinatie van DW-001 en DW-002. */
+    /**
+     * DW-003, een combinatie van DW-001 en DW-002.
+     */
     DW_003(),
-    /** DW-011, actualisering waardoor rij vervalt. */
+    /**
+     * DW-011, actualisering waardoor rij vervalt.
+     */
     DW_011(),
-    /** DW-012, correctie waardoor rij vervalt. */
+    /**
+     * DW-012, correctie waardoor rij vervalt.
+     */
     DW_012(),
-    /** DW-021, actualisering, waardoor rij materieel eindigt. */
+    /**
+     * DW-021, actualisering, waardoor rij materieel eindigt.
+     */
     DW_021(),
-    /** DW-022, correctie waardoor rij vervalt. */
+    /**
+     * DW-022, correctie waardoor rij vervalt.
+     */
     DW_022(),
-    /** DW-023, correctie waardoor DEG gevuld wordt obv andere rij. */
+    /**
+     * DW-023, correctie waardoor DEG gevuld wordt obv andere rij.
+     */
     DW_023(),
-    /** DW-024, actualisering waardoor actuele rij vervalt vervalt. */
+    /**
+     * DW-024, actualisering waardoor actuele rij vervalt vervalt.
+     */
     DW_024(),
-    /** DW-025, correctie waardoor 'stapel' vervalt. */
+    /**
+     * DW-025, correctie waardoor 'stapel' vervalt.
+     */
     DW_025(),
-    /** DW-031, actualisering uit categorie 08 (binnengemeentelijke verhuizing). */
+    /**
+     * DW-031, actualisering uit categorie 08 (binnengemeentelijke verhuizing).
+     */
     DW_031(),
-    /** DW-032, actualisering uit categorie 08 (intergemeentelijke verhuizing). */
+    /**
+     * DW-032, actualisering uit categorie 08 (intergemeentelijke verhuizing).
+     */
     DW_032(),
-    /** DW-034, correctie uit categorie 08. */
+    /**
+     * DW-034, correctie uit categorie 08.
+     */
     DW_034(),
- /** DW-041 Bijhouding van nationaliteit wordt beeindigd. */
+    /**
+     * DW-041 Bijhouding van nationaliteit wordt beeindigd.
+     */
     DW_041(),
     /**
      * DW-901, een wijziging van alleen de tsreg in een voorkomen die volgt uit categorie 07 of 13 die vervolgens wordt
@@ -62,9 +92,7 @@ public enum DeltaWijziging {
 
     /**
      * Constructor.
-     * @param isNodigVoorSyncResyncBeslissing
-     *              zet indicator
-     *
+     * @param isNodigVoorSyncResyncBeslissing zet indicator
      */
     DeltaWijziging(final boolean isNodigVoorSyncResyncBeslissing) {
         this.isNodigVoorSyncResyncBeslissing = isNodigVoorSyncResyncBeslissing;

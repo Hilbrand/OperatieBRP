@@ -6,19 +6,20 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import javax.inject.Inject;
-import junit.framework.Assert;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
 import org.junit.Test;
@@ -34,16 +35,14 @@ public class BrpBijhoudingMapperTest extends BrpAbstractTest {
     public void testMapInhoud() {
         final PersoonBijhoudingHistorie historie =
                 new PersoonBijhoudingHistorie(
-                    new Persoon(SoortPersoon.INGESCHREVENE),
-                    new Partij("naam", Integer.valueOf("0518")),
-                    Bijhoudingsaard.INGEZETENE,
-                    NadereBijhoudingsaard.ACTUEEL,
-                    false);
+                        new Persoon(SoortPersoon.INGESCHREVENE),
+                        new Partij("naam", "051801"),
+                        Bijhoudingsaard.INGEZETENE,
+                        NadereBijhoudingsaard.ACTUEEL);
 
         final BrpBijhoudingInhoud result = mapper.mapInhoud(historie, brpOnderzoekMapper);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(new BrpPartijCode(Integer.parseInt("0518")), result.getBijhoudingspartijCode());
-        Assert.assertEquals(new BrpBoolean(Boolean.FALSE, null), result.getIndicatieOnverwerktDocumentAanwezig());
+        assertNotNull(result);
+        assertEquals(new BrpPartijCode("051801"), result.getBijhoudingspartijCode());
     }
 }

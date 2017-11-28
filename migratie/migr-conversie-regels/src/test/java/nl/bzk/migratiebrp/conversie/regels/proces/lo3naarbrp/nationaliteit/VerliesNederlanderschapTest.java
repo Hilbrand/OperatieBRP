@@ -6,6 +6,9 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.nationaliteit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
@@ -32,13 +35,11 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.testutils.VerplichteStapel;
 import nl.bzk.migratiebrp.conversie.regels.proces.AbstractConversieTest;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Test om de speciale casus van reden verkrijging en reden verlies nederlanderschap te testen bij het converteren van
  * nationaliteit.
- *
  */
 
 public class VerliesNederlanderschapTest extends AbstractConversieTest {
@@ -52,51 +53,53 @@ public class VerliesNederlanderschapTest extends AbstractConversieTest {
         final List<Lo3Categorie<Lo3NationaliteitInhoud>> categorieen = new ArrayList<>();
 
         categorieen.add(VerliesNederlanderschapTest.buildNationaliteit(
-            "0001",
-            "017",
-            null,
-            null,
-            null,
-            19000101,
-            19000102,
-            1,
-            "0518",
-            "1-Verkrijging-1",
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 1)));
+                "0001",
+                "017",
+                null,
+                null,
+                "1 2+a-f/Z.D",
+                null,
+                19000101,
+                19000102,
+                1,
+                "0518",
+                "1-Verkrijging-1",
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 1)));
         categorieen.add(VerliesNederlanderschapTest.buildNationaliteit(
-            null,
-            null,
-            "087",
-            null,
-            null,
-            19960101,
-            19960101,
-            1,
-            "0518",
-            "1-Verkrijging-1",
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 0)));
+                null,
+                null,
+                "087",
+                null,
+                "1 2+a-f/Z.D",
+                null,
+                19960101,
+                19960101,
+                1,
+                "0518",
+                "1-Verkrijging-1",
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 0)));
 
         final Lo3Stapel<Lo3NationaliteitInhoud> lo3 = new Lo3Stapel<>(categorieen);
         final BrpStapel<BrpNationaliteitInhoud> brp = test(lo3);
 
-        Assert.assertEquals(1, brp.size());
+        assertEquals(1, brp.size());
         final BrpGroep<BrpNationaliteitInhoud> groep = brp.get(0);
 
         // Inhoud
-        Assert.assertNotNull(groep.getInhoud());
-        Assert.assertNotNull(groep.getInhoud().getRedenVerkrijgingNederlandschapCode());
-        Assert.assertEquals(Short.valueOf("17"), groep.getInhoud().getRedenVerkrijgingNederlandschapCode().getWaarde());
-        Assert.assertNotNull(groep.getInhoud().getRedenVerliesNederlandschapCode());
-        Assert.assertEquals(Short.valueOf("87"), groep.getInhoud().getRedenVerliesNederlandschapCode().getWaarde());
+        assertNotNull(groep.getInhoud());
+        assertNotNull(groep.getInhoud().getRedenVerkrijgingNederlandschapCode());
+        assertEquals("017", groep.getInhoud().getRedenVerkrijgingNederlandschapCode().getWaarde());
+        assertNotNull(groep.getInhoud().getRedenVerliesNederlandschapCode());
+        assertEquals("087", groep.getInhoud().getRedenVerliesNederlandschapCode().getWaarde());
 
         // Historie
-        Assert.assertNotNull(groep.getHistorie());
-        Assert.assertEquals(new BrpDatum(19000101, null), groep.getHistorie().getDatumAanvangGeldigheid());
-        Assert.assertEquals(new BrpDatum(19960101, null), groep.getHistorie().getDatumEindeGeldigheid());
+        assertNotNull(groep.getHistorie());
+        assertEquals(new BrpDatum(19000101, null), groep.getHistorie().getDatumAanvangGeldigheid());
+        assertEquals(new BrpDatum(19960101, null), groep.getHistorie().getDatumEindeGeldigheid());
 
         // Acties
-        Assert.assertNotNull(groep.getActieInhoud());
-        Assert.assertNotNull(groep.getActieGeldigheid());
+        assertNotNull(groep.getActieInhoud());
+        assertNotNull(groep.getActieGeldigheid());
         Logging.destroyContext();
     }
 
@@ -104,32 +107,33 @@ public class VerliesNederlanderschapTest extends AbstractConversieTest {
         final Lo3Persoonslijst lo3 = VerliesNederlanderschapTest.buildLo3Persoonslijst(nationaliteitStapel);
         final BrpPersoonslijst brp = converteerLo3NaarBrpService.converteerLo3Persoonslijst(lo3);
 
-        Assert.assertNotNull(brp);
-        Assert.assertNotNull(brp.getNationaliteitStapels());
-        Assert.assertEquals(1, brp.getNationaliteitStapels().size());
+        assertNotNull(brp);
+        assertNotNull(brp.getNationaliteitStapels());
+        assertEquals(1, brp.getNationaliteitStapels().size());
         return brp.getNationaliteitStapels().get(0);
     }
 
     private static Lo3Categorie<Lo3NationaliteitInhoud> buildNationaliteit(
-        final String nationaliteit,
-        final String redenVerkrijging,
-        final String redenVerlies,
-        final String aanduidingBijzonder,
-        final Lo3IndicatieOnjuist indicatieOnjuist,
-        final Integer ingangsdatumGeldigheid,
-        final Integer datumVanOpneming,
-        final Integer documentId,
-        final String gemeenteCodeAkte,
-        final String nummerAkte,
-        final Lo3Herkomst herkomst)
-    {
+            final String nationaliteit,
+            final String redenVerkrijging,
+            final String redenVerlies,
+            final String aanduidingBijzonder,
+            final String euPersoonsnummer,
+            final Lo3IndicatieOnjuist indicatieOnjuist,
+            final Integer ingangsdatumGeldigheid,
+            final Integer datumVanOpneming,
+            final Integer documentId,
+            final String gemeenteCodeAkte,
+            final String nummerAkte,
+            final Lo3Herkomst herkomst) {
 
         final Lo3NationaliteitInhoud inhoud =
                 new Lo3NationaliteitInhoud(
-                    nationaliteit == null ? null : new Lo3NationaliteitCode(nationaliteit),
-                    redenVerkrijging == null ? null : new Lo3RedenNederlandschapCode(redenVerkrijging),
-                    redenVerlies == null ? null : new Lo3RedenNederlandschapCode(redenVerlies),
-                    aanduidingBijzonder == null ? null : new Lo3AanduidingBijzonderNederlandschap(aanduidingBijzonder));
+                        nationaliteit == null ? null : new Lo3NationaliteitCode(nationaliteit),
+                        redenVerkrijging == null ? null : new Lo3RedenNederlandschapCode(redenVerkrijging),
+                        redenVerlies == null ? null : new Lo3RedenNederlandschapCode(redenVerlies),
+                        aanduidingBijzonder == null ? null : new Lo3AanduidingBijzonderNederlandschap(aanduidingBijzonder),
+                        euPersoonsnummer == null ? null : new Lo3String(euPersoonsnummer));
 
         // inhoud.valideer();
 

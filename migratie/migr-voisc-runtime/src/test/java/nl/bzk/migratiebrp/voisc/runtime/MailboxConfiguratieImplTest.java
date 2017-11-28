@@ -8,15 +8,16 @@ package nl.bzk.migratiebrp.voisc.runtime;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Gemeente;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegister;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegisterImpl;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegisterImpl;
 import nl.bzk.migratiebrp.register.client.RegisterService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.voisc.database.entities.Mailbox;
 import nl.bzk.migratiebrp.voisc.database.repository.MailboxRepository;
 import org.junit.Assert;
@@ -34,68 +35,58 @@ public class MailboxConfiguratieImplTest {
     private static final Logger LOG = LoggerFactory.getLogger();
 
     @Mock
-    private RegisterService<GemeenteRegister> gemeenteService;
+    private RegisterService<PartijRegister> partijService;
     @Mock
     private MailboxRepository mailboxRepository;
 
     @InjectMocks
     private MailboxConfiguratieImpl subject;
 
-    private final Mailbox mailboxCentraal0001 = maakMailbox(Mailbox.INSTANTIETYPE_CENTRALE_VOORZIENING, 3000200, "3000200");
-    private final Mailbox mailboxCentraal0002 = maakMailbox(Mailbox.INSTANTIETYPE_CENTRALE_VOORZIENING, 3000210, "3000210");
-    private final Mailbox mailboxGemeente0001 = maakMailbox(Mailbox.INSTANTIETYPE_GEMEENTE, 518, "0518010");
-    private final Mailbox mailboxGemeente0002 = maakMailbox(Mailbox.INSTANTIETYPE_GEMEENTE, 519, "0519010");
+    private final Mailbox mailboxCentraal0001 = maakMailbox("199902", "3000200");
+    private final Mailbox mailboxCentraal0002 = maakMailbox("199902", "3000210");
+    private final Mailbox mailboxPartij0001 = maakMailbox("051801", "0518010");
+    private final Mailbox mailboxPartij0002 = maakMailbox("051901", "0519010");
 
-    private final Gemeente gemeente0001 = maakGemeente("0518", new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 21));
-    private final Gemeente gemeente0002 = maakGemeente("0519", null);
+    private final Partij centraleVoorziening = maakPartij("199902", null, new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 21));
+    private final Partij partij0001 = maakPartij("051801", "0518", new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 21));
+    private final Partij partij0002 = maakPartij("051901", "0519", null);
 
-    private Mailbox maakMailbox(final String instantieType, final int instantieCode, final String mailboxnr) {
+    private Mailbox maakMailbox( final String partijCode, final String mailboxnr) {
         final Mailbox mailbox = new Mailbox();
-        mailbox.setInstantietype(instantieType);
-        mailbox.setInstantiecode(instantieCode);
+        mailbox.setPartijcode(partijCode);
         mailbox.setMailboxnr(mailboxnr);
 
         return mailbox;
     }
 
-    private Gemeente maakGemeente(final String gemeenteCode, final Date datumOvergangNaarBrp) {
-        return new Gemeente(gemeenteCode, null, datumOvergangNaarBrp);
+    private Partij maakPartij(final String partijCode, final String gemeenteCode, final Date datumOvergangNaarBrp) {
+        return new Partij(partijCode, gemeenteCode, datumOvergangNaarBrp, Collections.emptyList());
     }
 
     @Before
     public void setup() {
-        final List<Mailbox> centraleMailboxes = Arrays.asList(mailboxCentraal0001, mailboxCentraal0002);
-        Mockito.when(mailboxRepository.getCentraleMailboxes()).thenReturn(centraleMailboxes);
+        final List<Mailbox> alleMailboxen = Arrays.asList(mailboxCentraal0001, mailboxCentraal0002, mailboxPartij0001, mailboxPartij0002);
+        Mockito.when(mailboxRepository.getAllMailboxen()).thenReturn(alleMailboxen);
+        Mockito.when(mailboxRepository.getMailboxByNummer("0518010")).thenReturn(mailboxPartij0001);
+        Mockito.when(mailboxRepository.getMailboxByNummer("0519010")).thenReturn(mailboxPartij0002);
         Mockito.when(mailboxRepository.getMailboxByNummer("3000200")).thenReturn(mailboxCentraal0001);
         Mockito.when(mailboxRepository.getMailboxByNummer("3000210")).thenReturn(mailboxCentraal0002);
 
-        final List<Mailbox> gemeenteMailboxes = Arrays.asList(mailboxGemeente0001, mailboxGemeente0002);
-        Mockito.when(mailboxRepository.getGemeenteMailboxes()).thenReturn(gemeenteMailboxes);
-        Mockito.when(mailboxRepository.getMailboxByNummer("0518010")).thenReturn(mailboxGemeente0001);
-        Mockito.when(mailboxRepository.getMailboxByNummer("0519010")).thenReturn(mailboxGemeente0002);
-
-        final List<Gemeente> gemeenten = Arrays.asList(gemeente0001, gemeente0002);
-        final GemeenteRegister gemeenteRegister = new GemeenteRegisterImpl(gemeenten);
-        Mockito.when(gemeenteService.geefRegister()).thenReturn(gemeenteRegister);
+        final List<Partij> partijen = Arrays.asList(centraleVoorziening, partij0001, partij0002);
+        final PartijRegister partijRegister = new PartijRegisterImpl(partijen);
+        Mockito.when(partijService.geefRegister()).thenReturn(partijRegister);
     }
 
     /**
      * Zet de waarde van te bedienen mailboxen.
-     *
-     * @param config
-     *            te bedienen mailboxen
-     * @throws NoSuchFieldException
-     *             the no such field exception
-     * @throws SecurityException
-     *             the security exception
-     * @throws IllegalArgumentException
-     *             the illegal argument exception
-     * @throws IllegalAccessException
-     *             the illegal access exception
+     * @param config te bedienen mailboxen
+     * @throws NoSuchFieldException the no such field exception
+     * @throws SecurityException the security exception
+     * @throws IllegalArgumentException the illegal argument exception
+     * @throws IllegalAccessException the illegal access exception
      */
     private void setTeBedienenMailboxen(final String config) throws NoSuchFieldException, SecurityException, IllegalArgumentException,
-        IllegalAccessException
-    {
+            IllegalAccessException {
         final Field teBedienenMailboxenField = MailboxConfiguratieImpl.class.getDeclaredField("teBedienenMailboxen");
         teBedienenMailboxenField.setAccessible(true);
         teBedienenMailboxenField.set(subject, config);
@@ -113,7 +104,7 @@ public class MailboxConfiguratieImplTest {
         Assert.assertEquals(3, result.size());
         Assert.assertTrue(result.contains(mailboxCentraal0001));
         Assert.assertTrue(result.contains(mailboxCentraal0002));
-        Assert.assertTrue(result.contains(mailboxGemeente0001));
+        Assert.assertTrue(result.contains(mailboxPartij0001));
     }
 
     @Test
@@ -128,7 +119,7 @@ public class MailboxConfiguratieImplTest {
         Assert.assertEquals(3, result.size());
         Assert.assertTrue(result.contains(mailboxCentraal0001));
         Assert.assertTrue(result.contains(mailboxCentraal0002));
-        Assert.assertTrue(result.contains(mailboxGemeente0001));
+        Assert.assertTrue(result.contains(mailboxPartij0001));
     }
 
     @Test
@@ -154,11 +145,8 @@ public class MailboxConfiguratieImplTest {
         final Set<Mailbox> result = subject.bepaalMailboxen();
 
         // Verify
-        for (final Mailbox mailbox : result) {
-            LOG.error("Mailbox: " + mailbox.getMailboxnr());
-        }
         Assert.assertEquals(1, result.size());
-        Assert.assertTrue(result.contains(mailboxGemeente0001));
+        Assert.assertTrue(result.contains(mailboxPartij0001));
 
     }
 

@@ -16,17 +16,12 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 public class InjectorSelenese implements Injector {
 
     /**
-     * Zoek in de bericht inhoud naar <code> &lt;td>store&lt;/td>&lt;td>(.*)&lt;/td>&lt;td>key&lt;/td> </code> en
-     * vervang de <code>(.*)</code> met de value.
-     *
-     * @param context
-     *            context
-     * @param bericht
-     *            bericht
-     * @param key
-     *            variabele naam in het selenium script
-     * @param value
-     *            waarde
+     * Zoek in de bericht inhoud naar {@code <td>store</td><td>(.*)</td><td>key</td>} en
+     * vervang de {@code (.*)} met de value.
+     * @param context context
+     * @param bericht bericht
+     * @param key variabele naam in het selenium script
+     * @param value waarde
      */
     @Override
     public final void inject(final Context context, final Bericht bericht, final String key, final String value) {

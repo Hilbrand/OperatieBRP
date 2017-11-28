@@ -13,21 +13,17 @@ import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Afnemersindicatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3AfnemersindicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
-import org.springframework.stereotype.Component;
 
 /**
  * Afnemersindicatie opschoner.
  */
-@Component
 public final class Lo3AfnemersindicatieOpschoner {
 
     /**
      * Opschonen afnemersindicaties. Alle stapels waarvoor een error is worden verwijderd.
      *
      * Nota: LET OP! Gebruikt de Logging.context
-     *
-     * @param afnemersindicatie
-     *            afnemersindicaties
+     * @param afnemersindicatie afnemersindicaties
      * @return opgeschoonde afnemersindicaties
      */
     public Lo3Afnemersindicatie opschonen(final Lo3Afnemersindicatie afnemersindicatie) {

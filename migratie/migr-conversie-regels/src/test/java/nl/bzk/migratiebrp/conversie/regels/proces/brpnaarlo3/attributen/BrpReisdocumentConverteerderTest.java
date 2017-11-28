@@ -13,8 +13,7 @@ import static nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.BrpStapelHelp
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-
-import javax.inject.Inject;
+import static org.mockito.Mockito.when;
 
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
@@ -31,37 +30,71 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSignaleringMetBetrekkingT
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3ReisdocumentInhoud;
+import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3SignaleringEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingInhoudingVermissingNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AutoriteitVanAfgifteNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Signalering;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-import nl.bzk.migratiebrp.conversie.regels.proces.AbstractReisdocumentTest;
-
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test voor de terug conversie van BrpReisdocument/Signalering/BuitenlandsReisdocument naar Lo3Reisdocument.
  */
 @Requirement(Requirements.CCA12)
-public class BrpReisdocumentConverteerderTest extends AbstractReisdocumentTest {
+@RunWith(MockitoJUnitRunner.class)
+public class BrpReisdocumentConverteerderTest {
 
-    @Inject
+    private static final String SOORT_REISDOCUMENT = "P";
+    private static final String NUMMER_NL_REISDOCUMENT = "P12345678";
+    private static final int DATUM_UITGIFTE_NL_REISDOCUMENT = 20120101;
+    private static final String AUTORITEIT_VAN_AFGIFTE = "123456";
+    private static final int DATUM_EINDE_GELDIGHEID_NL_REISDOCUMENT = 20170101;
+    private static final int DATUM_INHOUDING_OF_VERMISSING = 20140101;
+    private static final char AANDUIDING_INHOUDING_OF_VERMISSING = 'I';
+    private static final Lo3Signalering LO3_SIGNALERING = Lo3SignaleringEnum.SIGNALERING.asElement();
+    private static final int DATUM_INGANG_GELDIGHEID = 20120101;
+
+    @Mock
+    private BrpAttribuutConverteerder attribuutConverteerder;
     private BrpReisdocumentConverteerder converteerder;
+
+    @Before
+    public void setUp() {
+        this.converteerder = new BrpReisdocumentConverteerder(attribuutConverteerder);
+        when(attribuutConverteerder.converteerSoortNederlandsResidocument(new BrpSoortNederlandsReisdocumentCode(SOORT_REISDOCUMENT)))
+                .thenReturn(new Lo3SoortNederlandsReisdocument(SOORT_REISDOCUMENT));
+        when(attribuutConverteerder.converteerString(new BrpString(NUMMER_NL_REISDOCUMENT))).thenReturn(new Lo3String(NUMMER_NL_REISDOCUMENT));
+        when(attribuutConverteerder.converteerDatum(new BrpDatum(DATUM_UITGIFTE_NL_REISDOCUMENT, null)))
+                .thenReturn(new Lo3Datum(DATUM_UITGIFTE_NL_REISDOCUMENT));
+        when(attribuutConverteerder.converteerAutoriteitVanAfgifte(new BrpReisdocumentAutoriteitVanAfgifteCode(AUTORITEIT_VAN_AFGIFTE)))
+                .thenReturn(new Lo3AutoriteitVanAfgifteNederlandsReisdocument(AUTORITEIT_VAN_AFGIFTE));
+        when(attribuutConverteerder.converteerDatum(new BrpDatum(DATUM_EINDE_GELDIGHEID_NL_REISDOCUMENT, null)))
+                .thenReturn(new Lo3Datum(DATUM_EINDE_GELDIGHEID_NL_REISDOCUMENT));
+        when(attribuutConverteerder.converteerDatum(new BrpDatum(DATUM_INHOUDING_OF_VERMISSING, null))).thenReturn(new Lo3Datum(DATUM_INHOUDING_OF_VERMISSING));
+        when(attribuutConverteerder.converteerAanduidingInhoudingNederlandsReisdocument(
+                new BrpAanduidingInhoudingOfVermissingReisdocumentCode(AANDUIDING_INHOUDING_OF_VERMISSING)))
+                .thenReturn(new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(String.valueOf(AANDUIDING_INHOUDING_OF_VERMISSING)));
+    }
 
     @Test
     public void testReisdocumentConversie() {
         final BrpReisdocumentInhoud inhoud =
                 new BrpReisdocumentInhoud(
-                    new BrpSoortNederlandsReisdocumentCode(SOORT_REISDOCUMENT),
-                    new BrpString(NUMMER_NL_REISDOCUMENT),
-                    new BrpDatum(DATUM_INGANG_GELDIGHEID, null),
-                    new BrpDatum(DATUM_UITGIFTE_NL_REISDOCUMENT, null),
-                    new BrpReisdocumentAutoriteitVanAfgifteCode(AUTORITEIT_VAN_AFGIFTE),
-                    new BrpDatum(DATUM_EINDE_GELDIGHEID_NL_REISDOCUMENT, null),
-                    new BrpDatum(DATUM_INHOUDING_OF_VERMISSING, null),
-                    new BrpAanduidingInhoudingOfVermissingReisdocumentCode(AANDUIDING_INHOUDING_OF_VERMISSING));
+                        new BrpSoortNederlandsReisdocumentCode(SOORT_REISDOCUMENT),
+                        new BrpString(NUMMER_NL_REISDOCUMENT),
+                        new BrpDatum(DATUM_INGANG_GELDIGHEID, null),
+                        new BrpDatum(DATUM_UITGIFTE_NL_REISDOCUMENT, null),
+                        new BrpReisdocumentAutoriteitVanAfgifteCode(AUTORITEIT_VAN_AFGIFTE),
+                        new BrpDatum(DATUM_EINDE_GELDIGHEID_NL_REISDOCUMENT, null),
+                        new BrpDatum(DATUM_INHOUDING_OF_VERMISSING, null),
+                        new BrpAanduidingInhoudingOfVermissingReisdocumentCode(AANDUIDING_INHOUDING_OF_VERMISSING));
         final BrpStapel<BrpReisdocumentInhoud> reisdocumentStapel = maakStapel(inhoud);
 
         final Lo3ReisdocumentInhoud lo3Inhoud = converteerNaarLo3(reisdocumentStapel);
@@ -79,8 +112,11 @@ public class BrpReisdocumentConverteerderTest extends AbstractReisdocumentTest {
 
     @Test
     public void testSignalering() {
+        final BrpBoolean indicatieSignalering = new BrpBoolean(true);
+        when(attribuutConverteerder.converteerSignalering(indicatieSignalering)).thenReturn(new Lo3Signalering(1));
+
         final BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud inhoud =
-                new BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud(new BrpBoolean(true, null), null, null);
+                new BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud(indicatieSignalering, null, null);
 
         final BrpStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> stapel = maakStapel(inhoud);
         final Lo3ReisdocumentInhoud lo3Inhoud = converteerNaarLo3(stapel);

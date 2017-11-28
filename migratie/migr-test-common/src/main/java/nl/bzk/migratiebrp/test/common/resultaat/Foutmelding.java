@@ -8,12 +8,12 @@ package nl.bzk.migratiebrp.test.common.resultaat;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Root;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
 
 /**
  * Foutmelding die als XML kan worden geserialiseerd, als terugkoppeling bij een fout tijdens het uitvoeren van de
@@ -28,17 +28,14 @@ public final class Foutmelding {
 
     /**
      * Constructor.
-     *
-     * @param context
-     *            context
-     * @param message
-     *            message
-     * @param stacktrace
-     *            stacktrace
+     * @param context context
+     * @param message message
+     * @param stacktrace stacktrace
      */
-    public Foutmelding(@Element(name = "context") final String context, @Element(name = "message", required = false) final String message, @Element(
-            name = "stacktrace", required = false) final String stacktrace)
-    {
+    public Foutmelding(
+            @Element(name = "context") final String context,
+            @Element(name = "message", required = false) final String message,
+            @Element(name = "stacktrace", required = false) final String stacktrace) {
         this.context = context;
         this.message = message;
         this.stacktrace = stacktrace;
@@ -46,11 +43,8 @@ public final class Foutmelding {
 
     /**
      * Maak een nieuwe foutmelding aan, die evt. weggeschreven kan worden naar XML.
-     *
-     * @param context
-     *            De context van de fout
-     * @param oorzaak
-     *            De exception die de fout veroorzaak heeft
+     * @param context De context van de fout
+     * @param oorzaak De exception die de fout veroorzaak heeft
      */
     public Foutmelding(final String context, final Throwable oorzaak) {
         if (context == null || oorzaak == null) {
@@ -69,7 +63,6 @@ public final class Foutmelding {
 
     /**
      * Geef de waarde van context.
-     *
      * @return context
      */
     @Element(name = "context")
@@ -79,7 +72,6 @@ public final class Foutmelding {
 
     /**
      * Geef de waarde van message.
-     *
      * @return message
      */
     @Element(name = "message", required = false)
@@ -89,7 +81,6 @@ public final class Foutmelding {
 
     /**
      * Geef de waarde van stacktrace.
-     *
      * @return stacktrace
      */
     @Element(name = "stacktrace", required = false)
@@ -117,9 +108,9 @@ public final class Foutmelding {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("context", context)
-                                                                          .append("message", message)
-                                                                          .toString();
+                .append("context", context)
+                .append("message", message)
+                .toString();
     }
 
 }

@@ -7,34 +7,29 @@
 package nl.bzk.migratiebrp.isc.runtime.handler;
 
 import java.util.Enumeration;
+
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * Jms Utilities.
  */
-public final class JmsUtil {
-
-    private static final Logger LOG = LoggerFactory.getLogger();
-
-    private JmsUtil() {
-        // Niet instantieerbaar
-    }
+public interface JmsUtil {
 
     /**
      * Lees jms bericht.
-     *
-     * @param message
-     *            jms bericht
+     * @param message jms bericht
      * @return bericht
-     * @throws JMSException
-     *             bij lees fouten
+     * @throws JMSException bij lees fouten
      */
-    public static Message leesMessage(final javax.jms.Message message) throws JMSException {
-        LOG.info("Bericht lezen");
+    static Message leesMessage(final javax.jms.Message message) throws JMSException {
+        final Logger log = LoggerFactory.getLogger();
+        log.info("Bericht lezen");
+
         if (message == null) {
             return null;
         }
@@ -47,7 +42,7 @@ public final class JmsUtil {
         while (propertyNames.hasMoreElements()) {
             final String propertyName = propertyNames.nextElement();
             final String propertyValue = message.getStringProperty(propertyName);
-            LOG.info("Bericht property {} -> {}", propertyName, propertyValue);
+            log.info("Bericht property {} -> {}", propertyName, propertyValue);
             result.setHeader(propertyName, propertyValue);
         }
 

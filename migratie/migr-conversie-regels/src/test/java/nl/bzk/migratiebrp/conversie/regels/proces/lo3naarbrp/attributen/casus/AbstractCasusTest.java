@@ -6,6 +6,10 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.casus;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +38,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpRelatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVastgesteldNietNederlanderIndicatieInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerblijfsrechtInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -54,9 +57,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3SoortVerbintenisEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieOnjuist;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOntbindingHuwelijkOfGpCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortVerbintenis;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
@@ -66,22 +67,18 @@ import nl.bzk.migratiebrp.conversie.regels.proces.AbstractConversieTest;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import org.junit.After;
 import org.junit.Assert;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Super class voor de CasusTesten. Door in deze class de maak*() methoden te overriden kan voor de test de gewenste
  * stapel worden gemaakt, terwijl niet telkens alle verplichte stapels hoeven worden gedefinieerd.
- * 
  */
 
 public abstract class AbstractCasusTest extends AbstractConversieTest {
 
-    protected static final String RDAM = "1234";
-    protected static final String ADAM = "4321";
+    static final String RDAM = "1234";
+    static final String ADAM = "4321";
     protected static final Lo3SoortVerbintenis H = Lo3SoortVerbintenisEnum.HUWELIJK.asElement();
     protected static final Lo3SoortVerbintenis P = Lo3SoortVerbintenisEnum.GEREGISTREERD_PARTNERSCHAP.asElement();
     protected static final Lo3IndicatieOnjuist ONJUIST = Lo3IndicatieOnjuistEnum.ONJUIST.asElement();
@@ -90,13 +87,12 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
     private static long brpActieIdTeller;
     private Lo3Persoonslijst lo3Persoonslijst;
 
-    protected static BrpRelatieInhoud buildBrpRelatie(
-        final Integer datumSluiting,
-        final String sluitingGemeenteCode,
-        final Integer datumOntbinding,
-        final String ontbindingGemeenteCode,
-        final Character redenOntbindingCode)
-    {
+    static BrpRelatieInhoud buildBrpRelatie(
+            final Integer datumSluiting,
+            final String sluitingGemeenteCode,
+            final Integer datumOntbinding,
+            final String ontbindingGemeenteCode,
+            final Character redenOntbindingCode) {
         final boolean isOntbonden = datumOntbinding != null;
         final boolean isGesloten = datumSluiting != null;
         final BrpRelatieInhoud inhoud;
@@ -108,48 +104,48 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
             final BrpDatum datumaanvang = isGesloten ? new BrpDatum(datumSluiting, null) : null;
             final BrpDatum datumEinde = isOntbonden ? new BrpDatum(datumOntbinding, null) : null;
             final BrpRedenEindeRelatieCode redenEinde = isOntbonden ? new BrpRedenEindeRelatieCode(redenOntbindingCode) : null;
-            final BrpGemeenteCode gemeenteCodeAanvang = isGesloten ? new BrpGemeenteCode(Short.parseShort(sluitingGemeenteCode)) : null;
-            final BrpGemeenteCode gemeenteCodeEinde = isOntbonden ? new BrpGemeenteCode(Short.parseShort(ontbindingGemeenteCode)) : null;
-            final BrpLandOfGebiedCode landCodeAanvang = isGesloten ? new BrpLandOfGebiedCode(Short.parseShort(LANDCODE)) : null;
-            final BrpLandOfGebiedCode landCodeEinde = isOntbonden ? new BrpLandOfGebiedCode(Short.parseShort(LANDCODE)) : null;
+            final BrpGemeenteCode gemeenteCodeAanvang = isGesloten ? new BrpGemeenteCode(sluitingGemeenteCode) : null;
+            final BrpGemeenteCode gemeenteCodeEinde = isOntbonden ? new BrpGemeenteCode(ontbindingGemeenteCode) : null;
+            final BrpLandOfGebiedCode landCodeAanvang = isGesloten ? new BrpLandOfGebiedCode(LANDCODE) : null;
+            final BrpLandOfGebiedCode landCodeEinde = isOntbonden ? new BrpLandOfGebiedCode(LANDCODE) : null;
 
             inhoud =
                     new BrpRelatieInhoud(
-                        datumaanvang,
-                        gemeenteCodeAanvang,
-                        null,
-                        null,
-                        null,
-                        landCodeAanvang,
-                        null,
-                        redenEinde,
-                        datumEinde,
-                        gemeenteCodeEinde,
-                        null,
-                        null,
-                        null,
-                        landCodeEinde,
-                        null);
+                            datumaanvang,
+                            gemeenteCodeAanvang,
+                            null,
+                            null,
+                            null,
+                            landCodeAanvang,
+                            null,
+                            redenEinde,
+                            datumEinde,
+                            gemeenteCodeEinde,
+                            null,
+                            null,
+                            null,
+                            landCodeEinde,
+                            null);
         }
         return inhoud;
     }
 
     protected static BrpGeboorteInhoud buildBrpGeboorteInhoud(final Integer datum, final String gemeenteCode) {
         return new BrpGeboorteInhoud(
-            new BrpDatum(datum, null),
-            new BrpGemeenteCode(Short.parseShort(gemeenteCode)),
-            null,
-            null,
-            null,
-            new BrpLandOfGebiedCode(Short.parseShort(LANDCODE)),
-            null);
+                new BrpDatum(datum, null),
+                new BrpGemeenteCode(gemeenteCode),
+                null,
+                null,
+                null,
+                new BrpLandOfGebiedCode(LANDCODE),
+                null);
     }
 
-    protected static Lo3Documentatie buildLo3Akte(final long id) {
+    static Lo3Documentatie buildLo3Akte(final long id) {
         return new Lo3Documentatie(id, new Lo3GemeenteCode("0518"), Lo3String.wrap(id + "A"), null, null, null, null, null);
     }
 
-    protected static Lo3Documentatie buildLo3Document(final long id, final Integer datum, final String beschrijving) {
+    static Lo3Documentatie buildLo3Document(final long id, final Integer datum, final String beschrijving) {
         return new Lo3Documentatie(id, null, null, new Lo3GemeenteCode("0518"), new Lo3Datum(datum), Lo3String.wrap(beschrijving), null, null);
     }
 
@@ -175,19 +171,15 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
 
     /**
      * Test de conversie van LO3 naar BRP
-     *
-     * @throws Exception
      */
     public abstract void testLo3NaarBrp();
 
     /**
      * Converteer de LO3 persoonslijst eerst naar een Brp persoonslijst en converteer deze terug naar LO3
-     *
-     * @throws Exception
      */
     public abstract void testRondverteer();
 
-    protected Lo3Persoonslijst maakPersoonslijst() {
+    private Lo3Persoonslijst maakPersoonslijst() {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         builder.inschrijvingStapel(maakInschrijvingStapel());
         builder.verblijfplaatsStapel(maakVerblijfplaatsStapel());
@@ -200,27 +192,27 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
         return builder.build();
     }
 
-    protected Lo3OuderInhoud buildOuder(final long aNummer, final int datumFamilie) {
+    Lo3OuderInhoud buildOuder(final String aNummer, final int datumFamilie) {
         return new Lo3OuderInhoud(
-            Lo3Long.wrap(aNummer),
-            Lo3Integer.wrap((int) (aNummer / 10)),
-            Lo3String.wrap("Ouder"),
-            null,
-            null,
-            Lo3String.wrap("Ouderson"),
-            new Lo3Datum(19030101),
-            new Lo3GemeenteCode("0518"),
-            new Lo3LandCode(LANDCODE),
-            Lo3GeslachtsaanduidingEnum.ONBEKEND.asElement(),
-            new Lo3Datum(datumFamilie));
+                Lo3String.wrap(aNummer),
+                Lo3String.wrap(aNummer.substring(0, 9)),
+                Lo3String.wrap("Ouder"),
+                null,
+                null,
+                Lo3String.wrap("Ouderson"),
+                new Lo3Datum(19030101),
+                new Lo3GemeenteCode("0518"),
+                new Lo3LandCode(LANDCODE),
+                Lo3GeslachtsaanduidingEnum.ONBEKEND.asElement(),
+                new Lo3Datum(datumFamilie));
     }
 
     protected Lo3Stapel<Lo3OuderInhoud> maakOuder1Stapel() {
-        return VerplichteStapel.createOuderStapel(1111111111L, Lo3CategorieEnum.CATEGORIE_02);
+        return VerplichteStapel.createOuderStapel("1111111111", Lo3CategorieEnum.CATEGORIE_02);
     }
 
     protected Lo3Stapel<Lo3OuderInhoud> maakOuder2Stapel() {
-        return VerplichteStapel.createOuderStapel(2222222222L, Lo3CategorieEnum.CATEGORIE_03);
+        return VerplichteStapel.createOuderStapel("2222222222", Lo3CategorieEnum.CATEGORIE_03);
     }
 
     protected Lo3Stapel<Lo3InschrijvingInhoud> maakInschrijvingStapel() {
@@ -235,29 +227,28 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
         return VerplichteStapel.createPersoonStapel();
     }
 
-    protected Lo3PersoonInhoud buildPersoonMetNaamEnGeboorte(
-        final String voornaam,
-        final String geslachtsnaam,
-        final Integer geboorteDatum,
-        final String geboorteGemeente)
-    {
+    Lo3PersoonInhoud buildPersoonMetNaamEnGeboorte(
+            final String voornaam,
+            final String geslachtsnaam,
+            final Integer geboorteDatum,
+            final String geboorteGemeente) {
         return new Lo3PersoonInhoud(
-            Lo3Long.wrap(1234567890L),
-            Lo3Integer.wrap(123456789),
-            Lo3String.wrap(voornaam),
-            null,
-            null,
-            Lo3String.wrap(geslachtsnaam),
-            new Lo3Datum(geboorteDatum),
-            new Lo3GemeenteCode(geboorteGemeente),
-            Lo3LandCode.NEDERLAND,
-            Lo3GeslachtsaanduidingEnum.MAN.asElement(),
-            null,
-            null,
-            Lo3AanduidingNaamgebruikCodeEnum.EIGEN_GESLACHTSNAAM.asElement());
+                Lo3String.wrap("1234567890"),
+                Lo3String.wrap("123456789"),
+                Lo3String.wrap(voornaam),
+                null,
+                null,
+                Lo3String.wrap(geslachtsnaam),
+                new Lo3Datum(geboorteDatum),
+                new Lo3GemeenteCode(geboorteGemeente),
+                Lo3LandCode.NEDERLAND,
+                Lo3GeslachtsaanduidingEnum.MAN.asElement(),
+                null,
+                null,
+                Lo3AanduidingNaamgebruikCodeEnum.EIGEN_GESLACHTSNAAM.asElement());
     }
 
-    protected Lo3PersoonInhoud buildPersoonMetNamen(final String voornaam, final String geslachtsnaam) {
+    Lo3PersoonInhoud buildPersoonMetNamen(final String voornaam, final String geslachtsnaam) {
         return buildPersoonMetNaamEnGeboorte(voornaam, geslachtsnaam, 19800101, RDAM);
     }
 
@@ -271,21 +262,19 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
     }
 
     protected Lo3HuwelijkOfGpInhoud buildHuwelijk(
-        final Integer datumSluiting,
-        final String gemeenteSluitingCode,
-        final Integer datumOntbinding,
-        final String gemeenteOntbindingCode)
-    {
+            final Integer datumSluiting,
+            final String gemeenteSluitingCode,
+            final Integer datumOntbinding,
+            final String gemeenteOntbindingCode) {
         return buildHuwelijk(datumSluiting, gemeenteSluitingCode, datumOntbinding, gemeenteOntbindingCode, Lo3SoortVerbintenisEnum.HUWELIJK.asElement());
     }
 
     protected Lo3HuwelijkOfGpInhoud buildHuwelijk(
-        final Integer datumSluiting,
-        final String gemeenteSluitingCode,
-        final Integer datumOntbinding,
-        final String gemeenteOntbindingCode,
-        final Lo3SoortVerbintenis soort)
-    {
+            final Integer datumSluiting,
+            final String gemeenteSluitingCode,
+            final Integer datumOntbinding,
+            final String gemeenteOntbindingCode,
+            final Lo3SoortVerbintenis soort) {
         final boolean isOntbonden = datumOntbinding != null;
         final boolean isGesloten = datumSluiting != null;
         final Lo3HuwelijkOfGpInhoud inhoud;
@@ -303,55 +292,52 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
             final Lo3LandCode landOntbinding = isOntbonden ? new Lo3LandCode(LANDCODE) : null;
             inhoud =
                     new Lo3HuwelijkOfGpInhoud(
-                        Lo3Long.wrap(1234567890L),
-                        Lo3Integer.wrap(123456789),
-                        Lo3String.wrap("Ben"),
-                        null,
-                        null,
-                        Lo3String.wrap("Getrouwd"),
-                        new Lo3Datum(19800101),
-                        new Lo3GemeenteCode(RDAM),
-                        new Lo3LandCode(LANDCODE),
-                        Lo3GeslachtsaanduidingEnum.MAN.asElement(),
-                        lo3DatumSluiting,
-                        gemeenteSluiting,
-                        landSluiting,
-                        lo3DatumOntbinding,
-                        gemeenteOntbinding,
-                        landOntbinding,
-                        redenOntbindingHuwelijkOfGpCode,
-                        soort);
+                            Lo3String.wrap("1234567890"),
+                            Lo3String.wrap("123456789"),
+                            Lo3String.wrap("Ben"),
+                            null,
+                            null,
+                            Lo3String.wrap("Getrouwd"),
+                            new Lo3Datum(19800101),
+                            new Lo3GemeenteCode(RDAM),
+                            new Lo3LandCode(LANDCODE),
+                            Lo3GeslachtsaanduidingEnum.MAN.asElement(),
+                            lo3DatumSluiting,
+                            gemeenteSluiting,
+                            landSluiting,
+                            lo3DatumOntbinding,
+                            gemeenteOntbinding,
+                            landOntbinding,
+                            redenOntbindingHuwelijkOfGpCode,
+                            soort);
         }
         return inhoud;
     }
 
-    private BrpStapel<BrpDocumentInhoud> buildBrpAkteStapel(final String akteNummer, final BrpDatumTijd registratie) {
-        return buildBrpAkteOfDocument(new BrpSoortDocumentCode(akteNummer.substring(0, 1)), akteNummer, null, registratie);
+    private BrpStapel<BrpDocumentInhoud> buildBrpAkteStapel(final String akteNummer) {
+        return buildBrpAkteOfDocument(new BrpSoortDocumentCode(akteNummer.substring(0, 1)), akteNummer, null);
     }
 
-    private BrpStapel<BrpDocumentInhoud> buildBrpDocumentStapel(final String docNummer, final BrpDatumTijd registratie) {
-        return buildBrpAkteOfDocument(BrpSoortDocumentCode.HISTORIE_CONVERSIE, null, docNummer, registratie);
+    private BrpStapel<BrpDocumentInhoud> buildBrpDocumentStapel(final String docNummer) {
+        return buildBrpAkteOfDocument(BrpSoortDocumentCode.HISTORIE_CONVERSIE, null, docNummer);
     }
 
     private BrpStapel<BrpDocumentInhoud> buildBrpAkteOfDocument(
-        final BrpSoortDocumentCode soortDocument,
-        final String aktenummer,
-        final String omschrijving,
-        final BrpDatumTijd registratie)
-    {
+            final BrpSoortDocumentCode soortDocument,
+            final String aktenummer,
+            final String omschrijving) {
         return new BrpStapel<>(
-            Collections.singletonList(
-                new BrpGroep<>(
-                    new BrpDocumentInhoud(
-                        soortDocument,
-                        null,
-                        BrpString.wrap(aktenummer, null),
-                        BrpString.wrap(omschrijving, null),
-                        new BrpPartijCode(Integer.valueOf("051801"))),
-                    new BrpHistorie(null, null, registratie, null, null),
-                    null,
-                    null,
-                    null)));
+                Collections.singletonList(
+                        new BrpGroep<>(
+                                new BrpDocumentInhoud(
+                                        soortDocument,
+                                        BrpString.wrap(aktenummer, null),
+                                        BrpString.wrap(omschrijving, null),
+                                        new BrpPartijCode("051801")),
+                                null,
+                                null,
+                                null,
+                                null)));
     }
 
     protected BrpActie buildBrpActie(final BrpDatumTijd dtRegistratie, final String documentNr) {
@@ -360,7 +346,7 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
 
     protected BrpActie buildBrpActie(final BrpDatumTijd dtRegistratie, final String documentNr, final BrpSoortActieCode soortActieCode) {
         final List<BrpActieBron> actieBronnen = new ArrayList<>();
-        actieBronnen.add(new BrpActieBron(buildBrpAkteStapel(documentNr, dtRegistratie), null));
+        actieBronnen.add(new BrpActieBron(buildBrpAkteStapel(documentNr), null));
 
         return new BrpActie(brpActieIdTeller++, soortActieCode, BrpPartijCode.MIGRATIEVOORZIENING, dtRegistratie, null, actieBronnen, 0, null);
     }
@@ -373,21 +359,20 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
         } else {
             actie =
                     new BrpActie(
-                        brpActieIdTeller++,
-                        BrpSoortActieCode.CONVERSIE_GBA,
-                        BrpPartijCode.MIGRATIEVOORZIENING,
-                        dtRegistratie,
-                        new BrpDatum(registratieDatumTijd, null),
-                        Collections.singletonList(new BrpActieBron(buildBrpDocumentStapel(documentNr, dtRegistratie), null)),
-                        0,
-                        null);
+                            brpActieIdTeller++,
+                            BrpSoortActieCode.CONVERSIE_GBA,
+                            BrpPartijCode.MIGRATIEVOORZIENING,
+                            dtRegistratie,
+                            new BrpDatum(registratieDatumTijd, null),
+                            Collections.singletonList(new BrpActieBron(buildBrpDocumentStapel(documentNr), null)),
+                            0,
+                            null);
         }
         return actie;
     }
 
     /**
      * Geef de waarde van lo3 persoonslijst.
-     *
      * @return lo3 persoonslijst
      */
     public Lo3Persoonslijst getLo3Persoonslijst() {
@@ -406,29 +391,24 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
         return null;
     }
 
-    protected void assertGroepExclusiefInhoud(
-        final BrpGroep<? extends BrpGroepInhoud> groep,
-        final BrpHistorie expectedHistorie,
-        final BrpActie expectedActie,
-        final BrpActie expectedActieGeldigheid,
-        final BrpActie expectedActieVerval)
-    {
+    private void assertGroepExclusiefInhoud(
+            final BrpGroep<? extends BrpGroepInhoud> groep,
+            final BrpHistorie expectedHistorie,
+            final BrpActie expectedActie,
+            final BrpActie expectedActieGeldigheid,
+            final BrpActie expectedActieVerval) {
         assertGroepExclusiefInhoud(groep, expectedHistorie, expectedActie, expectedActieGeldigheid, expectedActieVerval, false);
     }
 
-    protected void assertGroepExclusiefInhoud(
-        final BrpGroep<? extends BrpGroepInhoud> groep,
-        final BrpHistorie expectedHistorie,
-        final BrpActie expectedActie,
-        final BrpActie expectedActieGeldigheid,
-        final BrpActie expectedActieVerval,
-        final boolean negeerMaterieleHistorie)
-    {
+    private void assertGroepExclusiefInhoud(
+            final BrpGroep<? extends BrpGroepInhoud> groep,
+            final BrpHistorie expectedHistorie,
+            final BrpActie expectedActie,
+            final BrpActie expectedActieGeldigheid,
+            final BrpActie expectedActieVerval,
+            final boolean negeerMaterieleHistorie) {
         if (negeerMaterieleHistorie) {
-            Assert.assertEquals(
-                "Datumtijd registratie niet gelijk",
-                expectedHistorie.getDatumTijdRegistratie(),
-                groep.getHistorie().getDatumTijdRegistratie());
+            Assert.assertEquals("Datumtijd registratie niet gelijk", expectedHistorie.getDatumTijdRegistratie(), groep.getHistorie().getDatumTijdRegistratie());
             Assert.assertEquals("Datumtijd verval niet gelijk", expectedHistorie.getDatumTijdVerval(), groep.getHistorie().getDatumTijdVerval());
             // Assert.assertEquals("Nadere aanduiding verval niet gelijk", expectedHistorie.getNadereAanduidingVerval(),
             // groep.getHistorie().getNadereAanduidingVerval());
@@ -441,7 +421,7 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
 
     }
 
-    protected void assertActie(final BrpActie expectedActie, final BrpActie actie) {
+    void assertActie(final BrpActie expectedActie, final BrpActie actie) {
         if (expectedActie == null) {
             assertNull(actie);
             return;
@@ -456,6 +436,8 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
         // documenten
         final List<BrpActieBron> actieBronnen = actie.getActieBronnen();
         final List<BrpActieBron> expectedActieBronnen = expectedActie.getActieBronnen();
+        assertNotNull(expectedActieBronnen);
+        assertNotNull(actie.getActieBronnen());
         Assert.assertEquals(expectedActieBronnen.size(), actie.getActieBronnen().size());
 
         assertTrue(zijnDocumentStapelsGelijk(actieBronnen, expectedActieBronnen));
@@ -483,114 +465,80 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
     protected void assertNationaliteit(final BrpGroep<BrpNationaliteitInhoud> nationaliteitGroep, final BrpTestObject<BrpNationaliteitInhoud> expected) {
         final BrpHistorie expectedHistorie =
                 new BrpHistorie(
-                    expected.getAanvangGeldigheid(),
-                    expected.getEindeGeldigheid(),
-                    expected.getRegistratie(),
-                    expected.getVerval(),
-                    expected.getNadereAanduidingVerval());
-        assertGroepExclusiefInhoud(
-            nationaliteitGroep,
-            expectedHistorie,
-            expected.getActieInhoud(),
-            expected.getActieGeldigheid(),
-            expected.getActieVerval());
+                        expected.getAanvangGeldigheid(),
+                        expected.getEindeGeldigheid(),
+                        expected.getRegistratie(),
+                        expected.getVerval(),
+                        expected.getNadereAanduidingVerval());
+        assertGroepExclusiefInhoud(nationaliteitGroep, expectedHistorie, expected.getActieInhoud(), expected.getActieGeldigheid(), expected.getActieVerval());
         Assert.assertEquals(expected.getInhoud().getNationaliteitCode(), nationaliteitGroep.getInhoud().getNationaliteitCode());
         Assert.assertEquals(
-            expected.getInhoud().getRedenVerkrijgingNederlandschapCode(),
-            nationaliteitGroep.getInhoud().getRedenVerkrijgingNederlandschapCode());
+                expected.getInhoud().getRedenVerkrijgingNederlandschapCode(),
+                nationaliteitGroep.getInhoud().getRedenVerkrijgingNederlandschapCode());
         Assert.assertEquals(expected.getInhoud().getRedenVerliesNederlandschapCode(), nationaliteitGroep.getInhoud().getRedenVerliesNederlandschapCode());
 
     }
 
-    protected void assertVerblijfstitel(
-        final BrpGroep<BrpVerblijfsrechtInhoud> verblijfstitelGroep,
-        final BrpTestObject<BrpVerblijfsrechtInhoud> expected)
-    {
-        final BrpHistorie expectedHistorie =
-                new BrpHistorie(
-                    expected.getAanvangGeldigheid(),
-                    expected.getEindeGeldigheid(),
-                    expected.getRegistratie(),
-                    expected.getVerval(),
-                    expected.getNadereAanduidingVerval());
-        assertGroepExclusiefInhoud(
-            verblijfstitelGroep,
-            expectedHistorie,
-            expected.getActieInhoud(),
-            expected.getActieGeldigheid(),
-            expected.getActieVerval());
-        Assert.assertEquals(expected.getInhoud().getAanduidingVerblijfsrechtCode(), verblijfstitelGroep.getInhoud().getAanduidingVerblijfsrechtCode());
-        Assert.assertEquals(expected.getInhoud().getDatumMededelingVerblijfsrecht(), verblijfstitelGroep.getInhoud().getDatumMededelingVerblijfsrecht());
-        Assert.assertEquals(
-            expected.getInhoud().getDatumVoorzienEindeVerblijfsrecht(),
-            verblijfstitelGroep.getInhoud().getDatumVoorzienEindeVerblijfsrecht());
-    }
-
     protected void assertBehandeldAlsNederlander(
-        final BrpGroep<BrpBehandeldAlsNederlanderIndicatieInhoud> behandeldAlsNederlanderGroep,
-        final BrpTestObject<BrpBehandeldAlsNederlanderIndicatieInhoud> expected)
-    {
+            final BrpGroep<BrpBehandeldAlsNederlanderIndicatieInhoud> behandeldAlsNederlanderGroep,
+            final BrpTestObject<BrpBehandeldAlsNederlanderIndicatieInhoud> expected) {
         final BrpHistorie expectedHistorie =
                 new BrpHistorie(
-                    expected.getAanvangGeldigheid(),
-                    expected.getEindeGeldigheid(),
-                    expected.getRegistratie(),
-                    expected.getVerval(),
-                    expected.getNadereAanduidingVerval());
+                        expected.getAanvangGeldigheid(),
+                        expected.getEindeGeldigheid(),
+                        expected.getRegistratie(),
+                        expected.getVerval(),
+                        expected.getNadereAanduidingVerval());
         assertGroepExclusiefInhoud(
-            behandeldAlsNederlanderGroep,
-            expectedHistorie,
-            expected.getActieInhoud(),
-            expected.getActieGeldigheid(),
-            expected.getActieVerval());
+                behandeldAlsNederlanderGroep,
+                expectedHistorie,
+                expected.getActieInhoud(),
+                expected.getActieGeldigheid(),
+                expected.getActieVerval());
         Assert.assertEquals(Boolean.TRUE, behandeldAlsNederlanderGroep.getInhoud().heeftIndicatie());
     }
 
-    protected void assertVastgesteldNietNederlander(
-        final BrpGroep<BrpVastgesteldNietNederlanderIndicatieInhoud> vastgesteldNietNederlanderGroep,
-        final BrpTestObject<BrpVastgesteldNietNederlanderIndicatieInhoud> expected)
-    {
+    void assertVastgesteldNietNederlander(
+            final BrpGroep<BrpVastgesteldNietNederlanderIndicatieInhoud> vastgesteldNietNederlanderGroep,
+            final BrpTestObject<BrpVastgesteldNietNederlanderIndicatieInhoud> expected) {
         final BrpHistorie expectedHistorie =
                 new BrpHistorie(
-                    expected.getAanvangGeldigheid(),
-                    expected.getEindeGeldigheid(),
-                    expected.getRegistratie(),
-                    expected.getVerval(),
-                    expected.getNadereAanduidingVerval());
+                        expected.getAanvangGeldigheid(),
+                        expected.getEindeGeldigheid(),
+                        expected.getRegistratie(),
+                        expected.getVerval(),
+                        expected.getNadereAanduidingVerval());
         assertGroepExclusiefInhoud(
-            vastgesteldNietNederlanderGroep,
-            expectedHistorie,
-            expected.getActieInhoud(),
-            expected.getActieGeldigheid(),
-            expected.getActieVerval());
+                vastgesteldNietNederlanderGroep,
+                expectedHistorie,
+                expected.getActieInhoud(),
+                expected.getActieGeldigheid(),
+                expected.getActieVerval());
         Assert.assertEquals(Boolean.TRUE, vastgesteldNietNederlanderGroep.getInhoud().heeftIndicatie());
     }
 
     protected void assertVoornaam(final BrpGroep<BrpVoornaamInhoud> voornaamGroep, final BrpTestObject<BrpVoornaamInhoud> expected) {
         final BrpHistorie expectedHistorie =
                 new BrpHistorie(
-                    expected.getAanvangGeldigheid(),
-                    expected.getEindeGeldigheid(),
-                    expected.getRegistratie(),
-                    expected.getVerval(),
-                    expected.getNadereAanduidingVerval());
+                        expected.getAanvangGeldigheid(),
+                        expected.getEindeGeldigheid(),
+                        expected.getRegistratie(),
+                        expected.getVerval(),
+                        expected.getNadereAanduidingVerval());
         assertGroepExclusiefInhoud(voornaamGroep, expectedHistorie, expected.getActieInhoud(), expected.getActieGeldigheid(), expected.getActieVerval());
         Assert.assertEquals(expected.getInhoud().getVoornaam(), voornaamGroep.getInhoud().getVoornaam());
         Assert.assertEquals(expected.getInhoud().getVolgnummer(), voornaamGroep.getInhoud().getVolgnummer());
 
     }
 
-    protected void assertSamengesteldeNaam(
-        final BrpGroep<BrpSamengesteldeNaamInhoud> naamGroep,
-        final BrpTestObject<BrpSamengesteldeNaamInhoud> expected)
-    {
+    protected void assertSamengesteldeNaam(final BrpGroep<BrpSamengesteldeNaamInhoud> naamGroep, final BrpTestObject<BrpSamengesteldeNaamInhoud> expected) {
         final BrpHistorie expectedHistorie =
                 new BrpHistorie(
-                    expected.getAanvangGeldigheid(),
-                    expected.getEindeGeldigheid(),
-                    expected.getRegistratie(),
-                    expected.getVerval(),
-                    expected.getNadereAanduidingVerval());
+                        expected.getAanvangGeldigheid(),
+                        expected.getEindeGeldigheid(),
+                        expected.getRegistratie(),
+                        expected.getVerval(),
+                        expected.getNadereAanduidingVerval());
         assertGroepExclusiefInhoud(naamGroep, expectedHistorie, expected.getActieInhoud(), expected.getActieGeldigheid(), expected.getActieVerval());
         Assert.assertEquals(expected.getInhoud().getAdellijkeTitelCode(), naamGroep.getInhoud().getAdellijkeTitelCode());
         Assert.assertEquals(expected.getInhoud().getGeslachtsnaamstam(), naamGroep.getInhoud().getGeslachtsnaamstam());
@@ -607,18 +555,18 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
         final boolean negeerMaterieleHistorie = true;
         final BrpHistorie expectedHistorie =
                 new BrpHistorie(
-                    expected.getAanvangGeldigheid(),
-                    expected.getEindeGeldigheid(),
-                    expected.getRegistratie(),
-                    expected.getVerval(),
-                    expected.getNadereAanduidingVerval());
+                        expected.getAanvangGeldigheid(),
+                        expected.getEindeGeldigheid(),
+                        expected.getRegistratie(),
+                        expected.getVerval(),
+                        expected.getNadereAanduidingVerval());
         assertGroepExclusiefInhoud(
-            geboorteGroep,
-            expectedHistorie,
-            expected.getActieInhoud(),
-            expected.getActieGeldigheid(),
-            expected.getActieVerval(),
-            negeerMaterieleHistorie);
+                geboorteGroep,
+                expectedHistorie,
+                expected.getActieInhoud(),
+                expected.getActieGeldigheid(),
+                expected.getActieVerval(),
+                negeerMaterieleHistorie);
         Assert.assertEquals(expected.getInhoud().getBuitenlandsePlaatsGeboorte(), geboorteGroep.getInhoud().getBuitenlandsePlaatsGeboorte());
         Assert.assertEquals(expected.getInhoud().getBuitenlandseRegioGeboorte(), geboorteGroep.getInhoud().getBuitenlandseRegioGeboorte());
         Assert.assertEquals(expected.getInhoud().getGeboortedatum(), geboorteGroep.getInhoud().getGeboortedatum());
@@ -633,18 +581,18 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
         final boolean negeerMaterieleHistorie = true;
         final BrpHistorie expectedHistorie =
                 new BrpHistorie(
-                    expected.getAanvangGeldigheid(),
-                    expected.getEindeGeldigheid(),
-                    expected.getRegistratie(),
-                    expected.getVerval(),
-                    expected.getNadereAanduidingVerval());
+                        expected.getAanvangGeldigheid(),
+                        expected.getEindeGeldigheid(),
+                        expected.getRegistratie(),
+                        expected.getVerval(),
+                        expected.getNadereAanduidingVerval());
         assertGroepExclusiefInhoud(
-            geboorteGroep,
-            expectedHistorie,
-            expected.getActieInhoud(),
-            expected.getActieGeldigheid(),
-            expected.getActieVerval(),
-            negeerMaterieleHistorie);
+                geboorteGroep,
+                expectedHistorie,
+                expected.getActieInhoud(),
+                expected.getActieGeldigheid(),
+                expected.getActieVerval(),
+                negeerMaterieleHistorie);
         Assert.assertEquals(expected.getInhoud().getBuitenlandsePlaats(), geboorteGroep.getInhoud().getBuitenlandsePlaats());
         Assert.assertEquals(expected.getInhoud().getBuitenlandseRegio(), geboorteGroep.getInhoud().getBuitenlandseRegio());
         Assert.assertEquals(expected.getInhoud().getDatum(), geboorteGroep.getInhoud().getDatum());
@@ -654,22 +602,22 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
         Assert.assertEquals(expected.getInhoud().getWoonplaatsnaamOverlijden(), geboorteGroep.getInhoud().getWoonplaatsnaamOverlijden());
     }
 
-    protected void assertHuwelijk(final BrpGroep<BrpRelatieInhoud> relatieGroep, final BrpTestObject<BrpRelatieInhoud> expected) {
+    void assertHuwelijk(final BrpGroep<BrpRelatieInhoud> relatieGroep, final BrpTestObject<BrpRelatieInhoud> expected) {
         final boolean negeerMaterieleHistorie = true;
         final BrpHistorie expectedHistorie =
                 new BrpHistorie(
-                    expected.getAanvangGeldigheid(),
-                    expected.getEindeGeldigheid(),
-                    expected.getRegistratie(),
-                    expected.getVerval(),
-                    expected.getNadereAanduidingVerval());
+                        expected.getAanvangGeldigheid(),
+                        expected.getEindeGeldigheid(),
+                        expected.getRegistratie(),
+                        expected.getVerval(),
+                        expected.getNadereAanduidingVerval());
         assertGroepExclusiefInhoud(
-            relatieGroep,
-            expectedHistorie,
-            expected.getActieInhoud(),
-            expected.getActieGeldigheid(),
-            expected.getActieVerval(),
-            negeerMaterieleHistorie);
+                relatieGroep,
+                expectedHistorie,
+                expected.getActieInhoud(),
+                expected.getActieGeldigheid(),
+                expected.getActieVerval(),
+                negeerMaterieleHistorie);
         Assert.assertEquals(expected.getInhoud().getBuitenlandsePlaatsAanvang(), relatieGroep.getInhoud().getBuitenlandsePlaatsAanvang());
         Assert.assertEquals(expected.getInhoud().getBuitenlandsePlaatsEinde(), relatieGroep.getInhoud().getBuitenlandsePlaatsEinde());
         Assert.assertEquals(expected.getInhoud().getBuitenlandseRegioAanvang(), relatieGroep.getInhoud().getBuitenlandseRegioAanvang());
@@ -689,7 +637,7 @@ public abstract class AbstractCasusTest extends AbstractConversieTest {
 
     protected void sorteerBrpStapel(final BrpStapel<? extends BrpGroepInhoud> brpStapel) {
         // TODO sorteren werkt niet (waarschijnlijk unmodifiable list)
-        Collections.sort(brpStapel.getGroepen(), BRP_GROEP_COMPARATOR);
+        (brpStapel.getGroepen()).sort(BRP_GROEP_COMPARATOR);
     }
 
     public enum Document {

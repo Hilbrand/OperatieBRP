@@ -18,13 +18,11 @@ public final class SynchronisatieVerwerkerException extends Exception {
     private static final long serialVersionUID = 1L;
 
     private final StatusType status;
-    private final List<BrpPersoonslijst> kandidaten;
+    private final transient List<BrpPersoonslijst> kandidaten;
 
     /**
      * Constructor.
-     * 
-     * @param status
-     *            status
+     * @param status status
      */
     public SynchronisatieVerwerkerException(final StatusType status) {
         this.status = status;
@@ -33,11 +31,8 @@ public final class SynchronisatieVerwerkerException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param status
-     *            status
-     * @param cause
-     *            oorzaak
+     * @param status status
+     * @param cause oorzaak
      */
     public SynchronisatieVerwerkerException(final StatusType status, final Throwable cause) {
         super(cause);
@@ -47,11 +42,8 @@ public final class SynchronisatieVerwerkerException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param status
-     *            status
-     * @param kandidaten
-     *            kandidaten
+     * @param status status
+     * @param kandidaten kandidaten
      */
     public SynchronisatieVerwerkerException(final StatusType status, final List<BrpPersoonslijst> kandidaten) {
         this.status = status;
@@ -60,11 +52,8 @@ public final class SynchronisatieVerwerkerException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param status
-     *            status
-     * @param kandidaat
-     *            kandidaat
+     * @param status status
+     * @param kandidaat kandidaat
      */
     public SynchronisatieVerwerkerException(final StatusType status, final BrpPersoonslijst kandidaat) {
         this.status = status;
@@ -73,7 +62,6 @@ public final class SynchronisatieVerwerkerException extends Exception {
 
     /**
      * Geef de waarde van status.
-     *
      * @return status
      */
     public StatusType getStatus() {
@@ -82,7 +70,6 @@ public final class SynchronisatieVerwerkerException extends Exception {
 
     /**
      * Geef de waarde van kandidaten.
-     *
      * @return kandidaten
      */
     public List<BrpPersoonslijst> getKandidaten() {

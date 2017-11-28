@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -52,11 +54,8 @@ public final class EntiteitSleutel implements Sleutel {
 
     /**
      * Maakt een sleutel aan de hand van de opgegeven entiteit en veld.
-     *
-     * @param entiteit
-     *            entiteit waar deze sleutel voor geldt
-     * @param veld
-     *            veld waar deze sleutel voor geldt
+     * @param entiteit entiteit waar deze sleutel voor geldt
+     * @param veld veld waar deze sleutel voor geldt
      */
     public EntiteitSleutel(final Class<?> entiteit, final String veld) {
         this.entiteit = entiteit;
@@ -66,13 +65,9 @@ public final class EntiteitSleutel implements Sleutel {
 
     /**
      * Maakt een sleutel aan de hand van de opgegeven entiteit, veld en eigenaar sleutel.
-     *
-     * @param entiteit
-     *            entiteit waar deze sleutel voor geldt
-     * @param veld
-     *            veld waar deze sleutel voor geldt
-     * @param eigenaarSleutel
-     *            de sleutel van de eigenaar van de entiteit waar deze sleutel voor geldt
+     * @param entiteit entiteit waar deze sleutel voor geldt
+     * @param veld veld waar deze sleutel voor geldt
+     * @param eigenaarSleutel de sleutel van de eigenaar van de entiteit waar deze sleutel voor geldt
      */
     public EntiteitSleutel(final Class<?> entiteit, final String veld, final EntiteitSleutel eigenaarSleutel) {
         this.eigenaarSleutel = eigenaarSleutel;
@@ -82,9 +77,7 @@ public final class EntiteitSleutel implements Sleutel {
 
     /**
      * Maakt een Sleutel op basis van een bestaande sleutel.
-     *
-     * @param sleutel
-     *            sleutel waarop de nieuwe sleutel gebaseerd moet worden
+     * @param sleutel sleutel waarop de nieuwe sleutel gebaseerd moet worden
      */
     public EntiteitSleutel(final EntiteitSleutel sleutel) {
         entiteit = sleutel.entiteit;
@@ -95,11 +88,8 @@ public final class EntiteitSleutel implements Sleutel {
 
     /**
      * Maakt een Sleutel op basis van een bestaande sleutel, waarbij Veld wordt aangepast.
-     *
-     * @param sleutel
-     *            sleutel waarop de nieuwe sleutel gebaseerd moet worden
-     * @param veld
-     *            veld waar deze sleutel voor geldt
+     * @param sleutel sleutel waarop de nieuwe sleutel gebaseerd moet worden
+     * @param veld veld waar deze sleutel voor geldt
      */
     public EntiteitSleutel(final EntiteitSleutel sleutel, final String veld) {
         entiteit = sleutel.entiteit;
@@ -123,9 +113,7 @@ public final class EntiteitSleutel implements Sleutel {
 
     /**
      * Verwijder een veld/deel toe van de sleutel.
-     *
-     * @param naam
-     *            de naam van het sleuteldeel/veld
+     * @param naam de naam van het sleuteldeel/veld
      */
     public void removeSleuteldeel(final String naam) {
         if (delen.containsKey(naam)) {
@@ -134,38 +122,40 @@ public final class EntiteitSleutel implements Sleutel {
     }
 
     /**
-     * Geef de waarde van entiteit.
-     *
-     * @return entiteit
+     * Geef de waarde van entiteit van EntiteitSleutel.
+     * @return de waarde van entiteit van EntiteitSleutel
      */
     public Class<?> getEntiteit() {
         return entiteit;
     }
 
-    /**
-     * Geef de waarde van veld.
-     *
-     * @return veld
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel#getVeld()
      */
     @Override
     public String getVeld() {
         return veld;
     }
 
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel#getId()
+     */
     @Override
     public Long getId() {
         return id;
     }
 
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel#setId(java.lang.Long)
+     */
     @Override
     public void setId(final Long id) {
         this.id = id;
     }
 
     /**
-     * Geef de waarde van eigenaar sleutel.
-     *
-     * @return eigenaar sleutel
+     * Geef de waarde van eigenaar sleutel van EntiteitSleutel.
+     * @return de waarde van eigenaar sleutel van EntiteitSleutel
      */
     public EntiteitSleutel getEigenaarSleutel() {
         return eigenaarSleutel;
@@ -191,17 +181,15 @@ public final class EntiteitSleutel implements Sleutel {
         }
         final EntiteitSleutel castOther = (EntiteitSleutel) other;
         return new EqualsBuilder().append(entiteit, castOther.entiteit)
-                                  .append(veld, castOther.veld)
-                                  .append(delen, castOther.delen)
-                                  .append(eigenaarSleutel, castOther.eigenaarSleutel)
-                                  .isEquals();
+                .append(veld, castOther.veld)
+                .append(delen, castOther.delen)
+                .append(eigenaarSleutel, castOther.eigenaarSleutel)
+                .isEquals();
     }
 
     /**
      * Vergelijkt alleen de entiteit en veld attributen van sleutels met elkaar.
-     *
-     * @param sleutel
-     *            sleutel waarmee vergeleken wordt.
+     * @param sleutel sleutel waarmee vergeleken wordt.
      * @return true als de entiteit en veld gelijk zijn aan de opgegeven sleutel
      */
     public boolean equalsIgnoreOntbrekendeDelen(final EntiteitSleutel sleutel) {
@@ -211,17 +199,15 @@ public final class EntiteitSleutel implements Sleutel {
         final Map<String, Object> mijnDelen = mapSubset(delen, gezamelijkeDelenSleutels);
         final Map<String, Object> sleutelDelen = mapSubset(sleutel.delen, gezamelijkeDelenSleutels);
         return new EqualsBuilder().append(entiteit, sleutel.entiteit)
-                                  .append(veld, sleutel.veld)
-                                  .append(mijnDelen, sleutelDelen)
-                                  .append(eigenaarSleutel, sleutel.eigenaarSleutel)
-                                  .isEquals();
+                .append(veld, sleutel.veld)
+                .append(mijnDelen, sleutelDelen)
+                .append(eigenaarSleutel, sleutel.eigenaarSleutel)
+                .isEquals();
     }
 
     /**
      * Vergelijkt alleen de entiteit en veld attributen van sleutels met elkaar.
-     *
-     * @param sleutel
-     *            sleutel waarmee vergeleken wordt.
+     * @param sleutel sleutel waarmee vergeleken wordt.
      * @return true als de entiteit en veld gelijk zijn aan de opgegeven sleutel
      */
     public boolean equalsIgnoreDelen(final EntiteitSleutel sleutel) {
@@ -237,6 +223,25 @@ public final class EntiteitSleutel implements Sleutel {
         return equal;
     }
 
+    /**
+     * Vult de sleutel aan voor reisdocument.
+     * @param technischId technisch ID voor het reisdocument
+     * @param reisdocument een {@link PersoonReisdocument}
+     * @param reisdocumentHistorie een {@link PersoonReisdocumentHistorie}
+     */
+    public void vulSleutelAanVoorReisdocument(
+            final Long technischId,
+            final PersoonReisdocument reisdocument,
+            final PersoonReisdocumentHistorie reisdocumentHistorie) {
+        addSleuteldeel(PersoonReisdocument.TECHNISCH_ID, technischId);
+        addSleuteldeel("srt", reisdocument.getSoortNederlandsReisdocument().getCode());
+        addSleuteldeel("nr", reisdocumentHistorie.getNummer());
+        addSleuteldeel("autvanafgifte", reisdocumentHistorie.getAutoriteitVanAfgifte());
+        addSleuteldeel("dateindedoc", reisdocumentHistorie.getDatumEindeDocument());
+        addSleuteldeel("datuitgifte", reisdocumentHistorie.getDatumUitgifte());
+    }
+
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(entiteit).append(veld).append(delen).append(eigenaarSleutel).toHashCode();
@@ -246,8 +251,8 @@ public final class EntiteitSleutel implements Sleutel {
     public String toString() {
         final ToStringBuilder sb =
                 new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("Entiteit", entiteit)
-                                                                           .append("Veld", veld)
-                                                                           .append("EigenaarSleutel", eigenaarSleutel);
+                        .append("Veld", veld)
+                        .append("EigenaarSleutel", eigenaarSleutel);
         for (final Map.Entry<String, Object> entry : delen.entrySet()) {
             sb.append(entry.getKey(), entry.getValue());
         }

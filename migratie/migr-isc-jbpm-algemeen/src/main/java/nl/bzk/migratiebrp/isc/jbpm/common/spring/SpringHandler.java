@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.common.spring;
 
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.jbpm.JbpmContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
@@ -21,13 +21,9 @@ public class SpringHandler {
 
     /**
      * Zoek de bean met een bepaalde naam en klasse.
-     *
-     * @param <T>
-     *            klasse
-     * @param name
-     *            naam
-     * @param clazz
-     *            klasse
+     * @param <T> klasse
+     * @param name naam
+     * @param clazz klasse
      * @return bean
      */
     protected final <T> T getBean(final String name, final Class<T> clazz) {

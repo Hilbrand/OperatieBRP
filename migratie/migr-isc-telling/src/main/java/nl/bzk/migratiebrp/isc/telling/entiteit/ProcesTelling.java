@@ -17,7 +17,6 @@ import nl.bzk.migratiebrp.util.common.Kopieer;
 
 /**
  * Persistent klasse voor de processen tellingen database tabel.
- * 
  */
 @Entity
 @Table(name = "mig_telling_proces")
@@ -49,7 +48,6 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Geef de waarde van procesnaam.
-     *
      * @return procesnaam
      */
     public final String getProcesnaam() {
@@ -58,9 +56,7 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Zet de waarde van procesnaam.
-     *
-     * @param procesnaam
-     *            procesnaam
+     * @param procesnaam procesnaam
      */
     public final void setProcesnaam(final String procesnaam) {
         this.procesnaam = procesnaam;
@@ -68,7 +64,6 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Geef de waarde van bericht type.
-     *
      * @return bericht type
      */
     public final String getBerichtType() {
@@ -77,9 +72,7 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Zet de waarde van bericht type.
-     *
-     * @param berichtType
-     *            bericht type
+     * @param berichtType bericht type
      */
     public final void setBerichtType(final String berichtType) {
         this.berichtType = berichtType;
@@ -87,7 +80,6 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Geef de waarde van datum.
-     *
      * @return datum
      */
     public final Timestamp getDatum() {
@@ -96,9 +88,7 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Zet de waarde van datum.
-     *
-     * @param datum
-     *            datum
+     * @param datum datum
      */
     public final void setDatum(final Timestamp datum) {
         this.datum = Kopieer.timestamp(datum);
@@ -106,7 +96,6 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Geef de waarde van aantal gestarte processen.
-     *
      * @return aantal gestarte processen
      */
     public final Integer getAantalGestarteProcessen() {
@@ -115,9 +104,7 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Zet de waarde van aantal gestarte processen.
-     *
-     * @param aantalGestarteProcessen
-     *            aantal gestarte processen
+     * @param aantalGestarteProcessen aantal gestarte processen
      */
     public final void setAantalGestarteProcessen(final Integer aantalGestarteProcessen) {
         this.aantalGestarteProcessen = aantalGestarteProcessen;
@@ -125,7 +112,6 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Geef de waarde van aantal beeindigde processen.
-     *
      * @return aantal beeindigde processen
      */
     public final Integer getAantalBeeindigdeProcessen() {
@@ -134,9 +120,7 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Zet de waarde van aantal beeindigde processen.
-     *
-     * @param aantalBeeindigdeProcessen
-     *            aantal beeindigde processen
+     * @param aantalBeeindigdeProcessen aantal beeindigde processen
      */
     public final void setAantalBeeindigdeProcessen(final Integer aantalBeeindigdeProcessen) {
         this.aantalBeeindigdeProcessen = aantalBeeindigdeProcessen;
@@ -144,7 +128,6 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public final String getKanaal() {
@@ -153,9 +136,7 @@ public class ProcesTelling implements Serializable {
 
     /**
      * Zet de waarde van kanaal.
-     *
-     * @param kanaal
-     *            kanaal
+     * @param kanaal kanaal
      */
     public final void setKanaal(final String kanaal) {
         this.kanaal = kanaal;

@@ -8,9 +8,6 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.Definitie;
 import nl.bzk.migratiebrp.conversie.model.Definities;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
@@ -35,33 +32,31 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
-import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3.Foutmelding;
-
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Deze class bevat de conversie logica om de LO3 Categorie Reisdocument te converteren naar BRP.
  */
-@Component
 @Requirement(Requirements.CCA12)
-public class ReisdocumentConverteerder extends AbstractConverteerder {
+public class ReisdocumentConverteerder extends Converteerder {
 
-    @Inject
-    private Lo3AttribuutConverteerder converteerder;
+    /**
+     * Constructor.
+     * @param lo3AttribuutConverteerder Lo3AttribuutConverteerder
+     */
+    public ReisdocumentConverteerder(final Lo3AttribuutConverteerder lo3AttribuutConverteerder) {
+        super(lo3AttribuutConverteerder);
+    }
 
     /**
      * Converteert de LO3 Reisdocument categorie naar het BRP model en vult hiermee de tussenPersoonslijstBuilder aan.
-     * 
-     * @param lo3ReisdocumentStapels
-     *            de overlijden stapel, mag leeg zijn, maar niet null
-     * @param tussenPersoonslijstBuilder
-     *            de migratie builder
+     * @param lo3ReisdocumentStapels de overlijden stapel, mag leeg zijn, maar niet null
+     * @param tussenPersoonslijstBuilder de migratie builder
      */
-    @Definitie({Definities.DEF063, Definities.DEF065 })
+    @Definitie({Definities.DEF063, Definities.DEF065})
     public final void converteer(
-        final List<Lo3Stapel<Lo3ReisdocumentInhoud>> lo3ReisdocumentStapels,
-        final TussenPersoonslijstBuilder tussenPersoonslijstBuilder)
-    {
+            final List<Lo3Stapel<Lo3ReisdocumentInhoud>> lo3ReisdocumentStapels,
+            final TussenPersoonslijstBuilder tussenPersoonslijstBuilder) {
         for (final Lo3Stapel<Lo3ReisdocumentInhoud> lo3ReisdocumentStapel : lo3ReisdocumentStapels) {
             final List<TussenGroep<BrpReisdocumentInhoud>> tussenReisdocumenten = new ArrayList<>();
             final List<TussenGroep<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud>> tussenSignaleringGroep = new ArrayList<>();
@@ -102,12 +97,12 @@ public class ReisdocumentConverteerder extends AbstractConverteerder {
     }
 
     private void verwerkNederlandsReisdocument(
-        final List<TussenGroep<BrpReisdocumentInhoud>> tussenReisdocumenten,
-        final Lo3ReisdocumentInhoud lo3Inhoud,
-        final Lo3Historie lo3Historie,
-        final Lo3Herkomst lo3Herkomst,
-        final Lo3Documentatie lo3Documentatie)
-    {
+            final List<TussenGroep<BrpReisdocumentInhoud>> tussenReisdocumenten,
+            final Lo3ReisdocumentInhoud lo3Inhoud,
+            final Lo3Historie lo3Historie,
+            final Lo3Herkomst lo3Herkomst,
+            final Lo3Documentatie lo3Documentatie) {
+        final Lo3AttribuutConverteerder converteerder = getLo3AttribuutConverteerder();
         final BrpSoortNederlandsReisdocumentCode soortNederlandsReisdocumentCode;
         soortNederlandsReisdocumentCode = converteerder.converteerLo3ReisdocumentSoort(lo3Inhoud.getSoortNederlandsReisdocument());
         final BrpString nummer = converteerder.converteerString(lo3Inhoud.getNummerNederlandsReisdocument());
@@ -125,36 +120,35 @@ public class ReisdocumentConverteerder extends AbstractConverteerder {
 
         final TussenGroep<BrpReisdocumentInhoud> migratieReisDocument =
                 new TussenGroep<>(
-                    new BrpReisdocumentInhoud(
-                        soortNederlandsReisdocumentCode,
-                        nummer,
-                        datumIngangDocument,
-                        datumUitgifte,
-                        autoriteitVanAfgifte,
-                        datumEindeDocument,
-                        datumInhouding,
-                        aanduidingInhoudingOfVermissing),
-                    lo3Historie,
-                    lo3Documentatie,
-                    lo3Herkomst);
+                        new BrpReisdocumentInhoud(
+                                soortNederlandsReisdocumentCode,
+                                nummer,
+                                datumIngangDocument,
+                                datumUitgifte,
+                                autoriteitVanAfgifte,
+                                datumEindeDocument,
+                                datumInhouding,
+                                aanduidingInhoudingOfVermissing),
+                        lo3Historie,
+                        lo3Documentatie,
+                        lo3Herkomst);
         tussenReisdocumenten.add(migratieReisDocument);
     }
 
     private void verwerkBelemmeringVerstrekking(
-        final List<TussenGroep<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud>> tussenSignaleringGroep,
-        final Lo3ReisdocumentInhoud lo3Inhoud,
-        final Lo3Historie lo3Historie,
-        final Lo3Herkomst lo3Herkomst,
-        final Lo3Documentatie lo3Documentatie)
-    {
+            final List<TussenGroep<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud>> tussenSignaleringGroep,
+            final Lo3ReisdocumentInhoud lo3Inhoud,
+            final Lo3Historie lo3Historie,
+            final Lo3Herkomst lo3Herkomst,
+            final Lo3Documentatie lo3Documentatie) {
         if (!lo3Historie.getDatumVanOpneming().equals(lo3Historie.getIngangsdatumGeldigheid())) {
             Foutmelding.logMeldingFoutInfo(lo3Herkomst, SoortMeldingCode.BIJZ_CONV_LB026, null);
         }
-        final BrpBoolean signalering = converteerder.converteerSignalering(lo3Inhoud.getSignalering());
+        final BrpBoolean signalering = getLo3AttribuutConverteerder().converteerSignalering(lo3Inhoud.getSignalering());
         tussenSignaleringGroep.add(new TussenGroep<>(
                 new BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud(signalering, null, null),
-            lo3Historie,
-            lo3Documentatie,
-            lo3Herkomst));
+                lo3Historie,
+                lo3Documentatie,
+                lo3Herkomst));
     }
 }

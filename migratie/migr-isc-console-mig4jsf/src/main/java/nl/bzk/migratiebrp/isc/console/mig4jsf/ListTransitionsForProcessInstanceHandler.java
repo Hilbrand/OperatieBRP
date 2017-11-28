@@ -21,18 +21,16 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "listTransitionsForProcessInstance", description = "Read a log of transitions from a process instance.",
         attributes = {@TldAttribute(name = "target", description = "An EL expression into which the transition log should be stored.",
-                              required = true, deferredType = List.class),
-                      @TldAttribute(name = "processInstance", description = "The process instance whose task instances are to be read.",
-                              required = true, deferredType = ProcessInstance.class) })
+                required = true, deferredType = List.class),
+                @TldAttribute(name = "processInstance", description = "The process instance whose task instances are to be read.",
+                        required = true, deferredType = ProcessInstance.class)})
 public final class ListTransitionsForProcessInstanceHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute processInstanceTagAttribute;
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public ListTransitionsForProcessInstanceHandler(final TagConfig config) {
         super(config);
@@ -43,8 +41,8 @@ public final class ListTransitionsForProcessInstanceHandler extends AbstractHand
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new ListTransitionsForProcessInstanceActionListener(getValueExpression(
-            processInstanceTagAttribute,
-            ctx,
-            ProcessInstance.class), getValueExpression(targetTagAttribute, ctx, List.class));
+                processInstanceTagAttribute,
+                ctx,
+                ProcessInstance.class), getValueExpression(targetTagAttribute, ctx, List.class));
     }
 }

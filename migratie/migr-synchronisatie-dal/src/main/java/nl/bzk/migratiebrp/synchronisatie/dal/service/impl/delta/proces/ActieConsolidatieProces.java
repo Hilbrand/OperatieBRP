@@ -6,24 +6,17 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.proces;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.ALaagHistorieVerzameling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractFormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractMaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaSubRootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ALaagHistorieVerzameling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractFormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractMaterieleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.MaterieleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SubRootEntiteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.MaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.util.PersistenceUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.ConsolidatieData;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaRootEntiteitMatch;
@@ -37,16 +30,25 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util.DeltaUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util.SleutelUtil;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Deze class consolideert wijzigingen die resulteren in het aanmaken van meerdere actie objecten voor hetzelfde oude
  * actie object.
  */
-public final class ActieConsolidatieProces implements DeltaProces {
+final class ActieConsolidatieProces implements DeltaProces {
 
     @Override
     public void bepaalVerschillen(final DeltaBepalingContext context) {
         for (final DeltaRootEntiteitMatch deltaRootEntiteitMatch : context.getDeltaRootEntiteitMatches()) {
-            if (deltaRootEntiteitMatch.getVergelijkerResultaat() != null) {
+            final VergelijkerResultaat vergelijkerResultaat = deltaRootEntiteitMatch.getVergelijkerResultaat();
+            if (vergelijkerResultaat != null && !vergelijkerResultaat.isLeeg()) {
                 consolideerActies(deltaRootEntiteitMatch, context);
             }
         }
@@ -66,9 +68,9 @@ public final class ActieConsolidatieProces implements DeltaProces {
 
         final ConsolidatieData gefilterdeActieConsolidatieData =
                 context.getActieConsolidatieData()
-                       .verwijderActieInMRijen(mRijen, aanpassingenInNieuweRijen)
-                       .voegNieuweActiesToe(nieuweActies)
-                       .verwijderCat07Cat13Acties();
+                        .verwijderActieInMRijen(mRijen, aanpassingenInNieuweRijen)
+                        .voegNieuweActiesToe(nieuweActies)
+                        .verwijderCat07Cat13Acties();
         final Set<DeltaStapelMatch> teVervangenStapels = gefilterdeActieConsolidatieData.bepaalTeVervangenStapels();
 
         final Map<DeltaStapelMatch, List<Verschil>> teVervangenStapelVerschillen = new HashMap<>();
@@ -89,7 +91,9 @@ public final class ActieConsolidatieProces implements DeltaProces {
         if (!teVervangenStapelVerschillen.isEmpty()) {
             for (final Map.Entry<DeltaStapelMatch, List<Verschil>> entry : teVervangenStapelVerschillen.entrySet()) {
                 final DeltaRootEntiteitMatch entiteitMatch = zoekEntiteitMatchVoorDeltaStapelMatch(context, entry.getKey());
-                entiteitMatch.getVergelijkerResultaat().voegVerschillenToe(entry.getValue());
+                if (entiteitMatch != null) {
+                    entiteitMatch.getVergelijkerResultaat().voegVerschillenToe(entry.getValue());
+                }
             }
         }
     }
@@ -98,18 +102,18 @@ public final class ActieConsolidatieProces implements DeltaProces {
         final Object eigenaarEntiteit = stapelMatch.getEigenaarDeltaEntiteit();
 
         DeltaRootEntiteitMatch entiteitMatch = null;
-        DeltaRootEntiteit deltaRootEntiteit;
+        final RootEntiteit rootEntiteit;
 
-        if (eigenaarEntiteit instanceof DeltaSubRootEntiteit) {
-            deltaRootEntiteit = ((DeltaSubRootEntiteit) eigenaarEntiteit).getPersoon();
-        } else if (eigenaarEntiteit instanceof DeltaRootEntiteit) {
-            deltaRootEntiteit = (DeltaRootEntiteit) eigenaarEntiteit;
+        if (eigenaarEntiteit instanceof SubRootEntiteit) {
+            rootEntiteit = ((SubRootEntiteit) eigenaarEntiteit).getPersoon();
+        } else if (eigenaarEntiteit instanceof RootEntiteit) {
+            rootEntiteit = (RootEntiteit) eigenaarEntiteit;
         } else {
             throw new IllegalStateException("eigenaar entiteit geen delta (sub)root entiteit");
         }
 
         for (final DeltaRootEntiteitMatch match : context.getDeltaRootEntiteitMatches()) {
-            if (deltaRootEntiteit.equals(match.getBestaandeDeltaRootEntiteit())) {
+            if (rootEntiteit.equals(match.getBestaandeRootEntiteit())) {
                 entiteitMatch = match;
                 break;
             }
@@ -118,30 +122,28 @@ public final class ActieConsolidatieProces implements DeltaProces {
     }
 
     private void markeerNieuweRijenAlsToeTeVoegen(
-        final VergelijkerResultaat vergelijkerResultaat,
-        final List<Verschil> stapelsVervangenVerschillen,
-        final DeltaStapelMatch teVervangenStapel) throws ReflectiveOperationException
-    {
+            final VergelijkerResultaat vergelijkerResultaat,
+            final List<Verschil> stapelsVervangenVerschillen,
+            final DeltaStapelMatch teVervangenStapel) throws ReflectiveOperationException {
         for (final FormeleHistorie historie : teVervangenStapel.getNieuweRijen()) {
             // verwijderen van gevonden verschillen waar de nieuwe stapels in voorkomen en de nieuwe stapels als
             // "nieuw-toe-te-voegen-rij"-verschil toevoegen
             vergelijkerResultaat.verwijderVerschillenVoorHistorie(historie);
             final EntiteitSleutel nieuweRijSleutel =
                     SleutelUtil.maakRijSleutel(
-                        teVervangenStapel.getEigenaarDeltaEntiteit(),
-                        teVervangenStapel.getEigenaarSleutel(),
-                        historie,
-                        teVervangenStapel.getEigenaarVeld().getName());
+                            teVervangenStapel.getEigenaarDeltaEntiteit(),
+                            teVervangenStapel.getEigenaarSleutel(),
+                            historie,
+                            teVervangenStapel.getEigenaarVeld().getName());
             stapelsVervangenVerschillen.add(Verschil.maakConsolidatieVerschilRijToevoegen(nieuweRijSleutel, historie));
         }
     }
 
     private void markeerBestaandeRijenAlsTeVerwijderen(
-        final DeltaBepalingContext context,
-        final VergelijkerResultaat vergelijkerResultaat,
-        final List<Verschil> stapelsVervangenVerschillen,
-        final DeltaStapelMatch teVervangenStapel) throws ReflectiveOperationException
-    {
+            final DeltaBepalingContext context,
+            final VergelijkerResultaat vergelijkerResultaat,
+            final List<Verschil> stapelsVervangenVerschillen,
+            final DeltaStapelMatch teVervangenStapel) throws ReflectiveOperationException {
         for (final FormeleHistorie historie : teVervangenStapel.getOpgeslagenRijen()) {
             if (!DeltaUtil.isMRij(historie)) {
                 // verwijderen van de verschillen op bestaande stapels en bestaande stapels markeren als M-rijen
@@ -150,18 +152,17 @@ public final class ActieConsolidatieProces implements DeltaProces {
 
                 final EntiteitSleutel verwijderdeRijSleutel =
                         SleutelUtil.maakRijSleutel(
-                            teVervangenStapel.getEigenaarDeltaEntiteit(),
-                            teVervangenStapel.getEigenaarSleutel(),
-                            historie,
-                            teVervangenStapel.getEigenaarVeld().getName());
+                                teVervangenStapel.getEigenaarDeltaEntiteit(),
+                                teVervangenStapel.getEigenaarSleutel(),
+                                historie,
+                                teVervangenStapel.getEigenaarVeld().getName());
                 final Verschil historieContextVerschil = Verschil.maakConsolidatieHistorieContextVerschil(verwijderdeRijSleutel, historie);
                 stapelsVervangenVerschillen.addAll(
-                    AbstractTransformatie.maakMRijVerschillen(
-                        historie,
-                        AbstractTransformatie.maakRijInhoudSleutel(verwijderdeRijSleutel, historie),
-                        historieContextVerschil,
-                        context.getActieVervalTbvLeveringMuts(),
-                        context));
+                        AbstractTransformatie.maakMRijVerschillen(
+                                historie,
+                                AbstractTransformatie.maakRijInhoudSleutel(verwijderdeRijSleutel, historie),
+                                historieContextVerschil,
+                                context.getActieVervalTbvLeveringMuts()));
             }
         }
     }
@@ -185,29 +186,37 @@ public final class ActieConsolidatieProces implements DeltaProces {
 
         for (final VerschilGroep verschilGroep : verschilGroepen) {
             for (final Verschil verschil : verschilGroep) {
-                if (isVerschilGeschiktVoorConsolidatie(verschil)) {
-
-                    switch (verschil.getVerschilType()) {
-                        case ELEMENT_NIEUW:
-                        case ELEMENT_AANGEPAST:
-                            if (isNieuweActieVerschil(verschil)) {
-                                nieuweActies.add((BRPActie) verschil.getNieuweWaarde());
-                            }
-                            break;
-                        case RIJ_TOEGEVOEGD:
-                            if (verschil.getNieuweHistorieRij() != null) {
-                                nieuweActies.addAll(verzamelNieuweActies(verschil.getNieuweHistorieRij(), verschilGroep));
-                            } else if (verschil.getNieuweWaarde() instanceof ALaagHistorieVerzameling) {
-                                verzamelNieuweActies(nieuweActies, (ALaagHistorieVerzameling) verschil.getNieuweWaarde(), verschilGroep);
-                            }
-                            break;
-                        default:
-                    }
+                if (!isVerschilGeschiktVoorConsolidatie(verschil)) {
+                    continue;
+                }
+                switch (verschil.getVerschilType()) {
+                    case ELEMENT_NIEUW:
+                    case ELEMENT_AANGEPAST:
+                        bepaalNieuweActiesVoorElementAangepast(nieuweActies, verschil);
+                        break;
+                    case RIJ_TOEGEVOEGD:
+                        bepaalNieuweActiesVoorRijToegevoegd(nieuweActies, verschilGroep, verschil);
+                        break;
+                    default:
                 }
             }
         }
 
         return nieuweActies;
+    }
+
+    private void bepaalNieuweActiesVoorElementAangepast(final Set<BRPActie> nieuweActies, final Verschil verschil) {
+        if (isNieuweActieVerschil(verschil)) {
+            nieuweActies.add((BRPActie) verschil.getNieuweWaarde());
+        }
+    }
+
+    private void bepaalNieuweActiesVoorRijToegevoegd(final Set<BRPActie> nieuweActies, final VerschilGroep verschilGroep, final Verschil verschil) {
+        if (verschil.getNieuweHistorieRij() != null) {
+            nieuweActies.addAll(verzamelNieuweActies(verschil.getNieuweHistorieRij(), verschilGroep));
+        } else if (verschil.getNieuweWaarde() instanceof ALaagHistorieVerzameling) {
+            verzamelNieuweActies(nieuweActies, (ALaagHistorieVerzameling) verschil.getNieuweWaarde(), verschilGroep);
+        }
     }
 
     private boolean isNieuweActieVerschil(final Verschil verschil) {
@@ -217,7 +226,7 @@ public final class ActieConsolidatieProces implements DeltaProces {
     private boolean isVerschilGeschiktVoorConsolidatie(final Verschil verschil) {
         final Class<?> sleutelClass = verschil.getSleutel().getClass();
         return sleutelClass.isAssignableFrom(IstSleutel.class)
-               || (sleutelClass.isAssignableFrom(EntiteitSleutel.class) && !verschil.isConsolidatieVerschil());
+                || (sleutelClass.isAssignableFrom(EntiteitSleutel.class) && !verschil.isConsolidatieVerschil());
     }
 
     private Set<FormeleHistorie> bepaalMRijen(final List<VerschilGroep> verschilGroepen) {
@@ -226,9 +235,8 @@ public final class ActieConsolidatieProces implements DeltaProces {
         for (final VerschilGroep verschilGroep : verschilGroepen) {
             for (final Verschil verschil : verschilGroep) {
                 if (isVerschilGeschiktVoorConsolidatie(verschil)
-                    && VerschilType.ELEMENT_NIEUW.equals(verschil.getVerschilType())
-                    && AbstractFormeleHistorie.INDICATIE_VOORKOMEN_TBV_LEVERING_MUTATIES.equals(verschil.getSleutel().getVeld()))
-                {
+                        && VerschilType.ELEMENT_NIEUW.equals(verschil.getVerschilType())
+                        && AbstractFormeleHistorie.INDICATIE_VOORKOMEN_TBV_LEVERING_MUTATIES.equals(verschil.getSleutel().getVeld())) {
                     mRijen.add(verschil.getBestaandeHistorieRij());
                 }
             }
@@ -238,16 +246,15 @@ public final class ActieConsolidatieProces implements DeltaProces {
 
     private boolean isActieVeld(final String veldNaam) {
         return AbstractFormeleHistorie.ACTIE_INHOUD.equals(veldNaam)
-               || AbstractFormeleHistorie.ACTIE_VERVAL.equals(veldNaam)
-               || AbstractMaterieleHistorie.ACTIE_AANPASSING_GELDIGHEID.equals(veldNaam);
+                || AbstractFormeleHistorie.ACTIE_VERVAL.equals(veldNaam)
+                || AbstractMaterieleHistorie.ACTIE_AANPASSING_GELDIGHEID.equals(veldNaam);
     }
 
     private void verzamelNieuweActies(
-        final Set<BRPActie> nieuweActies,
-        final ALaagHistorieVerzameling historieVerzameling,
-        final VerschilGroep verschilGroep)
-    {
-        for (final Collection<? extends FormeleHistorie> formeleHistorieVerzameling : historieVerzameling.verzamelHistorie().values()) {
+            final Set<BRPActie> nieuweActies,
+            final ALaagHistorieVerzameling historieVerzameling,
+            final VerschilGroep verschilGroep) {
+        for (final Collection<FormeleHistorie> formeleHistorieVerzameling : historieVerzameling.verzamelHistorie().values()) {
             for (final FormeleHistorie historie : formeleHistorieVerzameling) {
                 nieuweActies.addAll(verzamelNieuweActies(historie, verschilGroep));
             }
@@ -268,8 +275,7 @@ public final class ActieConsolidatieProces implements DeltaProces {
         if (historie instanceof MaterieleHistorie) {
             final MaterieleHistorie materieleHistorie = (MaterieleHistorie) historie;
             if (isNieuweActie(materieleHistorie.getActieAanpassingGeldigheid())
-                && !wordtActieVervangenInNieuweRij(historie, AbstractMaterieleHistorie.ACTIE_AANPASSING_GELDIGHEID, verschilGroep))
-            {
+                    && !wordtActieVervangenInNieuweRij(historie, AbstractMaterieleHistorie.ACTIE_AANPASSING_GELDIGHEID, verschilGroep)) {
                 nieuweActies.add(materieleHistorie.getActieAanpassingGeldigheid());
             }
         }
@@ -286,10 +292,9 @@ public final class ActieConsolidatieProces implements DeltaProces {
 
         for (final Verschil verschil : verschilGroep) {
             if (isVerschilGeschiktVoorConsolidatie(verschil)
-                && VerschilType.NIEUWE_RIJ_ELEMENT_AANGEPAST.equals(verschil.getVerschilType())
-                && PersistenceUtil.getPojoFromObject(historie) == PersistenceUtil.getPojoFromObject(verschil.getNieuweHistorieRij())
-                && actieVeldnaam.equals(verschil.getSleutel().getVeld()))
-            {
+                    && VerschilType.NIEUWE_RIJ_ELEMENT_AANGEPAST.equals(verschil.getVerschilType())
+                    && Entiteit.convertToPojo(historie) == Entiteit.convertToPojo(verschil.getNieuweHistorieRij())
+                    && actieVeldnaam.equals(verschil.getSleutel().getVeld())) {
                 result = true;
             }
         }

@@ -6,60 +6,78 @@
 
 package nl.bzk.brp.levering.lo3.filter;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.Ja;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.SoortNederlandsReisdocumentCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.FunctieAdres;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Geslachtsaanduiding;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Partij;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortActie;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortAdministratieveHandeling;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortNederlandsReisdocument;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonAdresHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonAdresHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonIndicatieBijzondereVerblijfsrechtelijkePositieHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonReisdocumentHisVolledigImplBuilder;
+import java.util.Set;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.algemeenbrp.util.common.DatumUtil;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.leveringmodel.Actie;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaGroep;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.TestVerantwoording;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-import support.PersoonHisVolledigUtil;
 
 public class ResyncFilterTest {
 
-    private static final String ID = "iD";
-    private static final String GEMEENTE_518 = "518";
-    private static final String LAND_6030 = "6030";
-    private static final String I = "I";
-    private static final String A = "A";
-    private static final String P = "P";
-    private static final String ROTTERDAM = "Rotterdam";
-    private static final String HIS_VOLLEDIG_IMPL = "hisVolledigImpl";
-    private static final String GESLACHTSNAAM = "geslachtsnaam";
     private static final String RUBRIEK_REISDOCUMENT = "12.35.10";
 
-    private final Partij partij = PersoonHisVolledigUtil.maakPartij();
-    private final ActieModel actieInitieleVulling =
-            PersoonHisVolledigUtil.maakActie(1L, SoortAdministratieveHandeling.G_B_A_INITIELE_VULLING, SoortActie.CONVERSIE_G_B_A, 19200101, partij);
-    private final ActieModel actieSynchronisatie =
-            PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_OVERIG, SoortActie.CONVERSIE_G_B_A, 20140711, partij);
+    private final Actie         actieInitieleVulling;
+    private final Actie         actieSynchronisatie;
+    private final AdministratieveHandeling administratieveHandelingInitieleVulling;
+    private final AdministratieveHandeling administratieveHandelinSynchronisatie;
+
+    {
+        final ZonedDateTime tsReg = ZonedDateTime.of(1920, 1, 2, 0, 0, 0, 0, DatumUtil.BRP_ZONE_ID);
+        administratieveHandelingInitieleVulling = AdministratieveHandeling.converter().converteer(TestVerantwoording
+            .maakAdministratieveHandeling(-21L, "000034", tsReg, SoortAdministratieveHandeling.GBA_INITIELE_VULLING)
+            .metObject(TestVerantwoording.maakActieBuilder(1, SoortActie.CONVERSIE_GBA, tsReg, "000001", 19620101)
+        ).build());
+        actieInitieleVulling = administratieveHandelingInitieleVulling.getActies().iterator().next();
+
+        final ZonedDateTime tsReg2 = ZonedDateTime.of(2014, 7, 11, 0, 0, 0, 0, DatumUtil.BRP_ZONE_ID);
+        administratieveHandelinSynchronisatie = AdministratieveHandeling.converter().converteer(TestVerantwoording
+            .maakAdministratieveHandeling(-22l, "000034", tsReg2, SoortAdministratieveHandeling
+                .GBA_INITIELE_VULLING)
+            .metObject(TestVerantwoording.maakActieBuilder(1, SoortActie.CONVERSIE_GBA, tsReg2, "000001", 19630101)
+            ).build());
+        actieSynchronisatie = administratieveHandelinSynchronisatie.getActies().iterator().next();
+
+    }
 
     @Test
     public void test() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        voegGeboorteToe(builder, actieInitieleVulling);
-        voegVerhuizingToe(builder, actieInitieleVulling);
-        voegReisdocumentToe(builder, actieSynchronisatie);
+        final MetaObject.Builder basispersoon = MetaObject.maakBuilder();
+        basispersoon.metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId())).metId(4645);
 
-        final PersoonHisVolledig persoon = builder.build();
+        voegGeboorteToe(basispersoon, actieInitieleVulling);
+        voegReisdocumentToe(basispersoon, actieSynchronisatie);
 
-        final List<String> resyncRubrieken = ResyncBerichtFilter.bepaalRubrieken(persoon, null, actieSynchronisatie.getAdministratieveHandeling());
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(administratieveHandelingInitieleVulling);
+        administratieveHandelingen.add(administratieveHandelinSynchronisatie);
+        final Persoonslijst persoonslijst = new Persoonslijst(basispersoon.build(), 0L);
+
+        // Debug output
+        System.out.println("-GROEPEN-");
+        persoonslijst.getMetaObject().getGroepen().stream().forEach(metaGroep -> System.out.println("GROEP: " + metaGroep));
+        System.out.println("-OBJECTEN-");
+        persoonslijst.getMetaObject().getObjecten().stream().forEach(metaObject -> {
+            System.out.println("OBJECT: " + metaObject);
+            metaObject.getGroepen().stream().forEach(metaGroep -> System.out.println(" - GROEP: " + metaGroep));
+        });
+
+        final List<String> resyncRubrieken = ResyncBerichtFilter.bepaalRubrieken(persoonslijst, null, administratieveHandelinSynchronisatie);
+        System.out.println(resyncRubrieken);
+
         // Zie RubriekenMap
         Assert.assertTrue(resyncRubrieken.contains("12.35."));
         Assert.assertTrue(resyncRubrieken.contains("12.8"));
@@ -73,114 +91,81 @@ public class ResyncFilterTest {
 
     @Test
     public void testFallback() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        voegGeboorteToe(builder, actieInitieleVulling);
-        voegVerhuizingToe(builder, actieInitieleVulling);
-        voegProbasToe(builder, actieSynchronisatie);
+        final MetaObject.Builder basispersoon = MetaObject.maakBuilder();
+        basispersoon.metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId())).metId(4645);
 
-        final PersoonHisVolledig persoon = builder.build();
+        voegGeboorteToe(basispersoon, actieInitieleVulling);
+        voegProbasToe(basispersoon, actieSynchronisatie);
 
-        final List<String> resyncRubrieken = ResyncBerichtFilter.bepaalRubrieken(persoon, null, actieSynchronisatie.getAdministratieveHandeling());
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(administratieveHandelingInitieleVulling);
+        administratieveHandelingen.add(administratieveHandelinSynchronisatie);
+        final Persoonslijst persoonslijst = new Persoonslijst(basispersoon.build(), 0L);
+
+        final List<String> resyncRubrieken = ResyncBerichtFilter.bepaalRubrieken(persoonslijst, null, administratieveHandelinSynchronisatie);
         // Zie RubriekenMap
-        Assert.assertNull(resyncRubrieken);
+        Assert.assertEquals(0, resyncRubrieken.size());
 
         final List<String> filterRubrieken = Arrays.asList(RUBRIEK_REISDOCUMENT);
         Assert.assertTrue(ResyncBerichtFilter.bevatRubrieken(filterRubrieken, resyncRubrieken));
     }
 
-    private void voegGeboorteToe(final PersoonHisVolledigImplBuilder builder, final ActieModel actieGeboorte) {
+    private void voegGeboorteToe(final MetaObject.Builder builder, final Actie actieGeboorte) {
         // Geboorte
-        builder.voegPersoonAdresToe(
-            new PersoonAdresHisVolledigImplBuilder().nieuwStandaardRecord(actieGeboorte)
-                                                    .aangeverAdreshouding(I)
-                                                    .datumAanvangAdreshouding(actieGeboorte.getDatumAanvangGeldigheid())
-                                                    .gemeente(Short.valueOf(GEMEENTE_518))
-                                                    .gemeentedeel("deel vd gemeente")
-                                                    .huisletter(A)
-                                                    .huisnummer(10)
-                                                    .huisnummertoevoeging(A)
-                                                    .landGebied((short) 6030)
-                                                    .naamOpenbareRuimte("naam")
-                                                    .postcode("2245HJ")
-                                                    .redenWijziging(P)
-                                                    .soort(FunctieAdres.WOONADRES)
-                                                    .woonplaatsnaam(ROTTERDAM)
-                                                    .eindeRecord()
-                                                    .build());
-        builder.nieuwGeboorteRecord(actieGeboorte)
-               .datumGeboorte(actieGeboorte.getDatumAanvangGeldigheid())
-               .gemeenteGeboorte(Short.valueOf(GEMEENTE_518))
-               .landGebiedGeboorte(Short.valueOf(LAND_6030))
-               .eindeRecord();
-        builder.nieuwGeslachtsaanduidingRecord(actieGeboorte).geslachtsaanduiding(Geslachtsaanduiding.MAN).eindeRecord();
-        builder.nieuwIdentificatienummersRecord(actieGeboorte).administratienummer(1234567890L).burgerservicenummer(123456789).eindeRecord();
-        builder.nieuwInschrijvingRecord(actieGeboorte)
-               .datumInschrijving(actieGeboorte.getDatumAanvangGeldigheid())
-               .versienummer(1L)
-               .datumtijdstempel(new Date(123))
-               .eindeRecord();
-        // TODO: uitzoeken waarom het hier fout gaat
-        // builder.nieuwNaamgebruikRecord(actieGeboorte).indicatieNaamgebruikAfgeleid(true).naamgebruik(Naamgebruik.EIGEN)
-        // .eindeRecord();
-        builder.nieuwAfgeleidAdministratiefRecord(actieGeboorte)
-               .indicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig(false)
-               .tijdstipLaatsteWijziging(actieGeboorte.getTijdstipRegistratie())
-               .tijdstipLaatsteWijzigingGBASystematiek(actieGeboorte.getTijdstipRegistratie())
-               .eindeRecord();
-        builder.nieuwSamengesteldeNaamRecord(actieGeboorte)
-               .geslachtsnaamstam(GESLACHTSNAAM)
-               .voorvoegsel("de")
-               .voornamen("Voornaam1 Voornaam2")
-               .scheidingsteken(" ")
-               .eindeRecord();
+        builder.metGroep()
+            .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_GEBOORTE.getId()))
+            .metRecord()
+            .metId(54654)
+            .metActieInhoud(actieGeboorte)
+            .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_DATUM.getId()), 20040101)
+            .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_GEMEENTECODE.getId()), 0626)
+            .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_LANDGEBIEDCODE.getId()), 6030)
+            .eindeRecord()
+            .eindeGroep();
     }
 
-    private void voegVerhuizingToe(final PersoonHisVolledigImplBuilder builder, final ActieModel actieVerhuizing) {
-        final PersoonHisVolledigImpl hisVolledigImpl = (PersoonHisVolledigImpl) ReflectionTestUtils.getField(builder, HIS_VOLLEDIG_IMPL);
-
-        final PersoonAdresHisVolledigImpl adresHisVolledigImpl = hisVolledigImpl.getAdressen().iterator().next();
-
-        final PersoonAdresHisVolledigImplBuilder adresBuilder = new PersoonAdresHisVolledigImplBuilder();
-        ReflectionTestUtils.setField(adresBuilder, HIS_VOLLEDIG_IMPL, adresHisVolledigImpl);
-
-        adresBuilder.nieuwStandaardRecord(actieVerhuizing)
-                    .aangeverAdreshouding(I)
-                    .datumAanvangAdreshouding(actieVerhuizing.getDatumAanvangGeldigheid())
-                    .gemeente(Short.valueOf(GEMEENTE_518))
-                    .huisnummer(46)
-                    .landGebied((short) 6030)
-                    .naamOpenbareRuimte("Pippelingstraat")
-                    .postcode("2522HT")
-                    .redenWijziging(P)
-                    .soort(FunctieAdres.WOONADRES)
-                    .woonplaatsnaam(ROTTERDAM)
-                    .eindeRecord();
-    }
-
-    private void voegReisdocumentToe(final PersoonHisVolledigImplBuilder builder, final ActieModel actieReisdocument) {
+    private void voegReisdocumentToe(final MetaObject.Builder builder, final Actie actieReisdocument) {
         // Reisdocument
-        builder.voegPersoonReisdocumentToe(
-            new PersoonReisdocumentHisVolledigImplBuilder(
-                new SoortNederlandsReisdocument(new SoortNederlandsReisdocumentCodeAttribuut("PP"), null, null, null),
-                true).nieuwStandaardRecord(actieReisdocument).eindeRecord().build());
-
-        builder.nieuwAfgeleidAdministratiefRecord(actieReisdocument)
-               .tijdstipLaatsteWijziging(actieReisdocument.getTijdstipRegistratie())
-               .tijdstipLaatsteWijzigingGBASystematiek(actieReisdocument.getTijdstipRegistratie())
-               .eindeRecord();
+        final MetaObject.Builder reisdocument = builder.metObject().metId(2344).metObjectElement(Element.PERSOON_REISDOCUMENT.getId());
+        final MetaGroep.Builder identGroep = reisdocument.metGroep().metGroepElement(Element.PERSOON_REISDOCUMENT_IDENTITEIT.getId());
+        identGroep.metRecord().metId(2344).metAttribuut(Element.PERSOON_REISDOCUMENT_SOORTCODE.getId(), "PP");
+        final MetaGroep.Builder standaardGroep = reisdocument.metGroep().metGroepElement(Element.PERSOON_REISDOCUMENT_STANDAARD.getId());
+        standaardGroep.metRecord().metId(23441).metActieInhoud(actieReisdocument).metAttribuut(Element.PERSOON_REISDOCUMENT_NUMMER.getId(), "3454");
     }
 
-    private void voegProbasToe(final PersoonHisVolledigImplBuilder builder, final ActieModel actieProbas) {
-        // Reisdocument
-        builder.voegPersoonIndicatieBijzondereVerblijfsrechtelijkePositieToe(
-            new PersoonIndicatieBijzondereVerblijfsrechtelijkePositieHisVolledigImplBuilder().nieuwStandaardRecord(actieProbas)
-                                                                                             .waarde(Ja.J)
-                                                                                             .eindeRecord()
-                                                                                             .build());
+    private void voegProbasToe(final MetaObject.Builder builder, final Actie actieProbas) {
+        builder.metObject(
+            MetaObject.maakBuilder()
+                .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE.getId()))
+                .metId(2344)
+                .metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE_IDENTITEIT.getId()))
+                .metRecord()
+                .metId(23551)
+                .metAttribuut(
+                    ElementHelper.getAttribuutElement(Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE_SOORTNAAM.getId()),
+                    SoortIndicatie.BIJZONDERE_VERBLIJFSRECHTELIJKE_POSITIE.toString())
+                .eindeRecord()
+                .eindeGroep()
+                .metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE_STANDAARD.getId()))
+                .metRecord()
+                .metId(23552)
+                .metActieInhoud(actieProbas)
+                .metAttribuut(
+                    ElementHelper.getAttribuutElement(Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE_WAARDE.getId()),
+                    true)
+                .eindeRecord()
+                .eindeGroep()
+                .eindeObject());
+        // builder.metObjectElement(MetaObjectUtil.maakPersoonIndicatieBijzondereVerblijfsrechtelijkePositie(true));
 
-        builder.nieuwAfgeleidAdministratiefRecord(actieProbas)
-               .tijdstipLaatsteWijziging(actieProbas.getTijdstipRegistratie())
-               .tijdstipLaatsteWijzigingGBASystematiek(actieProbas.getTijdstipRegistratie())
-               .eindeRecord();
+        // final MetaGroep.Builder probasGroep =
+        // builder.metGroep().metGroepElement(Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE.getId());
+        //
+        // probasGroep.metRecord()
+        // .metId(23551)
+        // .metActieInhoud(actieProbas)
+        // .metAttribuut(Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE.getId(), true);
     }
 }

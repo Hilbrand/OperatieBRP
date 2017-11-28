@@ -6,10 +6,10 @@
 
 package nl.bzk.brp.beheer.webapp.validatie;
 
+import java.lang.reflect.Constructor;
+import java.time.LocalDate;
 import java.util.HashMap;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumEvtDeelsOnbekendAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.NaamEnumeratiewaardeAttribuut;
+import nl.bzk.algemeenbrp.util.common.DatumUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.validation.Errors;
@@ -39,6 +39,11 @@ public class ValidatieUtilsTest {
         Assert.assertEquals(1, errors.getFieldErrorCount());
         Assert.assertEquals(1, errors.getGlobalErrorCount());
         Assert.assertEquals("fout2", errors.getGlobalErrors().get(0).getCode());
+        ValidatieUtils.valideer(errors, false, "", "fout3");
+        Assert.assertEquals(3, errors.getErrorCount());
+        Assert.assertEquals(1, errors.getFieldErrorCount());
+        Assert.assertEquals(2, errors.getGlobalErrorCount());
+        Assert.assertEquals("fout3", errors.getGlobalErrors().get(1).getCode());
     }
 
     @Test
@@ -57,87 +62,93 @@ public class ValidatieUtilsTest {
     }
 
     @Test
-    public void valideerVerplichtVeldAttribuut() {
-        final Errors errors = new MapBindingResult(new HashMap<>(), "test");
-        ValidatieUtils.valideerVerplichtVeldAttribuut(errors, new NaamEnumeratiewaardeAttribuut("waarde"), "veld");
-        Assert.assertEquals(0, errors.getFieldErrorCount());
-        Assert.assertEquals(0, errors.getGlobalErrorCount());
-        ValidatieUtils.valideerVerplichtVeldAttribuut(errors, new NaamEnumeratiewaardeAttribuut(""), "veld");
-        Assert.assertEquals(1, errors.getFieldErrorCount());
-        Assert.assertEquals(0, errors.getGlobalErrorCount());
-        Assert.assertEquals("veld.verplicht", errors.getFieldErrors().get(0).getCode());
-        ValidatieUtils.valideerVerplichtVeldAttribuut(errors, null, "veld");
-        Assert.assertEquals(2, errors.getFieldErrorCount());
-        Assert.assertEquals(0, errors.getGlobalErrorCount());
-    }
-
-    @Test
     public void valideerDatumLigtNaDatum() {
         final Errors errors = new MapBindingResult(new HashMap<>(), "test");
-        ValidatieUtils.valideerDatumLigtNaDatum(errors, (DatumAttribuut) null, (DatumAttribuut) null, "veld1", "veld2");
+        ValidatieUtils.valideerDatumLigtNaDatum(errors, (Integer) null, (Integer) null, "veld1", "veld2");
         Assert.assertEquals(0, errors.getFieldErrorCount());
         Assert.assertEquals(0, errors.getGlobalErrorCount());
-        ValidatieUtils.valideerDatumLigtNaDatum(errors, new DatumEvtDeelsOnbekendAttribuut(19000101), null, "veld1", "veld2");
+        ValidatieUtils.valideerDatumLigtNaDatum(errors, Integer.valueOf(19000101), null, "veld1", "veld2");
         Assert.assertEquals(0, errors.getFieldErrorCount());
         Assert.assertEquals(0, errors.getGlobalErrorCount());
-        ValidatieUtils.valideerDatumLigtNaDatum(errors, null, new DatumEvtDeelsOnbekendAttribuut(19000102), "veld1", "veld2");
+        ValidatieUtils.valideerDatumLigtNaDatum(errors, null, Integer.valueOf(19000102), "veld1", "veld2");
         Assert.assertEquals(0, errors.getFieldErrorCount());
         Assert.assertEquals(0, errors.getGlobalErrorCount());
-        ValidatieUtils.valideerDatumLigtNaDatum(
-            errors,
-            new DatumEvtDeelsOnbekendAttribuut(19000101),
-            new DatumEvtDeelsOnbekendAttribuut(19000102),
-            "veld1",
-                "veld2");
+        ValidatieUtils.valideerDatumLigtNaDatum(errors, Integer.valueOf(19000101), Integer.valueOf(19000102), "veld1", "veld2");
         Assert.assertEquals(0, errors.getFieldErrorCount());
         Assert.assertEquals(0, errors.getGlobalErrorCount());
 
-        ValidatieUtils.valideerDatumLigtNaDatum(
-            errors,
-            new DatumEvtDeelsOnbekendAttribuut(0),
-            new DatumEvtDeelsOnbekendAttribuut(19000102),
-            "veld1",
-                "veld2");
+        ValidatieUtils.valideerDatumLigtNaDatum(errors, Integer.valueOf(0), Integer.valueOf(19000102), "veld1", "veld2");
         Assert.assertEquals(0, errors.getFieldErrorCount());
         Assert.assertEquals(0, errors.getGlobalErrorCount());
 
-        ValidatieUtils.valideerDatumLigtNaDatum(
-            errors,
-            new DatumEvtDeelsOnbekendAttribuut(20150000),
-            new DatumEvtDeelsOnbekendAttribuut(20150701),
-            "veld1",
-                "veld2");
+        ValidatieUtils.valideerDatumLigtNaDatum(errors, Integer.valueOf(20150000), Integer.valueOf(20150701), "veld1", "veld2");
         Assert.assertEquals(0, errors.getFieldErrorCount());
         Assert.assertEquals(0, errors.getGlobalErrorCount());
 
-        ValidatieUtils.valideerDatumLigtNaDatum(
-            errors,
-            new DatumEvtDeelsOnbekendAttribuut(20150715),
-            new DatumEvtDeelsOnbekendAttribuut(20150700),
-            "veld1",
-                "veld2");
+        ValidatieUtils.valideerDatumLigtNaDatum(errors, Integer.valueOf(20150715), Integer.valueOf(20150700), "veld1", "veld2");
         Assert.assertEquals(0, errors.getFieldErrorCount());
         Assert.assertEquals(0, errors.getGlobalErrorCount());
 
-        ValidatieUtils.valideerDatumLigtNaDatum(
-            errors,
-            new DatumEvtDeelsOnbekendAttribuut(20150715),
-            new DatumEvtDeelsOnbekendAttribuut(20150000),
-            "veld1",
-                "veld2");
+        ValidatieUtils.valideerDatumLigtNaDatum(errors, Integer.valueOf(20150715), Integer.valueOf(20150000), "veld1", "veld2");
         Assert.assertEquals(0, errors.getFieldErrorCount());
         Assert.assertEquals(0, errors.getGlobalErrorCount());
 
-        ValidatieUtils.valideerDatumLigtNaDatum(
-            errors,
-            new DatumEvtDeelsOnbekendAttribuut(19000101),
-            new DatumEvtDeelsOnbekendAttribuut(19000101),
-            "veld1",
-                "veld2");
+        ValidatieUtils.valideerDatumLigtNaDatum(errors, Integer.valueOf(19000101), Integer.valueOf(19000101), "veld1", "veld2");
         Assert.assertEquals(1, errors.getFieldErrorCount());
         Assert.assertEquals(0, errors.getGlobalErrorCount());
         Assert.assertEquals("veld.moetlaterzijn", errors.getFieldErrors().get(0).getCode());
         Assert.assertEquals("veld2", errors.getFieldErrors().get(0).getField());
 
+    }
+
+    @Test
+    public void valideerDeelsOnbekendeDatums() {
+        final Errors errors = new MapBindingResult(new HashMap<>(), "test");
+        ValidatieUtils.valideerGeenDeelsOnbekendeDelen(errors, (Integer) null, "datumIngang");
+        Assert.assertEquals(0, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+        ValidatieUtils.valideerGeenDeelsOnbekendeDelen(errors, Integer.valueOf(19000001), "datumIngang");
+        Assert.assertEquals(1, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+        ValidatieUtils.valideerGeenDeelsOnbekendeDelen(errors, Integer.valueOf(20990101), "datumIngang");
+        Assert.assertEquals(1, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+        ValidatieUtils.valideerGeenDeelsOnbekendeDelen(errors, Integer.valueOf(DatumUtil.vanDatumNaarInteger(LocalDate.now())), "datumIngang");
+        Assert.assertEquals(1, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+        ValidatieUtils.valideerGeenDeelsOnbekendeDelen(errors, Integer.valueOf(0), "datumIngang");
+        Assert.assertEquals(2, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+        ValidatieUtils.valideerGeenDeelsOnbekendeDelen(errors, Integer.valueOf(00000), "datumIngang");
+        Assert.assertEquals(3, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+    }
+
+    @Test
+    public void valideerDatumGroterGelijkAanVandaag() {
+        final Errors errors = new MapBindingResult(new HashMap<>(), "test");
+        ValidatieUtils.valideerDatumLigtNaHuidigeDatum(errors, (Integer) null, "datumIngang");
+        Assert.assertEquals(0, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+        ValidatieUtils.valideerDatumLigtNaHuidigeDatum(errors, Integer.valueOf(19000101), "datumIngang");
+        Assert.assertEquals(1, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+        ValidatieUtils.valideerDatumLigtNaHuidigeDatum(errors, Integer.valueOf(20990101), "datumIngang");
+        Assert.assertEquals(1, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+        ValidatieUtils.valideerDatumLigtNaHuidigeDatum(errors, Integer.valueOf(DatumUtil.vanDatumNaarInteger(LocalDate.now())), "datumIngang");
+        Assert.assertEquals(2, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+        ValidatieUtils.valideerDatumLigtOpOfNaHuidigeDatum(errors, Integer.valueOf(DatumUtil.vanDatumNaarInteger(LocalDate.now())), "datumIngang");
+        Assert.assertEquals(2, errors.getFieldErrorCount());
+        Assert.assertEquals(0, errors.getGlobalErrorCount());
+    }
+
+    @Test
+    public void eenPrivateConstructorTest() throws Exception {
+        Constructor<ValidatieUtils> c = ValidatieUtils.class.getDeclaredConstructor();
+        c.setAccessible(true);
+        ValidatieUtils validatieUtils = c.newInstance();
+        Assert.assertNotNull(validatieUtils);
     }
 }

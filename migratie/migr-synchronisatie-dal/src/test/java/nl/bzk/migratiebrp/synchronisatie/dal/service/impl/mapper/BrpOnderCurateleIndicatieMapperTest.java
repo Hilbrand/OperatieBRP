@@ -7,18 +7,21 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.ArrayList;
+
 import javax.inject.Inject;
-import junit.framework.Assert;
+
+import org.junit.Test;
+
+import org.junit.Assert;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnderCurateleIndicatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
-import org.junit.Test;
 
 public class BrpOnderCurateleIndicatieMapperTest extends BrpAbstractTest {
 
@@ -31,8 +34,8 @@ public class BrpOnderCurateleIndicatieMapperTest extends BrpAbstractTest {
     public void testMapInhoud() {
         final PersoonIndicatieHistorie historie =
                 new PersoonIndicatieHistorie(
-                    new PersoonIndicatie(new Persoon(SoortPersoon.INGESCHREVENE), SoortIndicatie.ONDER_CURATELE),
-                    true);
+                        new PersoonIndicatie(new Persoon(SoortPersoon.INGESCHREVENE), SoortIndicatie.ONDER_CURATELE),
+                        true);
 
         final BrpOnderCurateleIndicatieInhoud result = mapper.mapInhoud(historie, brpOnderzoekMapper);
 

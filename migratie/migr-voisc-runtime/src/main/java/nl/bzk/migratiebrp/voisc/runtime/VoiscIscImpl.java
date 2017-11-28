@@ -6,11 +6,12 @@
 
 package nl.bzk.migratiebrp.voisc.runtime;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
 import nl.bzk.migratiebrp.voisc.database.entities.Bericht;
 import nl.bzk.migratiebrp.voisc.database.entities.StatusEnum;
 import nl.bzk.migratiebrp.voisc.runtime.exceptions.VoiscException;
@@ -23,32 +24,42 @@ import org.springframework.transaction.annotation.Transactional;
 public final class VoiscIscImpl implements VoiscIsc {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    @Inject
     private VoiscDatabase voiscDatabase;
-    @Inject
     private VoiscQueue voiscQueue;
+
+    /**
+     * Constructor.
+     * @param voiscDatabase voisc database
+     * @param voiscQueue voisc queue
+     */
+    @Inject
+    public VoiscIscImpl(final VoiscDatabase voiscDatabase, final VoiscQueue voiscQueue) {
+        this.voiscDatabase = voiscDatabase;
+        this.voiscQueue = voiscQueue;
+    }
 
     /*
      * (non-Javadoc)
      *
-     * @see nl.bzk.isc.voisc.Voiscisc#verstuurBerichtenNaarIsc(java.util.List)
+     * @see nl.bzk.isc.voisc.Voiscisc#accept(java.util.List)
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, value = "voiscTransactionManager")
-    public void verstuurBerichtenNaarIsc(final List<Bericht> messagesToSend) {
+    public void accept(final List<Bericht> messagesToSend) {
         for (final Bericht bericht : messagesToSend) {
-            LOGGER.info("[Bericht {}] Bericht verwerken", bericht.getId());
-            try {
-                voiscQueue.verstuurBerichtNaarIsc(bericht);
-                bericht.setTijdstipVerzonden(new Date());
-                bericht.setStatus(StatusEnum.SENT_TO_ISC);
+            MDCProcessor.startVerwerking(bericht.getVerwerkingsCode()).run(() -> {
+                try {
+                    LOGGER.info("[Bericht {}] Bericht verwerken", bericht.getId());
+                    voiscQueue.verstuurBerichtNaarIsc(bericht);
+                    bericht.setTijdstipVerzonden(new Timestamp(System.currentTimeMillis()));
+                    bericht.setStatus(StatusEnum.SENT_TO_ISC);
 
-                LOGGER.info("[Bericht {}] Bericht opslaan.", bericht.getId());
-                voiscDatabase.saveBericht(bericht);
-
-            } catch (final VoiscException ve) {
-                LOGGER.error("[Bericht {}]: Fout bij verzenden van bericht naar ISC", bericht.getId(), ve);
-            }
+                    LOGGER.info("[Bericht {}] Bericht opslaan.", bericht.getId());
+                    voiscDatabase.saveBericht(bericht);
+                } catch (final VoiscException ve) {
+                    LOGGER.error("[Bericht {}]: Fout bij verzenden van bericht naar ISC", bericht.getId(), ve);
+                }
+            });
             LOGGER.info("[Bericht {}] Bericht verwerking gereed.", bericht.getId());
         }
     }

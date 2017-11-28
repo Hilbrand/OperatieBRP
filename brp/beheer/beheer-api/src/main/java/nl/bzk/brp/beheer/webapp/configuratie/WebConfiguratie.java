@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.configuratie;
@@ -15,12 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import nl.bzk.brp.beheer.webapp.configuratie.json.BrpJsonObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.web.HateoasPageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.HateoasSortHandlerMethodArgumentResolver;
@@ -31,6 +33,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -45,21 +48,55 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @Configuration
 @EnableWebMvc
 @EnableSpringDataWebSupport
-@ComponentScan(basePackages = {"nl.bzk.brp.beheer.webapp.controllers" })
+@ComponentScan(basePackages = {"nl.bzk.brp.beheer.webapp.controllers", "nl.bzk.brp.beheer.webapp.service"})
+@Import(value = JsonConfiguratie.class)
+@ImportResource(value = "classpath:webservice-client.xml")
+
 public class WebConfiguratie extends WebMvcConfigurerAdapter {
 
-    private static final int CACHE_PERIOD = 31556926;
-    private static final Integer MAX_PAGE_SIZE = Integer.valueOf(10000);
+    private static final int CACHE_PERIOD = 31_556_926;
+    private static final Integer MAX_PAGE_SIZE = 10_000;
+    private static final long MAX_AGE = 3600L;
 
-    @Autowired
-    private EntityManagerFactory[] entityManagerFactories;
+    private final EntityManagerFactory[] entityManagerFactories;
+    private final BrpJsonObjectMapper brpJsonObjectMapper;
 
     private final GlobalValidator globalValidator = new GlobalValidator();
 
+    /**
+     * Constructor
+     * @param entityManagerFactories entity manager factories
+     * @param brpJsonObjectMapper mapper voor json naar java en terug
+     */
+    @Inject
+    public WebConfiguratie(final EntityManagerFactory[] entityManagerFactories, final BrpJsonObjectMapper brpJsonObjectMapper) {
+        this.entityManagerFactories = entityManagerFactories;
+        this.brpJsonObjectMapper = brpJsonObjectMapper;
+    }
+
     @Override
-    @SuppressWarnings({"checkstyle:designforextension", "PMD.AvoidDuplicateLiterals"})
+    public final void addCorsMappings(final CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS")
+                .allowedHeaders(
+                        "Host",
+                        "User-Agent",
+                        "X-Requested-With",
+                        "Accept",
+                        "Accept-Language",
+                        "Accept-Encoding",
+                        "Authorization",
+                        "Referer",
+                        "Connection",
+                        "Content-Type")
+                .exposedHeaders("header1", "header2")
+                .maxAge(MAX_AGE)
+                .allowCredentials(true);
+    }
+
+    @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(new CorsInterceptor());
 
         for (final EntityManagerFactory entityManagerFactory : entityManagerFactories) {
             final OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor = new OpenEntityManagerInViewInterceptor();
@@ -74,7 +111,6 @@ public class WebConfiguratie extends WebMvcConfigurerAdapter {
      * @return PageableHandlerResolver
      */
     @Bean
-    @SuppressWarnings("checkstyle:designforextension")
     public HateoasPageableHandlerMethodArgumentResolver pageableResolver() {
         final HateoasPageableHandlerMethodArgumentResolver hateoasPageableHandlerMethodArgumentResolver =
                 new HateoasPageableHandlerMethodArgumentResolver(sortResolver());
@@ -86,7 +122,6 @@ public class WebConfiguratie extends WebMvcConfigurerAdapter {
      * @return SortResolver
      */
     @Bean
-    @SuppressWarnings("checkstyle:designforextension")
     public HateoasSortHandlerMethodArgumentResolver sortResolver() {
         return new HateoasSortHandlerMethodArgumentResolver();
     }
@@ -95,7 +130,6 @@ public class WebConfiguratie extends WebMvcConfigurerAdapter {
      * @return ViewResolver
      */
     @Bean
-    @SuppressWarnings("checkstyle:designforextension")
     public UrlBasedViewResolver setupViewResolver() {
         final UrlBasedViewResolver resolver = new UrlBasedViewResolver();
         resolver.setPrefix("/");
@@ -105,13 +139,11 @@ public class WebConfiguratie extends WebMvcConfigurerAdapter {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public void configureDefaultServletHandling(final DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/META-INF/resources/webjars/").setCachePeriod(CACHE_PERIOD);
         registry.addResourceHandler("/css/**").addResourceLocations("/css/").setCachePeriod(CACHE_PERIOD);
@@ -122,7 +154,6 @@ public class WebConfiguratie extends WebMvcConfigurerAdapter {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public void configureMessageConverters(final List<HttpMessageConverter<?>> converters) {
         converters.add(createJacksonHttpConverter());
 
@@ -130,9 +161,8 @@ public class WebConfiguratie extends WebMvcConfigurerAdapter {
     }
 
     private HttpMessageConverter<Object> createJacksonHttpConverter() {
-        final MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter();
+        final MappingJackson2HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(brpJsonObjectMapper);
         jacksonConverter.setPrettyPrint(true);
-        jacksonConverter.setObjectMapper(new BrpJsonObjectMapper());
 
         return jacksonConverter;
     }
@@ -141,7 +171,6 @@ public class WebConfiguratie extends WebMvcConfigurerAdapter {
      * @return Foutmeldingen resource bundle
      */
     @Bean(name = "foutmeldingen")
-    @SuppressWarnings("checkstyle:designforextension")
     public ResourceBundle getFoutmeldingenResourceBundle() {
         try (InputStream is = WebConfiguratie.class.getResourceAsStream("/foutmeldingen.properties")) {
             return new PropertyResourceBundle(is);
@@ -150,37 +179,33 @@ public class WebConfiguratie extends WebMvcConfigurerAdapter {
         }
     }
 
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public void addFormatters(final FormatterRegistry registry) {
-        registry.addConverter(new Converter<String, Timestamp>() {
-
-            @Override
-            public final Timestamp convert(final String source) {
-                Timestamp timestamp;
-                try {
-                    timestamp = new Timestamp(new SimpleDateFormat("yyyyMMddHHmm").parse(source).getTime());
-                } catch (final ParseException e) {
-                    timestamp = null;
-                }
-                return timestamp;
-            }
-        });
+    private interface StringToTimestampConverter extends Converter<String, Timestamp> {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
+    public void addFormatters(final FormatterRegistry registry) {
+        StringToTimestampConverter converter = source -> {
+            Timestamp timestamp;
+            try {
+                timestamp = new Timestamp(new SimpleDateFormat("yyyyMMddHHmm").parse(source).getTime());
+            } catch (final ParseException e) {
+                timestamp = null;
+            }
+            return timestamp;
+        };
+        registry.addConverter(converter);
+    }
+
+    @Override
     public Validator getValidator() {
         return globalValidator;
     }
 
     /**
      * Registreer alle specifieke validators (om te injecteren in globale validator).
-     *
      * @param validators alle validators
      */
-    @Autowired
-    @SuppressWarnings("checkstyle:designforextension")
+    @Inject
     public void setValidators(final Validator[] validators) {
         globalValidator.setValidators(validators);
     }
@@ -193,7 +218,6 @@ public class WebConfiguratie extends WebMvcConfigurerAdapter {
 
         /**
          * Registreer de specifieke validators.
-         *
          * @param validators validators
          */
         public void setValidators(final Validator[] validators) {

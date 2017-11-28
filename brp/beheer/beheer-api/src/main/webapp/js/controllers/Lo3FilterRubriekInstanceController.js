@@ -16,12 +16,11 @@ angular.module('Lo3FilterRubriekInstanceController', [])
             var oudelijst = orginelelijst.map(function(rubriek) {
                 return rubriek.rubrieknaam;
             });
-            //console.log(orginelelijst);
             var resultaat = [];
             //loop door oudelijst en check welke voor update
             angular.forEach(oudelijst, function(ouderubriek) {
                 var ouderubriekobject = angular.copy(oudelijstmap[ouderubriek]);
-                if (~nieuwelijst.indexOf(ouderubriekobject.rubrieknaam)) {
+                if (nieuwelijst.indexOf(ouderubriekobject.rubrieknaam) >= 0) {
                     if (ouderubriekobject.actief !== 'Ja') {
                         ouderubriekobject.actief = 'Ja';
                         resultaat.push(ouderubriekobject);
@@ -48,24 +47,24 @@ angular.module('Lo3FilterRubriekInstanceController', [])
                     return el;
                 }
             });
-            var beloften = nieuwtoevoegen.map(function(nieuwerubriek, i) {
+            var beloften = nieuwtoevoegen.map(function (nieuwerubriek) {
                 var belofte = $q.defer();
                 var nieuwerubriekobject = {};
-                nieuwerubriekobject.abonnement = context.params.abonnement;
+                nieuwerubriekobject.dienstbundel = context.params.dienstbundel;
                 nieuwerubriekobject.actief = 'Ja';
                 var params = {
                     naam: nieuwerubriek
                 };
-                rubriekBron.get(params, function success(data) {
-                    if (data.numberOfElements == 1) {
-                        ontvangenrubriek = data.content[0];
-                        nieuwerubriekobject.rubriek = ontvangenrubriek.iD;
+                rubriekBron.get(params, function (data) {
+                    if (data.numberOfElements === 1) {
+                        var ontvangenrubriek = data.content[0];
+                        nieuwerubriekobject.rubriek = ontvangenrubriek.id;
                         nieuwerubriekobject.rubrieknaam = ontvangenrubriek.naam;
                         belofte.resolve(nieuwerubriekobject);
                     } else {
                         belofte.reject('verkeerde gegevens ontvangen');
                     }
-                }, function error(data) {
+                }, function (data) {
                     belofte.reject(data);
                 });
                 return belofte.promise;
@@ -74,7 +73,6 @@ angular.module('Lo3FilterRubriekInstanceController', [])
         };
 
         var bepaalNieuweLijst = function(waardenlijst) {
-            console.log(waardenlijst);
             return waardenlijst.split('#');
         };
 
@@ -97,12 +95,11 @@ angular.module('Lo3FilterRubriekInstanceController', [])
             });
             $q.all(
                 bepaalNieuwToetevoegen(nl, oudelijst)
-            ).then(function success(data) {
+            ).then(function (data) {
                 return data.concat(lijstbijtewerken);
-            }).then(function success(data) {
+            }).then(function (data) {
                 return opslaanRubrieken(data);
-            }).then(function success(data) {
-                console.log(data);
+            }).then(function () {
                 $modalInstance.close();
                 $rootScope.$broadcast('info', {type: 'success', message: "Opslaan gelukt."});
                 $rootScope.$broadcast('succes', {item: 'sub'});
@@ -116,7 +113,7 @@ angular.module('Lo3FilterRubriekInstanceController', [])
         };
 
         $scope.hasRole = function(role) {
-        	return $rootScope.user && $rootScope.user.authorities.indexOf(role) != -1;
+        	return $rootScope.user && $rootScope.user.authorities.indexOf(role) !== -1;
         };
     }
 ]);

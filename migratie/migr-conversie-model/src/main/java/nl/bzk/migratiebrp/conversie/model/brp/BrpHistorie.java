@@ -6,24 +6,19 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de BRP Groep Historie.
- * 
+ *
  * Deze class immutable en threadsafe.
- * 
- * 
- * 
- * 
  */
 public final class BrpHistorie {
 
@@ -45,27 +40,19 @@ public final class BrpHistorie {
 
     /**
      * Maakt een BrpHistorie object voor zowel materiele als formele historie.
-     * 
-     * @param datumAanvangGeldigheid
-     *            datum aanvang, mag null zijn
-     * @param datumEindeGeldigheid
-     *            datum eindige geldigheid, mag null zijn
-     * @param datumTijdRegistratie
-     *            datum en tijd van de registratie, mag niet null zijn
-     * @param datumTijdVerval
-     *            datum en tijd van verval, mag null zijn
-     * @param nadereAanduidingVerval
-     *            nadere aanduiding verval ('O' bij een onjuiste rij), mag null zijn
-     * @throws NullPointerException
-     *             als datumTijdRegistratie null is
+     * @param datumAanvangGeldigheid datum aanvang, mag null zijn
+     * @param datumEindeGeldigheid datum eindige geldigheid, mag null zijn
+     * @param datumTijdRegistratie datum en tijd van de registratie, mag niet null zijn
+     * @param datumTijdVerval datum en tijd van verval, mag null zijn
+     * @param nadereAanduidingVerval nadere aanduiding verval ('O' bij een onjuiste rij), mag null zijn
+     * @throws NullPointerException als datumTijdRegistratie null is
      */
     public BrpHistorie(
-        @Element(name = "datumAanvangGeldigheid", required = false) final BrpDatum datumAanvangGeldigheid,
-        @Element(name = "datumEindeGeldigheid", required = false) final BrpDatum datumEindeGeldigheid,
-        @Element(name = "datumTijdRegistratie", required = true) final BrpDatumTijd datumTijdRegistratie,
-        @Element(name = "datumTijdVerval", required = false) final BrpDatumTijd datumTijdVerval,
-        @Element(name = "nadereAanduidingVerval", required = false) final BrpCharacter nadereAanduidingVerval)
-    {
+            @Element(name = "datumAanvangGeldigheid", required = false) final BrpDatum datumAanvangGeldigheid,
+            @Element(name = "datumEindeGeldigheid", required = false) final BrpDatum datumEindeGeldigheid,
+            @Element(name = "datumTijdRegistratie", required = true) final BrpDatumTijd datumTijdRegistratie,
+            @Element(name = "datumTijdVerval", required = false) final BrpDatumTijd datumTijdVerval,
+            @Element(name = "nadereAanduidingVerval", required = false) final BrpCharacter nadereAanduidingVerval) {
 
         if (datumTijdRegistratie == null) {
             throw new NullPointerException("datumTijdRegistratie moet gevuld zijn.");
@@ -79,13 +66,9 @@ public final class BrpHistorie {
 
     /**
      * Maak een BrpHistorie object voor formele historie.
-     * 
-     * @param datumTijdRegistratie
-     *            datum en tijd van de registratie, mag niet null zijn
-     * @param datumTijdVerval
-     *            datum en tijd van verval, mag null zijn
-     * @param nadereAanduidingVerval
-     *            nadere aanduiding verval ('O' bij een onjuiste rij), mag null zijn
+     * @param datumTijdRegistratie datum en tijd van de registratie, mag niet null zijn
+     * @param datumTijdVerval datum en tijd van verval, mag null zijn
+     * @param nadereAanduidingVerval nadere aanduiding verval ('O' bij een onjuiste rij), mag null zijn
      */
     public BrpHistorie(final BrpDatumTijd datumTijdRegistratie, final BrpDatumTijd datumTijdVerval, final BrpCharacter nadereAanduidingVerval) {
         this(null, null, datumTijdRegistratie, datumTijdVerval, nadereAanduidingVerval);
@@ -93,7 +76,6 @@ public final class BrpHistorie {
 
     /**
      * Geef de vervallen.
-     *
      * @return true als de vervaldatum gezet is.
      */
     public boolean isVervallen() {
@@ -102,7 +84,6 @@ public final class BrpHistorie {
 
     /**
      * Geef de waarde van datum tijd registratie.
-     *
      * @return de datumTijdRegistratie
      */
     public BrpDatumTijd getDatumTijdRegistratie() {
@@ -111,7 +92,6 @@ public final class BrpHistorie {
 
     /**
      * Geef de waarde van datum aanvang geldigheid.
-     *
      * @return de datumAanvangGeldigheid
      */
     public BrpDatum getDatumAanvangGeldigheid() {
@@ -120,7 +100,6 @@ public final class BrpHistorie {
 
     /**
      * Geef de waarde van datum einde geldigheid.
-     *
      * @return de datumEindeGeldigheid of null
      */
     public BrpDatum getDatumEindeGeldigheid() {
@@ -129,7 +108,6 @@ public final class BrpHistorie {
 
     /**
      * Geef de waarde van datum tijd verval.
-     *
      * @return de datumTijdVerval of null
      */
     public BrpDatumTijd getDatumTijdVerval() {
@@ -138,7 +116,6 @@ public final class BrpHistorie {
 
     /**
      * Geef de waarde van nadere aanduiding verval.
-     *
      * @return de nadereAanduidingVerval ('O') of null
      */
     public BrpCharacter getNadereAanduidingVerval() {
@@ -147,20 +124,17 @@ public final class BrpHistorie {
 
     /**
      * Geeft aan of de historie een actuele rij betreft.
-     * 
      * @return true als deze historie een actuele rij is
      */
     public boolean isActueel() {
         return (datumTijdVerval == null || !datumTijdVerval.isInhoudelijkGevuld())
-               && (datumEindeGeldigheid == null || !datumEindeGeldigheid.isInhoudelijkGevuld());
+                && (datumEindeGeldigheid == null || !datumEindeGeldigheid.isInhoudelijkGevuld());
     }
 
     /**
-     * @param vervalDatum
-     *            de datum waarop de groep is komen te vervallen
+     * @param vervalDatum de datum waarop de groep is komen te vervallen
      * @return een BrpHistorie waarbij de historie is vervallen op de opgegeven vervalDatum
-     * @throws IllegalStateException
-     *             als de historie al vervallen was.
+     * @throws IllegalStateException als de historie al vervallen was.
      * @see #isVervallen()
      */
     public BrpHistorie laatVervallen(final BrpDatumTijd vervalDatum) {
@@ -172,9 +146,7 @@ public final class BrpHistorie {
 
     /**
      * Bepaal of deze historie qua geldigheid overlap heeft met de meegegeven historie.
-     * 
-     * @param andere
-     *            de andere historie
+     * @param andere de andere historie
      * @return true als er overlap in geldigheid bestaat tussen deze historie en de andere historie
      */
     public boolean geldigheidOverlapt(final BrpHistorie andere) {
@@ -186,7 +158,8 @@ public final class BrpHistorie {
                         && (anderEinde == null || anderEinde.getWaarde() > datumAanvangGeldigheid.getWaarde());
         final boolean anderStartGelijkOfLaterEnHeeftOverlap =
                 andereAanvang.getWaarde() >= datumAanvangGeldigheid.getWaarde()
-                        && (datumEindeGeldigheid == null || datumEindeGeldigheid.getWaarde() > andereAanvang.getWaarde());
+                        && (datumEindeGeldigheid == null
+                        || datumEindeGeldigheid.getWaarde() > andereAanvang.getWaarde());
         return anderStartGelijkOfEerderEnHeeftOverlap || anderStartGelijkOfLaterEnHeeftOverlap;
     }
 
@@ -200,35 +173,37 @@ public final class BrpHistorie {
         }
         final BrpHistorie castOther = (BrpHistorie) other;
         return new EqualsBuilder().append(datumAanvangGeldigheid, castOther.datumAanvangGeldigheid)
-                                  .append(datumEindeGeldigheid, castOther.datumEindeGeldigheid)
-                                  .append(datumTijdRegistratie, castOther.datumTijdRegistratie)
-                                  .append(datumTijdVerval, castOther.datumTijdVerval)
-                                  .append(nadereAanduidingVerval, castOther.nadereAanduidingVerval)
-                                  .isEquals();
+                .append(datumEindeGeldigheid, castOther.datumEindeGeldigheid)
+                .append(datumTijdRegistratie, castOther.datumTijdRegistratie)
+                .append(datumTijdVerval, castOther.datumTijdVerval)
+                .append(nadereAanduidingVerval, castOther.nadereAanduidingVerval)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(datumAanvangGeldigheid)
-                                    .append(datumEindeGeldigheid)
-                                    .append(datumTijdRegistratie)
-                                    .append(datumTijdVerval)
-                                    .append(nadereAanduidingVerval)
-                                    .toHashCode();
+                .append(datumEindeGeldigheid)
+                .append(datumTijdRegistratie)
+                .append(datumTijdVerval)
+                .append(nadereAanduidingVerval)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("datumAanvangGeldigheid", datumAanvangGeldigheid)
-                                                                          .append("datumEindeGeldigheid", datumEindeGeldigheid)
-                                                                          .append("datumTijdRegistratie", datumTijdRegistratie)
-                                                                          .append("datumTijdVerval", datumTijdVerval)
-                                                                          .append("nadereAanduidingVerval", nadereAanduidingVerval)
-                                                                          .toString();
+                .append("datumAanvangGeldigheid", datumAanvangGeldigheid)
+                .append("datumEindeGeldigheid", datumEindeGeldigheid)
+                .append("datumTijdRegistratie", datumTijdRegistratie)
+                .append("datumTijdVerval", datumTijdVerval)
+                .append("nadereAanduidingVerval", nadereAanduidingVerval)
+                .toString();
     }
 
-    /** Builder. */
+    /**
+     * Builder.
+     */
     public static final class Builder {
         private BrpDatum datumAanvangGeldigheid;
         private BrpDatum datumEindeGeldigheid;
@@ -236,15 +211,16 @@ public final class BrpHistorie {
         private BrpDatumTijd datumTijdVerval;
         private BrpCharacter nadereAanduidingVerval;
 
-        /** Maak een lege builder. */
+        /**
+         * Maak een lege builder.
+         */
         public Builder() {
+            /* lege builder*/
         }
 
         /**
          * Maak een initieel gevulde builder.
-         * 
-         * @param inhoud
-         *            initiele vulling
+         * @param inhoud initiele vulling
          */
         public Builder(final BrpHistorie inhoud) {
             datumAanvangGeldigheid = inhoud.datumAanvangGeldigheid;
@@ -263,9 +239,7 @@ public final class BrpHistorie {
 
         /**
          * Zet de waarde van datum aanvang geldigheid.
-         *
-         * @param datumAanvangGeldigheid
-         *            the datumAanvangGeldigheid to set
+         * @param datumAanvangGeldigheid the datumAanvangGeldigheid to set
          */
         public void setDatumAanvangGeldigheid(final BrpDatum datumAanvangGeldigheid) {
             this.datumAanvangGeldigheid = datumAanvangGeldigheid;
@@ -273,9 +247,7 @@ public final class BrpHistorie {
 
         /**
          * Zet de waarde van datum einde geldigheid.
-         *
-         * @param datumEindeGeldigheid
-         *            the datumEindeGeldigheid to set
+         * @param datumEindeGeldigheid the datumEindeGeldigheid to set
          */
         public void setDatumEindeGeldigheid(final BrpDatum datumEindeGeldigheid) {
             this.datumEindeGeldigheid = datumEindeGeldigheid;
@@ -283,9 +255,7 @@ public final class BrpHistorie {
 
         /**
          * Zet de waarde van datum tijd registratie.
-         *
-         * @param datumTijdRegistratie
-         *            the datumTijdRegistratie to set
+         * @param datumTijdRegistratie the datumTijdRegistratie to set
          */
         public void setDatumTijdRegistratie(final BrpDatumTijd datumTijdRegistratie) {
             this.datumTijdRegistratie = datumTijdRegistratie;
@@ -293,9 +263,7 @@ public final class BrpHistorie {
 
         /**
          * Zet de waarde van datum tijd verval.
-         *
-         * @param datumTijdVerval
-         *            the datumTijdVerval to set
+         * @param datumTijdVerval the datumTijdVerval to set
          */
         public void setDatumTijdVerval(final BrpDatumTijd datumTijdVerval) {
             this.datumTijdVerval = datumTijdVerval;
@@ -303,9 +271,7 @@ public final class BrpHistorie {
 
         /**
          * Zet de waarde van nadere aanduiding verval.
-         *
-         * @param nadereAanduidingVerval
-         *            the nadereAanduidingVerval to set
+         * @param nadereAanduidingVerval the nadereAanduidingVerval to set
          */
         public void setNadereAanduidingVerval(final BrpCharacter nadereAanduidingVerval) {
             this.nadereAanduidingVerval = nadereAanduidingVerval;

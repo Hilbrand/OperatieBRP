@@ -26,9 +26,7 @@ public final class AMSchrijver {
 
     /**
      * Constructor.
-     * 
-     * @param file
-     *            output bestand
+     * @param file output bestand
      */
     public AMSchrijver(final File file) {
         this.file = file;
@@ -36,11 +34,8 @@ public final class AMSchrijver {
 
     /**
      * Schrijf het start record.
-     * 
-     * @param originator
-     *            voor wie het AM-bestand bedoelt is.
-     * @throws IOException
-     *             bij schrijf fouten
+     * @param originator voor wie het AM-bestand bedoelt is.
+     * @throws IOException bij schrijf fouten
      */
     public void schrijfStartRecord(final String originator) throws IOException {
         file.getParentFile().mkdirs();
@@ -62,11 +57,8 @@ public final class AMSchrijver {
 
     /**
      * Schrijf een data record (moet een PutMessage bericht zijn in Spd-formaat).
-     * 
-     * @param bericht
-     *            bericht
-     * @throws IOException
-     *             bij schrijf fouten
+     * @param bericht bericht
+     * @throws IOException bij schrijf fouten
      */
     public void schrijfDataRecord(final String bericht) throws IOException {
         final Record dataRecord = new Record();
@@ -76,9 +68,7 @@ public final class AMSchrijver {
 
     /**
      * Schrijf het eind record.
-     * 
-     * @throws IOException
-     *             bij schrijf fouten
+     * @throws IOException bij schrijf fouten
      */
     public void schrijfEndRecord() throws IOException {
         final Record endRecord = new Record();
@@ -109,8 +99,6 @@ public final class AMSchrijver {
 
         /**
          * plaatst @bytes in Record
-         * 
-         * @param bytes
          */
         public void addBytes(final byte[] bytes) {
             System.arraycopy(bytes, 0, record, index, bytes.length);
@@ -119,8 +107,6 @@ public final class AMSchrijver {
 
         /**
          * plaatst de bytes van String value in Record
-         * 
-         * @param value
          */
         public void addBytes(final String value) {
             addBytes(value.getBytes());
@@ -128,9 +114,6 @@ public final class AMSchrijver {
 
         /**
          * schrijft de inhoud van dit record naar @output
-         * 
-         * @param output
-         * @throws IOException
          */
         public void write(final OutputStream output) throws IOException {
             int blocks = index / BLOCK_SIZE;

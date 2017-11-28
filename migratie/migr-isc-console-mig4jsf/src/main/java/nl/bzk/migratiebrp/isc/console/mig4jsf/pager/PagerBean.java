@@ -22,11 +22,8 @@ public final class PagerBean implements Serializable {
 
     /**
      * Constructor.
-     * 
-     * @param page
-     *            pagina
-     * @param pageSize
-     *            pagina grootte
+     * @param page pagina
+     * @param pageSize pagina grootte
      */
     public PagerBean(final int page, final int pageSize) {
         this.page = page;
@@ -35,7 +32,6 @@ public final class PagerBean implements Serializable {
 
     /**
      * Geef de waarde van page.
-     *
      * @return page
      */
     public int getPage() {
@@ -44,7 +40,6 @@ public final class PagerBean implements Serializable {
 
     /**
      * Geef de waarde van page size.
-     *
      * @return page size
      */
     public int getPageSize() {
@@ -55,9 +50,7 @@ public final class PagerBean implements Serializable {
 
     /**
      * Zet het aantal resultaten uit de query (om aantal paginas en grootte van deze pagina te bereken).
-     * 
-     * @param numberOfResults
-     *            aantal resultaten
+     * @param numberOfResults aantal resultaten
      */
     public void setNumberOfResults(final int numberOfResults) {
         totalPages = (numberOfResults + pageSize - 1) / pageSize;
@@ -68,7 +61,6 @@ public final class PagerBean implements Serializable {
 
     /**
      * Geef de waarde van total pages.
-     *
      * @return total pages
      */
     public int getTotalPages() {
@@ -77,7 +69,6 @@ public final class PagerBean implements Serializable {
 
     /**
      * Geef de first page.
-     *
      * @return true als dit de eerste pagina is
      */
     public boolean isFirstPage() {
@@ -86,7 +77,6 @@ public final class PagerBean implements Serializable {
 
     /**
      * Geef de last page.
-     *
      * @return true als dit de laatste pagina is
      */
     public boolean isLastPage() {
@@ -97,7 +87,6 @@ public final class PagerBean implements Serializable {
 
     /**
      * Geef de waarde van first.
-     *
      * @return eerste index in de list voor deze pagina (=0)
      */
     public int getFirst() {
@@ -106,7 +95,6 @@ public final class PagerBean implements Serializable {
 
     /**
      * Geef de waarde van limit.
-     *
      * @return laatste index in de list voor deze pagina
      */
     public int getLimit() {

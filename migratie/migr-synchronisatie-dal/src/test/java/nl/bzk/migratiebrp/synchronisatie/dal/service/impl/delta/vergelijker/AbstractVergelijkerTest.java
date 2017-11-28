@@ -14,6 +14,18 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.After;
+import org.junit.Before;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
@@ -27,12 +39,7 @@ import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.PreconditiesService;
 import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.SyncParameters;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.TestPersonen;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.PersoonMapper;
@@ -40,12 +47,6 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Onder
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapperImpl;
 import nl.bzk.migratiebrp.test.common.reader.ExcelReader;
 import nl.bzk.migratiebrp.util.excel.ExcelAdapterException;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.After;
-import org.junit.Before;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
  * Abstract class ter ondersteuning van de vergelijker testen.
@@ -88,7 +89,6 @@ public abstract class AbstractVergelijkerTest extends AbstractDatabaseTest {
 
     /**
      * Geef de waarde van test data folder name.
-     *
      * @return test data folder name
      */
     protected abstract String getTestDataFolderName();
@@ -99,8 +99,7 @@ public abstract class AbstractVergelijkerTest extends AbstractDatabaseTest {
     }
 
     List<BrpPersoonslijst> converteerNaarBrpPersoon(final List<Lo3Lg01BerichtWaarde> excelWaarden) throws BerichtSyntaxException,
-        OngeldigePersoonslijstException
-    {
+            OngeldigePersoonslijstException {
         final List<BrpPersoonslijst> brpPersoonlijsten = new ArrayList<>();
         for (final Lo3Lg01BerichtWaarde berichtWaarde : excelWaarden) {
             final List<Lo3CategorieWaarde> syntax = syntaxControle.controleer(berichtWaarde.getLo3CategorieWaardeList());
@@ -115,7 +114,7 @@ public abstract class AbstractVergelijkerTest extends AbstractDatabaseTest {
 
     private Pair<Persoon, Set<Onderzoek>> mapNaarBrpPersoon(final BrpPersoonslijst brpPl) {
         final Persoon kluizenaar = new Persoon(SoortPersoon.INGESCHREVENE);
-        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(kluizenaar);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(kluizenaar, maakPartij());
         final Lo3Bericht lo3Bericht =
                 new Lo3Bericht("Referentie", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()), "<geen bericht>", true);
         final SyncParameters syncParams = new SyncParameters();
@@ -124,9 +123,12 @@ public abstract class AbstractVergelijkerTest extends AbstractDatabaseTest {
         return Pair.of(kluizenaar, onderzoekMapper.getOnderzoekSet());
     }
 
+    public Partij maakPartij() {
+        return new Partij("Gemeente 's-Gravenhage", "051801");
+    }
+
     protected TestPersonen getTestPersonen(final String name) throws IOException, BerichtSyntaxException, OngeldigePersoonslijstException,
-        ExcelAdapterException, Lo3SyntaxException
-    {
+            ExcelAdapterException, Lo3SyntaxException {
         final List<Lo3Lg01BerichtWaarde> excelWaarden = reader.getInputLo3(name);
         final List<BrpPersoonslijst> brpPersoonslijsten = converteerNaarBrpPersoon(excelWaarden);
 

@@ -7,13 +7,13 @@
 package nl.bzk.migratiebrp.isc.telling.entiteit;
 
 import java.sql.Timestamp;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class BerichtTellingIdTest {
 
     private static final String BERICHT_TYPE = "Lg01";
-    private static final String KANAAL = "VOSPG";
+    private static final String KANAAL = "VOISC";
     private static final Timestamp DATUM = new Timestamp(System.currentTimeMillis());
 
     @Test

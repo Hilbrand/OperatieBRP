@@ -9,8 +9,8 @@ package nl.bzk.migratiebrp.util.common.jmx;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 import org.springframework.jmx.export.naming.ObjectNamingStrategy;
 import org.springframework.jmx.support.ObjectNameManager;
@@ -43,9 +43,7 @@ public final class DynamicDomainNamingStrategy implements ObjectNamingStrategy {
 
     /**
      * Zet het domein.
-     * 
-     * @param domain
-     *            het te zetten domein
+     * @param domain het te zetten domein
      */
     public void setDomain(final String domain) {
         this.domain = domain;
@@ -53,9 +51,7 @@ public final class DynamicDomainNamingStrategy implements ObjectNamingStrategy {
 
     /**
      * Zet de delegate.
-     * 
-     * @param delegate
-     *            de te zetten delegate
+     * @param delegate de te zetten delegate
      */
     public void setDelegate(final ObjectNamingStrategy delegate) {
         this.delegate = delegate;

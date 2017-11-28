@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.util.common;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -19,10 +19,10 @@ import static org.junit.Assert.*;
 public class EncodingConstantsTest {
 
     @Test
-    public void testSettings(){
-        assertEquals(StandardCharsets.UTF_8,EncodingConstants.CHARSET);
-        assertEquals(StandardCharsets.UTF_8.name(),EncodingConstants.CHARSET_NAAM);
-        assertEquals(Locale.forLanguageTag("nl-NL"),EncodingConstants.LOCALE);
+    public void testSettings() {
+        assertEquals(StandardCharsets.UTF_8, EncodingConstants.CHARSET);
+        assertEquals(StandardCharsets.UTF_8.name(), EncodingConstants.CHARSET_NAAM);
+        assertEquals(Locale.forLanguageTag("nl-NL"), EncodingConstants.LOCALE);
 
     }
 
@@ -33,7 +33,7 @@ public class EncodingConstantsTest {
             constructors[0].setAccessible(true);
             constructors[0].newInstance((Object[]) null);
             Assert.fail();
-        }catch(InvocationTargetException e){
+        } catch (InvocationTargetException e) {
             Assert.assertTrue(e.getCause() instanceof AssertionError);
             throw e.getCause();
         }

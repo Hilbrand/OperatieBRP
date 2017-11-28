@@ -73,12 +73,8 @@
             </datumtijdstempel>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <documentatie>
             <id>21727</id>

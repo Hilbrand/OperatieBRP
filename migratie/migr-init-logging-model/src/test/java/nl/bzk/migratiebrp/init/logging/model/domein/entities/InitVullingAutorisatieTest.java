@@ -15,16 +15,16 @@ public class InitVullingAutorisatieTest {
     public void test() {
         final InitVullingAutorisatie subject = new InitVullingAutorisatie();
 
-        Assert.assertNull(subject.getAfnemerCode());
-        subject.setAfnemerCode(123456);
-        Assert.assertEquals(Integer.valueOf(123456), subject.getAfnemerCode());
+        Assert.assertNull(subject.getAutorisatieId());
+        subject.setAutorisatieId(123456L);
+        Assert.assertEquals(Long.valueOf(123456L), subject.getAutorisatieId());
 
         Assert.assertNull(subject.getConversieResultaat());
         subject.setConversieResultaat("VIERKANT");
         Assert.assertEquals("VIERKANT", subject.getConversieResultaat());
 
-        Assert.assertNull(subject.getFoutmelding());
-        subject.setFoutmelding("LINKERKANT IS STUK");
-        Assert.assertEquals("LINKERKANT IS STUK", subject.getFoutmelding());
+        Assert.assertNull(subject.getConversieMelding());
+        subject.setConversieMelding("LINKERKANT IS STUK");
+        Assert.assertEquals("LINKERKANT IS STUK", subject.getConversieMelding());
     }
 }

@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Context voor een conversie.
@@ -35,11 +35,8 @@ public final class ConverterContext {
 
     /**
      * Registreer een persoon.
-     * 
-     * @param localId
-     *            lokaal id
-     * @param persoon
-     *            persoon
+     * @param localId lokaal id
+     * @param persoon persoon
      */
     public void storePersoon(final int localId, final Persoon persoon) {
         LOG.info("storePersoon(localId={}, persoon={}", localId, persoon);
@@ -48,12 +45,9 @@ public final class ConverterContext {
 
     /**
      * Zoek een persoon.
-     * 
-     * @param localId
-     *            lokaal id
+     * @param localId lokaal id
      * @return persoon
-     * @throws IllegalArgumentException
-     *             wanneer de persoon niet is gevonden
+     * @throws IllegalArgumentException wanneer de persoon niet is gevonden
      */
     public Persoon getPersoon(final int localId) {
         if (personen.containsKey(localId)) {
@@ -65,7 +59,6 @@ public final class ConverterContext {
 
     /**
      * Geef alle geregistreerde personen.
-     * 
      * @return lijst met personen
      */
     public List<Persoon> getPersonen() {
@@ -74,11 +67,8 @@ public final class ConverterContext {
 
     /**
      * Registreer een IST stapel.
-     * 
-     * @param localId
-     *            lokaal id
-     * @param stapel
-     *            de IST stapel
+     * @param localId lokaal id
+     * @param stapel de IST stapel
      */
     public void storeStapel(final int localId, final Stapel stapel) {
         LOG.info("storeStapel(localId={}, stapel={}", localId, stapel);
@@ -87,12 +77,9 @@ public final class ConverterContext {
 
     /**
      * Zoek een stapel.
-     * 
-     * @param localId
-     *            lokaal id
+     * @param localId lokaal id
      * @return actie
-     * @throws IllegalArgumentException
-     *             wanneer de stapel niet is gevonden
+     * @throws IllegalArgumentException wanneer de stapel niet is gevonden
      */
     public Stapel getStapel(final int localId) {
         if (stapels.containsKey(localId)) {
@@ -104,11 +91,8 @@ public final class ConverterContext {
 
     /**
      * Registreer een administratieve handeling.
-     * 
-     * @param localId
-     *            lokaal id
-     * @param adminHandeling
-     *            de administratieve handeling
+     * @param localId lokaal id
+     * @param adminHandeling de administratieve handeling
      */
     public void storeAdministratieveHandeling(final int localId, final AdministratieveHandeling adminHandeling) {
         LOG.info("storeAdministratieveHandeling(localId={}, administratieveHandeling={}", localId, adminHandeling);
@@ -117,12 +101,9 @@ public final class ConverterContext {
 
     /**
      * Zoek een administratieve handeling.
-     * 
-     * @param localId
-     *            lokaal id
+     * @param localId lokaal id
      * @return actie
-     * @throws IllegalArgumentException
-     *             wanneer de administratieve handeling niet is gevonden
+     * @throws IllegalArgumentException wanneer de administratieve handeling niet is gevonden
      */
     public AdministratieveHandeling getAdministratieveHandeling(final int localId) {
         if (adminHandelingen.containsKey(localId)) {
@@ -134,11 +115,8 @@ public final class ConverterContext {
 
     /**
      * Registreer een actie.
-     * 
-     * @param localId
-     *            lokaal id
-     * @param actie
-     *            actie
+     * @param localId lokaal id
+     * @param actie actie
      */
     public void storeActie(final int localId, final BRPActie actie) {
         LOG.info("storeActie(localId={}, actie={}", localId, actie);
@@ -147,12 +125,9 @@ public final class ConverterContext {
 
     /**
      * Zoek een actie.
-     * 
-     * @param localId
-     *            lokaal id
+     * @param localId lokaal id
      * @return actie
-     * @throws IllegalArgumentException
-     *             wanneer de actie niet is gevonden
+     * @throws IllegalArgumentException wanneer de actie niet is gevonden
      */
     public BRPActie getActie(final int localId) {
         if (acties.containsKey(localId)) {
@@ -164,7 +139,6 @@ public final class ConverterContext {
 
     /**
      * Geef alle geregistreerde actie.
-     * 
      * @return lijst met acties
      */
     public List<BRPActie> getActies() {
@@ -173,11 +147,8 @@ public final class ConverterContext {
 
     /**
      * Registreer een relatie.
-     * 
-     * @param localId
-     *            lokaal id
-     * @param relatie
-     *            relatie
+     * @param localId lokaal id
+     * @param relatie relatie
      */
     public void storeRelatie(final int localId, final Relatie relatie) {
         LOG.info("storeRelatie(localId={}, relatie={}", localId, relatie);
@@ -186,12 +157,9 @@ public final class ConverterContext {
 
     /**
      * Zoek een relatie.
-     * 
-     * @param localId
-     *            lokaal id
+     * @param localId lokaal id
      * @return relatie
-     * @throws IllegalArgumentException
-     *             wanneer de relatie niet is gevonden
+     * @throws IllegalArgumentException wanneer de relatie niet is gevonden
      */
     public Relatie getRelatie(final int localId) {
         if (relaties.containsKey(localId)) {
@@ -203,7 +171,6 @@ public final class ConverterContext {
 
     /**
      * Geef alle geregistreerde relaties.
-     * 
      * @return lijst met relaties
      */
     public List<Relatie> getRelaties() {
@@ -212,11 +179,8 @@ public final class ConverterContext {
 
     /**
      * Registreer een betrokkenheid.
-     * 
-     * @param localId
-     *            lokaal id
-     * @param betrokkenheid
-     *            betrokkenheid
+     * @param localId lokaal id
+     * @param betrokkenheid betrokkenheid
      */
     public void storeBetrokkenheid(final int localId, final Betrokkenheid betrokkenheid) {
         LOG.info("storeBetrokkenheid(localId={}, relatie={}", localId, betrokkenheid);
@@ -225,12 +189,9 @@ public final class ConverterContext {
 
     /**
      * Zoek een betrokkenheid.
-     * 
-     * @param localId
-     *            lokaal id
+     * @param localId lokaal id
      * @return betrokkenheid
-     * @throws IllegalArgumentException
-     *             wanneer de betrokkenheid niet is gevonden
+     * @throws IllegalArgumentException wanneer de betrokkenheid niet is gevonden
      */
     public Betrokkenheid getBetrokkenheid(final int localId) {
         if (betrokkenheden.containsKey(localId)) {
@@ -242,7 +203,6 @@ public final class ConverterContext {
 
     /**
      * Geef alle geregistreerde betrokkenheden.
-     * 
      * @return lijst met betrokkenheden
      */
     public List<Betrokkenheid> getBetrokkenheden() {

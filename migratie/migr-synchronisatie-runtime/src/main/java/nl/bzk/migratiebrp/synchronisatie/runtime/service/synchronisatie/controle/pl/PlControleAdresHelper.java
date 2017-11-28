@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -24,7 +23,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
-
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -43,15 +41,13 @@ public final class PlControleAdresHelper {
     /**
      * Maakt op basis van de brp persoonslijst een map aan met daarin de voorkomens van de historische adressen. Per
      * voorkomen wordt in de map bijgehouden hoe vaak deze voorkomt op de persoonslijst.
-     *
-     * @param persoonslijst
-     *            De brp persoonslijst.
+     * @param persoonslijst De brp persoonslijst.
      * @return De map met daarin de adressen en hoe vaak deze voorkomen op de persoonslijst.
      */
     public static Map<AdresData, Long> getAdresHistorie(final BrpPersoonslijst persoonslijst) {
         final BrpStapel<BrpAdresInhoud> stapel = persoonslijst.getAdresStapel();
         if (stapel == null) {
-            return new LinkedHashMap<AdresData, Long>();
+            return new LinkedHashMap<>();
         }
 
         final Map<AdresData, Long> adressen = new LinkedHashMap<>();
@@ -72,17 +68,14 @@ public final class PlControleAdresHelper {
 
     /**
      * Voegt een adres toe aan de map van adressen.
-     *
-     * @param adressenMap
-     *            De huidige map van adressen.
-     * @param adres
-     *            Het toe te voegen adres.
+     * @param adressenMap De huidige map van adressen.
+     * @param adres Het toe te voegen adres.
      */
     public static void voegAdresToeAanMap(final Map<AdresData, Long> adressenMap, final AdresData adres) {
 
         if (adressenMap.containsKey(adres)) {
-            Long aantal = adressenMap.get(adres);
-            adressenMap.put(adres, ++aantal);
+            Long nieuwAantal = adressenMap.get(adres) + 1;
+            adressenMap.put(adres, nieuwAantal);
         } else {
             adressenMap.put(adres, 1L);
         }
@@ -91,51 +84,59 @@ public final class PlControleAdresHelper {
 
     /**
      * Vergelijkt of de gegeven volledige set van adressen de gegeven subset van adressen bevat.
-     *
-     * @param volledigeSet
-     *            volledige set van adressen
-     * @param subSet
-     *            Map met de adressen van de gevonden PL.
+     * @param volledigeSet volledige set van adressen
+     * @param subSet Map met de adressen van de gevonden PL.
      * @return True indien bovenstaande vergelijking slaagt, false in andere gevallen.
      */
     public static boolean volledigSetBevatSubset(final Map<AdresData, Long> volledigeSet, final Map<AdresData, Long> subSet) {
 
-        boolean resultaat = true;
-
-        for (final Iterator<Map.Entry<AdresData, Long>> adresIterator = subSet.entrySet().iterator(); adresIterator.hasNext();) {
-
-            final Map.Entry<AdresData, Long> adres = adresIterator.next();
-
-            if (volledigeSet.get(adres.getKey()) == null) {
-                resultaat = false;
-                break;
-            }
-
-            if (!(volledigeSet.get(adres.getKey()) >= subSet.get(adres.getKey()))) {
-                resultaat = false;
-                break;
-            }
+        // Controleer of de grootte van de sets overeenkomt of dat de volledige set groter is voordat we inhoudelijk
+        // gaan vergelijken.
+        if (volledigeSet.size() < subSet.size()) {
+            // De grootte van de sets komt niet overeen of de volledige set is kleiner, het heeft geen zin om
+            // inhoudelijk te gaan vergelijken aangezien
+            // ze niet volledig gelijk kunnen zijn.
+            return false;
         }
 
-        return resultaat;
+        return bepaalInhoudelijkSetBevatSubset(volledigeSet, subSet);
     }
 
     /**
-     * Comparator voor mogelijke null waarden.
-     *
-     * @param o1
-     *            Waarde 1
-     * @param o2
-     *            Waarde 2
-     * @return Resultaat van de vergelijking.
+     * Vergelijkt of de gegeven volledige set van adressen gelijk is aan de gegeven subset van adressen.
+     * @param volledigeSet volledige set van adressen
+     * @param subSet Map met de adressen van de gevonden PL.
+     * @return True indien bovenstaande vergelijking slaagt, false in andere gevallen.
      */
-    private static <T extends Comparable<T>> int compareNulls(final T o1, final T o2) {
-        if (o1 == null) {
-            return o2 == null ? 0 : -1;
-        } else {
-            return o2 == null ? 1 : o1.compareTo(o2);
+    public static boolean volledigSetGelijkAanSubset(final Map<AdresData, Long> volledigeSet, final Map<AdresData, Long> subSet) {
+
+        // Controleer of de grootte van de sets overeenkomt voordat we inhoudelijk gaan vergelijken.
+        if (volledigeSet.size() != subSet.size()) {
+            // De grootte van de sets komt niet overeen, het heeft geen zin om inhoudelijk te gaan vergelijken aangezien
+            // ze niet volledig gelijk kunnen zijn.
+            return false;
         }
+
+        return bepaalInhoudelijkSetBevatSubset(volledigeSet, subSet);
     }
+
+    private static boolean bepaalInhoudelijkSetBevatSubset(final Map<AdresData, Long> volledigeSet, final Map<AdresData, Long> subSet) {
+        boolean resultaat = true;
+
+        for (final Map.Entry<AdresData, Long> entry : subSet.entrySet()) {
+
+            if (volledigeSet.get(entry.getKey()) == null) {
+                resultaat = false;
+            }
+
+            if (!resultaat || volledigeSet.get(entry.getKey()) < subSet.get(entry.getKey())) {
+                resultaat = false;
+                break;
+            }
+        }
+        return resultaat;
+    }
+
 
     /**
      * Comparator voor de BrpGroepInhoud.
@@ -167,6 +168,21 @@ public final class PlControleAdresHelper {
             return result;
         }
 
+
+        /**
+         * Comparator voor mogelijke null waarden.
+         * @param o1 Waarde 1
+         * @param o2 Waarde 2
+         * @return Resultaat van de vergelijking.
+         */
+        private static <T extends Comparable<T>> int compareNulls(final T o1, final T o2) {
+            if (o1 == null) {
+                return o2 == null ? 0 : -1;
+            } else {
+                return o2 == null ? 1 : o1.compareTo(o2);
+            }
+        }
+
     }
 
     /**
@@ -190,12 +206,8 @@ public final class PlControleAdresHelper {
 
         /**
          * Constructor waarbij gegevens vanuit het BRP-adres worden overgenomen.
-         *
-         * @param adres
-         *            Het BRP adres waaruit we de gegevens over nemen.
-         * @param gemeenteCodeInControle
-         *            True indien de gemeentecode meegenomen dient te worden in de vergelijking.
-         *
+         * @param adres Het BRP adres waaruit we de gegevens over nemen.
+         * @param gemeenteCodeInControle True indien de gemeentecode meegenomen dient te worden in de vergelijking.
          */
         public AdresData(final BrpAdresInhoud adres, final boolean gemeenteCodeInControle) {
             gemeenteCode = adres.getGemeenteCode();
@@ -215,38 +227,24 @@ public final class PlControleAdresHelper {
 
         @Override
         public int hashCode() {
-            if (gemeenteCodeInControle) {
-                return new HashCodeBuilder().append(PlControleHelper.geefAttribuutWaarde(gemeenteCode))
-                                            .append(PlControleHelper.geefAttribuutWaarde(huisnummer))
-                                            .append(PlControleHelper.geefAttribuutWaarde(huisletter))
-                                            .append(PlControleHelper.geefAttribuutWaarde(huisnummertoevoeging))
-                                            .append(PlControleHelper.geefAttribuutWaarde(postcode))
-                                            .append(PlControleHelper.geefAttribuutWaarde(woonplaatsnaam))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel1))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel2))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel3))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel4))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel5))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel6))
-                                            .toHashCode();
-            } else {
-                return new HashCodeBuilder().append(PlControleHelper.geefAttribuutWaarde(huisnummer))
-                                            .append(PlControleHelper.geefAttribuutWaarde(huisletter))
-                                            .append(PlControleHelper.geefAttribuutWaarde(huisnummertoevoeging))
-                                            .append(PlControleHelper.geefAttribuutWaarde(postcode))
-                                            .append(PlControleHelper.geefAttribuutWaarde(woonplaatsnaam))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel1))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel2))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel3))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel4))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel5))
-                                            .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel6))
-                                            .toHashCode();
-            }
+            return new HashCodeBuilder().append(gemeenteCodeInControle ? PlControleHelper.geefAttribuutWaarde(gemeenteCode) : null)
+                    .append(PlControleHelper.geefAttribuutWaarde(huisnummer))
+                    .append(PlControleHelper.geefAttribuutWaarde(huisletter))
+                    .append(PlControleHelper.geefAttribuutWaarde(huisnummertoevoeging))
+                    .append(PlControleHelper.geefAttribuutWaarde(postcode))
+                    .append(PlControleHelper.geefAttribuutWaarde(woonplaatsnaam))
+                    .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel1))
+                    .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel2))
+                    .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel3))
+                    .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel4))
+                    .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel5))
+                    .append(PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel6))
+                    .toHashCode();
         }
 
         @Override
         public boolean equals(final Object other) {
+            boolean result;
             if (this == other) {
                 return true;
             }
@@ -256,59 +254,80 @@ public final class PlControleAdresHelper {
             final AdresData castOther = (AdresData) other;
 
             if (gemeenteCodeInControle) {
-                return AbstractBrpAttribuutMetOnderzoek.equalsWaarde(gemeenteCode, castOther.gemeenteCode)
-                       && bepaalHuisnummerGegevensGelijk(castOther)
-                       && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(postcode, castOther.postcode)
-                       && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(woonplaatsnaam, castOther.woonplaatsnaam)
-                       && bepaalBuitenlandseAdresRegels1Tot3Gelijk(castOther)
-                       && bepaalBuitenlandseAdresRegels4Tot6Gelijk(castOther);
-            } else {
-                return bepaalHuisnummerGegevensGelijk(castOther)
-                        && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(postcode, castOther.postcode)
-                        && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(woonplaatsnaam, castOther.woonplaatsnaam)
+                result = AbstractBrpAttribuutMetOnderzoek.equalsWaarde(gemeenteCode, castOther.gemeenteCode)
+                        && bepaalAdresGegevensGelijk(castOther)
                         && bepaalBuitenlandseAdresRegels1Tot3Gelijk(castOther)
                         && bepaalBuitenlandseAdresRegels4Tot6Gelijk(castOther);
+            } else {
+                result = bepaalAdresGegevensGelijk(castOther)
+                        && bepaalBuitenlandseAdresRegels1Tot3Gelijk(castOther)
+                        && bepaalBuitenlandseAdresRegels4Tot6Gelijk(castOther);
+
             }
+            return result;
+        }
+
+        private boolean bepaalAdresGegevensGelijk(AdresData castOther) {
+            return bepaalHuisnummerGegevensGelijk(castOther)
+                    && bepaalWoonplaatsgegevensGelijk(castOther);
+        }
+
+        private boolean bepaalWoonplaatsgegevensGelijk(AdresData castOther) {
+            return AbstractBrpAttribuutMetOnderzoek.equalsWaarde(postcode, castOther.postcode)
+                    && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(woonplaatsnaam, castOther.woonplaatsnaam);
         }
 
         private boolean bepaalHuisnummerGegevensGelijk(final AdresData castOther) {
             return AbstractBrpAttribuutMetOnderzoek.equalsWaarde(huisnummer, castOther.huisnummer)
-                   && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(huisnummer, castOther.huisnummer)
-                   && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(huisletter, castOther.huisletter)
-                   && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(huisnummertoevoeging, castOther.huisnummertoevoeging);
+                    && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(huisletter, castOther.huisletter)
+                    && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(huisnummertoevoeging, castOther.huisnummertoevoeging);
         }
 
         private boolean bepaalBuitenlandseAdresRegels1Tot3Gelijk(final AdresData castOther) {
             return AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel1, castOther.buitenlandsAdresRegel1)
-                   && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel2, castOther.buitenlandsAdresRegel2)
-                   && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel3, castOther.buitenlandsAdresRegel3);
+                    && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel2, castOther.buitenlandsAdresRegel2)
+                    && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel3, castOther.buitenlandsAdresRegel3);
         }
 
         private boolean bepaalBuitenlandseAdresRegels4Tot6Gelijk(final AdresData castOther) {
             return AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel4, castOther.buitenlandsAdresRegel4)
-                   && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel5, castOther.buitenlandsAdresRegel5)
-                   && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel6, castOther.buitenlandsAdresRegel6);
+                    && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel5, castOther.buitenlandsAdresRegel5)
+                    && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(buitenlandsAdresRegel6, castOther.buitenlandsAdresRegel6);
         }
 
         @Override
         public String toString() {
-            final String toString =
-                    new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("gemeenteCode", PlControleHelper.geefAttribuutWaarde(gemeenteCode))
-                        .append("huisnummer", PlControleHelper.geefAttribuutWaarde(huisnummer))
-                        .append("huisletter", PlControleHelper.geefAttribuutWaarde(huisletter))
-                        .append("huisnummertoevoeging", PlControleHelper.geefAttribuutWaarde(huisnummertoevoeging))
-                        .append("postcode", PlControleHelper.geefAttribuutWaarde(postcode))
-                        .append("woonplaatsnaam", PlControleHelper.geefAttribuutWaarde(woonplaatsnaam))
-                        .append("buitenlandsAdresRegel1", PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel1))
-                        .append("buitenlandsAdresRegel2", PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel2))
-                        .append("buitenlandsAdresRegel3", PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel3))
-                        .append("buitenlandsAdresRegel4", PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel4))
-                        .append("buitenlandsAdresRegel5", PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel5))
-                        .append("buitenlandsAdresRegel6", PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel6))
-                        .toString()
-                        .replaceAll("PlControleAdresHelper.AdresData", "Adres")
-                        .replaceAll("<null>", "<leeg>");
-            return toString;
+            return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("gemeenteCode", PlControleHelper.geefAttribuutWaarde(gemeenteCode))
+                    .append("huisnummer", PlControleHelper.geefAttribuutWaarde(huisnummer))
+                    .append("huisletter", PlControleHelper.geefAttribuutWaarde(huisletter))
+                    .append(
+                            "huisnummertoevoeging",
+                            PlControleHelper.geefAttribuutWaarde(huisnummertoevoeging))
+                    .append("postcode", PlControleHelper.geefAttribuutWaarde(postcode))
+                    .append(
+                            "woonplaatsnaam",
+                            PlControleHelper.geefAttribuutWaarde(woonplaatsnaam))
+                    .append(
+                            "buitenlandsAdresRegel1",
+                            PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel1))
+                    .append(
+                            "buitenlandsAdresRegel2",
+                            PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel2))
+                    .append(
+                            "buitenlandsAdresRegel3",
+                            PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel3))
+                    .append(
+                            "buitenlandsAdresRegel4",
+                            PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel4))
+                    .append(
+                            "buitenlandsAdresRegel5",
+                            PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel5))
+                    .append(
+                            "buitenlandsAdresRegel6",
+                            PlControleHelper.geefAttribuutWaarde(buitenlandsAdresRegel6))
+                    .toString()
+                    .replaceAll("PlControleAdresHelper.AdresData", "Adres")
+                    .replaceAll("<null>", "<leeg>");
         }
     }
 

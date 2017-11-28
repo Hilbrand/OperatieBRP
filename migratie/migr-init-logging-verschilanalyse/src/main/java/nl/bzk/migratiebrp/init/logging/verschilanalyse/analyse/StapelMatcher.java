@@ -16,16 +16,13 @@ import nl.bzk.migratiebrp.init.logging.model.StapelMatch;
 /**
  * Voert de matching op stapel-niveau uit. Matching gebeurt op basis van {@link Lo3Herkomst}.
  */
-public final class StapelMatcher {
+final class StapelMatcher {
 
     private StapelMatcher() {
     }
 
-    private static <T extends Lo3CategorieInhoud> void matchStapels(
-        final List<Lo3Stapel<T>> stapels,
-        final List<StapelMatch<T>> matching,
-        final boolean isLo3Stapel)
-    {
+    private static <T extends Lo3CategorieInhoud> void matchStapels(final List<Lo3Stapel<T>> stapels, final List<StapelMatch<T>> matching,
+                                                                    final boolean isLo3Stapel) {
         for (final Lo3Stapel<T> stapel : stapels) {
             // Altijd het eerste voorkomen uit de stapel pakken voor de herkomst.
             final Lo3Herkomst herkomst = stapel.get(0).getLo3Herkomst();
@@ -48,19 +45,12 @@ public final class StapelMatcher {
 
     /**
      * Matcht de stapels op basis van hun {@link Lo3Herkomst}.
-     * 
-     * @param lo3Stapels
-     *            de stapels van een bepaalde categorie uit de LO3 PL
-     * @param brpLo3Stapels
-     *            de stapels van bepaalde categorie uit de teruggeconverteerde BRP PL
-     * @param <T>
-     *            moet een implementatie zijn van {@link Lo3CategorieInhoud}
+     * @param lo3Stapels de stapels van een bepaalde categorie uit de LO3 PL
+     * @param brpLo3Stapels de stapels van bepaalde categorie uit de teruggeconverteerde BRP PL
+     * @param <T> moet een implementatie zijn van {@link Lo3CategorieInhoud}
      * @return een lijst van {@link StapelMatch} objecten
      */
-    public static <T extends Lo3CategorieInhoud> List<StapelMatch<T>> matchStapels(
-        final List<Lo3Stapel<T>> lo3Stapels,
-        final List<Lo3Stapel<T>> brpLo3Stapels)
-    {
+    static <T extends Lo3CategorieInhoud> List<StapelMatch<T>> matchStapels(final List<Lo3Stapel<T>> lo3Stapels, final List<Lo3Stapel<T>> brpLo3Stapels) {
         final List<StapelMatch<T>> matching = new ArrayList<>();
         if (lo3Stapels != null) {
             matchStapels(lo3Stapels, matching, true);

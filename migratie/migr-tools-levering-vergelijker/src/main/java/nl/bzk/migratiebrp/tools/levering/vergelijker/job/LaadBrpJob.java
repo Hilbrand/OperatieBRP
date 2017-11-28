@@ -19,9 +19,7 @@ public final class LaadBrpJob {
 
     /**
      * Main execute methode voor het uitvoeren van de job.
-     *
-     * @param context
-     *            De context van de job.
+     * @param context De context van de job.
      */
     public void execute(final ConfigurableApplicationContext context) {
 

@@ -6,24 +6,24 @@
 
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortVerbintenis;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class SoortVerbintenisConversietabelTest {
     private final SoortVerbintenisConversietabel subject = new SoortVerbintenisConversietabel();
-    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), Lo3Datum.NULL_DATUM, null);
+    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), new Lo3Datum(0), null);
     private static final BrpSoortRelatieCode LEEG_MET_ONDERZOEK = new BrpSoortRelatieCode(null, ONDERZOEK);
     private static final BrpSoortRelatieCode HUWELIJK_MET_ONDERZOEK = new BrpSoortRelatieCode(BrpSoortRelatieCode.HUWELIJK.getWaarde(), ONDERZOEK);
-    private static final BrpSoortRelatieCode GEREGISTREERD_PARTNERSCHAP_MET_ONDERZOEK = new BrpSoortRelatieCode(
-        BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP.getWaarde(),
-        ONDERZOEK);
+    private static final BrpSoortRelatieCode GEREGISTREERD_PARTNERSCHAP_MET_ONDERZOEK =
+            new BrpSoortRelatieCode(BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP.getWaarde(), ONDERZOEK);
 
     @Test
     public void converteerNaarBrp() {
@@ -66,8 +66,6 @@ public class SoortVerbintenisConversietabelTest {
         assertTrue(subject.valideerLo3(new Lo3SoortVerbintenis(".", null)));
         assertFalse(subject.valideerLo3(new Lo3SoortVerbintenis("X", null)));
     }
-
-
 
     @Test
     public void valideerBrp() {

@@ -4,8 +4,4 @@
  * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
  */
 
-/**
- * Created by jan-paul on 6/18/14.
- */
 package nl.bzk.migratiebrp.init.logging.verschilanalyse.analyse;
-

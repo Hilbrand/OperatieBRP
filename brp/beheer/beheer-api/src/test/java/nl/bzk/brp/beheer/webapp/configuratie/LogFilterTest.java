@@ -23,17 +23,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-
 
 /**
  *
@@ -42,17 +41,17 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class LogFilterTest {
 
     @Mock
-    private HttpServletRequest  request;
+    private HttpServletRequest request;
 
     @Mock
     private HttpServletResponse response;
 
     @Mock
-    private FilterChain         chain;
+    private FilterChain chain;
 
-    private TestAppender        testAppender;
+    private TestAppender testAppender;
 
-    private List<LogEvent>      events = new ArrayList<>();
+    private final List<LogEvent> events = new ArrayList<>();
 
     /**
      * setup logger.
@@ -64,13 +63,16 @@ public class LogFilterTest {
         testAppender = new TestAppender("testappender", events);
         final Logger deLogger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
         final org.apache.logging.log4j.core.Logger coreLogger = (org.apache.logging.log4j.core.Logger) deLogger;
+        for (final Appender appender : coreLogger.getAppenders().values()) {
+            coreLogger.removeAppender(appender);
+        }
         coreLogger.addAppender(testAppender);
-        if (coreLogger.getAppenders().containsKey("Logstash")) {
-            coreLogger.removeAppender(coreLogger.getAppenders().get("Logstash"));
-        }
-        if (coreLogger.getAppenders().containsKey("Logstash-Primary")) {
-            coreLogger.removeAppender(coreLogger.getAppenders().get("Logstash-Primary"));
-        }
+        // if (coreLogger.getAppenders().containsKey("Logstash")) {
+        // coreLogger.removeAppender(coreLogger.getAppenders().get("Logstash"));
+        // }
+        // if (coreLogger.getAppenders().containsKey("Logstash-Primary")) {
+        // coreLogger.removeAppender(coreLogger.getAppenders().get("Logstash-Primary"));
+        // }
         testAppender.start();
     }
 
@@ -91,8 +93,8 @@ public class LogFilterTest {
         Mockito.when(request.getParameter("Tweede")).thenReturn("TweedeWaarde");
         final Enumeration<String> enumParameters = new Enumeration<String>() {
 
-            private List<String> waarden = Arrays.asList("Eerste", "Tweede");
-            private int          counter;
+            private final List<String> waarden = Arrays.asList("Eerste", "Tweede");
+            private int counter;
 
             @Override
             public boolean hasMoreElements() {
@@ -125,8 +127,8 @@ public class LogFilterTest {
         Mockito.when(request.getParameter("Tweede")).thenReturn("TweedeWaarde");
         final Enumeration<String> enumParameters = new Enumeration<String>() {
 
-            private List<String> waarden = Arrays.asList("Eerste", "Tweede");
-            private int          counter;
+            private final List<String> waarden = Arrays.asList("Eerste", "Tweede");
+            private int counter;
 
             @Override
             public boolean hasMoreElements() {
@@ -159,16 +161,16 @@ public class LogFilterTest {
      */
     public static class TestAppender extends AbstractAppender {
 
-        private final List<LogEvent> events;
+        private final List<LogEvent> innerEvents;
 
         public TestAppender(final String name, final List<LogEvent> events) {
             super(name, null, null);
-            this.events = events;
+            innerEvents = events;
         }
 
         @Override
         public final void append(final LogEvent event) {
-            events.add(event);
+            innerEvents.add(event);
         }
 
     }

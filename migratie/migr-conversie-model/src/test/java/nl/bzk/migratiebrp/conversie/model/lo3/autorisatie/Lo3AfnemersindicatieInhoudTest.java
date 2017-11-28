@@ -6,7 +6,9 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.autorisatie;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -17,26 +19,26 @@ public class Lo3AfnemersindicatieInhoudTest {
         final Lo3AfnemersindicatieInhoud subject = new Lo3AfnemersindicatieInhoud();
         final Lo3AfnemersindicatieInhoud equals = new Lo3AfnemersindicatieInhoud();
 
-        Assert.assertTrue(subject.isLeeg());
+        assertTrue(subject.isLeeg());
 
-        Assert.assertEquals(subject, equals);
-        Assert.assertEquals(subject.hashCode(), equals.hashCode());
-        Assert.assertEquals(subject.toString(), equals.toString());
+        assertEquals(subject, equals);
+        assertEquals(subject.hashCode(), equals.hashCode());
+        assertEquals(subject.toString(), equals.toString());
     }
 
     @Test
     public void testFilled() {
-        final Lo3AfnemersindicatieInhoud subject = new Lo3AfnemersindicatieInhoud(123);
-        final Lo3AfnemersindicatieInhoud equals = new Lo3AfnemersindicatieInhoud(123);
-        final Lo3AfnemersindicatieInhoud different = new Lo3AfnemersindicatieInhoud(456);
+        final Lo3AfnemersindicatieInhoud subject = new Lo3AfnemersindicatieInhoud("000123");
+        final Lo3AfnemersindicatieInhoud equals = new Lo3AfnemersindicatieInhoud("000123");
+        final Lo3AfnemersindicatieInhoud different = new Lo3AfnemersindicatieInhoud("000456");
 
-        Assert.assertEquals(Integer.valueOf(123), subject.getAfnemersindicatie());
-        Assert.assertFalse(subject.isLeeg());
-        Assert.assertEquals(subject, subject);
-        Assert.assertEquals(subject, equals);
-        Assert.assertFalse(subject.equals(new Object()));
-        Assert.assertFalse(subject.equals(different));
-        Assert.assertEquals(subject.hashCode(), equals.hashCode());
-        Assert.assertEquals(subject.toString(), equals.toString());
+        assertEquals("000123", subject.getAfnemersindicatie());
+        assertFalse(subject.isLeeg());
+        assertEquals(subject, subject);
+        assertEquals(subject, equals);
+        assertFalse(subject.equals(new Object()));
+        assertFalse(subject.equals(different));
+        assertEquals(subject.hashCode(), equals.hashCode());
+        assertEquals(subject.toString(), equals.toString());
     }
 }

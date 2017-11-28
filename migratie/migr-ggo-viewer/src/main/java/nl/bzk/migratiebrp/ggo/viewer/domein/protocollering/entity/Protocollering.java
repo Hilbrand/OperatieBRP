@@ -36,7 +36,7 @@ public class Protocollering {
     private Timestamp datumtijd;
 
     @Column(name = "a_nummer", nullable = true)
-    private Long administratienummer;
+    private String administratienummer;
 
     @Column(name = "geautoriseerd")
     private Boolean geautoriseerd;
@@ -49,22 +49,16 @@ public class Protocollering {
 
     /**
      * Constructor voor Protocollering met de benodigde gegevens.
-     * 
-     * @param gebruikersnaam
-     *            De gebruikersnaam.
-     * @param datumtijd
-     *            De datumtijd van het aanmaken van de protocollering.
-     * @param administratienummer
-     *            Het a-nummer.
-     * @param geautoriseerd
-     *            Of de gebruiker geautoriseerd was.
+     * @param gebruikersnaam De gebruikersnaam.
+     * @param datumtijd De datumtijd van het aanmaken van de protocollering.
+     * @param administratienummer Het a-nummer.
+     * @param geautoriseerd Of de gebruiker geautoriseerd was.
      */
     public Protocollering(
-        final String gebruikersnaam,
-        final Timestamp datumtijd,
-        final Long administratienummer,
-        final Boolean geautoriseerd)
-    {
+            final String gebruikersnaam,
+            final Timestamp datumtijd,
+            final String administratienummer,
+            final Boolean geautoriseerd) {
         super();
         this.gebruikersnaam = gebruikersnaam;
         this.datumtijd = Kopieer.timestamp(datumtijd);
@@ -74,7 +68,6 @@ public class Protocollering {
 
     /**
      * Geef de waarde van id.
-     *
      * @return the id
      */
     public final Long getId() {
@@ -83,9 +76,7 @@ public class Protocollering {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            the id to set
+     * @param id the id to set
      */
     public final void setId(final Long id) {
         this.id = id;
@@ -93,7 +84,6 @@ public class Protocollering {
 
     /**
      * Geef de waarde van gebruikersnaam.
-     *
      * @return the gebruikersnaam
      */
     public final String getGebruikersnaam() {
@@ -102,9 +92,7 @@ public class Protocollering {
 
     /**
      * Zet de waarde van gebruikersnaam.
-     *
-     * @param gebruikersnaam
-     *            the gebruikersnaam to set
+     * @param gebruikersnaam the gebruikersnaam to set
      */
     public final void setGebruikersnaam(final String gebruikersnaam) {
         this.gebruikersnaam = gebruikersnaam;
@@ -112,7 +100,6 @@ public class Protocollering {
 
     /**
      * Geef de waarde van datumtijd.
-     *
      * @return the datumtijd
      */
     public final Timestamp getDatumtijd() {
@@ -121,9 +108,7 @@ public class Protocollering {
 
     /**
      * Zet de waarde van datumtijd.
-     *
-     * @param datumtijd
-     *            the datumtijd to set
+     * @param datumtijd the datumtijd to set
      */
     public final void setDatumtijd(final Timestamp datumtijd) {
         this.datumtijd = Kopieer.timestamp(datumtijd);
@@ -131,26 +116,22 @@ public class Protocollering {
 
     /**
      * Geef de waarde van administratienummer.
-     *
      * @return the administratienummer
      */
-    public final Long getAdministratienummer() {
+    public final String getAdministratienummer() {
         return administratienummer;
     }
 
     /**
      * Zet de waarde van administratienummer.
-     *
-     * @param administratienummer
-     *            the administratienummer to set
+     * @param administratienummer the administratienummer to set
      */
-    public final void setAdministratienummer(final Long administratienummer) {
+    public final void setAdministratienummer(final String administratienummer) {
         this.administratienummer = administratienummer;
     }
 
     /**
      * Geef de waarde van geautoriseerd.
-     *
      * @return the geautoriseerd
      */
     public final Boolean getGeautoriseerd() {
@@ -159,9 +140,7 @@ public class Protocollering {
 
     /**
      * Zet de waarde van geautoriseerd.
-     *
-     * @param geautoriseerd
-     *            the geautoriseerd to set
+     * @param geautoriseerd the geautoriseerd to set
      */
     public final void setGeautoriseerd(final Boolean geautoriseerd) {
         this.geautoriseerd = geautoriseerd;

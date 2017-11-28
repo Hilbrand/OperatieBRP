@@ -26,8 +26,6 @@
     <!-- Override entityManager from synchronisatie-beans.xml -->
     <import resource="classpath:viewer-beans-datasource.xml" />
 
-    <import resource="classpath:viewer-beans-mappers.xml" />
-
     <bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
         <property name="suffix"><value>.html</value></property>
         <property name="contentType" value="text/html; charset=UTF-8" />

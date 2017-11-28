@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.init.logging.runtime.service;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatie;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAutorisatie;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingLog;
+import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingProtocollering;
 
 /**
  * Service om logging te bewerken.
@@ -17,61 +18,60 @@ public interface LoggingService {
 
     /**
      * Persisteert een {@link InitVullingLog} voor een persoonslijst.
-     *
-     * @param log
-     *            De log die opgeslagen moet worden.
+     * @param log De log die opgeslagen moet worden.
      */
     void persisteerInitVullingLog(final InitVullingLog log);
 
     /**
      * Persisteert een {@link InitVullingAutorisatie} voor een autorisatie.
-     *
-     * @param autorisatie
-     *            De logs die opgeslagen moet worden.
+     * @param autorisatie De logs die opgeslagen moet worden.
      */
     void persisteerInitVullingAutorisatie(final InitVullingAutorisatie autorisatie);
 
     /**
      * Persisteert een {@link InitVullingAfnemersindicatie} voor een afnemerindicatie.
-     *
-     * @param afnemerindicatie
-     *            De log die opgeslagen moet worden.
+     * @param afnemerindicatie De log die opgeslagen moet worden.
      */
     void persisteerInitVullingAfnemerindicatie(final InitVullingAfnemersindicatie afnemerindicatie);
 
     /**
-     * Bepaalt de verschillen tussen het oorspronkelijke LO3-bericht en de terug geconverteerde BRP-PL en slaat deze
-     * verschillen op bij de {@link InitVullingLog}.
-     *
-     * @param log
-     *            {@link InitVullingLog} waar in de beide berichten staan.
+     * Persisteert een {@link InitVullingProtocollering} voor een protocollering data.
+     * @param protocollering Init vulling protocollering data.
+     */
+    void persisteerInitVullingProtocollering(InitVullingProtocollering protocollering);
+
+    /**
+     * Bepaalt de verschillen tussen het oorspronkelijke LO3-bericht en de terug geconverteerde
+     * BRP-PL en slaat deze verschillen op bij de {@link InitVullingLog}.
+     * @param log {@link InitVullingLog} waar in de beide berichten staan.
      */
     void bepalenEnOpslaanVerschillen(final InitVullingLog log);
 
     /**
      * Zoek een {@link InitVullingLog} op basis van een anummer.
-     *
-     * @param anummer
-     *            of the log to find.
+     * @param anummer of the log to find.
      * @return {@link InitVullingLog} voor een persoonslijst.
      */
-    InitVullingLog zoekInitVullingLog(final Long anummer);
+    InitVullingLog zoekInitVullingLog(final String anummer);
 
     /**
-     * Zoek een {@link InitVullingAutorisatie} op basis van een afnemercode.
-     *
-     * @param afnemerCode
-     *            of the log to find.
-     * @return {@link InitVullingAutorisatie} voor een autorisatie.
+     * Zoek een {@link InitVullingAutorisatie} op basis van een autorisatie id.
+     * @param autorisatieId of the log to find.
+     * @return {@link InitVullingAutorisatie} voor een autorisatie (regel).
      */
-    InitVullingAutorisatie zoekInitVullingAutorisatie(final Integer afnemerCode);
+    InitVullingAutorisatie zoekInitVullingAutorisatie(final Long autorisatieId);
 
     /**
      * Zoek een {@link InitVullingAfnemersindicatie} op basis van een anummer.
-     *
-     * @param anummer
-     *            of the log to find.
+     * @param anummer of the log to find.
      * @return {@link InitVullingAfnemersindicatie} voor een afnemerindicatie.
      */
-    InitVullingAfnemersindicatie zoekInitVullingAfnemerindicatie(final Long anummer);
+    InitVullingAfnemersindicatie zoekInitVullingAfnemerindicatie(final String anummer);
+
+    /**
+     * Zoek een {@link InitVullingProtocollering} op basis van activiteit id.
+     * @param activiteitId activiteit id
+     * @return {@link InitVullingProtocollering} voor protocollering data
+     */
+    InitVullingProtocollering zoekInitVullingProtocollering(long activiteitId);
 }

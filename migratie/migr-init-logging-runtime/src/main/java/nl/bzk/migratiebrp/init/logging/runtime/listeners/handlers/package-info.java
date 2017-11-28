@@ -8,4 +8,3 @@
  * Message handlers.
  */
 package nl.bzk.migratiebrp.init.logging.runtime.listeners.handlers;
-

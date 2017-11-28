@@ -11,28 +11,30 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.domein.ProefSynchronisatieBericht;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.repository.ProefSynchronisatieRepository;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.verwerker.BerichtVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
+
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.ProducerCallback;
 
 /**
  * Verstuurt proefsynchronisatie berichten.
  */
-public final class JMSProefSynchronisatieBerichtVerwerker extends AbstractProefSynchronisatieBerichtVerwerker implements
-        BerichtVerwerker<ProefSynchronisatieBericht>
-{
+public final class JMSProefSynchronisatieBerichtVerwerker extends AbstractProefSynchronisatieBerichtVerwerker
+        implements BerichtVerwerker<ProefSynchronisatieBericht> {
 
     private static final Logger LOG = LoggerFactory.getLogger();
     private static final String KON_BERICHTEN_NIET_VERZENDEN = "Kon berichten niet verzenden.";
@@ -42,22 +44,16 @@ public final class JMSProefSynchronisatieBerichtVerwerker extends AbstractProefS
 
     /**
      * Constructor.
-     *
-     * @param executor
-     *            {@link ThreadPoolExecutor}
-     * @param destination
-     *            {@link Destination} queue waarop berichten geplaatst moeten worden.
-     * @param jmsTemplate
-     *            {@link JmsTemplate}
-     * @param proefSynchronisatieRepository
-     *            De repository waaruit de proefsynchronisatie berichten moeten worden gelezen
+     * @param executor {@link ThreadPoolExecutor}
+     * @param destination {@link Destination} queue waarop berichten geplaatst moeten worden.
+     * @param jmsTemplate {@link JmsTemplate}
+     * @param proefSynchronisatieRepository De repository waaruit de proefsynchronisatie berichten moeten worden gelezen
      */
     public JMSProefSynchronisatieBerichtVerwerker(
-        final ThreadPoolExecutor executor,
-        final Destination destination,
-        final JmsTemplate jmsTemplate,
-        final ProefSynchronisatieRepository proefSynchronisatieRepository)
-    {
+            final ThreadPoolExecutor executor,
+            final Destination destination,
+            final JmsTemplate jmsTemplate,
+            final ProefSynchronisatieRepository proefSynchronisatieRepository) {
         super(executor, proefSynchronisatieRepository);
         this.destination = destination;
         this.jmsTemplate = jmsTemplate;
@@ -94,12 +90,12 @@ public final class JMSProefSynchronisatieBerichtVerwerker extends AbstractProefS
                         message.setStringProperty(JMSConstants.BERICHT_REFERENTIE, String.valueOf(proefSynchronisatieBericht.getBerichtId()));
                         if (proefSynchronisatieBericht.getAfzender() != null) {
                             message.setStringProperty(
-                                JMSConstants.BERICHT_ORIGINATOR,
-                                new DecimalFormat("0000").format(proefSynchronisatieBericht.getAfzender()));
+                                    JMSConstants.BERICHT_ORIGINATOR,
+                                    new DecimalFormat("0000").format(proefSynchronisatieBericht.getAfzender()));
                         }
                         message.setStringProperty(
-                            JMSConstants.BERICHT_MS_SEQUENCE_NUMBER,
-                            String.valueOf(proefSynchronisatieBericht.getMsSequenceNumber()));
+                                JMSConstants.BERICHT_MS_SEQUENCE_NUMBER,
+                                String.valueOf(proefSynchronisatieBericht.getMsSequenceNumber()));
                         producer.send(destination, message);
                     }
                     return null;

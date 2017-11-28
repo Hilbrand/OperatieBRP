@@ -14,7 +14,6 @@ public class AkteOnbekendException extends Exception {
 
     /**
      * Constructor.
-     *
      * @param message message
      */
     public AkteOnbekendException(final String message) {
@@ -23,8 +22,7 @@ public class AkteOnbekendException extends Exception {
 
     /**
      * Constructor.
-     *
-     * @param message   message
+     * @param message message
      * @param rootCause root cause
      */
     public AkteOnbekendException(final String message, final Throwable rootCause) {

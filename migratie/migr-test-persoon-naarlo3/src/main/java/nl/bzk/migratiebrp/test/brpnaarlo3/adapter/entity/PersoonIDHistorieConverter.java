@@ -8,9 +8,9 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import org.springframework.stereotype.Component;
@@ -24,8 +24,8 @@ public final class PersoonIDHistorieConverter extends AbstractEntityHistorieConv
     private static final String HEADER_BSN = "bsn";
     private static final String HEADER_ANUMMER = "anr";
 
-    private Long administratienummer;
-    private Integer burgerservicenummer;
+    private String administratienummer;
+    private String burgerservicenummer;
     private Integer datumAanvangGeldigheid;
     private Integer datumEindeGeldigheid;
     private Timestamp datumTijdRegistratie;
@@ -51,10 +51,10 @@ public final class PersoonIDHistorieConverter extends AbstractEntityHistorieConv
                 persoon = context.getPersoon(Integer.parseInt(value));
                 break;
             case HEADER_BSN:
-                burgerservicenummer = Integer.valueOf(value);
+                burgerservicenummer = value;
                 break;
             case HEADER_ANUMMER:
-                administratienummer = Long.valueOf(value);
+                administratienummer = value;
                 break;
             case HEADER_DATUM_AANVANG_GELDIGHEID:
                 datumAanvangGeldigheid = Integer.valueOf(value);

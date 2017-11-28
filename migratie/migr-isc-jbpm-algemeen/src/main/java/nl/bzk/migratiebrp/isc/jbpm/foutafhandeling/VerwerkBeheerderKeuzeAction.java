@@ -33,8 +33,6 @@ public final class VerwerkBeheerderKeuzeAction implements SpringAction {
         }
 
         result.put(FoutafhandelingConstants.INDICATIE_PF, paden.getPf(restart));
-        result.put(FoutafhandelingConstants.INDICATIE_DEBLOKKERING, paden.getDeblokkeren(restart));
-        result.put(FoutafhandelingConstants.INDICATIE_ANTWOORD, paden.getAntwoord(restart));
 
         return result;
     }

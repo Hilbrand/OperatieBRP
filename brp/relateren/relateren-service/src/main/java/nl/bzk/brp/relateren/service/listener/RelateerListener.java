@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.relateren.service.listener;
@@ -11,8 +11,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
 import nl.bzk.brp.relateren.service.RelateerService;
 import nl.bzk.brp.relateren.service.bericht.RelateerPersoonBericht;
 import org.springframework.stereotype.Component;
@@ -20,13 +18,19 @@ import org.springframework.stereotype.Component;
 /**
  * Handelt binnenkomende relateer berichten af en delegeert de verwerking naar de bijbehorende relateer service.
  */
-@Component
+@Component("relateerListener")
 public final class RelateerListener implements MessageListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger();
+    private final RelateerService relateerService;
 
+    /**
+     * constructor
+     * @param relateerService service
+     */
     @Inject
-    private RelateerService relateerService;
+    public RelateerListener(final RelateerService relateerService) {
+        this.relateerService = relateerService;
+    }
 
     @Override
     public void onMessage(final Message message) {

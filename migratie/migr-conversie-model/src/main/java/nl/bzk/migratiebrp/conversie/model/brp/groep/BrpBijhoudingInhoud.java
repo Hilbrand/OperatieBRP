@@ -6,21 +6,19 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBijhoudingsaardCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP Bijhouding.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpBijhoudingInhoud extends AbstractBrpGroepInhoud {
 
@@ -33,34 +31,24 @@ public final class BrpBijhoudingInhoud extends AbstractBrpGroepInhoud {
     @Element(name = "nadereBijhoudingsaardCode", required = true)
     private final BrpNadereBijhoudingsaardCode nadereBijhoudingsaardCode;
 
-    @Element(name = "indicatieOnverwerktDocumentAanwezig", required = true)
-    private final BrpBoolean indicatieOnverwerktDocumentAanwezig;
-
     /**
      * Maakt een BrpBijhoudingInhoud object.
-     * 
-     * @param bijhoudingspartijCode
-     *            bijhoudingspartij
-     * @param bijhoudingsaardCode
-     *            bijhoudingsaardCode
-     * @param nadereBijhoudingsaardCode
-     *            nadereBijhoudingsaardCode
-     * @param indicatieOnverwerktDocumentAanwezig
-     *            indicatie onverwerkt document aanwezig
+     * @param bijhoudingspartijCode bijhoudingspartij
+     * @param bijhoudingsaardCode bijhoudingsaardCode
+     * @param nadereBijhoudingsaardCode nadereBijhoudingsaardCode
      */
     public BrpBijhoudingInhoud(
-        @Element(name = "bijhoudingspartijCode", required = true) final BrpPartijCode bijhoudingspartijCode,
-        @Element(name = "bijhoudingsaardCode", required = true) final BrpBijhoudingsaardCode bijhoudingsaardCode,
-        @Element(name = "nadereBijhoudingsaardCode", required = true) final BrpNadereBijhoudingsaardCode nadereBijhoudingsaardCode,
-        @Element(name = "indicatieOnverwerktDocumentAanwezig", required = true) final BrpBoolean indicatieOnverwerktDocumentAanwezig)
-    {
+            @Element(name = "bijhoudingspartijCode", required = true) final BrpPartijCode bijhoudingspartijCode,
+            @Element(name = "bijhoudingsaardCode", required = true) final BrpBijhoudingsaardCode bijhoudingsaardCode,
+            @Element(name = "nadereBijhoudingsaardCode", required = true) final BrpNadereBijhoudingsaardCode nadereBijhoudingsaardCode) {
         this.bijhoudingspartijCode = bijhoudingspartijCode;
         this.bijhoudingsaardCode = bijhoudingsaardCode;
         this.nadereBijhoudingsaardCode = nadereBijhoudingsaardCode;
-        this.indicatieOnverwerktDocumentAanwezig = indicatieOnverwerktDocumentAanwezig;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
@@ -69,39 +57,27 @@ public final class BrpBijhoudingInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van bijhoudingspartij code.
-     *
-     * @return bijhoudingspartij code
+     * Geef de waarde van bijhoudingspartij code van BrpBijhoudingInhoud.
+     * @return de waarde van bijhoudingspartij code van BrpBijhoudingInhoud
      */
     public BrpPartijCode getBijhoudingspartijCode() {
         return bijhoudingspartijCode;
     }
 
     /**
-     * Geef de waarde van bijhoudingsaard code.
-     *
-     * @return the bijhoudingsaardcode
+     * Geef de waarde van bijhoudingsaard code van BrpBijhoudingInhoud.
+     * @return de waarde van bijhoudingsaard code van BrpBijhoudingInhoud
      */
     public BrpBijhoudingsaardCode getBijhoudingsaardCode() {
         return bijhoudingsaardCode;
     }
 
     /**
-     * Geef de waarde van nadere bijhoudingsaard code.
-     *
-     * @return the redenOpschortingBijhoudingCode
+     * Geef de waarde van nadere bijhoudingsaard code van BrpBijhoudingInhoud.
+     * @return de waarde van nadere bijhoudingsaard code van BrpBijhoudingInhoud
      */
     public BrpNadereBijhoudingsaardCode getNadereBijhoudingsaardCode() {
         return nadereBijhoudingsaardCode;
-    }
-
-    /**
-     * Geef de waarde van indicatie onverwerkt document aanwezig.
-     *
-     * @return indicatie onverwerkt document aanwezig
-     */
-    public BrpBoolean getIndicatieOnverwerktDocumentAanwezig() {
-        return indicatieOnverwerktDocumentAanwezig;
     }
 
     @Override
@@ -114,32 +90,25 @@ public final class BrpBijhoudingInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpBijhoudingInhoud castOther = (BrpBijhoudingInhoud) other;
         return new EqualsBuilder().append(bijhoudingspartijCode, castOther.bijhoudingspartijCode)
-                                  .append(bijhoudingsaardCode, castOther.bijhoudingsaardCode)
-                                  .append(nadereBijhoudingsaardCode, castOther.nadereBijhoudingsaardCode)
-                                  .append(indicatieOnverwerktDocumentAanwezig, castOther.indicatieOnverwerktDocumentAanwezig)
-                                  .isEquals();
+                .append(bijhoudingsaardCode, castOther.bijhoudingsaardCode)
+                .append(nadereBijhoudingsaardCode, castOther.nadereBijhoudingsaardCode)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(bijhoudingspartijCode)
-                                    .append(bijhoudingsaardCode)
-                                    .append(nadereBijhoudingsaardCode)
-                                    .append(indicatieOnverwerktDocumentAanwezig)
-                                    .toHashCode();
+                .append(bijhoudingsaardCode)
+                .append(nadereBijhoudingsaardCode)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("bijhoudingspartijCode", bijhoudingspartijCode)
-                                                                          .append("bijhoudingsaardCode", bijhoudingsaardCode)
-                                                                          .append(
-                                                                              "redenOpschortingBijhoudingCode",
-                                                                              nadereBijhoudingsaardCode)
-                                                                          .append(
-                                                                              "onverwerktDocumentAanwezig",
-                                                                              indicatieOnverwerktDocumentAanwezig)
-                                                                          .toString();
+                .append("bijhoudingspartijCode", bijhoudingspartijCode)
+                .append("bijhoudingsaardCode", bijhoudingsaardCode)
+                .append("redenOpschortingBijhoudingCode", nadereBijhoudingsaardCode)
+                .toString();
     }
 }

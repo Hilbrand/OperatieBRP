@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -35,18 +35,18 @@ public class Lo3VerwijzingParserTest extends AbstractParserTest {
         final Lo3Documentatie documentatie = maakDocumentatie();
         final Lo3VerwijzingInhoud verwijzingInhoud =
                 new Lo3VerwijzingInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110, null),
-                    maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0910, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0920, onderzoek),
-                    new Lo3IndicatieGeheimCode(Integer.valueOf(WAARDE_ELEMENT_7010)));
+                        maakLo3Long(WAARDE_ELEMENT_0110, null),
+                        maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0910, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0920, onderzoek),
+                        new Lo3IndicatieGeheimCode(Integer.valueOf(WAARDE_ELEMENT_7010)));
         final Lo3Categorie<Lo3VerwijzingInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(verwijzingInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_21, 0, 0));
         final List<Lo3Categorie<Lo3VerwijzingInhoud>> categorieInhoudLijst = new ArrayList<>();

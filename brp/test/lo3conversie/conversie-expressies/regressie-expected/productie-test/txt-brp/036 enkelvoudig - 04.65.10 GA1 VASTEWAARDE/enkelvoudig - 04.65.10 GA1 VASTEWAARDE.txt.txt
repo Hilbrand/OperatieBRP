@@ -1,1 +1,1 @@
-NIET IS_NULL(indicatie.behandeld_als_nederlander)
+KV(Persoon.Indicatie.BehandeldAlsNederlander.Waarde)

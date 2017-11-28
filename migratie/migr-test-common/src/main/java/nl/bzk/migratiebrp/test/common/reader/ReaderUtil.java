@@ -13,8 +13,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.mozilla.universalchardet.UniversalDetector;
 
 /**
@@ -32,12 +32,9 @@ public final class ReaderUtil {
     /**
      * Geeft een {@link java.io.BufferedReader} terug voor het meegegeven bestand. Als de encodering van het bestand
      * achterhaalt kan worden, dan wordt deze gebruikt. Anders wordt er standaard UTF-8 gebruikt.
-     * 
-     * @param file
-     *            bestand dat gelezen moet worden met deze Reader.
+     * @param file bestand dat gelezen moet worden met deze Reader.
      * @return een {@link java.io.BufferedReader} met de juiste encodering voor het bestand
-     * @throws IOException
-     *             als het bestand niet gelezen kan worden voor het bepalen van de encodering
+     * @throws IOException als het bestand niet gelezen kan worden voor het bepalen van de encodering
      */
     public static java.io.Reader getReader(final File file) throws IOException {
         final BufferedInputStream input = new BufferedInputStream(new FileInputStream(file));

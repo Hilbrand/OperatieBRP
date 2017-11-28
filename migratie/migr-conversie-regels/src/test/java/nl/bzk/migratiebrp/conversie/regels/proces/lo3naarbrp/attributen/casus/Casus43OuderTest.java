@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpBetrokkenheid;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
@@ -32,8 +33,8 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
 import nl.bzk.migratiebrp.conversie.model.testutils.StapelUtils;
 import nl.bzk.migratiebrp.conversie.model.testutils.VerplichteStapel;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.junit.Test;
 
 public class Casus43OuderTest extends AbstractCasusTest {
@@ -53,8 +54,8 @@ public class Casus43OuderTest extends AbstractCasusTest {
         // 1000000123 1-1-1990 - 1-1-1990 2-1-1990 Rotterdam A1
 
         // LO3 input
-        lo2.vul(buildOuder(1000000456L, 20000201), null, 20000201, 20000202, 2, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_02, 0, 0));
-        lo1.vul(buildOuder(1000000123L, VerplichteStapel.GEBOORTE_DATUM),
+        lo2.vul(buildOuder("1000000456", 20000201), null, 20000201, 20000202, 2, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_02, 0, 0));
+        lo1.vul(buildOuder("1000000123", VerplichteStapel.GEBOORTE_DATUM),
                 null,
                 19900101,
                 19900102,
@@ -119,12 +120,12 @@ public class Casus43OuderTest extends AbstractCasusTest {
             assertNotNull(betrokkenheid.getIdentificatienummersStapel());
             assertEquals(1, betrokkenheid.getIdentificatienummersStapel().size());
 
-            final Long aNummer = betrokkenheid.getIdentificatienummersStapel().get(0).getInhoud().getAdministratienummer().getWaarde();
+            final String aNummer = betrokkenheid.getIdentificatienummersStapel().get(0).getInhoud().getAdministratienummer().getWaarde();
 
-            if (aNummer == 1000000123L) {
+            if (Objects.equals(aNummer, "1000000123")) {
                 assertOuder1a(betrokkenheid);
 
-            } else if (aNummer == 1000000456L) {
+            } else if (Objects.equals(aNummer, "1000000456")) {
                 assertOuder1b(betrokkenheid);
 
             }

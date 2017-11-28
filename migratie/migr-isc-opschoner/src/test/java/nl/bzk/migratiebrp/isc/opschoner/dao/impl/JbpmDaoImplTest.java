@@ -27,8 +27,10 @@ public class JbpmDaoImplTest extends AbstractDaoTest {
     public void testJbpmDaoVerwijderenProcesGegevens() throws SQLException {
 
         Timestamp einddatumProces = jbpmDao.haalEinddatumProcesOp(PROCES_ID);
+        Timestamp einddatumNietBestaandProces = jbpmDao.haalEinddatumProcesOp(Long.MAX_VALUE);
 
         Assert.assertNotNull(einddatumProces);
+        Assert.assertNull(einddatumNietBestaandProces);
 
         einddatumProces = jbpmDao.haalEinddatumProcesOp(GERELATEERD_PROCES_ID);
 

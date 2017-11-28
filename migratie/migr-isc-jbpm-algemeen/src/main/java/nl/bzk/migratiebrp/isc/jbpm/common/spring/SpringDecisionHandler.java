@@ -8,8 +8,8 @@ package nl.bzk.migratiebrp.isc.jbpm.common.spring;
 
 import java.util.HashMap;
 import java.util.Map;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.node.DecisionHandler;
 
@@ -22,7 +22,7 @@ public final class SpringDecisionHandler extends SpringHandler implements Decisi
     private static final Logger LOG = LoggerFactory.getLogger();
 
     private String bean;
-    private Map<String, Object> parameters;
+    private transient Map<String, Object> parameters;
 
     @Override
     public String decide(final ExecutionContext executionContext) {
@@ -57,9 +57,7 @@ public final class SpringDecisionHandler extends SpringHandler implements Decisi
 
     /**
      * Name of the spring bean to execute for this decision.
-     *
-     * @param bean
-     *            bean name
+     * @param bean bean name
      */
     public void setBean(final String bean) {
         this.bean = bean;
@@ -67,9 +65,7 @@ public final class SpringDecisionHandler extends SpringHandler implements Decisi
 
     /**
      * Parameters to add to the execution.
-     *
-     * @param parameters
-     *            parameters
+     * @param parameters parameters
      */
     public void setParameters(final Map<String, Object> parameters) {
         this.parameters = parameters;

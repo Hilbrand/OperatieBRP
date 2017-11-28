@@ -8,12 +8,11 @@ package nl.bzk.migratiebrp.conversie.model.brp;
 
 import java.io.Serializable;
 import java.util.Comparator;
-
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 
 /**
  * Helper class for sortering binnen testcases.
- * 
+ *
  * Eigenlijke sortering maakt niet uit, zo lang deze maar consistent is.
  */
 public class BrpComparatorTestHelper implements Comparator<BrpGroep<? extends BrpGroepInhoud>>, Serializable {

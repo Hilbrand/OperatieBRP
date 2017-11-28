@@ -60,8 +60,8 @@
                     foutafhandelingIndicatieBeheerder=true;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("restartAtControleren", "Gemeente register opnieuw ophalen en opnieuw controleren", false, false, false);
-                    foutafhandelingPaden.put("end", "Proces be&#235;indigen", false, false, false);
+                    foutafhandelingPaden.put("restartAtControleren", "Gemeente register opnieuw ophalen en opnieuw controleren", false, false);
+                    foutafhandelingPaden.put("end", "Proces be&#235;indigen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingIndicatieBeheerder' access='write' />
@@ -74,8 +74,8 @@
     <process-state name="II-1. Foutafhandeling (controle en lock)">
         <sub-process name="foutafhandeling" binding="late"></sub-process>
         <variable access="read" mapped-name="lo3Bericht" name="input"></variable>
-        <variable access="read" mapped-name="bronGemeente" name="bronGemeente"></variable>
-        <variable access="read" mapped-name="doelGemeente" name="doelGemeente"></variable>
+        <variable access="read" mapped-name="bronPartijCode" name="bronPartijCode"></variable>
+        <variable access="read" mapped-name="doelPartijCode" name="doelPartijCode"></variable>
         <variable access="read" mapped-name="functioneleStap" name="functioneleStap"></variable>
         <variable access="read" mapped-name="fout" name="foutafhandelingFout" ></variable>
         <variable access="read" mapped-name="foutmelding" name="foutafhandelingFoutmelding"></variable>
@@ -122,8 +122,8 @@
             <script>
                 <expression>
                     functioneleStap="uc812.lq01.stap";
-                    lq01HerhalingTimeout=nl.bzk.migratiebrp.isc.jbpm.common.configuratie.JbpmConfiguratieDao.INSTANCE.getConfiguratieAsDuration("vospg.timeout");
-                    lq01HerhalingMaxHerhalingen=nl.bzk.migratiebrp.isc.jbpm.common.configuratie.JbpmConfiguratieDao.INSTANCE.getConfiguratieAsInteger("vospg.herhalingen");
+                    lq01HerhalingTimeout=nl.bzk.migratiebrp.isc.jbpm.common.configuratie.JbpmConfiguratieDao.INSTANCE.getConfiguratieAsDuration("voisc.timeout");
+                    lq01HerhalingMaxHerhalingen=nl.bzk.migratiebrp.isc.jbpm.common.configuratie.JbpmConfiguratieDao.INSTANCE.getConfiguratieAsInteger("voisc.herhalingen");
                 </expression>
                 <variable name='functioneleStap' access='write' />
                 <variable name='lq01HerhalingTimeout' access='write' />

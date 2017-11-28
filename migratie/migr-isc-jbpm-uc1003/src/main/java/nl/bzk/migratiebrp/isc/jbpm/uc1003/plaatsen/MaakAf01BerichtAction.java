@@ -9,14 +9,14 @@ package nl.bzk.migratiebrp.isc.jbpm.uc1003.plaatsen;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Af01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ap01Bericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.AfnemersIndicatieJbpmConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,8 +27,16 @@ public final class MaakAf01BerichtAction implements SpringAction {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakAf01BerichtAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -49,15 +57,12 @@ public final class MaakAf01BerichtAction implements SpringAction {
         final Af01Bericht af01Bericht = new Af01Bericht();
         af01Bericht.setCorrelationId(input.getMessageId());
         af01Bericht.setCategorieen(input.getCategorieen());
-        af01Bericht.setBronGemeente(input.getDoelGemeente());
-        af01Bericht.setDoelGemeente(input.getBronGemeente());
+        af01Bericht.setBronPartijCode(input.getDoelPartijCode());
+        af01Bericht.setDoelPartijCode(input.getBronPartijCode());
 
         af01Bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, foutreden);
         af01Bericht.setHeader(Lo3HeaderVeld.GEMEENTE, gemeente);
-        if (AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_B.equals(foutreden)
-            || AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_I.equals(foutreden)
-            || AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_V.equals(foutreden))
-        {
+        if (AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_I.equals(foutreden)) {
             af01Bericht.setHeader(Lo3HeaderVeld.A_NUMMER, anummer);
         }
 

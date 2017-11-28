@@ -10,6 +10,7 @@ import java.io.Serializable;
 import nl.bzk.migratiebrp.bericht.model.lo3.AbstractCategorieGebaseerdParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 
 /**
  * Ib01.
@@ -17,17 +18,13 @@ import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 public final class Ib01Bericht extends AbstractCategorieGebaseerdParsedLo3Bericht implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final Lo3Header HEADER = new Lo3Header(
-        Lo3HeaderVeld.RANDOM_KEY,
-        Lo3HeaderVeld.BERICHTNUMMER,
-        Lo3HeaderVeld.HERHALING,
-        Lo3HeaderVeld.STATUS,
-        Lo3HeaderVeld.DATUM);
+    private static final Lo3Header HEADER =
+            new Lo3Header(Lo3HeaderVeld.RANDOM_KEY, Lo3HeaderVeld.BERICHTNUMMER, Lo3HeaderVeld.HERHALING, Lo3HeaderVeld.STATUS, Lo3HeaderVeld.DATUM);
 
     /**
      * Constructor.
      */
     public Ib01Bericht() {
-        super(HEADER, "Ib01", null);
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Ib01", null);
     }
 }

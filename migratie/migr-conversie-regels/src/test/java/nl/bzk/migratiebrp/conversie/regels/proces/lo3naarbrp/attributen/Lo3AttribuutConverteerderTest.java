@@ -11,9 +11,12 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGezagMinderjarige;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
+
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import org.junit.Test;
 
 /**
  * Unit test voor {@link Lo3AttribuutConverteerder}.
@@ -21,7 +24,7 @@ import org.junit.Test;
 public class Lo3AttribuutConverteerderTest {
 
 
-    private final static Lo3AttribuutConverteerder converteerder = new Lo3AttribuutConverteerder();
+    private final static Lo3AttribuutConverteerder converteerder = new Lo3AttribuutConverteerder(new ConversietabelFactoryImpl());
     private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(110000), new Lo3Datum(20150101), null);
     private static final BrpBoolean EXPECTED_TRUE_ZONDER_ONDERZOEK = new BrpBoolean(true, null);
     private static final BrpBoolean EXPECTED_TRUE_MET_ONDERZOEK = new BrpBoolean(true, ONDERZOEK);
@@ -29,7 +32,7 @@ public class Lo3AttribuutConverteerderTest {
     private static final BrpBoolean EXPECTED_FALSE_MET_ONDERZOEK = new BrpBoolean(false, ONDERZOEK);
 
     @Test
-    public void testConverteerOuder1HeeftGezag () {
+    public void testConverteerOuder1HeeftGezag() {
         assertEquals(EXPECTED_TRUE_ZONDER_ONDERZOEK, converteerder.converteerOuder1HeeftGezag(new Lo3IndicatieGezagMinderjarige("1")));
         assertEquals(EXPECTED_TRUE_MET_ONDERZOEK, converteerder.converteerOuder1HeeftGezag(new Lo3IndicatieGezagMinderjarige("1", ONDERZOEK)));
 
@@ -51,7 +54,7 @@ public class Lo3AttribuutConverteerderTest {
     }
 
     @Test
-    public void testConverteerOuder2HeeftGezag () {
+    public void testConverteerOuder2HeeftGezag() {
         assertEquals(EXPECTED_TRUE_ZONDER_ONDERZOEK, converteerder.converteerOuder2HeeftGezag(new Lo3IndicatieGezagMinderjarige("2")));
         assertEquals(EXPECTED_TRUE_MET_ONDERZOEK, converteerder.converteerOuder2HeeftGezag(new Lo3IndicatieGezagMinderjarige("2", ONDERZOEK)));
 

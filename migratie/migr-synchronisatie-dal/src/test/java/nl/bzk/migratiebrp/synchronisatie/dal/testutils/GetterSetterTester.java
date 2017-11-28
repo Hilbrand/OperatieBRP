@@ -17,31 +17,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.persistence.Entity;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.Dienst;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.DienstHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.Dienstbundel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.DienstbundelHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.Leveringsautorisatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.LeveringsautorisatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.ToegangLeveringsAutorisatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.GegevenInOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PartijRol;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RelatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Rol;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stelsel;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.junit.Assert;
 import org.reflections.Reflections;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Dienst;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.DienstHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Dienstbundel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.DienstbundelHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Leveringsautorisatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LeveringsautorisatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ToegangLeveringsAutorisatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.GegevenInOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PartijRol;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RelatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Rol;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Stelsel;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Tester voor getter en setter methoden.
@@ -67,14 +70,14 @@ public class GetterSetterTester {
         VALUES.put(Boolean.TYPE, true);
         VALUES.put(Timestamp.class, new Timestamp(System.currentTimeMillis()));
         VALUES.put(Set.class, Collections.emptySet());
-        final byte[] byteArray = new byte[] {};
+        final byte[] byteArray = new byte[]{};
         VALUES.put(byteArray.getClass(), byteArray);
         VALUES.put(FormeleHistorie.class, new RelatieHistorie(new Relatie(SoortRelatie.HUWELIJK)));
         VALUES.put(EntiteitSleutel.class, new EntiteitSleutel(BRPActie.class, "veld", new EntiteitSleutel(Persoon.class, "actieInhoud")));
         VALUES.put(Element.class, Element.PERSOON_NAAMGEBRUIK_ACTIEINHOUD);
         VALUES.put(ToegangLeveringsAutorisatie.class, new ToegangLeveringsAutorisatie(
-            new PartijRol(new Partij("partij", 0), Rol.AFNEMER),
-            new Leveringsautorisatie(Stelsel.GBA, false)));
+                new PartijRol(new Partij("partij", "000000"), Rol.AFNEMER),
+                new Leveringsautorisatie(Stelsel.GBA, false)));
         // excludes
         // BMR44
         EXCLUDES.add(Dienst.class);
@@ -88,9 +91,7 @@ public class GetterSetterTester {
 
     /**
      * Test entities in package.
-     *
-     * @param packageName
-     *            package
+     * @param packageName package
      */
     public void testEntities(final String packageName) throws ReflectiveOperationException {
         final Reflections reflections = new Reflections(packageName);
@@ -119,11 +120,8 @@ public class GetterSetterTester {
 
     /**
      * Test het object (op alle mogelijke manieren {@link #bepaalPropertiesObvFields(Object)}).
-     *
-     * @param objectToTest
-     *            object om te testen
-     * @throws ReflectiveOperationException
-     *             bij fouten
+     * @param objectToTest object om te testen
+     * @throws ReflectiveOperationException bij fouten
      */
     public void test(final Object objectToTest) throws ReflectiveOperationException {
         LOG.info("Test object van klasse: " + objectToTest.getClass().getName());
@@ -137,9 +135,7 @@ public class GetterSetterTester {
 
     /**
      * Bepaal properties obv fields in klassen.
-     *
-     * @param objectToTest
-     *            objcet om te testen
+     * @param objectToTest objcet om te testen
      * @return lisjt van properties
      */
     public Set<String> bepaalPropertiesObvFields(final Object objectToTest) {
@@ -159,13 +155,9 @@ public class GetterSetterTester {
 
     /**
      * Test gebaseerd op property naam (setProperty, getProperty/isProperty, property).
-     *
-     * @param property
-     *            property naam
-     * @param objectToTest
-     *            object om te testen
-     * @throws ReflectiveOperationException
-     *             bij fouten
+     * @param property property naam
+     * @param objectToTest object om te testen
+     * @throws ReflectiveOperationException bij fouten
      */
     public void test(final String property, final Object objectToTest) throws ReflectiveOperationException {
         LOG.info("Test property " + property + " object van klasse: " + objectToTest.getClass().getName());
@@ -186,16 +178,16 @@ public class GetterSetterTester {
                     setter.invoke(objectToTest, value);
                 } catch (final Exception e) {
                     LOG.warn("Kan property "
-                                + property
-                                + " ("
-                                + field.getType().getName()
-                                + ") op object ("
-                                + objectToTest.getClass().getName()
-                                + ") niet setten met "
-                                + value
-                                + " ("
-                                + value.getClass().getName()
-                                + ")", e);
+                            + property
+                            + " ("
+                            + field.getType().getName()
+                            + ") op object ("
+                            + objectToTest.getClass().getName()
+                            + ") niet setten met "
+                            + value
+                            + " ("
+                            + value.getClass().getName()
+                            + ")", e);
                     throw e;
                 }
 

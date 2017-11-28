@@ -9,9 +9,9 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -23,31 +23,24 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public final class DeltaStapelMatch {
     private final Collection<FormeleHistorie> opgeslagenRijen;
     private final Collection<FormeleHistorie> nieuweRijen;
-    private final DeltaEntiteit eigenaarDeltaEntiteit;
+    private final Entiteit eigenaarDeltaEntiteit;
     private final EntiteitSleutel eigenaarSleutel;
     private final Field eigenaarVeld;
 
     /**
      * Maak een DeltaStapelmatch instantie.
-     * 
-     * @param opgeslagenRijen
-     *            de verzameling rijen in de opgeslagen persoonslijst
-     * @param nieuweRijen
-     *            de verzameling rijen in de nieuwe persoonslijst
-     * @param eigenaarDeltaEntiteit
-     *            de (opgeslagen) eigenaar entiteit van de rijen
-     * @param eigenaarSleutel
-     *            de sleutel van de eigenaar
-     * @param eigenaarVeld
-     *            het veld van de eigenaar entiteit waarin de verzameling is opgeslagen
+     * @param opgeslagenRijen de verzameling rijen in de opgeslagen persoonslijst
+     * @param nieuweRijen de verzameling rijen in de nieuwe persoonslijst
+     * @param eigenaarDeltaEntiteit de (opgeslagen) eigenaar entiteit van de rijen
+     * @param eigenaarSleutel de sleutel van de eigenaar
+     * @param eigenaarVeld het veld van de eigenaar entiteit waarin de verzameling is opgeslagen
      */
     public DeltaStapelMatch(
-        final Collection<FormeleHistorie> opgeslagenRijen,
-        final Collection<FormeleHistorie> nieuweRijen,
-        final DeltaEntiteit eigenaarDeltaEntiteit,
-        final EntiteitSleutel eigenaarSleutel,
-        final Field eigenaarVeld)
-    {
+            final Collection<FormeleHistorie> opgeslagenRijen,
+            final Collection<FormeleHistorie> nieuweRijen,
+            final Entiteit eigenaarDeltaEntiteit,
+            final EntiteitSleutel eigenaarSleutel,
+            final Field eigenaarVeld) {
         this.opgeslagenRijen = opgeslagenRijen;
         this.nieuweRijen = nieuweRijen;
         this.eigenaarDeltaEntiteit = eigenaarDeltaEntiteit;
@@ -72,7 +65,7 @@ public final class DeltaStapelMatch {
     /**
      * @return de eigenaar entiteit van de stapels
      */
-    public DeltaEntiteit getEigenaarDeltaEntiteit() {
+    public Entiteit getEigenaarDeltaEntiteit() {
         return eigenaarDeltaEntiteit;
     }
 
@@ -93,11 +86,11 @@ public final class DeltaStapelMatch {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("aantal opgeslagenRijen", opgeslagenRijen.size())
-                                                                          .append("aantal nieuweRijen", nieuweRijen.size())
-                                                                          .append("eigenaarEntiteit", eigenaarDeltaEntiteit)
-                                                                          .append("eigenaarSleutel", eigenaarSleutel)
-                                                                          .append("eigenaarVeld", eigenaarVeld)
-                                                                          .toString();
+                .append("aantal opgeslagenRijen", opgeslagenRijen.size())
+                .append("aantal nieuweRijen", nieuweRijen.size())
+                .append("eigenaarEntiteit", eigenaarDeltaEntiteit)
+                .append("eigenaarSleutel", eigenaarSleutel)
+                .append("eigenaarVeld", eigenaarVeld)
+                .toString();
     }
 }

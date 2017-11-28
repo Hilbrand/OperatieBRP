@@ -6,7 +6,8 @@
 
 package nl.bzk.brp.beheer.webapp.controllers;
 
-import nl.bzk.brp.model.basis.FormeelHistorisch;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractFormeleHistorieZonderVerantwoording;
+
 import org.junit.Assert;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -16,12 +17,12 @@ public class HistorieVerwerkerTestUtil {
         // empty constructor, util class.
     }
 
-    public static <T extends FormeelHistorisch> void controleer(
-            final AbstractHistorieVerwerker<?, T> historieVerwerker,
-            final T nieuweHistorie,
-            final T actueleRecord,
-            final String propertyNaam,
-            final Object andereWaarde)
+    public static <T extends AbstractFormeleHistorieZonderVerantwoording> void controleer(
+        final AbstractHistorieVerwerker<?, T> historieVerwerker,
+        final T nieuweHistorie,
+        final T actueleRecord,
+        final String propertyNaam,
+        final Object andereWaarde)
     {
         Assert.assertTrue(historieVerwerker.isHistorieInhoudelijkGelijk(nieuweHistorie, actueleRecord));
         ReflectionTestUtils.setField(nieuweHistorie, propertyNaam, andereWaarde);

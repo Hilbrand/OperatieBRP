@@ -17,13 +17,9 @@ public interface FileUploadVerwerker {
 
     /**
      * Verwerkt de upload van een file.
-     * 
-     * @param filename
-     *            De filenaam van het bestand met de PL.
-     * @param file
-     *            De file inhoud.
-     * @param foutMelder
-     *            FoutMelder waar de errors gelogt worden.
+     * @param filename De filenaam van het bestand met de PL.
+     * @param file De file inhoud.
+     * @param foutMelder FoutMelder waar de errors gelogt worden.
      * @return String met de persoonslijst.
      */
     List<GgoPersoonslijstGroep> verwerkFileUpload(String filename, byte[] file, FoutMelder foutMelder);

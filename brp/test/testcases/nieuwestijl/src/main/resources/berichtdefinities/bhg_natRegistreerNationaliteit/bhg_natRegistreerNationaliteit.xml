@@ -27,7 +27,7 @@
         <brp:bronnen>
             <!--Zero or more repetitions:-->
             [#list verkrijgingNederlandseNationaliteit.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -117,7 +117,7 @@
         <brp:bronnen>
             <!--Zero or more repetitions:-->
             [#list verkrijgingVreemdeNationaliteit.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -205,7 +205,7 @@
         <brp:bronnen>
             <!--Zero or more repetitions:-->
             [#list wijzigingIndicatieNationaliteit.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>

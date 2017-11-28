@@ -7,40 +7,37 @@
 package nl.bzk.migratiebrp.ggo.viewer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonOnderzoek;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
 
 /**
  * Het Onderzoek object gemodelleerd zoals dit in de Viewer aan de BRP kant wordt weergegeven.
- *
  * @author stefanr
- *
  */
 public class GgoBrpOnderzoek implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonIgnore
-    private final PersoonOnderzoek persoonOnderzoek;
+    private final Onderzoek onderzoek;
 
     private Map<String, String> inhoud;
     private final Set<String> betrokkenVelden = new LinkedHashSet<>();
 
     /**
      * Constructor.
-     *
-     * @param persoonOnderzoek
-     *            Het oorspronkelijke onderzoek uit het Entity-model, gebruikt als identificatie voor deze instantie.
+     * @param onderzoek Het oorspronkelijke onderzoek uit het Entity-model, gebruikt als identificatie voor deze instantie.
      */
-    public GgoBrpOnderzoek(final PersoonOnderzoek persoonOnderzoek) {
-        this.persoonOnderzoek = persoonOnderzoek;
+    public GgoBrpOnderzoek(final Onderzoek onderzoek) {
+        this.onderzoek = onderzoek;
     }
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return the inhoud
      */
     public final Map<String, String> getInhoud() {
@@ -49,9 +46,7 @@ public class GgoBrpOnderzoek implements Serializable {
 
     /**
      * Sets the inhoud.
-     *
-     * @param inhoud
-     *            the inhoud to set
+     * @param inhoud the inhoud to set
      */
     public final void setInhoud(final Map<String, String> inhoud) {
         this.inhoud = inhoud;
@@ -59,7 +54,6 @@ public class GgoBrpOnderzoek implements Serializable {
 
     /**
      * Geef de waarde van betrokken velden.
-     *
      * @return the betrokkenVelden
      */
     public final Set<String> getBetrokkenVelden() {
@@ -67,8 +61,7 @@ public class GgoBrpOnderzoek implements Serializable {
     }
 
     /**
-     * @param betrokkenVeld
-     *            the betrokkenVeld to add
+     * @param betrokkenVeld the betrokkenVeld to add
      */
     public final void addBetrokkenVeld(final String betrokkenVeld) {
         betrokkenVelden.add(betrokkenVeld);
@@ -76,11 +69,11 @@ public class GgoBrpOnderzoek implements Serializable {
 
     @Override
     public final boolean equals(final Object obj) {
-        return obj instanceof GgoBrpOnderzoek && persoonOnderzoek.equals(((GgoBrpOnderzoek) obj).persoonOnderzoek);
+        return obj instanceof GgoBrpOnderzoek && onderzoek.equals(((GgoBrpOnderzoek) obj).onderzoek);
     }
 
     @Override
     public final int hashCode() {
-        return persoonOnderzoek.hashCode();
+        return onderzoek.hashCode();
     }
 }

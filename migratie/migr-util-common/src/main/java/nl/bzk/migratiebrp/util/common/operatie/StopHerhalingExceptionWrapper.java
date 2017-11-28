@@ -14,9 +14,7 @@ public class StopHerhalingExceptionWrapper extends ExceptionWrapper implements S
 
     /**
      * Constructor.
-     * 
-     * @param e
-     *            te wrappen exception
+     * @param e te wrappen exception
      */
 
     public StopHerhalingExceptionWrapper(final Exception e) {

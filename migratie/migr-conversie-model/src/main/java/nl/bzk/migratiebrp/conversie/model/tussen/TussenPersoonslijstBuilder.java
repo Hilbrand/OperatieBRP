@@ -8,11 +8,11 @@ package nl.bzk.migratiebrp.conversie.model.tussen;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBehandeldAlsNederlanderIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBuitenlandsPersoonsnummerInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDeelnameEuVerkiezingenInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDerdeHeeftGezagIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
@@ -27,6 +27,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNaamgebruikInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNationaliteitInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNummerverwijzingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnderCurateleIndicatieInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnverwerktDocumentAanwezigIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoud;
@@ -46,12 +47,14 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerstrekkingsbeperkingInd
 public final class TussenPersoonslijstBuilder {
 
     private final List<TussenStapel<BrpNationaliteitInhoud>> nationaliteitStapels = new ArrayList<>();
+    private final List<TussenStapel<BrpBuitenlandsPersoonsnummerInhoud>> buitenlandsPersoonsnummerStapels = new ArrayList<>();
     private final List<TussenStapel<BrpReisdocumentInhoud>> reisdocumentStapels = new ArrayList<>();
     private final List<TussenRelatie> relaties = new ArrayList<>();
     private final List<TussenStapel<BrpVerificatieInhoud>> verificatieStapels = new ArrayList<>();
     private TussenStapel<BrpNaamgebruikInhoud> naamgebruikStapel;
     private TussenStapel<BrpAdresInhoud> adresStapel;
     private TussenStapel<BrpBehandeldAlsNederlanderIndicatieInhoud> behandeldAlsNederlanderIndicatieStapel;
+    private TussenStapel<BrpOnverwerktDocumentAanwezigIndicatieInhoud> onverwerktDocumentAanwezigIndicatieStapel;
     private TussenStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel;
     private TussenStapel<BrpBijhoudingInhoud> bijhoudingStapel;
     private TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud> derdeHeeftGezagIndicatieStapel;
@@ -86,18 +89,18 @@ public final class TussenPersoonslijstBuilder {
      * Maak een lege builder.
      */
     public TussenPersoonslijstBuilder() {
+        //lege builder
     }
 
     /**
      * Maak een builder gevuld met de stapels uit de persoonslijst.
-     *
-     * @param persoonslijst
-     *            initiele vulling
+     * @param persoonslijst initiele vulling
      */
     public TussenPersoonslijstBuilder(final TussenPersoonslijst persoonslijst) {
         naamgebruikStapel = persoonslijst.getNaamgebruikStapel();
         adresStapel = persoonslijst.getAdresStapel();
         behandeldAlsNederlanderIndicatieStapel = persoonslijst.getBehandeldAlsNederlanderIndicatieStapel();
+        onverwerktDocumentAanwezigIndicatieStapel = persoonslijst.getOnverwerktDocumentAanwezigIndicatieStapel();
         signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel = persoonslijst.getSignaleringMetBetrekkingTotVerstrekkenReisdocumentStapel();
         bijhoudingStapel = persoonslijst.getBijhoudingStapel();
         derdeHeeftGezagIndicatieStapel = persoonslijst.getDerdeHeeftGezagIndicatieStapel();
@@ -108,6 +111,7 @@ public final class TussenPersoonslijstBuilder {
         migratieStapel = persoonslijst.getMigratieStapel();
         inschrijvingStapel = persoonslijst.getInschrijvingStapel();
         nationaliteitStapels.addAll(persoonslijst.getNationaliteitStapels());
+        buitenlandsPersoonsnummerStapels.addAll(persoonslijst.getBuitenlandsPersoonsnummerStapels());
         nummerverwijzingStapel = persoonslijst.getNummerverwijzingStapel();
         onderCurateleIndicatieStapel = persoonslijst.getOnderCurateleIndicatieStapel();
         overlijdenStapel = persoonslijst.getOverlijdenStapel();
@@ -137,46 +141,46 @@ public final class TussenPersoonslijstBuilder {
      */
     public TussenPersoonslijst build() {
         return new TussenPersoonslijst(
-            naamgebruikStapel,
-            adresStapel,
-            persoonAfgeleidAdministratiefStapel,
-            behandeldAlsNederlanderIndicatieStapel,
-            signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel,
-            bijhoudingStapel,
-            derdeHeeftGezagIndicatieStapel,
-            deelnameEuVerkiezingenStapel,
-            geboorteStapel,
-            geslachtsaanduidingStapel,
-            identificatienummerStapel,
-            migratieStapel,
-            inschrijvingStapel,
-            nationaliteitStapels,
-            nummerverwijzingStapel,
-            onderCurateleIndicatieStapel,
-            overlijdenStapel,
-            persoonskaartStapel,
-            reisdocumentStapels,
-            relaties,
-            samengesteldeNaamStapel,
-            staatloosIndicatieStapel,
-            uitsluitingKiesrechtStapel,
-            vastgesteldNietNederlanderIndicatieStapel,
-            verblijfsrechtStapel,
-            verstrekkingsbeperkingIndicatieStapel,
-            bijzondereVerblijfsrechtelijkePositieIndicatieStapel,
-            verificatieStapels,
-            istOuder1Stapel,
-            istOuder2Stapel,
-            istHuwelijkOfGpStapels,
-            istKindStapels,
-            istGezagsverhoudingStapel);
+                naamgebruikStapel,
+                adresStapel,
+                persoonAfgeleidAdministratiefStapel,
+                behandeldAlsNederlanderIndicatieStapel,
+                onverwerktDocumentAanwezigIndicatieStapel,
+                signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel,
+                bijhoudingStapel,
+                derdeHeeftGezagIndicatieStapel,
+                deelnameEuVerkiezingenStapel,
+                geboorteStapel,
+                geslachtsaanduidingStapel,
+                identificatienummerStapel,
+                migratieStapel,
+                inschrijvingStapel,
+                nationaliteitStapels,
+                buitenlandsPersoonsnummerStapels,
+                nummerverwijzingStapel,
+                onderCurateleIndicatieStapel,
+                overlijdenStapel,
+                persoonskaartStapel,
+                reisdocumentStapels,
+                relaties,
+                samengesteldeNaamStapel,
+                staatloosIndicatieStapel,
+                uitsluitingKiesrechtStapel,
+                vastgesteldNietNederlanderIndicatieStapel,
+                verblijfsrechtStapel,
+                verstrekkingsbeperkingIndicatieStapel,
+                bijzondereVerblijfsrechtelijkePositieIndicatieStapel,
+                verificatieStapels,
+                istOuder1Stapel,
+                istOuder2Stapel,
+                istHuwelijkOfGpStapels,
+                istKindStapels,
+                istGezagsverhoudingStapel);
     }
 
     /**
      * Voegt de Naamgebruik TussenStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de naamgebruikStapel, mag niet null zijn
+     * @param param de naamgebruikStapel, mag niet null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder naamgebruikStapel(final TussenStapel<BrpNaamgebruikInhoud> param) {
@@ -186,9 +190,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de adres stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            adres stapel
+     * @param param adres stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder adresStapel(final TussenStapel<BrpAdresInhoud> param) {
@@ -199,9 +201,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de persoon afgeleid administratief stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            stapel
+     * @param param stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder persoonAfgeleidAdministratiefStapel(final TussenStapel<BrpPersoonAfgeleidAdministratiefInhoud> param) {
@@ -212,9 +212,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de staatloos stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            stapel
+     * @param param stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder staatloosIndicatieStapel(final TussenStapel<BrpStaatloosIndicatieInhoud> param) {
@@ -223,10 +221,8 @@ public final class TussenPersoonslijstBuilder {
     }
 
     /**
-     * Voegt de MigratieBehandeldAlsNederlanderIndicatieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de MigratieBehandeldAlsNederlanderIndicatieStapel, mag niet null zijn
+     * Voegt de {@link BrpBehandeldAlsNederlanderIndicatieInhoud} toe aan deze persoonslijst builder.
+     * @param param de {@link BrpBehandeldAlsNederlanderIndicatieInhoud}, mag niet null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder behandeldAlsNederlanderIndicatieStapel(final TussenStapel<BrpBehandeldAlsNederlanderIndicatieInhoud> param) {
@@ -235,15 +231,22 @@ public final class TussenPersoonslijstBuilder {
     }
 
     /**
+     * Voegt de {@link BrpOnverwerktDocumentAanwezigIndicatieInhoud} toe aan deze persoonslijst builder.
+     * @param param de {@link BrpOnverwerktDocumentAanwezigIndicatieInhoud}, mag niet null zijn
+     * @return het TussenPersoonslijstBuilder object
+     */
+    public TussenPersoonslijstBuilder onverwerktDocumentAanwezigIndicatieStapel(final TussenStapel<BrpOnverwerktDocumentAanwezigIndicatieInhoud> param) {
+        onverwerktDocumentAanwezigIndicatieStapel = param;
+        return this;
+    }
+
+    /**
      * Voegt de signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel, mag null zijn
+     * @param param de signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel(
-        final TussenStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> param)
-    {
+            final TussenStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> param) {
         signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel = param;
 
         return this;
@@ -251,9 +254,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de bijhouding stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            bijhouding stapel
+     * @param param bijhouding stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder bijhoudingStapel(final TussenStapel<BrpBijhoudingInhoud> param) {
@@ -263,9 +264,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de derdeHeeftGezagIndicatie stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            derdeHeeftGezagIndicatie stapel
+     * @param param derdeHeeftGezagIndicatie stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder derdeHeeftGezagIndicatieStapel(final TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud> param) {
@@ -275,9 +274,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de deelnameEuVerkiezingen stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            deelnameEuVerkiezingen stapel
+     * @param param deelnameEuVerkiezingen stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder deelnameEuVerkiezingen(final TussenStapel<BrpDeelnameEuVerkiezingenInhoud> param) {
@@ -287,9 +284,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de Geboorte TussenStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de geboorteStapel, mag niet null zijn
+     * @param param de geboorteStapel, mag niet null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder geboorteStapel(final TussenStapel<BrpGeboorteInhoud> param) {
@@ -299,9 +294,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de geslachtsaanduidingStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de geslachtsaanduidingStapel, mag null zijn
+     * @param param de geslachtsaanduidingStapel, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder geslachtsaanduidingStapel(final TussenStapel<BrpGeslachtsaanduidingInhoud> param) {
@@ -311,9 +304,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de identificatienummer stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de identificatienummer, mag null zijn
+     * @param param de identificatienummer, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder identificatienummerStapel(final TussenStapel<BrpIdentificatienummersInhoud> param) {
@@ -323,9 +314,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de immigratie stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            immigratie stapel
+     * @param param immigratie stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder migratieStapel(final TussenStapel<BrpMigratieInhoud> param) {
@@ -335,9 +324,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de Inschrijving TussenStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de inschrijvingStapel, mag niet null zijn
+     * @param param de inschrijvingStapel, mag niet null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder inschrijvingStapel(final TussenStapel<BrpInschrijvingInhoud> param) {
@@ -347,9 +334,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de Nummerverwijzing stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de nummerverwijzingStapel
+     * @param param de nummerverwijzingStapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder nummerverwijzingStapel(final TussenStapel<BrpNummerverwijzingInhoud> param) {
@@ -358,10 +343,8 @@ public final class TussenPersoonslijstBuilder {
     }
 
     /**
-     * Voegt de MigratieNationaliteitStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de MigratieNationaliteitStapel, mag niet null zijn
+     * Voegt een {@link TussenStapel} met {@link BrpNationaliteitInhoud} toe aan deze builder.
+     * @param param een {@link TussenStapel}, mag niet null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder nationaliteitStapel(final TussenStapel<BrpNationaliteitInhoud> param) {
@@ -372,10 +355,21 @@ public final class TussenPersoonslijstBuilder {
     }
 
     /**
-     * Voegt de MigratieNationaliteitStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de MigratieNationaliteitStapel, mag niet null zijn
+     * Voegt een {@link TussenStapel} met BrpBuitenlandsPersoonsnummerInhoud toe toe aan deze builder.
+     * @param param de {@link TussenStapel}, mag niet null zijn
+     * @return het TussenPersoonslijstBuilder object
+     */
+    public TussenPersoonslijstBuilder buitenlandsPersoonsnummerStapel(final TussenStapel<BrpBuitenlandsPersoonsnummerInhoud> param) {
+        if (param != null) {
+            buitenlandsPersoonsnummerStapels.add(param);
+        }
+        return this;
+    }
+
+
+    /**
+     * Voegt een lijst van {@link TussenStapel} met {@link BrpNationaliteitInhoud} toe aan deze builder.
+     * @param param een {@link TussenStapel}, mag niet null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder nationaliteitStapels(final List<TussenStapel<BrpNationaliteitInhoud>> param) {
@@ -387,10 +381,21 @@ public final class TussenPersoonslijstBuilder {
     }
 
     /**
+     * Voegt een lijst van {@link TussenStapel} met {@link BrpNationaliteitInhoud} toe aan deze builder.
+     * @param param een {@link TussenStapel}, mag niet null zijn
+     * @return het TussenPersoonslijstBuilder object
+     */
+    public TussenPersoonslijstBuilder buitenlandsPersoonsnummerStapels(final List<TussenStapel<BrpBuitenlandsPersoonsnummerInhoud>> param) {
+        buitenlandsPersoonsnummerStapels.clear();
+        if (param != null) {
+            buitenlandsPersoonsnummerStapels.addAll(param);
+        }
+        return this;
+    }
+
+    /**
      * Voegt de onderCurateleIndicatie stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            onderCurateleIndicatie stapel
+     * @param param onderCurateleIndicatie stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder onderCurateleIndicatieStapel(final TussenStapel<BrpOnderCurateleIndicatieInhoud> param) {
@@ -400,9 +405,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de overlijden stapel aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de overlijden stapel
+     * @param param de overlijden stapel
      * @return de BrpPersoonslijstBuilder
      */
     public TussenPersoonslijstBuilder overlijdenStapel(final TussenStapel<BrpOverlijdenInhoud> param) {
@@ -412,9 +415,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de persoonskaart stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            the persoonskaartStapel to set
+     * @param param the persoonskaartStapel to set
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder persoonskaartStapel(final TussenStapel<BrpPersoonskaartInhoud> param) {
@@ -424,9 +425,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de Reisdocument TussenStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de reisdocumentStapel, mag null zijn
+     * @param param de reisdocumentStapel, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder reisdocumentStapel(final TussenStapel<BrpReisdocumentInhoud> param) {
@@ -438,9 +437,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de Reisdocument MigratieStapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de reisdocumentStapels, mag null zijn
+     * @param param de reisdocumentStapels, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder reisdocumentStapels(final List<TussenStapel<BrpReisdocumentInhoud>> param) {
@@ -453,9 +450,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de MigratieRelatieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de relatieStapel, mag null zijn
+     * @param param de relatieStapel, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder relatie(final TussenRelatie param) {
@@ -467,12 +462,9 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de MigratieRelatieStapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de relatieStapels, mag null zijn
+     * @param param de relatieStapels, mag null zijn
      * @return het TussenPersoonslijstBuilder object
-     * @throws NullPointerException
-     *             als relatieStapels null is
+     * @throws NullPointerException als relatieStapels null is
      */
     public TussenPersoonslijstBuilder relaties(final List<TussenRelatie> param) {
         relaties.clear();
@@ -484,9 +476,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de samengestelde naam stapel toe aan deze persoonlijst builder.
-     *
-     * @param param
-     *            samengestelde naam stapel
+     * @param param samengestelde naam stapel
      * @return builder (this)
      */
     public TussenPersoonslijstBuilder samengesteldeNaamStapel(final TussenStapel<BrpSamengesteldeNaamInhoud> param) {
@@ -496,9 +486,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de uitsluitingKiesrecht stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            uitsluitingKiesrecht stapel
+     * @param param uitsluitingKiesrecht stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder uitsluitingKiesrecht(final TussenStapel<BrpUitsluitingKiesrechtInhoud> param) {
@@ -508,9 +496,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de MigratieVastgesteldNietNederlanderIndicatieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de MigratieVastgesteldNietNederlanderIndicatieStapel, mag niet null zijn
+     * @param param de MigratieVastgesteldNietNederlanderIndicatieStapel, mag niet null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder vastgesteldNietNederlanderIndicatieStapel(final TussenStapel<BrpVastgesteldNietNederlanderIndicatieInhoud> param) {
@@ -520,9 +506,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de verblijfsrecht stapel aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de verblijfsrecht stapel
+     * @param param de verblijfsrecht stapel
      * @return de BrpPersoonslijstBuilder
      */
     public TussenPersoonslijstBuilder verblijfsrechtStapel(final TussenStapel<BrpVerblijfsrechtInhoud> param) {
@@ -532,9 +516,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de verstrekkingsbeperkingIndicatie stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            the verstrekkingsbeperkingIndicatieStapel to set
+     * @param param the verstrekkingsbeperkingIndicatieStapel to set
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder verstrekkingsbeperkingIndicatieStapel(final TussenStapel<BrpVerstrekkingsbeperkingIndicatieInhoud> param) {
@@ -544,23 +526,18 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de bijzondereVerblijfsrechtelijkePositieIndicatie stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de bijzondereVerblijfsrechtelijkePositie stapel die moet worden toegevoegd
+     * @param param de bijzondereVerblijfsrechtelijkePositie stapel die moet worden toegevoegd
      * @return de builder
      */
     public TussenPersoonslijstBuilder bijzondereVerblijfsrechtelijkePositieIndicatieStapel(
-        final TussenStapel<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud> param)
-    {
+            final TussenStapel<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud> param) {
         bijzondereVerblijfsrechtelijkePositieIndicatieStapel = param;
         return this;
     }
 
     /**
      * Voegt de Verificatie TussenStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de verificatieStapel, mag null zijn
+     * @param param de verificatieStapel, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder verificatieStapel(final TussenStapel<BrpVerificatieInhoud> param) {
@@ -572,9 +549,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de Verificatie MigratieStapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de verificatieStapels, mag null zijn
+     * @param param de verificatieStapels, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder verificatieStapels(final List<TussenStapel<BrpVerificatieInhoud>> param) {
@@ -587,9 +562,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de IST kindstapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de istKindStapels, mag null zijn
+     * @param param de istKindStapels, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder istKindStapels(final List<TussenStapel<BrpIstRelatieGroepInhoud>> param) {
@@ -602,9 +575,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de IST kind stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de istKindStapel, mag null zijn
+     * @param param de istKindStapel, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder istKindStapel(final TussenStapel<BrpIstRelatieGroepInhoud> param) {
@@ -616,9 +587,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de IST HuwelijkOfGp stapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de istHuwelijkOfGpStapels, mag null zijn
+     * @param param de istHuwelijkOfGpStapels, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder istHuwelijkOfGpStapels(final List<TussenStapel<BrpIstHuwelijkOfGpGroepInhoud>> param) {
@@ -631,9 +600,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de IST HuwelijkOfGp stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de istKindHuwelijkOfGpStapel, mag null zijn
+     * @param param de istKindHuwelijkOfGpStapel, mag null zijn
      * @return het TussenPersoonslijstBuilder object
      */
     public TussenPersoonslijstBuilder istHuwelijkOfGpStapel(final TussenStapel<BrpIstHuwelijkOfGpGroepInhoud> param) {
@@ -645,9 +612,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de IST ouder1 stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            istOuder1 stapel
+     * @param param istOuder1 stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder istOuder1(final TussenStapel<BrpIstRelatieGroepInhoud> param) {
@@ -657,9 +622,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de IST ouder2 stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            istOuder2 stapel
+     * @param param istOuder2 stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder istOuder2(final TussenStapel<BrpIstRelatieGroepInhoud> param) {
@@ -669,9 +632,7 @@ public final class TussenPersoonslijstBuilder {
 
     /**
      * Voegt de IST gezagsverhouding stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            istGezagsverhouding stapel
+     * @param param istGezagsverhouding stapel
      * @return de builder (this)
      */
     public TussenPersoonslijstBuilder istGezagsverhouding(final TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> param) {

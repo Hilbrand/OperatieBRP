@@ -27,7 +27,6 @@ import nl.gba.gbav.spontaan.verschilanalyse.VoorkomenMatch;
 /**
  * Roept GBA-V code aan om twee Lo3 Persoonslijsten met elkaar te vergelijken en het resultaat hiervan te gebruiken om
  * te bepalen wat de lo3Herkomst is van de teruggeconverteerde Lo3Persoonslijst.
- * 
  */
 public class Lo3HerkomstBuilder {
     private static final Map<Lo3Herkomst, Lo3Herkomst> HERKOMST = new HashMap<>();
@@ -35,11 +34,8 @@ public class Lo3HerkomstBuilder {
     /**
      * Kopieert de Terugconversie Lo3Persoonslijst en voegt Lo3Herkomst aan toe. Lo3Herkomst wordt bepaalt door de
      * verschil/match analyse uit GBA-V (spontaan).
-     * 
-     * @param origineel
-     *            Lo3Persoonslijst
-     * @param teruggeconverteerd
-     *            Lo3Persoonslijst
+     * @param origineel Lo3Persoonslijst
+     * @param teruggeconverteerd Lo3Persoonslijst
      * @return gekopieerde teruggeconverteerde Lo3Persoonslijst met Lo3Herkomst
      */
     public final Lo3Persoonslijst kopieerTerugconversiePlMetHerkomst(final Lo3Persoonslijst origineel, final Lo3Persoonslijst teruggeconverteerd) {
@@ -103,8 +99,7 @@ public class Lo3HerkomstBuilder {
         }
     }
 
-    private <T extends Lo3CategorieInhoud> List<Lo3Stapel<T>> kopieerStapelsMetHerkomst(final List<Lo3Stapel<T>> lo3Stapels, final Lo3CategorieEnum catNr)
-    {
+    private <T extends Lo3CategorieInhoud> List<Lo3Stapel<T>> kopieerStapelsMetHerkomst(final List<Lo3Stapel<T>> lo3Stapels, final Lo3CategorieEnum catNr) {
         final List<Lo3Stapel<T>> stapels = new ArrayList<>();
         int stapelNr = 0;
         for (final Lo3Stapel<T> lo3Stapel : lo3Stapels) {
@@ -115,10 +110,9 @@ public class Lo3HerkomstBuilder {
     }
 
     private <T extends Lo3CategorieInhoud> Lo3Stapel<T> kopieerStapelMetHerkomst(
-        final Lo3Stapel<T> lo3Stapel,
-        final Lo3CategorieEnum catNr,
-        final int stapelNr)
-    {
+            final Lo3Stapel<T> lo3Stapel,
+            final Lo3CategorieEnum catNr,
+            final int stapelNr) {
         if (lo3Stapel == null) {
             return null;
         }

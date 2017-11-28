@@ -8,6 +8,7 @@ package nl.bzk.migratiebrp.isc.telling.repository.jpa;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.isc.telling.AbstractDatabaseTest;
@@ -33,7 +34,7 @@ public class ProcesExtractieRepositoryImplTest extends AbstractDatabaseTest {
     @InsertBefore("/sql/data/soa_data.xml")
     public void testSelecteerInTellingTeVerwerkenGestarteProcesInstanties() {
 
-        Assert.assertNull(service.selecteerInTellingTeVerwerkenGestarteProcesInstanties(null, null));
+        Assert.assertEquals(Collections.emptyList(), service.selecteerInTellingTeVerwerkenGestarteProcesInstanties(null, null));
 
         List<ProcesExtractie> procesExtractieLijst = service.selecteerInTellingTeVerwerkenGestarteProcesInstanties(ONGELDIGE_DATUM, null);
         Assert.assertNotNull(procesExtractieLijst);
@@ -55,7 +56,7 @@ public class ProcesExtractieRepositoryImplTest extends AbstractDatabaseTest {
     @InsertBefore("/sql/data/soa_data.xml")
     public void testSelecteerInTellingTeVerwerkenBeeindigdeProcesInstanties() {
 
-        Assert.assertNull(service.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(null, null));
+        Assert.assertEquals(Collections.emptyList(), service.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(null, null));
 
         List<ProcesExtractie> procesExtractieLijst = service.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(ONGELDIGE_DATUM, null);
         Assert.assertNotNull(procesExtractieLijst);

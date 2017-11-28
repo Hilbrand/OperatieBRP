@@ -11,9 +11,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.AfnemersindicatiesBericht;
@@ -28,8 +32,6 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
 import nl.bzk.migratiebrp.util.common.JdbcConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * Insert afnemersindicaties in de GBA-v tabellen.
@@ -66,7 +68,7 @@ public class GbavAfnemersindicatieKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -89,7 +91,7 @@ public class GbavAfnemersindicatieKanaal extends LazyLoadingKanaal {
 
                     for (int volgnummer = 0; volgnummer < afnemersindicatieStapel.size(); volgnummer++) {
                         final Lo3Categorie<Lo3AfnemersindicatieInhoud> afnemersindicatieVoorkomen = afnemersindicatieStapel.get(volgnummer);
-                        final Integer afnemerCode = afnemersindicatieVoorkomen.getInhoud().getAfnemersindicatie();
+                        final String afnemerCode = afnemersindicatieVoorkomen.getInhoud().getAfnemersindicatie();
                         final Lo3Datum geldigheidStartDatum = afnemersindicatieVoorkomen.getHistorie().getIngangsdatumGeldigheid();
 
                         insertAfnemersindicatie(connection, plId, stapel, volgnummer, afnemerCode, geldigheidStartDatum);
@@ -100,9 +102,9 @@ public class GbavAfnemersindicatieKanaal extends LazyLoadingKanaal {
             }
         }
 
-        private Long zoekPersoon(final Connection connection, final Long aNummer) throws SQLException, KanaalException {
+        private Long zoekPersoon(final Connection connection, final String aNummer) throws SQLException, KanaalException {
             try (final PreparedStatement statement = connection.prepareStatement(ZOEK_PERSOON_SQL)) {
-                statement.setLong(JdbcConstants.COLUMN_1, aNummer);
+                statement.setLong(JdbcConstants.COLUMN_1, Long.valueOf(aNummer));
 
                 try (ResultSet result = statement.executeQuery()) {
                     if (!result.next()) {
@@ -114,14 +116,8 @@ public class GbavAfnemersindicatieKanaal extends LazyLoadingKanaal {
             }
         }
 
-        private void insertAfnemersindicatie(
-            final Connection connection,
-            final Long plId,
-            final int stapel,
-            final int volgnummer,
-            final Integer afnemerCode,
-            final Lo3Datum geldigheidStartDatum) throws SQLException
-        {
+        private void insertAfnemersindicatie(final Connection connection, final Long plId, final int stapel, final int volgnummer, final String afnemerCode,
+                                             final Lo3Datum geldigheidStartDatum) throws SQLException {
             try (final PreparedStatement statement = connection.prepareStatement(INSERT_AFNEMER_IND_SQL)) {
                 statement.setLong(PARAM_PL_ID, plId);
                 statement.setInt(PARAM_STAPEL_NR, stapel);
@@ -129,7 +125,7 @@ public class GbavAfnemersindicatieKanaal extends LazyLoadingKanaal {
                 if (afnemerCode == null) {
                     statement.setNull(PARAM_AFNEMER_CODE, Types.NULL);
                 } else {
-                    statement.setInt(PARAM_AFNEMER_CODE, afnemerCode);
+                    statement.setInt(PARAM_AFNEMER_CODE, Integer.valueOf(afnemerCode));
 
                 }
                 statement.setInt(PARAM_GELDIGHEID_START_DATUM, geldigheidStartDatum.getIntegerWaarde());

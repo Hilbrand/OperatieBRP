@@ -9,8 +9,8 @@ package nl.bzk.brp.levering.lo3.filter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
@@ -62,7 +62,7 @@ public class MutatieBerichtFilterTest {
 
         final List<String> rubrieken = Arrays.asList("01.02.20", CODE_010230, CODE_01_02_40, "51.02.10", "03.02.10", "52.02.10");
 
-        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, categorieen, rubrieken);
+        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, null, categorieen, rubrieken);
         for (final Lo3CategorieWaarde filt : gefilterd) {
             LOGGER.info(filt.toString());
         }
@@ -96,7 +96,7 @@ public class MutatieBerichtFilterTest {
 
         final List<String> filterRubrieken = Arrays.asList(CODE_01_02_40);
 
-        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, categorieen, filterRubrieken);
+        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, null, categorieen, filterRubrieken);
 
         Assert.assertEquals(2, gefilterd.size());
         Assert.assertEquals(WAARDE010240_NIEUW, gefilterd.get(0).getElement(Lo3ElementEnum.ELEMENT_0240));
@@ -124,7 +124,7 @@ public class MutatieBerichtFilterTest {
 
         final List<String> filterRubrieken = Arrays.asList(CODE_01_02_40);
 
-        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, categorieen, filterRubrieken);
+        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, null, categorieen, filterRubrieken);
 
         Assert.assertEquals(2, gefilterd.size());
         Assert.assertEquals(WAARDE010240_NIEUW, gefilterd.get(0).getElement(Lo3ElementEnum.ELEMENT_0240));
@@ -152,7 +152,7 @@ public class MutatieBerichtFilterTest {
 
         final List<String> filterRubrieken = Arrays.asList(CODE_01_02_40);
 
-        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, categorieen, filterRubrieken);
+        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, null, categorieen, filterRubrieken);
 
         Assert.assertEquals(2, gefilterd.size());
         Assert.assertEquals(WAARDE010240_NIEUW, gefilterd.get(0).getElement(Lo3ElementEnum.ELEMENT_0240));
@@ -182,7 +182,7 @@ public class MutatieBerichtFilterTest {
 
         final List<String> filterRubrieken = Arrays.asList(CODE_010230);
 
-        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, categorieen, filterRubrieken);
+        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, null, categorieen, filterRubrieken);
 
         Assert.assertEquals(2, gefilterd.size());
         Assert.assertEquals(WAARDE_010230_NIEUW, gefilterd.get(0).getElement(Lo3ElementEnum.ELEMENT_0230));
@@ -263,14 +263,14 @@ public class MutatieBerichtFilterTest {
                     "51.85.10",
                     "51.86.10");
 
-        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, categorieen, filterRubrieken);
+        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, null, categorieen, filterRubrieken);
         System.out.println("GEFILTERED: " + gefilterd);
         Assert.assertEquals(0, gefilterd.size());
     }
 
     @Test
     public void testEmpty() {
-        Assert.assertEquals(0, subject.filter(null, null, null, null, null).size());
-        Assert.assertEquals(0, subject.filter(null, null, null, null, Collections.<String>emptyList()).size());
+        Assert.assertEquals(0, subject.filter(null, null, null, null, null, null).size());
+        Assert.assertEquals(0, subject.filter(null, null, null, null, null, Collections.<String>emptyList()).size());
     }
 }

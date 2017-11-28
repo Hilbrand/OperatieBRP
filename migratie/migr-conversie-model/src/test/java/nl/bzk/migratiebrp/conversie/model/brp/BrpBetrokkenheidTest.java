@@ -14,12 +14,11 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpBetrokkenheid.Builder;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud;
@@ -31,7 +30,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderlijkGezagInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderlijkGezagInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoudTest;
-
 import org.junit.Test;
 
 public class BrpBetrokkenheidTest {
@@ -45,14 +43,14 @@ public class BrpBetrokkenheidTest {
 
     @Test
     public void testGetIdentificatienummersStapel() throws Exception {
-        BrpIdentificatienummersInhoud inh = new BrpIdentificatienummersInhoud(new BrpLong(1234L), null);
+        BrpIdentificatienummersInhoud inh = new BrpIdentificatienummersInhoud(new BrpString("1234"), null);
         BrpGroep<BrpIdentificatienummersInhoud> groep = new BrpGroep<>(inh, createHistory(), null, null, null);
         List<BrpGroep<BrpIdentificatienummersInhoud>> groepen = new ArrayList<>();
         groepen.add(groep);
         BrpStapel<BrpIdentificatienummersInhoud> iNumStapel = new BrpStapel<>(groepen);
         BrpBetrokkenheid b = BrpBetrokkenheidTest.maakBetrokkenheidINum(BrpSoortBetrokkenheidCode.KIND, iNumStapel);
         assertEquals(1, b.getIdentificatienummersStapel().size());
-        assertEquals(1234, b.getIdentificatienummersStapel().getActueel().getInhoud().getAdministratienummer().getWaarde().intValue());
+        assertEquals("1234", b.getIdentificatienummersStapel().getActueel().getInhoud().getAdministratienummer().getWaarde());
         bBuilder = new Builder();
         bBuilder = bBuilder.rol(BrpSoortBetrokkenheidCode.KIND);
         assertEquals(bBuilder.identificatienummersStapel(iNumStapel).build(), b);
@@ -113,7 +111,7 @@ public class BrpBetrokkenheidTest {
         BrpStapel<BrpOuderlijkGezagInhoud> stapel = new BrpStapel<>(groepen);
         BrpBetrokkenheid b = BrpBetrokkenheidTest.maakBetrokkenheidOuderlijkGezag(BrpSoortBetrokkenheidCode.OUDER, stapel);
         assertEquals(1, b.getOuderlijkGezagStapel().size());
-        assertTrue(b.getOuderlijkGezagStapel().getActueel().getInhoud().getOuderHeeftGezag().getWaarde().booleanValue());
+        assertTrue(b.getOuderlijkGezagStapel().getActueel().getInhoud().getOuderHeeftGezag().getWaarde());
         bBuilder = new Builder();
         bBuilder = bBuilder.rol(BrpSoortBetrokkenheidCode.OUDER);
         assertEquals(bBuilder.ouderlijkGezagStapel(stapel).build(), b);
@@ -121,15 +119,14 @@ public class BrpBetrokkenheidTest {
 
     @Test
     public void testGetOuderStapel() throws Exception {
-        BrpOuderInhoud inh = BrpOuderInhoudTest.createInhoud(Boolean.TRUE, Boolean.FALSE);
+        BrpOuderInhoud inh = BrpOuderInhoudTest.createInhoud(Boolean.FALSE);
         BrpGroep<BrpOuderInhoud> groep = new BrpGroep<>(inh, createHistory(), null, null, null);
         List<BrpGroep<BrpOuderInhoud>> groepen = new ArrayList<>();
         groepen.add(groep);
         BrpStapel<BrpOuderInhoud> stapel = new BrpStapel<>(groepen);
         BrpBetrokkenheid b = BrpBetrokkenheidTest.maakBetrokkenheidOuderStapel(BrpSoortBetrokkenheidCode.OUDER, stapel);
         assertEquals(1, b.getOuderStapel().size());
-        assertTrue(b.getOuderStapel().getActueel().getInhoud().getIndicatieOuder().getWaarde().booleanValue());
-        assertFalse(b.getOuderStapel().getActueel().getInhoud().getIndicatieOuderUitWieKindIsGeboren().getWaarde().booleanValue());
+        assertFalse(b.getOuderStapel().getActueel().getInhoud().getIndicatieOuderUitWieKindIsGeboren().getWaarde());
         bBuilder = new Builder();
         bBuilder = bBuilder.rol(BrpSoortBetrokkenheidCode.OUDER);
         assertEquals(bBuilder.ouderStapel(stapel).build(), b);
@@ -195,11 +192,11 @@ public class BrpBetrokkenheidTest {
         return new BrpHistorie(new BrpDatumTijd(Calendar.getInstance().getTime()), null, null);
     }
 
-    public static List<BrpBetrokkenheid> maaklijstMetBetrokkenheden(int aantalKinderen,boolean creerOuderStapelOpEerste,boolean creerOuderStapelOpTweede){
+    public static List<BrpBetrokkenheid> maaklijstMetBetrokkenheden(int aantalKinderen, boolean creerOuderStapelOpEerste, boolean creerOuderStapelOpTweede) {
         List<BrpBetrokkenheid> result = new ArrayList<>();
-        for(int i=0;i<aantalKinderen;i++){
+        for (int i = 0; i < aantalKinderen; i++) {
             BrpBetrokkenheid betrokkenheid = maakBetrokkenheid(BrpSoortBetrokkenheidCode.KIND);
-            if(i==0 && creerOuderStapelOpEerste || i==1 && creerOuderStapelOpTweede){
+            if (i == 0 && creerOuderStapelOpEerste || i == 1 && creerOuderStapelOpTweede) {
                 BrpBetrokkenheid.Builder b = new Builder(betrokkenheid);
                 b.ouderStapel(BrpOuderInhoudTest.createStapel());
                 betrokkenheid = b.build();
@@ -228,9 +225,6 @@ public class BrpBetrokkenheidTest {
     public static BrpBetrokkenheid maakBetrokkenheidSamenGEsteldeNaam(BrpSoortBetrokkenheidCode rol, BrpStapel<BrpSamengesteldeNaamInhoud> stapel) {
         return maakBetrokkenheidMetNullStapels(rol, null, null, null, stapel, null, null, null);
     }
-    public static BrpBetrokkenheid maakBetrokkenheidINumMetSnaam(BrpSoortBetrokkenheidCode rol, BrpStapel<BrpIdentificatienummersInhoud> stapel,BrpStapel<BrpSamengesteldeNaamInhoud> stapelNaam) {
-        return maakBetrokkenheidMetNullStapels(rol, stapel, null, null, stapelNaam, null, null, null);
-    }
 
     public static BrpBetrokkenheid maakBetrokkenheidOuderlijkGezag(BrpSoortBetrokkenheidCode rol, BrpStapel<BrpOuderlijkGezagInhoud> stapel) {
         return maakBetrokkenheidMetNullStapels(rol, null, null, null, null, stapel, null, null);
@@ -245,15 +239,14 @@ public class BrpBetrokkenheidTest {
     }
 
     public static BrpBetrokkenheid maakBetrokkenheidMetNullStapels(
-        BrpSoortBetrokkenheidCode rol,
-        BrpStapel<BrpIdentificatienummersInhoud> iNumStapel,
-        BrpStapel<BrpGeslachtsaanduidingInhoud> mvStapel,
-        BrpStapel<BrpGeboorteInhoud> geboorteStapel,
-        BrpStapel<BrpSamengesteldeNaamInhoud> naamStapel,
-        BrpStapel<BrpOuderlijkGezagInhoud> oGezagStapel,
-        BrpStapel<BrpOuderInhoud> ouderStapel,
-        BrpStapel<BrpIdentiteitInhoud> identiteitStapel)
-    {
+            BrpSoortBetrokkenheidCode rol,
+            BrpStapel<BrpIdentificatienummersInhoud> iNumStapel,
+            BrpStapel<BrpGeslachtsaanduidingInhoud> mvStapel,
+            BrpStapel<BrpGeboorteInhoud> geboorteStapel,
+            BrpStapel<BrpSamengesteldeNaamInhoud> naamStapel,
+            BrpStapel<BrpOuderlijkGezagInhoud> oGezagStapel,
+            BrpStapel<BrpOuderInhoud> ouderStapel,
+            BrpStapel<BrpIdentiteitInhoud> identiteitStapel) {
         return new BrpBetrokkenheid(rol, iNumStapel, mvStapel, geboorteStapel, oGezagStapel, naamStapel, ouderStapel, identiteitStapel);
     }
 }

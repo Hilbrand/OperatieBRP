@@ -11,6 +11,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.AbstractCategorieGebaseerdParsedLo3B
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 
 /**
  * La01.
@@ -24,7 +25,7 @@ public final class La01Bericht extends AbstractCategorieGebaseerdParsedLo3Berich
      * Constructor.
      */
     public La01Bericht() {
-        super(HEADER, "La01", null);
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "La01", null);
     }
 
 }

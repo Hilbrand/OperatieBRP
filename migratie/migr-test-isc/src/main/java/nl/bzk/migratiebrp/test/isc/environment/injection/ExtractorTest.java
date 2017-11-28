@@ -13,9 +13,8 @@ import nl.bzk.migratiebrp.test.isc.exception.TestException;
 
 /**
  * Extractor voor test informatie.
- * 
+ *
  * Ondersteund de keys: - testdir - expectdir - outputdir - testfile - expectfile - outputfile
- * 
  */
 public class ExtractorTest implements Extractor {
 

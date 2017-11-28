@@ -17,13 +17,10 @@ public interface ZoekAnummerVerwerker {
 
     /**
      * Zoekt in de Database naar pl en conversie gegevens op basis van Anummer.
-     * 
-     * @param aNummer
-     *            Long
-     * @param foutMelder
-     *            De foutMelder waar de errors gelogt worden.
+     * @param aNummer Long
+     * @param foutMelder De foutMelder waar de errors gelogt worden.
      * @return String met de persoonslijst.
      */
-    List<GgoPersoonslijstGroep> zoekOpAnummer(long aNummer, FoutMelder foutMelder);
+    List<GgoPersoonslijstGroep> zoekOpAnummer(String aNummer, FoutMelder foutMelder);
 
 }

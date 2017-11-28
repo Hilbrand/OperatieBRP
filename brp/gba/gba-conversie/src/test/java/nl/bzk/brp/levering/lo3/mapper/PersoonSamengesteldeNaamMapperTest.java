@@ -7,9 +7,6 @@
 package nl.bzk.brp.levering.lo3.mapper;
 
 import nl.bzk.brp.gba.dataaccess.VerConvRepository;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.predikaatview.kern.PersoonHisVolledigView;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
 import org.junit.Assert;
@@ -17,8 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+import nl.bzk.brp.levering.lo3.support.MetaObjectUtil;
 
-public class PersoonSamengesteldeNaamMapperTest {
+public class PersoonSamengesteldeNaamMapperTest extends AbstractMapperTestBasis {
 
     private static final String H = "H";
 
@@ -32,52 +30,40 @@ public class PersoonSamengesteldeNaamMapperTest {
 
     @Test
     public void test() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(maak(builder).build(), null);
         final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaam =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+                doMapping(
+                    mapper,
+                    MetaObjectUtil.maakIngeschrevene(b -> MetaObjectUtil.voegPersoonSamengesteldeNaamGroepToe(
+                        b,
+                        H,
+                        "geslachtsnaam",
+                        false,
+                        true,
+                        H,
+                        " ",
+                        "Voornaam1 Voornaam2",
+                        "de")));
 
         Assert.assertNotNull(samengesteldeNaam);
         Assert.assertTrue(samengesteldeNaam.size() == 1);
-    }
-
-    /**
-     * NPE vanwege hardcoded controle in conversie model (boolean primitive).
-     */
-    public void testGeenWaarde() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        builder.nieuwSamengesteldeNaamRecord(MapperTestUtil.maakActieModel(20131210000000L, 20131211, 20141212)).eindeRecord();
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaam =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
-
-        Assert.assertNotNull(samengesteldeNaam);
-        Assert.assertTrue(samengesteldeNaam.size() == 1);
-        Assert.assertNull(samengesteldeNaam.get(0).getInhoud().getGeslachtsnaamstam());
     }
 
     @Test
     public void testLeeg() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaam =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
-
+        final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaam = doMapping(mapper, MetaObjectUtil.maakIngeschrevene());
         Assert.assertNull(samengesteldeNaam);
     }
 
-    public static PersoonHisVolledigImplBuilder maak(final PersoonHisVolledigImplBuilder builder) {
-        // @formatter:off
-        return builder.nieuwSamengesteldeNaamRecord(MapperTestUtil.maakActieModel(20131210000000L, 20131211, 20141212))
-                .geslachtsnaamstam("geslachtsnaam")
-                .voorvoegsel("de")
-                .voornamen("Voornaam1 Voornaam2")
-                .scheidingsteken(" ")
-                .predicaat(H)
-                .indicatieNamenreeks(Boolean.TRUE)
-                .indicatieAfgeleid(Boolean.FALSE)
-                .adellijkeTitel(H)
-                .eindeRecord();
-        // @formatter:on
+    @Test
+    public void testGeenWaarde() {
+        final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaam =
+                doMapping(
+                    mapper,
+                    MetaObjectUtil.maakIngeschrevene(
+                        b -> MetaObjectUtil.voegPersoonSamengesteldeNaamGroepToe(b, null, null, null, null, null, null, null, null)));
+
+        Assert.assertNotNull(samengesteldeNaam);
+        Assert.assertTrue(samengesteldeNaam.size() == 1);
+        Assert.assertNull(samengesteldeNaam.get(0).getInhoud().getGeslachtsnaamstam());
     }
 }

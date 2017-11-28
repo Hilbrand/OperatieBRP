@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lo3Persoonslijst>
    <persoonStapel>
       <lo3Categorie>
@@ -6,7 +7,7 @@
                <waarde>4063858721</waarde>
             </aNummer>
             <burgerservicenummer>
-               <waarde>745819977</waarde>
+               <waarde>141960541</waarde>
             </burgerservicenummer>
             <voornamen>
                <waarde>Libby</waarde>
@@ -27,7 +28,7 @@
                <waarde>V</waarde>
             </geslachtsaanduiding>
             <aanduidingNaamgebruikCode>
-               <waarde>V</waarde>
+               <waarde>E</waarde>
             </aanduidingNaamgebruikCode>
          </inhoud>
          <historie>
@@ -81,12 +82,8 @@
             </indicatiePKVolledigGeconverteerdCode>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <documentatie>
             <id>15</id>

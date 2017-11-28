@@ -12,9 +12,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3CategorieInhoud;
 /**
  * Wrapper voor Lo3Categorie om extra bij te houden of de rij onjuist was in de oorspronkelijke Lo3 PL. Deze class is
  * immutable.
- * 
- * @param <T>
- *            categorie inhoud type
+ * @param <T> categorie inhoud type
  */
 final class Lo3CategorieWrapper<T extends Lo3CategorieInhoud> {
 
@@ -23,11 +21,8 @@ final class Lo3CategorieWrapper<T extends Lo3CategorieInhoud> {
 
     /**
      * Maak een wrapper instantie aan.
-     * 
-     * @param lo3Categorie
-     *            De Lo3Categorie
-     * @param juistInLo3Bron
-     *            Was de bron van deze rij in Lo3 oorspronkelijke Onjuist
+     * @param lo3Categorie De Lo3Categorie
+     * @param juistInLo3Bron Was de bron van deze rij in Lo3 oorspronkelijke Onjuist
      */
     Lo3CategorieWrapper(final Lo3Categorie<T> lo3Categorie, final boolean juistInLo3Bron) {
         this.lo3Categorie = lo3Categorie;
@@ -36,7 +31,6 @@ final class Lo3CategorieWrapper<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van lo3 categorie.
-     *
      * @return lo3 categorie
      */
     public Lo3Categorie<T> getLo3Categorie() {
@@ -45,7 +39,6 @@ final class Lo3CategorieWrapper<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de juist in lo3 bron.
-     *
      * @return juist in lo3 bron
      */
     public boolean isJuistInLo3Bron() {

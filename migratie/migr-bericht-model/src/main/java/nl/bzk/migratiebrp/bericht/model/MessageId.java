@@ -14,6 +14,7 @@ public final class MessageId {
     private static final String ID_COMPONENT_PADDING = "0000000000";
     private static final int ID_COMPONENT_RADIX = 36;
     private static final int ID_COMPONENT_MAX_LENGTH = 10;
+    private static final String MESSAGE_ID_PREFIX = "MM";
 
     private MessageId() {
         // Niet instantieerbaar
@@ -21,9 +22,7 @@ public final class MessageId {
 
     /**
      * Bepaal messageId voor een intern bericht obv het database id.
-     *
-     * @param id
-     *            id
+     * @param id id
      * @return message id
      */
     public static String bepaalMessageId(final Long id) {
@@ -42,12 +41,11 @@ public final class MessageId {
 
     /**
      * Geef de waarde van message id prefix.
-     *
      * @return message id prefix
      */
     private static String getMessageIdPrefix() {
         // Placeholder omdat we hier waarschijnlijk iets van een omgevingsidentificatie willen opnemen
         // (OTAP + Servernummer oid)
-        return "MM";
+        return MESSAGE_ID_PREFIX;
     }
 }

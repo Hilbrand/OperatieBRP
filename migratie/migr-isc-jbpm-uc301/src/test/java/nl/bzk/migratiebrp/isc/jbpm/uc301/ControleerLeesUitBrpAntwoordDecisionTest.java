@@ -8,26 +8,17 @@ package nl.bzk.migratiebrp.isc.jbpm.uc301;
 
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ControleerLeesUitBrpAntwoordDecisionTest {
 
-    private ControleerLeesUitBrpAntwoordDecision subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new ControleerLeesUitBrpAntwoordDecision();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private ControleerLeesUitBrpAntwoordDecision subject = new ControleerLeesUitBrpAntwoordDecision(berichtenDao);
 
     @Test
     public void testNull() {

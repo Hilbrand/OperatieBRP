@@ -7,19 +7,16 @@
 package nl.bzk.migratiebrp.init.logging.runtime.repository.jpa;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatie;
-import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatieStapel;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAutorisatie;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingLog;
+import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingProtocollering;
 import nl.bzk.migratiebrp.init.logging.runtime.repository.InitVullingLogRepository;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.springframework.stereotype.Repository;
 
 /**
@@ -29,8 +26,8 @@ import org.springframework.stereotype.Repository;
 public final class InitVullingLogRepositoryImpl implements InitVullingLogRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger();
-
     private static final String PARAM_ANUMMER = "anummer";
+
     @PersistenceContext(name = "loggingEntityManagerFactory", unitName = "LogEntities")
     private EntityManager em;
 
@@ -40,40 +37,40 @@ public final class InitVullingLogRepositoryImpl implements InitVullingLogReposit
     }
 
     @Override
-    public InitVullingLog findInitVullingLogPersoon(final Long anummer) {
+    public InitVullingLog findInitVullingLogPersoon(final String anummer) {
         try {
             return em.createNamedQuery("InitVullingLog.selectLogByAnummer", InitVullingLog.class).setParameter(PARAM_ANUMMER, anummer).getSingleResult();
         } catch (final NoResultException nre) {
+            LOG.debug("Geen resultaten gevonden", nre);
             return null;
         }
     }
 
     @Override
-    public InitVullingAutorisatie findInitVullingAutorisatie(final Integer afnemerCode) {
-        return em.find(InitVullingAutorisatie.class, afnemerCode);
+    public InitVullingAutorisatie findInitVullingAutorisatie(final Long autorisatieId) {
+        return em.find(InitVullingAutorisatie.class, autorisatieId);
     }
 
     @Override
     public void saveInitVullingAutorisatie(final InitVullingAutorisatie initVullingAutorisatie) {
-        LOG.info(
-            "Opslaan autorisatie met afnemercode {} en resultaat {}.",
-            initVullingAutorisatie.getAfnemerCode(),
-            initVullingAutorisatie.getConversieResultaat());
-        final InitVullingAutorisatie opgeslagenInitVullingAutorisatie = em.merge(initVullingAutorisatie);
-        LOG.info(
-            "Autorisatie met afnemercode {} opgeslagen met resultaat {}.",
-            opgeslagenInitVullingAutorisatie.getAfnemerCode(),
-            opgeslagenInitVullingAutorisatie.getConversieResultaat());
+        em.merge(initVullingAutorisatie);
     }
 
     @Override
-    public InitVullingAfnemersindicatie findInitVullingAfnemersindicatie(final Long administratienummer) {
+    public InitVullingProtocollering findInitVullingProtocollering(final long activiteitId) {
+        return em.find(InitVullingProtocollering.class, activiteitId);
+    }
+
+    @Override
+    public void saveInitVullingProtocollering(final InitVullingProtocollering initVullingProtocollering) {
+        em.merge(initVullingProtocollering);
+    }
+
+    @Override
+    public InitVullingAfnemersindicatie findInitVullingAfnemersindicatie(final String administratienummer) {
         final List<InitVullingAfnemersindicatie> regels =
-                em.createQuery(
-                      "SELECT r FROM InitVullingAfnemersindicatie r " + " where r.administratienummer = :administratienummer ",
-                      InitVullingAfnemersindicatie.class)
-                  .setParameter("administratienummer", administratienummer)
-                  .getResultList();
+                em.createQuery("SELECT r FROM InitVullingAfnemersindicatie r " + " where r.administratienummer = :administratienummer ",
+                        InitVullingAfnemersindicatie.class).setParameter("administratienummer", administratienummer).getResultList();
 
         if (regels.isEmpty()) {
             return null;
@@ -86,24 +83,10 @@ public final class InitVullingLogRepositoryImpl implements InitVullingLogReposit
 
     @Override
     public void saveInitVullingAfnemersindicatie(final InitVullingAfnemersindicatie initVullingAfnemersindicatie) {
-        LOG.info(
-            "Opslaan afnemersindicatie met id {}, anr {} en resultaat {}.",
-            initVullingAfnemersindicatie.getPlId(),
-            initVullingAfnemersindicatie.getAdministratienummer(),
-            initVullingAfnemersindicatie.getConversieResultaat());
+        LOG.info("Opslaan afnemersindicatie met id {}, anr {} en resultaat {}.", initVullingAfnemersindicatie.getPlId(),
+                initVullingAfnemersindicatie.getAdministratienummer(), initVullingAfnemersindicatie.getBerichtResultaat());
         final InitVullingAfnemersindicatie opgeslagenInitVullingAfnemersindicatie = em.merge(initVullingAfnemersindicatie);
-        if (opgeslagenInitVullingAfnemersindicatie.getStapels() != null) {
-            LOG.info("Stapels om op te slaan: {}", opgeslagenInitVullingAfnemersindicatie.getStapels().size());
-            for (final InitVullingAfnemersindicatieStapel stapel : opgeslagenInitVullingAfnemersindicatie.getStapels()) {
-                LOG.info("Opgeslagen waarde van stapel-{}: {}", stapel.getStapelPk().getStapelNr(), stapel.getConversieResultaat());
-            }
-        } else {
-            LOG.info("Geen stapels om op te slaan");
-        }
-        LOG.info(
-            "Afnemersindicatie met id {}, anr {} opgeslagen met resultaat {}.",
-            opgeslagenInitVullingAfnemersindicatie.getPlId(),
-            opgeslagenInitVullingAfnemersindicatie.getAdministratienummer(),
-            opgeslagenInitVullingAfnemersindicatie.getConversieResultaat());
+        LOG.info("Afnemersindicatie met id {}, anr {} opgeslagen met resultaat {}.", opgeslagenInitVullingAfnemersindicatie.getPlId(),
+                opgeslagenInitVullingAfnemersindicatie.getAdministratienummer(), opgeslagenInitVullingAfnemersindicatie.getBerichtResultaat());
     }
 }

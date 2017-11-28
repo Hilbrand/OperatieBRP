@@ -9,18 +9,17 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.Dienst;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.DienstHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
-
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Dienst;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.DienstHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstInhoud;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
 
 public class BrpDienstMapperTest {
 
@@ -28,7 +27,6 @@ public class BrpDienstMapperTest {
 
     private final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(new ArrayList<Onderzoek>());
 
-    @Ignore("BMR44")
     @Test
     public void test() {
         final Dienst entiteit = Mockito.mock(Dienst.class);

@@ -22,11 +22,12 @@ public class LoadBerichtTest extends AbstractTagTest {
         addTagAttribute("target", null);
 
         setupDatabase(
-            "/sql/mig-drop.sql",
-            "/sql/jbpm-drop.sql",
-            "/sql/jbpm-create.sql",
-            "/sql/mig-create.sql",
-            "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
+                "/sql/hsqldb4postgres.sql",
+                "/sql/mig-drop.sql",
+                "/sql/jbpm-drop.sql",
+                "/sql/jbpm-create.sql",
+                "/sql/mig-create.sql",
+                "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
 
         // Execute
         final JbpmActionListener subject = initializeSubject(LoadBerichtHandler.class);
@@ -41,14 +42,14 @@ public class LoadBerichtTest extends AbstractTagTest {
         final Bericht bericht = (Bericht) getExpressionValues().get("target");
         Assert.assertNotNull(bericht);
         Assert.assertEquals(Long.valueOf(42L), bericht.getId());
-        Assert.assertEquals("VOSPG", bericht.getKanaal());
+        Assert.assertEquals("VOISC", bericht.getKanaal());
         Assert.assertEquals(Direction.INKOMEND, bericht.getRichting());
         Assert.assertEquals("MSG-ID", bericht.getMessageId());
         Assert.assertEquals("CORR-ID", bericht.getCorrelationId());
         Assert.assertEquals("INHOUD", bericht.getBericht());
         Assert.assertEquals("NAAM", bericht.getNaam());
         Assert.assertEquals(Long.valueOf(4321L), bericht.getProcessInstanceId());
-        Assert.assertEquals("0518", bericht.getBronGemeente());
-        Assert.assertEquals("0519", bericht.getDoelGemeente());
+        Assert.assertEquals("0518", bericht.getBronPartijCode());
+        Assert.assertEquals("0519", bericht.getDoelPartijCode());
     }
 }

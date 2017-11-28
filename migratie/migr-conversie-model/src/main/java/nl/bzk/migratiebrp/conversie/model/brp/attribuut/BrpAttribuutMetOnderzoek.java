@@ -15,7 +15,6 @@ public interface BrpAttribuutMetOnderzoek extends BrpAttribuut {
 
     /**
      * Geef de waarde van waarde.
-     *
      * @return de waarde van het attribuut.
      */
     Object getWaarde();
@@ -23,14 +22,12 @@ public interface BrpAttribuutMetOnderzoek extends BrpAttribuut {
     /**
      * True als het element inhoudelijk is gevuld. Onderzoek maakt geen deel uit van het element en wordt dus niet
      * meegenomen of het element gevuld is of niet.
-     * 
      * @return true of de waarde van het element gevuld is ongeacht of onderzoek is gevuld.
      */
     boolean isInhoudelijkGevuld();
 
     /**
      * Geef de waarde van onderzoek.
-     *
      * @return Een onderzoek als dit element in onderzoek staat.
      */
     Lo3Onderzoek getOnderzoek();

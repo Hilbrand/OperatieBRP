@@ -6,7 +6,6 @@
 
 /**
  * Functionaliteit mbt Logging en berichten uit het verconv database schema.
- * 
  * @since 1.0
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.logging;

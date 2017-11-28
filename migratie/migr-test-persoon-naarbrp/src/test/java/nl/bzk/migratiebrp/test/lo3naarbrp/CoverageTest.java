@@ -15,7 +15,7 @@ public class CoverageTest extends Lo3NaarBrpConversieTestConfiguratie {
 
     @Override
     public boolean useMemoryDS() {
-         return true;
+        return true;
     }
 
     /* (non-Javadoc)

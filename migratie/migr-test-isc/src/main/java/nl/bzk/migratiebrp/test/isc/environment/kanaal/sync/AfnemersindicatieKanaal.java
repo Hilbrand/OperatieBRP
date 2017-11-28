@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.sync;
 
 import javax.inject.Inject;
+
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.AfnemersindicatiesBericht;
@@ -14,7 +15,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAfnemersindicaties;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Afnemersindicatie;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerLo3NaarBrpService;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpAfnemerIndicatiesService;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
@@ -30,13 +31,14 @@ public final class AfnemersindicatieKanaal extends LazyLoadingKanaal {
      * Constructor.
      */
     public AfnemersindicatieKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-em-sync.xml",
-            "classpath:infra-jta.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:beans-sync.xml"));
+        super(new Worker(),
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-db-brp.xml",
+                        "classpath:infra-em-sync.xml",
+                        "classpath:infra-jta.xml",
+                        "classpath:infra-db-sync.xml",
+                        "classpath:beans-sync.xml"));
     }
 
     /**
@@ -44,14 +46,14 @@ public final class AfnemersindicatieKanaal extends LazyLoadingKanaal {
      */
     public static final class Worker extends AbstractKanaal {
         @Inject
-        private BrpDalService brpDalService;
+        private BrpAfnemerIndicatiesService afnemerIndicatiesService;
 
         @Inject
         private ConverteerLo3NaarBrpService conversieService;
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -67,7 +69,7 @@ public final class AfnemersindicatieKanaal extends LazyLoadingKanaal {
             Logging.initContext();
             try {
                 final BrpAfnemersindicaties brpAfnemersindicaties = conversieService.converteerLo3Afnemersindicaties(lo3Afnemersindicatie);
-                brpDalService.persisteerAfnemersindicaties(brpAfnemersindicaties);
+                afnemerIndicatiesService.persisteerAfnemersindicaties(brpAfnemersindicaties);
             } finally {
                 Logging.destroyContext();
             }

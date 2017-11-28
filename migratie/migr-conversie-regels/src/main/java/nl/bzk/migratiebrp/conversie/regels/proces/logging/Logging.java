@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.conversie.regels.proces.logging;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
@@ -16,7 +17,6 @@ import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.ElementList;
 
 /**
  * Logging wrapper.
@@ -43,16 +43,13 @@ public final class Logging {
 
     /**
      * Simple XML constructor.
-     * 
-     * @param regels
-     *            regels
+     * @param regels regels
      */
     public Logging(@ElementList(name = "logging", required = false, inline = true, type = LogRegel.class) final Set<LogRegel> regels) {
         this();
-        if (regels == null) {
-            throw new NullPointerException("regels mag niet null zijn");
+        if (regels != null) {
+            this.regels.addAll(regels);
         }
-        this.regels.addAll(regels);
     }
 
     /* ************************************************************************************************************* */
@@ -70,9 +67,7 @@ public final class Logging {
 
     /**
      * Init thread local logging context.
-     * 
-     * @param logging
-     *            logging
+     * @param logging logging
      */
     public static void initContext(final Logging logging) {
         LOCAL.set(logging);
@@ -80,7 +75,6 @@ public final class Logging {
 
     /**
      * Get the logging.
-     * 
      * @return logging
      */
     public static Logging getLogging() {
@@ -96,22 +90,16 @@ public final class Logging {
 
     /**
      * Log.
-     * 
-     * @param lo3Herkomst
-     *            LO3 herkomst
-     * @param severity
-     *            severity
-     * @param soortMeldingCode
-     *            Soort melding
-     * @param lo3ElementNummer
-     *            LO3 elementnummer
+     * @param lo3Herkomst LO3 herkomst
+     * @param severity severity
+     * @param soortMeldingCode Soort melding
+     * @param lo3ElementNummer LO3 elementnummer
      */
     public static void log(
-        final Lo3Herkomst lo3Herkomst,
-        final LogSeverity severity,
-        final SoortMeldingCode soortMeldingCode,
-        final Lo3ElementEnum lo3ElementNummer)
-    {
+            final Lo3Herkomst lo3Herkomst,
+            final LogSeverity severity,
+            final SoortMeldingCode soortMeldingCode,
+            final Lo3ElementEnum lo3ElementNummer) {
         final Logging logging = LOCAL.get();
 
         if (logging == null) {
@@ -122,9 +110,7 @@ public final class Logging {
 
     /**
      * /** Voegt de gegeven regel toe aan het log.
-     * 
-     * @param log
-     *            de regel die aan het log toegevoegd moet worden
+     * @param log de regel die aan het log toegevoegd moet worden
      */
     public static void log(final LogRegel log) {
         final Logging logging = LOCAL.get();
@@ -144,7 +130,6 @@ public final class Logging {
 
     /**
      * Geef de waarde van regels.
-     *
      * @return log regels
      */
     public Set<LogRegel> getRegels() {
@@ -153,9 +138,7 @@ public final class Logging {
 
     /**
      * Geeft het maximale foutniveau van de gegeven regels.
-     * 
-     * @param regels
-     *            de logregels die gegenereerd zijn
+     * @param regels de logregels die gegenereerd zijn
      * @return het maximale foutniveau van de gegeven regels.
      */
     public static LogSeverity getMaxSeverity(final Set<LogRegel> regels) {
@@ -171,8 +154,7 @@ public final class Logging {
     }
 
     /**
-     * @param regels
-     *            de logregels waarin gecontroleerd moet worden of het niveau ERROR voorkomt
+     * @param regels de logregels waarin gecontroleerd moet worden of het niveau ERROR voorkomt
      * @return true als er een logregel is met het niveau ERROR
      */
     public static boolean containSeverityLevelError(final Set<LogRegel> regels) {
@@ -181,8 +163,7 @@ public final class Logging {
     }
 
     /**
-     * @param regels
-     *            de logregels waarin gecontroleerd moet worden of het niveau ERROR voorkomt
+     * @param regels de logregels waarin gecontroleerd moet worden of het niveau ERROR voorkomt
      * @return true als er een logregel is met het niveau CRITICAL
      */
     public static boolean containSeverityLevelCritical(final Set<LogRegel> regels) {
@@ -192,7 +173,6 @@ public final class Logging {
 
     /**
      * Geef de waarde van severity.
-     *
      * @return (hoogste) severity
      */
     public LogSeverity getSeverity() {
@@ -215,30 +195,22 @@ public final class Logging {
 
     /**
      * Log.
-     * 
-     * @param lo3Herkomst
-     *            LO3 herkomst
-     * @param severity
-     *            severity
-     * @param soortMeldingCode
-     *            de soort melding code
-     * @param lo3ElementNummer
-     *            het lo3 element nummer
+     * @param lo3Herkomst LO3 herkomst
+     * @param severity severity
+     * @param soortMeldingCode de soort melding code
+     * @param lo3ElementNummer het lo3 element nummer
      */
     public void addLogRegel(
-        final Lo3Herkomst lo3Herkomst,
-        final LogSeverity severity,
-        final SoortMeldingCode soortMeldingCode,
-        final Lo3ElementEnum lo3ElementNummer)
-    {
+            final Lo3Herkomst lo3Herkomst,
+            final LogSeverity severity,
+            final SoortMeldingCode soortMeldingCode,
+            final Lo3ElementEnum lo3ElementNummer) {
         regels.add(new LogRegel(lo3Herkomst, severity, soortMeldingCode, lo3ElementNummer));
     }
 
     /**
      * Voegt de gegeven regel toe aan het log.
-     * 
-     * @param regel
-     *            de regel die aan het log toegevoegd moet worden
+     * @param regel de regel die aan het log toegevoegd moet worden
      */
     public void addLogRegel(final LogRegel regel) {
         regels.add(regel);

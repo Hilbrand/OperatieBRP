@@ -10,7 +10,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.testutils.EqualsAndHashcodeTester;
-
 import org.junit.Test;
 
 public class LoggingTest {
@@ -18,14 +17,14 @@ public class LoggingTest {
     @Test
     public void test() throws NoSuchMethodException, IllegalAccessException {
         EqualsAndHashcodeTester.testEqualsHashcodeAndToString(new LogRegel(
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 1, 1),
-            LogSeverity.INFO,
-            SoortMeldingCode.PRE046,
-            null), new LogRegel(new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 1, 1), LogSeverity.INFO, SoortMeldingCode.PRE046, null), new LogRegel(
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 1, 1),
-            LogSeverity.WARNING,
-            SoortMeldingCode.BIJZ_CONV_LB004,
-            null)
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 1, 1),
+                LogSeverity.INFO,
+                SoortMeldingCode.PRE046,
+                null), new LogRegel(new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 1, 1), LogSeverity.INFO, SoortMeldingCode.PRE046, null), new LogRegel(
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 1, 1),
+                LogSeverity.WARNING,
+                SoortMeldingCode.BIJZ_CONV_LB004,
+                null)
 
         );
     }

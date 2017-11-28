@@ -9,9 +9,11 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.sync;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
+
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
@@ -40,7 +42,7 @@ public final class DeleteProefsyncKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override

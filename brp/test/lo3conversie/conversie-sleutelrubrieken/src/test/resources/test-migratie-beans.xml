@@ -92,7 +92,9 @@
                     <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
                     <prop key="net.sf.ehcache.configurationResourceName">synchronisatie-dal-stamtabel-ehcache.xml</prop>
                     <prop key="hibernate.generate_statistics">false</prop>
-					<prop key="hibernate.transaction.jta.platform">nl.bzk.migratiebrp.synchronisatie.dal.repository.jta.AtomikosJtaPlatform</prop>
+                    <prop key="hibernate.transaction.jta.platform">
+                        nl.bzk.algemeenbrp.jta.AtomikosJtaPlatform
+                    </prop>
                     <!--<prop key="hibernate.hbm2ddl.auto">validate</prop>-->
                 </props>
             </property>
@@ -123,7 +125,9 @@
                     <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
                     <prop key="net.sf.ehcache.configurationResourceName">synchronisatie-dal-stamtabel-ehcache.xml</prop>
                     <prop key="hibernate.generate_statistics">false</prop>
-                    <prop key="hibernate.transaction.jta.platform">nl.bzk.migratiebrp.synchronisatie.dal.repository.jta.AtomikosJtaPlatform</prop>
+                    <prop key="hibernate.transaction.jta.platform">
+                        nl.bzk.algemeenbrp.jta.AtomikosJtaPlatform
+                    </prop>
                     <!--<prop key="hibernate.hbm2ddl.auto">validate</prop>-->
                 </props>
             </property>

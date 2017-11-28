@@ -1,5 +1,5 @@
 angular.module('BrpLijstveld', [])
-.directive("brpLijstveld", ["$injector", '$rootScope', function ($injector, $rootScope) {
+    .directive("brpLijstveld", ["$injector", "$filter", function ($injector, $filter) {
         return {
             restrict: 'E',
             scope: {
@@ -9,21 +9,29 @@ angular.module('BrpLijstveld', [])
                 scope.kolom = JSON.parse(attrs.kolom);
                 scope.veld = 'fields/lijstspan.html';
 
-                scope.verversLijst = function() {
-                    if (scope.kolom.bron && (scope.kolom.type === 'select' || scope.kolom.type === 'selectRef' || scope.kolom.type === 'selectCodeMV' || scope.kolom.type === 'selectCodeOmschrijving')) {
+                scope.verversLijst = function () {
+                    if (scope.kolom.bron && scope.kolom.type.indexOf('select') === 0) {
                         scope.config = $injector.get(scope.kolom.bron + 'Config');
                         scope.resource = $injector.get(scope.config.resourceNaam).resource();
                         var sid = scope.waarde[scope.kolom.display];
                         if (sid) {
-                            var swaarde = scope.resource.get({id: sid, size: null} , function() {
-                            	if (scope.kolom.type === 'selectCodeMV') {
-                            	    scope.geselecteerdewaarde = swaarde.naamMannelijk + '/' + swaarde.naamVrouwelijk;
-                            	} else if (scope.kolom.type === 'selectCodeOmschrijving') {
-                                    scope.geselecteerdewaarde = swaarde.Omschrijving;
-                                } else if (scope.kolom.type === 'select') {
-                                    scope.geselecteerdewaarde = swaarde.naam;
+                            var swaarde = scope.resource.get({id: sid, size: null}, function () {
+                                if (scope.kolom.ngFilter) {
+                                    $filter(scope.kolom.ngFilter)(swaarde);
+                                }
+                                var voorloper = '';
+                                if (swaarde.code) {
+                                    voorloper = swaarde.code + ' - ';
+                                }
+
+                                if (scope.kolom.type === 'selectCodeMV') {
+                                    scope.geselecteerdewaarde = voorloper + swaarde.naamMannelijk + '/' + swaarde.naamVrouwelijk;
+                                } else if (scope.kolom.type === 'selectCodeOmschrijving') {
+                                    scope.geselecteerdewaarde = voorloper + swaarde.omschrijving;
+                                } else if (scope.kolom.type === 'selectIdentifier') {
+                                    scope.geselecteerdewaarde = voorloper + swaarde.identifier;
                                 } else {
-                                    scope.geselecteerdewaarde = swaarde.Naam;
+                                    scope.geselecteerdewaarde = voorloper + swaarde.naam;
                                 }
                             });
                         }
@@ -42,10 +50,10 @@ angular.module('BrpLijstveld', [])
                 };
                 scope.verversLijst();
 
-                scope.$on('succes', function() {
+                scope.$on('succes', function () {
                     scope.verversLijst();
                 });
             },
-            template: '<span  style="cursor: hand;">{{geselecteerdewaarde}}</span>'
+            template: '<span style="cursor: hand;">{{geselecteerdewaarde}}</span>'
         };
     }]);

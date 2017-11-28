@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -21,24 +20,22 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-
 import org.junit.Test;
 
 public class BrpGeboorteInhoudTest {
 
-    public static final String STRING_1234 = "1234";
-    public static final String STRING_6030 = "6030";
-    public static final String WOONPLAATSNAAM_GEBOORTE = "woonplaatsnaamGeboorte";
-    public static final String BLGP = "blgp";
-    public static final String BRC = "brc";
-    public static final String OMSCHRIJVING = "omschrijving";
-    public static final int JAN_01_1980 = 19800101;
+    private static final String CODE_1234 = "1234";
+    private static final String CODE_6030 = "6030";
+    private static final String WOONPLAATSNAAM_GEBOORTE = "woonplaatsnaamGeboorte";
+    private static final String BLGP = "blgp";
+    private static final String BRC = "brc";
+    private static final String OMSCHRIJVING = "omschrijving";
+    public static final int JAN_01_1980 = 1980_01_01;
 
     /**
      * returns BrpGeboorteInhoud met waardes GeboorteDatum = 1980-01-01 gemeente code = 1234 Woonplaats geboorte =
      * woonplaatsnaamGeboorte buitenlandse plaats geboorte = blgp buitenlandse regio geboorte = brc land of gebied code
      * = 6030 omschrijving geb locatie = omschrijving
-     *
      * @return BrpGeboorteInhoud
      */
     public static BrpGeboorteInhoud getBrpGeboorteInhoud() {
@@ -49,7 +46,6 @@ public class BrpGeboorteInhoudTest {
      * returns BrpGeboorteInhoud met meegegeven GeboorteDatum en gemeente code = 1234 Woonplaats geboorte =
      * woonplaatsnaamGeboorte buitenlandse plaats geboorte = blgp buitenlandse regio geboorte = brc land of gebied code
      * = 6030 omschrijving geb locatie = omschrijving
-     *
      * @param datum datum
      * @return BrpGeboorteInhoud
      */
@@ -62,56 +58,55 @@ public class BrpGeboorteInhoudTest {
         List<BrpGroep<BrpGeboorteInhoud>> groepen = new ArrayList<>();
         BrpGroep<BrpGeboorteInhoud> groep = new BrpGroep<>(getBrpGeboorteInhoud(), BrpHistorieTest.createdefaultInhoud(), null, null, null);
         groepen.add(groep);
-        BrpStapel<BrpGeboorteInhoud> result = new BrpStapel<>(groepen);
-        return result;
+        return new BrpStapel<>(groepen);
     }
 
     @Test
     public void testHashCode() {
         final BrpGeboorteInhoud inhoud1 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    null,
-                    null,
-                    null,
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    null);
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        null,
+                        null,
+                        null,
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        null);
         final BrpGeboorteInhoud inhoud2 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    null,
-                    null,
-                    null,
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    null);
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        null,
+                        null,
+                        null,
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        null);
         assertEquals(inhoud1.hashCode(), inhoud2.hashCode());
     }
 
     @Test
     public void testBrpGeboorteInhoud() {
         new BrpGeboorteInhoud(
-            new BrpDatum(JAN_01_1980, null),
-            new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-            null,
-            null,
-            null,
-            new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-            null);
+                new BrpDatum(JAN_01_1980, null),
+                new BrpGemeenteCode(CODE_1234),
+                null,
+                null,
+                null,
+                new BrpLandOfGebiedCode(CODE_6030),
+                null);
     }
 
     @Test
     public void testIsLeeg() {
         final BrpGeboorteInhoud inhoud1 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    null,
-                    null,
-                    null,
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    null);
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        null,
+                        null,
+                        null,
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        null);
         final BrpGeboorteInhoud inhoud2 = new BrpGeboorteInhoud(null, null, null, null, null, null, null);
         assertFalse(inhoud1.isLeeg());
         assertTrue(inhoud2.isLeeg());
@@ -121,50 +116,50 @@ public class BrpGeboorteInhoudTest {
     public void testEqualsObject() {
         final BrpGeboorteInhoud inhoud1 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    null,
-                    null,
-                    null,
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    null);
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        null,
+                        null,
+                        null,
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        null);
         final BrpGeboorteInhoud inhoud2 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    null,
-                    null,
-                    null,
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    null);
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        null,
+                        null,
+                        null,
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        null);
         final BrpGeboorteInhoud inhoud3 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    null,
-                    new BrpString(BLGP),
-                    null,
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    null);
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        null,
+                        new BrpString(BLGP),
+                        null,
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        null);
 
         final BrpGeboorteInhoud inhoud4 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    new BrpString(WOONPLAATSNAAM_GEBOORTE),
-                    new BrpString(BLGP),
-                    new BrpString(BRC),
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    new BrpString(OMSCHRIJVING));
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        new BrpString(WOONPLAATSNAAM_GEBOORTE),
+                        new BrpString(BLGP),
+                        new BrpString(BRC),
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        new BrpString(OMSCHRIJVING));
         final BrpGeboorteInhoud inhoud5 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    new BrpString(WOONPLAATSNAAM_GEBOORTE),
-                    new BrpString(BLGP),
-                    new BrpString(BRC),
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    new BrpString(OMSCHRIJVING));
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        new BrpString(WOONPLAATSNAAM_GEBOORTE),
+                        new BrpString(BLGP),
+                        new BrpString(BRC),
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        new BrpString(OMSCHRIJVING));
 
         assertEquals(inhoud1, inhoud2);
         assertNotSame(inhoud1, inhoud3);
@@ -175,22 +170,22 @@ public class BrpGeboorteInhoudTest {
     public void testToString() {
         final BrpGeboorteInhoud inhoud1 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    null,
-                    null,
-                    null,
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    null);
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        null,
+                        null,
+                        null,
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        null);
         final BrpGeboorteInhoud inhoud2 =
                 new BrpGeboorteInhoud(
-                    new BrpDatum(JAN_01_1980, null),
-                    new BrpGemeenteCode(Short.parseShort(STRING_1234)),
-                    null,
-                    null,
-                    null,
-                    new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-                    null);
+                        new BrpDatum(JAN_01_1980, null),
+                        new BrpGemeenteCode(CODE_1234),
+                        null,
+                        null,
+                        null,
+                        new BrpLandOfGebiedCode(CODE_6030),
+                        null);
         assertEquals(inhoud1.toString(), inhoud2.toString());
     }
 }

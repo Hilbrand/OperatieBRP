@@ -14,12 +14,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * DAO voor mig.
- * 
  */
 public final class MigDaoImpl implements MigDao {
 
+    private final JdbcTemplate template;
+
+    /**
+     * Constructor.
+     * @param template jdbc template
+     */
     @Inject
-    private JdbcTemplate template;
+    public MigDaoImpl(final JdbcTemplate template) {
+        this.template = template;
+    }
 
     @Override
     public Timestamp bepaalDatumLaatsteBerichtOntvangenVoorProces(final Long procesId) {
@@ -50,7 +57,7 @@ public final class MigDaoImpl implements MigDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.isc.opschoner.dao.MigDao#verwijderGerelateerdProcesVerwijzingVoorProces(java.lang .Long,
      * java.lang.Long)
      */

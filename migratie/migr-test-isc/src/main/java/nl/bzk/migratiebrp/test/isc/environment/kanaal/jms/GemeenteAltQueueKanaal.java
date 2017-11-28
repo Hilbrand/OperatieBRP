@@ -8,12 +8,14 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
+
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
@@ -22,6 +24,7 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
+
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
@@ -31,7 +34,9 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
  */
 public final class GemeenteAltQueueKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "gemeente_alt";
 
     /**
@@ -39,11 +44,11 @@ public final class GemeenteAltQueueKanaal extends LazyLoadingKanaal {
      */
     public GemeenteAltQueueKanaal() {
         super(new Worker(),
-              new Configuration(
-                  "classpath:configuratie.xml",
-                  "classpath:infra-jms-isc.xml",
-                  "classpath:infra-container-gemeente.xml",
-                  "classpath:infra-queues-isc-gemeente.xml"));
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-jms-isc.xml",
+                        "classpath:infra-container-gemeente.xml",
+                        "classpath:infra-queues-isc-gemeente.xml"));
     }
 
     /**

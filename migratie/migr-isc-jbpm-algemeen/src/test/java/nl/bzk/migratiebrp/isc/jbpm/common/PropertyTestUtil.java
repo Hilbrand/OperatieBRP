@@ -8,13 +8,12 @@ package nl.bzk.migratiebrp.isc.jbpm.common;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class PropertyTestUtil {
 
     public static <T> void testMutableProperty(final Object object, final String property, final T initialValue, final T checkValue)
-        throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         final Class<?> clazz = object.getClass();
         final String camelCase = Character.toUpperCase(property.charAt(0)) + property.substring(1);
         final Method getter = clazz.getMethod("get" + camelCase, (Class[]) null);
@@ -22,7 +21,7 @@ public class PropertyTestUtil {
         final Object value = getter.invoke(object, (Object[]) null);
         Assert.assertEquals(initialValue, value);
 
-        final Method setter = clazz.getMethod("set" + camelCase, new Class[] {getter.getReturnType() });
+        final Method setter = clazz.getMethod("set" + camelCase, new Class[]{getter.getReturnType()});
         setter.invoke(object, checkValue);
 
         final Object check = getter.invoke(object, (Object[]) null);

@@ -15,15 +15,12 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze class converteert de LO3 plaats velden naar de BRP plaats velden.
- * 
- * 
- * 
  */
-@Requirement({Requirements.CAP001, Requirements.CAP001_LB01, Requirements.CAP001_LB02 })
+@Requirement({Requirements.CAP001, Requirements.CAP001_LB01, Requirements.CAP001_LB02})
 public final class Lo3PlaatsLandConversieHelper {
 
     private final Lo3AttribuutConverteerder converteerder;
@@ -32,16 +29,11 @@ public final class Lo3PlaatsLandConversieHelper {
 
     /**
      * Maakt een Lo3PlaatsLandConversieHelper object.
-     * 
-     * @param lo3GemeenteCode
-     *            de lo3 gemeente die geconverteerd moet worden
-     * @param lo3LandCode
-     *            de lo3 land code die geconverteerd moet worden
-     * @param converteerder
-     *            converteerder service
+     * @param lo3GemeenteCode de lo3 gemeente die geconverteerd moet worden
+     * @param lo3LandCode de lo3 land code die geconverteerd moet worden
+     * @param converteerder converteerder service
      */
-    public Lo3PlaatsLandConversieHelper(final Lo3GemeenteCode lo3GemeenteCode, final Lo3LandCode lo3LandCode, final Lo3AttribuutConverteerder converteerder)
-    {
+    public Lo3PlaatsLandConversieHelper(final Lo3GemeenteCode lo3GemeenteCode, final Lo3LandCode lo3LandCode, final Lo3AttribuutConverteerder converteerder) {
         this.lo3GemeenteCode = lo3GemeenteCode;
         this.lo3LandCode = lo3LandCode;
         this.converteerder = converteerder;
@@ -49,7 +41,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
     /**
      * Converteert de LO3 gemeente en land naar de corresponderende velden in het BRP model.
-     * 
      * @return corresponderende velden in het BRP model
      */
     public BrpPlaatsLand converteerNaarBrp() {
@@ -58,7 +49,7 @@ public final class Lo3PlaatsLandConversieHelper {
          */
         final BrpPlaatsLand resultaat;
         final BrpLandOfGebiedCode brpLandOfGebiedCode = converteerder.converteerLo3LandCode(lo3LandCode);
-        if (Validatie.isElementGevuld(lo3GemeenteCode)) {
+        if (Lo3Validatie.isElementGevuld(lo3GemeenteCode)) {
             BrpGemeenteCode brpGemeenteCode = null;
             BrpString brpBuitenlandsePlaats = null;
             BrpString brpOmschrijvingLocatie = null;
@@ -84,7 +75,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
     /**
      * Geef de woonachtig in nederlandse gemeente.
-     *
      * @return true als deze persoon woonachtig is in een nederlandse gemeente, anders false
      */
     @Definitie(Definities.DEF001)
@@ -94,7 +84,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
     /**
      * Geef de woonachtig in buitenlandse plaats.
-     *
      * @return true als deze persoon woonachtig is in een bekende buitenlandse plaats, anders false
      */
     @Definitie(Definities.DEF002)
@@ -104,7 +93,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
     /**
      * Deze class bevat de BRP velden die corresponderen met de LO3 elementen gemeente en land.
-     * 
      */
     public static final class BrpPlaatsLand {
         private final BrpString brpWoonplaatsnaam;
@@ -116,28 +104,20 @@ public final class Lo3PlaatsLandConversieHelper {
 
         /**
          * Maak een BrpPlaatsLand.
-         * 
-         * @param brpWoonplaatsnaam
-         *            plaats
-         * @param brpBuitenlandseRegio
-         *            buitenlandse regio
-         * @param brpGemeenteCode
-         *            gemeente
-         * @param brpBuitenlandsePlaats
-         *            buitenlandse plaats
-         * @param brpOmschrijvingLocatie
-         *            omschrijving locatie
-         * @param brpLandOfGebiedCode
-         *            land
+         * @param brpWoonplaatsnaam plaats
+         * @param brpBuitenlandseRegio buitenlandse regio
+         * @param brpGemeenteCode gemeente
+         * @param brpBuitenlandsePlaats buitenlandse plaats
+         * @param brpOmschrijvingLocatie omschrijving locatie
+         * @param brpLandOfGebiedCode land
          */
         public BrpPlaatsLand(
-            final BrpString brpWoonplaatsnaam,
-            final BrpString brpBuitenlandseRegio,
-            final BrpGemeenteCode brpGemeenteCode,
-            final BrpString brpBuitenlandsePlaats,
-            final BrpString brpOmschrijvingLocatie,
-            final BrpLandOfGebiedCode brpLandOfGebiedCode)
-        {
+                final BrpString brpWoonplaatsnaam,
+                final BrpString brpBuitenlandseRegio,
+                final BrpGemeenteCode brpGemeenteCode,
+                final BrpString brpBuitenlandsePlaats,
+                final BrpString brpOmschrijvingLocatie,
+                final BrpLandOfGebiedCode brpLandOfGebiedCode) {
             this.brpWoonplaatsnaam = brpWoonplaatsnaam;
             this.brpBuitenlandseRegio = brpBuitenlandseRegio;
             this.brpGemeenteCode = brpGemeenteCode;
@@ -148,7 +128,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
         /**
          * Geef de waarde van brp woonplaatsnaam.
-         *
          * @return the brpWoonplaatsnaam
          */
         public BrpString getBrpWoonplaatsnaam() {
@@ -157,7 +136,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
         /**
          * Geef de waarde van brp buitenlandse regio.
-         *
          * @return the brpBuitenlandseRegio
          */
         public BrpString getBrpBuitenlandseRegio() {
@@ -166,7 +144,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
         /**
          * Geef de waarde van brp gemeente code.
-         *
          * @return the brpGemeenteCode
          */
         public BrpGemeenteCode getBrpGemeenteCode() {
@@ -175,7 +152,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
         /**
          * Geef de waarde van brp buitenlandse plaats.
-         *
          * @return the brpBuitenlandsePlaats
          */
         public BrpString getBrpBuitenlandsePlaats() {
@@ -184,7 +160,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
         /**
          * Geef de waarde van brp omschrijving locatie.
-         *
          * @return the brpOmschrijvingLocatie
          */
         public BrpString getBrpOmschrijvingLocatie() {
@@ -193,7 +168,6 @@ public final class Lo3PlaatsLandConversieHelper {
 
         /**
          * Geef de waarde van brp land of gebied code.
-         *
          * @return the brpLandOfGebiedCode
          */
         public BrpLandOfGebiedCode getBrpLandOfGebiedCode() {

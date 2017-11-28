@@ -6,14 +6,15 @@
 
 package nl.bzk.migratiebrp.isc.runtime.service;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.dao.CorrelatieDao;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.JbpmService;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.model.Correlatie;
 import nl.bzk.migratiebrp.isc.runtime.message.Acties;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -43,7 +44,7 @@ public final class CorrelerenAction implements Action {
         LOG.debug("[Bericht: {}]: correlatieId={}", message.getBerichtId(), correlatieId);
 
         // Correleer bericht
-        if (correlatieId != null) {
+        if (correlatieId != null && controleerGeenDelRepStaRepBericht(message)) {
             final Correlatie processData = correlatieDao.zoeken(correlatieId, kanaal, message.getOriginator(), message.getRecipient());
             LOG.debug("[Bericht: {}]: processData", message.getBerichtId(), processData);
 
@@ -53,7 +54,10 @@ public final class CorrelerenAction implements Action {
                 // Zoek gecorreleerd bericht obv correlatie, kanaal, originator en recipient
                 final nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht gecorreleerdBericht =
                         berichtenDao.zoekVraagBericht(correlatieId, kanaal, message.getOriginator(), message.getRecipient());
-                LOG.info("[Bericht: {}]: gecorreleerdBericht={}", message.getBerichtId(), gecorreleerdBericht == null ? null : gecorreleerdBericht.getId());
+                LOG.info(
+                        "[Bericht: {}]: gecorreleerdBericht={}",
+                        message.getBerichtId(),
+                        gecorreleerdBericht == null ? null : gecorreleerdBericht.getId());
 
                 if (gecorreleerdBericht != null) {
                     message.setAttribute(Message.ATTRIBUTE_GECORRELEERD_BERICHT, gecorreleerdBericht);
@@ -63,14 +67,14 @@ public final class CorrelerenAction implements Action {
                 berichtenDao.updateActie(message.getBerichtId(), Acties.ACTIE_FOUTAFHANDELING_GESTART);
                 final Long processInstanceId =
                         jbpmService.startFoutmeldingProces(
-                            message.getBericht(),
-                            message.getBerichtId(),
-                            message.getRecipient(),
-                            message.getOriginator(),
-                            "esb.geen.processdata",
-                            "Correlatie opgegeven, maar geen lopend proces gevonden.",
-                            false,
-                            false);
+                                message.getBericht(),
+                                message.getBerichtId(),
+                                message.getRecipient(),
+                                message.getOriginator(),
+                                "esb.geen.processdata",
+                                "Correlatie opgegeven, maar geen lopend proces gevonden.",
+                                false,
+                                false);
                 berichtenDao.updateProcessInstance(message.getBerichtId(), processInstanceId);
 
                 // Stop verwerking van deze ESB service
@@ -85,4 +89,7 @@ public final class CorrelerenAction implements Action {
         return true;
     }
 
+    private boolean controleerGeenDelRepStaRepBericht(final Message message) {
+        return !("StaR".equals(message.getBerichtType()) || "DelR".equals(message.getBerichtType()));
+    }
 }

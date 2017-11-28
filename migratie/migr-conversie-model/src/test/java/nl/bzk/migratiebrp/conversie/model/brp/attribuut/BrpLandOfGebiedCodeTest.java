@@ -13,18 +13,18 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Test;
 
 public class BrpLandOfGebiedCodeTest {
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testVerwijderOnderzoek() throws Exception {
-        BrpLandOfGebiedCode code = new BrpLandOfGebiedCode(Short.parseShort("45"), onderzoek);
+        BrpLandOfGebiedCode code = new BrpLandOfGebiedCode("0045", onderzoek);
         assertNotNull(code.getOnderzoek());
-        BrpLandOfGebiedCode newCode = code.verwijderOnderzoek();
+        final BrpLandOfGebiedCode newCode = code.verwijderOnderzoek();
         assertNotNull(code.getOnderzoek());
+        assertNotNull(newCode);
         assertNull(newCode.getOnderzoek());
         code = new BrpLandOfGebiedCode(null, onderzoek);
         assertNotNull(code.getOnderzoek());
@@ -38,14 +38,14 @@ public class BrpLandOfGebiedCodeTest {
 
     @Test
     public void testWrapMetWaardeEnZonderOnderzoek() throws Exception {
-        BrpLandOfGebiedCode result = BrpLandOfGebiedCode.wrap(Short.parseShort("45"), null);
+        final BrpLandOfGebiedCode result = BrpLandOfGebiedCode.wrap("0045", null);
         assertNull(result.getOnderzoek());
-        assertEquals(45, result.getWaarde().intValue());
+        assertEquals("0045", result.getWaarde());
     }
 
     @Test
     public void testWrapZonderWaardeEnMetOnderzoek() throws Exception {
-        BrpLandOfGebiedCode result = BrpLandOfGebiedCode.wrap(null, onderzoek);
+        final BrpLandOfGebiedCode result = BrpLandOfGebiedCode.wrap(null, onderzoek);
         assertNotNull(result.getOnderzoek());
         assertNull(result.getWaarde());
     }

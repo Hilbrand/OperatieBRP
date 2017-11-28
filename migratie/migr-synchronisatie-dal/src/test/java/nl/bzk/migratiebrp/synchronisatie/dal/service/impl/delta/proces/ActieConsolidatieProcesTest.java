@@ -20,13 +20,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractFormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractFormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.ConsolidatieData;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
@@ -37,12 +43,6 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Unittest voor {@link ActieConsolidatieProces}.
@@ -82,7 +82,7 @@ public class ActieConsolidatieProcesTest extends AbstractDeltaTest {
 
         final List<VerschilGroep> verschilGroepen = new ArrayList<>();
         verschilGroepen.add(verschilGroep);
-        mockitoCallsVoorbereiden(verschilGroepen, Collections.<DeltaStapelMatch>emptySet());
+        mockitoCallsVoorbereiden(verschilGroepen, Collections.emptySet());
 
         proces.verwerkVerschillen(context);
         proces.bepaalVerschillen(context);
@@ -111,12 +111,19 @@ public class ActieConsolidatieProcesTest extends AbstractDeltaTest {
 
         final Verschil nieuweRijElementAangepastVerschil =
                 new Verschil(sleutel, null, nieuweHistorie.getActieInhoud(), VerschilType.NIEUWE_RIJ_ELEMENT_AANGEPAST, bestaandeHistorie, nieuweHistorie);
-        final Verschil aLaagRijToegevoegd = new Verschil(sleutel, null, new PersoonNationaliteit(nieuwPersoon, new Nationaliteit("Nederlands", (short)2)), VerschilType.RIJ_TOEGEVOEGD, null, null);
+        final Verschil aLaagRijToegevoegd =
+                new Verschil(
+                        sleutel,
+                        null,
+                        new PersoonNationaliteit(nieuwPersoon, new Nationaliteit("Nederlands", "0002")),
+                        VerschilType.RIJ_TOEGEVOEGD,
+                        null,
+                        null);
         final Verschil nieuweRijToegevoegd = new Verschil(sleutel, null, nieuweHistorie, VerschilType.RIJ_TOEGEVOEGD, null, nieuweHistorie);
 
         final EntiteitSleutel actieSleutel = new EntiteitSleutel(Persoon.class, AbstractFormeleHistorie.ACTIE_VERVAL, null);
-        final Verschil actieVervalAangepast = new Verschil(actieSleutel, null, bestaandeHistorie.getActieInhoud(), VerschilType.ELEMENT_AANGEPAST, null, null);
-
+        final Verschil actieVervalAangepast =
+                new Verschil(actieSleutel, null, bestaandeHistorie.getActieInhoud(), VerschilType.ELEMENT_AANGEPAST, null, null);
 
         verschilGroep.addVerschil(nieuweRijElementAangepastVerschil);
         verschilGroep.addVerschil(mRijVerschil);

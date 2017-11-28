@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze enum representeert een unieke verwijzing naar de BRP stamtabel 'Naamgebruik'.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class BrpNaamgebruikCode extends AbstractBrpAttribuutMetOnderzoek {
@@ -37,9 +37,7 @@ public final class BrpNaamgebruikCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpNaamgebruikCode.
-     * 
-     * @param waarde
-     *            BRP code
+     * @param waarde BRP code
      */
     public BrpNaamgebruikCode(final String waarde) {
         this(waarde, null);
@@ -47,22 +45,18 @@ public final class BrpNaamgebruikCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpNaamgebruikCode object met onderzoek.
-     * 
-     * @param waarde
-     *            de waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde de waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpNaamgebruikCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override

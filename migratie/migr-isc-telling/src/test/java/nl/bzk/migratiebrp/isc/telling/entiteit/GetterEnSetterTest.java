@@ -62,9 +62,7 @@ public class GetterEnSetterTest {
      * standaard waarde gezet, waarna de betreffende getter methode wordt aangeroepen en gekeken wordt of dezelfde
      * waarde dan wordt geretourneerd. Daarna wordt hetzelfde gedaan, maar dan wordt het veld op <code>
      * null</code> gezet en gekeken of de getter ook <code>null</code> retourneerd.
-     * 
-     * @throws Exception
-     *             indien er fouten optreden.
+     * @throws Exception indien er fouten optreden.
      */
     @Test
     public void testEntityGetters() throws Exception {
@@ -80,9 +78,7 @@ public class GetterEnSetterTest {
      * methodes wordt eerst het veld op een standaard waarde gezet, waarna de betreffende getter methode wordt
      * aangeroepen en gekeken wordt of dezelfde waarde dan wordt geretourneerd. Daarna wordt hetzelfde gedaan, maar dan
      * wordt het veld op <code>null</code> gezet en gekeken of de getter ook <code>null</code> retourneert.
-     * 
-     * @throws Exception
-     *             indien er fouten optreden.
+     * @throws Exception indien er fouten optreden.
      */
     private void testModelGetters(final List<Class<? extends Object>> classes) throws Exception {
         for (final Class<? extends Object> clazz : classes) {
@@ -132,9 +128,7 @@ public class GetterEnSetterTest {
      * standaard waarde gezet, waarna de betreffende getter methode wordt aangeroepen en gekeken wordt of dezelfde
      * waarde dan wordt geretourneerd. Daarna wordt hetzelfde gedaan, maar dan wordt het veld op <code>
      * null</code> gezet en gekeken of de getter ook <code>null</code> retourneerd.
-     * 
-     * @throws Exception
-     *             indien er fouten optreden.
+     * @throws Exception indien er fouten optreden.
      */
     @Test
     public void testEnumGetters() throws Exception {
@@ -162,9 +156,7 @@ public class GetterEnSetterTest {
      * veld wordt bekeken of deze nu dezelfde waarde heeft als de waarde die is gezet. Daarna wordt hetzelfde gedaan,
      * maar dan wordt de setter methode aangeroepen met <code>null</code> en wordt gekeken of het veld daarna ook
      * <code>null</code> is.
-     * 
-     * @throws Exception
-     *             indien er fouten optreden.
+     * @throws Exception indien er fouten optreden.
      */
     @Test
     public void testLogischModelSetters() throws Exception {
@@ -182,9 +174,7 @@ public class GetterEnSetterTest {
      * bekeken of deze nu dezelfde waarde heeft als de waarde die is gezet. Daarna wordt hetzelfde gedaan, maar dan
      * wordt de setter methode aangeroepen met <code>null</code> en wordt gekeken of het veld daarna ook
      * <code>null</code> is.
-     * 
-     * @throws Exception
-     *             indien er fouten optreden.
+     * @throws Exception indien er fouten optreden.
      */
     @Test
     public void testEntitySetters() throws Exception {
@@ -201,9 +191,7 @@ public class GetterEnSetterTest {
      * standaard waarde, waarna het betreffende veld wordt bekeken of deze nu dezelfde waarde heeft als de waarde die is
      * gezet. Daarna wordt hetzelfde gedaan, maar dan wordt de setter methode aangeroepen met <code>null</code> en wordt
      * gekeken of het veld daarna ook <code>null</code> is.
-     * 
-     * @throws Exception
-     *             indien er fouten optreden.
+     * @throws Exception indien er fouten optreden.
      */
     private void testModelSetters(final List<Class<? extends Object>> classes) throws Exception {
         for (final Class<? extends Object> clazz : classes) {
@@ -263,12 +251,9 @@ public class GetterEnSetterTest {
      * een methode zonder parameters, waarbij de naam van het veld gelijk is aan de naam van de methode, alleen dan
      * geprefixed met 'get' of 'is' (indien het een boolean veld is). Indien een dergelijke methode niet bestaat binnen
      * de opgegeven class, wordt <code>null</code> geretourneerd.
-     * 
-     * @param veld
-     *            het veld waarvoor de getter methode wordt gezocht.
+     * @param veld het veld waarvoor de getter methode wordt gezocht.
      * @return de bij het veld horende getter methode, of <code>null</code> indien er geen getter methode is.
-     * @throws NoSuchMethodException
-     *             indien er een fout optreedt.
+     * @throws NoSuchMethodException indien er een fout optreedt.
      */
     private Method getGetterMethodeVoorVeld(final Field veld) throws NoSuchMethodException {
         final Class<? extends Object> clazz = veld.getDeclaringClass();
@@ -291,14 +276,11 @@ public class GetterEnSetterTest {
      * {@link #VALUES} map bekende class is, wordt de binnen de {@link #VALUES} map bekende waarde van die class
      * geretourneerd en als het een type is die een standaard lege constructor ondersteund, dan wordt die gebruikt om de
      * standaard waarde te genereren.
-     * 
-     * @param veld
-     *            het veld waarvoor een standaard waarde wordt gezocht.
+     * @param veld het veld waarvoor een standaard waarde wordt gezocht.
      * @return de standaard waarde voor het opgegeven veld.
-     * @throws Exception
-     *             indien er fouten optreden.
+     * @throws Exception indien er fouten optreden.
      */
-    
+
     private Object getStandaardWaardeVoorVeld(final Field veld) throws Exception {
         Object result = null;
         if (veld.getType().isEnum()) {
@@ -317,11 +299,8 @@ public class GetterEnSetterTest {
      * Controleert of de opgegeven getter methode ook een correct te testen methode is voor het opgegeven veld. Dit is
      * alleen indien de methode hetzelfde type retourneert als het veld is en indien het of een in de {@link #VALUES}
      * ondersteund type is, het een enum is of het type een lege (zonder parameters) constructor heeft.
-     * 
-     * @param getterMethode
-     *            de getter methode die gecontroleerd dient te worden.
-     * @param veld
-     *            het veld dat middels de getter methode ondersteund wordt.
+     * @param getterMethode de getter methode die gecontroleerd dient te worden.
+     * @param veld het veld dat middels de getter methode ondersteund wordt.
      * @return een boolean die aangeeft of de getter methode een goed testbare methode is of niet.
      */
     private boolean isTestbareGetterMethodeVoorVeld(final Method getterMethode, final Field veld) {
@@ -340,11 +319,8 @@ public class GetterEnSetterTest {
      * alleen indien de methode een enkele parameter ondersteund en deze van hetzelfde type is als het veld zelf en
      * indien het of een in de {@link #VALUES} ondersteund type is, het veld een enum is of het type een lege (zonder
      * parameters) constructor heeft.
-     * 
-     * @param setterMethode
-     *            de setter methode die gecontroleerd dient te worden.
-     * @param veld
-     *            het veld dat middels de setter methode ondersteund wordt.
+     * @param setterMethode de setter methode die gecontroleerd dient te worden.
+     * @param veld het veld dat middels de setter methode ondersteund wordt.
      * @return een boolean die aangeeft of de setter methode een goed testbare methode is of niet.
      */
     private boolean isTestbareSetterMethodeVoorVeld(final Method setterMethode, final Field veld) {
@@ -362,9 +338,7 @@ public class GetterEnSetterTest {
 
     /**
      * Geeft aan of het opgegeven type over een lege (zonder parameters) constructor heeft of niet.
-     * 
-     * @param type
-     *            het type dat gecontroleerd dient te worden.
+     * @param type het type dat gecontroleerd dient te worden.
      * @return of het opgegeven type over een lege (zonder parameters) constructor heeft.
      */
     private boolean heeftVeldTypeLegeConstructor(final Class<?> type) {
@@ -392,15 +366,10 @@ public class GetterEnSetterTest {
      * Creeert een nieuwe instantie voor de (entity) class. Het doet dit door de verwachte parameterloze constructor op
      * te halen voor de opgegeven class en deze aan te roepen. Daar JPA entities verplicht zijn een parameterloze
      * constructor te hebben, zal dit geen probleem zijn, ook al is deze niet public.
-     * 
-     * @param clazz
-     *            de class waarvoor een instantie moet worden gecreeerd.
-     * @param <T>
-     *            het type van de class.
+     * @param clazz de class waarvoor een instantie moet worden gecreeerd.
+     * @param <T> het type van de class.
      * @return een nieuwe instantie van de class.
-     * @throws Exception
-     *             indien er een fout optreedt bij het instantieren van de nieuwe instantie en/of het vinden van de
-     *             juiste constructor.
+     * @throws Exception indien er een fout optreedt bij het instantieren van de nieuwe instantie en/of het vinden van de juiste constructor.
      */
     private <T extends Object> T creeerEntityInstantie(final Class<T> clazz) throws Exception {
         final Constructor<T> constructor = clazz.getDeclaredConstructor();
@@ -411,9 +380,7 @@ public class GetterEnSetterTest {
     /**
      * Bouwt een nieuwe lijst op van classes, gebaseerd op de opgegeven lijst van classes, maar waar dan alleen nog
      * classes inzitten die een entity zijn (welke geannoteerd zijn met de annotatie {@link Entity}).
-     * 
-     * @param classes
-     *            de lijst van classes waaruit de lijst van entities wordt opgebouwd.
+     * @param classes de lijst van classes waaruit de lijst van entities wordt opgebouwd.
      * @return een lijst van entity classes.
      */
     private List<Class<? extends Object>> filterClassesOpEntities(final List<Class<? extends Object>> classes) {
@@ -430,9 +397,7 @@ public class GetterEnSetterTest {
     /**
      * Bouwt een nieuwe lijst op van classes, gebaseerd op de opgegeven lijst van classes, maar waar dan alleen nog
      * classes inzitten die niet een enum zijn.
-     * 
-     * @param classes
-     *            de lijst van classes waaruit de lijst van model classes wordt opgebouwd.
+     * @param classes de lijst van classes waaruit de lijst van model classes wordt opgebouwd.
      * @return een lijst van model classes.
      */
     private List<Class<? extends Object>> filterClassesOpModelClasses(final List<Class<? extends Object>> classes) {
@@ -448,9 +413,7 @@ public class GetterEnSetterTest {
     /**
      * Bouwt een nieuwe lijst op van classes, gebaseerd op de opgegeven lijst van classes, maar waar dan alleen nog
      * classes inzitten die een enum zijn.
-     * 
-     * @param classes
-     *            de lijst van classes waaruit de lijst van entities wordt opgebouwd.
+     * @param classes de lijst van classes waaruit de lijst van entities wordt opgebouwd.
      * @return een lijst van enum classes.
      */
     private List<Class<? extends Object>> filterClassesOpEnums(final List<Class<? extends Object>> classes) {
@@ -466,20 +429,15 @@ public class GetterEnSetterTest {
     /**
      * Controleert of de opgegeven class een methode (private, protected, package of public) heeft die voldoet aan de
      * opgegeven methode naam en een parameter heeft van het eventueel opgegeven parametertype.
-     * 
-     * @param clazz
-     *            de class die moet worden gecontroleerd.
-     * @param methodeNaam
-     *            de naam van de methode waarop wordt gezocht.
-     * @param veldType
-     *            parametertype.
+     * @param clazz de class die moet worden gecontroleerd.
+     * @param methodeNaam de naam van de methode waarop wordt gezocht.
+     * @param veldType parametertype.
      * @return een boolean die aangeeft of de methode bestaat in de class of niet.
      */
     private boolean heeftClassOpgegevenMethode(
-        final Class<? extends Object> clazz,
-        final String methodeNaam,
-        final Class<? extends Object> veldType)
-    {
+            final Class<? extends Object> clazz,
+            final String methodeNaam,
+            final Class<? extends Object> veldType) {
         boolean result = false;
         final Method[] methods = clazz.getDeclaredMethods();
         for (final Method method : methods) {
@@ -503,20 +461,14 @@ public class GetterEnSetterTest {
      * opgegeven package (dit zijn naar alle waarschijnlijkheid de package in src/main/java en src/test/java). Daarna
      * wordt een lijst opgebouwd voor de classes die zijn te vinden in deze folders en hun onderliggende folders, waarna
      * deze lijst van classes wordt geretourneerd.
-     * 
-     * @param packageNaam
-     *            De naam van het package waarvoor de classes moeten worden geretourneerd.
+     * @param packageNaam De naam van het package waarvoor de classes moeten worden geretourneerd.
      * @return Een lijst van classes welke worden gevonden in de opgegeven package en diens subpackages.
-     * @throws ClassNotFoundException
-     *             indien een class niet gevonden kan worden.
-     * @throws IOException
-     *             indien de package niet gevonden kan worden.
-     * @throws URISyntaxException
-     *             als de URI syntactisch niet juist is, wat onwaarschijnlijk is, omdat die opgehaald wordt.
+     * @throws ClassNotFoundException indien een class niet gevonden kan worden.
+     * @throws IOException indien de package niet gevonden kan worden.
+     * @throws URISyntaxException als de URI syntactisch niet juist is, wat onwaarschijnlijk is, omdat die opgehaald wordt.
      */
     private static List<Class<? extends Object>> getClassesInPackage(final String packageNaam) throws ClassNotFoundException, IOException,
-        URISyntaxException
-    {
+            URISyntaxException {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final Enumeration<URL> resources = classLoader.getResources(packageNaam.replace('.', '/'));
 
@@ -538,18 +490,13 @@ public class GetterEnSetterTest {
 
     /**
      * Haalt alle classes op uit de opgegeven folder en diens subfolder en retourneert deze.
-     * 
-     * @param folder
-     *            de folder die classes bevat welke geretourneerd dienen te worden.
-     * @param packageNaam
-     *            de naam van het package waartoe de classes in de folder behoren.
+     * @param folder de folder die classes bevat welke geretourneerd dienen te worden.
+     * @param packageNaam de naam van het package waartoe de classes in de folder behoren.
      * @return de in de folder en diens subfolder gevonden classes.
-     * @throws ClassNotFoundException
-     *             indien een class niet gevonden kan worden.
+     * @throws ClassNotFoundException indien een class niet gevonden kan worden.
      */
     private static List<Class<? extends Object>> vindClassesInPackageFolderEnSubpackages(final File folder, final String packageNaam)
-        throws ClassNotFoundException
-    {
+            throws ClassNotFoundException {
         final List<Class<? extends Object>> classes = new ArrayList<>();
 
         if (!folder.exists()) {
@@ -570,11 +517,8 @@ public class GetterEnSetterTest {
 
     /**
      * Bouwt de package naam op voor een folder.
-     * 
-     * @param folder
-     *            de folder waarvoor de package naam wordt opgebouwd.
-     * @param parentPackageNaam
-     *            de naam van het (parent) package waarin dit package zich bevindt.
+     * @param folder de folder waarvoor de package naam wordt opgebouwd.
+     * @param parentPackageNaam de naam van het (parent) package waarin dit package zich bevindt.
      * @return de package naam voor de folder.
      */
     private static String bouwPackageNaamVoorFolder(final File folder, final String parentPackageNaam) {
@@ -583,11 +527,8 @@ public class GetterEnSetterTest {
 
     /**
      * Retourneert de volledige naam van de java class file.
-     * 
-     * @param bestand
-     *            het java class bestand waarvoor de naam moet worden gegenereerd.
-     * @param packageNaam
-     *            de naam van het package waarin de java class file zich bevindt.
+     * @param bestand het java class bestand waarvoor de naam moet worden gegenereerd.
+     * @param packageNaam de naam van het package waarin de java class file zich bevindt.
      * @return de volledige naam van de java class file.
      */
     private static String bouwClassNaamVoorBestand(final File bestand, final String packageNaam) {

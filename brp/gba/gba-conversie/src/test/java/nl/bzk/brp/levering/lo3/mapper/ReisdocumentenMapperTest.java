@@ -6,16 +6,12 @@
 
 package nl.bzk.brp.levering.lo3.mapper;
 
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.maakIngeschrevene;
+
 import java.util.List;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
 import nl.bzk.brp.gba.dataaccess.VerConvRepository;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumEvtDeelsOnbekendAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.OmschrijvingEnumeratiewaardeAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.SoortNederlandsReisdocumentCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortNederlandsReisdocument;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.predikaatview.kern.PersoonHisVolledigView;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonReisdocumentHisVolledigImplBuilder;
+import nl.bzk.brp.levering.lo3.support.MetaObjectUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpReisdocumentInhoud;
 import org.junit.Assert;
@@ -24,23 +20,23 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class ReisdocumentenMapperTest {
+public class ReisdocumentenMapperTest extends AbstractMapperTestBasis {
 
-    private final ReisdocumentenMapper mapper = new ReisdocumentenMapper();
+    private final ReisdocumentMapper singleMapper = new ReisdocumentMapper();
+    private final ReisdocumentenMapper mapper = new ReisdocumentenMapper(singleMapper);
 
     @Before
     public void setupSingleMapper() throws ReflectiveOperationException {
-        final ReisdocumentMapper singleMapper = new ReisdocumentMapper();
         ReflectionTestUtils.setField(singleMapper, "verConvRepository", Mockito.mock(VerConvRepository.class, Mockito.RETURNS_DEFAULTS));
-        ReflectionTestUtils.setField(mapper, "reisdocumentMapper", singleMapper);
     }
 
     @Test
     public void test() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(maak(builder).build(), null);
-        final List<BrpStapel<BrpReisdocumentInhoud>> reisdocument =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+        final MetaObject.Builder builder =
+                maakIngeschrevene(
+                        () -> MetaObjectUtil.maakPersoonReisdocument("P", "V", "autoriteitVanAfgifte", 20140101, 20130111, 20140101, 20131010, "1234"));
+
+        final List<BrpStapel<BrpReisdocumentInhoud>> reisdocument = doMapping(mapper, builder);
 
         Assert.assertNotNull(reisdocument);
         Assert.assertTrue(reisdocument.size() == 1);
@@ -48,23 +44,11 @@ public class ReisdocumentenMapperTest {
 
     @Test
     public void testAlleenData() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        builder.voegPersoonReisdocumentToe(new PersoonReisdocumentHisVolledigImplBuilder(new SoortNederlandsReisdocument(
-            new SoortNederlandsReisdocumentCodeAttribuut("P"),
-            new OmschrijvingEnumeratiewaardeAttribuut("Pass"),
-            new DatumEvtDeelsOnbekendAttribuut(20130110),
-            new DatumEvtDeelsOnbekendAttribuut(20140110))).nieuwStandaardRecord(MapperTestUtil.maakActieModel(20130110000000L))
-                                                          .autoriteitVanAfgifte("autoriteitVanAfgifte")
-                                                          .datumIngangDocument(20130111)
-                                                          .datumUitgifte(20131010)
-                                                          .datumEindeDocument(20140101)
-                                                          .nummer("1234")
-                                                          .eindeRecord()
-                                                          .build());
+        final MetaObject.Builder builder =
+                maakIngeschrevene(
+                        () -> MetaObjectUtil.maakPersoonReisdocument("P", null, "autoriteitVanAfgifte", 20140101, 20130111, null, 20131010, "1234"));
 
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final List<BrpStapel<BrpReisdocumentInhoud>> reisdocument =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+        final List<BrpStapel<BrpReisdocumentInhoud>> reisdocument = doMapping(mapper, builder);
 
         Assert.assertNotNull(reisdocument);
         Assert.assertTrue(reisdocument.size() == 1);
@@ -73,32 +57,9 @@ public class ReisdocumentenMapperTest {
 
     @Test
     public void testLeeg() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final List<BrpStapel<BrpReisdocumentInhoud>> reisdocument =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+        final List<BrpStapel<BrpReisdocumentInhoud>> reisdocument = doMapping(mapper, maakIngeschrevene());
 
         Assert.assertNotNull(reisdocument);
         Assert.assertTrue(reisdocument.size() == 0);
-    }
-
-    public static PersoonHisVolledigImplBuilder maak(final PersoonHisVolledigImplBuilder builder) {
-        // @formatter:off
-        return builder.voegPersoonReisdocumentToe(
-                new PersoonReisdocumentHisVolledigImplBuilder(
-                        new SoortNederlandsReisdocument(new SoortNederlandsReisdocumentCodeAttribuut("P"),
-                                                        new OmschrijvingEnumeratiewaardeAttribuut("Pass"),
-                                                        new DatumEvtDeelsOnbekendAttribuut(20130110),
-                                                        new DatumEvtDeelsOnbekendAttribuut(20140110)))
-                        .nieuwStandaardRecord(MapperTestUtil.maakActieModel(20130110000000L))
-                        .aanduidingInhoudingVermissing("V")
-                        .autoriteitVanAfgifte("autoriteitVanAfgifte")
-                        .datumEindeDocument(20140101)
-                        .datumIngangDocument(20130111)
-                        .datumInhoudingVermissing(20140101)
-                        .datumUitgifte(20131010)
-                        .nummer("1234")
-                        .eindeRecord().build());
-        // @formatter:on
     }
 }

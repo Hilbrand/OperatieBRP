@@ -19,15 +19,13 @@ import org.jbpm.jsf.core.impl.UpdatesHashMap;
  * Rapporteerd geselecteerd keuze handler.
  */
 @TldTag(name = "reportSelectedChoice", description = "Report the selected option from a task", attributes = {@TldAttribute(
-        name = "variableMap", description = "The variable map", required = true, deferredType = UpdatesHashMap.class) })
+        name = "variableMap", description = "The variable map", required = true, deferredType = UpdatesHashMap.class)})
 public final class ReportSelectedChoiceHandler extends AbstractHandler {
     private final TagAttribute variableMapTagAttribute;
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public ReportSelectedChoiceHandler(final TagConfig config) {
         super(config);

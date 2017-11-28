@@ -16,7 +16,6 @@ import nl.bzk.migratiebrp.util.common.Kopieer;
 
 /**
  * Persistent klasse voor de extractie runtime database tabel.
- * 
  */
 @Entity
 @Table(name = "mig_runtime")
@@ -35,7 +34,6 @@ public class Runtime implements Serializable {
 
     /**
      * Geef de waarde van runtime naam.
-     *
      * @return runtime naam
      */
     public final String getRuntimeNaam() {
@@ -44,9 +42,7 @@ public class Runtime implements Serializable {
 
     /**
      * Zet de waarde van runtime naam.
-     *
-     * @param runtimeNaam
-     *            runtime naam
+     * @param runtimeNaam runtime naam
      */
     public final void setRuntimeNaam(final String runtimeNaam) {
         this.runtimeNaam = runtimeNaam;
@@ -54,7 +50,6 @@ public class Runtime implements Serializable {
 
     /**
      * Geef de waarde van start datum.
-     *
      * @return start datum
      */
     public final Date getStartDatum() {
@@ -63,9 +58,7 @@ public class Runtime implements Serializable {
 
     /**
      * Zet de waarde van start datum.
-     *
-     * @param startDatum
-     *            start datum
+     * @param startDatum start datum
      */
     public final void setStartDatum(final Date startDatum) {
         this.startDatum = Kopieer.sqlDate(startDatum);
@@ -73,7 +66,6 @@ public class Runtime implements Serializable {
 
     /**
      * Geef de waarde van client naam.
-     *
      * @return client naam
      */
     public final String getClientNaam() {
@@ -82,9 +74,7 @@ public class Runtime implements Serializable {
 
     /**
      * Zet de waarde van client naam.
-     *
-     * @param clientNaam
-     *            client naam
+     * @param clientNaam client naam
      */
     public final void setClientNaam(final String clientNaam) {
         this.clientNaam = clientNaam;

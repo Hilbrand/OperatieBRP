@@ -19,6 +19,7 @@ import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpAntwoordBericht;
 import nl.bzk.migratiebrp.init.logging.runtime.service.LoggingService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
@@ -27,7 +28,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:synchronisatie-logging-beans-test.xml", "classpath:synchronisatie-logging-jms-test.xml" })
+@ContextConfiguration(locations = {"classpath:synchronisatie-logging-beans-test.xml", "classpath:synchronisatie-logging-jms-test.xml"})
 public class NaarBrpMessageListenerTest {
 
     @Inject
@@ -66,7 +67,7 @@ public class NaarBrpMessageListenerTest {
                 }
             }
         });
-        service.zoekInitVullingLog(Long.valueOf(correlationId));
+        Assert.assertNotNull(service.zoekInitVullingLog(correlationId));
     }
 
     /**
@@ -95,6 +96,6 @@ public class NaarBrpMessageListenerTest {
 
             }
         });
-        service.zoekInitVullingLog(3832803548L);
+        Assert.assertNotNull(service.zoekInitVullingLog("3832803548"));
     }
 }

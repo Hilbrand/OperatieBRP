@@ -6,12 +6,15 @@
 
 package nl.bzk.migratiebrp.test.common.output;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -22,6 +25,8 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAfnemersindicaties;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAutorisatie;
@@ -29,20 +34,22 @@ import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstExcep
 import nl.bzk.migratiebrp.conversie.model.exceptions.PreconditieException;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Afnemersindicatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Autorisatie;
-import nl.bzk.migratiebrp.conversie.model.serialize.XmlEncoding;
+import nl.bzk.migratiebrp.conversie.model.serialize.MigratieXml;
 import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenAfnemersindicaties;
 import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenAutorisatie;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.test.common.resultaat.Foutmelding;
 import nl.bzk.migratiebrp.test.common.resultaat.TestRapportage;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * Test output helper.
  */
 public final class TestOutput {
 
+    private static final String EXCEPTION = "Exception: >> {} <<";
+    private static final String UTF_8_ENCODING = "UTF-8";
     private static final String AFNEMERSINDICATIE_XSL = "/AfnemersindicatieNaarHtml.xsl";
     private static final String AUTORISATIE_XSL = "/AutorisatieNaarHtml.xsl";
     private static final String FOUTMELDING_XSL = "/FoutmeldingNaarHtml.xsl";
@@ -80,6 +87,7 @@ public final class TestOutput {
     private static final Transformer AFNEMERSINDICATIE_TRANSFORMER;
     private static final Transformer AUTORISATIE_TRANSFORMER;
     private static final Transformer MODEL_TRANSFORMER;
+
     static {
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
         try {
@@ -99,7 +107,7 @@ public final class TestOutput {
             AFNEMERSINDICATIE_TRANSFORMER = transformerFactory.newTransformer(new StreamSource(clazz.getResourceAsStream(AFNEMERSINDICATIE_XSL)));
 
         } catch (final TransformerConfigurationException e) {
-            e.printStackTrace();
+            LOG.error(ExceptionUtils.getStackTrace(e));
             throw new TestOutputException("Kan XSLT transformatie (afnemersindicatie,autorisatie,model) niet initialiseren.", e);
         }
     }
@@ -109,21 +117,17 @@ public final class TestOutput {
 
     /**
      * Output XML en HTML voor een object.
-     *
-     * @param object
-     *            object
-     * @param xmlFile
-     *            xml file
-     * @param htmlFile
-     *            html file
+     * @param object object
+     * @param xmlFile xml file
+     * @param htmlFile html file
      */
     public static void outputXmlEnHtml(final Object object, final File xmlFile, final File htmlFile) {
-        final byte[] xmlData = object == null ? new byte[] {} : TestOutput.xmlSerializeObject(object);
+        final String xmlData = object == null ? null : TestOutput.xmlSerializeObject(object);
         TestOutput.outputXml(xmlData, xmlFile);
         TestOutput.outputHtml(xmlData, object, htmlFile);
     }
 
-    private static void outputHtml(final byte[] xmlData, final Object object, final File htmlFile) {
+    private static void outputHtml(final String xmlData, final Object object, final File htmlFile) {
         final Transformer transformer;
         if (object instanceof Persoonslijst) {
             transformer = MODEL_TRANSFORMER;
@@ -152,13 +156,13 @@ public final class TestOutput {
             final boolean okToWrite = parentFile.exists() || parentFile.mkdirs();
 
             // @formatter:off - formatter zet opening-{ niet op juiste plaats
-            try (final FileOutputStream htmlFos = new FileOutputStream(htmlFile);
-                    final ByteArrayInputStream xmlDataBais = new ByteArrayInputStream(xmlData))
-                    {
+            try (FileOutputStream fos = new FileOutputStream(htmlFile);
+                 OutputStreamWriter writer = new OutputStreamWriter(fos, UTF_8_ENCODING);
+                 final StringReader reader = new StringReader(xmlData)) {
                 // @formatter:on
 
                 if (okToWrite) {
-                    transformer.transform(new StreamSource(xmlDataBais), new StreamResult(htmlFos));
+                    transformer.transform(new StreamSource(reader), new StreamResult(writer));
                 } else {
                     throw new IOException(FILE_WRITE_ERROR);
                 }
@@ -168,44 +172,42 @@ public final class TestOutput {
         }
     }
 
-    private static void outputXml(final byte[] xmlData, final File xmlFile) {
+    private static void outputXml(final String xmlData, final File xmlFile) {
         if (xmlFile != null) {
             final File parentFile = xmlFile.getParentFile();
             final boolean okToWrite = parentFile.exists() || parentFile.mkdirs();
 
-            try (FileOutputStream xmlFos = new FileOutputStream(xmlFile)) {
+            try (FileOutputStream fos = new FileOutputStream(xmlFile);
+                 OutputStreamWriter writer = new OutputStreamWriter(fos, UTF_8_ENCODING)) {
                 if (okToWrite) {
                     // write XML to file
-                    xmlFos.write(xmlData);
+                    writer.write(xmlData);
                 } else {
                     throw new IOException(FILE_WRITE_ERROR);
                 }
             } catch (final Exception e) {
-                LOG.error("Exception: >>" + e.getMessage() + "<<");
+                LOG.error(EXCEPTION, e.getMessage());
                 throw new TestOutputException("Kan XML file niet schrijven.", e);
             }
         }
     }
 
-    private static byte[] xmlSerializeObject(final Object object) {
-        try (ByteArrayOutputStream boas = new ByteArrayOutputStream()) {
-            XmlEncoding.encode(object, boas);
-            return boas.toByteArray();
+    private static String xmlSerializeObject(final Object object) {
+        try (StringWriter writer = new StringWriter()) {
+            MigratieXml.encode(object, writer);
+            writer.flush();
+            return writer.toString();
         } catch (final Exception e) {
-            System.err.println("Exception: >>" + e.getMessage() + "<<");
+            LOG.error(EXCEPTION, e.getMessage());
             throw new TestOutputException("Kan object (class=" + object.getClass().getName() + " niet serializeren.", e);
         }
     }
 
     /**
      * Leest een XML-bestand en decodeerd de XML naar het opgegeven clazz object.
-     *
-     * @param clazz
-     *            Class dat gevuld moet worden vanuit de XML
-     * @param xmlFile
-     *            het XML bestand
-     * @param <T>
-     *            Type klasse dat moet worden terug gegeven
+     * @param clazz Class dat gevuld moet worden vanuit de XML
+     * @param xmlFile het XML bestand
+     * @param <T> Type klasse dat moet worden terug gegeven
      * @return het gevulde clazz-Object
      */
     public static <T> T readXml(final Class<T> clazz, final File xmlFile) {
@@ -214,10 +216,11 @@ public final class TestOutput {
             return null;
         }
 
-        try (FileInputStream xmlFis = new FileInputStream(xmlFile)) {
-            return XmlEncoding.decode(clazz, xmlFis);
+        try (FileInputStream xmlFis = new FileInputStream(xmlFile);
+             Reader reader = new InputStreamReader(xmlFis, UTF_8_ENCODING)) {
+            return MigratieXml.decode(clazz, reader);
         } catch (final Exception e) {
-            System.err.println("Exception: >>" + e.getMessage() + "<<");
+            LOG.error(EXCEPTION, e.getMessage());
             throw new TestOutputException("Fout bij lezen en decoderen XML uit file.", e);
         }
     }

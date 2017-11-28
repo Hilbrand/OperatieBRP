@@ -150,7 +150,7 @@
                             <th>#{msgs['task.heading.create']}</th>
                             <td>
                                 <h:outputText value="#{task.create}" rendered="#{task.create != null}">
-                                    <f:convertDateTime type="both" timeZone="#{j4j:getServerTimeZone()}"/>
+                                    <f:convertDateTime type="both" timeZone="Europe/Amsterdam"/>
                                 </h:outputText>
                             </td>
                         </gs:tr>
@@ -158,7 +158,7 @@
                             <th>#{msgs['task.heading.start']}</th>
                             <td>
                                 <h:outputText value="#{task.start}" rendered="#{task.start != null}">
-                                    <f:convertDateTime type="both" timeZone="#{j4j:getServerTimeZone()}"/>
+                                    <f:convertDateTime type="both" timeZone="Europe/Amsterdam"/>
                                 </h:outputText>
                             </td>
                         </gs:tr>
@@ -166,7 +166,7 @@
                             <th>#{msgs['task.heading.end']}</th>
                             <td>
                                 <h:outputText value="#{task.end}" rendered="#{task.end != null}">
-                                    <f:convertDateTime type="both" timeZone="#{j4j:getServerTimeZone()}"/>
+                                    <f:convertDateTime type="both" timeZone="Europe/Amsterdam"/>
                                 </h:outputText>
                             </td>
                         </gs:tr>
@@ -469,10 +469,10 @@
                                 <f:validateLongRange minimum="0"/>
                                 <f:convertNumber integerOnly="true" maxFractionDigits="0"/>
                             </ga:parameter>
-                            
+
                             <mig:verwerkTaak  id="#{id}" transition="#{transition}" comment="#{comment}"  variableMap="#{taskVariableMap}" unless="#{button != 'transition'}" navigate="false" />
                             <mig:reportSelectedChoice variableMap="#{taskVariableMap}" unless="#{button != 'transition'}" />
-                                 
+
                             <n:nav outcome="error" redirect="true" storeMessages="true"/>
                             <n:nav outcome="save" redirect="true" storeMessages="true"/>
                             <n:nav outcome="cancel" redirect="true" storeMessages="true"/>

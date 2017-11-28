@@ -82,6 +82,23 @@ voltrekkingHuwelijkInNederland:
                   voorvoegsel: '[]'
                   scheidingsteken: '[]'
                   stam: '[]'
+    registratieGeslachtsnaam:
+      communicatieID: 'comid.voltrekkingHuwelijkInNederland.registratieGeslachtsnaam'
+      datumAanvangGeldigheid: '[-1]'
+      bronnen:
+        -
+          communicatieID: 'comid.voltrekkingHuwelijkInNederland.registratieGeslachtsnaam.bron1'
+          referentieID: 'comid.voltrekkingHuwelijkInNederland.bron1'
+      persoon:
+        communicatieID: 'comid.voltrekkingHuwelijkInNederland.registratieGeslachtsnaam.persoon'
+        objectSleutel: '[]'
+        geslachtsnaamcomponent:
+          communicatieID: 'comid.voltrekkingHuwelijkInNederland.registratieGeslachtsnaam.naamgebruik'
+          voorvoegsel: '[]'
+          scheidingsteken: '[]'
+          stam: '[]'
+          predicaatCode: '[]'
+          adellijkeTitelCode: '[]'
     registratieNaamgebruik:
       communicatieID: 'comid.voltrekkingHuwelijkInNederland.registratieNaamgebruik'
       datumAanvangGeldigheid: '[-1]'

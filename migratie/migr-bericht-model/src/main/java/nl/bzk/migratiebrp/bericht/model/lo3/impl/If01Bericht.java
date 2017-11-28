@@ -9,27 +9,25 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 import java.io.Serializable;
 import nl.bzk.migratiebrp.bericht.model.lo3.AbstractCategorieGebaseerdParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3EindBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 
 /**
  * If01.
  */
-public final class If01Bericht extends AbstractCategorieGebaseerdParsedLo3Bericht implements Lo3Bericht, Serializable {
+public final class If01Bericht extends AbstractCategorieGebaseerdParsedLo3Bericht implements Lo3Bericht, Lo3EindBericht, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final Lo3Header HEADER = new Lo3Header(
-        Lo3HeaderVeld.RANDOM_KEY,
-        Lo3HeaderVeld.BERICHTNUMMER,
-        Lo3HeaderVeld.FOUTREDEN,
-        Lo3HeaderVeld.GEMEENTE,
-        Lo3HeaderVeld.A_NUMMER);
+    private static final Lo3Header HEADER =
+            new Lo3Header(Lo3HeaderVeld.RANDOM_KEY, Lo3HeaderVeld.BERICHTNUMMER, Lo3HeaderVeld.FOUTREDEN, Lo3HeaderVeld.GEMEENTE, Lo3HeaderVeld.A_NUMMER);
 
     /**
      * Constructor.
      */
     public If01Bericht() {
-        super(HEADER, "If01", null);
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "If01", null);
     }
 
 }

@@ -13,9 +13,7 @@ public final class CheckFactory {
 
     /**
      * Geef een check.
-     *
-     * @param type
-     *            type
+     * @param type type
      * @return extractor, null als type onbekend is
      */
     public Check getCheck(final String type) {

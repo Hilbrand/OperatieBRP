@@ -76,13 +76,13 @@ INSERT INTO mig_leveringsvergelijking_berichtcorrelatie_brp (bijhouding_ber_eref
 SELECT cast(ber1.message_id as bigint), ber1.id, ber2.ontvangende_partij, ber2.id, SUBSTRING(ber2.bericht, 9, 4) FROM
 	mig_bericht AS ber1
 	INNER JOIN mig_proces_gerelateerd AS proces1 ON
-	ber1.naam IN ('Lg01', 'La01') AND ber1.richting = 'I' AND ber1.kanaal = 'VOSPG' AND
+	ber1.naam IN ('Lg01', 'La01') AND ber1.richting = 'I' AND ber1.kanaal = 'VOISC' AND
 	ber1.process_instance_id = proces1.process_instance_id AND
 	proces1.soort_gegeven = 'ADH'
 	INNER JOIN mig_virtueel_proces_gerelateerd AS proces2 ON
 	proces1.gegeven = proces2.gegeven
 	LEFT JOIN mig_bericht AS ber2 ON
-	proces2.virtueel_proces_id = ber2.virtueel_proces_id AND ber2.kanaal = 'VOSPG' AND ber2.richting = 'U'
+	proces2.virtueel_proces_id = ber2.virtueel_proces_id AND ber2.kanaal = 'VOISC' AND ber2.richting = 'U'
 	;
 
 UPDATE mig_leveringsvergelijking_berichtcorrelatie_brp SET afnemer_code = afnemer_code || '0' WHERE LENGTH(afnemer_code) = 6; -- 0 toevoegen om gelijk te trekken met GBAV

@@ -13,16 +13,13 @@ public enum TestStatus {
     /**
      * OK.
      */
-    OK,
-    /**
+    OK, /**
      * Niet OK.
      */
-    NOK,
-    /**
+    NOK, /**
      * Er is een exception opgetreden.
      */
-    EXCEPTIE,
-    /**
+    EXCEPTIE, /**
      * Er is geen verwachting gevonden voor dit testgeval.
      */
     GEEN_VERWACHTING

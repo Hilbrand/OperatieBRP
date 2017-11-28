@@ -12,39 +12,37 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
 import org.junit.Assert;
-import org.junit.Test;
 
 public class FindFile {
 
-	@Test
-	public void findFileInJar() throws IOException {
-		//findFileInJar("D:\\mGBA\\runtime-22\\test-tooling\\migr-test-isc\\lib", "TransactionSynchronizationRegistry.class");
-		findFileInJar("D:\\mGBA\\runtime-22\\test-tooling\\migr-test-isc\\lib", "javax/transaction/");
-	}
+    public static void main(String[] args) throws IOException  {
+        //findFileInJar("D:\\mGBA\\runtime-22\\test-tooling\\migr-test-isc\\lib", "TransactionSynchronizationRegistry.class");
+        findFileInJar("D:\\mGBA\\runtime-22\\test-tooling\\migr-test-isc\\lib", "javax/transaction/");
+    }
 
-	private void findFileInJar(String directoryName, String fileName) throws IOException {
-		File directory = new File(directoryName);
-		Assert.assertTrue(directory.isDirectory());
+    private static void findFileInJar(String directoryName, String fileName) throws IOException {
+        File directory = new File(directoryName);
+        Assert.assertTrue(directory.isDirectory());
 
-		for(File file : directory.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File directory, String name) {
-				return name.endsWith(".jar");
-			}})) {
-			
-			System.out.println("Looking in: " + file.getCanonicalPath());
-			JarFile jarFile = new JarFile(file);
-			Enumeration<JarEntry> entries = jarFile.entries();
-			while(entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-				
-				if(!entry.isDirectory() && entry.getName().contains(fileName)) {
-					System.out.println("--------------------------------> File found: " + entry.toString());
-				}
-			}
-		}
-	}
-	
+        for (File file : directory.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File directory, String name) {
+                return name.endsWith(".jar");
+            }
+        })) {
+
+            System.out.println("Looking in: " + file.getCanonicalPath());
+            JarFile jarFile = new JarFile(file);
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+
+                if (!entry.isDirectory() && entry.getName().contains(fileName)) {
+                    System.out.println("--------------------------------> File found: " + entry.toString());
+                }
+            }
+        }
+    }
+
 }

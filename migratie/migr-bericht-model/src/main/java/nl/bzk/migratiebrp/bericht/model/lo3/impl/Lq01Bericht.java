@@ -16,6 +16,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3CategorieWaardeFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3Format;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
@@ -33,12 +34,12 @@ public final class Lq01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
      * Constructor.
      */
     public Lq01Bericht() {
-        super(HEADER, "Lq01", null);
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Lq01", null);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3Bericht#getGerelateerdeAnummers()
      */
     @Override
@@ -46,10 +47,13 @@ public final class Lq01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
         return Arrays.asList(aNummer);
     }
 
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
     @Override
-    protected void parseInhoud(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
+    protected void parseCategorieen(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
         // rubriek 01.01.10 A-nummer uit het Lq01-bericht
         for (final Lo3CategorieWaarde catWaarde : categorieen) {
             if (Lo3CategorieEnum.CATEGORIE_01.equals(catWaarde.getCategorie())) {
@@ -75,13 +79,14 @@ public final class Lq01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
         return formatter.getList();
     }
 
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
     /**
      * Zet de categorieen obv een lo3 persoonslijst.
-     *
-     * @param paramANummer
-     *            Het A-nummer.
+     * @param paramANummer Het A-nummer.
      */
     public void setANummer(final String paramANummer) {
         aNummer = paramANummer;
@@ -89,7 +94,6 @@ public final class Lq01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geeft het A-nummer terug.
-     *
      * @return Het A-nummer
      */
     public String getANummer() {

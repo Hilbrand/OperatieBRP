@@ -164,6 +164,7 @@
     <mapping resource="jbpm/Fout.hbm.xml"/>
     <mapping resource="jbpm/GerelateerdeGegevens.hbm.xml"/>
     <mapping resource="jbpm/ProcesRelatie.hbm.xml"/>
+    <mapping resource="jbpm/TaakGerelateerd.hbm.xml"/>
     <mapping resource="jbpm/Verzender.hbm.xml"/>
     <mapping resource="jbpm/VirtueelGerelateerdeGegevens.hbm.xml"/>
     <mapping resource="jbpm/VirtueelProces.hbm.xml"/>

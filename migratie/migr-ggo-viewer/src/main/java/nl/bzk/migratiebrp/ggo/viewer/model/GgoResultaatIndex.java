@@ -16,10 +16,8 @@ public final class GgoResultaatIndex {
     private final GgoResultaat resultaat;
 
     /**
-     * @param aantalMeldingen
-     *            int
-     * @param resultaat
-     *            GgoResultaat
+     * @param aantalMeldingen int
+     * @param resultaat GgoResultaat
      */
     public GgoResultaatIndex(final int aantalMeldingen, final GgoResultaat resultaat) {
         omschrijving = resultaat != null ? resultaat.getLabel() : "";
@@ -29,7 +27,6 @@ public final class GgoResultaatIndex {
 
     /**
      * Geef de waarde van omschrijving.
-     *
      * @return the omschrijving
      */
     public String getOmschrijving() {
@@ -38,7 +35,6 @@ public final class GgoResultaatIndex {
 
     /**
      * Geef de waarde van aantal meldingen.
-     *
      * @return the aantalMeldingen
      */
     public int getAantalMeldingen() {
@@ -47,7 +43,6 @@ public final class GgoResultaatIndex {
 
     /**
      * Geef de waarde van resultaat.
-     *
      * @return the resultaat
      */
     public GgoResultaat getResultaat() {

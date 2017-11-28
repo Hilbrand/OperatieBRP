@@ -9,20 +9,18 @@ package nl.bzk.migratiebrp.synchronisatie.dal.repository.jpa;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.Blokkering;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.BlokkeringRepository;
 import org.springframework.stereotype.Repository;
 
 /**
  * Data-access-punt voor alles omtrent blokkeringen.
- * 
  */
 @Repository
 public final class BlokkeringRepositoryImpl implements BlokkeringRepository {
 
     private static final String NULLPOINTER_MELDING = "Blokkering mag niet null zijn.";
     private static final String NULLPOINTER_MELDING_A_NUMMER = "A-nummer mag niet null zijn.";
-    private static final String SELECT_DEEL = "SELECT b FROM Blokkering b ";
 
     @PersistenceContext(name = "syncDalEntityManagerFactory", unitName = "BrpEntities")
     private EntityManager em;
@@ -42,17 +40,17 @@ public final class BlokkeringRepositoryImpl implements BlokkeringRepository {
     }
 
     @Override
-    public Blokkering statusBlokkering(final Long aNummer) {
+    public Blokkering statusBlokkering(final String aNummer) {
 
         if (aNummer == null) {
             throw new NullPointerException(NULLPOINTER_MELDING_A_NUMMER);
         }
 
         final List<Blokkering> resultList =
-                em.createQuery(SELECT_DEEL + " WHERE b.aNummer = :aNummer", Blokkering.class)
-                  .setMaxResults(1)
-                  .setParameter("aNummer", aNummer)
-                  .getResultList();
+                em.createQuery("SELECT b FROM Blokkering b WHERE b.aNummer = :aNummer", Blokkering.class)
+                        .setMaxResults(1)
+                        .setParameter("aNummer", aNummer)
+                        .getResultList();
         if (resultList.isEmpty()) {
             return null;
         } else {

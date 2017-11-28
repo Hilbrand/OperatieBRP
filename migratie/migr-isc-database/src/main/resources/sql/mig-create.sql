@@ -7,11 +7,12 @@ CREATE TABLE mig_bericht(
    correlation_id            VARCHAR(36),
    bericht                   TEXT          NOT NULL,
    naam                      VARCHAR(40),
-   process_instance_id       INTEGER,
-   virtueel_proces_id        BIGINT,
+   process_instance_id       BIGINT,
+   virtueel_proces_id        INTEGER,
    verzendende_partij        VARCHAR(7),
    ontvangende_partij        VARCHAR(7),
    ms_sequence_number        BIGINT,
+   request_non_receipt       BOOLEAN,
    actie                     VARCHAR(30),
    indicatie_geteld          BOOLEAN,
 
@@ -67,23 +68,6 @@ CREATE TABLE mig_fout(
    CONSTRAINT fot_pk PRIMARY KEY(id)
 );
 
-CREATE TABLE mig_lock(
-   id                        SERIAL,
-   tijdstip                  TIMESTAMP     NOT NULL,
-   process_instance_id       BIGINT        NOT NULL,
-
-   CONSTRAINT lok_pk PRIMARY KEY(id)
-);
-
-CREATE TABLE mig_lock_anummer(
-   id                        SERIAL,
-   lock_id                   INTEGER       NOT NULL,
-   anummer                   BIGINT        NOT NULL,
-   tijdstip                  TIMESTAMP     NOT NULL,
-
-   CONSTRAINT lar_pk PRIMARY KEY(id)
-);
-
 CREATE TABLE mig_proces_relatie(
    process_instance_id_een    BIGINT        NOT NULL,
    process_instance_id_twee   BIGINT        NOT NULL,
@@ -106,6 +90,14 @@ CREATE TABLE mig_runtime (
     client_naam              VARCHAR(60)   NOT NULL,
 
     CONSTRAINT rte_pk PRIMARY KEY (runtime_naam)
+);
+
+CREATE TABLE mig_taak_gerelateerd(
+   id                        SERIAL,
+   task_instance_id          BIGINT        NOT NULL,
+   administratienummer       VARCHAR(10)   NOT NULL,
+
+   CONSTRAINT tkg_pk PRIMARY KEY(id)
 );
 
 CREATE TABLE mig_telling_bericht(
@@ -152,9 +144,9 @@ CREATE TABLE mig_virtueel_proces_gerelateerd(
    CONSTRAINT vpg_pk PRIMARY KEY(id)
 );
 
--- FK Initially deferred, omdat proces instantie in aparte connectie (zelfde XA transactie) wordt aangemaakt en pas op commit te refereren is
+
+
 ALTER TABLE mig_bericht ADD CONSTRAINT ber_pie_fk1 FOREIGN KEY(process_instance_id) REFERENCES jbpm_processinstance(id_) ON DELETE CASCADE;
--- INITIALLY DEFERRED;
 ALTER TABLE mig_bericht ADD CONSTRAINT ber_pvl_fk1 FOREIGN KEY(virtueel_proces_id) REFERENCES mig_virtueel_proces(id) ON DELETE CASCADE;
 
 CREATE INDEX ber_ix1 ON mig_bericht(process_instance_id);
@@ -177,21 +169,8 @@ CREATE INDEX fot_ix2 ON mig_fout(tijdstip);
 CREATE INDEX fot_ix3 ON mig_fout(proces);
 CREATE INDEX fot_ix4 ON mig_fout(code);
 
-ALTER TABLE mig_lock ADD CONSTRAINT lok_uk1 UNIQUE(process_instance_id);
-ALTER TABLE mig_lock ADD CONSTRAINT lok_pie_fk1 FOREIGN KEY(process_instance_id) REFERENCES jbpm_processinstance(id_) ON DELETE CASCADE;
-
-CREATE INDEX lok_ix1 ON mig_lock(process_instance_id);
-
-ALTER TABLE mig_lock_anummer ADD CONSTRAINT lar_uk1 UNIQUE(anummer);
-ALTER TABLE mig_lock_anummer ADD CONSTRAINT lar_lok_fk1 FOREIGN KEY(lock_id) REFERENCES mig_lock(id) ON DELETE CASCADE;
-
-CREATE INDEX lar_ix1 ON mig_lock_anummer(lock_id);
-
--- FK Initially deferred, omdat proces instantie in aparte connectie (zelfde XA transactie) wordt aangemaakt en pas op commit te refereren is
 ALTER TABLE mig_proces_relatie ADD CONSTRAINT pre_pie_fk1 FOREIGN KEY(process_instance_id_een) REFERENCES jbpm_processinstance(id_) ON DELETE CASCADE;
--- INITIALLY DEFERRED;
 ALTER TABLE mig_proces_relatie ADD CONSTRAINT pre_pie_fk2 FOREIGN KEY(process_instance_id_twee) REFERENCES jbpm_processinstance(id_) ON DELETE CASCADE;
--- INITIALLY DEFERRED;
 
 CREATE INDEX pre_ix1 ON mig_proces_relatie(process_instance_id_een);
 CREATE INDEX pre_ix2 ON mig_proces_relatie(process_instance_id_twee);
@@ -200,6 +179,10 @@ ALTER TABLE mig_proces_gerelateerd ADD CONSTRAINT pgd_pie_fk1 FOREIGN KEY(proces
 
 CREATE INDEX pgd_ix1 ON mig_proces_gerelateerd(process_instance_id);
 CREATE INDEX pdg_ix2 ON mig_proces_gerelateerd(soort_gegeven, gegeven);
+
+ALTER TABLE mig_taak_gerelateerd ADD CONSTRAINT tkg_tsk_fk1 FOREIGN KEY(task_instance_id) REFERENCES jbpm_taskinstance(id_) ON DELETE CASCADE;
+
+CREATE INDEX tkg_ix1 ON mig_taak_gerelateerd(task_instance_id);
 
 ALTER TABLE mig_virtueel_proces_gerelateerd ADD CONSTRAINT vpg_pvl_fk1 FOREIGN KEY(virtueel_proces_id) REFERENCES mig_virtueel_proces(id) ON DELETE CASCADE;
 

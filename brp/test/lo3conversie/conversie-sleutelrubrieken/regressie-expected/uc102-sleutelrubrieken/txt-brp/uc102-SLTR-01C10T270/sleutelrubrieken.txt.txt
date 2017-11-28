@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [verblijfsrecht.aanduiding])
+GEWIJZIGD(oud, nieuw, [Persoon.Verblijfsrecht.AanduidingCode])

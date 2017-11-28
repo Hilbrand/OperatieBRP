@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lo3Persoonslijst>
    <persoonStapel>
       <lo3Categorie>
@@ -31,7 +32,7 @@
                <waarde>1984726945</waarde>
             </aNummer>
             <burgerservicenummer>
-               <waarde>422531881</waarde>
+               <waarde>693201289</waarde>
             </burgerservicenummer>
             <voornamen>
                <waarde>Libby</waarde>
@@ -52,7 +53,7 @@
                <waarde>V</waarde>
             </geslachtsaanduiding>
             <aanduidingNaamgebruikCode>
-               <waarde>V</waarde>
+               <waarde>E</waarde>
             </aanduidingNaamgebruikCode>
          </inhoud>
       </lo3Categorie>
@@ -107,12 +108,8 @@
             <id>38</id>
          </documentatie>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <inhoud class="nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3InschrijvingInhoud">
             <datumEersteInschrijving>

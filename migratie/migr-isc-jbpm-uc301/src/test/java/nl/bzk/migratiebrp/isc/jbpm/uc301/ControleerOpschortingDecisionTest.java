@@ -17,31 +17,24 @@ import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ControleerOpschortingDecisionTest {
 
-    private ControleerOpschortingDecision subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new ControleerOpschortingDecision();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private ControleerOpschortingDecision subject = new ControleerOpschortingDecision(berichtenDao);
 
     @Test
     public void testOk() {
 
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
-        builder.inschrijvingStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-            Lo3StapelHelper.lo3Inschrijving(null, null, null, 19700101, "0053", 5, 1, 19700101124500000L, true),
-            null,
-            Lo3Historie.NULL_HISTORIE,
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0))));
+        builder.inschrijvingStapel(
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, null, null, 19700101, "0053", 5, 1, 19700101124500000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0))));
 
         final LeesUitBrpAntwoordBericht queryResponse = new LeesUitBrpAntwoordBericht("dummy_correlation_id", builder.build());
 
@@ -54,11 +47,13 @@ public class ControleerOpschortingDecisionTest {
     @Test
     public void testNok() {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
-        builder.inschrijvingStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-            Lo3StapelHelper.lo3Inschrijving(null, null, "O", 19700101, "0053", 5, 1, 19700101124500000L, true),
-            null,
-            Lo3Historie.NULL_HISTORIE,
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0))));
+        builder.inschrijvingStapel(
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, null, "O", 19700101, "0053", 5, 1, 19700101124500000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0))));
 
         final LeesUitBrpAntwoordBericht queryResponse = new LeesUitBrpAntwoordBericht("dummy_correlation_id", builder.build());
 

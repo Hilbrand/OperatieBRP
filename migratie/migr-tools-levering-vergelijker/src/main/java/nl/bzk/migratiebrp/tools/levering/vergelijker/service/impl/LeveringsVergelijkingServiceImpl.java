@@ -8,6 +8,9 @@ package nl.bzk.migratiebrp.tools.levering.vergelijker.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
@@ -15,8 +18,7 @@ import nl.bzk.migratiebrp.tools.levering.vergelijker.entity.LeveringsVergelijkin
 import nl.bzk.migratiebrp.tools.levering.vergelijker.service.LeveringsVergelijkingService;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.util.Lo3CategorieWaardenVergelijker;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.util.Lo3HeaderUtils;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 /**
@@ -40,10 +42,10 @@ public final class LeveringsVergelijkingServiceImpl implements LeveringsVergelij
                 final StringBuilder vergelijkingsLog = new StringBuilder();
                 final List<LeveringsVergelijkingResultaatInhoud> vergelijkingResultaten =
                         Lo3CategorieWaardenVergelijker.vergelijk(
-                            vergelijkingsLog,
-                            gbaBerichtInhoud,
-                            brpBerichtInhoud,
-                            new ArrayList<LeveringsVergelijkingResultaatInhoud>());
+                                vergelijkingsLog,
+                                gbaBerichtInhoud,
+                                brpBerichtInhoud,
+                                new ArrayList<LeveringsVergelijkingResultaatInhoud>());
 
                 if (vergelijkingResultaten != null && vergelijkingResultaten.size() > 0) {
                     return vergelijkingResultaten;

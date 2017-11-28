@@ -15,10 +15,10 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.ggo.viewer.log.FoutMelder;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoPersoonslijstGroep;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.shiro.SecurityUtils;
@@ -58,7 +58,6 @@ public class ViewerController {
 
     /**
      * Return de indexpagina.
-     *
      * @return De indexpagina.
      */
     @RequestMapping(value = "/", produces = "text/html; charset=UTF-8")
@@ -74,14 +73,12 @@ public class ViewerController {
 
     /**
      * Zoekt in de Database naar pl en conversie gegevens op basis van Anummer.
-     *
-     * @param aNummer
-     *            Long
+     * @param aNummer Long
      * @return String met de persoonslijst.
      */
     @RequestMapping(value = "/zoek", produces = "application/json; charset=UTF-8")
     @ResponseBody
-    public final ResponseEntity<String> zoekOpAnummer(@RequestParam(value = "aNummer") final long aNummer) {
+    public final ResponseEntity<String> zoekOpAnummer(@RequestParam(value = "aNummer") final String aNummer) {
         final FoutMelder foutMelder = new FoutMelder();
         final List<GgoPersoonslijstGroep> persoonslijstGroepen = zoekAnummerVerwerker.zoekOpAnummer(aNummer, foutMelder);
         final ViewerResponse response = new ViewerResponse(persoonslijstGroepen, foutMelder.getFoutRegels());
@@ -91,11 +88,8 @@ public class ViewerController {
 
     /**
      * Behandelt inkomend request, zijnde een upload.
-     *
-     * @param filename
-     *            De naam van het bestand.
-     * @param file
-     *            De file in een byte array.
+     * @param filename De naam van het bestand.
+     * @param file De file in een byte array.
      * @return String met de persoonslijst.
      */
     @RequestMapping(value = "/file/upload", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
@@ -106,12 +100,9 @@ public class ViewerController {
 
     /**
      * Behandelt een upload request met alleen een file naam. Dit bestand moet op de server staan.
-     *
-     * @param filename
-     *            De file naam.
+     * @param filename De file naam.
      * @return Json string met de PL.
-     * @throws IOException
-     *             als de file niet gelezen kan worden
+     * @throws IOException als de file niet gelezen kan worden
      */
     @RequestMapping(value = "/file/uploadFileName", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     @ResponseBody
@@ -121,9 +112,7 @@ public class ViewerController {
 
     /**
      * Behandelt inkomend request, zijnde een upload, vanaf een IE.
-     *
-     * @param file
-     *            De file in een MultipartFile.
+     * @param file De file in een MultipartFile.
      * @return String met de persoonslijst.
      */
     @RequestMapping(value = "/file/uploadMSIE", method = RequestMethod.POST, produces = "text/html; charset=UTF-8")
@@ -133,18 +122,15 @@ public class ViewerController {
             return verwerkFileUpload(file.getOriginalFilename(), file.getBytes());
         } catch (final IOException e) {
             // kon file niet inlezen; produceer foutresultaat door verder te gaan met lege file
-            return verwerkFileUpload(file.getOriginalFilename(), new byte[] {});
+            return verwerkFileUpload(file.getOriginalFilename(), new byte[]{});
         }
     }
 
     /**
      * Behandelt een download request voor een van de demo files.
-     *
-     * @param filename
-     *            De file naam.
+     * @param filename De file naam.
      * @return De file.
-     * @throws IOException
-     *             als de file niet gelezen kan worden
+     * @throws IOException als de file niet gelezen kan worden
      */
     @RequestMapping(value = "/file/downloadFileName", method = RequestMethod.GET)
     @ResponseBody
@@ -166,7 +152,6 @@ public class ViewerController {
 
     /**
      * Laad de help pagina.
-     *
      * @return Laad help pagina.
      */
     @RequestMapping(value = "/help", produces = "text/html; charset=UTF-8")
@@ -178,26 +163,23 @@ public class ViewerController {
 
     /**
      * Ensure that exceptions are returned as JSON 500 errors.
-     *
-     * @param e
-     *            The thrown exception
+     * @param e The thrown exception
      * @return The thrown exception as a JSON encoded 500 error string.
      */
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<String> verwerkException(final Exception e) {
         LOG.error("Exception verstuurd als response:", e);
         return new ResponseEntity<>(
-            "{ \"error\" : \"" + new String(new JsonStringEncoder().encodeAsUTF8(e.toString()), StandardCharsets.UTF_8) + "\"}",
-            HttpStatus.INTERNAL_SERVER_ERROR);
+                "{ \"error\" : \""
+                        + new String(new JsonStringEncoder().encodeAsUTF8(e.toString()), StandardCharsets.UTF_8)
+                        + "\"}",
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Verwerkt de upload van een file.
-     *
-     * @param filename
-     *            bestandsnaam
-     * @param file
-     *            bestand inhoud
+     * @param filename bestandsnaam
+     * @param file bestand inhoud
      * @return String met de persoonslijst.
      */
     private ResponseEntity<String> verwerkFileUpload(final String filename, final byte[] file) {

@@ -10,10 +10,27 @@
     <bean id="conversietabelFactory" class="nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl"/>
 
     <!-- Definitie van DataSource specifiek voor test -->
-    <jdbc:embedded-database id="inMemoryDatabase">
-        <jdbc:script location="classpath:sql/hsqldb/createInitVullingTables.sql"/>
-        <jdbc:script location="classpath:sql/hsqldb/insertGbavResult.sql"/>
-    </jdbc:embedded-database>
+    <jdbc:embedded-database id="inMemoryDatabase" />
+	<jdbc:initialize-database data-source="inMemoryDatabase" ignore-failures="ALL">
+        <jdbc:script location="classpath:sql/postgres.sql"/>
+    </jdbc:initialize-database>
+    <bean name="gbavInitializer" class="org.springframework.jdbc.datasource.init.DataSourceInitializer">
+    	<property name="dataSource" ref="inMemoryDatabase" />
+    	<property name="databasePopulator">
+    		<bean class="org.springframework.jdbc.datasource.init.ResourceDatabasePopulator">
+    			<property name="sqlScriptEncoding" value="UTF-8" />
+    			<property name="scripts">
+    				<list>
+			        	<bean class="nl.bzk.migratiebrp.init.naarbrp.util.HsqlSqlAdapter">
+			        		<property name="sqlResource" value="classpath:sql/createInitVullingTables.sql" />
+			        	</bean>
+			        	<value>classpath:sql/hsqldb/insertGbavResult.sql</value>
+    				</list>
+    			</property>
+    		</bean>
+    	</property>
+    </bean>    
+    
 
     <bean id="loggingJpaVendorAdapter"
           class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
@@ -25,7 +42,7 @@
 
     <bean id="loggingEntityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="persistenceXmlLocation" value="META-INF/test-persistence.xml" />
+        <property name="persistenceXmlLocation" value="META-INF/test-persistence.xml"/>
         <property name="persistenceUnitName" value="LogEntities"/>
         <property name="dataSource" ref="inMemoryDatabase"/>
         <property name="jpaVendorAdapter" ref="loggingJpaVendorAdapter"/>

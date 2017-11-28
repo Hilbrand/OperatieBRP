@@ -33,31 +33,27 @@ public class GbaVoorwaardeRegelTest {
     @Test
     public void testMaakStandaardVoorwaardeRegel() {
         final String gbaVoorwaardeRegel = "01.01.20 GA1 003412345 OFVGL 005012345 OFVGL 017112345";
-        final GbaVoorwaardeRegel result = gbaVoorwaardeRegelFactory.maakGbaVoorwaardeRegel(gbaVoorwaardeRegel);
+        final GbaVoorwaardeRegel result = gbaVoorwaardeRegelFactory.maakGbaVoorwaardeRegel(new RubriekWaarde(gbaVoorwaardeRegel));
         assertTrue(result instanceof StandaardVoorwaardeRegel);
     }
 
     /**
      * Test creatie DatumVoorwaardeRegel
-     *
-     * @throws nl.bzk.migratiebrp.conversie.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie
      */
     @Test
     public void testMaakDatumVoorwaardeRegel() throws GbaVoorwaardeOnvertaalbaarExceptie {
         final String gbaVoorwaardeRegel = "01.03.10 KDOG1 19.89.30 - 00290000";
-        final GbaVoorwaardeRegel result = gbaVoorwaardeRegelFactory.maakGbaVoorwaardeRegel(gbaVoorwaardeRegel);
+        final GbaVoorwaardeRegel result = gbaVoorwaardeRegelFactory.maakGbaVoorwaardeRegel(new RubriekWaarde(gbaVoorwaardeRegel));
         assertTrue(result instanceof DatumVoorwaardeRegel);
     }
 
     /**
      * Test creatie KomtVoorVoorwaardeRegel
-     *
-     * @throws nl.bzk.migratiebrp.conversie.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie
      */
     @Test
     public void testMaakKomtVoorVoorwaardeRegel() throws GbaVoorwaardeOnvertaalbaarExceptie {
         final String gbaVoorwaardeRegel = "KNV 01.03.10";
-        final GbaVoorwaardeRegel result = gbaVoorwaardeRegelFactory.maakGbaVoorwaardeRegel(gbaVoorwaardeRegel);
+        final GbaVoorwaardeRegel result = gbaVoorwaardeRegelFactory.maakGbaVoorwaardeRegel(new RubriekWaarde(gbaVoorwaardeRegel));
         assertTrue(result instanceof KomtVoorVoorwaardeRegel);
     }
 

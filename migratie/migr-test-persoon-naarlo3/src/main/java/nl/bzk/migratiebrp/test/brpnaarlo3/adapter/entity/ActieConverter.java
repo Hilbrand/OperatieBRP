@@ -7,14 +7,17 @@
 package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
+
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.PartijConverter;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -67,7 +70,7 @@ public final class ActieConverter extends EntityConverter {
                 id = Integer.valueOf(value);
                 break;
             case HEADER_SOORT:
-                soortActie = SoortActie.parseId(Short.valueOf(value));
+                soortActie = SoortActie.parseId(Integer.valueOf(value));
                 break;
             case HEADER_ADMINISTRATIEVE_HANDELING:
                 adminHandeling = context.getAdministratieveHandeling(Short.valueOf(value));

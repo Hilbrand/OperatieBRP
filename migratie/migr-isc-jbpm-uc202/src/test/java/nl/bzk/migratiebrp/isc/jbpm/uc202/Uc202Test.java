@@ -6,96 +6,42 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc202;
 
-import javax.inject.Inject;
+import java.util.Collection;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf03Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.Vb01Bericht;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.BeheerdersKeuzeType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoVerzoekBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.DeblokkeringVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpVerzoekBericht;
-import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
-import nl.bzk.migratiebrp.conversie.model.lo3.Lo3PersoonslijstBuilder;
-import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
-import nl.bzk.migratiebrp.isc.jbpm.common.locking.LockService;
+import nl.bzk.migratiebrp.isc.jbpm.common.dao.TaakGerelateerdeInformatieDao;
+import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Test de happy flow.
  */
 public class Uc202Test extends AbstractUc202Test {
 
-    @Inject
-    private LockService lockService;
+    @Autowired
+    private TaakGerelateerdeInformatieDao taakGerelateerdeInformatieDao;
 
     @BeforeClass
     public static void outputTestIscBerichten() {
         // Output de unittests als migr-test-isc flow.
-        // setOutputBerichten("D:\\mGBA\\work\\test-isc");
-    }
-
-    @Before
-    public void setupLock() throws Exception {
-        Mockito.reset(lockService);
-        Mockito.when(lockService.verkrijgLockVoorAnummers(Matchers.anySetOf(Long.class), Matchers.anyLong())).thenReturn(5678L);
+//        setOutputBerichten("D:\\mGBA\\work\\test-isc");
     }
 
     @Test
-    public void happyFlowZonderVerhuizing() throws Exception {
-        final Long aNummer = 1231231234L;
+    public void happyFlow() throws Exception {
+        final String aNummer = "1231231234";
         // Start
-        startProcess(maakLg01(aNummer, aNummer, null, null, "0599", "0599"));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        Assert.assertEquals("1231231234", blokkeringInfoVerzoek.getANummer());
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, null, null, null));
+        startProcess(maakLg01(aNummer, aNummer, null, null, "059901", "0599"));
 
         // Sync naar BRP
         controleerBerichten(0, 0, 1);
         final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
         signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.TOEGEVOEGD, null));
-
-        Assert.assertTrue(processEnded());
-    }
-
-    @Test
-    public void happyFlowMetVerhuizing() throws Exception {
-        // Start
-        final Long aNummer = 1231231234L;
-        startProcess(maakLg01(aNummer, aNummer, null, null, "0599", "0599"));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        Assert.assertNotNull(blokkeringInfoVerzoek.getMessageId());
-        Assert.assertEquals("1231231234", blokkeringInfoVerzoek.getANummer());
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, PersoonsaanduidingType.VERHUIZEND_VAN_BRP_NAAR_LO_3_GBA, "proc-123123", "0518"));
-
-        // Sync naar BRP
-        controleerBerichten(0, 0, 1);
-        final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
-        Assert.assertNotNull(synchroniseerNaarBrpVerzoek.getMessageId());
-        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.TOEGEVOEGD, null));
-
-        // Deblokkeren
-        controleerBerichten(0, 0, 1);
-        final DeblokkeringVerzoekBericht deblokkeringVerzoek = getBericht(DeblokkeringVerzoekBericht.class);
-        Assert.assertNotNull(deblokkeringVerzoek.getMessageId());
-        Assert.assertEquals("1231231234", deblokkeringVerzoek.getANummer());
-        Assert.assertEquals("0599", deblokkeringVerzoek.getGemeenteRegistratie());
-        Assert.assertEquals("proc-123123", deblokkeringVerzoek.getProcessId());
-        signalSync(maakDeblokkeringAntwoordBericht(deblokkeringVerzoek));
-
-        controleerBerichten(0, 0, 0);
 
         Assert.assertTrue(processEnded());
     }
@@ -103,31 +49,11 @@ public class Uc202Test extends AbstractUc202Test {
     @Test
     public void badFlowOngeldigeInput() {
         // Start
-        startProcess(maakLg01(1231231234L, 9879879879L, null, null, "0599", "0599"));
+        startProcess(maakLg01("1231231234", "9879879879", null, null, "0599", "0599"));
 
-        // Verwacht twee output berichten (pf03 en vb01) om de lg01 cyclus netjes af te ronden
-        controleerBerichten(0, 2, 0);
+        // Verwacht een output berichten (pf03) om de lg01 cyclus netjes af te ronden
+        controleerBerichten(0, 1, 0);
         getBericht(Pf03Bericht.class);
-        getBericht(Vb01Bericht.class);
-
-        Assert.assertTrue(processEnded());
-    }
-
-    @Test
-    public void badFlowBlokkeringFout() {
-        // Start
-        startProcess(maakLg01(1231231234L, 1231231234L, null, null, "0599", "0599"));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        Assert.assertEquals("1231231234", blokkeringInfoVerzoek.getANummer());
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, PersoonsaanduidingType.VERHUIZEND_VAN_LO_3_NAAR_BRP, "proc-456456", "0518"));
-
-        // Verwacht twee output berichten (pf03 en vb01) om de lg01 cyclus netjes af te ronden
-        controleerBerichten(0, 2, 0);
-        getBericht(Pf03Bericht.class);
-        getBericht(Vb01Bericht.class);
 
         Assert.assertTrue(processEnded());
     }
@@ -135,24 +61,17 @@ public class Uc202Test extends AbstractUc202Test {
     @Test
     public void badFlowAfgekeurdDoorSync() {
         // Start
-        final Long aNummer = 1231231234L;
-        startProcess(maakLg01(aNummer, aNummer, null, null, "0599", "0599"));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        Assert.assertEquals("1231231234", blokkeringInfoVerzoek.getANummer());
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, null, null, null));
+        final String aNummer = "1231231234";
+        startProcess(maakLg01(aNummer, aNummer, null, null, "059901", "0599"));
 
         // Sync naar BRP
         controleerBerichten(0, 0, 1);
         final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
         signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.AFGEKEURD, null));
 
-        // Verwacht twee output berichten (pf03 en vb01) om de lg01 cyclus netjes af te ronden
-        controleerBerichten(0, 2, 0);
+        // Verwacht een output berichten (pf03) om de lg01 cyclus netjes af te ronden
+        controleerBerichten(0, 1, 0);
         getBericht(Pf03Bericht.class);
-        getBericht(Vb01Bericht.class);
 
         controleerBerichten(0, 0, 0);
         Assert.assertTrue(processEnded());
@@ -161,26 +80,20 @@ public class Uc202Test extends AbstractUc202Test {
     @Test
     public void beheerderkeuzeNieuw() {
         // Start
-        final Long aNummer = 1231231234L;
-        startProcess(maakLg01(aNummer, aNummer, null, null, "0599", "0599"));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        Assert.assertEquals("1231231234", blokkeringInfoVerzoek.getANummer());
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, null, null, null));
+        final String aNummer = "1231231234";
+        startProcess(maakLg01(aNummer, aNummer, null, null, "059901", "0599"));
 
         // Sync naar BRP
         controleerBerichten(0, 0, 1);
         final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
-        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.ONDUIDELIJK, maakPersoonslijsten()));
+        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.ONDUIDELIJK, null));
 
-        // Lock (lock exception)
-        signalHumanTask("opnemenAlsNieuwePl");
+        // Beheerderskeuze: NIEUW
+        signalHumanTask(MaakBeheerderskeuzesAction.KEUZE_NIEUW);
 
         controleerBerichten(0, 0, 1);
         final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoekNaKeuze = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
-        Assert.assertEquals(Boolean.TRUE, synchroniseerNaarBrpVerzoekNaKeuze.getOpnemenAlsNieuwePl());
+        Assert.assertEquals(BeheerdersKeuzeType.TOEVOEGEN, synchroniseerNaarBrpVerzoekNaKeuze.getBeheerderKeuze().getKeuze());
         signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.TOEGEVOEGD, null));
 
         controleerBerichten(0, 0, 0);
@@ -189,24 +102,18 @@ public class Uc202Test extends AbstractUc202Test {
     }
 
     @Test
-    public void beheerderkeuzeNegeren() {
+    public void beheerderkeuzeAfbreken() {
         // Start
-        final Long aNummer = 1231231234L;
-        startProcess(maakLg01(aNummer, aNummer, null, null, "0599", "0599"));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        Assert.assertEquals("1231231234", blokkeringInfoVerzoek.getANummer());
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, null, null, null));
+        final String aNummer = "1231231234";
+        startProcess(maakLg01(aNummer, aNummer, null, null, "059901", "0599"));
 
         // Sync naar BRP
         controleerBerichten(0, 0, 1);
         final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
-        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.ONDUIDELIJK, maakPersoonslijsten()));
+        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.ONDUIDELIJK, null));
 
         // Lock (lock exception)
-        signalHumanTask("negeren");
+        signalHumanTask(MaakBeheerderskeuzesAction.KEUZE_AFBREKEN);
 
         controleerBerichten(0, 0, 0);
 
@@ -216,25 +123,57 @@ public class Uc202Test extends AbstractUc202Test {
     @Test
     public void beheerderkeuzeAfkeuren() {
         // Start
-        final Long aNummer = 1231231234L;
-        startProcess(maakLg01(aNummer, aNummer, null, null, "0599", "0599"));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        Assert.assertEquals("1231231234", blokkeringInfoVerzoek.getANummer());
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, null, null, null));
+        final String aNummer = "1231231234";
+        startProcess(maakLg01(aNummer, aNummer, null, null, "059901", "0599"));
 
         // Sync naar BRP
         controleerBerichten(0, 0, 1);
         final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
-        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.ONDUIDELIJK, maakPersoonslijsten()));
+        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.ONDUIDELIJK, null));
 
-        // Lock (lock exception)
-        signalHumanTask("afkeuren");
-        controleerBerichten(0, 2, 0);
+        // Beheerderskeuze: NIEUW
+        signalHumanTask(MaakBeheerderskeuzesAction.KEUZE_AFKEUREN);
+
+        controleerBerichten(0, 0, 1);
+        final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoekNaKeuze = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
+        Assert.assertEquals(BeheerdersKeuzeType.AFKEUREN, synchroniseerNaarBrpVerzoekNaKeuze.getBeheerderKeuze().getKeuze());
+        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.AFGEKEURD, null));
+
+        controleerBerichten(0, 1, 0);
         getBericht(Pf03Bericht.class);
-        getBericht(Vb01Bericht.class);
+
+        Assert.assertTrue(processEnded());
+    }
+
+    @Test
+    public void beheerderkeuzeNegeren() {
+        // Start
+        final String aNummer = "1231231234";
+        startProcess(maakLg01(aNummer, aNummer, null, null, "059901", "0599"));
+
+        // Sync naar BRP
+        controleerBerichten(0, 0, 1);
+        final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
+
+        Collection<TaskInstance> gekoppeldeTaken = taakGerelateerdeInformatieDao.zoekOpAdministratienummers(aNummer);
+        Assert.assertTrue(gekoppeldeTaken.isEmpty());
+
+        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.ONDUIDELIJK, null));
+
+        Assert.assertTrue(processHumanTask());
+
+        gekoppeldeTaken = taakGerelateerdeInformatieDao.zoekOpAdministratienummers(aNummer);
+        Assert.assertFalse(gekoppeldeTaken.isEmpty());
+
+        // Beheerderskeuze: NIEUW
+        signalHumanTask(MaakBeheerderskeuzesAction.KEUZE_NEGEREN);
+
+        controleerBerichten(0, 0, 1);
+        final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoekNaKeuze = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
+        Assert.assertEquals(BeheerdersKeuzeType.NEGEREN, synchroniseerNaarBrpVerzoekNaKeuze.getBeheerderKeuze().getKeuze());
+        signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.GENEGEERD, null));
+
+        controleerBerichten(0, 0, 0);
 
         Assert.assertTrue(processEnded());
     }
@@ -242,70 +181,31 @@ public class Uc202Test extends AbstractUc202Test {
     @Test
     public void beheerderkeuzeVervangen() {
         // Start
-        final Long aNummer = 1231231234L;
-        startProcess(maakLg01(aNummer, aNummer, null, null, "0599", "0599"));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        Assert.assertEquals("1231231234", blokkeringInfoVerzoek.getANummer());
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, null, null, null));
+        final String aNummer = "1231231234";
+        final String burgerServicenummer = "415121237";
+        startProcess(maakLg01(aNummer, aNummer, null, null, burgerServicenummer, "059901", "0599"));
 
         // Sync naar BRP
         controleerBerichten(0, 0, 1);
         final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
         signalSync(maakSynchroniseerNaarBrpAntwoordBericht(
-            synchroniseerNaarBrpVerzoek,
-            StatusType.ONDUIDELIJK,
-            maakPersoonslijsten(4445556667L, 5556667778L, 6667778889L)));
+                synchroniseerNaarBrpVerzoek,
+                StatusType.ONDUIDELIJK,
+                maakKandidaten("1445556667", "1556667778", "1667778889")));
 
-        // Lock (lock exception)
-        signalHumanTask("vervangAnummer5556667778");
+        // Beheerderskeuze: VERVANG
+        // pl id is gelijk aan a-nummer door methode maakKandidaten()
+        signalHumanTask(MaakBeheerderskeuzesAction.KEUZE_VERVANGEN_PREFIX + "1556667778");
 
         controleerBerichten(0, 0, 1);
         final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoekNaKeuze = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
-        Assert.assertEquals(Long.valueOf(5556667778L), synchroniseerNaarBrpVerzoekNaKeuze.getANummerTeVervangenPl());
+        Assert.assertEquals(BeheerdersKeuzeType.VERVANGEN, synchroniseerNaarBrpVerzoekNaKeuze.getBeheerderKeuze().getKeuze());
+        Assert.assertEquals(Long.valueOf(1556667778), synchroniseerNaarBrpVerzoekNaKeuze.getBeheerderKeuze().getTeVervangenPersoonId());
+        Assert.assertEquals(3, synchroniseerNaarBrpVerzoekNaKeuze.getBeheerderKeuze().getKandidaat().size());
+
         signalSync(maakSynchroniseerNaarBrpAntwoordBericht(synchroniseerNaarBrpVerzoek, StatusType.VERVANGEN, null));
-
         controleerBerichten(0, 0, 0);
-
         Assert.assertTrue(processEnded());
     }
 
-    @Override
-    protected Lo3Persoonslijst maakPersoonslijst(final Long aNummerInhoud, final Long vorigANummerInhoud, final String gemeenteInhoud) {
-
-        final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
-        // @formatter:off
-        builder.persoonStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Persoon(aNummerInhoud,
-                                                                                                          null,
-                                                                                                          "Jan",
-                                                                                                          null,
-                                                                                                          null,
-                                                                                                          "Jansen",
-                                                                                                          19700101,
-                                                                                                          "0518",
-                                                                                                          "6030",
-                                                                                                          "M",
-                                                                                                          vorigANummerInhoud,
-                                                                                                          null,
-                                                                                                          "E"),
-                                                                               Lo3StapelHelper.lo3Akt(1),
-                                                                               Lo3StapelHelper.lo3His(19700101),
-                                                                               new Lo3Herkomst(Lo3CategorieEnum.PERSOON, 0, 0))));
-
-        builder.verblijfplaatsStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Verblijfplaats(gemeenteInhoud,
-                                                                                                                        1970101,
-                                                                                                                        1970101,
-                                                                                                                        "Straat",
-                                                                                                                        15,
-                                                                                                                        "9876AA",
-                                                                                                                        "I"),
-                                                                                      null,
-                                                                                      Lo3StapelHelper.lo3His(19700101),
-                                                                                      new Lo3Herkomst(Lo3CategorieEnum.VERBLIJFPLAATS, 0, 0))));
-        // @formatter:on
-
-        return builder.build();
-    }
 }

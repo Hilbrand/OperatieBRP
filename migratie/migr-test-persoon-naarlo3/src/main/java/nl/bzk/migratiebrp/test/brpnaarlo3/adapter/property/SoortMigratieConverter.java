@@ -6,18 +6,18 @@
 
 package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.PropertyConverter;
 import org.springframework.stereotype.Component;
 
 /**
- * SoortMigratie converter
+ * SoortMigratie .
  */
 @Component
 public final class SoortMigratieConverter implements PropertyConverter<SoortMigratie> {
 
     @Override
     public SoortMigratie convert(final String value) {
-        return value == null ? null : SoortMigratie.parseId(Short.valueOf(value));
+        return value == null ? null : SoortMigratie.parseId(Integer.valueOf(value));
     }
 }

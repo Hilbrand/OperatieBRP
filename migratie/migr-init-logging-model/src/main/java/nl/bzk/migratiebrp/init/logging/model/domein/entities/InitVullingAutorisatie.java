@@ -16,40 +16,36 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "initvullingresult_aut", schema = "initvul")
-@SuppressWarnings("checkstyle:designforextension")
 public class InitVullingAutorisatie {
+
     @Id
-    @Column(name = "afnemer_code")
-    private Integer afnemerCode;
+    @Column(name = "autorisatie_id")
+    private Long autorisatieId;
 
     @Column(name = "conversie_resultaat", insertable = true, updatable = true, length = 200)
     private String conversieResultaat;
 
-    @Column(insertable = true, updatable = true, length = 2147483647)
-    private String foutmelding;
+    @Column(name = "conversie_melding", insertable = true, updatable = true, length = 2_147_483_647)
+    private String conversieMelding;
 
     /**
-     * Geef de waarde van afnemer code.
-     *
-     * @return afnemer code
+     * Geef de waarde van autorisatie id.
+     * @return autorisatie id
      */
-    public Integer getAfnemerCode() {
-        return afnemerCode;
+    public Long getAutorisatieId() {
+        return autorisatieId;
     }
 
     /**
-     * Zet de waarde van afnemer code.
-     *
-     * @param afnemerCode
-     *            afnemer code
+     * Zet de waarde van autorisatie id.
+     * @param autorisatieId autorisatie id
      */
-    public void setAfnemerCode(final Integer afnemerCode) {
-        this.afnemerCode = afnemerCode;
+    public void setAutorisatieId(final Long autorisatieId) {
+        this.autorisatieId = autorisatieId;
     }
 
     /**
      * Geef de waarde van conversie resultaat.
-     *
      * @return conversie resultaat
      */
     public String getConversieResultaat() {
@@ -58,31 +54,25 @@ public class InitVullingAutorisatie {
 
     /**
      * Zet de waarde van conversie resultaat.
-     *
-     * @param conversieResultaat
-     *            conversie resultaat
+     * @param conversieResultaat conversie resultaat
      */
     public void setConversieResultaat(final String conversieResultaat) {
         this.conversieResultaat = conversieResultaat;
     }
 
     /**
-     * Geef de waarde van foutmelding.
-     *
-     * @return foutmelding
+     * Geef de waarde van conversie melding.
+     * @return conversie melding
      */
-    public String getFoutmelding() {
-        return foutmelding;
+    public String getConversieMelding() {
+        return conversieMelding;
     }
 
     /**
-     * Zet de waarde van foutmelding.
-     *
-     * @param foutmelding
-     *            foutmelding
+     * Zet de waarde van conversie melding.
+     * @param conversieMelding conversie melding
      */
-    public void setFoutmelding(final String foutmelding) {
-        this.foutmelding = foutmelding;
+    public void setConversieMelding(final String conversieMelding) {
+        this.conversieMelding = conversieMelding;
     }
-
 }

@@ -16,6 +16,23 @@ import static org.mockito.Mockito.when;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -33,23 +50,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpIstGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstStandaardGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractIstMapperTest<T extends AbstractBrpIstGroepInhoud> {
@@ -63,23 +64,23 @@ public abstract class AbstractIstMapperTest<T extends AbstractBrpIstGroepInhoud>
     static final Character SCHEIDINGSTEKEN = ' ';
     static final String GESLACHTSNAAMSTAM = "Klaveren";
     static final String AKTENUMMER = "A350";
-    static final short BRP_GEMEENTE_CODE = (short) 518;
-    static final int BRP_PARTIJ_CODE = 51801;
-    static final int MIGRATIEVOORZIENING_PARTIJ_CODE = 199902;
-    static final short BRP_LAND_OF_GEBIED_CODE_NL = (short) 6030;
-    static final Long ANUMMER = 1234597890L;
-    static final Integer BSN = 123456789;
-    static final Integer DATUM_OPNEMING = 20120102;
-    static final Integer DATUM_GELDIGHEID = 20120101;
+    static final String BRP_GEMEENTE_CODE = "0518";
+    static final String BRP_PARTIJ_CODE = "051801";
+    static final String MIGRATIEVOORZIENING_PARTIJ_CODE = "199902";
+    static final String BRP_LAND_OF_GEBIED_CODE_NL = "6030";
+    static final String ANUMMER = "1234597890";
+    static final String BSN = "123456789";
+    static final Integer DATUM_OPNEMING = 2012_01_02;
+    static final Integer DATUM_GELDIGHEID = 2012_01_01;
     static final Integer DATUM_GEBOORTE = 1980101;
-    static final Integer DATUM_SLUITING = 20120101;
-    static final Integer DATUM_ONTBINDING = 20120501;
+    static final Integer DATUM_SLUITING = 2012_01_01;
+    static final Integer DATUM_ONTBINDING = 2012_05_01;
     static final Character REDEN_EINDE_CODE = 'S';
-    static final Integer DATUM_DOCUMENT = 20120103;
+    static final Integer DATUM_DOCUMENT = 2012_01_03;
     static final String DOCUMENT_OMSCHRIJVING = "omschrijving";
-    static final Integer GEGEVENS_IN_ONDERZOEK = 020110;
-    static final Integer DATUM_INGANG_ONDERZOEK = 20120202;
-    static final Integer DATUM_EINDE_ONDERZOEK = 20120203;
+    static final Integer GEGEVENS_IN_ONDERZOEK = 20110;
+    static final Integer DATUM_INGANG_ONDERZOEK = 2012_02_02;
+    static final Integer DATUM_EINDE_ONDERZOEK = 2012_02_03;
     static final Character ONJUIST = 'O';
     static final String BUITENLANDSE_PLAATS = "Buitenlandse plaats";
     static final String OMSCHRIJVING_LOC = "Omschrijving locatie";
@@ -93,8 +94,9 @@ public abstract class AbstractIstMapperTest<T extends AbstractBrpIstGroepInhoud>
     // Mock entities
     private static final SoortDocument SOORT_DOCUMENT_AKTE =
             new SoortDocument(
-                "Geboorteakte",
-                "Geboortakte, opgenomen in de registers van de burgerlijke stand in Nederland, zoals bedoeld in artikel 2.8 lid 1 sub a, dan wel artikel 2.8 lid 2 sub a");
+                    "Geboorteakte",
+                    "Geboortakte, opgenomen in de registers van de burgerlijke stand in Nederland, zoals bedoeld in artikel 2.8 lid 1 sub a, dan wel artikel "
+                            + "2.8 lid 2 sub a");
     private static final SoortDocument SOORT_DOCUMENT_DOCUMENT = new SoortDocument("Overig", "Overig");
     private static final Partij PARTIJ = new Partij("Gemeente \'s-Gravenhage", BRP_PARTIJ_CODE);
     private static final Partij PARTIJ_MIGRATIEVOORZIENING = new Partij("Migratievoorziening", MIGRATIEVOORZIENING_PARTIJ_CODE);
@@ -151,7 +153,6 @@ public abstract class AbstractIstMapperTest<T extends AbstractBrpIstGroepInhoud>
 
     /**
      * Geef de waarde van adellijke titel.
-     *
      * @return adellijke titel
      */
     BrpAdellijkeTitelCode getAdellijkeTitel() {
@@ -174,14 +175,12 @@ public abstract class AbstractIstMapperTest<T extends AbstractBrpIstGroepInhoud>
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return categorie
      */
     abstract Lo3CategorieEnum getCategorie();
 
     /**
      * Geef de waarde van standaard builder.
-     *
      * @return standaard builder
      */
     public BrpIstStandaardGroepInhoud.Builder getStandaardBuilder() {
@@ -381,7 +380,6 @@ public abstract class AbstractIstMapperTest<T extends AbstractBrpIstGroepInhoud>
 
     /**
      * Geef de waarde van predicaat.
-     *
      * @return predicaat
      */
     BrpPredicaatCode getPredicaat() {
@@ -390,7 +388,6 @@ public abstract class AbstractIstMapperTest<T extends AbstractBrpIstGroepInhoud>
 
     /**
      * Geef de waarde van dynamische stamtabel repository.
-     *
      * @return dynamische stamtabel repository
      */
     public DynamischeStamtabelRepository getDynamischeStamtabelRepository() {

@@ -19,26 +19,24 @@ public final class HerhaalException extends Exception {
     private static final long serialVersionUID = 1L;
 
     private static final String EARLIER_CAUSES = "Earlier causes:";
+    public static final int INT_2 = 2;
 
     private final List<Exception> pogingExcepties;
 
     /**
      * Creëer een HerhaalExceptie met een lijst van alle excepties van de gefaalde pogingen.
-     * 
-     * @param pogingExcepties
-     *            De excepties van de gefaalde pogingen.
+     * @param pogingExcepties De excepties van de gefaalde pogingen.
      */
     public HerhaalException(final List<Exception> pogingExcepties) {
         super(MessageFormat.format(
-            "Herhaalde operatie gefaald na {0} pogingen. Laatste fout: {1}",
-            pogingExcepties.size(),
-            pogingExcepties.get(pogingExcepties.size() - 1).getMessage()), pogingExcepties.get(pogingExcepties.size() - 1));
+                "Herhaalde operatie gefaald na {0} pogingen. Laatste fout: {1}",
+                pogingExcepties.size(),
+                pogingExcepties.get(pogingExcepties.size() - 1).getMessage()), pogingExcepties.get(pogingExcepties.size() - 1));
         this.pogingExcepties = pogingExcepties;
     }
 
     /**
      * De lijst van excepties die tijdens alle pogingen zijn opgetreden.
-     * 
      * @return De lijst van excepties die tijdens alle pogingen zijn opgetreden.
      */
     public List<Exception> getPogingExcepties() {
@@ -51,7 +49,7 @@ public final class HerhaalException extends Exception {
         // and would not be reliable with different compilers or test runners.
         super.printStackTrace(s);
         s.println(EARLIER_CAUSES);
-        for (int i = pogingExcepties.size() - 2; i >= 0; i--) {
+        for (int i = pogingExcepties.size() - INT_2; i >= 0; i--) {
             pogingExcepties.get(i).printStackTrace(s);
         }
     }
@@ -62,7 +60,7 @@ public final class HerhaalException extends Exception {
         // and would not be reliable with different compilers or test runners.
         super.printStackTrace(s);
         s.println(EARLIER_CAUSES);
-        for (int i = pogingExcepties.size() - 2; i >= 0; i--) {
+        for (int i = pogingExcepties.size() - INT_2; i >= 0; i--) {
             pogingExcepties.get(i).printStackTrace(s);
         }
     }

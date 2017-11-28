@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -42,14 +42,14 @@ public class Lo3ReisdocumentParserTest extends AbstractParserTest {
         final List<Lo3Categorie<Lo3ReisdocumentInhoud>> categorieInhoudLijst = new ArrayList<>();
         final Lo3ReisdocumentInhoud reisdocumentInhoud =
                 new Lo3ReisdocumentInhoud(
-                    new Lo3SoortNederlandsReisdocument(WAARDE_ELEMENT_3510, onderzoek),
-                    new Lo3String(WAARDE_ELEMENT_3520, onderzoek),
-                    new Lo3Datum(WAARDE_ELEMENT_3530, onderzoek),
-                    new Lo3AutoriteitVanAfgifteNederlandsReisdocument(WAARDE_ELEMENT_3540, onderzoek),
-                    new Lo3Datum(WAARDE_ELEMENT_3550, onderzoek),
-                    new Lo3Datum(WAARDE_ELEMENT_3560, onderzoek),
-                    new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(WAARDE_ELEMENT_3570, onderzoek),
-                    new Lo3Signalering(WAARDE_ELEMENT_3610, onderzoek));
+                        new Lo3SoortNederlandsReisdocument(WAARDE_ELEMENT_3510, onderzoek),
+                        new Lo3String(WAARDE_ELEMENT_3520, onderzoek),
+                        new Lo3Datum(WAARDE_ELEMENT_3530, onderzoek),
+                        new Lo3AutoriteitVanAfgifteNederlandsReisdocument(WAARDE_ELEMENT_3540, onderzoek),
+                        new Lo3Datum(WAARDE_ELEMENT_3550, onderzoek),
+                        new Lo3Datum(WAARDE_ELEMENT_3560, onderzoek),
+                        new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(WAARDE_ELEMENT_3570, onderzoek),
+                        new Lo3Signalering(WAARDE_ELEMENT_3610, onderzoek));
         final Lo3Categorie<Lo3ReisdocumentInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(reisdocumentInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_12, 0, 0));
         categorieInhoudLijst.add(categorieInhoudCategorie);

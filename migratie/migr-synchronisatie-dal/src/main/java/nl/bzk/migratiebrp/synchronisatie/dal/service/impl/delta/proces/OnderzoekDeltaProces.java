@@ -7,22 +7,19 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.proces;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.GegevenInOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteitPaar;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.GegevenInOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PartijOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.util.PersistenceUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util.DeltaUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util.OnderzoekUtil;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 
 /**
@@ -40,21 +37,17 @@ public class OnderzoekDeltaProces implements DeltaProces {
 
     /**
      * {@inheritDoc}
-     * @param context
      */
     @Override
-     public final void verwerkVerschillen(final DeltaBepalingContext context) {
-        final Persoon bestaandePersoon = context.getBestaandePersoon();
+    public final void verwerkVerschillen(final DeltaBepalingContext context) {
         final Collection<OnderzoekPaar> onderzoekPaarSet = matchOnderzoeken(context);
 
         for (final OnderzoekPaar onderzoekPaar : onderzoekPaarSet) {
-            verwerkOnderzoek(context, bestaandePersoon, onderzoekPaar);
+            verwerkOnderzoek(context, onderzoekPaar);
         }
     }
 
-    private void verwerkOnderzoek(final DeltaBepalingContext context, final Persoon persoon, final OnderzoekPaar onderzoekPaar) {
-        final boolean onderzoekIsBijhoudingActueel = onderzoekPaar.isBijhoudingActueel();
-
+    private void verwerkOnderzoek(final DeltaBepalingContext context, final OnderzoekPaar onderzoekPaar) {
         final boolean isOnderzoekMutatie;
         switch (onderzoekPaar.getStatus()) {
             case GEWIJZIGD:
@@ -67,13 +60,13 @@ public class OnderzoekDeltaProces implements DeltaProces {
                 break;
             case NIEUW:
                 isOnderzoekMutatie = true;
-                toevoegenOnderzoek(context, persoon, onderzoekPaar.getNieuwOnderzoek());
+                toevoegenOnderzoek(context, onderzoekPaar.getNieuwOnderzoek());
                 break;
             default:
                 isOnderzoekMutatie = false;
         }
 
-        if (!onderzoekIsBijhoudingActueel && isOnderzoekMutatie) {
+        if (!onderzoekPaar.isBijhoudingActueel() && isOnderzoekMutatie) {
             context.setBijhoudingOverig();
         }
     }
@@ -83,10 +76,8 @@ public class OnderzoekDeltaProces implements DeltaProces {
         final Persoon bestaandePersoon = context.getBestaandePersoon();
         final Collection<DeltaEntiteitPaar> deltaEntiteitPaarCollection = context.getDeltaEntiteitPaarSet();
 
-        final Collection<Onderzoek> nieuweOnderzoeken =
-                OnderzoekUtil.transformeerPersoonOnderzoekenNaarOnderzoeken(nieuwePersoon.getPersoonOnderzoekSet());
-        final Collection<Onderzoek> bestaandeOnderzoeken =
-                OnderzoekUtil.transformeerPersoonOnderzoekenNaarOnderzoeken(bestaandePersoon.getPersoonOnderzoekSet());
+        final Collection<Onderzoek> nieuweOnderzoeken = new HashSet<>(nieuwePersoon.getOnderzoeken());
+        final Collection<Onderzoek> bestaandeOnderzoeken = new HashSet<>(bestaandePersoon.getOnderzoeken());
 
         final Collection<OnderzoekPaar> onderzoekPaarSet = new LinkedHashSet<>();
         for (final Onderzoek nieuwOnderzoek : nieuweOnderzoeken) {
@@ -104,19 +95,14 @@ public class OnderzoekDeltaProces implements DeltaProces {
     }
 
     private Onderzoek zoekOnderzoekInSet(
-        final Collection<Onderzoek> onderzoeken,
-        final Onderzoek onderzoek,
-        final Collection<DeltaEntiteitPaar> deltaEntiteitPaarCollection)
-    {
+            final Collection<Onderzoek> onderzoeken,
+            final Onderzoek onderzoek,
+            final Collection<DeltaEntiteitPaar> deltaEntiteitPaarCollection) {
         Onderzoek resultaat = null;
         final Iterator<Onderzoek> onderzoekIterator = onderzoeken.iterator();
         while (resultaat == null && onderzoekIterator.hasNext()) {
             final Onderzoek mogelijkeMatch = onderzoekIterator.next();
-            if (zijnGegevenInOnderzoekEenMatch(
-                mogelijkeMatch.getGegevenInOnderzoekSet(),
-                onderzoek.getGegevenInOnderzoekSet(),
-                deltaEntiteitPaarCollection))
-            {
+            if (zijnGegevenInOnderzoekEenMatch(mogelijkeMatch.getGegevenInOnderzoekSet(), onderzoek.getGegevenInOnderzoekSet(), deltaEntiteitPaarCollection)) {
                 resultaat = mogelijkeMatch;
                 onderzoekIterator.remove();
             }
@@ -125,10 +111,9 @@ public class OnderzoekDeltaProces implements DeltaProces {
     }
 
     private boolean zijnGegevenInOnderzoekEenMatch(
-        final Set<GegevenInOnderzoek> mogelijkeMatchGios,
-        final Set<GegevenInOnderzoek> zoekGios,
-        final Collection<DeltaEntiteitPaar> deltaEntiteitPaarCollection)
-    {
+            final Set<GegevenInOnderzoek> mogelijkeMatchGios,
+            final Set<GegevenInOnderzoek> zoekGios,
+            final Collection<DeltaEntiteitPaar> deltaEntiteitPaarCollection) {
         final Iterator<GegevenInOnderzoek> zoekGiosIterator = zoekGios.iterator();
         boolean result = mogelijkeMatchGios.size() == zoekGios.size();
         while (result && zoekGiosIterator.hasNext()) {
@@ -139,31 +124,30 @@ public class OnderzoekDeltaProces implements DeltaProces {
     }
 
     private boolean bestaatGioInSet(
-        final Set<GegevenInOnderzoek> gegevenInOnderzoekSet,
-        final GegevenInOnderzoek zoekGegevenInOnderzoek,
-        final Collection<DeltaEntiteitPaar> deltaEntiteitPaarCollection)
-    {
-        final DeltaEntiteit deltaEntiteit = PersistenceUtil.getPojoFromObject(zoekGegevenInOnderzoek.getObjectOfVoorkomen());
+            final Set<GegevenInOnderzoek> gegevenInOnderzoekSet,
+            final GegevenInOnderzoek zoekGegevenInOnderzoek,
+            final Collection<DeltaEntiteitPaar> deltaEntiteitPaarCollection) {
+        final Entiteit deltaEntiteit = Entiteit.convertToPojo(zoekGegevenInOnderzoek.getEntiteitOfVoorkomen());
 
         boolean result = false;
         final Iterator<GegevenInOnderzoek> gegevenInOnderzoekIterator = gegevenInOnderzoekSet.iterator();
         while (!result && gegevenInOnderzoekIterator.hasNext()) {
             final GegevenInOnderzoek gegevenInOnderzoek = gegevenInOnderzoekIterator.next();
-            final DeltaEntiteit pojoGio = PersistenceUtil.getPojoFromObject(gegevenInOnderzoek.getObjectOfVoorkomen());
+            final Entiteit pojoGio = Entiteit.convertToPojo(gegevenInOnderzoek.getEntiteitOfVoorkomen());
             if (pojoGio.getClass().isAssignableFrom(deltaEntiteit.getClass())) {
                 // Het is dezelfde class.
                 result =
                         deltaEntiteitPaarCollection.contains(new DeltaEntiteitPaar(pojoGio, deltaEntiteit))
-                         && zoekGegevenInOnderzoek.getSoortGegeven().equals(gegevenInOnderzoek.getSoortGegeven());
+                                && zoekGegevenInOnderzoek.getSoortGegeven().equals(gegevenInOnderzoek.getSoortGegeven());
             }
         }
         return result;
     }
 
-    private void toevoegenOnderzoek(final DeltaBepalingContext context, final Persoon persoon, final Onderzoek onderzoek) {
+    private void toevoegenOnderzoek(final DeltaBepalingContext context, final Onderzoek onderzoek) {
         SynchronisatieLogging.addMelding(onderzoek.getClass().getSimpleName() + " (DW-002-ACT)");
         // Vanuit conversie heeft onderzoek maar 1 persoononderzoek
-        persoon.addPersoonOnderzoek(onderzoek.getPersoonOnderzoekSet().iterator().next());
+        context.getBestaandePersoon().addOnderzoek(onderzoek);
         controleerOnderzoekToegevoegdOpBestaandeEntiteiten(context, onderzoek);
     }
 
@@ -172,29 +156,16 @@ public class OnderzoekDeltaProces implements DeltaProces {
 
         // Vanuit conversie heeft onderzoek maar 1 historie rij.
         converteerNaarMRij(context, bestaandOnderzoek.getOnderzoekHistorieSet());
-        converteerNaarMRij(context, bestaandOnderzoek.getOnderzoekAfgeleidAdministratiefHistorieSet());
-
-        // Eerst onderzoek bijwerken, daarna historie toevoegen. Historie wordt gebaseerd op het Onderzoek object.
-        bestaandOnderzoek.updateInhoud(nieuwOnderzoek);
 
         bestaandOnderzoek.addOnderzoekHistorie(nieuwOnderzoek.getOnderzoekHistorieSet().iterator().next());
-        bestaandOnderzoek.addOnderzoekAfgeleidAdministratiefHistorie(nieuwOnderzoek.getOnderzoekAfgeleidAdministratiefHistorieSet().iterator().next());
     }
 
     private void verwijderOnderzoek(final DeltaBepalingContext context, final Onderzoek bestaandOnderzoek) {
         SynchronisatieLogging.addMelding(bestaandOnderzoek.getClass().getSimpleName() + " (DW-001)");
         // alleen de actuele historie rij naar een M-rij veranderen
         converteerNaarMRij(context, bestaandOnderzoek.getOnderzoekHistorieSet());
-        converteerNaarMRij(context, bestaandOnderzoek.getOnderzoekAfgeleidAdministratiefHistorieSet());
-
-        for (final PartijOnderzoek partijOnderzoek : bestaandOnderzoek.getPartijOnderzoekSet()) {
-            converteerNaarMRij(context, partijOnderzoek.getPartijOnderzoekHistorieSet());
-            partijOnderzoek.setSoortPartijOnderzoek(null);
-        }
-
-        for (final PersoonOnderzoek persoonOnderzoek : bestaandOnderzoek.getPersoonOnderzoekSet()) {
-            converteerNaarMRij(context, persoonOnderzoek.getPersoonOnderzoekHistorieSet());
-            persoonOnderzoek.setSoortPersoonOnderzoek(null);
+        for (GegevenInOnderzoek gio : bestaandOnderzoek.getGegevenInOnderzoekSet()) {
+            converteerNaarMRij(context, gio.getGegevenInOnderzoekHistorieSet());
         }
     }
 
@@ -212,8 +183,8 @@ public class OnderzoekDeltaProces implements DeltaProces {
     private void controleerOnderzoekToegevoegdOpBestaandeEntiteiten(final DeltaBepalingContext context, final Onderzoek onderzoek) {
         for (final GegevenInOnderzoek gegevenInOnderzoek : onderzoek.getGegevenInOnderzoekSet()) {
             for (final DeltaEntiteitPaar deltaEntiteitPaar : context.getDeltaEntiteitPaarSet()) {
-                if (gegevenInOnderzoek.getObjectOfVoorkomen() == deltaEntiteitPaar.getNieuw() && !deltaEntiteitPaar.wordtBestaandMRij()) {
-                    gegevenInOnderzoek.setObjectOfVoorkomen(deltaEntiteitPaar.getBestaand());
+                if (gegevenInOnderzoek.getEntiteitOfVoorkomen() == deltaEntiteitPaar.getNieuw() && !deltaEntiteitPaar.wordtBestaandMRij()) {
+                    gegevenInOnderzoek.setEntiteitOfVoorkomen(deltaEntiteitPaar.getBestaand());
                 }
             }
         }

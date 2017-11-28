@@ -7,15 +7,17 @@
 package nl.bzk.migratiebrp.synchronisatie.runtime.service;
 
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.RedenBlokkering;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.BlokkeringInfoAntwoordType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoVerzoekBericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.Blokkering;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.RedenBlokkering;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
 import nl.bzk.migratiebrp.synchronisatie.runtime.util.MessageId;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,10 +26,20 @@ import org.springframework.stereotype.Service;
 @Service
 public final class BlokkeringInfoVerzoekService implements SynchronisatieBerichtService<BlokkeringInfoVerzoekBericht, BlokkeringInfoAntwoordBericht> {
 
-    @Inject
-    private BrpDalService brpDalService;
+    private final BrpDalService brpDalService;
 
-    /* (non-Javadoc)
+    /**
+     * constructor.
+     * @param brpDalService
+     */
+    @Inject
+    public BlokkeringInfoVerzoekService(final BrpDalService brpDalService) {
+        this.brpDalService = brpDalService;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.synchronisatie.runtime.service.SynchronisatieBerichtService#getVerzoekType()
      */
     @Override
@@ -38,9 +50,7 @@ public final class BlokkeringInfoVerzoekService implements SynchronisatieBericht
     /**
      * Haalt op basis van het a-nummer in het BlokkeringInfoVerzoek bericht de blokkeringstatus op van een persoonslijst
      * en retourneert de gevonden informatie in het antwoordbericht.
-     *
-     * @param blokkeringInfoVerzoekBericht
-     *            het blokkeringinfo verzoek met daarin het a-nummer
+     * @param blokkeringInfoVerzoekBericht het blokkeringinfo verzoek met daarin het a-nummer
      * @return het antwoordbericht met daarin informatie omtrent de blokkeringstatus
      */
     @Override
@@ -48,7 +58,7 @@ public final class BlokkeringInfoVerzoekService implements SynchronisatieBericht
 
         final BlokkeringInfoAntwoordType blokkeringInfoAntwoordType = new BlokkeringInfoAntwoordType();
 
-        final Blokkering opgeslagenBlokkering = brpDalService.vraagOpBlokkering(Long.valueOf(blokkeringInfoVerzoekBericht.getANummer()));
+        final Blokkering opgeslagenBlokkering = brpDalService.vraagOpBlokkering(blokkeringInfoVerzoekBericht.getANummer());
 
         if (opgeslagenBlokkering == null) {
             blokkeringInfoAntwoordType.setStatus(StatusType.OK);
@@ -57,6 +67,7 @@ public final class BlokkeringInfoVerzoekService implements SynchronisatieBericht
             blokkeringInfoAntwoordType.setStatus(StatusType.OK);
             blokkeringInfoAntwoordType.setProcessId(opgeslagenBlokkering.getProcessId().toString());
             blokkeringInfoAntwoordType.setPersoonsaanduiding(mapPersoonsaanduiding(opgeslagenBlokkering.getRedenBlokkering()));
+            blokkeringInfoAntwoordType.setGemeenteNaar(opgeslagenBlokkering.getGemeenteCodeNaar());
         }
 
         final BlokkeringInfoAntwoordBericht blokkeringInfoAntwoordBericht = new BlokkeringInfoAntwoordBericht(blokkeringInfoAntwoordType);

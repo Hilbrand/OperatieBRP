@@ -12,7 +12,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 
@@ -25,7 +25,6 @@ public class TestUtil {
 
     /**
      * Geef de waarde van herkomst.
-     *
      * @return herkomst
      */
     public static Lo3Herkomst getHerkomst() {
@@ -57,11 +56,11 @@ public class TestUtil {
     public static Lo3Categorie<Lo3PersoonInhoud> maakVoorkomen(final boolean anderPersoon, final Lo3Herkomst herkomst) {
         final Lo3PersoonInhoud.Builder inhoud = new Lo3PersoonInhoud.Builder();
         if (anderPersoon) {
-            inhoud.setaNummer(Lo3Long.wrap(9987654321L));
+            inhoud.setaNummer(Lo3String.wrap("9987654321"));
         } else {
-            inhoud.setaNummer(Lo3Long.wrap(1234567890L));
+            inhoud.setaNummer(Lo3String.wrap("1234567890"));
         }
-        return new Lo3Categorie<>(inhoud.build(), null, Lo3Historie.NULL_HISTORIE, herkomst);
+        return new Lo3Categorie<>(inhoud.build(), null, new Lo3Historie(null, null, null), herkomst);
     }
 
 }

@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jmx;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.management.MBeanServerConnection;
+
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
 /**

@@ -13,19 +13,19 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteitHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteitHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 
 /**
  * Unit test voor {@link TransformatieDw041}.
@@ -70,40 +70,40 @@ public class TransformatieDw041Test extends AbstractTransformatieTest {
     private VerschilGroep maakVerschilGroep() {
         final BRPActie actie =
                 new BRPActie(
-                    SoortActie.CONVERSIE_GBA,
-                    getAdministratieveHandeling(),
-                    getAdministratieveHandeling().getPartij(),
-                    getAdministratieveHandeling().getDatumTijdRegistratie());
+                        SoortActie.CONVERSIE_GBA,
+                        getAdministratieveHandeling(),
+                        getAdministratieveHandeling().getPartij(),
+                        getAdministratieveHandeling().getDatumTijdRegistratie());
         final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        final PersoonNationaliteit persoonNationaliteit = new PersoonNationaliteit(persoon, new Nationaliteit("NL", (short) 1));
+        final PersoonNationaliteit persoonNationaliteit = new PersoonNationaliteit(persoon, new Nationaliteit("NL", "0001"));
         final PersoonNationaliteitHistorie persoonNationaliteitHistorie = new PersoonNationaliteitHistorie(persoonNationaliteit);
 
         final Verschil actieVervalVerschil =
                 new Verschil(maakEntiteitSleutel("actieVerval"), null, actie, persoonNationaliteitHistorie, persoonNationaliteitHistorie);
         final Verschil datumTijdVervalVerschil =
                 new Verschil(
-                    maakEntiteitSleutel("datumTijdVerval"),
-                    null,
-                    maakTimestamp("2000-01-02 02"),
-                    persoonNationaliteitHistorie,
-                    persoonNationaliteitHistorie);
+                        maakEntiteitSleutel("datumTijdVerval"),
+                        null,
+                        maakTimestamp("2000-01-02 02"),
+                        persoonNationaliteitHistorie,
+                        persoonNationaliteitHistorie);
         final Verschil eindeBijhoudingNationaliteit =
                 new Verschil(
-                    maakEntiteitSleutel(PersoonNationaliteitHistorie.EINDE_BIJHOUDING),
-                    null,
-                    true,
-                    persoonNationaliteitHistorie,
-                    persoonNationaliteitHistorie);
+                        maakEntiteitSleutel(PersoonNationaliteitHistorie.EINDE_BIJHOUDING),
+                        null,
+                        true,
+                        persoonNationaliteitHistorie,
+                        persoonNationaliteitHistorie);
         final Verschil migratieDatumNationaliteit =
                 new Verschil(
-                    maakEntiteitSleutel(PersoonNationaliteitHistorie.MIGRATIE_DATUM),
-                    null,
-                    true,
-                    persoonNationaliteitHistorie,
-                    persoonNationaliteitHistorie);
+                        maakEntiteitSleutel(PersoonNationaliteitHistorie.MIGRATIE_DATUM),
+                        null,
+                        true,
+                        persoonNationaliteitHistorie,
+                        persoonNationaliteitHistorie);
         final VerschilGroep verschilGroep = VerschilGroep.maakVerschilGroepMetHistorie(persoonNationaliteitHistorie);
         verschilGroep.addVerschillen(
-            Arrays.asList(actieVervalVerschil, datumTijdVervalVerschil, eindeBijhoudingNationaliteit, migratieDatumNationaliteit));
+                Arrays.asList(actieVervalVerschil, datumTijdVervalVerschil, eindeBijhoudingNationaliteit, migratieDatumNationaliteit));
         return verschilGroep;
     }
 

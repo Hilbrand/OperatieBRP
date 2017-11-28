@@ -8,14 +8,17 @@ package nl.bzk.migratiebrp.bericht.model.brp.factory;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.BerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.brp.BrpBericht;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhouding;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerNaamGeslachtBijhouding;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerNaamGeslachtBijhoudingResultaat;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerOverlijdenBijhouding;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerOverlijdenBijhoudingResultaat;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingRegistreerHuwelijkGeregistreerdPartnerschapMigVrz;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingResultaatRegistreerHuwelijkGeregistreerdPartnerschapMigVrz;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingRegistreerNaamGeslachtMigVrz;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingResultaatRegistreerNaamGeslachtMigVrz;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingRegistreerOverlijdenMigVrz;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingResultaatRegistreerOverlijdenMigVrz;
 import nl.bzk.migratiebrp.bericht.model.brp.impl.OngeldigBericht;
 import nl.bzk.migratiebrp.bericht.model.brp.impl.RegistreerHuwelijkGeregistreerdPartnerschapBijhouding;
 import nl.bzk.migratiebrp.bericht.model.brp.impl.RegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat;
@@ -24,8 +27,6 @@ import nl.bzk.migratiebrp.bericht.model.brp.impl.RegistreerNaamGeslachtBijhoudin
 import nl.bzk.migratiebrp.bericht.model.brp.impl.RegistreerOverlijdenBijhouding;
 import nl.bzk.migratiebrp.bericht.model.brp.impl.RegistreerOverlijdenBijhoudingResultaat;
 import nl.bzk.migratiebrp.bericht.model.brp.xml.BrpXml;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * Vertaal een binnengekomen BRP bericht naar een BRP Bericht object.
@@ -41,9 +42,7 @@ public enum BrpBerichtFactory implements BerichtFactory {
 
     /**
      * Vertaal een binnengekomen BRP bericht naar een ESB BRP Bericht object.
-     *
-     * @param berichtAlsString
-     *            binnengekomen BRP bericht
+     * @param berichtAlsString binnengekomen BRP bericht
      * @return ESB BRP Bericht
      */
     @Override
@@ -59,9 +58,7 @@ public enum BrpBerichtFactory implements BerichtFactory {
 
     /**
      * Maakt het bericht op basis van de meegegeven value (representatie van het bericht).
-     *
-     * @param value
-     *            De meegegeven value.
+     * @param value De meegegeven value.
      * @return Het bericht.
      */
     private BrpBericht maakBericht(final Object value) {
@@ -69,24 +66,24 @@ public enum BrpBerichtFactory implements BerichtFactory {
         final BrpBericht result;
 
         // BRP berichten
-        if (value instanceof MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhouding) {
+        if (value instanceof BijhoudingRegistreerHuwelijkGeregistreerdPartnerschapMigVrz) {
             result =
                     new RegistreerHuwelijkGeregistreerdPartnerschapBijhouding(
-                        (MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhouding) value);
-        } else if (value instanceof MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat) {
+                            (BijhoudingRegistreerHuwelijkGeregistreerdPartnerschapMigVrz) value);
+        } else if (value instanceof BijhoudingResultaatRegistreerHuwelijkGeregistreerdPartnerschapMigVrz) {
             result =
                     new RegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat(
-                        (MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat) value);
+                            (BijhoudingResultaatRegistreerHuwelijkGeregistreerdPartnerschapMigVrz) value);
 
-        } else if (value instanceof MigratievoorzieningRegistreerNaamGeslachtBijhouding) {
-            result = new RegistreerNaamGeslachtBijhouding((MigratievoorzieningRegistreerNaamGeslachtBijhouding) value);
-        } else if (value instanceof MigratievoorzieningRegistreerNaamGeslachtBijhoudingResultaat) {
-            result = new RegistreerNaamGeslachtBijhoudingResultaat((MigratievoorzieningRegistreerNaamGeslachtBijhoudingResultaat) value);
+        } else if (value instanceof BijhoudingRegistreerNaamGeslachtMigVrz) {
+            result = new RegistreerNaamGeslachtBijhouding((BijhoudingRegistreerNaamGeslachtMigVrz) value);
+        } else if (value instanceof BijhoudingResultaatRegistreerNaamGeslachtMigVrz) {
+            result = new RegistreerNaamGeslachtBijhoudingResultaat((BijhoudingResultaatRegistreerNaamGeslachtMigVrz) value);
 
-        } else if (value instanceof MigratievoorzieningRegistreerOverlijdenBijhouding) {
-            result = new RegistreerOverlijdenBijhouding((MigratievoorzieningRegistreerOverlijdenBijhouding) value);
-        } else if (value instanceof MigratievoorzieningRegistreerOverlijdenBijhoudingResultaat) {
-            result = new RegistreerOverlijdenBijhoudingResultaat((MigratievoorzieningRegistreerOverlijdenBijhoudingResultaat) value);
+        } else if (value instanceof BijhoudingRegistreerOverlijdenMigVrz) {
+            result = new RegistreerOverlijdenBijhouding((BijhoudingRegistreerOverlijdenMigVrz) value);
+        } else if (value instanceof BijhoudingResultaatRegistreerOverlijdenMigVrz) {
+            result = new RegistreerOverlijdenBijhoudingResultaat((BijhoudingResultaatRegistreerOverlijdenMigVrz) value);
 
             // ELSE
         } else {

@@ -17,15 +17,14 @@ public class InMemoryFoutenDao implements FoutenDao {
 
     @Override
     public long registreerFout(
-        final String foutcode,
-        final String foutmelding,
-        final String proces,
-        final long processId,
-        final String bronGemeente,
-        final String doelGemeente)
-    {
+            final String foutcode,
+            final String foutmelding,
+            final String proces,
+            final long processId,
+            final String bronPartijCode,
+            final String doelPartijCode) {
         final Long id = sequence.incrementAndGet();
-        final Fout fout = new Fout(foutcode, foutmelding, null, proces, processId, bronGemeente, doelGemeente);
+        final Fout fout = new Fout(foutcode, foutmelding, null, proces, processId, bronPartijCode, doelPartijCode);
         store.put(id, fout);
         return id;
     }
@@ -55,30 +54,28 @@ public class InMemoryFoutenDao implements FoutenDao {
         private String resolutie;
         private final String proces;
         private final long processId;
-        private final String bronGemeente;
-        private final String doelGemeente;
+        private final String bronPartijCode;
+        private final String doelPartijCode;
 
         protected Fout(
-            final String foutcode,
-            final String foutmelding,
-            final String resolutie,
-            final String proces,
-            final long processId,
-            final String bronGemeente,
-            final String doelGemeente)
-        {
+                final String foutcode,
+                final String foutmelding,
+                final String resolutie,
+                final String proces,
+                final long processId,
+                final String bronPartijCode,
+                final String doelPartijCode) {
             this.foutcode = foutcode;
             this.foutmelding = foutmelding;
             this.resolutie = resolutie;
             this.proces = proces;
             this.processId = processId;
-            this.bronGemeente = bronGemeente;
-            this.doelGemeente = doelGemeente;
+            this.bronPartijCode = bronPartijCode;
+            this.doelPartijCode = doelPartijCode;
         }
 
         /**
          * Geef de waarde van proces.
-         *
          * @return proces
          */
         public String getProces() {
@@ -87,7 +84,6 @@ public class InMemoryFoutenDao implements FoutenDao {
 
         /**
          * Geef de waarde van foutcode.
-         *
          * @return foutcode
          */
         public String getFoutcode() {
@@ -96,7 +92,6 @@ public class InMemoryFoutenDao implements FoutenDao {
 
         /**
          * Geef de waarde van foutmelding.
-         *
          * @return foutmelding
          */
         public String getFoutmelding() {
@@ -105,7 +100,6 @@ public class InMemoryFoutenDao implements FoutenDao {
 
         /**
          * Geef de waarde van resolutie.
-         *
          * @return resolutie
          */
         public String getResolutie() {
@@ -114,9 +108,7 @@ public class InMemoryFoutenDao implements FoutenDao {
 
         /**
          * Zet de waarde van resolutie.
-         *
-         * @param resolutie
-         *            resolutie
+         * @param resolutie resolutie
          */
         public void setResolutie(final String resolutie) {
             this.resolutie = resolutie;
@@ -124,7 +116,6 @@ public class InMemoryFoutenDao implements FoutenDao {
 
         /**
          * Geef de waarde van process id.
-         *
          * @return process id
          */
         public long getProcessId() {
@@ -133,20 +124,18 @@ public class InMemoryFoutenDao implements FoutenDao {
 
         /**
          * Geef de waarde van bron gemeente.
-         *
          * @return bron gemeente
          */
-        public String getBronGemeente() {
-            return bronGemeente;
+        public String getBronPartijCode() {
+            return bronPartijCode;
         }
 
         /**
          * Geef de waarde van doel gemeente.
-         *
          * @return doel gemeente
          */
-        public String getDoelGemeente() {
-            return doelGemeente;
+        public String getDoelPartijCode() {
+            return doelPartijCode;
         }
 
     }

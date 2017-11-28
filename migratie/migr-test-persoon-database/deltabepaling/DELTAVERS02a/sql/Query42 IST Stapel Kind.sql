@@ -20,6 +20,5 @@ left join kern.srtrelatie h on h.id = c.srtrelatie
 left join kern.rdneinderelatie i on i.id = d.rdneinde
 join kern.betr j on j.relatie = d.id
 where d.srt = 3
-and j.indouder is null
+and j.rol <> 2
 and categorie like '%9%'
- 

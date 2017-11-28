@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <brpAfnemersindicaties>
    <administratienummer>4157015073</administratienummer>
    <afnemersindicaties class="java.util.ArrayList">
@@ -51,7 +52,23 @@
                      <voorkomen>1</voorkomen>
                   </lo3Herkomst>
                </actieInhoud>
-               <actieVerval ref="34"/>
+               <actieVerval id="34">
+                  <datumTijdRegistratie>
+                     <waarde>20130101010000000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>199902</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <lo3Herkomst>
+                     <categorie>CATEGORIE_14</categorie>
+                     <stapel>0</stapel>
+                     <voorkomen>0</voorkomen>
+                  </lo3Herkomst>
+               </actieVerval>
                <historie>
                   <datumTijdRegistratie>
                      <waarde>20120101010000000</waarde>
@@ -82,7 +99,23 @@
                      <voorkomen>2</voorkomen>
                   </lo3Herkomst>
                </actieInhoud>
-               <actieVerval ref="35"/>
+               <actieVerval id="35">
+                  <datumTijdRegistratie>
+                     <waarde>20120101010000000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>199902</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <lo3Herkomst>
+                     <categorie>CATEGORIE_64</categorie>
+                     <stapel>0</stapel>
+                     <voorkomen>1</voorkomen>
+                  </lo3Herkomst>
+               </actieVerval>
                <historie>
                   <datumTijdRegistratie>
                      <waarde>20100101010000000</waarde>

@@ -21,7 +21,7 @@ plaatsingAfnemerindicatie:
       communicatieID: 'comid.registratieAfnemerindicatie'
       persoon:
         communicatieID: 'comid.registratieAfnemerindicatie.persoon'
-        objectSleutel: ''
+        objectSleutel: '[]'
         identificatienummers:
           communicatieID: 'comid.registratieAfnemerindicatie.persoon.identificatienummers'
           burgerservicenummer: '[]'

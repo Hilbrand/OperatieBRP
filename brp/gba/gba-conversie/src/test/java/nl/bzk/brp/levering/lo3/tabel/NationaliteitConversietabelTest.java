@@ -20,8 +20,8 @@ public class NationaliteitConversietabelTest {
 
     @Test
     public void test() {
-        final List<Short> list = new ArrayList<>();
-        list.add((short) 1);
+        final List<String> list = new ArrayList<>();
+        list.add("0001");
         final NationaliteitConversietabel subject = new NationaliteitConversietabel(list);
 
         Assert.assertTrue(subject.valideerLo3(null));
@@ -29,7 +29,7 @@ public class NationaliteitConversietabelTest {
         Assert.assertFalse(subject.valideerLo3(new Lo3NationaliteitCode("0002")));
 
         Assert.assertTrue(subject.valideerBrp(null));
-        Assert.assertTrue(subject.valideerBrp(new BrpNationaliteitCode((short) 1)));
-        Assert.assertFalse(subject.valideerBrp(new BrpNationaliteitCode((short) 2)));
+        Assert.assertTrue(subject.valideerBrp(new BrpNationaliteitCode("0001")));
+        Assert.assertFalse(subject.valideerBrp(new BrpNationaliteitCode("0002")));
     }
 }

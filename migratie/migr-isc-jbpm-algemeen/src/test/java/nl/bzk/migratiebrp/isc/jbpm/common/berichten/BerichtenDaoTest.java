@@ -50,7 +50,7 @@ public class BerichtenDaoTest extends AbstractJbpmDaoTest {
             @Override
             public void execute(final Connection connection) throws SQLException {
                 try (PreparedStatement statement =
-                        connection.prepareStatement("insert into jbpm_processinstance(id_, version_, issuspended_) values(?, 0, false)")) {
+                             connection.prepareStatement("insert into jbpm_processinstance(id_, version_, issuspended_) values(?, 0, false)")) {
                     statement.setLong(1, 42L);
                     statement.executeUpdate();
                     statement.setLong(1, 4444L);
@@ -75,8 +75,8 @@ public class BerichtenDaoTest extends AbstractJbpmDaoTest {
         final Pf03Bericht bericht = new Pf03Bericht();
         bericht.setMessageId("msg-id-1");
         bericht.setCorrelationId("corr-id-1");
-        bericht.setBronGemeente("0518");
-        bericht.setDoelGemeente("0599");
+        bericht.setBronPartijCode("0518");
+        bericht.setDoelPartijCode("0599");
 
         final Long berichtId = subject.bewaarBericht(bericht);
         Assert.assertNotNull(berichtId);
@@ -88,7 +88,7 @@ public class BerichtenDaoTest extends AbstractJbpmDaoTest {
         final BerichtMetaData metaData = subject.leesBerichtMetaData(berichtId);
         Assert.assertEquals(berichtId, metaData.getId());
         Assert.assertNotNull(metaData.getTijdstip());
-        Assert.assertEquals("VOSPG", metaData.getKanaal());
+        Assert.assertEquals("VOISC", metaData.getKanaal());
         Assert.assertNull(metaData.getRichting());
         Assert.assertEquals("msg-id-1", metaData.getMessageId());
         Assert.assertEquals("corr-id-1", metaData.getCorrelationId());
@@ -100,7 +100,7 @@ public class BerichtenDaoTest extends AbstractJbpmDaoTest {
         final String msgId = UUID.randomUUID().toString();
 
         // Test
-        final Long berichtId = subject.bewaar("TEST", Direction.INKOMEND, msgId, "corr-id", "inhoud", "from", "to", 123L);
+        final Long berichtId = subject.bewaar("TEST", Direction.INKOMEND, msgId, "corr-id", "inhoud", "from", "to", 123L, null);
         Assert.assertNotNull(berichtId);
         nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht bericht = subject.getBericht(berichtId);
         assertBericht(bericht, berichtId, "TEST", Direction.INKOMEND, msgId, "corr-id", "inhoud", null, null, null, "from", "to");
@@ -162,7 +162,7 @@ public class BerichtenDaoTest extends AbstractJbpmDaoTest {
         final String msgId = UUID.randomUUID().toString();
 
         // Test
-        final Long berichtId = subject.bewaar("TEST", Direction.INKOMEND, msgId, "corr-id", "inhoud", "from", "to", 123L);
+        final Long berichtId = subject.bewaar("TEST", Direction.INKOMEND, msgId, "corr-id", "inhoud", "from", "to", 123L, null);
         Assert.assertNotNull(berichtId);
         nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht bericht = subject.getBericht(berichtId);
         assertBericht(bericht, berichtId, "TEST", Direction.INKOMEND, msgId, "corr-id", "inhoud", null, null, null, "from", "to");
@@ -179,19 +179,18 @@ public class BerichtenDaoTest extends AbstractJbpmDaoTest {
     }
 
     private void assertBericht(
-        final nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht bericht,
-        final Long id,
-        final String kanaal,
-        final Direction richting,
-        final String messageId,
-        final String correlationId,
-        final String inhoud,
-        final String naam,
-        final Long processInstanceId,
-        final Long virtuelProcesId,
-        final String originator,
-        final String recipient)
-    {
+            final nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht bericht,
+            final Long id,
+            final String kanaal,
+            final Direction richting,
+            final String messageId,
+            final String correlationId,
+            final String inhoud,
+            final String naam,
+            final Long processInstanceId,
+            final Long virtuelProcesId,
+            final String originator,
+            final String recipient) {
         Assert.assertNotNull("Geen bericht", bericht);
         Assert.assertEquals(id, bericht.getId());
         Assert.assertNotNull(bericht.getTijdstip());

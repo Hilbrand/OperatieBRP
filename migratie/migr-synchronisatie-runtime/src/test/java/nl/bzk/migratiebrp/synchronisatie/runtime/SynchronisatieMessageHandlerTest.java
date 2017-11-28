@@ -19,6 +19,7 @@ import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
@@ -31,8 +32,9 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3PersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerBrpNaarLo3Service;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerLo3NaarBrpService;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
 import nl.bzk.migratiebrp.synchronisatie.runtime.exception.ServiceException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,17 +45,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Testcase voor het testen van de MessageHandler voor synchronisatie berichten.
- *
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SynchronisatieMessageHandlerTest {
 
-    private static final long ANUMMER = 14L;
+    private static final String ANUMMER = "14";
     private static final BrpPersoonslijst DUMMY_BRP_PL = new BrpPersoonslijstBuilder().build();
     private static final Lo3Persoonslijst DUMMY_LO3_PL = new Lo3PersoonslijstBuilder().build();
 
     @Mock
-    private BrpDalService brpDalService;
+    private BrpPersoonslijstService persoonslijstService;
     @Mock
     private ConverteerLo3NaarBrpService converteerLo3NaarBrpService;
     @Mock
@@ -71,8 +72,8 @@ public class SynchronisatieMessageHandlerTest {
 
     @Before
     public void setup() {
-        when(brpDalService.bevraagPersoonslijst(ANUMMER)).thenReturn(DUMMY_BRP_PL);
-        when(brpDalService.zoekPersoonOpAnummer(ANUMMER)).thenReturn(DUMMY_BRP_PL);
+        when(persoonslijstService.bevraagPersoonslijst(ANUMMER)).thenReturn(DUMMY_BRP_PL);
+        when(persoonslijstService.zoekPersoonOpAnummer(ANUMMER)).thenReturn(DUMMY_BRP_PL);
 
         when(converteerBrpNaarLo3Service.converteerBrpPersoonslijst(DUMMY_BRP_PL)).thenReturn(DUMMY_LO3_PL);
         when(converteerLo3NaarBrpService.converteerLo3Persoonslijst(DUMMY_LO3_PL)).thenReturn(DUMMY_BRP_PL);
@@ -106,7 +107,7 @@ public class SynchronisatieMessageHandlerTest {
         when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(session);
         when(connectionFactory.createConnection()).thenReturn(connection);
 
-        messageHandler.setConnectionFactory(connectionFactory);
+        //messageHandler.setConnectionFactory(connectionFactory);
     }
 
     // ------------------------------------TESTS-----------------------------------
@@ -168,7 +169,6 @@ public class SynchronisatieMessageHandlerTest {
 
         /**
          * Geef de waarde van vraag.
-         *
          * @return vraag
          */
         public SyncBericht getVraag() {
@@ -177,7 +177,6 @@ public class SynchronisatieMessageHandlerTest {
 
         /**
          * Geef de waarde van antwoord.
-         *
          * @return antwoord
          */
         public SyncBericht getAntwoord() {
@@ -186,7 +185,6 @@ public class SynchronisatieMessageHandlerTest {
 
         /**
          * Geef de waarde van vraag als text message.
-         *
          * @return vraag als text message
          */
         public TextMessage getVraagAlsTextMessage() {
@@ -195,7 +193,6 @@ public class SynchronisatieMessageHandlerTest {
 
         /**
          * Geef de waarde van antwoord als text message.
-         *
          * @return antwoord als text message
          */
         public TextMessage getAntwoordAlsTextMessage() {

@@ -6,7 +6,8 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen;
 
-import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
@@ -21,33 +22,25 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNummerverwijzingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpAttribuutConverteerder.Lo3GemeenteLand;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * Persoon converteerder.
  */
-@Component
 public final class BrpPersoonConverteerder extends AbstractBrpCategorieConverteerder<Lo3PersoonInhoud> {
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    @Inject
-    private GeboorteConverteerder geboorteConverteerder;
-    @Inject
-    private NaamgebruikConverteerder naamgebruikConverteerder;
-    @Inject
-    private SamengesteldeNaamConverteerder samengesteldeNaamConverteerder;
-    @Inject
-    private IdentificatienumersConverteerder identificatienumersConverteerder;
-    @Inject
-    private GeslachtsaanduidingConverteerder geslachtsaanduidingConverteerder;
-    @Inject
-    private NummerverwijzingConverteerder nummerverwijzingConverteerder;
+    private final BrpAttribuutConverteerder attribuutConverteerder;
+    /**
+     * Constructor.
+     * @param converteerder attribuut converteerder
+     */
+    public BrpPersoonConverteerder(final BrpAttribuutConverteerder converteerder) {
+        attribuutConverteerder = converteerder;
+    }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.AbstractBrpCategorieConverteerder#getLogger()
      */
@@ -60,17 +53,17 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
     protected <T extends BrpGroepInhoud> BrpGroepConverteerder<T, Lo3PersoonInhoud> bepaalConverteerder(final T inhoud) {
         final BrpGroepConverteerder<T, Lo3PersoonInhoud> result;
         if (inhoud instanceof BrpGeboorteInhoud) {
-            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) geboorteConverteerder;
+            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) new GeboorteConverteerder(attribuutConverteerder);
         } else if (inhoud instanceof BrpNaamgebruikInhoud) {
-            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) naamgebruikConverteerder;
+            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) new NaamgebruikConverteerder(attribuutConverteerder);
         } else if (inhoud instanceof BrpSamengesteldeNaamInhoud) {
-            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) samengesteldeNaamConverteerder;
+            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) new SamengesteldeNaamConverteerder(attribuutConverteerder);
         } else if (inhoud instanceof BrpIdentificatienummersInhoud) {
-            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) identificatienumersConverteerder;
+            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) new IdentificatienumersConverteerder(attribuutConverteerder);
         } else if (inhoud instanceof BrpGeslachtsaanduidingInhoud) {
-            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) geslachtsaanduidingConverteerder;
+            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) new GeslachtsaanduidingConverteerder(attribuutConverteerder);
         } else if (inhoud instanceof BrpNummerverwijzingInhoud) {
-            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) nummerverwijzingConverteerder;
+            result = (BrpGroepConverteerder<T, Lo3PersoonInhoud>) new NummerverwijzingConverteerder(attribuutConverteerder);
         } else {
             throw new IllegalArgumentException("BrpPersoonConverteerder bevat geen Groep converteerder voor: " + inhoud);
         }
@@ -80,11 +73,13 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
 
     /**
      * Converteerder die weet hoe een Lo3PersoonInhoud rij gemaakt moet worden.
-     *
-     * @param <T>
-     *            brp groep inhoud type
+     * @param <T> brp groep inhoud type
      */
-    public abstract static class AbstractPersoonConverteerder<T extends BrpGroepInhoud> extends BrpGroepConverteerder<T, Lo3PersoonInhoud> {
+    public abstract static class AbstractPersoonConverteerder<T extends BrpGroepInhoud> extends AbstractBrpGroepConverteerder<T, Lo3PersoonInhoud> {
+
+        AbstractPersoonConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+            super(attribuutConverteerder);
+        }
 
         @Override
         public final Lo3PersoonInhoud maakNieuweInhoud() {
@@ -95,17 +90,21 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
     /**
      * Converteerder die weet hoe een BrpGeboorteInhoud omgezet moeten worden naar Lo3PersoonInhoud.
      */
-    @Component
-    @Requirement({Requirements.CAP001, Requirements.CAP001_BL01, Requirements.CAP001_BL02 })
+    @Requirement({Requirements.CAP001, Requirements.CAP001_BL01, Requirements.CAP001_BL02})
     public static final class GeboorteConverteerder extends AbstractPersoonConverteerder<BrpGeboorteInhoud> {
         private static final Logger LOG = LoggerFactory.getLogger();
 
-        @Inject
-        private BrpAttribuutConverteerder converteerder;
+        /**
+         * Constructor.
+         * @param converteerder attribuut converteerder
+         */
+        public GeboorteConverteerder(final BrpAttribuutConverteerder converteerder) {
+            super(converteerder);
+        }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder#getLogger()
          */
         @Override
@@ -129,14 +128,14 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
                 final BrpString omschrijvingGeboortelocatie = brpInhoud.getOmschrijvingGeboortelocatie();
 
                 final Lo3GemeenteLand locatie =
-                        converteerder.converteerLocatie(
-                            gemeenteCode,
-                            buitenlandsePlaatsGeboorte,
-                            buitenlandseRegioGeboorte,
-                            landCode,
-                            omschrijvingGeboortelocatie);
+                        getAttribuutConverteerder().converteerLocatie(
+                                gemeenteCode,
+                                buitenlandsePlaatsGeboorte,
+                                buitenlandseRegioGeboorte,
+                                landCode,
+                                omschrijvingGeboortelocatie);
 
-                builder.setGeboortedatum(converteerder.converteerDatum(brpInhoud.getGeboortedatum()));
+                builder.setGeboortedatum(getAttribuutConverteerder().converteerDatum(brpInhoud.getGeboortedatum()));
                 builder.setGeboorteGemeenteCode(locatie.getGemeenteCode());
                 builder.setGeboorteLandCode(locatie.getLandCode());
             }
@@ -147,16 +146,19 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
     /**
      * Converteerder die weet hoe een BrpNaamgebruikInhoud omgezet moeten worden naar Lo3PersoonInhoud.
      */
-    @Component
     public static final class NaamgebruikConverteerder extends AbstractPersoonConverteerder<BrpNaamgebruikInhoud> {
         private static final Logger LOG = LoggerFactory.getLogger();
-
-        @Inject
-        private BrpAttribuutConverteerder converteerder;
+        /**
+         * Constructor.
+         * @param converteerder attribuut converteerder
+         */
+        public NaamgebruikConverteerder(final BrpAttribuutConverteerder converteerder) {
+            super(converteerder);
+        }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder#getLogger()
          */
         @Override
@@ -166,16 +168,15 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
 
         @Override
         public Lo3PersoonInhoud vulInhoud(
-            final Lo3PersoonInhoud lo3Inhoud,
-            final BrpNaamgebruikInhoud brpInhoud,
-            final BrpNaamgebruikInhoud brpVorigeInhoud)
-        {
+                final Lo3PersoonInhoud lo3Inhoud,
+                final BrpNaamgebruikInhoud brpInhoud,
+                final BrpNaamgebruikInhoud brpVorigeInhoud) {
             final Lo3PersoonInhoud.Builder builder = new Lo3PersoonInhoud.Builder(lo3Inhoud);
 
             if (brpInhoud == null) {
                 builder.setAanduidingNaamgebruikCode(null);
             } else {
-                builder.setAanduidingNaamgebruikCode(converteerder.converteerAanduidingNaamgebruik(brpInhoud.getNaamgebruikCode()));
+                builder.setAanduidingNaamgebruikCode(getAttribuutConverteerder().converteerAanduidingNaamgebruik(brpInhoud.getNaamgebruikCode()));
             }
             return builder.build();
         }
@@ -185,17 +186,20 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
     /**
      * Converteerder die weet hoe een BrpSamengesteldeNaamInhoud omgezet moeten worden naar Lo3PersoonInhoud.
      */
-    @Component
-    @Requirement({Requirements.CEL0210_BL01, Requirements.CEL0240, Requirements.CEL0240_BL01 })
+    @Requirement({Requirements.CEL0210_BL01, Requirements.CEL0240, Requirements.CEL0240_BL01})
     public static final class SamengesteldeNaamConverteerder extends AbstractPersoonConverteerder<BrpSamengesteldeNaamInhoud> {
         private static final Logger LOG = LoggerFactory.getLogger();
-
-        @Inject
-        private BrpAttribuutConverteerder converteerder;
+        /**
+         * Constructor.
+         * @param converteerder attribuut converteerder
+         */
+        public SamengesteldeNaamConverteerder(final BrpAttribuutConverteerder converteerder) {
+            super(converteerder);
+        }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder#getLogger()
          */
         @Override
@@ -205,10 +209,9 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
 
         @Override
         public Lo3PersoonInhoud vulInhoud(
-            final Lo3PersoonInhoud lo3Inhoud,
-            final BrpSamengesteldeNaamInhoud brpInhoud,
-            final BrpSamengesteldeNaamInhoud brpVorigeInhoud)
-        {
+                final Lo3PersoonInhoud lo3Inhoud,
+                final BrpSamengesteldeNaamInhoud brpInhoud,
+                final BrpSamengesteldeNaamInhoud brpVorigeInhoud) {
             final Lo3PersoonInhoud.Builder builder = new Lo3PersoonInhoud.Builder(lo3Inhoud);
 
             if (brpInhoud == null) {
@@ -217,12 +220,12 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
                 builder.setVoorvoegselGeslachtsnaam(null);
                 builder.setGeslachtsnaam(null);
             } else {
-                builder.setAdellijkeTitelPredikaatCode(converteerder.converteerAdellijkeTitelPredikaatCode(
-                    brpInhoud.getAdellijkeTitelCode(),
-                    brpInhoud.getPredicaatCode()));
-                builder.setVoornamen(converteerder.converteerString(brpInhoud.getVoornamen()));
-                builder.setVoorvoegselGeslachtsnaam(converteerder.converteerVoorvoegsel(brpInhoud.getVoorvoegsel(), brpInhoud.getScheidingsteken()));
-                builder.setGeslachtsnaam(converteerder.converteerString(brpInhoud.getGeslachtsnaamstam()));
+                builder.setAdellijkeTitelPredikaatCode(
+                        getAttribuutConverteerder().converteerAdellijkeTitelPredikaatCode(brpInhoud.getAdellijkeTitelCode(), brpInhoud.getPredicaatCode()));
+                builder.setVoornamen(getAttribuutConverteerder().converteerString(brpInhoud.getVoornamen()));
+                builder.setVoorvoegselGeslachtsnaam(
+                        getAttribuutConverteerder().converteerVoorvoegsel(brpInhoud.getVoorvoegsel(), brpInhoud.getScheidingsteken()));
+                builder.setGeslachtsnaam(getAttribuutConverteerder().converteerString(brpInhoud.getGeslachtsnaamstam()));
             }
             return builder.build();
         }
@@ -231,17 +234,20 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
     /**
      * Converteerder die weet hoe een BrpIdentificatienummersInhoud omgezet moeten worden naar Lo3PersoonInhoud.
      */
-    @Component
-    @Requirement({Requirements.CGR01, Requirements.CGR01_BL01 })
+    @Requirement({Requirements.CGR01, Requirements.CGR01_BL01})
     public static final class IdentificatienumersConverteerder extends AbstractPersoonConverteerder<BrpIdentificatienummersInhoud> {
         private static final Logger LOG = LoggerFactory.getLogger();
-
-        @Inject
-        private BrpAttribuutConverteerder converteerder;
+        /**
+         * Constructor.
+         * @param converteerder attribuut converteerder
+         */
+        public IdentificatienumersConverteerder(final BrpAttribuutConverteerder converteerder) {
+            super(converteerder);
+        }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder#getLogger()
          */
         @Override
@@ -251,18 +257,17 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
 
         @Override
         public Lo3PersoonInhoud vulInhoud(
-            final Lo3PersoonInhoud lo3Inhoud,
-            final BrpIdentificatienummersInhoud brpInhoud,
-            final BrpIdentificatienummersInhoud brpVorigeInhoud)
-        {
+                final Lo3PersoonInhoud lo3Inhoud,
+                final BrpIdentificatienummersInhoud brpInhoud,
+                final BrpIdentificatienummersInhoud brpVorigeInhoud) {
             final Lo3PersoonInhoud.Builder builder = new Lo3PersoonInhoud.Builder(lo3Inhoud);
 
             if (brpInhoud == null) {
                 builder.setaNummer(null);
                 builder.setBurgerservicenummer(null);
             } else {
-                builder.setaNummer(converteerder.converteerAdministratieNummer(brpInhoud.getAdministratienummer()));
-                builder.setBurgerservicenummer(converteerder.converteerBurgerservicenummer(brpInhoud.getBurgerservicenummer()));
+                builder.setaNummer(getAttribuutConverteerder().converteerAdministratieNummer(brpInhoud.getAdministratienummer()));
+                builder.setBurgerservicenummer(getAttribuutConverteerder().converteerBurgerservicenummer(brpInhoud.getBurgerservicenummer()));
             }
             return builder.build();
         }
@@ -272,16 +277,19 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
     /**
      * Converteerder die weet hoe een BrpGeslachtsaanduidingInhoud omgezet moeten worden naar Lo3PersoonInhoud.
      */
-    @Component
     public static final class GeslachtsaanduidingConverteerder extends AbstractPersoonConverteerder<BrpGeslachtsaanduidingInhoud> {
         private static final Logger LOG = LoggerFactory.getLogger();
-
-        @Inject
-        private BrpAttribuutConverteerder converteerder;
+        /**
+         * Constructor.
+         * @param converteerder attribuut converteerder
+         */
+        public GeslachtsaanduidingConverteerder(final BrpAttribuutConverteerder converteerder) {
+            super(converteerder);
+        }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder#getLogger()
          */
         @Override
@@ -291,16 +299,15 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
 
         @Override
         public Lo3PersoonInhoud vulInhoud(
-            final Lo3PersoonInhoud lo3Inhoud,
-            final BrpGeslachtsaanduidingInhoud brpInhoud,
-            final BrpGeslachtsaanduidingInhoud brpVorigeInhoud)
-        {
+                final Lo3PersoonInhoud lo3Inhoud,
+                final BrpGeslachtsaanduidingInhoud brpInhoud,
+                final BrpGeslachtsaanduidingInhoud brpVorigeInhoud) {
             final Lo3PersoonInhoud.Builder builder = new Lo3PersoonInhoud.Builder(lo3Inhoud);
 
             if (brpInhoud == null) {
                 builder.setGeslachtsaanduiding(null);
             } else {
-                builder.setGeslachtsaanduiding(converteerder.converteerGeslachtsaanduiding(brpInhoud.getGeslachtsaanduidingCode()));
+                builder.setGeslachtsaanduiding(getAttribuutConverteerder().converteerGeslachtsaanduiding(brpInhoud.getGeslachtsaanduidingCode()));
             }
             return builder.build();
         }
@@ -310,16 +317,19 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
     /**
      * Converteerder die weet hoe een BrpNummerverwijzingInhoud omgezet moeten worden naar Lo3PersoonInhoud.
      */
-    @Component
     public static final class NummerverwijzingConverteerder extends AbstractPersoonConverteerder<BrpNummerverwijzingInhoud> {
         private static final Logger LOG = LoggerFactory.getLogger();
-
-        @Inject
-        private BrpAttribuutConverteerder converteerder;
+        /**
+         * Constructor.
+         * @param converteerder attribuut converteerder
+         */
+        public NummerverwijzingConverteerder(final BrpAttribuutConverteerder converteerder) {
+            super(converteerder);
+        }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder#getLogger()
          */
         @Override
@@ -329,22 +339,20 @@ public final class BrpPersoonConverteerder extends AbstractBrpCategorieConvertee
 
         @Override
         public Lo3PersoonInhoud vulInhoud(
-            final Lo3PersoonInhoud lo3Inhoud,
-            final BrpNummerverwijzingInhoud brpInhoud,
-            final BrpNummerverwijzingInhoud brpVorigeInhoud)
-        {
+                final Lo3PersoonInhoud lo3Inhoud,
+                final BrpNummerverwijzingInhoud brpInhoud,
+                final BrpNummerverwijzingInhoud brpVorigeInhoud) {
             final Lo3PersoonInhoud.Builder builder = new Lo3PersoonInhoud.Builder(lo3Inhoud);
 
             if (brpInhoud == null) {
                 builder.setVolgendANummer(null);
                 builder.setVorigANummer(null);
             } else {
-                builder.setVolgendANummer(converteerder.converteerAdministratieNummer(brpInhoud.getVolgendeAdministratienummer()));
-                builder.setVorigANummer(converteerder.converteerAdministratieNummer(brpInhoud.getVorigeAdministratienummer()));
+                builder.setVolgendANummer(getAttribuutConverteerder().converteerAdministratieNummer(brpInhoud.getVolgendeAdministratienummer()));
+                builder.setVorigANummer(getAttribuutConverteerder().converteerAdministratieNummer(brpInhoud.getVorigeAdministratienummer()));
             }
             return builder.build();
         }
 
     }
-
 }

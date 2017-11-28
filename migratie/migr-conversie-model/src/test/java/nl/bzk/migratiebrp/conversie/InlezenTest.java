@@ -6,14 +6,16 @@
 
 package nl.bzk.migratiebrp.conversie;
 
-import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
-import nl.bzk.migratiebrp.conversie.model.serialize.XmlEncoding;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
+import nl.bzk.algemeenbrp.util.xml.exception.XmlException;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
+import nl.bzk.migratiebrp.conversie.model.serialize.MigratieXml;
+import org.junit.Test;
 
 /**
  * Inlezen Test.
@@ -21,20 +23,20 @@ import java.net.URL;
 public class InlezenTest {
 
     @Test
-    public void testLeesVerwachteBrpPersoonslijst() {
-        URL resource = this.getClass().getClassLoader().getResource("brppersoonslijst.xml");
+    public void testLeesVerwachteBrpPersoonslijst() throws XmlException {
+        final URL resource = this.getClass().getClassLoader().getResource("brppersoonslijst.xml");
         try {
-            if(resource!=null) {
+            if (resource != null) {
                 final File file = new File(resource.getFile());
-                FileInputStream fis = new FileInputStream(file);
-                XmlEncoding.decode(BrpPersoonslijst.class, fis);
+                final FileInputStream fis = new FileInputStream(file);
+                final Reader reader = new InputStreamReader(fis);
+
+                MigratieXml.decode(BrpPersoonslijst.class, reader);
+
             }
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             e.printStackTrace();
         }
     }
-
-
-
 
 }

@@ -8,8 +8,8 @@ package nl.bzk.migratiebrp.test.common.writer;
 
 import java.io.File;
 import java.util.regex.Pattern;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Abstract I/O Factory.
@@ -35,9 +35,7 @@ public abstract class AbstractIOFactory {
 
     /**
      * Controleert of de factory een I/O (reader/writer) heeft die de aangeboden file kan verwerken.
-     * 
-     * @param file
-     *            het te lezen bestand
+     * @param file het te lezen bestand
      * @return true als er I/O voor mogelijk is, false als dit niet zo is.
      */
     public abstract boolean accept(final File file);

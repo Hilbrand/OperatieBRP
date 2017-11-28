@@ -11,16 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.isc.impl.Uc812Bericht;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegister;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
 import nl.bzk.migratiebrp.bericht.model.sync.register.Stelsel;
-import nl.bzk.migratiebrp.isc.jbpm.common.ValidationUtil;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler;
-import nl.bzk.migratiebrp.register.client.GemeenteService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.register.client.PartijService;
+import nl.bzk.migratiebrp.util.common.AnummerUtil;
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,11 +42,19 @@ public final class ValideerBulkBestandAction implements SpringAction {
     private static final String INPUT_PARAMETER_KEY = "input";
     private static final Integer MAXIMALE_INDEX_FOUTMELDING = 3996;
 
-    @Inject
-    private BerichtenDao berichtenDao;
+    private final BerichtenDao berichtenDao;
+    private final PartijService partijService;
 
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     * @param partijService de partij service
+     */
     @Inject
-    private GemeenteService gemeenteService;
+    public ValideerBulkBestandAction(final BerichtenDao berichtenDao, final PartijService partijService) {
+        this.berichtenDao = berichtenDao;
+        this.partijService = partijService;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -53,10 +62,10 @@ public final class ValideerBulkBestandAction implements SpringAction {
 
         final Uc812Bericht uc812Bericht = (Uc812Bericht) berichtenDao.leesBericht((Long) parameters.get(INPUT_PARAMETER_KEY));
 
-        final GemeenteRegister gemeenteRegister = gemeenteService.geefRegister();
+        final PartijRegister partijRegister = partijService.geefRegister();
 
-        final List<String> foutRegels = valideerInhoudBulkBestand(uc812Bericht.getBulkSynchronisatievraag(), gemeenteRegister);
-        if (foutRegels.size() != 0) {
+        final List<String> foutRegels = valideerInhoudBulkBestand(uc812Bericht.getBulkSynchronisatievraag(), partijRegister);
+        if (!foutRegels.isEmpty()) {
 
             final Map<String, Object> result = new HashMap<>();
 
@@ -82,7 +91,7 @@ public final class ValideerBulkBestandAction implements SpringAction {
         return null;
     }
 
-    private List<String> valideerInhoudBulkBestand(final String teformatterenTekst, final GemeenteRegister gemeenteRegister) {
+    private List<String> valideerInhoudBulkBestand(final String teformatterenTekst, final PartijRegister partijRegister) {
 
         final List<String> foutRegels = new ArrayList<>();
 
@@ -95,19 +104,20 @@ public final class ValideerBulkBestandAction implements SpringAction {
 
             final String[] regelGesplit = regel.split(KOMMA);
 
-            if (regelGesplit.length != 2) {
+            final int verwachtAantalKolommen = 2;
+            if (regelGesplit.length != verwachtAantalKolommen) {
                 foutRegels.add(MELDING_FOUT_REGEL + huidigeRegel + ": Het aantal kolommen is niet 2. ");
             } else {
                 final String gemeente = regelGesplit[0];
                 if (LENGTE_GEMEENTE_CODE != gemeente.length()) {
                     foutRegels.add(MELDING_FOUT_REGEL + huidigeRegel + ": De lengte van de gemeente code is niet " + LENGTE_GEMEENTE_CODE);
-                } else if (!bepaalGbaGemeenten(gemeenteRegister, gemeente)) {
+                } else if (!bepaalGbaGemeenten(partijRegister, gemeente)) {
                     foutRegels.add(MELDING_FOUT_REGEL + huidigeRegel + ": Gemeente met code " + gemeente + " is geen GBA-gemeente");
                 }
                 final String aNummer = regelGesplit[1];
                 if (LENGTE_ANUMMER != aNummer.length()) {
                     foutRegels.add(MELDING_FOUT_REGEL + huidigeRegel + ": De lengte van het a-nummer is niet " + LENGTE_ANUMMER);
-                } else if (!ValidationUtil.valideerANummer(aNummer)) {
+                } else if (!AnummerUtil.isAnummerValide(aNummer)) {
                     foutRegels.add(MELDING_FOUT_REGEL + huidigeRegel + ": Het a-nummer " + aNummer + " is geen geldig a-nummer");
                 }
             }
@@ -118,15 +128,10 @@ public final class ValideerBulkBestandAction implements SpringAction {
         return foutRegels;
     }
 
-    private boolean bepaalGbaGemeenten(final GemeenteRegister gemeenteRegister, final String ingelezenGemeente) {
+    private boolean bepaalGbaGemeenten(final PartijRegister partijRegister, final String ingelezenGemeente) {
+        final Partij partij = partijRegister.zoekPartijOpGemeenteCode(ingelezenGemeente);
+        return partij != null && partij.isBijhouder() && Stelsel.GBA == partij.getStelsel();
 
-        if (gemeenteRegister.zoekGemeenteOpGemeenteCode(ingelezenGemeente) != null
-            && Stelsel.GBA == gemeenteRegister.zoekGemeenteOpGemeenteCode(ingelezenGemeente).getStelsel())
-        {
-            return true;
-        }
-
-        return false;
     }
 
 }

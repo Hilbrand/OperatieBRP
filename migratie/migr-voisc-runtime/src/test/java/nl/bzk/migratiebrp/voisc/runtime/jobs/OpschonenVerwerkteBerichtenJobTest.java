@@ -6,13 +6,17 @@
 
 package nl.bzk.migratiebrp.voisc.runtime.jobs;
 
-import java.util.Calendar;
-import java.util.Date;
 import nl.bzk.migratiebrp.voisc.runtime.VoiscService;
+
+import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class OpschonenVerwerkteBerichtenJobTest {
 
@@ -35,15 +39,18 @@ public class OpschonenVerwerkteBerichtenJobTest {
 
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.HOUR_OF_DAY, -aantalUrenSindsVerwerkt);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
         final Date ouderDan = cal.getTime();
+
+        ArgumentCaptor<Date> ouderDanCapturer = ArgumentCaptor.forClass(Date.class);
+
         // Verify
         Mockito.verify(jobExecutionContext).getMergedJobDataMap();
-        Mockito.verify(voiscService).opschonenVoiscBerichten(ouderDan);
+        Mockito.verify(voiscService).opschonenVoiscBerichten(ouderDanCapturer.capture());
         Mockito.verifyNoMoreInteractions(voiscService, jobExecutionContext);
+
+        final Date capturedDate = ouderDanCapturer.getValue();
+        Assert.assertTrue(ouderDan.getTime() >= capturedDate.getTime());
+        Assert.assertTrue((ouderDan.getTime() + 10000) >= capturedDate.getTime());
     }
 
 }

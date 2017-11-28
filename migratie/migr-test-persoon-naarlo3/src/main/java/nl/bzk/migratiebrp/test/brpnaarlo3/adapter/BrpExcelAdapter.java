@@ -11,9 +11,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -33,12 +33,9 @@ public final class BrpExcelAdapter {
 
     /**
      * Lees een excel document in.
-     *
-     * @param is
-     *            inputstream
+     * @param is inputstream
      * @return ingelezen personen
-     * @throws IOException
-     *             bij lees fouten
+     * @throws IOException bij lees fouten
      */
     public List<Persoon> leesExcel(final InputStream is) throws IOException {
         LOG.info("leesExcel");
@@ -110,10 +107,6 @@ public final class BrpExcelAdapter {
 
     private String getCellStringValue(final HSSFRow row, final int i) {
         final HSSFCell cell = row.getCell(i);
-
-        // if (cell != null && cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-        // System.out.printf("bah. humbug");
-        // }
         return cell == null ? null : cell.getStringCellValue();
     }
 

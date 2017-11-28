@@ -6,7 +6,6 @@
 
 package nl.bzk.migratiebrp.isc.console.mig4jsf.jmx;
 
-import java.io.IOException;
 import java.io.Serializable;
 import javax.el.ELContext;
 import javax.el.ValueExpression;
@@ -14,7 +13,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
-import javax.management.JMException;
 
 /**
  * Haal een waarde op via jmx.
@@ -30,25 +28,18 @@ public final class JmxAttributeActionListener implements ActionListener, Seriali
 
     /**
      * Constructor.
-     *
-     * @param targetExpression
-     *            expression voor target
-     * @param serverExpression
-     *            expression voor jmx server
-     * @param objectNameExpression
-     *            expression voor object name
-     * @param attributeNameExpression
-     *            expression voor attribute name
-     * @param ignoreErrorsExpression
-     *            expression voor indicatie errors negeren
+     * @param targetExpression expression voor target
+     * @param serverExpression expression voor jmx server
+     * @param objectNameExpression expression voor object name
+     * @param attributeNameExpression expression voor attribute name
+     * @param ignoreErrorsExpression expression voor indicatie errors negeren
      */
-    public JmxAttributeActionListener(
-        final ValueExpression targetExpression,
-        final ValueExpression serverExpression,
-        final ValueExpression objectNameExpression,
-        final ValueExpression attributeNameExpression,
-        final ValueExpression ignoreErrorsExpression)
-    {
+    JmxAttributeActionListener(
+            final ValueExpression targetExpression,
+            final ValueExpression serverExpression,
+            final ValueExpression objectNameExpression,
+            final ValueExpression attributeNameExpression,
+            final ValueExpression ignoreErrorsExpression) {
         this.targetExpression = targetExpression;
         this.serverExpression = serverExpression;
         this.objectNameExpression = objectNameExpression;
@@ -65,20 +56,16 @@ public final class JmxAttributeActionListener implements ActionListener, Seriali
         final String objectName = (String) objectNameExpression.getValue(elContext);
         final String attributeName = (String) attributeNameExpression.getValue(elContext);
 
-        final boolean ignoreErrors;
-        if (ignoreErrorsExpression == null) {
-            ignoreErrors = true;
-        } else {
-            final Boolean ignoreErrorsValue = (Boolean) ignoreErrorsExpression.getValue(elContext);
-            ignoreErrors = ignoreErrorsValue == null ? true : ignoreErrorsValue;
-        }
-
         try {
             targetExpression.setValue(elContext, server.getAttribute(objectName, attributeName));
-        } catch (final
-            IOException
-            | JMException e)
-        {
+        } catch (final JmxServerException e) {
+            final boolean ignoreErrors;
+            if (ignoreErrorsExpression == null) {
+                ignoreErrors = true;
+            } else {
+                final Boolean ignoreErrorsValue = (Boolean) ignoreErrorsExpression.getValue(elContext);
+                ignoreErrors = ignoreErrorsValue == null ? true : ignoreErrorsValue;
+            }
             if (!ignoreErrors) {
                 throw new AbortProcessingException("JMX Attribute kan niet worden opgehaald.", e);
             }

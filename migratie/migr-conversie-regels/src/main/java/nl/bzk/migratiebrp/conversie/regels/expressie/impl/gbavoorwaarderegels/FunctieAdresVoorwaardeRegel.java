@@ -9,13 +9,17 @@ package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3FunctieAdres;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.RubriekWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
 import org.springframework.stereotype.Component;
 
 /**
  * Vertaald GBA voorwaarde regels van type functie adres; hiervoor wordt een conversie tabel gebruikt.
  */
 @Component
-public class FunctieAdresVoorwaardeRegel extends AbstractStandaardVoorwaardeRegel {
+public final class FunctieAdresVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
 
     /**
      * Regex expressie voor selectie van voorwaarderegels die door deze class worden behandeld.
@@ -23,21 +27,26 @@ public class FunctieAdresVoorwaardeRegel extends AbstractStandaardVoorwaardeRege
     public static final String REGEX_PATROON = "^(08|58)\\.10\\.10.*";
     private static final int VOLGORDE = 500;
 
-    @Inject
-    private ConversietabelFactory conversieTabelFactory;
+    private final StandaardVoorwaardeRegelUtil standaardVoorwaardeRegelUtil;
 
     /**
      * Maakt nieuwe voorwaarderegel aan.
+     * @param conversieTabelFactory conversie tabel factory
+     * @param gbaRubriekNaarBrpTypeVertaler rubriekvertaler
      */
-    public FunctieAdresVoorwaardeRegel() {
+    @Inject
+    public FunctieAdresVoorwaardeRegel(
+            final ConversietabelFactory conversieTabelFactory,
+            final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler) {
         super(VOLGORDE, REGEX_PATROON);
+        standaardVoorwaardeRegelUtil = new StandaardVoorwaardeRegelUtil(gbaRubriekNaarBrpTypeVertaler, waarde ->
+                conversieTabelFactory.createFunctieAdresConversietabel().converteerNaarBrp(new Lo3FunctieAdres(waarde.replaceAll("\"", "")))
+                        .getWaarde()
+        );
     }
 
     @Override
-    public final String vertaalWaardeVanRubriek(final String ruweWaarde) {
-        final String zonderAanhalingstekens = ruweWaarde.replaceAll("\"", "");
-        final String vertaaldeWaarde =
-                conversieTabelFactory.createFunctieAdresConversietabel().converteerNaarBrp(new Lo3FunctieAdres(zonderAanhalingstekens)).getWaarde();
-        return String.format("\"%s\"", vertaaldeWaarde);
+    public Expressie getBrpExpressie(final RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
+        return standaardVoorwaardeRegelUtil.getBrpExpressie(voorwaardeRegel);
     }
 }

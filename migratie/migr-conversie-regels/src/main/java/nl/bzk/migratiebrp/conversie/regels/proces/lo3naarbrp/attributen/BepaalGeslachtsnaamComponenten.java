@@ -13,35 +13,29 @@ import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
-import org.springframework.stereotype.Component;
 
 /**
  * Bepaal de geslachtsnaam componenten obv de samengestelde naam.
- * 
  */
-@Component
 public class BepaalGeslachtsnaamComponenten {
 
     /**
      * Bepaal de geslachtsnaam componenten obv de samengestelde naam.
-     * 
-     * @param samengesteldeNaamStapel
-     *            samengestelde naam stapel
+     * @param samengesteldeNaamStapel samengestelde naam stapel
      * @return lijst van geslachtsnaam component stapels
      */
-    public final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> bepaal(final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaamStapel)
-    {
+    public final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> bepaal(final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaamStapel) {
 
         final List<BrpGroep<BrpGeslachtsnaamcomponentInhoud>> geslachtsnaamComponentGroepen = new ArrayList<>();
         for (final BrpGroep<BrpSamengesteldeNaamInhoud> samengesteldeNaamGroep : samengesteldeNaamStapel) {
             final BrpGeslachtsnaamcomponentInhoud inhoud = bepaalGeslachtsnaamComponent(samengesteldeNaamGroep.getInhoud());
 
             geslachtsnaamComponentGroepen.add(new BrpGroep<>(
-                inhoud,
-                samengesteldeNaamGroep.getHistorie(),
-                samengesteldeNaamGroep.getActieInhoud(),
-                samengesteldeNaamGroep.getActieVerval(),
-                samengesteldeNaamGroep.getActieGeldigheid()));
+                    inhoud,
+                    samengesteldeNaamGroep.getHistorie(),
+                    samengesteldeNaamGroep.getActieInhoud(),
+                    samengesteldeNaamGroep.getActieVerval(),
+                    samengesteldeNaamGroep.getActieGeldigheid()));
         }
 
         final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> result = new ArrayList<>();
@@ -52,11 +46,11 @@ public class BepaalGeslachtsnaamComponenten {
 
     private static BrpGeslachtsnaamcomponentInhoud bepaalGeslachtsnaamComponent(final BrpSamengesteldeNaamInhoud inhoud) {
         return new BrpGeslachtsnaamcomponentInhoud(
-            inhoud.getVoorvoegsel(),
-            inhoud.getScheidingsteken(),
-            inhoud.getGeslachtsnaamstam(),
-            inhoud.getPredicaatCode(),
-            inhoud.getAdellijkeTitelCode(),
-            new BrpInteger(1));
+                inhoud.getVoorvoegsel(),
+                inhoud.getScheidingsteken(),
+                inhoud.getGeslachtsnaamstam(),
+                inhoud.getPredicaatCode(),
+                inhoud.getAdellijkeTitelCode(),
+                new BrpInteger(1));
     }
 }

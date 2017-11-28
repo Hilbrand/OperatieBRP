@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Autorisatie;
@@ -17,24 +18,28 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Preconditie controles voor categorie 35: Autorisaties.
  *
  * Maakt gebruik van de {@link nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging#log Logging.log} methode.
  */
-@Component
 public final class Lo3AutorisatiePrecondities extends AbstractLo3Precondities {
 
     private boolean legeEinddatumVerwerkt;
 
     /**
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
+     */
+    public Lo3AutorisatiePrecondities(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
+
+    /**
      * Controleer precondities op container niveau.
-     *
-     * @param autorisatie
-     *            autorisatie
+     * @param autorisatie autorisatie
      */
     public void controleerAutorisatie(final Lo3Autorisatie autorisatie) {
         legeEinddatumVerwerkt = false;
@@ -44,22 +49,17 @@ public final class Lo3AutorisatiePrecondities extends AbstractLo3Precondities {
 
     /**
      * Controleert of alle verplichte velden van de autorisatie wel gevuld zijn.
-     *
-     * @param autorisatie
-     *            De te controleren autorisatie.
+     * @param autorisatie De te controleren autorisatie.
      */
     private void controleerVerplichteVelden(final Lo3Autorisatie autorisatie) {
 
-        controleerAanwezig(
-            Lo3Integer.wrap(autorisatie.getAfnemersindicatie()),
-            Foutmelding.maakMeldingFout(new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_35, -1, -1), LogSeverity.ERROR, SoortMeldingCode.AUT001, null));
+        controleerAanwezig(Lo3String.wrap(autorisatie.getAfnemersindicatie()),
+                Foutmelding.maakMeldingFout(new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_35, -1, -1), LogSeverity.ERROR, SoortMeldingCode.AUT001, null));
     }
 
     /**
      * Controleer precondities op stapel niveau.
-     *
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      */
     public void controleerStapel(final Lo3Stapel<Lo3AutorisatieInhoud> stapel) {
 
@@ -70,9 +70,7 @@ public final class Lo3AutorisatiePrecondities extends AbstractLo3Precondities {
 
     /**
      * Controleert de categorie.
-     *
-     * @param categorie
-     *            De te controleren categorie.
+     * @param categorie De te controleren categorie.
      */
     private void controleerCategorie(final Lo3Categorie<Lo3AutorisatieInhoud> categorie) {
 
@@ -80,12 +78,12 @@ public final class Lo3AutorisatiePrecondities extends AbstractLo3Precondities {
         final Lo3Herkomst herkomst = categorie.getLo3Herkomst();
 
         controleerAanwezig(
-            Lo3String.wrap(inhoud.getAfnemernaam()),
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.AUT004, null));
+                Lo3String.wrap(inhoud.getAfnemernaam()),
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.AUT004, null));
 
         controleerAanwezig(
-            Lo3Integer.wrap(inhoud.getVerstrekkingsbeperking()),
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.AUT005, null));
+                Lo3Integer.wrap(inhoud.getVerstrekkingsbeperking()),
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.AUT005, null));
 
         final Lo3Datum datumIngang = inhoud.getDatumIngang();
 

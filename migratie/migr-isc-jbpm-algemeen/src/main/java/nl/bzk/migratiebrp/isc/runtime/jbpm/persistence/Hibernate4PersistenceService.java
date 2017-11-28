@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.isc.runtime.jbpm.persistence;
 
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -23,7 +23,6 @@ import org.jbpm.tx.TxService;
 
 /**
  * Persistence service die werkt via hibernate 4.
- *
  * @see org.jbpm.persistence.db.DbPersistenceService
  */
 public final class Hibernate4PersistenceService implements PersistenceService {
@@ -42,9 +41,7 @@ public final class Hibernate4PersistenceService implements PersistenceService {
 
     /**
      * Constructor.
-     *
-     * @param sessionFactory
-     *            session factory
+     * @param sessionFactory session factory
      */
     public Hibernate4PersistenceService(final SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -52,6 +49,7 @@ public final class Hibernate4PersistenceService implements PersistenceService {
 
     @Override
     public void close() {
+        // Interface methode, hoeft niks te sluiten
     }
 
     @Override
@@ -132,8 +130,8 @@ public final class Hibernate4PersistenceService implements PersistenceService {
     }
 
     /**
-     * @deprecated use {@link TxService#isRollbackOnly()} instead
      * @return {@link txService#isRollbackOnly()}
+     * @deprecated use {@link TxService#isRollbackOnly()} instead
      */
     @Deprecated
     @Override
@@ -155,11 +153,9 @@ public final class Hibernate4PersistenceService implements PersistenceService {
     }
 
     /**
+     * @param isRollbackOnly true, to set to rollback only
+     * @throws IllegalArgumentException if <code>rollbackOnly</code> is <code>false</code>
      * @deprecated use {@link TxService#setRollbackOnly()} instead
-     * @param isRollbackOnly
-     *            true, to set to rollback only
-     * @throws IllegalArgumentException
-     *             if <code>rollbackOnly</code> is <code>false</code>
      */
     @Deprecated
     @Override

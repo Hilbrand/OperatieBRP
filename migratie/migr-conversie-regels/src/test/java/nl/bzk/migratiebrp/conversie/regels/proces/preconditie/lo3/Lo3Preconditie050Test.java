@@ -8,6 +8,7 @@ package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -25,11 +26,12 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.regels.proces.AbstractLoggingTest;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import org.junit.Test;
 
 public class Lo3Preconditie050Test extends AbstractLoggingTest {
 
-    private static final Lo3PreconditiesTester TESTER = new Lo3PreconditiesTester();
+    private static final Lo3PreconditiesTester TESTER = new Lo3PreconditiesTester(new ConversietabelFactoryImpl());
     private static final Lo3Datum DEFAULT_DATUM = new Lo3Datum(19900101);
 
     // Situatie 1
@@ -57,15 +59,15 @@ public class Lo3Preconditie050Test extends AbstractLoggingTest {
 
     private final Lo3KindInhoud s2InhoudLeeg = new Lo3KindInhoud(null, null, null, null, null, null, null, null, null);
     private final Lo3KindInhoud s2InhoudGevuld = new Lo3KindInhoud(
-        null,
-        null,
-        Lo3String.wrap("Piet"),
-        null,
-        null,
-        Lo3String.wrap("Jansen"),
-        null,
-        null,
-        null);
+            null,
+            null,
+            Lo3String.wrap("Piet"),
+            null,
+            null,
+            Lo3String.wrap("Jansen"),
+            null,
+            null,
+            null);
 
     // Situatie 3
     private final Lo3Historie s3Lo3Historie1 = new Lo3Historie(Lo3IndicatieOnjuist.O, new Lo3Datum(19960107), new Lo3Datum(19950901));
@@ -88,20 +90,20 @@ public class Lo3Preconditie050Test extends AbstractLoggingTest {
     private final Lo3Herkomst c4Lo3Herkomst0 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 0);
     private final Lo3Herkomst c4Lo3Herkomst1 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1);
 
-    private final Lo3NationaliteitInhoud c4InhoudDuits = new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6029"), null, null, null);
-    private final Lo3NationaliteitInhoud c4InhoudLegeRij = new Lo3NationaliteitInhoud(null, null, null, null);
+    private final Lo3NationaliteitInhoud c4InhoudDuits = new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6029"), null, null, null, null);
+    private final Lo3NationaliteitInhoud c4InhoudLegeRij = new Lo3NationaliteitInhoud(null, null, null, null, null);
     private final Lo3Historie c4HistorieLegeRij = new Lo3Historie(null, DEFAULT_DATUM, DEFAULT_DATUM);
 
     // Algemeen
     private final Lo3Documentatie documentatie = new Lo3Documentatie(
-        1L,
-        null,
-        null,
-        new Lo3GemeenteCode("9999"),
-        new Lo3Datum(20051001),
-        Lo3String.wrap("Document"),
-        null,
-        null);
+            1L,
+            null,
+            null,
+            new Lo3GemeenteCode("9999"),
+            new Lo3Datum(20051001),
+            Lo3String.wrap("Document"),
+            null,
+            null);
 
     /**
      * Controleer op 85.10.
@@ -155,6 +157,7 @@ public class Lo3Preconditie050Test extends AbstractLoggingTest {
     }
 
     // @formatter:off
+
     /**
      * Tests mbt Cat04 85.10 86.10 PRE050 triggered? testcases Situatie 1 <leeg> 01-01-1990 01-01-1990 Duits 01-01-1990
      * 01-01-1990 nee 1 Situatie 2 <leeg> 01-01-1990 01-01-1990 Duits 01-01-1991 dont' care ja 3 Situatie 3 <leeg>
@@ -282,11 +285,11 @@ public class Lo3Preconditie050Test extends AbstractLoggingTest {
     }
 
     // @formatter:off
+
     /**
-     * 
      * Cat04 meerdere gevulde rijen 85.10 86.10 PRE050 triggered? testcases Gevulde rij Situatie 1 Duits 01-01-1990
      * 01-01-1989 nee 1 <leeg> 01-01-1990 01-01-1990 Duits 01-01-1989 01-01-1990
-     * 
+     *
      * Situatie 2 Duits 01-01-1991 01-01-1990 ja 1 <leeg> 01-01-1990 01-01-1990 Duits 01-01-1990 01-01-1991
      */
     // @formatter:on
@@ -385,5 +388,12 @@ public class Lo3Preconditie050Test extends AbstractLoggingTest {
     }
 
     private static final class Lo3PreconditiesTester extends AbstractLo3Precondities {
+        /**
+         * Constructor.
+         * @param conversieTabelFactory {@link ConversietabelFactory}
+         */
+        public Lo3PreconditiesTester(final ConversietabelFactory conversieTabelFactory) {
+            super(conversieTabelFactory);
+        }
     }
 }

@@ -7,19 +7,17 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.repository;
 
 import java.util.List;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.AanduidingInhoudingVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.AangifteAdreshouding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.AdellijkeTitelPredikaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RNIDeelnemer;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenOntbindingHuwelijkPartnerschap;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenOpschorting;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.SoortNlReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.VoorvoegselConversie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AangifteAdreshouding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdellijkeTitelPredikaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RNIDeelnemer;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenOntbindingHuwelijkPartnerschap;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenOpschorting;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNlReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.VoorvoegselConversie;
 
 /**
  * Levert alle methoden op gegevens uit conversietabellen op te zoeken a.d.h.v. hun unieke code(s).
- *
  */
 public interface ConversietabelRepository {
 

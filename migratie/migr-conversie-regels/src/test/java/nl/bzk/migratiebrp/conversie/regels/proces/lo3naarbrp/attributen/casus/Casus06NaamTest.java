@@ -36,32 +36,32 @@ public class Casus06NaamTest extends AbstractCasusTest {
     private final BrpVoornaamInhoud brpPiet = new BrpVoornaamInhoud(new BrpString("Piet"), new BrpInteger(1));
     private final BrpVoornaamInhoud brpJan = new BrpVoornaamInhoud(new BrpString("Jan"), new BrpInteger(1));
     private final BrpSamengesteldeNaamInhoud brpSamengesteldPiet = new BrpSamengesteldeNaamInhoud(
-        null,
-        new BrpString("Piet"),
-        null,
-        null,
-        null,
-        new BrpString("Jansen"),
-        new BrpBoolean(false, null),
-        new BrpBoolean(true, null));
+            null,
+            new BrpString("Piet"),
+            null,
+            null,
+            null,
+            new BrpString("Jansen"),
+            new BrpBoolean(false, null),
+            new BrpBoolean(true, null));
     private final BrpSamengesteldeNaamInhoud brpSamengesteldJan = new BrpSamengesteldeNaamInhoud(
-        null,
-        new BrpString("Jan"),
-        null,
-        null,
-        null,
-        new BrpString("Jansen"),
-        new BrpBoolean(false, null),
-        new BrpBoolean(true, null));
+            null,
+            new BrpString("Jan"),
+            null,
+            null,
+            null,
+            new BrpString("Jansen"),
+            new BrpBoolean(false, null),
+            new BrpBoolean(true, null));
     private final BrpSamengesteldeNaamInhoud brpSamengesteldLeeg = new BrpSamengesteldeNaamInhoud(
-        null,
-        null,
-        null,
-        null,
-        null,
-        new BrpString("Jansen"),
-        new BrpBoolean(false, null),
-        new BrpBoolean(true, null));
+            null,
+            null,
+            null,
+            null,
+            null,
+            new BrpString("Jansen"),
+            new BrpBoolean(false, null),
+            new BrpBoolean(true, null));
     private final Lo3PersoonInhoud lo3Leeg = buildPersoonMetVoornaam(null);
     private final Lo3PersoonInhoud lo3Piet = buildPersoonMetVoornaam("Piet");
     private final Lo3PersoonInhoud lo3Jan = buildPersoonMetVoornaam("Jan");

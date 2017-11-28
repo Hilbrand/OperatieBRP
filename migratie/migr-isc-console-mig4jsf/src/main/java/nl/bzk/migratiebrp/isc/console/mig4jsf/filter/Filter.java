@@ -17,48 +17,43 @@ public interface Filter {
 
     /**
      * Apply the filter to the given criteria.
-     * 
-     * @param criteria
-     *            hibernate criteria
-     * @throws UnsupportedOperationException
-     *             when this filter does not support this kind of query
+     * @param criteria hibernate criteria
+     * @throws UnsupportedOperationException when this filter does not support this kind of query
      */
     void applyFilter(Criteria criteria);
 
     /**
      * Construct a where clause for a direct SQL query.
-     * 
-     * @param startType
-     *            what to start the clause with
+     * @param startType what to start the clause with
      * @return where clause, empty if no restrictions, contains start type if not empty.
-     * @throws UnsupportedOperationException
-     *             when this filter does not support this kind of query
+     * @throws UnsupportedOperationException when this filter does not support this kind of query
      */
     String getWhereClause(StartType startType);
 
     /**
      * Set the values on a statement for the where clause constructed by {@link #getWhereClause()}.
-     * 
-     * @param statement
-     *            statement to set values on
-     * @param startingIndex
-     *            starting index for setting parameters
-     * @throws SQLException
-     *             on SQL errors
-     * @throws UnsupportedOperationException
-     *             when this filter does not support this kind of query
+     * @param statement statement to set values on
+     * @param startingIndex starting index for setting parameters
+     * @throws SQLException on SQL errors
+     * @throws UnsupportedOperationException when this filter does not support this kind of query
      */
     void setWhereClause(PreparedStatement statement, int startingIndex) throws SQLException;
 
     /**
      * Where clause query start.
      */
-    public static enum StartType {
-        /** where. */
+    public enum StartType {
+        /**
+         * where.
+         */
         WHERE,
-        /** and. */
+        /**
+         * and.
+         */
         AND,
-        /** nothing. */
+        /**
+         * nothing.
+         */
         NONE;
     }
 }

@@ -6,11 +6,14 @@
 
 package nl.bzk.migratiebrp.init.logging.verschilanalyse.service.impl;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.xml.exception.XmlException;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3PersoonslijstFormatter;
@@ -18,20 +21,14 @@ import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
 import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstException;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
-import nl.bzk.migratiebrp.conversie.model.serialize.XmlEncoding;
+import nl.bzk.migratiebrp.conversie.model.serialize.MigratieXml;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.BrpSorterenLo3;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.PreconditiesService;
-import nl.bzk.migratiebrp.init.logging.model.domein.entities.FingerPrint;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingLog;
-import nl.bzk.migratiebrp.init.logging.model.domein.entities.VerschilAnalyseRegel;
+import nl.bzk.migratiebrp.init.logging.verschilanalyse.analyse.VergelijkResultaat;
 import nl.bzk.migratiebrp.init.logging.verschilanalyse.analyse.VerschilBepaler;
 import nl.bzk.migratiebrp.init.logging.verschilanalyse.service.VerschilAnalyseService;
-import nl.bzk.migratiebrp.util.common.EncodingConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,15 +38,25 @@ import org.springframework.stereotype.Service;
 public final class VerschilAnalyseServiceImpl implements VerschilAnalyseService {
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    @Inject
-    private PreconditiesService preconditieService;
-    @Inject
-    private Lo3SyntaxControle syntaxControle;
-    @Inject
-    private BrpSorterenLo3 brpSorterenLo3;
+    private final PreconditiesService preconditieService;
+    private final Lo3SyntaxControle syntaxControle;
+    private final BrpSorterenLo3 brpSorterenLo3;
+    private final VerschilBepaler verschilBepaler;
 
+    /**
+     * Constructor voor de {@link VerschilAnalyseServiceImpl}.
+     * @param preconditieService preconditie service
+     * @param syntaxControle syntax controle service
+     * @param brpSorterenLo3 brp sorteren op LO# service
+     */
     @Inject
-    private VerschilBepaler verschilBepaler;
+    public VerschilAnalyseServiceImpl(final PreconditiesService preconditieService, final Lo3SyntaxControle syntaxControle,
+                                      final BrpSorterenLo3 brpSorterenLo3) {
+        this.preconditieService = preconditieService;
+        this.syntaxControle = syntaxControle;
+        this.brpSorterenLo3 = brpSorterenLo3;
+        verschilBepaler = new VerschilBepaler();
+    }
 
     @Override
     public void bepaalVerschillen(final InitVullingLog vullingLog) {
@@ -59,32 +66,38 @@ public final class VerschilAnalyseServiceImpl implements VerschilAnalyseService 
         if (brpLo3Xml != null && lo3Bericht != null) {
             final Lo3Persoonslijst lo3Pl = createLo3Persoonslijst(lo3Bericht, vullingLog);
             final Lo3Persoonslijst brpLo3Pl = createBrpLo3PersoonsLijst(brpLo3Xml, vullingLog);
-            final List<Pair<List<VerschilAnalyseRegel>, FingerPrint>> verschillen = verschilBepaler.bepaalVerschillen(lo3Pl, brpLo3Pl);
-            if (verschillen != null) {
-                for (final Pair<List<VerschilAnalyseRegel>, FingerPrint> verschil : verschillen) {
-                    vullingLog.addVerschilAnalyseRegels(verschil.getLeft());
-                    vullingLog.addFingerPrint(verschil.getRight());
-                }
-                vullingLog.setBerichtNaTerugConversie(converteerNaarLo3Formaat(brpLo3Pl));
+            final List<VergelijkResultaat> verschillen = verschilBepaler.bepaalVerschillen(lo3Pl, brpLo3Pl);
+
+            final String brpLo3Bericht = converteerNaarLo3Formaat(brpLo3Pl);
+            vullingLog.setBerichtNaTerugConversie(brpLo3Bericht);
+
+            // Herkomst opnieuw genereren door te parsen vanuit lo3
+            verschillen.addAll(verschilBepaler.controleerActueelJuist(maakLo3PersoonslijstVoorActueelOnjuistBepaling(brpLo3Bericht, vullingLog)));
+
+
+            for (final VergelijkResultaat verschil : verschillen) {
+                vullingLog.addVerschilAnalyseRegels(verschil.getRegels());
+                vullingLog.addFingerPrint(verschil.getVingerafdruk());
             }
         }
     }
 
     @Override
-    public List<Pair<List<VerschilAnalyseRegel>, FingerPrint>> bepaalVerschillen(final Lo3Persoonslijst lo3Pl, final Lo3Persoonslijst brpLo3Pl) {
-        return verschilBepaler.bepaalVerschillen(lo3Pl, brpLo3Pl);
+    public List<VergelijkResultaat> bepaalVerschillen(final Lo3Persoonslijst lo3Pl, final Lo3Persoonslijst brpLo3Pl) {
+        final List<VergelijkResultaat> verschillen = verschilBepaler.bepaalVerschillen(lo3Pl, brpLo3Pl);
+        final String brpLo3Bericht = converteerNaarLo3Formaat(brpLo3Pl);
+        verschillen.addAll(verschilBepaler.controleerActueelJuist(maakLo3PersoonslijstVoorActueelOnjuistBepaling(brpLo3Bericht, new InitVullingLog())));
+        return verschillen;
     }
 
     /**
      * Maakt van een XML-structuur een {@link Lo3Persoonslijst}.
      */
-    @SuppressWarnings("checkstyle:illegalcatch")
     private Lo3Persoonslijst createBrpLo3PersoonsLijst(final String xmlData, final InitVullingLog vullingLog) {
         Lo3Persoonslijst lo3Pl = null;
-        try {
-            final ByteArrayInputStream bais = new ByteArrayInputStream(xmlData.getBytes(EncodingConstants.CHARSET));
-            lo3Pl = XmlEncoding.decode(Lo3Persoonslijst.class, bais);
-        } catch (final RuntimeException e /* Moet hier gevangen worden omdat decode een RuntimeException kan gooien. */) {
+        try (final Reader reader = new StringReader(xmlData)) {
+            lo3Pl = MigratieXml.decode(Lo3Persoonslijst.class, reader);
+        } catch (final IOException | XmlException e) {
             final String melding = "Fout bij maken persoonslijst vanuit BRP/LO3 xml-structuur";
             logFoutmelding(vullingLog, melding, e);
         }
@@ -98,11 +111,20 @@ public final class VerschilAnalyseServiceImpl implements VerschilAnalyseService 
         Lo3Persoonslijst lo3Pl = null;
         try {
             lo3Pl = aanvullenControlerenSorteren(lo3Data);
-        } catch (final
-            BerichtSyntaxException
-            | OngeldigePersoonslijstException
-            | NumberFormatException e)
-        {
+        } catch (final BerichtSyntaxException | OngeldigePersoonslijstException | NumberFormatException e) {
+            final String melding = "Fout bij maken persoonslijst vanuit Lo3-bericht";
+            logFoutmelding(vullingLog, melding, e);
+        }
+        return lo3Pl;
+    }
+
+    private Lo3Persoonslijst maakLo3PersoonslijstVoorActueelOnjuistBepaling(final String brpLo3Data, final InitVullingLog vullingLog) {
+        Lo3Persoonslijst lo3Pl = null;
+        try {
+            final List<Lo3CategorieWaarde> categorieWaarden = Lo3Inhoud.parseInhoud(brpLo3Data);
+            final Lo3PersoonslijstParser parser = new Lo3PersoonslijstParser();
+            lo3Pl = parser.parse(categorieWaarden);
+        } catch (final BerichtSyntaxException | NumberFormatException e) {
             final String melding = "Fout bij maken persoonslijst vanuit Lo3-bericht";
             logFoutmelding(vullingLog, melding, e);
         }

@@ -9,35 +9,32 @@ package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch;
 import java.util.List;
 import java.util.Map.Entry;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenEindeRelatieCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AbstractAttribuutConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOntbindingHuwelijkOfGpCode;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * De Conversietabel voor reden ontbinding huwelijk/geregistreerd partnerschap. Deze mapt een
  * Lo3RedenOntbindingHuwelijkOfGpCode op BrpRedenEindeRelatieCode.
  */
 public abstract class AbstractRedenOntbindingHuwelijkPartnerschapConversietabel extends
-        AbstractAttribuutConversietabel<Lo3RedenOntbindingHuwelijkOfGpCode, BrpRedenEindeRelatieCode>
-{
+        AbstractAttribuutConversietabel<Lo3RedenOntbindingHuwelijkOfGpCode, BrpRedenEindeRelatieCode> {
 
     /**
      * Maakt een RedenOntbindingHuwelijkPartnerschapConversietabel object.
-     * 
-     * @param conversieLijst
-     *            de lijst met alle reden entries uit de conversietabel
+     * @param conversieLijst de lijst met alle reden entries uit de conversietabel
      */
     public AbstractRedenOntbindingHuwelijkPartnerschapConversietabel(
-        final List<Entry<Lo3RedenOntbindingHuwelijkOfGpCode, BrpRedenEindeRelatieCode>> conversieLijst)
-    {
+            final List<Entry<Lo3RedenOntbindingHuwelijkOfGpCode, BrpRedenEindeRelatieCode>> conversieLijst) {
         super(conversieLijst);
     }
 
     @Override
     protected final Lo3RedenOntbindingHuwelijkOfGpCode voegOnderzoekToeLo3(final Lo3RedenOntbindingHuwelijkOfGpCode input, final Lo3Onderzoek onderzoek) {
         final Lo3RedenOntbindingHuwelijkOfGpCode resultaat;
-        if (nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie.isElementGevuld(input)) {
+        if (Lo3Validatie.isElementGevuld(input)) {
             resultaat = new Lo3RedenOntbindingHuwelijkOfGpCode(input.getWaarde(), onderzoek);
         } else {
             if (onderzoek != null) {
@@ -53,7 +50,7 @@ public abstract class AbstractRedenOntbindingHuwelijkPartnerschapConversietabel 
     @Override
     protected final BrpRedenEindeRelatieCode voegOnderzoekToeBrp(final BrpRedenEindeRelatieCode input, final Lo3Onderzoek onderzoek) {
         final BrpRedenEindeRelatieCode resultaat;
-        if (Validatie.isAttribuutGevuld(input)) {
+        if (BrpValidatie.isAttribuutGevuld(input)) {
             resultaat = new BrpRedenEindeRelatieCode(input.getWaarde(), onderzoek);
         } else {
             if (onderzoek != null) {

@@ -6,23 +6,23 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingBijzonderNederlandschap;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class geeft de inhoud weer van een LO3 Categorie 04/54 Nationaliteit.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class Lo3NationaliteitInhoud implements Lo3CategorieInhoud {
 
@@ -41,35 +41,36 @@ public final class Lo3NationaliteitInhoud implements Lo3CategorieInhoud {
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_6510)
     @Element(name = "aanduidingBijzonderNederlandschap", required = false)
     private final Lo3AanduidingBijzonderNederlandschap aanduidingBijzonderNederlandschap;
+    @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_7310)
+    @Element(name = "buitenlandsPersoonsnummer", required = false)
+    private final Lo3String buitenlandsPersoonsnummer;
 
     /**
      * Maak een lege nationaliteit aan.
      */
     public Lo3NationaliteitInhoud() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     /**
      * Maakt een Lo3NationaliteitInhoud object.
-     * 
-     * @param nationaliteitCode
-     *            nationaliteit code 05.10 of null
-     * @param redenVerkrijgingNederlandschapCode
-     *            reden verkrijging Nederlandschap 63.10 of null
-     * @param redenVerliesNederlandschapCode
-     *            reden verlies nederlandschap 64.10 of null
-     * @param aanduidingBijzonderNederlandschap
-     *            aanduiding bijzonder nederlandschap of null
+     * @param nationaliteitCode nationaliteit code 05.10 of null
+     * @param redenVerkrijgingNederlandschapCode reden verkrijging Nederlandschap 63.10 of null
+     * @param redenVerliesNederlandschapCode reden verlies nederlandschap 64.10 of null
+     * @param aanduidingBijzonderNederlandschap aanduiding bijzonder nederlandschap of null
+     * @param buitenlandsPersoonsnummer het EU persoonsnummer
      */
-    public Lo3NationaliteitInhoud(@Element(name = "nationaliteitCode", required = false) final Lo3NationaliteitCode nationaliteitCode, @Element(
-            name = "redenVerkrijgingNederlandschapCode", required = false) final Lo3RedenNederlandschapCode redenVerkrijgingNederlandschapCode, @Element(
-            name = "redenVerliesNederlandschapCode", required = false) final Lo3RedenNederlandschapCode redenVerliesNederlandschapCode, @Element(
-            name = "aanduidingBijzonderNederlandschap", required = false) final Lo3AanduidingBijzonderNederlandschap aanduidingBijzonderNederlandschap)
-    {
+    public Lo3NationaliteitInhoud(
+            @Element(name = "nationaliteitCode", required = false) final Lo3NationaliteitCode nationaliteitCode,
+            @Element(name = "redenVerkrijgingNederlandschapCode", required = false) final Lo3RedenNederlandschapCode redenVerkrijgingNederlandschapCode,
+            @Element(name = "redenVerliesNederlandschapCode", required = false) final Lo3RedenNederlandschapCode redenVerliesNederlandschapCode,
+            @Element(name = "aanduidingBijzonderNederlandschap", required = false) final Lo3AanduidingBijzonderNederlandschap aanduidingBijzonderNederlandschap,
+            @Element(name = "buitenlandsPersoonsnummer", required = false) final Lo3String buitenlandsPersoonsnummer) {
         this.nationaliteitCode = nationaliteitCode;
         this.redenVerkrijgingNederlandschapCode = redenVerkrijgingNederlandschapCode;
         this.redenVerliesNederlandschapCode = redenVerliesNederlandschapCode;
         this.aanduidingBijzonderNederlandschap = aanduidingBijzonderNederlandschap;
+        this.buitenlandsPersoonsnummer = buitenlandsPersoonsnummer;
     }
 
     private Lo3NationaliteitInhoud(final Builder builder) {
@@ -77,6 +78,7 @@ public final class Lo3NationaliteitInhoud implements Lo3CategorieInhoud {
         redenVerkrijgingNederlandschapCode = builder.redenVerkrijgingNederlandschapCode;
         redenVerliesNederlandschapCode = builder.redenVerliesNederlandschapCode;
         aanduidingBijzonderNederlandschap = builder.aanduidingBijzonderNederlandschap;
+        buitenlandsPersoonsnummer = builder.buitenlandsPersoonsnummer;
     }
 
     /*
@@ -85,48 +87,56 @@ public final class Lo3NationaliteitInhoud implements Lo3CategorieInhoud {
      */
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.Lo3CategorieInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(nationaliteitCode, redenVerkrijgingNederlandschapCode, aanduidingBijzonderNederlandschap);
+        return !Lo3Validatie.isEenParameterGevuld(
+                nationaliteitCode,
+                redenVerkrijgingNederlandschapCode,
+                aanduidingBijzonderNederlandschap,
+                buitenlandsPersoonsnummer);
     }
 
     /**
-     * Geef de waarde van nationaliteit code.
-     *
-     * @return de nationaliteit code of null
+     * Geef de waarde van nationaliteit code van Lo3NationaliteitInhoud.
+     * @return de waarde van nationaliteit code van Lo3NationaliteitInhoud
      */
     public Lo3NationaliteitCode getNationaliteitCode() {
         return nationaliteitCode;
     }
 
     /**
-     * Geef de waarde van reden verkrijging nederlandschap code.
-     *
-     * @return de reden verkrijging nederlandschap code, of null
+     * Geef de waarde van reden verkrijging nederlandschap code van Lo3NationaliteitInhoud.
+     * @return de waarde van reden verkrijging nederlandschap code van Lo3NationaliteitInhoud
      */
     public Lo3RedenNederlandschapCode getRedenVerkrijgingNederlandschapCode() {
         return redenVerkrijgingNederlandschapCode;
     }
 
     /**
-     * Geef de waarde van reden verlies nederlandschap code.
-     *
-     * @return de reden verlies nederlandschap code, of null
+     * Geef de waarde van reden verlies nederlandschap code van Lo3NationaliteitInhoud.
+     * @return de waarde van reden verlies nederlandschap code van Lo3NationaliteitInhoud
      */
     public Lo3RedenNederlandschapCode getRedenVerliesNederlandschapCode() {
         return redenVerliesNederlandschapCode;
     }
 
     /**
-     * Geef de waarde van aanduiding bijzonder nederlandschap.
-     *
-     * @return de aanduiding bijzonder nederlandschap, of null
+     * Geef de waarde van aanduiding bijzonder nederlandschap van Lo3NationaliteitInhoud.
+     * @return de waarde van aanduiding bijzonder nederlandschap van Lo3NationaliteitInhoud
      */
     public Lo3AanduidingBijzonderNederlandschap getAanduidingBijzonderNederlandschap() {
         return aanduidingBijzonderNederlandschap;
+    }
+
+    /**
+     * Geeft de waarde van het EU persoonsnummer terug.
+     * @return de waarde van het EU persoonsnummer
+     */
+    public Lo3String getBuitenlandsPersoonsnummer() {
+        return buitenlandsPersoonsnummer;
     }
 
     @Override
@@ -139,28 +149,31 @@ public final class Lo3NationaliteitInhoud implements Lo3CategorieInhoud {
         }
         final Lo3NationaliteitInhoud castOther = (Lo3NationaliteitInhoud) other;
         return new EqualsBuilder().append(nationaliteitCode, castOther.nationaliteitCode)
-                                  .append(redenVerkrijgingNederlandschapCode, castOther.redenVerkrijgingNederlandschapCode)
-                                  .append(redenVerliesNederlandschapCode, castOther.redenVerliesNederlandschapCode)
-                                  .append(aanduidingBijzonderNederlandschap, castOther.aanduidingBijzonderNederlandschap)
-                                  .isEquals();
+                .append(redenVerkrijgingNederlandschapCode, castOther.redenVerkrijgingNederlandschapCode)
+                .append(redenVerliesNederlandschapCode, castOther.redenVerliesNederlandschapCode)
+                .append(aanduidingBijzonderNederlandschap, castOther.aanduidingBijzonderNederlandschap)
+                .append(buitenlandsPersoonsnummer, castOther.buitenlandsPersoonsnummer)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(nationaliteitCode)
-                                    .append(redenVerkrijgingNederlandschapCode)
-                                    .append(redenVerliesNederlandschapCode)
-                                    .append(aanduidingBijzonderNederlandschap)
-                                    .toHashCode();
+                .append(redenVerkrijgingNederlandschapCode)
+                .append(redenVerliesNederlandschapCode)
+                .append(aanduidingBijzonderNederlandschap)
+                .append(buitenlandsPersoonsnummer)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("nationaliteitCode", nationaliteitCode)
-                                                                          .append("redenVerkrijgingNederlandschapCode", redenVerkrijgingNederlandschapCode)
-                                                                          .append("redenVerliesNederlandschapCode", redenVerliesNederlandschapCode)
-                                                                          .append("aanduidingBijzonderNederlandschap", aanduidingBijzonderNederlandschap)
-                                                                          .toString();
+                .append("redenVerkrijgingNederlandschapCode", redenVerkrijgingNederlandschapCode)
+                .append("redenVerliesNederlandschapCode", redenVerliesNederlandschapCode)
+                .append("aanduidingBijzonderNederlandschap", aanduidingBijzonderNederlandschap)
+                .append("buitenlandsPersoonsnummer", buitenlandsPersoonsnummer)
+                .toString();
     }
 
     /**
@@ -171,29 +184,29 @@ public final class Lo3NationaliteitInhoud implements Lo3CategorieInhoud {
         private Lo3RedenNederlandschapCode redenVerkrijgingNederlandschapCode;
         private Lo3RedenNederlandschapCode redenVerliesNederlandschapCode;
         private Lo3AanduidingBijzonderNederlandschap aanduidingBijzonderNederlandschap;
+        private Lo3String buitenlandsPersoonsnummer;
 
         /**
          * Maak een lege builder.
          */
         public Builder() {
+            //lege builder
         }
 
         /**
          * Maak een builder gevuld met de gegeven inhoud.
-         * 
-         * @param inhoud
-         *            inhoud
+         * @param inhoud inhoud
          */
         public Builder(final Lo3NationaliteitInhoud inhoud) {
             nationaliteitCode = inhoud.nationaliteitCode;
             redenVerkrijgingNederlandschapCode = inhoud.redenVerkrijgingNederlandschapCode;
             redenVerliesNederlandschapCode = inhoud.redenVerliesNederlandschapCode;
             aanduidingBijzonderNederlandschap = inhoud.aanduidingBijzonderNederlandschap;
+            buitenlandsPersoonsnummer = inhoud.buitenlandsPersoonsnummer;
         }
 
         /**
          * Maak de inhoud.
-         * 
          * @return inhoud
          */
         public Lo3NationaliteitInhoud build() {
@@ -201,47 +214,52 @@ public final class Lo3NationaliteitInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the nationaliteitCode to set
+         * @param param the nationaliteitCode to set
          * @return builder object
          */
         public Builder nationaliteitCode(final Lo3NationaliteitCode param) {
-            this.nationaliteitCode = param;
+            nationaliteitCode = param;
             return this;
         }
 
         /**
-         * @param param
-         *            the redenVerkrijgingNederlandschapCode to set
+         * @param param the redenVerkrijgingNederlandschapCode to set
          * @return builder object
          */
         public Builder redenVerkrijgingNederlandschapCode(final Lo3RedenNederlandschapCode param) {
-            this.redenVerkrijgingNederlandschapCode = param;
+            redenVerkrijgingNederlandschapCode = param;
             return this;
         }
 
         /**
-         * @param param
-         *            the redenVerliesNederlandschapCode to set
+         * @param param the redenVerliesNederlandschapCode to set
          * @return builder object
          */
         public Builder redenVerliesNederlandschapCode(final Lo3RedenNederlandschapCode param) {
-            this.redenVerliesNederlandschapCode = param;
+            redenVerliesNederlandschapCode = param;
             return this;
         }
 
         /**
-         * @param param
-         *            the aanduidingBijzonderNederlandschap to set
+         * @param param the aanduidingBijzonderNederlandschap to set
          * @return builder object
          */
         public Builder aanduidingBijzonderNederlandschap(final Lo3AanduidingBijzonderNederlandschap param) {
-            this.aanduidingBijzonderNederlandschap = param;
+            aanduidingBijzonderNederlandschap = param;
             return this;
         }
 
         /**
-         * Reset categorie 05, 63, 64 en 65. Aan te roepen alvorens een van deze categorien wordt gevuld. Zie
+         * @param param het buitenlands persoonsnummer
+         * @return builder object
+         */
+        public Builder buitenlandsPersoonsnummer(final Lo3String param) {
+            buitenlandsPersoonsnummer = param;
+            return this;
+        }
+
+        /**
+         * Reset categorie 05, 63, 64, 65 en 73. Aan te roepen alvorens een van deze categorien wordt gevuld. Zie
          * ORANJE-1817
          */
         public void resetElkaarUitsluitendeVelden() {
@@ -249,6 +267,7 @@ public final class Lo3NationaliteitInhoud implements Lo3CategorieInhoud {
             redenVerkrijgingNederlandschapCode = null;
             redenVerliesNederlandschapCode = null;
             aanduidingBijzonderNederlandschap = null;
+            buitenlandsPersoonsnummer = null;
         }
     }
 }

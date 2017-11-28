@@ -18,7 +18,6 @@ public class GgoAdministratieveHandeling extends GgoVoorkomen {
 
     /**
      * Geef de waarde van betrokken voorkomens.
-     *
      * @return betrokken voorkomens
      */
     public final Set<String> getBetrokkenVoorkomens() {
@@ -27,9 +26,7 @@ public class GgoAdministratieveHandeling extends GgoVoorkomen {
 
     /**
      * Sets the betrokken voorkomens.
-     *
-     * @param betrokkenVoorkomens
-     *            the betrokken voorkomens
+     * @param betrokkenVoorkomens the betrokken voorkomens
      */
     public final void setBetrokkenVoorkomens(final Set<String> betrokkenVoorkomens) {
         this.betrokkenVoorkomens = betrokkenVoorkomens;

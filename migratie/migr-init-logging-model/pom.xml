@@ -3,29 +3,29 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>nl.bzk.migratiebrp.init</groupId>
+        <groupId>nl.bzk.migratiebrp</groupId>
         <artifactId>migr-init-logging</artifactId>
-        <version>3.2.108-SNAPSHOT</version>
+        <version>145.3</version>
         <relativePath>../migr-init-logging</relativePath>
     </parent>
-    <groupId>nl.bzk.migratiebrp.init.logging</groupId>
+
     <artifactId>migr-init-logging-model</artifactId>
     <name>Migr - Initiele vulling - Logging - Model</name>
 
-	<properties>
-		<m2e.jpa.activation>false</m2e.jpa.activation>
-	</properties>
+    <properties>
+        <m2e.jpa.activation>false</m2e.jpa.activation>
+    </properties>
 
     <dependencies>
         <!-- Project -->
         <dependency>
-            <groupId>nl.bzk.migratiebrp.init</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-init-naarbrp</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.conversie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-conversie-model</artifactId>
         </dependency>
 
@@ -39,7 +39,7 @@
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
         <dependency>
-			<groupId>com.mchange</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
         </dependency>
 
@@ -49,27 +49,11 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
-
-        <!-- HyperSQL als in memory alternatief voor PostgreSQL t.b.v. unit-testen -->
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-  		<!-- Reflections -->
+        <!-- Reflections -->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <scope>test</scope>
-			<!--
-            <exclusions>
-                <exclusion>
-                     <groupId>org.javassist</groupId>
-                     <artifactId>javassist</artifactId>
-                </exclusion>
-            </exclusions>
-			-->
         </dependency>
     </dependencies>
 </project>

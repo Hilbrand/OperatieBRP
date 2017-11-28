@@ -22,24 +22,24 @@ import org.jboss.gravel.common.annotation.TldTag;
  */
 @TldTag(name = "pager", description = "Calculate paging information for use by another component.",
         attributes = {@TldAttribute(name = "target",
-                              description = "An EL expression into which the paging information will be stored. The paging"
-                                            + " information is stored in a bean with the following properties: <ul>"
-                                            + "<li><code>page</code> - the current actual page number (if the requested page is "
-                                            + "past the end, it will be clamped to this value</li>"
-                                            + "<li><code>totalPages</code> - the total number of pages available (0 for an empty "
-                                            + "data set)</li>"
-                                            + "<li><code>pageSize</code> - the number of results per page</li>"
-                                            + "<li><code>thisPageSize</code> - the number of results on the current page</li>"
-                                            + "<li><code>firstPage</code> - a boolean that is true if this is the first page</li>"
-                                            + "<li><code>lastPage</code> - a boolean that is true if this is the last page</li>"
-                                            + "<li><code>first</code> - the index of the first item in the collection to "
-                                            + "display</li>"
-                                            + "</ul>", required = true, deferredType = Object.class),
-                      @TldAttribute(name = "pageSize",
-                              description = "The number of results that will be displayed per page.  If not given, defaults" + " to 10.",
-                              deferredType = int.class),
-                      @TldAttribute(name = "page", description = "The current page number.  If not given, defaults to 1.",
-                              deferredType = int.class) })
+                description = "An EL expression into which the paging information will be stored. The paging"
+                        + " information is stored in a bean with the following properties: <ul>"
+                        + "<li><code>page</code> - the current actual page number (if the requested page is "
+                        + "past the end, it will be clamped to this value</li>"
+                        + "<li><code>totalPages</code> - the total number of pages available (0 for an empty "
+                        + "data set)</li>"
+                        + "<li><code>pageSize</code> - the number of results per page</li>"
+                        + "<li><code>thisPageSize</code> - the number of results on the current page</li>"
+                        + "<li><code>firstPage</code> - a boolean that is true if this is the first page</li>"
+                        + "<li><code>lastPage</code> - a boolean that is true if this is the last page</li>"
+                        + "<li><code>first</code> - the index of the first item in the collection to "
+                        + "display</li>"
+                        + "</ul>", required = true, deferredType = Object.class),
+                @TldAttribute(name = "pageSize",
+                        description = "The number of results that will be displayed per page.  If not given, defaults" + " to 10.",
+                        deferredType = int.class),
+                @TldAttribute(name = "page", description = "The current page number.  If not given, defaults to 1.",
+                        deferredType = int.class)})
 public final class PagerHandler extends TagHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute pageSizeTagAttribute;
@@ -47,9 +47,7 @@ public final class PagerHandler extends TagHandler {
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public PagerHandler(final TagConfig config) {
         super(config);
@@ -65,9 +63,9 @@ public final class PagerHandler extends TagHandler {
         }
         if (ComponentSupport.isNew(parent)) {
             ((ActionSource) parent).addActionListener(new PagerActionListener(
-                pageTagAttribute == null ? null : pageTagAttribute.getValueExpression(ctx, int.class),
-                pageSizeTagAttribute == null ? null : pageSizeTagAttribute.getValueExpression(ctx, int.class),
-                targetTagAttribute.getValueExpression(ctx, Object.class)));
+                    pageTagAttribute == null ? null : pageTagAttribute.getValueExpression(ctx, int.class),
+                    pageSizeTagAttribute == null ? null : pageSizeTagAttribute.getValueExpression(ctx, int.class),
+                    targetTagAttribute.getValueExpression(ctx, Object.class)));
         }
     }
 }

@@ -7,14 +7,7 @@
 package nl.bzk.migratiebrp.bericht.model.sync.impl;
 
 import nl.bzk.migratiebrp.bericht.model.sync.AbstractSyncBerichtZonderGerelateerdeInformatie;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.AkteGroepType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.FamilierechtelijkeBetrekkingType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.GeldigheidGroepType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.NaamGeslachtType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.ObjectFactory;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.OverlijdenType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.RelatieType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.VerwerkToevalligeGebeurtenisVerzoekType;
 import nl.bzk.migratiebrp.bericht.model.sync.xml.SyncXml;
 
@@ -35,9 +28,7 @@ public final class VerwerkToevalligeGebeurtenisVerzoekBericht extends AbstractSy
 
     /**
      * JAXB constructor.
-     *
-     * @param verwerkToevallligeGebeurtenisVerzoekType
-     *            Het verwerk toevallige gebeurtenis verzoek type {@link VerwerkToevallligeGebeurtenisVerzoekType}
+     * @param verwerkToevallligeGebeurtenisVerzoekType Het verwerk toevallige gebeurtenis verzoek type {@link VerwerkToevallligeGebeurtenisVerzoekType}
      */
     public VerwerkToevalligeGebeurtenisVerzoekBericht(final VerwerkToevalligeGebeurtenisVerzoekType verwerkToevallligeGebeurtenisVerzoekType) {
         super("VerwerkToevalligeGebeurtenisVerzoek");
@@ -54,155 +45,67 @@ public final class VerwerkToevalligeGebeurtenisVerzoekBericht extends AbstractSy
     /* ************************************************************************************************************* */
 
     /**
-     * Geef de waarde van persoon.
-     *
-     * @return persoon
+     * Geef de waarde van aktenummer.
+     * @return aktenummer
      */
-    public PersoonType getPersoon() {
-        return verwerkToevallligeGebeurtenisVerzoekType.getPersoon();
+    public String getAktenummer() {
+        return verwerkToevallligeGebeurtenisVerzoekType.getAktenummer();
     }
 
     /**
-     * Zet de waarde van persoon.
-     *
-     * @param persoon
-     *            De te zetten persoon
+     * Zet de waarde van aktenummer.
+     * @param aktenummer Het te zetten aktenummer
      */
-    public void setPersoon(final PersoonType persoon) {
-        verwerkToevallligeGebeurtenisVerzoekType.setPersoon(persoon);
+    public void setAktenummer(final String aktenummer) {
+        verwerkToevallligeGebeurtenisVerzoekType.setAktenummer(aktenummer);
     }
 
     /**
-     * Geef de waarde van update persoon.
-     *
-     * @return update persoon
+     * Geef de waarde van de ontvangende gemeente.
+     * @return ontvangende gemeente
      */
-    public NaamGeslachtType getUpdatePersoon() {
-        return verwerkToevallligeGebeurtenisVerzoekType.getNaamGeslacht();
+    public String getOntvangendeGemeente() {
+        return verwerkToevallligeGebeurtenisVerzoekType.getOntvangendeGemeente();
     }
 
     /**
-     * Zet de waarde van update persoon.
-     *
-     * @param naamGeslacht
-     *            De te zetten update persoon
+     * Zet de waarde van ontvangende Gemeente.
+     * @param ontvangendeGemeente De te zetten ontvangende Gemeente
      */
-    public void setUpdatePersoon(final NaamGeslachtType naamGeslacht) {
-        verwerkToevallligeGebeurtenisVerzoekType.setNaamGeslacht(naamGeslacht);
+    public void setOntvangendeGemeente(final String ontvangendeGemeente) {
+        verwerkToevallligeGebeurtenisVerzoekType.setOntvangendeGemeente(ontvangendeGemeente);
     }
 
     /**
-     * Geef de waarde van familierechtelijke betrekking.
-     *
-     * @return familierechtelijke betrekking
+     * Geef de waarde van het Tb02 bericht als teletex string.
+     * @return inhoud Tb02 bericht als teletex
      */
-    public FamilierechtelijkeBetrekkingType getFamilieRechtelijkeBetrekking() {
-        return verwerkToevallligeGebeurtenisVerzoekType.getFamilierechtelijkeBetrekking();
+    public String getTb02InhoudAlsTeletex() {
+        return verwerkToevallligeGebeurtenisVerzoekType.getTb02InhoudAlsTeletex();
     }
 
     /**
-     * Zet de waarde van de familierechtelijke betrekking.
-     *
-     * @param familierechtelijkeBetrekking
-     *            De te zetten familierechtelijke betrekking
+     * Zet de waarde van de inhoud van het Tb02 bericht.
+     * @param tb02InhoudAlsTeletex De te zetten inhoud van het Tb02 bericht als teletext string
      */
-    public void setFamilieRechtelijkeBetrekking(final FamilierechtelijkeBetrekkingType familierechtelijkeBetrekking) {
-        verwerkToevallligeGebeurtenisVerzoekType.setFamilierechtelijkeBetrekking(familierechtelijkeBetrekking);
+    public void setTb02InhoudAlsTeletex(final String tb02InhoudAlsTeletex) {
+        verwerkToevallligeGebeurtenisVerzoekType.setTb02InhoudAlsTeletex(tb02InhoudAlsTeletex);
     }
 
     /**
-     * Geef de waarde van overlijden.
-     *
-     * @return overlijden
+     * Geef de waarde van verzendende gemeente.
+     * @return verzendende gemeente
      */
-    public OverlijdenType getOverlijden() {
-        return verwerkToevallligeGebeurtenisVerzoekType.getOverlijden();
+    public String getVerzendendeGemeente() {
+        return verwerkToevallligeGebeurtenisVerzoekType.getVerzendendeGemeente();
     }
 
     /**
-     * Zet de waarde van overlijden.
-     *
-     * @param overlijden
-     *            De te zetten overlijden
+     * Zet de waarde van de verzendende gemeente.
+     * @param verzendendeGemeente De te zetten verzendende gemeente
      */
-    public void setOverlijden(final OverlijdenType overlijden) {
-        verwerkToevallligeGebeurtenisVerzoekType.setOverlijden(overlijden);
-    }
-
-    /**
-     * Geef de waarde van relatie.
-     *
-     * @return relatie
-     */
-    public RelatieType getRelatie() {
-        return verwerkToevallligeGebeurtenisVerzoekType.getRelatie();
-    }
-
-    /**
-     * Zet de waarde van relatie.
-     *
-     * @param relatie
-     *            De te zetten relatie
-     */
-    public void setRelatie(final RelatieType relatie) {
-        verwerkToevallligeGebeurtenisVerzoekType.setRelatie(relatie);
-    }
-
-    /**
-     * Geef de waarde van de groep akte.
-     *
-     * @return groep akte
-     */
-    public AkteGroepType getAkte() {
-        return verwerkToevallligeGebeurtenisVerzoekType.getAkte();
-    }
-
-    /**
-     * Zet de groep akte.
-     *
-     * @param akte
-     *            De te zetten groep akte
-     */
-    public void setAkte(final AkteGroepType akte) {
-        verwerkToevallligeGebeurtenisVerzoekType.setAkte(akte);
-    }
-
-    /**
-     * Geef de groep geldigheid.
-     *
-     * @return groep geldigheid
-     */
-    public GeldigheidGroepType getGeldigheid() {
-        return verwerkToevallligeGebeurtenisVerzoekType.getGeldigheid();
-    }
-
-    /**
-     * Zet de groep geldigheid.
-     *
-     * @param geldigheid
-     *            De te zetten groep geldigheid
-     */
-    public void setGeldigheid(final GeldigheidGroepType geldigheid) {
-        verwerkToevallligeGebeurtenisVerzoekType.setGeldigheid(geldigheid);
-    }
-
-    /**
-     * Geef de doel gemeente.
-     *
-     * @return doelgemeente
-     */
-    public String getDoelGemeente() {
-        return verwerkToevallligeGebeurtenisVerzoekType.getDoelGemeente();
-    }
-
-    /**
-     * Zet de groep geldigheid.
-     *
-     * @param doelGemeente
-     *            De te zetten doel gemeente
-     */
-    public void setDoelGemeente(final String doelGemeente) {
-        verwerkToevallligeGebeurtenisVerzoekType.setDoelGemeente(doelGemeente);
+    public void setVerzendendeGemeente(final String verzendendeGemeente) {
+        verwerkToevallligeGebeurtenisVerzoekType.setVerzendendeGemeente(verzendendeGemeente);
     }
 
 }

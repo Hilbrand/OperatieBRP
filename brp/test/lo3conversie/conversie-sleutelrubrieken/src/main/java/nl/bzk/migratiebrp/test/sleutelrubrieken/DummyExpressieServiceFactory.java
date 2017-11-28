@@ -9,9 +9,7 @@ package nl.bzk.migratiebrp.test.sleutelrubrieken;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
-import nl.bzk.brp.levering.business.expressietaal.ExpressieService;
-
+import nl.bzk.brp.service.algemeen.expressie.ExpressieService;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 

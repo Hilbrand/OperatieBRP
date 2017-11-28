@@ -20,6 +20,11 @@ public final class Meldingen implements Map<String, String> {
     private final ResourceBundle bundle = ResourceBundle.getBundle("nl.bzk.migratiebrp.isc.jbpm.common.jsf.Messages");
 
     @Override
+    /**
+     * squid:S1166 Exception handlers should preserve the original exceptions
+     *
+     * False positive, exceptie wordt volledig verwerkt. Info is niet nodig.
+     */
     public String get(final Object key) {
         String result;
         if (key == null || "".equals(key)) {
@@ -50,15 +55,10 @@ public final class Meldingen implements Map<String, String> {
     }
 
     @Override
-    public Set<java.util.Map.Entry<String, String>> entrySet() {
+    public Set<Map.Entry<String, String>> entrySet() {
         throw new UnsupportedOperationException();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Map#isEmpty()
-     */
     @Override
     public boolean isEmpty() {
         throw new UnsupportedOperationException();

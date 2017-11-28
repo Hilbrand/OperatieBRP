@@ -10,14 +10,24 @@ package nl.bzk.migratiebrp.conversie.model.logging;
  * Log type.
  */
 public enum LogType {
-    /** Verwerking. */
+    /**
+     * Verwerking.
+     */
     VERWERKING,
-    /** Preconditie. */
+    /**
+     * Preconditie.
+     */
     PRECONDITIE,
-    /** Bijzondere situatie. */
+    /**
+     * Bijzondere situatie.
+     */
     BIJZONDERE_SITUATIE,
-    /** Structuur/domein regel. */
+    /**
+     * Structuur/domein regel.
+     */
     STRUCTUUR,
-    /** Syntax. */
+    /**
+     * Syntax.
+     */
     SYNTAX;
 }

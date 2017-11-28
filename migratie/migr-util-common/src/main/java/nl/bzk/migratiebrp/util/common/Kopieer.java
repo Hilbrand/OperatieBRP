@@ -21,9 +21,7 @@ public final class Kopieer {
     /**
      * Utility methode om een kopie van een java.sql.Timestamp te maken. Te gebruiken voor het defensieve kopieren van
      * (mutable) Timestamp objecten in getters, setters en constructors. Kan omgaan met <code>null</code>.
-     *
-     * @param ts
-     *            De te kopieren Timestamp
+     * @param ts De te kopieren Timestamp
      * @return Een kopie van de Timestamp
      */
     public static Timestamp timestamp(final Timestamp ts) {
@@ -39,9 +37,7 @@ public final class Kopieer {
     /**
      * Utility methode om een kopie van een java.sql.Date te maken. Te gebruiken voor het defensieve kopieren van
      * (mutable) Date objecten in getters, setters en constructors. Kan omgaan met <code>null</code>.
-     *
-     * @param date
-     *            De te kopieren Timestamp
+     * @param date De te kopieren Timestamp
      * @return Een kopie van de Timestamp
      */
     public static Date sqlDate(final Date date) {
@@ -55,9 +51,7 @@ public final class Kopieer {
     /**
      * Utility methode om een kopie van een java.util.Date te maken. Te gebruiken voor het defensieve kopieren van
      * (mutable) Date objecten in getters, setters en constructors. Kan omgaan met <code>null</code>.
-     *
-     * @param date
-     *            De te kopieren Timestamp
+     * @param date De te kopieren Timestamp
      * @return Een kopie van de Timestamp
      */
     public static java.util.Date utilDate(final java.util.Date date) {

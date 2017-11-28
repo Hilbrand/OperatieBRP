@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -34,111 +33,39 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 public final class Lo3PersoonslijstParser {
 
     /**
-     * Geeft per stapel de gesorteerde categorieen terug. De sortering is van oud naar nieuw.
-     *
-     * @see #getCategorieWaarden(List, Lo3CategorieEnum)
-     * @param categorieenLijst
-     * @param categorie
-     * @return de lijst met categoriewaarden
-     */
-    private static List<List<Lo3CategorieWaarde>> getGesorteerdeCategorieenPerStapel(
-        final List<Lo3CategorieWaarde> categorieenLijst,
-        final Lo3CategorieEnum categorie)
-    {
-        final List<Lo3CategorieWaarde> categorieWaarden = getCategorieWaarden(categorieenLijst, categorie);
-        final List<List<Lo3CategorieWaarde>> stapels = new ArrayList<>();
-        List<Lo3CategorieWaarde> stapel = null;
-        boolean isActueelAfwezig = true;
-        for (final Lo3CategorieWaarde cat : categorieWaarden) {
-            if (cat.getCategorie().isActueel()) {
-                stapel = new ArrayList<>();
-                stapels.add(stapel);
-                isActueelAfwezig = false;
-            } else if (isActueelAfwezig) {
-                // We vinden een historische groep voor een actuele, dit is niet juist aangezien het twee stapels zijn
-                // en de nieuwste stapel dan geen actuele
-                // bevat.
-                throw new GeenActueleCategorieExceptie(Lo3CategorieEnum.bepaalActueleCategorie(cat.getCategorie()));
-            }
-
-            if (stapel != null) {
-                // Voeg de categorie toe aan de stapel.
-                stapel.add(cat);
-            }
-        }
-
-        // sorteer de stapels
-        for (final List<Lo3CategorieWaarde> teSorterenStapel : stapels) {
-            Collections.reverse(teSorterenStapel);
-        }
-        return stapels;
-    }
-
-    /* Categorie parser methoden */
-
-    /**
-     * Geeft op basis van de complete lijst met categorieen, een lijst met die categorieen die voldoen aan de
-     * opgevraagde categorie enum. Deze methode geeft zowel de actuele als historische categorieen terug. Verwacht wordt
-     * dat in de excel sheet de stapels van nieuw naar oud worden opgesomd.
-     *
-     * @param categorieenLijst
-     *            de complete lijst met categorieen
-     * @param categorie
-     *            de gevraagde categorie
-     * @return
-     */
-    private static List<Lo3CategorieWaarde> getCategorieWaarden(final List<Lo3CategorieWaarde> categorieenLijst, final Lo3CategorieEnum categorie) {
-        final List<Lo3CategorieWaarde> result = new ArrayList<>();
-        final Lo3CategorieEnum historisch = Lo3CategorieEnum.bepaalHistorischeCategorie(categorie, true);
-        for (final Lo3CategorieWaarde categorieWaarde : categorieenLijst) {
-            if (categorieWaarde.getCategorie().equals(categorie) || categorieWaarde.getCategorie().equals(historisch)) {
-                result.add(categorieWaarde);
-            }
-        }
-        return result;
-    }
-
-    /**
      * Parse een persoonslijst.
-     *
-     * @param persoonslijstWaarden
-     *            alle waarden van een kolom uit de excel sheet
+     * @param persoonslijstWaarden alle waarden van een kolom uit de excel sheet
      * @return een lo3 persoonslijst
      */
     public Lo3Persoonslijst parse(final List<Lo3CategorieWaarde> persoonslijstWaarden) {
         final Lo3PersoonslijstBuilder persoonslijstBuilder = new Lo3PersoonslijstBuilder();
 
-        persoonslijstBuilder.persoonStapel(parseLo3PersoonStapel(getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_01)));
-        persoonslijstBuilder.ouder1Stapel(parseLo3OuderStapel(getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_02)));
-        persoonslijstBuilder.ouder2Stapel(parseLo3OuderStapel(getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_03)));
-        persoonslijstBuilder.nationaliteitStapels(parseLo3NationaliteitStapel(getGesorteerdeCategorieenPerStapel(
-            persoonslijstWaarden,
-            Lo3CategorieEnum.CATEGORIE_04)));
-        persoonslijstBuilder.huwelijkOfGpStapels(parseLo3HuwelijkOfGpStapel(getGesorteerdeCategorieenPerStapel(
-            persoonslijstWaarden,
-            Lo3CategorieEnum.CATEGORIE_05)));
-        persoonslijstBuilder.overlijdenStapel(parseLo3OverlijdenStapel(getGesorteerdeCategorieenPerStapel(
-            persoonslijstWaarden,
-            Lo3CategorieEnum.CATEGORIE_06)));
-        persoonslijstBuilder.inschrijvingStapel(parseLo3InschrijvingStapel(getGesorteerdeCategorieenPerStapel(
-            persoonslijstWaarden,
-            Lo3CategorieEnum.CATEGORIE_07)));
-        persoonslijstBuilder.verblijfplaatsStapel(parseLo3VerblijfplaatsStapel(getGesorteerdeCategorieenPerStapel(
-            persoonslijstWaarden,
-            Lo3CategorieEnum.CATEGORIE_08)));
-        persoonslijstBuilder.kindStapels(parseLo3KindStapel(getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_09)));
-        persoonslijstBuilder.verblijfstitelStapel(parseLo3VerblijfstitelStapel(getGesorteerdeCategorieenPerStapel(
-            persoonslijstWaarden,
-            Lo3CategorieEnum.CATEGORIE_10)));
-        persoonslijstBuilder.gezagsverhoudingStapel(parseLo3GezagsverhoudingStapel(getGesorteerdeCategorieenPerStapel(
-            persoonslijstWaarden,
-            Lo3CategorieEnum.CATEGORIE_11)));
-        persoonslijstBuilder.reisdocumentStapels(parseLo3ReisdocumentStapel(getGesorteerdeCategorieenPerStapel(
-            persoonslijstWaarden,
-            Lo3CategorieEnum.CATEGORIE_12)));
-        persoonslijstBuilder.kiesrechtStapel(parseLo3KiesrechtStapel(getGesorteerdeCategorieenPerStapel(
-            persoonslijstWaarden,
-            Lo3CategorieEnum.CATEGORIE_13)));
+        persoonslijstBuilder.persoonStapel(
+                parseLo3PersoonStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_01)));
+        persoonslijstBuilder.ouder1Stapel(
+                parseLo3OuderStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_02)));
+        persoonslijstBuilder.ouder2Stapel(
+                parseLo3OuderStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_03)));
+        persoonslijstBuilder.nationaliteitStapels(
+                parseLo3NationaliteitStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_04)));
+        persoonslijstBuilder.huwelijkOfGpStapels(
+                parseLo3HuwelijkOfGpStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_05)));
+        persoonslijstBuilder.overlijdenStapel(
+                parseLo3OverlijdenStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_06)));
+        persoonslijstBuilder.inschrijvingStapel(
+                parseLo3InschrijvingStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_07)));
+        persoonslijstBuilder.verblijfplaatsStapel(
+                parseLo3VerblijfplaatsStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_08)));
+        persoonslijstBuilder.kindStapels(
+                parseLo3KindStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_09)));
+        persoonslijstBuilder.verblijfstitelStapel(
+                parseLo3VerblijfstitelStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_10)));
+        persoonslijstBuilder.gezagsverhoudingStapel(
+                parseLo3GezagsverhoudingStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_11)));
+        persoonslijstBuilder.reisdocumentStapels(
+                parseLo3ReisdocumentStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_12)));
+        persoonslijstBuilder.kiesrechtStapel(
+                parseLo3KiesrechtStapel(Lo3ParserUtil.getGesorteerdeCategorieenPerStapel(persoonslijstWaarden, Lo3CategorieEnum.CATEGORIE_13)));
 
         return persoonslijstBuilder.build();
     }

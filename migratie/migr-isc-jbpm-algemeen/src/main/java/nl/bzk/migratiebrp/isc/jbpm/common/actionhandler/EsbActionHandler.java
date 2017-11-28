@@ -21,25 +21,36 @@ import org.jbpm.graph.exe.Token;
  */
 public final class EsbActionHandler implements ActionHandler {
 
-    /** Attribuut naam waarop het JBPM proces id wordt gezet. */
+    /**
+     * Attribuut naam waarop het JBPM proces id wordt gezet.
+     */
     public static final String PROCESS_ID_ATTRIBUTE = "jbpm.process.id";
-    /** Attribuut naam waarop het JBPM token id wordt gezet. */
+    /**
+     * Attribuut naam waarop het JBPM token id wordt gezet.
+     */
     public static final String TOKEN_ID_ATTRIBUTE = "jbpm.token.id";
-    /** Attribuut naam waarop het JBPM node id wordt gezet. */
+    /**
+     * Attribuut naam waarop het JBPM node id wordt gezet.
+     */
     public static final String NODE_ID_ATTRIBUTE = "jbpm.node.id";
 
     private static final long serialVersionUID = 1L;
 
-    /** The ESB Service Name, specified in the processdefinition.xml. */
+    /**
+     * The ESB Service Name, specified in the processdefinition.xml.
+     */
     private String esbServiceName;
-    /** XML element to specify the mapping of variables from jBPM to ESB. */
+    /**
+     * XML element to specify the mapping of variables from jBPM to ESB.
+     */
     private DefaultElement bpmToEsbVars;
-    /** XML element to specify the mapping of variables from jBPM to ESB. */
+    /**
+     * XML element to specify the mapping of variables from jBPM to ESB.
+     */
     private DefaultElement esbToBpmVars;
 
     /**
      * Geef de ESB service naam.
-     * 
      * @return de ESB service naam
      */
     public String getEsbServiceName() {
@@ -48,9 +59,7 @@ public final class EsbActionHandler implements ActionHandler {
 
     /**
      * Zet de ESB service naam.
-     * 
-     * @param esbServiceName
-     *            de te zetten ESB service naam.
+     * @param esbServiceName de te zetten ESB service naam.
      */
     public void setEsbServiceName(final String esbServiceName) {
         this.esbServiceName = esbServiceName;
@@ -58,7 +67,6 @@ public final class EsbActionHandler implements ActionHandler {
 
     /**
      * Geef de BPM naar ESB variabelen.
-     * 
      * @return de BPM naar ESB variabelen.
      */
     public DefaultElement getBpmToEsbVars() {
@@ -67,9 +75,7 @@ public final class EsbActionHandler implements ActionHandler {
 
     /**
      * Zet de BPM naar ESB variabelen.
-     * 
-     * @param bpmToEsbVars
-     *            de te zetten BPM naar ESB variabelen.
+     * @param bpmToEsbVars de te zetten BPM naar ESB variabelen.
      */
     public void setBpmToEsbVars(final DefaultElement bpmToEsbVars) {
         this.bpmToEsbVars = bpmToEsbVars;
@@ -77,7 +83,6 @@ public final class EsbActionHandler implements ActionHandler {
 
     /**
      * Geef de ESB naar BPM variabelen.
-     * 
      * @return de ESB naar BPM variabelen.
      */
     public DefaultElement getEsbToBpmVars() {
@@ -86,9 +91,7 @@ public final class EsbActionHandler implements ActionHandler {
 
     /**
      * Zet de ESB naar BPM variabelen.
-     * 
-     * @param esbToBpmVars
-     *            de te zetten ESB naar BPM variabelen.
+     * @param esbToBpmVars de te zetten ESB naar BPM variabelen.
      */
     public void setEsbToBpmVars(final DefaultElement esbToBpmVars) {
         this.esbToBpmVars = esbToBpmVars;

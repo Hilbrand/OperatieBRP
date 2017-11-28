@@ -14,9 +14,7 @@ public final class ReportException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
+     * @param message melding
      */
     public ReportException(final String message) {
         super(message);
@@ -24,11 +22,8 @@ public final class ReportException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
-     * @param t
-     *            oorzaak
+     * @param message melding
+     * @param t oorzaak
      */
     public ReportException(final String message, final Throwable t) {
         super(message, t);

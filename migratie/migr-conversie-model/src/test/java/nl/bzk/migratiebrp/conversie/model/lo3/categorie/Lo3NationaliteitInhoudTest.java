@@ -11,16 +11,23 @@ import static org.junit.Assert.assertTrue;
 
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
-
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import org.junit.Test;
 
 public class Lo3NationaliteitInhoudTest {
 
     @Test
     public void testIsLeeg() {
-        assertTrue(new Lo3NationaliteitInhoud(null, null, null, null).isLeeg());
-        assertTrue(new Lo3NationaliteitInhoud(null, null, new Lo3RedenNederlandschapCode("001"), null).isLeeg());
-        assertFalse(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6030"), null, null, null).isLeeg());
-        assertFalse(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6030"), null, new Lo3RedenNederlandschapCode("001"), null).isLeeg());
+        assertTrue(new Lo3NationaliteitInhoud(null, null, null, null, null).isLeeg());
+        assertTrue(new Lo3NationaliteitInhoud(null, null, new Lo3RedenNederlandschapCode("001"), null, null).isLeeg());
+        assertFalse(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6030"), null, null, null, null).isLeeg());
+        assertFalse(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6030"), null, new Lo3RedenNederlandschapCode("001"), null, null).isLeeg());
+        assertFalse(
+                new Lo3NationaliteitInhoud(
+                        new Lo3NationaliteitCode("6030"),
+                        null,
+                        new Lo3RedenNederlandschapCode("001"),
+                        null,
+                        new Lo3String("1 2+a-f/Z.D")).isLeeg());
     }
 }

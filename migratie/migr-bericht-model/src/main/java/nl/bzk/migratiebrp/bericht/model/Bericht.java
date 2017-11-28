@@ -12,60 +12,49 @@ package nl.bzk.migratiebrp.bericht.model;
 public interface Bericht {
     /**
      * Bericht ID.
-     * 
      * @return bericht ID
      */
     String getMessageId();
 
     /**
      * Bericht ID.
-     * 
-     * @param messageId
-     *            bericht ID
+     * @param messageId bericht ID
      */
     void setMessageId(final String messageId);
 
     /**
      * Correlatie ID.
-     * 
      * @return correlatie ID
      */
     String getCorrelationId();
 
     /**
      * Correlatie ID.
-     * 
-     * @param correlationId
-     *            correlatie ID
+     * @param correlationId correlatie ID
      */
     void setCorrelationId(final String correlationId);
 
     /**
      * Bericht type.
-     * 
      * @return bericht type
      */
     String getBerichtType();
 
     /**
      * Welke cyclus wordt gestart door dit bericht?.
-     *
      * @return proces identificatie
      */
     String getStartCyclus();
 
     /**
      * Format naar een string bericht.
-     * 
      * @return String representatie van het bericht
-     * @throws BerichtInhoudException
-     *             In het gaval de inhoud niet conformeert aan de XSD.
+     * @throws BerichtInhoudException In het gaval de inhoud niet conformeert aan de XSD.
      */
     String format() throws BerichtInhoudException;
 
     /**
      * Geef de gerelateerde informatie.
-     * 
      * @return gerelateerde informatie
      */
     GerelateerdeInformatie getGerelateerdeInformatie();

@@ -56,7 +56,7 @@ public class BirtReportParameterTest {
         final IScalarParameterDefn def = Mockito.mock(IScalarParameterDefn.class);
         Mockito.when(def.getDataType()).thenReturn(IParameterDefn.TYPE_INTEGER);
 
-        final Object input = new String[] {"345534" };
+        final Object input = new String[]{"345534"};
         final Object result = BirtReportParameters.convertTo(def, input);
 
         Assert.assertEquals(345534, result);
@@ -77,7 +77,7 @@ public class BirtReportParameterTest {
         final IScalarParameterDefn def = Mockito.mock(IScalarParameterDefn.class);
         Mockito.when(def.getDataType()).thenReturn(IParameterDefn.TYPE_STRING);
 
-        final Object input = new String[] {"Blablabla" };
+        final Object input = new String[]{"Blablabla"};
         final Object result = BirtReportParameters.convertTo(def, input);
 
         Assert.assertEquals("Blablabla", result);

@@ -6,24 +6,21 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de Brp voornaam inhoud.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
- * 
- * 
  */
 @Preconditie(SoortMeldingCode.PRE019)
 public final class BrpVoornaamInhoud extends AbstractBrpGroepInhoud {
@@ -35,19 +32,13 @@ public final class BrpVoornaamInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een BrpVoornaamInhoud object.
-     * 
-     * @param voornaam
-     *            de voornaam, minimaal 1 karakter, mag geen leading of trailing spaties bevatten. voornaam mag ook null
-     *            zijn
-     * @param volgnummer
-     *            het volgnummer, bepaald de volgorder van de voornamen
-     * @throws IllegalArgumentException
-     *             als de inhoud van voornaam niet aan de eisen voldoet
+     * @param voornaam de voornaam, minimaal 1 karakter, mag geen leading of trailing spaties bevatten. voornaam mag ook null zijn
+     * @param volgnummer het volgnummer, bepaald de volgorder van de voornamen
+     * @throws IllegalArgumentException als de inhoud van voornaam niet aan de eisen voldoet
      */
     public BrpVoornaamInhoud(
-        @Element(name = "voornaam", required = false) final BrpString voornaam,
-        @Element(name = "volgnummer", required = false) final BrpInteger volgnummer)
-    {
+            @Element(name = "voornaam", required = false) final BrpString voornaam,
+            @Element(name = "volgnummer", required = false) final BrpInteger volgnummer) {
         final String voornaamAsString = BrpString.unwrap(voornaam);
         if (voornaamAsString != null && voornaamAsString.length() < 1) {
             throw new IllegalArgumentException("De lengte van voornaam moet minimaal 1 zijn");
@@ -66,27 +57,25 @@ public final class BrpVoornaamInhoud extends AbstractBrpGroepInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(voornaam);
+        return !BrpValidatie.isEenParameterGevuld(voornaam);
     }
 
     /**
-     * Geef de waarde van voornaam.
-     *
-     * @return de voornaam of null
+     * Geef de waarde van voornaam van BrpVoornaamInhoud.
+     * @return de waarde van voornaam van BrpVoornaamInhoud
      */
     public BrpString getVoornaam() {
         return voornaam;
     }
 
     /**
-     * Geef de waarde van volgnummer.
-     *
-     * @return volgnummer
+     * Geef de waarde van volgnummer van BrpVoornaamInhoud.
+     * @return de waarde van volgnummer van BrpVoornaamInhoud
      */
     public BrpInteger getVolgnummer() {
         return volgnummer;
@@ -112,8 +101,8 @@ public final class BrpVoornaamInhoud extends AbstractBrpGroepInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("voornaam", voornaam)
-                                                                          .append("volgnummer", volgnummer)
-                                                                          .toString();
+                .append("voornaam", voornaam)
+                .append("volgnummer", volgnummer)
+                .toString();
     }
 }

@@ -27,7 +27,6 @@ public final class DatumUtil {
 
     /**
      * Retourneert de huidige datum.
-     * 
      * @return De huidige datum.
      */
     public static Integer vandaag() {
@@ -37,7 +36,6 @@ public final class DatumUtil {
 
     /**
      * Retourneert de datum van gisteren.
-     * 
      * @return De datum van gisteren.
      */
     public static Integer gisteren() {
@@ -49,7 +47,6 @@ public final class DatumUtil {
 
     /**
      * Retourneert de datum van morgen.
-     * 
      * @return De datum van morgen.
      */
     public static Integer morgen() {

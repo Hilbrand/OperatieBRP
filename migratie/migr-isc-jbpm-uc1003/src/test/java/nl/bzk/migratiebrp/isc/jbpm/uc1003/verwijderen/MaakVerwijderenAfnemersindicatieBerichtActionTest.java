@@ -8,34 +8,30 @@ package nl.bzk.migratiebrp.isc.jbpm.uc1003.verwijderen;
 
 import java.util.HashMap;
 import java.util.Map;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.Av01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwijderAfnemersindicatieVerzoekBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.AfnemersIndicatieJbpmConstants;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakVerwijderenAfnemersindicatieBerichtActionTest {
 
-    private static final String AFNEMER = "580001";
-    private MaakVerwijderenAfnemersindicatieBerichtAction subject;
-    private BerichtenDao berichtenDao;
+    private static final String AFNEMER = "059901";
+    private static final String BSN = "123456789";
 
-    @Before
-    public void setup() {
-        subject = new MaakVerwijderenAfnemersindicatieBerichtAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakVerwijderenAfnemersindicatieBerichtAction subject = new MaakVerwijderenAfnemersindicatieBerichtAction(berichtenDao);
 
     @Test
     public void test() {
         final Map<String, Object> parameters = new HashMap<>();
-        parameters.put(AfnemersIndicatieJbpmConstants.TOEGANGLEVERINGSAUTORISATIEID_KEY, Integer.valueOf(666));
-        parameters.put(AfnemersIndicatieJbpmConstants.VERWIJDEREN_DIENSTID_KEY, Integer.valueOf(69));
-        parameters.put(AfnemersIndicatieJbpmConstants.PERSOONID_KEY, Integer.valueOf(20));
+        parameters.put(AfnemersIndicatieJbpmConstants.PERSOON_BSN, BSN);
+        Av01Bericht av01Bericht = new Av01Bericht();
+        av01Bericht.setBronPartijCode(AFNEMER);
+        Long input = berichtenDao.bewaarBericht(av01Bericht);
+        parameters.put("input", input);
 
         final Map<String, Object> result = subject.execute(parameters);
         Assert.assertEquals(1, result.size());
@@ -44,8 +40,7 @@ public class MaakVerwijderenAfnemersindicatieBerichtActionTest {
                 (VerwijderAfnemersindicatieVerzoekBericht) berichtenDao.leesBericht((Long) result.get("verwijderenAfnIndBericht"));
 
         Assert.assertNotNull(verwijderAfnemersindicatieVerzoekBericht);
-        Assert.assertEquals(Integer.valueOf(666), verwijderAfnemersindicatieVerzoekBericht.getToegangLeveringsautorisatieId());
-        Assert.assertEquals(Integer.valueOf(69), verwijderAfnemersindicatieVerzoekBericht.getDienstId());
-        Assert.assertEquals(Integer.valueOf(20), verwijderAfnemersindicatieVerzoekBericht.getPersoonId());
+        Assert.assertEquals(AFNEMER, verwijderAfnemersindicatieVerzoekBericht.getPartijCode());
+        Assert.assertEquals(BSN, verwijderAfnemersindicatieVerzoekBericht.getBsn());
     }
 }

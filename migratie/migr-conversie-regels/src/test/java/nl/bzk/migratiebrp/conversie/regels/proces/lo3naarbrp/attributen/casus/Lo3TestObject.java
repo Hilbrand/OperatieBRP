@@ -16,8 +16,6 @@ import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.casus.Ab
 
 /**
  * Test class om makkelijk de inhoud van de test casus op te nemen
- *
- * @param <T>
  */
 public class Lo3TestObject<T extends Lo3CategorieInhoud> {
 
@@ -30,8 +28,7 @@ public class Lo3TestObject<T extends Lo3CategorieInhoud> {
     private Lo3Herkomst lo3Herkomst;
 
     /**
-     * @param documentSoort
-     *            mag null zijn
+     * @param documentSoort mag null zijn
      */
     public Lo3TestObject(final Document documentSoort) {
         super();
@@ -39,13 +36,12 @@ public class Lo3TestObject<T extends Lo3CategorieInhoud> {
     }
 
     protected void vul(
-        final T inhoud,
-        final Lo3IndicatieOnjuist onjuist,
-        final Integer ingangsdatumGeldigheid,
-        final Integer datumOpneming,
-        final Integer docId,
-        final Lo3Herkomst lo3Herkomst)
-    {
+            final T inhoud,
+            final Lo3IndicatieOnjuist onjuist,
+            final Integer ingangsdatumGeldigheid,
+            final Integer datumOpneming,
+            final Integer docId,
+            final Lo3Herkomst lo3Herkomst) {
         this.inhoud = inhoud;
         this.onjuist = onjuist;
         this.ingang = ingangsdatumGeldigheid == null ? null : new Lo3Datum(ingangsdatumGeldigheid);
@@ -60,7 +56,6 @@ public class Lo3TestObject<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return inhoud
      */
     public T getInhoud() {
@@ -69,7 +64,6 @@ public class Lo3TestObject<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van onjuist.
-     *
      * @return onjuist
      */
     public Lo3IndicatieOnjuist getOnjuist() {
@@ -78,7 +72,6 @@ public class Lo3TestObject<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van ingang.
-     *
      * @return ingang
      */
     public Lo3Datum getIngang() {
@@ -87,7 +80,6 @@ public class Lo3TestObject<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van opneming.
-     *
      * @return opneming
      */
     public Lo3Datum getOpneming() {
@@ -96,7 +88,6 @@ public class Lo3TestObject<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van akte.
-     *
      * @return akte
      */
     public Lo3Documentatie getAkte() {
@@ -105,7 +96,6 @@ public class Lo3TestObject<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van historie.
-     *
      * @return historie
      */
     public Lo3Historie getHistorie() {
@@ -114,7 +104,6 @@ public class Lo3TestObject<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van lo3 herkomst.
-     *
      * @return lo3 herkomst
      */
     public Lo3Herkomst getLo3Herkomst() {

@@ -20,8 +20,16 @@ import org.springframework.stereotype.Component;
 @Component
 public final class SessionProcesDao implements ProcesDao {
 
+    private final SessionFactory sessionFactory;
+
+    /**
+     * Constructor.
+     * @param sessionFactory session factory
+     */
     @Inject
-    private SessionFactory sessionFactory;
+    public SessionProcesDao(final SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public void registreerProcesRelatie(final long processInstanceIdEen, final long processInstanceIdTwee) {

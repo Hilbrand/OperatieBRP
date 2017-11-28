@@ -14,9 +14,7 @@ public class VoiscQueueException extends VoiscException {
 
     /**
      * Constructor.
-     * 
-     * @param foutmelding
-     *            foutmelding
+     * @param foutmelding foutmelding
      */
     public VoiscQueueException(final String foutmelding) {
         super(foutmelding);
@@ -24,11 +22,8 @@ public class VoiscQueueException extends VoiscException {
 
     /**
      * Constructor.
-     * 
-     * @param foutmelding
-     *            foutmelding
-     * @param oorzaak
-     *            oorzaak
+     * @param foutmelding foutmelding
+     * @param oorzaak oorzaak
      */
     public VoiscQueueException(final String foutmelding, final Throwable oorzaak) {
         super(foutmelding, oorzaak);

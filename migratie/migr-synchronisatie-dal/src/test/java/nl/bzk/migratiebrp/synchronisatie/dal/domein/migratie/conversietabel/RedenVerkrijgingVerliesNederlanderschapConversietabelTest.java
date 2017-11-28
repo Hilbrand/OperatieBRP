@@ -17,7 +17,7 @@ import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
 import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
+import nl.bzk.algemeenbrp.test.dal.DBUnit.InsertBefore;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,23 +35,23 @@ public class RedenVerkrijgingVerliesNederlanderschapConversietabelTest extends A
         verliesConversietabel = conversietabelFactory.createRedenBeeindigingNationaliteitConversietabel();
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test
     public void testRedenVerkrijgingConversieTabel() {
         Lo3RedenNederlandschapCode lo3Input = new Lo3RedenNederlandschapCode("020");
         final BrpRedenVerkrijgingNederlandschapCode verkrijg = verkrijgingConversietabel.converteerNaarBrp(lo3Input);
-        assertEquals(new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort("020")), verkrijg);
+        assertEquals(new BrpRedenVerkrijgingNederlandschapCode("020"), verkrijg);
 
         try {
             lo3Input = new Lo3RedenNederlandschapCode("035");
             verkrijgingConversietabel.converteerNaarBrp(lo3Input);
         } catch (final IllegalArgumentException iae) {
             assertTrue(iae.getMessage().contains(
-                "Er is geen mapping naar BRP voor LO3 waarde 'Lo3RedenNederlandschapCode[waarde=035,onderzoek=<null>]'"));
+                    "Er is geen mapping naar BRP voor LO3 waarde 'Lo3RedenNederlandschapCode[waarde=035,onderzoek=<null>]'"));
         }
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test
     public void testRedenVerliesConversieTabel() {
         Lo3RedenNederlandschapCode lo3Input;
@@ -62,12 +62,12 @@ public class RedenVerkrijgingVerliesNederlanderschapConversietabelTest extends A
             verliesConversietabel.converteerNaarBrp(lo3Input);
         } catch (final IllegalArgumentException iae) {
             assertTrue(iae.getMessage().contains(
-                "Er is geen mapping naar BRP voor LO3 waarde 'Lo3RedenNederlandschapCode[waarde=020,onderzoek=<null>]'"));
+                    "Er is geen mapping naar BRP voor LO3 waarde 'Lo3RedenNederlandschapCode[waarde=020,onderzoek=<null>]'"));
         }
 
         lo3Input = new Lo3RedenNederlandschapCode("035");
         verkrijg = verliesConversietabel.converteerNaarBrp(lo3Input);
-        assertEquals(new BrpRedenVerliesNederlandschapCode(Short.parseShort("035")), verkrijg);
+        assertEquals(new BrpRedenVerliesNederlandschapCode("035"), verkrijg);
 
         final Lo3RedenNederlandschapCode terug = verliesConversietabel.converteerNaarLo3(verkrijg);
         assertEquals(lo3Input, terug);

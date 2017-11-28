@@ -8,16 +8,16 @@
     <!--  -->
 
   <start-state name="1. ONTVANG TB02 BERICHT">
-    <transition to="1.1 Loggen start proces">
+    <transition to="O-1. Loggen start proces">
       <script>
         <expression>
                     functioneleStap="uc309.start.stap";
-                    bronGemeente = nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(input).getBronGemeente();
-                    doelGemeente = nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(input).getDoelGemeente();
+                    bronPartijCode = nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(input).getBronPartijCode();
+                    doelPartijCode = nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(input).getDoelPartijCode();
         </expression>
         <variable name="functioneleStap" access="write"/>
-        <variable name="bronGemeente" access="write"/>
-        <variable name="doelGemeente" access="write"/>
+        <variable name="bronPartijCode" access="write"/>
+        <variable name="doelPartijCode" access="write"/>
       </script>
       <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler" config-type="bean">
         <bean>registreerGerelateerdeInformatieAction</bean>
@@ -31,7 +31,7 @@
     </transition>
   </start-state>
 
-  <node name="1.1 Loggen start proces">
+  <node name="O-1. Loggen start proces">
     <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler">
       <bean>startProcesInstantieAction</bean>
     </action>
@@ -70,7 +70,7 @@
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces be&#235;indigen (Pf03)", true, false, false);
+                    foutafhandelingPaden.put("end", "Proces be&#235;indigen (Pf03)", true, false);
                 </expression>
                 <variable name='actieFoutmelding' access='read' />
                 <variable name='foutafhandelingFout' access='write' />
@@ -145,10 +145,9 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces be&#235;indigen (Pf03)", true, false, false);
-                    foutafhandelingPaden.put("endWithoutPf03", "Proces be&#235;indigen (zonder Pf03)", false, false,
-                    false);
-                    foutafhandelingPaden.put("restartAtVerstuurBericht", "Opnieuw proberen toevallige gebeurtenis te versturen", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces be&#235;indigen (Pf03)", true, false);
+                    foutafhandelingPaden.put("endWithoutPf03", "Proces be&#235;indigen (zonder Pf03)", false, false);
+                    foutafhandelingPaden.put("restartAtVerstuurBericht", "Opnieuw proberen toevallige gebeurtenis te versturen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -178,10 +177,9 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces be&#235;indigen (Pf03)", true, false, false);
-                    foutafhandelingPaden.put("endWithoutPf03", "Proces be&#235;indigen (zonder Pf03)", false, false,
-                    false);
-                    foutafhandelingPaden.put("restartAtVerstuurBericht", "Opnieuw proberen toevallige gebeurtenis te versturen", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces be&#235;indigen (Pf03)", true, false);
+                    foutafhandelingPaden.put("endWithoutPf03", "Proces be&#235;indigen (zonder Pf03)", false, false);
+                    foutafhandelingPaden.put("restartAtVerstuurBericht", "Opnieuw proberen toevallige gebeurtenis te versturen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -224,7 +222,7 @@
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces be&#235;indigen (Tf21)", true, false, false);
+                    foutafhandelingPaden.put("end", "Proces be&#235;indigen (Tf21)", true, false);
                 </expression>
                 <variable name='actieFoutmelding' access='read' />
                 <variable name='foutafhandelingFout' access='write' />
@@ -234,6 +232,25 @@
                 <variable name='foutafhandelingPaden' access='write' />
             </script>
         </transition>
+		<transition to="6-1. Foutafhandeling (Toevallige Gebeurtenis)" name="4c. afgekeurd">
+            <script>
+                <expression>
+                    foutafhandelingFout="uc309.verwerking.afgekeurd";
+                    foutafhandelingFoutmelding=actieFoutmelding;
+
+                    foutafhandelingIndicatieBeheerder=false;
+                    restart="end";
+                    foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
+                    foutafhandelingPaden.put("end", "Proces be&#235;indigen (Pf03)", true, false);
+                </expression>
+                <variable name='actieFoutmelding' access='read' />
+                <variable name='foutafhandelingFout' access='write' />
+                <variable name='foutafhandelingFoutmelding' access='write' />
+                <variable name='foutafhandelingIndicatieBeheerder' access='write' />
+                <variable name='restart' access='write' />
+                <variable name='foutafhandelingPaden' access='write' />
+            </script>
+		</transition>
     </decision>
 
     <node name="4.2 Maak null antwoord bericht">
@@ -251,11 +268,8 @@
             </action>
             <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    VOISC-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
                     <mapping bpm="nullBericht" esb="BODY_CONTENT"></mapping>
                 </bpmToEsbVars>
@@ -278,11 +292,8 @@
             </action>
             <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    VOISC-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
                     <mapping bpm="tf21Bericht" esb="BODY_CONTENT"></mapping>
                 </bpmToEsbVars>
@@ -299,8 +310,8 @@
     <process-state  name="6-1. Foutafhandeling (Toevallige Gebeurtenis)">
         <sub-process name="foutafhandeling" binding="late"></sub-process>
         <variable access="read" mapped-name="lo3Bericht" name="input"></variable>
-        <variable access="read" mapped-name="bronGemeente" name="bronGemeente"></variable>
-        <variable access="read" mapped-name="doelGemeente" name="doelGemeente"></variable>
+        <variable access="read" mapped-name="bronPartijCode" name="bronPartijCode"></variable>
+        <variable access="read" mapped-name="doelPartijCode" name="doelPartijCode"></variable>
         <variable access="read" mapped-name="functioneleStap" name="functioneleStap"></variable>
         <variable access="read" mapped-name="fout" name="foutafhandelingFout" ></variable>
         <variable access="read" mapped-name="foutmelding" name="foutafhandelingFoutmelding"></variable>
@@ -312,13 +323,12 @@
 
     <decision name="6-2. Keuze">
         <transition to="5. EINDE" name="6b. Beeindigen">
-            <condition expression="#{restart == 'end'}"></condition>
+            <condition expression="#{restart == 'end' || restart == 'endWithoutPf03'}"></condition>
         </transition>
-		<transition to="3.1 maak verwerkToevalligeGebeurtenisVerzoek bericht" name="6a. Opnieuw proberen">
+        <transition to="3.1 maak verwerkToevalligeGebeurtenisVerzoek bericht" name="6a. Opnieuw proberen">
             <condition expression="#{restart == 'restartAtVerstuurBericht'}"></condition>
-		</transition>
+        </transition>
     </decision>
-
 
     <!--  -->
     <!--  -->

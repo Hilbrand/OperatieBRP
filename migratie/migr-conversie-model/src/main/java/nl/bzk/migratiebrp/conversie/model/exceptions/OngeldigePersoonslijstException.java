@@ -6,13 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.exceptions;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Root;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
 
 /**
- * Exception class voor preconditie fouten in niet onjuiste voorkomens tijdens conversie LO3 -> BRP.
+ * Exception class voor preconditie fouten in niet onjuiste voorkomens tijdens conversie LO3 -&lt; BRP.
  */
 @Root
 public final class OngeldigePersoonslijstException extends Exception {
@@ -21,20 +21,24 @@ public final class OngeldigePersoonslijstException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
+     * @param message melding
      */
     public OngeldigePersoonslijstException(@Element(name = "message") final String message) {
         super(message);
     }
 
+    /**
+     * Constructor om een andere exception te wrappen en een melding erbij mee te geven.
+     * @param message melding
+     * @param cause de andere exceptie
+     */
+    public OngeldigePersoonslijstException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
     @Override
     public boolean equals(final Object other) {
-        if (!(other instanceof OngeldigePersoonslijstException)) {
-            return false;
-        }
-        return new EqualsBuilder().isEquals();
+        return other instanceof OngeldigePersoonslijstException && new EqualsBuilder().isEquals();
     }
 
     @Override
@@ -42,7 +46,9 @@ public final class OngeldigePersoonslijstException extends Exception {
         return new HashCodeBuilder().toHashCode();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see java.lang.Throwable#getMessage()
      */
     @Override

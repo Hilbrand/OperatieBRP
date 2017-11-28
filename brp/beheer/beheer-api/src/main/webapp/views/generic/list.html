@@ -54,7 +54,7 @@
                         <table id="table_{{titel}}" class="table {{readonly ? '' : 'table-hover'}} table-striped table-condensed table-responsive">
                             <label>Aantal resultaten: {{lijst.totalElements}}</label>
                             <colgroup ng-if="vastebreedte">
-                                <col ng-repeat="column in columns" ng-if="column.toonOpLijst" class="{{'col-xs-' + column.breedte}}"/>
+                                <col ng-repeat="column in columns" ng-if="column.toonOpLijst" class="{{'col-xs-' + column.lijstbreedte}}"/>
                             </colgroup>
                             <thead>
                                 <tr>

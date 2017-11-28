@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.conversie.model.lo3;
 
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3RubriekVolgnummerEnum;
-
 import org.junit.Assert;
 import org.junit.Test;
 

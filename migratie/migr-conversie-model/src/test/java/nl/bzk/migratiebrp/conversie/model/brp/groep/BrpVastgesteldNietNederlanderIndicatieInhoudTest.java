@@ -13,18 +13,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
-
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Test het contract van BrpVastgesteldNietNederlanderIndicatieInhoud.
- * 
  */
 public class BrpVastgesteldNietNederlanderIndicatieInhoudTest {
 

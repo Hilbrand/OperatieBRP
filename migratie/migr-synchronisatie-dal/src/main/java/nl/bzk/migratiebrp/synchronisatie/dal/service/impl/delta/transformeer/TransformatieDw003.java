@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
@@ -28,16 +28,15 @@ public final class TransformatieDw003 extends AbstractTransformatie {
 
     @Override
     public VerschilGroep execute(
-        final VerschilGroep verschillen,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final DeltaBepalingContext deltaBepalingContext)
-    {
+            final VerschilGroep verschillen,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final DeltaBepalingContext deltaBepalingContext) {
         return maakMRijEnNieuweRijVerschilVoorVerschilGroep(
-            verschillen,
-            actieVervalTbvLeveringMuts,
-            false,
-            verschillen.get(0).getBestaandeHistorieRij() instanceof PersoonBijhoudingHistorie,
-            deltaBepalingContext);
+                verschillen,
+                actieVervalTbvLeveringMuts,
+                false,
+                verschillen.get(0).getBestaandeHistorieRij() instanceof PersoonBijhoudingHistorie,
+                deltaBepalingContext);
     }
 
     @Override

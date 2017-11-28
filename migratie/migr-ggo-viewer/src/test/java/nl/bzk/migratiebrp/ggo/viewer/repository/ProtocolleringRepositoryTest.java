@@ -14,6 +14,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.ggo.viewer.domein.protocollering.entity.Protocollering;
+import nl.bzk.migratiebrp.ggo.viewer.util.PortInitializer;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.Rollback;
@@ -28,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(transactionManager = "viewerTransactionManager")
 @Rollback(false)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml" })
+@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml"}, initializers = {PortInitializer.class})
 public class ProtocolleringRepositoryTest {
 
     @Inject
@@ -40,7 +42,7 @@ public class ProtocolleringRepositoryTest {
     @Test
     @Transactional(value = "viewerTransactionManager", propagation = Propagation.REQUIRED)
     public void testInsertAndFindBerichtLogVoorANummer() {
-        final Long bestaandANummer = 123456789L;
+        final String bestaandANummer = "123456789";
         insertProtocollering(new Protocollering("test", new Timestamp(System.currentTimeMillis()), bestaandANummer, true));
         final List<Protocollering> protocolleringen = protocolleringRepository.findProtocolleringVoorANummer(bestaandANummer);
 
@@ -55,7 +57,7 @@ public class ProtocolleringRepositoryTest {
      */
     @Test
     public void testInsertAndFindBerichtLogVoorANummerZonderProtocollering() {
-        final Long nietBestaandANummer = 12345L;
+        final String nietBestaandANummer = "12345";
         final List<Protocollering> protocolleringen = protocolleringRepository.findProtocolleringVoorANummer(nietBestaandANummer);
 
         assertNotNull(protocolleringen);

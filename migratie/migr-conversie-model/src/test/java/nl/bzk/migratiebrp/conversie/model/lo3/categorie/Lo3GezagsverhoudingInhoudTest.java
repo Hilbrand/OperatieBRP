@@ -6,10 +6,9 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieCurateleregisterEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieGezagMinderjarigeEnum;
-
 import org.junit.Test;
 
 /**

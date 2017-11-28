@@ -6,11 +6,8 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,23 +23,22 @@ public class OpgeschortVoorwaardeRegelTest {
     @Inject
     private OpgeschortVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test of getBrpExpressie method, of class OpgeschortVoorwaardeRegel.
-     * 
-     * @throws java.lang.Exception
-     *             ging niet goed
+     * @throws java.lang.Exception ging niet goed
      */
     @Test
     public void testGetBrpExpressie() throws Exception {
-        testVoorwaarde("KNV 07.67.10", "bijhouding.nadere_bijhoudingsaard = \"A\"");
-        testVoorwaarde("KNV 07.67.20", "bijhouding.nadere_bijhoudingsaard = \"A\"");
-        testVoorwaarde("KV 07.67.10", "bijhouding.nadere_bijhoudingsaard <> \"A\"");
-        testVoorwaarde("KV 07.67.20", "bijhouding.nadere_bijhoudingsaard <> \"A\"");
-    }
-
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        Assert.assertTrue(instance.filter(gbaVoorwaarde));
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
+        testUtil.testVoorwaarde("KNV 07.67.10", "Persoon.Bijhouding.NadereBijhoudingsaardCode E= \"A\"");
+        testUtil.testVoorwaarde("KNV 07.67.20", "Persoon.Bijhouding.NadereBijhoudingsaardCode E= \"A\"");
+        testUtil.testVoorwaarde("KV 07.67.10", "NIET(Persoon.Bijhouding.NadereBijhoudingsaardCode A= \"A\")");
+        testUtil.testVoorwaarde("KV 07.67.20", "NIET(Persoon.Bijhouding.NadereBijhoudingsaardCode A= \"A\")");
     }
 }

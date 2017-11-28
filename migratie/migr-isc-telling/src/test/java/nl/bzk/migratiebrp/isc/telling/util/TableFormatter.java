@@ -21,11 +21,8 @@ public class TableFormatter {
 
     /**
      * Formats a table with all data in a beautiful way. Can be useful to print out the table data on a console.
-     *
-     * @param table
-     *            The table to be formatted in a beautiful way
+     * @param table The table to be formatted in a beautiful way
      * @return The table data as a formatted String
-     * @throws DataSetException
      */
     public String format(final ITable table) throws DataSetException {
         final StringBuffer sb = new StringBuffer();
@@ -89,10 +86,6 @@ public class TableFormatter {
 
     /**
      * Pads the given String with the given <code>padChar</code> up to the given <code>length</code>.
-     *
-     * @param s
-     * @param length
-     * @param padChar
      * @return The padded string
      */
     public static final String padLeft(final String s, final int length, final char padChar) {
@@ -108,10 +101,6 @@ public class TableFormatter {
 
     /**
      * Pads the given String with the given <code>padChar</code> up to the given <code>length</code>.
-     *
-     * @param s
-     * @param length
-     * @param padChar
      * @return The padded string
      */
     public static final String padRight(final String s, final int length, final char padChar) {

@@ -10,17 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.La01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lg01Bericht;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.BeheerdersKeuzeType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.SynchroniseerNaarBrpAntwoordType.Kandidaat;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.TypeSynchronisatieBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpVerzoekBericht;
-import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,35 +31,29 @@ public final class MaakSynchroniseerNaarBrpVerzoekAction implements SpringAction
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakSynchroniseerNaarBrpVerzoekAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
         LOG.debug("execute(parameters={})", parameters);
 
-        final Long plSyncBerichtId = (Long) parameters.get("input");
-        final Lo3Bericht lo3Bericht = (Lo3Bericht) berichtenDao.leesBericht(plSyncBerichtId);
-        final String vorigANummerKop = lo3Bericht.getHeader(Lo3HeaderVeld.OUD_A_NUMMER);
-        final List<Lo3CategorieWaarde> inhoud = getCategorieen(lo3Bericht);
-        final String pl = Lo3Inhoud.formatInhoud(inhoud);
+        final Lg01Bericht lg01Bericht = (Lg01Bericht) berichtenDao.leesBericht((Long) parameters.get("input"));
 
         final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoekBericht = new SynchroniseerNaarBrpVerzoekBericht();
-        synchroniseerNaarBrpVerzoekBericht.setLo3BerichtAsTeletexString(pl);
+        synchroniseerNaarBrpVerzoekBericht.setTypeBericht(TypeSynchronisatieBericht.LG_01);
+        synchroniseerNaarBrpVerzoekBericht.setLo3PersoonslijstAlsTeletexString(Lo3Inhoud.formatInhoud(lg01Bericht.getCategorieen()));
+        synchroniseerNaarBrpVerzoekBericht.setVerzendendeGemeente(lg01Bericht.getBronPartijCode());
 
-        // Zet de juiste stuurgegevens.
-        if (!emptyAnummer(vorigANummerKop)) {
-            // Indien de kop van het Lg01 bericht gevuld is met een niet leeg oud-anummer zet dan de
-            // a-nummerwijziging.
-            synchroniseerNaarBrpVerzoekBericht.setAnummerWijziging(true);
-        } else if (beheerderkeuzeNieuw(parameters)) {
-            // Beheerderskeuze 'Toevoegen als nieuw PL'.
-            synchroniseerNaarBrpVerzoekBericht.setOpnemenAlsNieuwePl(true);
-        } else if (beheerderkeuzeVervang(parameters)) {
-            // Beheerderskeize 'Vervangen'.
-            synchroniseerNaarBrpVerzoekBericht.setANummerTeVervangenPl(getTeVervangenAnummer(parameters));
-        }
-
+        verwerkBeheerderKeuze(parameters, synchroniseerNaarBrpVerzoekBericht);
         final Long synchroniseerNaarBrpVerzoekBerichtId = berichtenDao.bewaarBericht(synchroniseerNaarBrpVerzoekBericht);
 
         final Map<String, Object> result = new HashMap<>();
@@ -69,33 +63,51 @@ public final class MaakSynchroniseerNaarBrpVerzoekAction implements SpringAction
         return result;
     }
 
-    private boolean beheerderkeuzeNieuw(final Map<String, Object> parameters) {
-        return Boolean.TRUE.equals(parameters.get(VerwerkBeheerderkeuzeAction.VARIABLE_INDICATIE_NIEUW));
-    }
+    private void verwerkBeheerderKeuze(final Map<String, Object> parameters, final SynchroniseerNaarBrpVerzoekBericht verzoekBericht) {
+        final String keuze = (String) parameters.get(VerwerkBeheerderkeuzeAction.VARIABELE_BEHEERDER_KEUZE);
 
-    private boolean beheerderkeuzeVervang(final Map<String, Object> parameters) {
-        return parameters.get(VerwerkBeheerderkeuzeAction.VARIABLE_INDICATIE_VERVANG) != null;
-    }
+        if (keuze == null
+                || "".equals(keuze)
+                || MaakBeheerderskeuzesAction.KEUZE_OPNIEUW.equals(keuze)
+                || MaakBeheerderskeuzesAction.KEUZE_AUTOMATISCH_OPNIEUW.equals(keuze)) {
+            // Geen extra informatie toevoegen
+            LOG.debug("beheerderskeuze: opnieuw");
 
-    private Long getTeVervangenAnummer(final Map<String, Object> parameters) {
-        return (Long) parameters.get(VerwerkBeheerderkeuzeAction.VARIABLE_INDICATIE_VERVANG);
-    }
+        } else if (MaakBeheerderskeuzesAction.KEUZE_NIEUW.equals(keuze)
+                || MaakBeheerderskeuzesAction.KEUZE_NEGEREN.equals(keuze)
+                || MaakBeheerderskeuzesAction.KEUZE_AFKEUREN.equals(keuze)
+                || keuze.startsWith(MaakBeheerderskeuzesAction.KEUZE_VERVANGEN_PREFIX)) {
+            LOG.debug("beheerderskeuze: nieuw, negeren, afkeuren, vervangen");
 
-    private List<Lo3CategorieWaarde> getCategorieen(final Lo3Bericht lo3Bericht) {
-        final List<Lo3CategorieWaarde> categorieen;
+            final List<Kandidaat> kandidaten = haalKandidatenOp(parameters);
 
-        if (lo3Bericht instanceof Lg01Bericht) {
-            categorieen = ((Lg01Bericht) lo3Bericht).getCategorieen();
-        } else if (lo3Bericht instanceof La01Bericht) {
-            categorieen = ((La01Bericht) lo3Bericht).getCategorieen();
+            keuzeEnKandidatenToevoegen(verzoekBericht, keuze, kandidaten);
         } else {
-            categorieen = null;
+            LOG.debug("beheerderskeuze: onbekend");
+            throw new IllegalArgumentException("Beheerder keuze " + keuze + " onbekend.");
         }
-
-        return categorieen;
     }
 
-    private static boolean emptyAnummer(final String anummer) {
-        return anummer == null || "".equals(anummer) || "0000000000".equals(anummer);
+    private List<Kandidaat> haalKandidatenOp(final Map<String, Object> parameters) {
+        final SynchroniseerNaarBrpAntwoordBericht antwoordBericht =
+                (SynchroniseerNaarBrpAntwoordBericht) berichtenDao.leesBericht((Long) parameters.get("synchroniseerNaarBrpAntwoordBericht"));
+
+        return antwoordBericht == null ? null : antwoordBericht.getKandidaten();
+    }
+
+
+    private void keuzeEnKandidatenToevoegen(final SynchroniseerNaarBrpVerzoekBericht verzoekBericht, final String keuze,
+                                            final List<Kandidaat> kandidaten) {
+        if (MaakBeheerderskeuzesAction.KEUZE_NIEUW.equals(keuze)) {
+            verzoekBericht.setBeheerderKeuze(BeheerdersKeuzeType.TOEVOEGEN, null, kandidaten);
+        } else if (MaakBeheerderskeuzesAction.KEUZE_NEGEREN.equals(keuze)) {
+            verzoekBericht.setBeheerderKeuze(BeheerdersKeuzeType.NEGEREN, null, kandidaten);
+        } else if (MaakBeheerderskeuzesAction.KEUZE_AFKEUREN.equals(keuze)) {
+            verzoekBericht.setBeheerderKeuze(BeheerdersKeuzeType.AFKEUREN, null, kandidaten);
+        } else {
+            // Vervangen
+            final Long teVervangenPersoonId = Long.parseLong(keuze.substring(MaakBeheerderskeuzesAction.KEUZE_VERVANGEN_PREFIX.length()));
+            verzoekBericht.setBeheerderKeuze(BeheerdersKeuzeType.VERVANGEN, teVervangenPersoonId, kandidaten);
+        }
     }
 }

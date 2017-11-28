@@ -6,21 +6,19 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van een LO3 Kind categorie. Deze class is immutable en threadsafe.
@@ -28,33 +26,33 @@ import org.simpleframework.xml.Element;
 public final class Lo3KindInhoud implements Lo3CategorieInhoud {
 
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_0110)
-    @Element(name = "aNummer", required = false)
-    private final Lo3Long aNummer;
+    @Element(name = "aNummer")
+    private final Lo3String aNummer;
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_0120)
-    @Element(name = "burgerservicenummer", required = false)
-    private final Lo3Integer burgerservicenummer;
+    @Element(name = "burgerservicenummer")
+    private final Lo3String burgerservicenummer;
 
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_0210)
-    @Element(name = "voornamen", required = false)
+    @Element(name = "voornamen")
     private final Lo3String voornamen;
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_0220)
-    @Element(name = "adellijkeTitelPredikaatCode", required = false)
+    @Element(name = "adellijkeTitelPredikaatCode")
     private final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode;
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_0230)
-    @Element(name = "voorvoegselGeslachtsnaam", required = false)
+    @Element(name = "voorvoegselGeslachtsnaam")
     private final Lo3String voorvoegselGeslachtsnaam;
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_0240)
-    @Element(name = "geslachtsnaam", required = false)
+    @Element(name = "geslachtsnaam")
     private final Lo3String geslachtsnaam;
 
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_0310)
-    @Element(name = "geboortedatum", required = false)
+    @Element(name = "geboortedatum")
     private final Lo3Datum geboortedatum;
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_0320)
-    @Element(name = "geboorteGemeenteCode", required = false)
+    @Element(name = "geboorteGemeenteCode")
     private final Lo3GemeenteCode geboorteGemeenteCode;
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_0330)
-    @Element(name = "geboorteLandCode", required = false)
+    @Element(name = "geboorteLandCode")
     private final Lo3LandCode geboorteLandCode;
 
     /**
@@ -67,38 +65,27 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
 
     /**
      * Maakt een Lo3KindInhoud object. LET OP: Dit is alleen voor Simple-XML. Gebruik de Builder!
-     *
-     * @param aNummer
-     *            het LO3 A-nummer, mag null zijn
-     * @param burgerservicenummer
-     *            het LO3 burgerservicenummer, mag null zijn
-     * @param voornamen
-     *            de LO3 voornaam of voornamen, mag null zijn
-     * @param adellijkeTitelPredikaatCode
-     *            de LO3 adelijke titel / predikaat code, mag null zijn
-     * @param voorvoegselGeslachtsnaam
-     *            de LO3 voorvoegsel van de geslachtsnaam, mag null zijn, als gevuld dan lengte tussen 1 en 10 karakters
-     * @param geslachtsnaam
-     *            de LO3 geslachtsnaam, mag null zijn, als gevuld dan lengte tussen 1 en 200 karakters
-     * @param geboortedatum
-     *            de geboortedatum, mag null zijn
-     * @param geboorteGemeenteCode
-     *            de geboorte gemeente, mag null zijn
-     * @param geboorteLandCode
-     *            de landcode mag null zijn
+     * @param aNummer het LO3 A-nummer, mag null zijn
+     * @param burgerservicenummer het LO3 burgerservicenummer, mag null zijn
+     * @param voornamen de LO3 voornaam of voornamen, mag null zijn
+     * @param adellijkeTitelPredikaatCode de LO3 adelijke titel / predikaat code, mag null zijn
+     * @param voorvoegselGeslachtsnaam de LO3 voorvoegsel van de geslachtsnaam, mag null zijn, als gevuld dan lengte tussen 1 en 10 karakters
+     * @param geslachtsnaam de LO3 geslachtsnaam, mag null zijn, als gevuld dan lengte tussen 1 en 200 karakters
+     * @param geboortedatum de geboortedatum, mag null zijn
+     * @param geboorteGemeenteCode de geboorte gemeente, mag null zijn
+     * @param geboorteLandCode de landcode mag null zijn
      */
     public Lo3KindInhoud(
         /* Meer dan 7 parameters is in constructors van immutable model klassen getolereerd. */
-        @Element(name = "aNummer", required = false) final Lo3Long aNummer,
-        @Element(name = "burgerservicenummer", required = false) final Lo3Integer burgerservicenummer,
-        @Element(name = "voornamen", required = false) final Lo3String voornamen,
-        @Element(name = "adellijkeTitelPredikaatCode", required = false) final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode,
-        @Element(name = "voorvoegselGeslachtsnaam", required = false) final Lo3String voorvoegselGeslachtsnaam,
-        @Element(name = "geslachtsnaam", required = false) final Lo3String geslachtsnaam,
-        @Element(name = "geboortedatum", required = false) final Lo3Datum geboortedatum,
-        @Element(name = "geboorteGemeenteCode", required = false) final Lo3GemeenteCode geboorteGemeenteCode,
-        @Element(name = "geboorteLandCode", required = false) final Lo3LandCode geboorteLandCode)
-    {
+        @Element(name = "aNummer") final Lo3String aNummer,
+        @Element(name = "burgerservicenummer") final Lo3String burgerservicenummer,
+        @Element(name = "voornamen") final Lo3String voornamen,
+        @Element(name = "adellijkeTitelPredikaatCode") final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode,
+        @Element(name = "voorvoegselGeslachtsnaam") final Lo3String voorvoegselGeslachtsnaam,
+        @Element(name = "geslachtsnaam") final Lo3String geslachtsnaam,
+        @Element(name = "geboortedatum") final Lo3Datum geboortedatum,
+        @Element(name = "geboorteGemeenteCode") final Lo3GemeenteCode geboorteGemeenteCode,
+        @Element(name = "geboorteLandCode") final Lo3LandCode geboorteLandCode) {
         this.aNummer = aNummer;
         this.burgerservicenummer = burgerservicenummer;
         this.voornamen = voornamen;
@@ -124,97 +111,89 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.Lo3CategorieInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(
-            aNummer,
-            burgerservicenummer,
-            voornamen,
-            adellijkeTitelPredikaatCode,
-            voorvoegselGeslachtsnaam,
-            geslachtsnaam,
-            geboortedatum,
-            geboorteGemeenteCode,
-            geboorteLandCode);
+        return !Lo3Validatie.isEenParameterGevuld(
+                aNummer,
+                burgerservicenummer,
+                voornamen,
+                adellijkeTitelPredikaatCode,
+                voorvoegselGeslachtsnaam,
+                geslachtsnaam,
+                geboortedatum,
+                geboorteGemeenteCode,
+                geboorteLandCode);
     }
 
     /**
      * @return the aNummer
      */
-    public Lo3Long getaNummer() {
+    public Lo3String getaNummer() {
         return aNummer;
     }
 
     /**
-     * Geef de waarde van burgerservicenummer.
-     *
-     * @return the burgerservicenummer
+     * Geef de waarde van burgerservicenummer van Lo3KindInhoud.
+     * @return de waarde van burgerservicenummer van Lo3KindInhoud
      */
-    public Lo3Integer getBurgerservicenummer() {
+    public Lo3String getBurgerservicenummer() {
         return burgerservicenummer;
     }
 
     /**
-     * Geef de waarde van voornamen.
-     *
-     * @return the voornamen
+     * Geef de waarde van voornamen van Lo3KindInhoud.
+     * @return de waarde van voornamen van Lo3KindInhoud
      */
     public Lo3String getVoornamen() {
         return voornamen;
     }
 
     /**
-     * Geef de waarde van adellijke titel predikaat code.
-     *
-     * @return the adellijkeTitelPredikaatCode
+     * Geef de waarde van adellijke titel predikaat code van Lo3KindInhoud.
+     * @return de waarde van adellijke titel predikaat code van Lo3KindInhoud
      */
     public Lo3AdellijkeTitelPredikaatCode getAdellijkeTitelPredikaatCode() {
         return adellijkeTitelPredikaatCode;
     }
 
     /**
-     * Geef de waarde van voorvoegsel geslachtsnaam.
-     *
-     * @return the voorvoegselGeslachtsnaam
+     * Geef de waarde van voorvoegsel geslachtsnaam van Lo3KindInhoud.
+     * @return de waarde van voorvoegsel geslachtsnaam van Lo3KindInhoud
      */
     public Lo3String getVoorvoegselGeslachtsnaam() {
         return voorvoegselGeslachtsnaam;
     }
 
     /**
-     * Geef de waarde van geslachtsnaam.
-     *
-     * @return the geslachtsnaam
+     * Geef de waarde van geslachtsnaam van Lo3KindInhoud.
+     * @return de waarde van geslachtsnaam van Lo3KindInhoud
      */
     public Lo3String getGeslachtsnaam() {
         return geslachtsnaam;
     }
 
     /**
-     * Geef de waarde van geboortedatum.
-     *
-     * @return the geboortedatum
+     * Geef de waarde van geboortedatum van Lo3KindInhoud.
+     * @return de waarde van geboortedatum van Lo3KindInhoud
      */
     public Lo3Datum getGeboortedatum() {
         return geboortedatum;
     }
 
     /**
-     * Geef de waarde van geboorte gemeente code.
-     *
-     * @return the gemeenteCode
+     * Geef de waarde van geboorte gemeente code van Lo3KindInhoud.
+     * @return de waarde van geboorte gemeente code van Lo3KindInhoud
      */
     public Lo3GemeenteCode getGeboorteGemeenteCode() {
         return geboorteGemeenteCode;
     }
 
     /**
-     * Geef de waarde van geboorte land code.
-     *
-     * @return the landCode
+     * Geef de waarde van geboorte land code van Lo3KindInhoud.
+     * @return de waarde van geboorte land code van Lo3KindInhoud
      */
     public Lo3LandCode getGeboorteLandCode() {
         return geboorteLandCode;
@@ -230,50 +209,52 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
         }
         final Lo3KindInhoud castOther = (Lo3KindInhoud) other;
         return new EqualsBuilder().append(aNummer, castOther.aNummer)
-                                  .append(burgerservicenummer, castOther.burgerservicenummer)
-                                  .append(voornamen, castOther.voornamen)
-                                  .append(adellijkeTitelPredikaatCode, castOther.adellijkeTitelPredikaatCode)
-                                  .append(voorvoegselGeslachtsnaam, castOther.voorvoegselGeslachtsnaam)
-                                  .append(geslachtsnaam, castOther.geslachtsnaam)
-                                  .append(geboortedatum, castOther.geboortedatum)
-                                  .append(geboorteGemeenteCode, castOther.geboorteGemeenteCode)
-                                  .append(geboorteLandCode, castOther.geboorteLandCode)
-                                  .isEquals();
+                .append(burgerservicenummer, castOther.burgerservicenummer)
+                .append(voornamen, castOther.voornamen)
+                .append(adellijkeTitelPredikaatCode, castOther.adellijkeTitelPredikaatCode)
+                .append(voorvoegselGeslachtsnaam, castOther.voorvoegselGeslachtsnaam)
+                .append(geslachtsnaam, castOther.geslachtsnaam)
+                .append(geboortedatum, castOther.geboortedatum)
+                .append(geboorteGemeenteCode, castOther.geboorteGemeenteCode)
+                .append(geboorteLandCode, castOther.geboorteLandCode)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(aNummer)
-                                    .append(burgerservicenummer)
-                                    .append(voornamen)
-                                    .append(adellijkeTitelPredikaatCode)
-                                    .append(voorvoegselGeslachtsnaam)
-                                    .append(geslachtsnaam)
-                                    .append(geboortedatum)
-                                    .append(geboorteGemeenteCode)
-                                    .append(geboorteLandCode)
-                                    .toHashCode();
+                .append(burgerservicenummer)
+                .append(voornamen)
+                .append(adellijkeTitelPredikaatCode)
+                .append(voorvoegselGeslachtsnaam)
+                .append(geslachtsnaam)
+                .append(geboortedatum)
+                .append(geboorteGemeenteCode)
+                .append(geboorteLandCode)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("aNummer", aNummer)
-                                                                          .append("burgerservicenummer", burgerservicenummer)
-                                                                          .append("voornamen", voornamen)
-                                                                          .append("adellijkeTitelPredikaatCode", adellijkeTitelPredikaatCode)
-                                                                          .append("voorvoegselGeslachtsnaam", voorvoegselGeslachtsnaam)
-                                                                          .append("geslachtsnaam", geslachtsnaam)
-                                                                          .append("geboortedatum", geboortedatum)
-                                                                          .append("geboorteGemeenteCode", geboorteGemeenteCode)
-                                                                          .append("geboorteLandCode", geboorteLandCode)
-                                                                          .toString();
+                .append("burgerservicenummer", burgerservicenummer)
+                .append("voornamen", voornamen)
+                .append("adellijkeTitelPredikaatCode", adellijkeTitelPredikaatCode)
+                .append("voorvoegselGeslachtsnaam", voorvoegselGeslachtsnaam)
+                .append("geslachtsnaam", geslachtsnaam)
+                .append("geboortedatum", geboortedatum)
+                .append("geboorteGemeenteCode", geboorteGemeenteCode)
+                .append("geboorteLandCode", geboorteLandCode)
+                .toString();
     }
 
-    /** Builder. */
+    /**
+     * Builder.
+     */
     public static final class Builder {
 
-        private Lo3Long aNummer;
-        private Lo3Integer burgerservicenummer;
+        private Lo3String aNummer;
+        private Lo3String burgerservicenummer;
         private Lo3String voornamen;
         private Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode;
         private Lo3String voorvoegselGeslachtsnaam;
@@ -282,15 +263,16 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
         private Lo3GemeenteCode geboorteGemeenteCode;
         private Lo3LandCode geboorteLandCode;
 
-        /** Maak een lege builder. */
+        /**
+         * Maak een lege builder.
+         */
         public Builder() {
+            //lege builder
         }
 
         /**
          * Maak een initieel gevulde builder.
-         *
-         * @param inhoud
-         *            initiele vulling
+         * @param inhoud initiele vulling
          */
         public Builder(final Lo3KindInhoud inhoud) {
             aNummer = inhoud.aNummer;
@@ -306,7 +288,6 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
 
         /**
          * Build.
-         *
          * @return inhoud
          */
         public Lo3KindInhoud build() {
@@ -314,28 +295,25 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the aNummer to set
+         * @param param the aNummer to set
          * @return de builder
          */
-        public Builder aNummer(final Lo3Long param) {
+        public Builder aNummer(final Lo3String param) {
             aNummer = param;
             return this;
         }
 
         /**
-         * @param param
-         *            the burgerservicenummer to set
+         * @param param the burgerservicenummer to set
          * @return de builder
          */
-        public Builder burgerservicenummer(final Lo3Integer param) {
+        public Builder burgerservicenummer(final Lo3String param) {
             burgerservicenummer = param;
             return this;
         }
 
         /**
-         * @param param
-         *            the voornamen to set
+         * @param param the voornamen to set
          * @return de builder
          */
         public Builder voornamen(final Lo3String param) {
@@ -344,8 +322,7 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the adellijkeTitelPredikaatCode to set
+         * @param param the adellijkeTitelPredikaatCode to set
          * @return de builder
          */
         public Builder adellijkeTitelPredikaatCode(final Lo3AdellijkeTitelPredikaatCode param) {
@@ -354,8 +331,7 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the voorvoegselGeslachtsnaam to set
+         * @param param the voorvoegselGeslachtsnaam to set
          * @return de builder
          */
         public Builder voorvoegselGeslachtsnaam(final Lo3String param) {
@@ -364,8 +340,7 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the geslachtsnaam to set
+         * @param param the geslachtsnaam to set
          * @return de builder
          */
         public Builder geslachtsnaam(final Lo3String param) {
@@ -374,8 +349,7 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the geboortedatum to set
+         * @param param the geboortedatum to set
          * @return de builder
          */
         public Builder geboortedatum(final Lo3Datum param) {
@@ -384,8 +358,7 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the geboorteGemeenteCode to set
+         * @param param the geboorteGemeenteCode to set
          * @return de builder
          */
         public Builder geboorteGemeenteCode(final Lo3GemeenteCode param) {
@@ -394,8 +367,7 @@ public final class Lo3KindInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the geboorteLandCode to set
+         * @param param the geboorteLandCode to set
          * @return de builder
          */
         public Builder geboorteLandCode(final Lo3LandCode param) {

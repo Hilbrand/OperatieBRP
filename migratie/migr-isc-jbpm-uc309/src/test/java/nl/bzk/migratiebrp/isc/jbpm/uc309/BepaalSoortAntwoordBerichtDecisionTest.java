@@ -6,32 +6,22 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc309;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkToevalligeGebeurtenisAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  */
 public class BepaalSoortAntwoordBerichtDecisionTest {
 
-    private BepaalSoortAntwoordBerichtDecision subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setUp() throws Exception {
-        subject = new BepaalSoortAntwoordBerichtDecision();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private BepaalSoortAntwoordBerichtDecision subject = new BepaalSoortAntwoordBerichtDecision(berichtenDao);
 
     @Test
     public void testOkAntwoord() throws Exception {

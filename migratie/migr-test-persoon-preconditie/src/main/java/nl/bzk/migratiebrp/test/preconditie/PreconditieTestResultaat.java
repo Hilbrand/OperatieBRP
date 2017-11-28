@@ -6,10 +6,10 @@
 
 package nl.bzk.migratiebrp.test.preconditie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Attribute;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
 
 /**
  * Test resultaat: precondities.
@@ -27,19 +27,18 @@ public final class PreconditieTestResultaat extends TestResultaat {
 
     /**
      * Constructor.
-     * 
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
+     * @param thema thema
+     * @param naam naam
      */
-    protected PreconditieTestResultaat(@Attribute(name = "thema", required = false) final String thema, @Attribute(name = "naam",
-            required = false) final String naam)
-    {
+    protected PreconditieTestResultaat(
+            @Attribute(name = "thema", required = false) final String thema,
+            @Attribute(name = "naam", required = false) final String naam) {
         super(thema, naam);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.test.common.resultaat.TestResultaat#isSucces()
      */
     @Override
@@ -49,7 +48,6 @@ public final class PreconditieTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van syntax precondities.
-     *
      * @return syntax precondities
      */
     public TestStap getSyntaxPrecondities() {
@@ -58,9 +56,7 @@ public final class PreconditieTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van syntax precondities.
-     *
-     * @param syntaxPrecondities
-     *            syntax precondities
+     * @param syntaxPrecondities syntax precondities
      */
     public void setSyntaxPrecondities(final TestStap syntaxPrecondities) {
         this.syntaxPrecondities = syntaxPrecondities;
@@ -68,7 +64,6 @@ public final class PreconditieTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van lo3 naar brp.
-     *
      * @return lo3 naar brp
      */
     public TestStap getLo3NaarBrp() {
@@ -77,9 +72,7 @@ public final class PreconditieTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van lo3 naar brp.
-     *
-     * @param lo3NaarBrp
-     *            lo3 naar brp
+     * @param lo3NaarBrp lo3 naar brp
      */
     public void setLo3NaarBrp(final TestStap lo3NaarBrp) {
         this.lo3NaarBrp = lo3NaarBrp;
@@ -87,7 +80,6 @@ public final class PreconditieTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van conversie log.
-     *
      * @return conversie log
      */
     public TestStap getConversieLog() {
@@ -96,9 +88,7 @@ public final class PreconditieTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van conversie log.
-     *
-     * @param conversieLog
-     *            conversie log
+     * @param conversieLog conversie log
      */
     public void setConversieLog(final TestStap conversieLog) {
         this.conversieLog = conversieLog;

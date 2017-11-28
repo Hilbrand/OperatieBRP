@@ -22,9 +22,7 @@ public final class RegistreerResolutieAction implements SpringAction {
 
     /**
      * Zet de waarde van fouten dao.
-     *
-     * @param foutenDao
-     *            fouten dao
+     * @param foutenDao fouten dao
      */
     public void setFoutenDao(final FoutenDao foutenDao) {
         this.foutenDao = foutenDao;

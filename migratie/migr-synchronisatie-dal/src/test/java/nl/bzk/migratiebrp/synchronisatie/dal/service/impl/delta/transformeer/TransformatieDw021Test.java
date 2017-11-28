@@ -6,38 +6,44 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractMaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteitHistorie;
+import org.junit.Before;
+import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractMaterieleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaam;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaam;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerliesNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Test;
 
 public class TransformatieDw021Test extends AbstractTransformatieTest {
 
@@ -50,12 +56,12 @@ public class TransformatieDw021Test extends AbstractTransformatieTest {
 
     @Test
     public void testAcceptZonderVerliesNLNationaliteitZonder901Variant() {
-        assertTrue(transformer.accept(maakVoornaamActualisering(false)));
+        assertTrue(transformer.accept(maakVoornaamActualisering()));
     }
 
     @Test
     public void testAcceptMetVerliesNLNationaliteitZonder901Variant() {
-        assertTrue(transformer.accept(maakVoornaamActualisering(true)));
+        assertTrue(transformer.accept(maakNationaliteitActualisering()));
     }
 
     @Test
@@ -66,27 +72,27 @@ public class TransformatieDw021Test extends AbstractTransformatieTest {
 
         final List<Verschil> verschillen = new ArrayList<>();
         verschillen.add(
-            new Verschil(
-                new EntiteitSleutel(PersoonIndicatieHistorie.class, PersoonIndicatieHistorie.DATUM_EINDE_GELDIGHEID),
-                null,
-                null,
-                indicatieHistorie,
-                indicatieHistorie));
+                new Verschil(
+                        new EntiteitSleutel(PersoonIndicatieHistorie.class, PersoonIndicatieHistorie.DATUM_EINDE_GELDIGHEID),
+                        null,
+                        null,
+                        indicatieHistorie,
+                        indicatieHistorie));
         verschillen.add(
-            new Verschil(
-                new EntiteitSleutel(PersoonIndicatieHistorie.class, PersoonIndicatieHistorie.ACTIE_AANPASSING_GELDIGHEID),
-                null,
-                null,
-                indicatieHistorie,
-                indicatieHistorie));
+                new Verschil(
+                        new EntiteitSleutel(PersoonIndicatieHistorie.class, PersoonIndicatieHistorie.ACTIE_AANPASSING_GELDIGHEID),
+                        null,
+                        null,
+                        indicatieHistorie,
+                        indicatieHistorie));
         verschillen.add(
-            new Verschil(
-                new EntiteitSleutel(PersoonIndicatieHistorie.class, PersoonIndicatieHistorie.MIGRATIE_REDEN_BEEINDIGING_NATIONALITEIT),
-                null,
-                null,
-                VerschilType.ELEMENT_NIEUW,
-                indicatieHistorie,
-                indicatieHistorie));
+                new Verschil(
+                        new EntiteitSleutel(PersoonIndicatieHistorie.class, PersoonIndicatieHistorie.MIGRATIE_REDEN_BEEINDIGING_NATIONALITEIT),
+                        null,
+                        null,
+                        VerschilType.ELEMENT_NIEUW,
+                        indicatieHistorie,
+                        indicatieHistorie));
 
         final VerschilGroep verschilGroep = VerschilGroep.maakVerschilGroepMetHistorie(indicatieHistorie);
         verschilGroep.addVerschillen(verschillen);
@@ -118,7 +124,7 @@ public class TransformatieDw021Test extends AbstractTransformatieTest {
         if (is901Variant) {
             actualisering = maakBijhoudingActualisering();
         } else {
-            actualisering = maakVoornaamActualisering(false);
+            actualisering = maakVoornaamActualisering();
         }
 
         final BRPActie actieVervalTbvLeveringMuts = maakActieVerval("07", 0, 0);
@@ -149,7 +155,7 @@ public class TransformatieDw021Test extends AbstractTransformatieTest {
         assertNotNull(nieuweRijActieInhoudVerschil);
     }
 
-    private VerschilGroep maakVoornaamActualisering(final boolean heeftRedenVerliesNLNationaliteitVerschil) {
+    private VerschilGroep maakVoornaamActualisering() {
         final EntiteitSleutel datumEindeGeldigheidSleutel =
                 maakPersoonVoornaamHistorieEntiteitSleutel("datumEindeGeldigheid", 19900101, maakTimestamp("1990-01-02 02"));
         final EntiteitSleutel actieAanpassingGeldigheidSleutel =
@@ -181,19 +187,43 @@ public class TransformatieDw021Test extends AbstractTransformatieTest {
         final List<Verschil> verschillen = new ArrayList<>();
         verschillen.add(datumEindeGeldigheidVerschil);
         verschillen.add(actieAanpassingGeldigheidVerschil);
-        if (heeftRedenVerliesNLNationaliteitVerschil) {
-            final EntiteitSleutel redenVerliesNLNationaliteitSleutel =
-                    maakPersoonVoornaamHistorieEntiteitSleutel("redenVerliesNLNationaliteit", 19900101, maakTimestamp("1990-01-02 02"));
-            final Verschil redenVerliesNLNationaliteitVerschil =
-                    new Verschil(
-                        redenVerliesNLNationaliteitSleutel,
-                        null,
-                        new RedenVerliesNLNationaliteit((short) 60, "R"),
-                        VerschilType.ELEMENT_NIEUW,
-                        oudeRij,
+
+        final VerschilGroep verschilGroep = VerschilGroep.maakVerschilGroepMetHistorie(oudeRij);
+        verschilGroep.addVerschillen(verschillen);
+        return verschilGroep;
+    }
+
+    private VerschilGroep maakNationaliteitActualisering() {
+        final int nieuweDatumEindeGeldigheid = 20000101;
+        final BRPActie nieuweActieAanpassingGeldigheid = maakActieVerval("01", 0, 0);
+
+        final Nationaliteit nationaliteit = new Nationaliteit("Nederlands", "0001");
+        final PersoonNationaliteit persoonNationaliteit = new PersoonNationaliteit(persoonOud, nationaliteit);
+        final PersoonNationaliteitHistorie oudeRij = new PersoonNationaliteitHistorie(persoonNationaliteit);
+        final PersoonNationaliteitHistorie nieuweRij = new PersoonNationaliteitHistorie(persoonNationaliteit);
+
+        final EntiteitSleutel datumEindeGeldigheidSleutel =
+                maakPersoonVoornaamHistorieEntiteitSleutel("datumEindeGeldigheid", 19900101, maakTimestamp("1990-01-02 02"));
+        final EntiteitSleutel actieAanpassingGeldigheidSleutel =
+                maakPersoonVoornaamHistorieEntiteitSleutel("actieAanpassingGeldigheid", 19900101,
+                        maakTimestamp("1990-01-02 02"));
+
+        final Verschil datumEindeGeldigheidVerschil =
+                new Verschil(datumEindeGeldigheidSleutel, null, nieuweDatumEindeGeldigheid, VerschilType.ELEMENT_NIEUW, oudeRij, nieuweRij);
+        final Verschil actieAanpassingGeldigheidVerschil =
+                new Verschil(actieAanpassingGeldigheidSleutel, null, nieuweActieAanpassingGeldigheid, VerschilType.ELEMENT_NIEUW, oudeRij,
                         nieuweRij);
-            verschillen.add(redenVerliesNLNationaliteitVerschil);
-        }
+        final List<Verschil> verschillen = new ArrayList<>();
+        verschillen.add(datumEindeGeldigheidVerschil);
+        verschillen.add(actieAanpassingGeldigheidVerschil);
+        final EntiteitSleutel redenVerliesNLNationaliteitSleutel =
+                maakPersoonVoornaamHistorieEntiteitSleutel("redenVerliesNLNationaliteit", 19900101,
+                        maakTimestamp("1990-01-02 02"));
+        final Verschil
+                redenVerliesNLNationaliteitVerschil =
+                new Verschil(redenVerliesNLNationaliteitSleutel, null, new RedenVerliesNLNationaliteit("060", "R"),
+                        VerschilType.ELEMENT_NIEUW, oudeRij, nieuweRij);
+        verschillen.add(redenVerliesNLNationaliteitVerschil);
 
         final VerschilGroep verschilGroep = VerschilGroep.maakVerschilGroepMetHistorie(oudeRij);
         verschilGroep.addVerschillen(verschillen);
@@ -205,16 +235,16 @@ public class TransformatieDw021Test extends AbstractTransformatieTest {
         final Partij partij = administratieveHandeling.getPartij();
         final BRPActie actie = new BRPActie(SoortActie.CONVERSIE_GBA, administratieveHandeling, partij, new Timestamp(System.currentTimeMillis()));
         actie.setLo3Voorkomen(
-            new Lo3Voorkomen(
-                new Lo3Bericht("referentie", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()), "testdata", true),
-                "07"));
+                new Lo3Voorkomen(
+                        new Lo3Bericht("referentie", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()), "testdata", true),
+                        "07"));
         final PersoonBijhoudingHistorie bijhoudingHistorieOud =
-                new PersoonBijhoudingHistorie(persoonOud, partij, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL, false);
+                new PersoonBijhoudingHistorie(persoonOud, partij, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL);
         // set actie met lo3 voorkomen zodat herkomst juist wordt gedetecteerd voor 901 bepaling
         bijhoudingHistorieOud.setActieInhoud(actie);
         persoonOud.addPersoonBijhoudingHistorie(bijhoudingHistorieOud);
         final PersoonBijhoudingHistorie bijhoudingHistorieNieuw =
-                new PersoonBijhoudingHistorie(persoonNieuw, partij, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL, false);
+                new PersoonBijhoudingHistorie(persoonNieuw, partij, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL);
         // set actie met lo3 voorkomen zodat herkomst juist wordt gedetecteerd voor 901 bepaling
         bijhoudingHistorieNieuw.setActieInhoud(actie);
         persoonNieuw.addPersoonBijhoudingHistorie(bijhoudingHistorieNieuw);
@@ -241,9 +271,8 @@ public class TransformatieDw021Test extends AbstractTransformatieTest {
     }
 
     private Verschil maakPersoonBijhoudingTsRegHistorieVerschil(
-        final PersoonBijhoudingHistorie bijhoudingHistorieOud,
-        final PersoonBijhoudingHistorie bijhoudingHistorieNieuw)
-    {
+            final PersoonBijhoudingHistorie bijhoudingHistorieOud,
+            final PersoonBijhoudingHistorie bijhoudingHistorieNieuw) {
         final EntiteitSleutel bijhoudingTsRegHistorieSleutel =
                 maakPersoonBijhoudingHistorieEntiteitSleutel(AbstractMaterieleHistorie.DATUM_TIJD_REGISTRATIE);
         final Timestamp tsReg1 = new Timestamp(System.currentTimeMillis());
@@ -252,9 +281,8 @@ public class TransformatieDw021Test extends AbstractTransformatieTest {
     }
 
     private Verschil maakPersoonBijhoudingDegHistorieVerschil(
-        final PersoonBijhoudingHistorie bijhoudingHistorieOud,
-        final PersoonBijhoudingHistorie bijhoudingHistorieNieuw)
-    {
+            final PersoonBijhoudingHistorie bijhoudingHistorieOud,
+            final PersoonBijhoudingHistorie bijhoudingHistorieNieuw) {
         final EntiteitSleutel bijhoudingTsRegHistorieSleutel =
                 maakPersoonBijhoudingHistorieEntiteitSleutel(AbstractMaterieleHistorie.DATUM_EINDE_GELDIGHEID);
         final Integer deg = 20150101;
@@ -262,19 +290,17 @@ public class TransformatieDw021Test extends AbstractTransformatieTest {
     }
 
     private Verschil maakPersoonBijhoudingAiHistorieVerschil(
-        final PersoonBijhoudingHistorie bijhoudingHistorieOud,
-        final PersoonBijhoudingHistorie bijhoudingHistorieNieuw,
-        final BRPActie actie)
-    {
+            final PersoonBijhoudingHistorie bijhoudingHistorieOud,
+            final PersoonBijhoudingHistorie bijhoudingHistorieNieuw,
+            final BRPActie actie) {
         final EntiteitSleutel bijhoudingTsRegHistorieSleutel = maakPersoonBijhoudingHistorieEntiteitSleutel(AbstractMaterieleHistorie.ACTIE_INHOUD);
         return new Verschil(bijhoudingTsRegHistorieSleutel, actie, actie, bijhoudingHistorieOud, bijhoudingHistorieNieuw);
     }
 
     private Verschil maakPersoonBijhoudingAagHistorieVerschil(
-        final PersoonBijhoudingHistorie bijhoudingHistorieOud,
-        final PersoonBijhoudingHistorie bijhoudingHistorieNieuw,
-        final BRPActie actie)
-    {
+            final PersoonBijhoudingHistorie bijhoudingHistorieOud,
+            final PersoonBijhoudingHistorie bijhoudingHistorieNieuw,
+            final BRPActie actie) {
         final EntiteitSleutel bijhoudingTsRegHistorieSleutel =
                 maakPersoonBijhoudingHistorieEntiteitSleutel(AbstractMaterieleHistorie.ACTIE_AANPASSING_GELDIGHEID);
         return new Verschil(bijhoudingTsRegHistorieSleutel, null, actie, bijhoudingHistorieOud, bijhoudingHistorieNieuw);

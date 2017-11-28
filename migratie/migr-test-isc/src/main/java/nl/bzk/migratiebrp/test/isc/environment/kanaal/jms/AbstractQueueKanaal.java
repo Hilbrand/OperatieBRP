@@ -9,12 +9,16 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.test.common.util.SelectorBuilder;
 import nl.bzk.migratiebrp.test.isc.environment.correlatie.Correlator;
@@ -23,8 +27,7 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
@@ -53,21 +56,18 @@ public abstract class AbstractQueueKanaal extends AbstractKanaal {
     /**
      * Geef de correlatie identifier. Alle kanalen met dezelfde correlatie identifier kunnen messageid/correlatieid
      * delen.
-     *
      * @return correlatie identifier (null, als geen correlatie gebruikt kan worden.
      */
     protected abstract String getCorrelatieIdentifier();
 
     /**
      * Geef de queue voor inkomende berichten.
-     *
      * @return queue (null, als inkomende berichten niet gebruikt worden)
      */
     protected abstract Destination getInkomendDestination();
 
     /**
      * Geef de queue voor uitgaande berichten.
-     *
      * @return queue, (null, als uitgaande berichten niet gebruikt worden)
      */
     protected abstract Destination getUitgaandDestination();
@@ -97,7 +97,7 @@ public abstract class AbstractQueueKanaal extends AbstractKanaal {
 
         Bericht ontvangenBericht = zoekBericht(testCasus, berichten, verwachtBericht);
         while (ontvangenBericht == null) {
-            final Bericht berichtVanQueue = ontvangBericht(selector.toString(), verwachtBericht.getTestBericht().getHerhalingAantalPogingen());
+            final Bericht berichtVanQueue = ontvangBericht(selector.toString(), verwachtBericht.getTestBericht().getHerhalingVertragingInMillis(), verwachtBericht.getTestBericht().getHerhalingAantalPogingen());
             if (berichtVanQueue == null) {
                 break;
             }
@@ -121,15 +121,18 @@ public abstract class AbstractQueueKanaal extends AbstractKanaal {
         return ontvangenBericht;
     }
 
-    private Bericht ontvangBericht(final String selector, final int maxHerhaling) throws KanaalException {
+    private Bericht ontvangBericht(final String selector, final long vertraging, final int maxHerhaling) throws KanaalException {
         final Destination destination = getInkomendDestination();
         if (destination == null) {
             throw new KanaalException("Geen inkomende queue gedefinieerd; inkomende berichten niet toegestaan.");
         }
 
         final long origineleTimeout = jmsTemplate.getReceiveTimeout();
+        LOG.info("Orginele timeout: {}", origineleTimeout);
+        //long herhalingTimeout =origineleTimeout / maxHerhaling;
+        LOG.info("Herhaling timeout: {}", vertraging);
         try {
-            jmsTemplate.setReceiveTimeout(origineleTimeout / maxHerhaling);
+            jmsTemplate.setReceiveTimeout(vertraging);
 
             int herhaling = 0;
             while (++herhaling <= maxHerhaling) {
@@ -291,9 +294,7 @@ public abstract class AbstractQueueKanaal extends AbstractKanaal {
 
     /**
      * Alle berichten van een queue lezen.
-     *
-     * @param destination
-     *            queue
+     * @param destination queue
      * @return gelezen berichten
      */
     protected List<Bericht> cleanUp(final Destination destination) {

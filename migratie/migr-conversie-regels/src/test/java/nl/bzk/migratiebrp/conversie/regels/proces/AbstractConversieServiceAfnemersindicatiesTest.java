@@ -44,11 +44,10 @@ public abstract class AbstractConversieServiceAfnemersindicatiesTest extends Abs
     }
 
     protected Lo3Categorie<Lo3AfnemersindicatieInhoud> maakLo3Categorie(
-        final Integer afnemersindicatie,
-        final int datumIngang,
-        final int stapel,
-        final int voorkomen)
-    {
+            final String afnemersindicatie,
+            final int datumIngang,
+            final int stapel,
+            final int voorkomen) {
         final Lo3AfnemersindicatieInhoud inhoud = new Lo3AfnemersindicatieInhoud(afnemersindicatie);
         final Lo3Historie historie = Lo3StapelHelper.lo3His(null, datumIngang, datumIngang);
         return Lo3StapelHelper.lo3Cat(inhoud, null, historie, Lo3StapelHelper.lo3Her(14, stapel, voorkomen));

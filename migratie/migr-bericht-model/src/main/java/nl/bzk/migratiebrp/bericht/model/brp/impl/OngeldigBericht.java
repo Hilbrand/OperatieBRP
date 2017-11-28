@@ -18,11 +18,8 @@ public final class OngeldigBericht extends AbstractOngeldigBericht implements Br
 
     /**
      * Constructor (gebruikt in ESB).
-     *
-     * @param bericht
-     *            bericht inhoud
-     * @param melding
-     *            melding
+     * @param bericht bericht inhoud
+     * @param melding melding
      */
     public OngeldigBericht(final String bericht, final String melding) {
         super(bericht, melding);

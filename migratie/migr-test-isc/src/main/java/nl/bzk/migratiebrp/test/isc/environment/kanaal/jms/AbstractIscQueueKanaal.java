@@ -9,11 +9,11 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.management.MBeanServerConnection;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.test.common.util.SelectorBuilder;
 import nl.bzk.migratiebrp.test.isc.environment.correlatie.Correlator;
@@ -22,8 +22,6 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * ISC Queuer kanaal.
@@ -47,9 +45,7 @@ public abstract class AbstractIscQueueKanaal extends AbstractKanaal {
 
     /**
      * Zet de uitgaande correlatie.
-     *
-     * @param registreerUitgaandeCorrelatie
-     *            de te zetten uitgaande correlatie
+     * @param registreerUitgaandeCorrelatie de te zetten uitgaande correlatie
      */
     public final void setRegistreerUitgaandeCorrelatie(final boolean registreerUitgaandeCorrelatie) {
         this.registreerUitgaandeCorrelatie = registreerUitgaandeCorrelatie;
@@ -57,9 +53,7 @@ public abstract class AbstractIscQueueKanaal extends AbstractKanaal {
 
     /**
      * Zet de inkomende correlatie.
-     *
-     * @param registreerInkomendeCorrelatie
-     *            de te zetten inkomende correlatie
+     * @param registreerInkomendeCorrelatie de te zetten inkomende correlatie
      */
     public final void setRegistreerInkomendeCorrelatie(final boolean registreerInkomendeCorrelatie) {
         this.registreerInkomendeCorrelatie = registreerInkomendeCorrelatie;
@@ -67,14 +61,12 @@ public abstract class AbstractIscQueueKanaal extends AbstractKanaal {
 
     /**
      * Geef de waarde van uitgaand destination.
-     *
      * @return uitgaand destination
      */
     public abstract Destination getUitgaandDestination();
 
     /**
      * Geef de waarde van inkomend destination.
-     *
      * @return inkomend destination
      */
     public abstract Destination getInkomendDestination();
@@ -111,6 +103,7 @@ public abstract class AbstractIscQueueKanaal extends AbstractKanaal {
         queueBericht.setInhoud(bericht.getInhoud());
         queueBericht.setVerzendendePartij(bericht.getVerzendendePartij());
         queueBericht.setOntvangendePartij(bericht.getOntvangendePartij());
+        queueBericht.setRequestNonReceiptNotification(bericht.getRequestNonReceiptNotification());
 
         postProcessQueueBericht(queueBericht);
 
@@ -119,9 +112,7 @@ public abstract class AbstractIscQueueKanaal extends AbstractKanaal {
 
     /**
      * Post process hook na het ontvangen van een bericht van de queue.
-     *
-     * @param queueBericht
-     *            het ontvangen bericht
+     * @param queueBericht het ontvangen bericht
      */
     protected void postProcessQueueBericht(final Bericht queueBericht) {
         // Hook
@@ -185,7 +176,6 @@ public abstract class AbstractIscQueueKanaal extends AbstractKanaal {
 
     /**
      * Correlatie referenties ook vergelijken bij inkomend bericht.
-     *
      * @return false
      */
     @Override

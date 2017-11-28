@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class RegelConversietabelTest {

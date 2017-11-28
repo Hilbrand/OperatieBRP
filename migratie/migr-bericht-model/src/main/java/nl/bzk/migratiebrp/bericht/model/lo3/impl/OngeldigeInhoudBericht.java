@@ -10,19 +10,13 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 /**
  * Bericht om aan te geven dat een bericht om inhoudelijke redenen ongeldig is.
  */
-public final class OngeldigeInhoudBericht extends OngeldigBericht {
+public final class OngeldigeInhoudBericht extends AbstractOngeldigLo3Bericht {
     private static final long serialVersionUID = 1L;
-
-    // private static final ToStringStyle TO_STRING_STYLE = new
-    // OverridenClassToStringStyle("OngeldigeInhoud(Lo3)Bericht");
 
     /**
      * Constructor.
-     *
-     * @param bericht
-     *            bericht
-     * @param melding
-     *            melding
+     * @param bericht bericht
+     * @param melding melding
      */
     public OngeldigeInhoudBericht(final String bericht, final String melding) {
         super(bericht, melding);

@@ -6,17 +6,17 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP Partij.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class BrpPartijInhoud extends AbstractBrpGroepInhoud {
@@ -31,22 +31,16 @@ public final class BrpPartijInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maak een nieuw BrpPartijInhoud object.
-     * 
-     * @param datumIngang
-     *            daum ingang
-     * @param datumEinde
-     *            datum einde
-     * @param indicatieVerstrekkingsbeperking
-     *            indicatieVerstrekkingsbeperking
-     * @param isGevuld
-     *            is gevuld
+     * @param datumIngang daum ingang
+     * @param datumEinde datum einde
+     * @param indicatieVerstrekkingsbeperking indicatieVerstrekkingsbeperking
+     * @param isGevuld is gevuld
      */
     public BrpPartijInhoud(
-        @Element(name = "datumIngang", required = false) final BrpDatum datumIngang,
-        @Element(name = "datumEinde", required = false) final BrpDatum datumEinde,
-        @Element(name = "indicatieVerstrekkingsbeperking", required = false) final Boolean indicatieVerstrekkingsbeperking,
-        @Element(name = "isGevuld", required = false) final boolean isGevuld)
-    {
+            @Element(name = "datumIngang", required = false) final BrpDatum datumIngang,
+            @Element(name = "datumEinde", required = false) final BrpDatum datumEinde,
+            @Element(name = "indicatieVerstrekkingsbeperking", required = false) final Boolean indicatieVerstrekkingsbeperking,
+            @Element(name = "isGevuld", required = false) final boolean isGevuld) {
         super();
         this.datumIngang = datumIngang;
         this.datumEinde = datumEinde;
@@ -55,45 +49,41 @@ public final class BrpPartijInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van datum ingang.
-     *
-     * @return datum ingang
+     * Geef de waarde van datum ingang van BrpPartijInhoud.
+     * @return de waarde van datum ingang van BrpPartijInhoud
      */
     public BrpDatum getDatumIngang() {
         return datumIngang;
     }
 
     /**
-     * Geef de waarde van datum einde.
-     *
-     * @return datum einde
+     * Geef de waarde van datum einde van BrpPartijInhoud.
+     * @return de waarde van datum einde van BrpPartijInhoud
      */
     public BrpDatum getDatumEinde() {
         return datumEinde;
     }
 
     /**
-     * Geef de waarde van indicatie verstrekkingsbeperking.
-     *
-     * @return indicatie verstrekkingsbeperking
+     * Geef de waarde van indicatie verstrekkingsbeperking van BrpPartijInhoud.
+     * @return de waarde van indicatie verstrekkingsbeperking van BrpPartijInhoud
      */
     public Boolean getIndicatieVerstrekkingsbeperking() {
         return indicatieVerstrekkingsbeperking;
     }
 
     /**
-     * Geef de gevuld.
-     *
-     * @return gevuld
+     * Geef de waarde van gevuld van BrpPartijInhoud.
+     * @return de waarde van gevuld van BrpPartijInhoud
      */
     public boolean isGevuld() {
         return isGevuld;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -110,29 +100,23 @@ public final class BrpPartijInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpPartijInhoud castOther = (BrpPartijInhoud) other;
         return new EqualsBuilder().append(datumIngang, castOther.datumIngang)
-                                  .append(datumEinde, castOther.datumEinde)
-                                  .append(indicatieVerstrekkingsbeperking, castOther.indicatieVerstrekkingsbeperking)
-                                  .append(isGevuld, castOther.isGevuld)
-                                  .isEquals();
+                .append(datumEinde, castOther.datumEinde)
+                .append(indicatieVerstrekkingsbeperking, castOther.indicatieVerstrekkingsbeperking)
+                .append(isGevuld, castOther.isGevuld)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(datumIngang)
-                                    .append(datumEinde)
-                                    .append(indicatieVerstrekkingsbeperking)
-                                    .append(isGevuld)
-                                    .toHashCode();
+        return new HashCodeBuilder().append(datumIngang).append(datumEinde).append(indicatieVerstrekkingsbeperking).append(isGevuld).toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("datumIngang", datumIngang)
-                                                                          .append("datumEinde", datumEinde)
-                                                                          .append(
-                                                                              "indicatieVerstrekkingsbeperking",
-                                                                              indicatieVerstrekkingsbeperking)
-                                                                          .append("isGevuld", isGevuld)
-                                                                          .toString();
+                .append("datumEinde", datumEinde)
+                .append("indicatieVerstrekkingsbeperking", indicatieVerstrekkingsbeperking)
+                .append("isGevuld", isGevuld)
+                .toString();
     }
 }

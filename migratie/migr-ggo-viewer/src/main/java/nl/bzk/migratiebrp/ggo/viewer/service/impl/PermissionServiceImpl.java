@@ -8,15 +8,15 @@ package nl.bzk.migratiebrp.ggo.viewer.service.impl;
 
 import java.util.List;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3HuwelijkOfGpInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KindInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OuderInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.ggo.viewer.service.DbService;
 import nl.bzk.migratiebrp.ggo.viewer.service.PermissionService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Component;
@@ -35,18 +35,16 @@ public class PermissionServiceImpl implements PermissionService {
      */
     @Override
     public final boolean hasPermissionOnPl(final Lo3Persoonslijst lo3Persoonslijst) {
-        boolean permission;
         final String gemeenteCode = retrieveGemeenteCode(lo3Persoonslijst);
         final Subject currentUser = SecurityUtils.getSubject();
 
+        final boolean permission;
         if (currentUser.hasRole("ROLE_ADMIN")) {
             // ROLE_ADMIN gebruikers mogen alles inzien.
             permission = true;
-        } else if (currentUser.hasRole(gemeenteCode)) {
-            permission = true;
         } else {
             // Check of het anummer van een gerelateerde een is waar de gemeente wel recht op heeft
-            permission = hasPermissionOnRelaties(lo3Persoonslijst, currentUser);
+            permission = currentUser.hasRole(gemeenteCode) || hasPermissionOnRelaties(lo3Persoonslijst, currentUser);
         }
 
         return permission;
@@ -55,11 +53,8 @@ public class PermissionServiceImpl implements PermissionService {
     /**
      * Kijkt of de huidige gebruiker voor een gerelateerde Persoonslijst geautoriseerd is (02-Ouder1, 03-Ouder2,
      * 05-Huwelijk en 09-Kind).
-     * 
-     * @param lo3Persoonslijst
-     *            Lo3Persoosnlijst
-     * @param currentUser
-     *            Subject shiro
+     * @param lo3Persoonslijst Lo3Persoosnlijst
+     * @param currentUser Subject shiro
      * @return boolean permission
      */
     private boolean hasPermissionOnRelaties(final Lo3Persoonslijst lo3Persoonslijst, final Subject currentUser) {
@@ -83,7 +78,7 @@ public class PermissionServiceImpl implements PermissionService {
     private boolean hasPermissionOnOuder(final Lo3Stapel<Lo3OuderInhoud> ouderStapel, final Subject currentUser) {
         boolean permission = false;
         if (ouderStapel != null && ouderStapel.getLaatsteElement().getInhoud() != null) {
-            final Long gerelateerdeAnummer = Lo3Long.unwrap(ouderStapel.getLaatsteElement().getInhoud().getaNummer());
+            final String gerelateerdeAnummer = Lo3String.unwrap(ouderStapel.getLaatsteElement().getInhoud().getaNummer());
             permission = hasPermissionOnRelatie(gerelateerdeAnummer, currentUser);
         }
         return permission;
@@ -93,7 +88,7 @@ public class PermissionServiceImpl implements PermissionService {
         boolean permission = false;
         for (final Lo3Stapel<Lo3HuwelijkOfGpInhoud> huwelijkStapel : huwelijkStapels) {
             if (!permission && huwelijkStapel != null && huwelijkStapel.getLaatsteElement().getInhoud() != null) {
-                final Long gerelateerdeAnummer = Lo3Long.unwrap(huwelijkStapel.getLaatsteElement().getInhoud().getaNummer());
+                final String gerelateerdeAnummer = Lo3String.unwrap(huwelijkStapel.getLaatsteElement().getInhoud().getaNummer());
                 permission = hasPermissionOnRelatie(gerelateerdeAnummer, currentUser);
             }
         }
@@ -104,7 +99,7 @@ public class PermissionServiceImpl implements PermissionService {
         boolean permission = false;
         for (final Lo3Stapel<Lo3KindInhoud> kindStapel : kindStapels) {
             if (!permission && kindStapel != null && kindStapel.getLaatsteElement().getInhoud() != null) {
-                final Long gerelateerdeAnummer = Lo3Long.unwrap(kindStapel.getLaatsteElement().getInhoud().getaNummer());
+                final String gerelateerdeAnummer = Lo3String.unwrap(kindStapel.getLaatsteElement().getInhoud().getaNummer());
                 permission = hasPermissionOnRelatie(gerelateerdeAnummer, currentUser);
             }
         }
@@ -114,14 +109,11 @@ public class PermissionServiceImpl implements PermissionService {
     /**
      * Zoekt de gerelateerde Lo3 Persoonslijst op en controleert of de gebruiker geautoriseerd is deze Persoonslijst te
      * zien.
-     * 
-     * @param gerelateerdeAnummer
-     *            Long
-     * @param currentUser
-     *            Subject shiro
+     * @param gerelateerdeAnummer String
+     * @param currentUser Subject shiro
      * @return boolean permission
      */
-    private boolean hasPermissionOnRelatie(final Long gerelateerdeAnummer, final Subject currentUser) {
+    private boolean hasPermissionOnRelatie(final String gerelateerdeAnummer, final Subject currentUser) {
         boolean permission = false;
         if (gerelateerdeAnummer != null) {
             final Lo3Bericht lo3Bericht = dbService.zoekLo3Bericht(gerelateerdeAnummer);
@@ -136,9 +128,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * Haalt de gemeenteCode (08.09.10 gemeente van inschrijving) uit de Lo3Persoonslijst.
-     * 
-     * @param lo3Persoonslijst
-     *            Lo3Persoonslijst
+     * @param lo3Persoonslijst Lo3Persoonslijst
      * @return gemeenteCode String
      */
     private String retrieveGemeenteCode(final Lo3Persoonslijst lo3Persoonslijst) {
@@ -147,10 +137,9 @@ public class PermissionServiceImpl implements PermissionService {
         // Altijd true wegens de invariant op stapel (die mag niet leeg zijn):
         // lo3Persoonslijst.getVerblijfplaatsStapel().getLaatsteElement() != null
         if (lo3Persoonslijst != null
-            && lo3Persoonslijst.getVerblijfplaatsStapel() != null
-            && lo3Persoonslijst.getVerblijfplaatsStapel().getLaatsteElement().getInhoud() != null
-            && lo3Persoonslijst.getVerblijfplaatsStapel().getLaatsteElement().getInhoud().getGemeenteInschrijving() != null)
-        {
+                && lo3Persoonslijst.getVerblijfplaatsStapel() != null
+                && lo3Persoonslijst.getVerblijfplaatsStapel().getLaatsteElement().getInhoud() != null
+                && lo3Persoonslijst.getVerblijfplaatsStapel().getLaatsteElement().getInhoud().getGemeenteInschrijving() != null) {
             gemeenteCode = lo3Persoonslijst.getVerblijfplaatsStapel().getLaatsteElement().getInhoud().getGemeenteInschrijving().getWaarde();
 
         }

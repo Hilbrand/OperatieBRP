@@ -13,21 +13,18 @@ public interface Bericht {
 
     /**
      * Geeft het bericht als string terug.
-     *
      * @return Het bericht als string.
      */
     String getBerichtInhoud();
 
     /**
      * Geeft het soort bericht terug.
-     *
      * @return Het type bericht.
      */
     String getBerichtType();
 
     /**
      * Geeft het bericht als string terug.
-     *
      * @return Het bericht als string.
      */
     String getBericht();

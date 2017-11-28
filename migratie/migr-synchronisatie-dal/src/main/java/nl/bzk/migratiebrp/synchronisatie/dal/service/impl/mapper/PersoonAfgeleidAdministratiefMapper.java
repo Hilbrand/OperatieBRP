@@ -6,13 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractPersoonHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
@@ -20,29 +18,23 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Onder
 /**
  * Mapper waarmee een {@link nl.bzk.migratiebrp.conversie.model.brp.BrpStapel <BrpAfgeleidAdministratiefInhoud>} gemapt
  * kan worden op een verzameling van
- * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie}.
+ * {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie}.
  */
 public final class PersoonAfgeleidAdministratiefMapper extends
-        AbstractPersoonHistorieMapperStrategie<BrpPersoonAfgeleidAdministratiefInhoud, PersoonAfgeleidAdministratiefHistorie>
-{
+        AbstractPersoonHistorieMapperStrategie<BrpPersoonAfgeleidAdministratiefInhoud, PersoonAfgeleidAdministratiefHistorie> {
 
     private final BRPActieFactory brpActieFactory;
 
     /**
      * Maakt een PersoonAfgeleidAdministratiefMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonAfgeleidAdministratiefMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
         this.brpActieFactory = brpActieFactory;
     }
@@ -59,16 +51,6 @@ public final class PersoonAfgeleidAdministratiefMapper extends
      * {@inheritDoc}
      */
     @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonAfgeleidAdministratiefHistorie historie, final Persoon persoon) {
-        persoon.setTijdstipLaatsteWijziging(historie.getDatumTijdLaatsteWijziging());
-        persoon.setTijdstipLaatsteWijzigingGbaSystematiek(historie.getDatumTijdLaatsteWijzigingGba());
-        persoon.setAdministratieveHandeling(historie.getAdministratieveHandeling());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected PersoonAfgeleidAdministratiefHistorie mapHistorischeGroep(final BrpPersoonAfgeleidAdministratiefInhoud groepInhoud, final Persoon persoon) {
 
         final AdministratieveHandeling administratieveHandeling = brpActieFactory.getAdministratieveHandeling();
@@ -76,17 +58,11 @@ public final class PersoonAfgeleidAdministratiefMapper extends
         final PersoonAfgeleidAdministratiefHistorie result;
         result =
                 new PersoonAfgeleidAdministratiefHistorie(
-                    (short) 1,
-                    persoon,
-                    administratieveHandeling,
-                    administratieveHandeling.getDatumTijdRegistratie(),
-                    BrpBoolean.unwrap(groepInhoud.getIndicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig()));
+                        (short) 1,
+                        persoon,
+                        administratieveHandeling,
+                        administratieveHandeling.getDatumTijdRegistratie());
         result.setDatumTijdLaatsteWijzigingGba(administratieveHandeling.getDatumTijdRegistratie());
-
-        getOnderzoekMapper().mapOnderzoek(
-            result,
-            groepInhoud.getIndicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig(),
-            Element.PERSOON_AFGELEIDADMINISTRATIEF_INDICATIEONVERWERKTBIJHOUDINGSVOORSTELNIETINGEZETENEAANWEZIG);
 
         return result;
     }

@@ -11,30 +11,27 @@ import java.util.List;
 import java.util.Map.Entry;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AbstractConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AdellijkeTitelPredikaatPaar;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.AbstractLo3Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * De conversietabel voor de converie van 'LO3 Adellijke Titel/Predikaat'-code naar 'BRP Adellijke Titel,
  * Predikaat'-paar en vice versa.
- * 
  */
 public abstract class AbstractAdellijkeTitelPredikaatConversietabel extends
-        AbstractConversietabel<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar>
-{
+        AbstractConversietabel<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar> {
 
     private final List<Entry<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar>> conversieLijst;
 
     /**
      * Maakt een AdellijkeTitelPredikaatConversietabel object.
-     * 
-     * @param conversieLijst
-     *            de lijst met titel conversies
+     * @param conversieLijst de lijst met titel conversies
      */
     public AbstractAdellijkeTitelPredikaatConversietabel(final List<Entry<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar>> conversieLijst) {
         super(conversieLijst);
@@ -72,7 +69,7 @@ public abstract class AbstractAdellijkeTitelPredikaatConversietabel extends
     @Override
     protected final Lo3AdellijkeTitelPredikaatCode voegOnderzoekToeLo3(final Lo3AdellijkeTitelPredikaatCode input, final Lo3Onderzoek onderzoek) {
         final Lo3AdellijkeTitelPredikaatCode resultaat;
-        if (!nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie.isElementGevuld(input)) {
+        if (!Lo3Validatie.isElementGevuld(input)) {
             if (onderzoek == null) {
                 resultaat = null;
             } else {
@@ -89,20 +86,20 @@ public abstract class AbstractAdellijkeTitelPredikaatConversietabel extends
     protected final AdellijkeTitelPredikaatPaar voegOnderzoekToeBrp(final AdellijkeTitelPredikaatPaar input, final Lo3Onderzoek onderzoek) {
         final AdellijkeTitelPredikaatPaar resultaat;
 
-        if (input == null || !(Validatie.isAttribuutGevuld(input.getAdellijkeTitel()) || Validatie.isAttribuutGevuld(input.getPredikaat()))) {
+        if (input == null || !(BrpValidatie.isAttribuutGevuld(input.getAdellijkeTitel()) || BrpValidatie.isAttribuutGevuld(input.getPredikaat()))) {
             if (onderzoek == null) {
                 resultaat = null;
             } else {
                 resultaat =
                         new AdellijkeTitelPredikaatPaar(
-                            new BrpCharacter(null, onderzoek),
-                            new BrpCharacter(null, onderzoek),
-                            new BrpGeslachtsaanduidingCode(null, onderzoek));
+                                new BrpCharacter(null, onderzoek),
+                                new BrpCharacter(null, onderzoek),
+                                new BrpGeslachtsaanduidingCode(null, onderzoek));
             }
         } else {
             return new AdellijkeTitelPredikaatPaar(BrpCharacter.wrap(BrpCharacter.unwrap(input.getAdellijkeTitel()), onderzoek), BrpCharacter.wrap(
-                BrpCharacter.unwrap(input.getPredikaat()),
-                onderzoek), new BrpGeslachtsaanduidingCode(input.getGeslachtsaanduiding().getWaarde(), onderzoek));
+                    BrpCharacter.unwrap(input.getPredikaat()),
+                    onderzoek), new BrpGeslachtsaanduidingCode(input.getGeslachtsaanduiding().getWaarde(), onderzoek));
         }
 
         return resultaat;
@@ -111,23 +108,17 @@ public abstract class AbstractAdellijkeTitelPredikaatConversietabel extends
     /**
      * Controleert of de bijzondere situatie LB035 van toepassing is op de combinatie adellijktitel/predicaat en
      * geslachtsaanduiding.
-     * 
-     * @param adellijkeTitelPredikaatCode
-     *            de adellijketitel of predicaat
-     * @param geslachtsaanduiding
-     *            de geslachtsaanduiding
-     * @return true als de combinatie van adellijkeTitelPredikaatCode en geslachtsaanduiding niet voorkomt in de
-     *         conversietabel
+     * @param adellijkeTitelPredikaatCode de adellijketitel of predicaat
+     * @param geslachtsaanduiding de geslachtsaanduiding
+     * @return true als de combinatie van adellijkeTitelPredikaatCode en geslachtsaanduiding niet voorkomt in de conversietabel
      */
     public final boolean isBijzondereSituatieLB035VanToepassing(
-        final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode,
-        final Lo3Geslachtsaanduiding geslachtsaanduiding)
-    {
+            final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode,
+            final Lo3Geslachtsaanduiding geslachtsaanduiding) {
         boolean resultaat = true;
         for (final Entry<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar> entry : conversieLijst) {
             if (AbstractLo3Element.equalsWaarde(entry.getKey(), adellijkeTitelPredikaatCode)
-                && entry.getValue().getGeslachtsaanduiding().getWaarde().equals(geslachtsaanduiding.getWaarde()))
-            {
+                    && entry.getValue().getGeslachtsaanduiding().getWaarde().equals(geslachtsaanduiding.getWaarde())) {
                 resultaat = false;
                 break;
             }

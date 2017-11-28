@@ -19,11 +19,8 @@ public final class NotEqualsFilter implements FilenameFilter {
 
     /**
      * Constructor.
-     * 
-     * @param accept
-     *            waarde die de bestandsnaam of folder niet moet hebben (hoofdletter ongevoelig), null accepteert alles
-     * @param type
-     *            type of files to accept
+     * @param accept waarde die de bestandsnaam of folder niet moet hebben (hoofdletter ongevoelig), null accepteert alles
+     * @param type type of files to accept
      */
     public NotEqualsFilter(final String accept, final FilterType type) {
         this.accept = accept;

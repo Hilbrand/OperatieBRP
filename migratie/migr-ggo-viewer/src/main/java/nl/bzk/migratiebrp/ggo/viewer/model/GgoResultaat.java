@@ -10,15 +10,25 @@ package nl.bzk.migratiebrp.ggo.viewer.model;
  * Ggo resultaat.
  */
 public enum GgoResultaat {
-    /** Inlezen GBA-PL niet geslaagd. */
+    /**
+     * Inlezen GBA-PL niet geslaagd.
+     */
     INLEZEN_GBA_PL_NIET_GESLAAGD("Inlezen GBA-PL: niet geslaagd"),
-    /** Conversie niet geslaagd. */
+    /**
+     * Conversie niet geslaagd.
+     */
     CONVERSIE_NIET_GESLAAGD("Conversie (GBA > BRP): niet geslaagd"),
-    /** Conversie gelukt. */
+    /**
+     * Conversie gelukt.
+     */
     CONVERSIE_GESLAAGD("Conversie (GBA > BRP): geslaagd"),
-    /** Terugconversie niet geslaagd. */
+    /**
+     * Terugconversie niet geslaagd.
+     */
     TERUGCONVERSIE_NIET_GESLAAGD("Terugconversie (GBA > BRP > GBA): niet geslaagd"),
-    /** Terugconversie geslaagd. */
+    /**
+     * Terugconversie geslaagd.
+     */
     TERUGCONVERSIE_GESLAAGD("Terugconversie (GBA > BRP > GBA): geslaagd");
 
     private final String label;
@@ -29,7 +39,6 @@ public enum GgoResultaat {
 
     /**
      * Geef de waarde van label.
-     *
      * @return de label
      */
     public String getLabel() {

@@ -18,6 +18,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lf01Bericht.Foutreden;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lq01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.SynchroniseerNaarBrpAntwoordType.Kandidaat;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.DeblokkeringAntwoordBericht;
@@ -40,7 +41,8 @@ public abstract class AbstractUc811Test extends AbstractUcTest {
     }
 
     /*
-     * *** Uc811 Bericht *****************************************************************************************
+     * *** Uc811 Bericht
+     * *****************************************************************************************
      */
     protected Uc811Bericht maakUc811Bericht(final String gemeenteCode, final Long aNummer) {
         final Uc811Bericht uc811Bericht = new Uc811Bericht();
@@ -51,40 +53,21 @@ public abstract class AbstractUc811Test extends AbstractUcTest {
     }
 
     /*
-     * *** La01 *****************************************************************************************
+     * *** La01
+     * *****************************************************************************************
      */
 
-    protected Lo3Persoonslijst maakPersoonslijst(final Long aNummerInhoud, final Long vorigANummerInhoud, final String gemeenteInhoud) {
+    protected Lo3Persoonslijst maakPersoonslijst(final String aNummerInhoud, final String vorigANummerInhoud, final String gemeenteInhoud) {
 
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         // @formatter:off
-        builder.persoonStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Persoon(aNummerInhoud,
-                                                                                                          null,
-                                                                                                          "Jan",
-                                                                                                          null,
-                                                                                                          null,
-                                                                                                          "Jansen",
-                                                                                                          19700101,
-                                                                                                          "0518",
-                                                                                                          "6030",
-                                                                                                          "M",
-                                                                                                          vorigANummerInhoud,
-                                                                                                          null,
-                                                                                                          "E"),
-                                                                               Lo3StapelHelper.lo3Akt(1),
-                                                                               Lo3StapelHelper.lo3His(19700101),
-                                                                               new Lo3Herkomst(Lo3CategorieEnum.PERSOON, 0, 0))));
+        builder.persoonStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
+                Lo3StapelHelper.lo3Persoon(aNummerInhoud, null, "Jan", null, null, "Jansen", 19700101, "0518", "6030", "M", vorigANummerInhoud, null, "E"),
+                Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(19700101), new Lo3Herkomst(Lo3CategorieEnum.PERSOON, 0, 0))));
 
-        builder.verblijfplaatsStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Verblijfplaats(gemeenteInhoud,
-                                                                                                                        1970101,
-                                                                                                                        1970101,
-                                                                                                                        "Straat",
-                                                                                                                        15,
-                                                                                                                        "9876AA",
-                                                                                                                        "I"),
-                                                                                      null,
-                                                                                      Lo3StapelHelper.lo3His(19700101),
-                                                                                      new Lo3Herkomst(Lo3CategorieEnum.VERBLIJFPLAATS, 0, 0))));
+        builder.verblijfplaatsStapel(Lo3StapelHelper
+                .lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Verblijfplaats(gemeenteInhoud, 1970101, 1970101, "Straat", 15, "9876AA", "I"), null,
+                        Lo3StapelHelper.lo3His(19700101), new Lo3Herkomst(Lo3CategorieEnum.VERBLIJFPLAATS, 0, 0))));
         // @formatter:on
 
         return builder.build();
@@ -96,10 +79,10 @@ public abstract class AbstractUc811Test extends AbstractUcTest {
 
     protected La01Bericht maakLa01Bericht(final Lq01Bericht lq01Bericht, final boolean vulPersoonslijst) {
         final La01Bericht la01Bericht = new La01Bericht();
-        la01Bericht.setBronGemeente(lq01Bericht.getDoelGemeente());
-        la01Bericht.setDoelGemeente(lq01Bericht.getBronGemeente());
+        la01Bericht.setBronPartijCode(lq01Bericht.getDoelPartijCode());
+        la01Bericht.setDoelPartijCode(lq01Bericht.getBronPartijCode());
         if (vulPersoonslijst) {
-            la01Bericht.setLo3Persoonslijst(maakPersoonslijst(Long.valueOf(lq01Bericht.getANummer()), null, lq01Bericht.getDoelGemeente()));
+            la01Bericht.setLo3Persoonslijst(maakPersoonslijst(lq01Bericht.getANummer(), null, lq01Bericht.getDoelPartijCode().substring(0, 4)));
         }
         la01Bericht.setCorrelationId(lq01Bericht.getMessageId());
         la01Bericht.setMessageId(generateMessageId());
@@ -108,29 +91,29 @@ public abstract class AbstractUc811Test extends AbstractUcTest {
     }
 
     /*
-     * *** Lf01 ********************************************************************************************
+     * *** Lf01
+     * ********************************************************************************************
      */
 
     protected Lf01Bericht maakLf01Bericht(final Lq01Bericht lq01Bericht, final Foutreden foutreden, final String gemeente) {
         final Lf01Bericht bericht = new Lf01Bericht();
         bericht.setMessageId(generateMessageId());
         bericht.setCorrelationId(lq01Bericht.getMessageId());
-        bericht.setBronGemeente(lq01Bericht.getDoelGemeente());
-        bericht.setDoelGemeente(lq01Bericht.getBronGemeente());
+        bericht.setBronPartijCode(lq01Bericht.getDoelPartijCode());
+        bericht.setDoelPartijCode(lq01Bericht.getBronPartijCode());
         bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, foutreden.toString());
         bericht.setHeader(Lo3HeaderVeld.GEMEENTE, gemeente);
 
         return bericht;
     }
 
-    /* *** BLOKKERING INFO ***************************************************************************************** */
+    /*
+     * *** BLOKKERING INFO
+     * *****************************************************************************************
+     */
 
-    protected BlokkeringInfoAntwoordBericht maakBlokkeringInfoAntwoordBericht(
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek,
-        final PersoonsaanduidingType persoonsaanduiding,
-        final String processId,
-        final String gemeenteNaar)
-    {
+    protected BlokkeringInfoAntwoordBericht maakBlokkeringInfoAntwoordBericht(final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek,
+            final PersoonsaanduidingType persoonsaanduiding, final String processId, final String gemeenteNaar) {
         final BlokkeringInfoAntwoordBericht result = new BlokkeringInfoAntwoordBericht();
         result.setStatus(StatusType.OK);
         result.setPersoonsaanduiding(persoonsaanduiding);
@@ -142,7 +125,10 @@ public abstract class AbstractUc811Test extends AbstractUcTest {
         return result;
     }
 
-    /* *** DEBLOKKERING ******************************************************************************************** */
+    /*
+     * *** DEBLOKKERING
+     * ********************************************************************************************
+     */
 
     protected DeblokkeringAntwoordBericht maakDeblokkeringAntwoordBericht(final DeblokkeringVerzoekBericht deblokkeringVerzoek) {
         final DeblokkeringAntwoordBericht result = new DeblokkeringAntwoordBericht();
@@ -153,32 +139,38 @@ public abstract class AbstractUc811Test extends AbstractUcTest {
         return result;
     }
 
-    /* *** SYNC NAAR BRP******************************************************************************************** */
+    /*
+     * *** SYNC NAAR
+     * BRP******************************************************************************************
+     * **
+     */
 
-    protected SynchroniseerNaarBrpAntwoordBericht maakSynchroniseerNaarBrpAntwoordBericht(
-        final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek,
-        final StatusType status,
-        final List<String> persoonslijsten)
-    {
+    protected SynchroniseerNaarBrpAntwoordBericht maakSynchroniseerNaarBrpAntwoordBericht(final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek,
+            final StatusType status, final List<Kandidaat> kandidaten) {
         final SynchroniseerNaarBrpAntwoordBericht result = new SynchroniseerNaarBrpAntwoordBericht();
         result.setStatus(status);
         result.setMessageId(generateMessageId());
         result.setCorrelationId(synchroniseerNaarBrpVerzoek.getMessageId());
-        result.setKandidaten(persoonslijsten);
+        result.setKandidaten(kandidaten);
 
         return result;
     }
 
-    protected List<String> maakPersoonslijsten(final Long... aNummers) {
+    protected List<Kandidaat> maakKandidaten(final String... aNummers) {
         if (aNummers == null || aNummers.length == 0) {
             return null;
         }
 
-        final List<String> result = new ArrayList<>();
+        final List<Kandidaat> result = new ArrayList<>();
 
-        for (final Long aNummer : aNummers) {
+        for (final String aNummer : aNummers) {
             final Lo3Persoonslijst pl = maakPersoonslijst(aNummer, null, "0599");
-            result.add(plToString(pl));
+            final Kandidaat kandidaat = new Kandidaat();
+            kandidaat.setPersoonId(Integer.valueOf(aNummer));
+            kandidaat.setVersie(1);
+            kandidaat.setLo3PersoonslijstAlsTeletexString(plToString(pl));
+
+            result.add(kandidaat);
         }
 
         return result;

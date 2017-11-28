@@ -9,7 +9,6 @@ package nl.bzk.migratiebrp.conversie.model.lo3;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-
 import org.junit.Test;
 
 public class Lo3DocumentatieTest {
@@ -17,14 +16,14 @@ public class Lo3DocumentatieTest {
     @Test
     public void testConstructor() {
         new Lo3Documentatie(
-            1L,
-            new Lo3GemeenteCode("1234"),
-            Lo3String.wrap("1234567"),
-            new Lo3GemeenteCode("1234"),
-            new Lo3Datum(20010101),
-            Lo3String.wrap("beschrijvingDocument"),
-            null,
-            null);
+                1L,
+                new Lo3GemeenteCode("1234"),
+                Lo3String.wrap("1234567"),
+                new Lo3GemeenteCode("1234"),
+                new Lo3Datum(20010101),
+                Lo3String.wrap("beschrijvingDocument"),
+                null,
+                null);
     }
 
 }

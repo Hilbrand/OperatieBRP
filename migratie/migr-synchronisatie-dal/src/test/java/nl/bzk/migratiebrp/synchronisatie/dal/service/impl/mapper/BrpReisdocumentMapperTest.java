@@ -7,24 +7,27 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.ArrayList;
+
 import javax.inject.Inject;
-import junit.framework.Assert;
+
+import org.junit.Test;
+
+import org.junit.Assert;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpReisdocumentAutoriteitVanAfgifteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpReisdocumentInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
-import org.junit.Test;
 
 public class BrpReisdocumentMapperTest extends BrpAbstractTest {
 
@@ -37,12 +40,12 @@ public class BrpReisdocumentMapperTest extends BrpAbstractTest {
     public void testMapInhoud() {
         final PersoonReisdocumentHistorie historie =
                 new PersoonReisdocumentHistorie(
-                    20000101,
-                    20000101,
-                    20170601,
-                    "1494-XSD-123",
-                    "0518",
-                    new PersoonReisdocument(new Persoon(SoortPersoon.INGESCHREVENE), new SoortNederlandsReisdocument("PP", "Paspoort")));
+                        20000101,
+                        20000101,
+                        20170601,
+                        "1494-XSD-123",
+                        "0518",
+                        new PersoonReisdocument(new Persoon(SoortPersoon.INGESCHREVENE), new SoortNederlandsReisdocument("PP", "Paspoort")));
         historie.setDatumInhoudingOfVermissing(20120403);
         historie.setAanduidingInhoudingOfVermissingReisdocument(new AanduidingInhoudingOfVermissingReisdocument('I', "Ingehouden, ingeleverd"));
 

@@ -10,11 +10,7 @@ import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import nl.bzk.migratiebrp.isc.jbpm.command.client.CommandClient;
-import nl.bzk.migratiebrp.isc.jbpm.command.exception.CommandException;
 import nl.bzk.migratiebrp.isc.jbpm.command.impl.JbpmSuspendCommand;
-import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringService;
-import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringServiceFactory;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.jsf.JbpmJsfContext;
 import org.jbpm.logging.log.MessageLog;
@@ -31,9 +27,7 @@ public final class SuspendProcessInstanceActionListener extends AbstractActionLi
 
     /**
      * Constructor.
-     *
-     * @param processInstanceExpression
-     *            process instance expression
+     * @param processInstanceExpression process instance expression
      */
     public SuspendProcessInstanceActionListener(final ValueExpression processInstanceExpression) {
         super("suspendProcessInstance");
@@ -41,7 +35,7 @@ public final class SuspendProcessInstanceActionListener extends AbstractActionLi
     }
 
     @Override
-    public void verwerkAction(final JbpmJsfContext context, final ActionEvent event) throws CommandException {
+    public void verwerkAction(final JbpmJsfContext context, final ActionEvent event) throws ActionException {
         final FacesContext facesContext = FacesContext.getCurrentInstance();
         final ELContext elContext = facesContext.getELContext();
 
@@ -52,9 +46,7 @@ public final class SuspendProcessInstanceActionListener extends AbstractActionLi
         }
 
         final JbpmSuspendCommand jbpmSuspendCommand = new JbpmSuspendCommand(processInstance.getId());
-        final SpringService springService = (SpringService) context.getJbpmContext().getServiceFactory(SpringServiceFactory.SERVICE_NAME).openService();
-        final CommandClient commandClient = springService.getBean(CommandClient.class);
-        commandClient.executeCommand(jbpmSuspendCommand);
+        executeCommand(context, jbpmSuspendCommand);
 
         processInstance.getRootToken().addLog(new MessageLog("Beheerder heeft procesinstantie (id=" + processInstance.getId() + ") opgeschort."));
 

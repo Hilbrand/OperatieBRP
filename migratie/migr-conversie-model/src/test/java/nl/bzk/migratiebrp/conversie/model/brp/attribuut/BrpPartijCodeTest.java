@@ -15,17 +15,16 @@ import static org.junit.Assert.assertTrue;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Test;
 
 public class BrpPartijCodeTest {
 
-    private static final Integer PARTIJ_CODE = 123401;
-    private static final Integer PARTIJ_CODE2 = 123501;
+    private static final String PARTIJ_CODE = "123401";
+    private static final String PARTIJ_CODE2 = "123501";
 
     private static final BrpPartijCode BRP_PARTIJ_CODE = new BrpPartijCode(PARTIJ_CODE);
     private static final BrpPartijCode BRP_PARTIJ_CODE_2 = new BrpPartijCode(PARTIJ_CODE2);
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testBrpPartijCode() {
@@ -60,9 +59,9 @@ public class BrpPartijCodeTest {
 
     @Test
     public void testVerwijderOnderzoek() throws Exception {
-        BrpPartijCode code = new BrpPartijCode(209, onderzoek);
+        BrpPartijCode code = new BrpPartijCode("000209", onderzoek);
         assertNotNull(code.getOnderzoek());
-        BrpPartijCode newCode = code.verwijderOnderzoek();
+        final BrpPartijCode newCode = code.verwijderOnderzoek();
         assertNotNull(code.getOnderzoek());
         assertNull(newCode.getOnderzoek());
         code = new BrpPartijCode(null, onderzoek);
@@ -77,14 +76,14 @@ public class BrpPartijCodeTest {
 
     @Test
     public void testWrapMetWaardeEnZonderOnderzoek() throws Exception {
-        BrpPartijCode result = BrpPartijCode.wrap(207, null);
+        final BrpPartijCode result = BrpPartijCode.wrap("000207", null);
         assertNull(result.getOnderzoek());
-        assertEquals(207, result.getWaarde().intValue());
+        assertEquals("000207", result.getWaarde());
     }
 
     @Test
     public void testWrapZonderWaardeEnMetOnderzoek() throws Exception {
-        BrpPartijCode result = BrpPartijCode.wrap(null, onderzoek);
+        final BrpPartijCode result = BrpPartijCode.wrap(null, onderzoek);
         assertNotNull(result.getOnderzoek());
         assertNull(result.getWaarde());
     }

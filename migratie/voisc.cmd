@@ -42,7 +42,6 @@ cd ..
 cd ..
 cd voisc-centraal
 cd migr-voisc-runtime
-copy ..\.voiscPwd
 copy ..\config.properties
 
 :run_voisc

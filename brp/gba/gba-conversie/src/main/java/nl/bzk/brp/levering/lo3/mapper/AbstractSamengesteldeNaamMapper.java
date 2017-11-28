@@ -1,14 +1,14 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.mapper;
 
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.ElementEnum;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.HisPersoonSamengesteldeNaamModel;
+import nl.bzk.brp.domain.element.AttribuutElement;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
 import org.springframework.stereotype.Component;
 
@@ -16,61 +16,56 @@ import org.springframework.stereotype.Component;
  * Mapt de samengestelde naam.
  */
 @Component
-public abstract class AbstractSamengesteldeNaamMapper
-        extends AbstractMaterieelMapper<PersoonHisVolledig, HisPersoonSamengesteldeNaamModel, BrpSamengesteldeNaamInhoud>
-{
-    private final ElementEnum predicaatCode;
-    private final ElementEnum voornamen;
-    private final ElementEnum voorvoegsel;
-    private final ElementEnum scheidingsteken;
-    private final ElementEnum adellijkeTitelCode;
-    private final ElementEnum geslachtsnaamStam;
-    private final ElementEnum indicatieNamenReeks;
-    private final ElementEnum indicatieAfgeleid;
+public abstract class AbstractSamengesteldeNaamMapper extends AbstractMapper<BrpSamengesteldeNaamInhoud> {
+
+    private final AttribuutElement predicaatCode;
+    private final AttribuutElement voornamen;
+    private final AttribuutElement voorvoegsel;
+    private final AttribuutElement scheidingsteken;
+    private final AttribuutElement adellijkeTitelCode;
+    private final AttribuutElement geslachtsnaamStam;
+    private final AttribuutElement indicatieNamenReeks;
+    private final AttribuutElement indicatieAfgeleid;
 
     /**
      * Constructor.
-     * 
-     * @param datumAanvangGeldigheid
-     *            element voor datum aanvang geldigheid
-     * @param datumEindeGeldigheid
-     *            element voor datum einde geldigheid
-     * @param tijdstipRegistratie
-     *            element voor tijdstip registratie
-     * @param tijdstipVerval
-     *            element voor tijdstip verval
-     * @param predicaatCode
-     *            element voor predicaat
-     * @param voornamen
-     *            element voor voornamen
-     * @param voorvoegsel
-     *            element voor voorvoegsel
-     * @param scheidingsteken
-     *            element voor scheidingsteken
-     * @param adellijkeTitelCode
-     *            element voor adellijke titel
-     * @param geslachtsnaamStam
-     *            element voor geslachtsnaam
-     * @param indicatieNamenReeks
-     *            element voor indicatie namen reeks
-     * @param indicatieAfgeleid
-     *            element voor indicatie afgeleid
+     * @param identiteitGroep element voor identiteit groep
+     * @param groep element voor te mappen groep
+     * @param datumAanvangGeldigheid element voor datum aanvang geldigheid
+     * @param datumEindeGeldigheid element voor datum einde geldigheid
+     * @param tijdstipRegistratie element voor tijdstip registratie
+     * @param tijdstipVerval element voor tijdstip verval
+     * @param predicaatCode element voor predicaat
+     * @param voornamen element voor voornamen
+     * @param voorvoegsel element voor voorvoegsel
+     * @param scheidingsteken element voor scheidingsteken
+     * @param adellijkeTitelCode element voor adellijke titel
+     * @param geslachtsnaamStam element voor geslachtsnaam
+     * @param indicatieNamenReeks element voor indicatie namen reeks
+     * @param indicatieAfgeleid element voor indicatie afgeleid
+     */
+    //
+    /*
+     * squid:S00107 Methods should not have too many parameters
+     *
+     * Terecht, geaccepteerd voor deze klasse.
      */
     protected AbstractSamengesteldeNaamMapper(
-        final ElementEnum datumAanvangGeldigheid,
-        final ElementEnum datumEindeGeldigheid,
-        final ElementEnum tijdstipRegistratie,
-        final ElementEnum tijdstipVerval,
-        final ElementEnum predicaatCode,
-        final ElementEnum voornamen,
-        final ElementEnum voorvoegsel,
-        final ElementEnum scheidingsteken,
-        final ElementEnum adellijkeTitelCode,
-        final ElementEnum geslachtsnaamStam,
-        final ElementEnum indicatieNamenReeks,
-        final ElementEnum indicatieAfgeleid)
-    {
-        super(datumAanvangGeldigheid, datumEindeGeldigheid, tijdstipRegistratie, tijdstipVerval);
+            final GroepElement identiteitGroep,
+            final GroepElement groep,
+            final AttribuutElement datumAanvangGeldigheid,
+            final AttribuutElement datumEindeGeldigheid,
+            final AttribuutElement tijdstipRegistratie,
+            final AttribuutElement tijdstipVerval,
+            final AttribuutElement predicaatCode,
+            final AttribuutElement voornamen,
+            final AttribuutElement voorvoegsel,
+            final AttribuutElement scheidingsteken,
+            final AttribuutElement adellijkeTitelCode,
+            final AttribuutElement geslachtsnaamStam,
+            final AttribuutElement indicatieNamenReeks,
+            final AttribuutElement indicatieAfgeleid) {
+        super(identiteitGroep, groep, datumAanvangGeldigheid, datumEindeGeldigheid, tijdstipRegistratie, tijdstipVerval);
         this.predicaatCode = predicaatCode;
         this.voornamen = voornamen;
         this.voorvoegsel = voorvoegsel;
@@ -82,22 +77,30 @@ public abstract class AbstractSamengesteldeNaamMapper
     }
 
     @Override
-    protected final Iterable<HisPersoonSamengesteldeNaamModel> getHistorieIterable(final PersoonHisVolledig persoonHisVolledig) {
-        return persoonHisVolledig.getPersoonSamengesteldeNaamHistorie();
-    }
-
-    @Override
-    public final BrpSamengesteldeNaamInhoud mapInhoud(final HisPersoonSamengesteldeNaamModel historie, final OnderzoekMapper onderzoekMapper) {
+    public final BrpSamengesteldeNaamInhoud mapInhoud(final MetaRecord identiteitsRecord, final MetaRecord record, final OnderzoekMapper onderzoekMapper) {
         return new BrpSamengesteldeNaamInhoud(
-            BrpMapperUtil.mapBrpPredicaatCode(historie.getPredicaat(), onderzoekMapper.bepaalOnderzoek(historie.getID(), predicaatCode, true)),
-            BrpMapperUtil.mapBrpString(historie.getVoornamen(), onderzoekMapper.bepaalOnderzoek(historie.getID(), voornamen, true)),
-            BrpMapperUtil.mapBrpString(historie.getVoorvoegsel(), onderzoekMapper.bepaalOnderzoek(historie.getID(), voorvoegsel, true)),
-            BrpMapperUtil.mapBrpCharacter(historie.getScheidingsteken(), onderzoekMapper.bepaalOnderzoek(historie.getID(), scheidingsteken, true)),
-            BrpMapperUtil.mapBrpAdellijkeTitelCode(
-                historie.getAdellijkeTitel(),
-                onderzoekMapper.bepaalOnderzoek(historie.getID(), adellijkeTitelCode, true)),
-            BrpMapperUtil.mapBrpString(historie.getGeslachtsnaamstam(), onderzoekMapper.bepaalOnderzoek(historie.getID(), geslachtsnaamStam, true)),
-            BrpMapperUtil.mapBrpBoolean(historie.getIndicatieNamenreeks(), onderzoekMapper.bepaalOnderzoek(historie.getID(), indicatieNamenReeks, true)),
-            BrpMapperUtil.mapBrpBoolean(historie.getIndicatieAfgeleid(), onderzoekMapper.bepaalOnderzoek(historie.getID(), indicatieAfgeleid, true)));
+                BrpMetaAttribuutMapper.mapBrpPredicaatCode(
+                        record.getAttribuut(predicaatCode),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), predicaatCode, true)),
+                BrpMetaAttribuutMapper
+                        .mapBrpString(record.getAttribuut(voornamen), onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), voornamen, true)),
+                BrpMetaAttribuutMapper
+                        .mapBrpString(record.getAttribuut(voorvoegsel), onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), voorvoegsel, true)),
+                BrpMetaAttribuutMapper.mapBrpCharacterScheidingsteken(
+                        record.getAttribuut(scheidingsteken),
+                        record.getAttribuut(voorvoegsel),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), scheidingsteken, true)),
+                BrpMetaAttribuutMapper.mapBrpAdellijkeTitelCode(
+                        record.getAttribuut(adellijkeTitelCode),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), adellijkeTitelCode, true)),
+                BrpMetaAttribuutMapper.mapBrpString(
+                        record.getAttribuut(geslachtsnaamStam),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), geslachtsnaamStam, true)),
+                BrpMetaAttribuutMapper.mapBrpBooleanJaNee(
+                        record.getAttribuut(indicatieNamenReeks),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), indicatieNamenReeks, true)),
+                BrpMetaAttribuutMapper.mapBrpBooleanJaNee(
+                        record.getAttribuut(indicatieAfgeleid),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), indicatieAfgeleid, true)));
     }
 }

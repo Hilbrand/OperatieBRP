@@ -11,33 +11,48 @@ package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerk
  */
 public enum PlVerwerkerMelding {
 
-    /** Verwerker synchronisatie. */
+    /**
+     * Verwerker synchronisatie.
+     */
     SERVICE("service", "Verwerk bericht."),
 
-    /** Verwerker initiele vulling. */
+    /**
+     * Verwerker initiele vulling.
+     */
     SYNCHRONISATIE_VERWERKER_INITIELE_VULLING("verwerker-initiele-vulling", "Verwerk synchronisatie als 'initiele vulling'."),
-    /** Verwerker synchronisatie. */
+    /**
+     * Verwerker synchronisatie.
+     */
     SYNCHRONISATIE_VERWERKER_SYNCHRONISATIE("verwerker-sync", "Verwerk synchronisatie."),
+    /**
+     * Verwerker beheerders keuze.
+     */
+    SYNCHRONISATIE_VERWERKER_BEHEERDERS_KEUZE("verwerker-beheerders-keuze", "Verwerk beheerders keuze."),
 
-    /** Verwerker beheerderskeuze nieuw. */
+    /**
+     * Verwerker beheerderskeuze nieuw.
+     */
     PL_VERWERKER_KEUZE_NIEUW("verwerker-keuze-nieuw", "Verwerk aangeboden persoonslijst als geforceerd opnemen als nieuwe persoonslijst."),
-    /** Verwerker beheerderskeuze vervang. */
+    /**
+     * Verwerker beheerderskeuze vervang.
+     */
     PL_VERWERKER_KEUZE_VERVANG("verwerker-keuze-vervang",
             "Verwerk aangeboden persoonslijst als geforceerd opnemen als vervanging van bestaande persoonslijst."),
-    /** Verwerker synchronisatie. */
+    /**
+     * Verwerker synchronisatie.
+     */
     PL_VERWERKER_SYNCHRONISATIE("verwerker-synchronisatie", "Verwerk aangeboden persoonslijst als reguliere synchronisatie.");
 
     private final String key;
     private final String omschrijving;
 
-    private PlVerwerkerMelding(final String key, final String omschrijving) {
+    PlVerwerkerMelding(final String key, final String omschrijving) {
         this.key = key;
         this.omschrijving = omschrijving;
     }
 
     /**
      * Geef de waarde van key.
-     *
      * @return key
      */
     public String getKey() {
@@ -46,7 +61,6 @@ public enum PlVerwerkerMelding {
 
     /**
      * Geef de waarde van omschrijving.
-     *
      * @return omschrijving
      */
     public String getOmschrijving() {

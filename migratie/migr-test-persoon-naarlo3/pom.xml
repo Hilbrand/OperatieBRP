@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <groupId>nl.bzk.migratiebrp.test</groupId>
+        <groupId>nl.bzk.migratiebrp</groupId>
         <artifactId>migr-test-persoon</artifactId>
-        <version>3.2.108-SNAPSHOT</version>
+        <version>145.3</version>
         <relativePath>../migr-test-persoon</relativePath>
     </parent>
-    <groupId>nl.bzk.migratiebrp.test.persoon</groupId>
+
     <artifactId>migr-test-persoon-naarlo3</artifactId>
     <name>Migr - Test - Persoon - Conversie BRP naar LO3</name>
 
@@ -22,45 +22,45 @@
             <artifactId>spring-beans</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.util</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-util-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.test</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-test-dal</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.conversie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-conversie-model</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.conversie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-conversie-model</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.conversie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-conversie-regels</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.conversie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-conversie-regels</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.bericht</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-bericht-model</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.util</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-util-excel</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.synchronisatie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-synchronisatie-dal</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.bzk.migratiebrp.synchronisatie</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-synchronisatie-dal</artifactId>
             <type>test-jar</type>
         </dependency>
@@ -69,13 +69,6 @@
         <dependency>
             <groupId>org.dbunit</groupId>
             <artifactId>dbunit</artifactId>
-        </dependency>
-
-        <!-- HyperSQL als in memory alternatief voor PostgreSQL t.b.v. unit-testen -->
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -114,7 +107,7 @@
             </build>
         </profile>
         <profile>
-            <id>coverage</id>
+            <id>regressie-coverage</id>
             <properties>
                 <resource.dir>regressie</resource.dir>
             </properties>
@@ -137,6 +130,69 @@
             </build>
         </profile>
         <profile>
+            <id>liquibase</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <files>
+                                        <file>
+                                            src/test/non-packaged-resources/${resource.dir}/datasource.naarlo3.properties
+                                        </file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.liquibase</groupId>
+                        <artifactId>liquibase-maven-plugin</artifactId>
+                        <version>${liquibase.version}</version>
+                        <configuration>
+                            <driver>org.postgresql.Driver</driver>
+                            <url>jdbc:postgresql://${database.host}/${database.name}</url>
+                            <username>${database.username}</username>
+                            <password>${database.password}</password>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>nl.bzk.brp</groupId>
+                                <artifactId>brp-database</artifactId>
+                                <version>${database.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.postgresql</groupId>
+                                <artifactId>postgresql</artifactId>
+                                <version>${postgresql.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>create-db-brp</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>update</goal>
+                                </goals>
+                                <configuration>
+                                    <dropFirst>true</dropFirst>
+                                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                                    <changeLogFile>liquibase/changeset/brp-databases.xml</changeLogFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>regressie</id>
             <properties>
                 <resource.dir>regressie</resource.dir>
@@ -152,21 +208,6 @@
                                 <exclude>**/*</exclude>
                             </excludes>
                         </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <configuration>
-                            <destFile>${project.basedir}/../jacoco-it.exec</destFile>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>test</id>
-                                <configuration>
-                                    <skip>true</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>

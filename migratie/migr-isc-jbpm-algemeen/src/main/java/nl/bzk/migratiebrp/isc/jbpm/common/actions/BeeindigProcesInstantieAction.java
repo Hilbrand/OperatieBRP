@@ -22,8 +22,16 @@ import org.springframework.stereotype.Component;
 @Component("beeindigProcesInstantieAction")
 public final class BeeindigProcesInstantieAction implements SpringAction {
 
+    private final RapportageDao rapportageDao;
+
+    /**
+     * Constructor.
+     * @param rapportageDao rapportage dao
+     */
     @Inject
-    private RapportageDao rapportageDao;
+    public BeeindigProcesInstantieAction(final RapportageDao rapportageDao) {
+        this.rapportageDao = rapportageDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {

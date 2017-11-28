@@ -33,8 +33,8 @@ public class PlControleBevatDatumIngangBlokkeringTest {
     private Lo3Persoonslijst maakPl(final Integer datumIngangBlokkering) {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         builder.inschrijvingStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-            Lo3StapelHelper.lo3Inschrijving(datumIngangBlokkering, null, null, 19770101, "0626", 0, 1, 19770101L, true),
-            Lo3CategorieEnum.CATEGORIE_07)));
+                Lo3StapelHelper.lo3Inschrijving(datumIngangBlokkering, null, null, 19770101, "0626", 0, 1, 19770101L, true),
+                Lo3CategorieEnum.CATEGORIE_07)));
         return builder.build();
     }
 }

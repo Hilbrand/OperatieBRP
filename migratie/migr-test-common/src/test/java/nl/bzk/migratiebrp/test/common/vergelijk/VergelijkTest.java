@@ -109,9 +109,18 @@ public class VergelijkTest {
     }
 
     @Test
+    public void testFlexibeleVasteLengteWildcard() {
+        final String expected = "bla[??????]bla";
+
+        Assert.assertTrue(Vergelijk.vergelijk(expected, "bla12345678bla"));
+        Assert.assertFalse(Vergelijk.vergelijk(expected, "bla1234567bla"));
+        Assert.assertFalse(Vergelijk.vergelijk(expected, "bla123456789bla"));
+    }
+
+    @Test
     public void testPraktijk() throws IOException {
-        final String expected = IOUtils.toString(VergelijkTest.class.getResourceAsStream("0003-in0002-vospg-vrij bericht.expected.txt"));
-        final String actual = IOUtils.toString(VergelijkTest.class.getResourceAsStream("0003-in0002-vospg-vrij bericht.txt"));
+        final String expected = IOUtils.toString(VergelijkTest.class.getResourceAsStream("0003-in0002-voisc-vrij bericht.expected.txt"));
+        final String actual = IOUtils.toString(VergelijkTest.class.getResourceAsStream("0003-in0002-voisc-vrij bericht.txt"));
 
         Assert.assertTrue(Vergelijk.vergelijk(expected, actual));
     }

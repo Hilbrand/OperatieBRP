@@ -6,17 +6,13 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc811;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpAntwoordBericht;
-import nl.bzk.migratiebrp.isc.jbpm.common.FoutUtil;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.isc.jbpm.uc202.ControleerSynchroniseerNaarBrpAntwoord;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,44 +21,31 @@ import org.springframework.stereotype.Component;
 @Component("uc811ControleerSynchroniseerNaarBrpAntwoordAction")
 public final class ControleerSynchroniseerNaarBrpAntwoordAction implements SpringAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger();
+    private static final String ONDUIDELIJK = "5d. Onduidelijk";
+    private static final String GENEGEERD = "5f. Genegeerd";
+    private static final String AFGEKEURD = "5e. Afgekeurd";
+    private static final String FOUT = "5c. Fout";
+    private static final String NOG_TE_LEVEREN = "5g. Te leveren administratieve handelingen aanwezig";
 
-    private static final String ONDUIDELIJK = "10e. Onduidelijk";
-    private static final String GENEGEERD = "10f. Genegeerd";
-    private static final String AFGEKEURD = "10g. Afgekeurd";
-    private static final String FOUT = "10h. Fout";
-    private static final String FOUTMELDING_VARIABELE = "actieFoutmelding";
+    private final ControleerSynchroniseerNaarBrpAntwoord controleerSynchroniseerNaarBrpAntwoord;
 
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public ControleerSynchroniseerNaarBrpAntwoordAction(final BerichtenDao berichtenDao) {
+        final EnumMap<StatusType, String> transitionResult = new EnumMap<>(StatusType.class);
+        transitionResult.put(StatusType.ONDUIDELIJK, ONDUIDELIJK);
+        transitionResult.put(StatusType.GENEGEERD, GENEGEERD);
+        transitionResult.put(StatusType.AFGEKEURD, AFGEKEURD);
+        transitionResult.put(StatusType.FOUT, FOUT);
+        transitionResult.put(StatusType.VORIGE_HANDELINGEN_NIET_GELEVERD, NOG_TE_LEVEREN);
+        controleerSynchroniseerNaarBrpAntwoord = new ControleerSynchroniseerNaarBrpAntwoord(berichtenDao, transitionResult);
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
-        LOG.debug("execute(parameters={})", parameters);
-
-        final Long synchroniseerNaarBrpAntwoordBerichtId = (Long) parameters.get("synchroniseerNaarBrpAntwoordBericht");
-        final SynchroniseerNaarBrpAntwoordBericht synchroniseerNaarBrpAntwoordBericht =
-                (SynchroniseerNaarBrpAntwoordBericht) berichtenDao.leesBericht(synchroniseerNaarBrpAntwoordBerichtId);
-
-        final Map<String, Object> result = new HashMap<>();
-        final StatusType status = synchroniseerNaarBrpAntwoordBericht.getStatus();
-
-        if (status == StatusType.TOEGEVOEGD || status == StatusType.VERVANGEN) {
-            // OK
-            LOG.debug("Controle ok");
-        } else {
-            if (status == StatusType.ONDUIDELIJK) {
-                result.put(SpringActionHandler.TRANSITION_RESULT, ONDUIDELIJK);
-            } else if (status == StatusType.GENEGEERD) {
-                result.put(SpringActionHandler.TRANSITION_RESULT, GENEGEERD);
-            } else if (status == StatusType.AFGEKEURD) {
-                result.put(SpringActionHandler.TRANSITION_RESULT, AFGEKEURD);
-            } else {
-                result.put(SpringActionHandler.TRANSITION_RESULT, FOUT);
-            }
-            result.put(FOUTMELDING_VARIABELE, FoutUtil.beperkFoutmelding(synchroniseerNaarBrpAntwoordBericht.getMelding()));
-        }
-        LOG.debug("result: {}", result);
-        return result;
+       return controleerSynchroniseerNaarBrpAntwoord.execute(parameters);
     }
 }

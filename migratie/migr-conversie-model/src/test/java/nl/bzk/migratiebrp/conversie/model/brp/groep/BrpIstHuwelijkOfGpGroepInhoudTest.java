@@ -6,6 +6,8 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
@@ -14,7 +16,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
@@ -23,20 +24,20 @@ public class BrpIstHuwelijkOfGpGroepInhoudTest {
 
     public static BrpIstHuwelijkOfGpGroepInhoud createInhoud() {
         return new BrpIstHuwelijkOfGpGroepInhoud(
-            BrpIstStandaardGroepInhoudTest.createInhoud(),
-            BrpIstRelatieGroepInhoudTest.createInhoud(),
-            new BrpInteger(20010101),
-            new BrpGemeenteCode((short) 42),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            BrpSoortRelatieCode.HUWELIJK);
+                BrpIstStandaardGroepInhoudTestUtil.createInhoud(),
+                BrpIstRelatieGroepInhoudTest.createInhoud(),
+                new BrpInteger(20010101),
+                new BrpGemeenteCode("0042"),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                BrpSoortRelatieCode.HUWELIJK);
     }
 
     public static BrpStapel<BrpIstHuwelijkOfGpGroepInhoud> createStapel() {

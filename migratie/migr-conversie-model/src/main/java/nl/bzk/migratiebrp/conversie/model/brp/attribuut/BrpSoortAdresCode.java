@@ -6,12 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een BRP Soort Adres code.
- * 
  */
 public final class BrpSoortAdresCode extends AbstractBrpAttribuutMetOnderzoek {
 
@@ -28,9 +27,7 @@ public final class BrpSoortAdresCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpSoortAdresCode.
-     * 
-     * @param waarde
-     *            BRP waarde
+     * @param waarde BRP waarde
      */
     public BrpSoortAdresCode(final String waarde) {
         this(waarde, null);
@@ -38,22 +35,18 @@ public final class BrpSoortAdresCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpSoortAdresCode met onderzoek.
-     * 
-     * @param waarde
-     *            BRP waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde BRP waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpSoortAdresCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override

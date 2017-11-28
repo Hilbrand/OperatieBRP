@@ -10,11 +10,8 @@ import java.util.Map;
 
 /**
  * Een conversie key paar.
- * 
- * @param <L>
- *            LO3 waarde
- * @param <B>
- *            BRP waarde
+ * @param <L> LO3 waarde
+ * @param <B> BRP waarde
  */
 public final class ConversieMapEntry<L, B> implements Map.Entry<L, B> {
 
@@ -23,11 +20,8 @@ public final class ConversieMapEntry<L, B> implements Map.Entry<L, B> {
 
     /**
      * Maakt een ConversieMapEntry object.
-     * 
-     * @param lo3Waarde
-     *            lo3 waarde
-     * @param brpWaarde
-     *            brp waarde
+     * @param lo3Waarde lo3 waarde
+     * @param brpWaarde brp waarde
      */
     public ConversieMapEntry(final L lo3Waarde, final B brpWaarde) {
         this.lo3Waarde = lo3Waarde;
@@ -36,7 +30,6 @@ public final class ConversieMapEntry<L, B> implements Map.Entry<L, B> {
 
     /**
      * Geef de waarde van key.
-     *
      * @return de lo3 waarde
      */
     @Override
@@ -46,7 +39,6 @@ public final class ConversieMapEntry<L, B> implements Map.Entry<L, B> {
 
     /**
      * Geef de waarde van value.
-     *
      * @return de brp waarde
      */
     @Override

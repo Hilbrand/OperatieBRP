@@ -18,31 +18,22 @@ public interface ProefSynchronisatieRepository {
 
     /**
      * Laad vulling proefsynchronisatie tabel met berichten die naar ISC gestuurd moeten worden.
-     *
-     * @param datumVanaf
-     *            De datum vanaf wanneer berichten worden meegenomen.
-     * @param datumTot
-     *            De datum tot wanneer berichten worden meegenomen.
+     * @param datumVanaf De datum vanaf wanneer berichten worden meegenomen.
+     * @param datumTot De datum tot wanneer berichten worden meegenomen.
      */
     void laadInitProefSynchronisatieBerichtenTabel(String datumVanaf, String datumTot);
 
     /**
      * Verwerkt de proefsynchronisatieberichten die in de proefsychronisatiebericht tabel staan.
-     *
-     * @param verwerker
-     *            om de berichten mee te verwerken.
-     * @param batchGrootte
-     *            de grootte van te verwerken batches
-     * @param wachtPeriode
-     *            de tijd die er gewacht wordt voordat er een nieuwe batch wordt verwerkt.
+     * @param verwerker om de berichten mee te verwerken.
+     * @param batchGrootte de grootte van te verwerken batches
+     * @param wachtPeriode de tijd die er gewacht wordt voordat er een nieuwe batch wordt verwerkt.
      */
     void verwerkProefSynchronisatieBericht(final BerichtVerwerker<ProefSynchronisatieBericht> verwerker, final int batchGrootte, final long wachtPeriode);
 
     /**
      * Update de status van de verwerkte proefsynchronisatieberichten.
-     *
-     * @param proefSynchronisatieBerichtIds
-     *            De ids van de verwerkte proefsynchronisatieberichten.
+     * @param proefSynchronisatieBerichtIds De ids van de verwerkte proefsynchronisatieberichten.
      * @return True indien alle berichten zijn geupdated, false in andere gevallen.
      */
     boolean updateProefSynchronisatieBerichtStatus(List<Long> proefSynchronisatieBerichtIds);

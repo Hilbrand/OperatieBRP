@@ -11,7 +11,6 @@ import org.xml.sax.SAXParseException;
 
 /**
  * Specifieke exceptie voor het geval een xml bericht niet gevalideerd kan worden tegen de xsd schema's.
- * 
  */
 public class XmlValidatieExceptie extends RuntimeException {
 
@@ -19,9 +18,7 @@ public class XmlValidatieExceptie extends RuntimeException {
 
     /**
      * Maak een XML Validatie exceptie op basis van een SAXParseException.
-     * 
-     * @param e
-     *            de SAXParseException
+     * @param e de SAXParseException
      */
     public XmlValidatieExceptie(final SAXParseException e) {
         this("Fout opgetreden bij valideren van xml", e);
@@ -29,11 +26,8 @@ public class XmlValidatieExceptie extends RuntimeException {
 
     /**
      * Maak een XML Validatie exceptie op basis van een SAXException.
-     * 
-     * @param message
-     *            de foutmelding
-     * @param e
-     *            de SAXException
+     * @param message de foutmelding
+     * @param e de SAXException
      */
     public XmlValidatieExceptie(final String message, final SAXException e) {
         super(message, e);

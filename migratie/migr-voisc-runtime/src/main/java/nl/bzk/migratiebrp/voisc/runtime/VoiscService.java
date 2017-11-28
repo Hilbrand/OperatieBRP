@@ -25,19 +25,16 @@ public interface VoiscService {
 
     /**
      * Opschonen van Bericht Entities die al verwerkt zijn en ouder zijn dan de opgegeven datum.
-     *
-     * @param ouderDan
-     *            Date
+     * @param ouderDan Date
      * @return int het aantal opgeschoonde berichten
      */
     int opschonenVoiscBerichten(Date ouderDan);
 
     /**
      * Herstellen bericht status.
-     *
-     * @param ouderDan
-     *            datum waarvoor de status in verwerking gezet moet zijn
+     * @param ouderDan datum waarvoor de status in verwerking gezet moet zijn
      * @return int het aantal herstelde berichten
      */
     int herstellenVoiscBerichten(Date ouderDan);
+
 }

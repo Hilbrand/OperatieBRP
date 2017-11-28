@@ -9,70 +9,64 @@ package nl.bzk.migratiebrp.conversie.model.lo3.codes;
 import java.util.HashMap;
 import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOpschortingBijhoudingCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze enum type representeert de LO3 waarde voor reden opschorting bijhouding.
  */
 public enum Lo3RedenOpschortingBijhoudingCodeEnum {
 
-    /** Overlijden. */
+    /**
+     * Overlijden.
+     */
     OVERLIJDEN("O", "Overlijden"),
 
-    /** Emigratie. */
+    /**
+     * Emigratie.
+     */
     EMIGRATIE("E", "Emigratie"),
 
-    /** Ministerieel besluit. */
-    MINISTERIEEL_BESLUIT("M", "Ministerieel besluit"),
+    /**
+     * Ministerieel besluit.
+     */
+    MINISTERIEEL_BESLUIT("M", "Bijzondere status"),
 
-    /** Fout. */
+    /**
+     * Fout.
+     */
     FOUT("F", "Fout"),
 
-    /** Directe registratie in de RNI. */
+    /**
+     * Directe registratie in de RNI.
+     */
     RNI("R", "RNI"),
 
-    /** Onbekend. */
+    /**
+     * Onbekend.
+     */
     ONBEKEND(".", "Onbekend");
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
 
-    private static final Map<String, Lo3RedenOpschortingBijhoudingCodeEnum> CODE_MAP = new HashMap<String, Lo3RedenOpschortingBijhoudingCodeEnum>() {
-        private static final long serialVersionUID = 1L;
-        {
-            for (final Lo3RedenOpschortingBijhoudingCodeEnum value : Lo3RedenOpschortingBijhoudingCodeEnum.values()) {
-                put(value.getCode(), value);
-            }
+    private static final Map<String, Lo3RedenOpschortingBijhoudingCodeEnum> CODE_MAP = new HashMap<>();
+
+    static {
+        for (final Lo3RedenOpschortingBijhoudingCodeEnum value : Lo3RedenOpschortingBijhoudingCodeEnum.values()) {
+            CODE_MAP.put(value.getCode(), value);
         }
-    };
+    }
+
     private final String code;
     private String label;
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
 
-    private Lo3RedenOpschortingBijhoudingCodeEnum(final String code, final String label) {
+    Lo3RedenOpschortingBijhoudingCodeEnum(final String code, final String label) {
         this.code = code;
         this.setLabel(label);
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-
     /**
      * Bestaat de gegeven code in de enumeratie.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return true, als de code bestaat, anders false
      */
     public static boolean containsCode(final String code) {
@@ -81,9 +75,7 @@ public enum Lo3RedenOpschortingBijhoudingCodeEnum {
 
     /**
      * Geef de enumeratie waarde voor de gegeven code.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3RedenOpschortingBijhoudingCodeEnum getByCode(final String code) {
@@ -92,9 +84,7 @@ public enum Lo3RedenOpschortingBijhoudingCodeEnum {
 
     /**
      * Geef de enumeratie waarde voor (de code van) het gegeven element.
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3RedenOpschortingBijhoudingCodeEnum getByElement(final Lo3RedenOpschortingBijhoudingCode element) {
@@ -109,7 +99,6 @@ public enum Lo3RedenOpschortingBijhoudingCodeEnum {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {
@@ -118,7 +107,6 @@ public enum Lo3RedenOpschortingBijhoudingCodeEnum {
 
     /**
      * Geef de enumeratie als element.
-     * 
      * @return element
      */
     public Lo3RedenOpschortingBijhoudingCode asElement() {
@@ -127,18 +115,15 @@ public enum Lo3RedenOpschortingBijhoudingCodeEnum {
 
     /**
      * Is de enumeratie waarde gelijk aan (de code van) het element?
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return true, als de waarde gelijk is, anders false
      */
     public boolean equalsElement(final Lo3RedenOpschortingBijhoudingCode element) {
-        return Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
+        return Lo3Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
     }
 
     /**
      * Geef de waarde van label.
-     *
      * @return the label
      */
     public String getLabel() {
@@ -147,11 +132,9 @@ public enum Lo3RedenOpschortingBijhoudingCodeEnum {
 
     /**
      * Zet de waarde van label.
-     *
-     * @param label
-     *            the label to set
+     * @param label the label to set
      */
-    public void setLabel(final String label) {
+    void setLabel(final String label) {
         this.label = label;
     }
 

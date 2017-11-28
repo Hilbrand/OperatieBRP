@@ -1,3 +1,0 @@
-org.hornetq:module=JMS,type=Queue,name="init.vulling.naarlo3"
-MessageCount
-0

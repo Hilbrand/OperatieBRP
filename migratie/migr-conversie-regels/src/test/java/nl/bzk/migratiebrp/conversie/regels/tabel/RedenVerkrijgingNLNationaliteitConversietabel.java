@@ -6,24 +6,22 @@
 
 package nl.bzk.migratiebrp.conversie.regels.tabel;
 
-import java.text.DecimalFormat;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenVerkrijgingNederlandschapCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
 
 public class RedenVerkrijgingNLNationaliteitConversietabel implements
-        Conversietabel<Lo3RedenNederlandschapCode, BrpRedenVerkrijgingNederlandschapCode>
-{
+        Conversietabel<Lo3RedenNederlandschapCode, BrpRedenVerkrijgingNederlandschapCode> {
 
-    /** Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk). */
+    /**
+     * Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk).
+     */
     public static final Lo3RedenNederlandschapCode LO3_NIET_VALIDE_UITZONDERING = new Lo3RedenNederlandschapCode("999");
-
-    private static final DecimalFormat REDEN_VERKRIJGING_FORMAT = new DecimalFormat("000");
 
     @Override
     public BrpRedenVerkrijgingNederlandschapCode converteerNaarBrp(final Lo3RedenNederlandschapCode input) {
         final BrpRedenVerkrijgingNederlandschapCode verkrijging =
-                input == null ? null : new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort(input.getWaarde()), input.getOnderzoek());
+                input == null ? null : new BrpRedenVerkrijgingNederlandschapCode(input.getWaarde(), input.getOnderzoek());
         if (verkrijging == null) {
             return null;
         }
@@ -39,7 +37,7 @@ public class RedenVerkrijgingNLNationaliteitConversietabel implements
     public Lo3RedenNederlandschapCode converteerNaarLo3(final BrpRedenVerkrijgingNederlandschapCode input) {
         Lo3RedenNederlandschapCode result = null;
         if (input != null) {
-            result = new Lo3RedenNederlandschapCode(REDEN_VERKRIJGING_FORMAT.format(input.getWaarde()), input.getOnderzoek());
+            result = new Lo3RedenNederlandschapCode(input.getWaarde(), input.getOnderzoek());
         }
         return result;
     }

@@ -30,21 +30,17 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakWa01BerichtActionTest {
 
-    private MaakWa01BerichtAction subject;
-    private BerichtenDao berichtenDao;
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakWa01BerichtAction subject = new MaakWa01BerichtAction(berichtenDao);
+
     private ExecutionContext executionContextMock;
     private ContextInstance contextInstance;
 
     @Before
     public void setup() {
-        subject = new MaakWa01BerichtAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-
         executionContextMock = Mockito.mock(ExecutionContext.class);
         contextInstance = Mockito.mock(ContextInstance.class);
         Mockito.when(executionContextMock.getContextInstance()).thenReturn(contextInstance);
@@ -59,24 +55,24 @@ public class MaakWa01BerichtActionTest {
     @Test
     public void test() {
         final AnummerWijzigingNotificatie input = new AnummerWijzigingNotificatie();
-        input.setOudAnummer(1231231234L);
-        input.setNieuwAnummer(8768768765L);
-        input.setDatumIngangGeldigheid(19900404);
-        input.setBronGemeente("0530");
+        input.setOudAnummer("1231231234");
+        input.setNieuwAnummer("8768768765");
+        input.setDatumIngangGeldigheid(1990_04_04);
+        input.setBronPartijCode("0530");
 
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         builder.persoonStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-            Lo3StapelHelper.lo3Persoon(5675675678L, "Piet", "Pietersen", 19770101, "0517", "6030", "M"),
-            Lo3StapelHelper.lo3Akt(1),
-            Lo3StapelHelper.lo3His(19770101),
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0))));
+                Lo3StapelHelper.lo3Persoon("5675675678", "Piet", "Pietersen", 1977_01_01, "0517", "6030", "M"),
+                Lo3StapelHelper.lo3Akt(1),
+                Lo3StapelHelper.lo3His(1977_01_01),
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0))));
         final LeesUitBrpAntwoordBericht leesUitBrpAntwoordBericht = new LeesUitBrpAntwoordBericht("2345354-wfsdf-23432", builder.build());
 
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("input", berichtenDao.bewaarBericht(input));
         parameters.put("leesUitBrpAntwoordBericht", berichtenDao.bewaarBericht(leesUitBrpAntwoordBericht));
         // Doel gemeente staat in de token scope variabele
-        Mockito.when(executionContextMock.getVariable("doelGemeente")).thenReturn("0430");
+        Mockito.when(executionContextMock.getVariable("doelPartijCode")).thenReturn("0430");
 
         final Map<String, Object> result = subject.execute(parameters);
         Assert.assertNull(result);
@@ -87,16 +83,16 @@ public class MaakWa01BerichtActionTest {
         final Wa01Bericht wa01Bericht = (Wa01Bericht) berichtenDao.leesBericht(wa01BerichtId);
 
         Assert.assertNotNull(wa01Bericht);
-        Assert.assertEquals("0530", wa01Bericht.getBronGemeente());
-        Assert.assertEquals("0430", wa01Bericht.getDoelGemeente());
-        Assert.assertEquals(Long.valueOf(1231231234L), wa01Bericht.getOudANummer());
-        Assert.assertEquals(Long.valueOf(8768768765L), wa01Bericht.getNieuwANummer());
-        Assert.assertEquals(new Lo3Datum(19900404), wa01Bericht.getDatumGeldigheid());
+        Assert.assertEquals("0530", wa01Bericht.getBronPartijCode());
+        Assert.assertEquals("0430", wa01Bericht.getDoelPartijCode());
+        Assert.assertEquals("1231231234", wa01Bericht.getOudANummer());
+        Assert.assertEquals("8768768765", wa01Bericht.getNieuwANummer());
+        Assert.assertEquals(new Lo3Datum(1990_04_04), wa01Bericht.getDatumGeldigheid());
         Assert.assertEquals("Piet", wa01Bericht.getVoornamen());
         Assert.assertEquals(null, wa01Bericht.getAdellijkeTitelPredikaatCode());
         Assert.assertEquals(null, wa01Bericht.getVoorvoegselGeslachtsnaam());
         Assert.assertEquals("Pietersen", wa01Bericht.getGeslachtsnaam());
-        Assert.assertEquals(new Lo3Datum(19770101), wa01Bericht.getGeboortedatum());
+        Assert.assertEquals(new Lo3Datum(1977_01_01), wa01Bericht.getGeboortedatum());
         Assert.assertEquals(new Lo3GemeenteCode("0517"), wa01Bericht.getGeboorteGemeenteCode());
         Assert.assertEquals(new Lo3LandCode("6030"), wa01Bericht.getGeboorteLandCode());
 

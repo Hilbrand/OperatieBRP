@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.voisc.database.entities;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import org.junit.Assert;
@@ -14,7 +15,8 @@ import org.junit.Test;
 
 public class MailboxTest {
 
-    private SimpleDateFormat dateFormat;;
+    private SimpleDateFormat dateFormat;
+    ;
 
     @Before
     public void setup() {
@@ -25,64 +27,56 @@ public class MailboxTest {
     public void test() throws ParseException {
         final Mailbox mailbox = new Mailbox();
         Assert.assertNull(mailbox.getId());
-        Assert.assertNull(mailbox.getInstantietype());
-        Assert.assertNull(mailbox.getInstantiecode());
         Assert.assertNull(mailbox.getMailboxnr());
-        Assert.assertNull(mailbox.getMailboxpwd());
-        Assert.assertEquals(0, mailbox.getLimitNumber());
+        Assert.assertNull(mailbox.getVerzender());
+        Assert.assertNull(mailbox.getPartijcode());
+
         Assert.assertNull(mailbox.getEindeBlokkering());
         Assert.assertNull(mailbox.getStartBlokkering());
+
+        Assert.assertNull(mailbox.getMailboxpwd());
+        Assert.assertEquals(0, mailbox.getLimitNumber());
         Assert.assertNull(mailbox.getLaatsteWijzigingPwd());
+        Assert.assertNull(mailbox.getLaatsteMsSequenceNumber());
+
 
         mailbox.setId(123123L);
-        mailbox.setInstantiecode(1904010);
-        mailbox.setInstantietype("G");
         mailbox.setMailboxnr("mailnr");
+        mailbox.setVerzender("verzender");
+        mailbox.setPartijcode("190401");
+
+        mailbox.setEindeBlokkering(new Timestamp(dateFormat.parse("01-01-2000").getTime()));
+        mailbox.setStartBlokkering(new Timestamp(dateFormat.parse("04-02-2002").getTime()));
+
         mailbox.setMailboxpwd("pwd");
         mailbox.setLimitNumber(123456);
-        mailbox.setEindeBlokkering(dateFormat.parse("01-01-2000"));
-        mailbox.setStartBlokkering(dateFormat.parse("04-02-2002"));
-        mailbox.setLaatsteWijzigingPwd(dateFormat.parse("13-11-2008"));
+        mailbox.setLaatsteWijzigingPwd(new Timestamp(dateFormat.parse("13-11-2008").getTime()));
+        mailbox.setLaatsteMsSequenceNumber(42);
 
         Assert.assertEquals(Long.valueOf(123123L), mailbox.getId());
-        Assert.assertEquals(Integer.valueOf(1904010), mailbox.getInstantiecode());
-        Assert.assertEquals("G", mailbox.getInstantietype());
         Assert.assertEquals("mailnr", mailbox.getMailboxnr());
+        Assert.assertEquals("verzender", mailbox.getVerzender());
+        Assert.assertEquals("190401", mailbox.getPartijcode());
+
+        Assert.assertEquals(new Timestamp(dateFormat.parse("01-01-2000").getTime()), mailbox.getEindeBlokkering());
+        Assert.assertEquals(new Timestamp(dateFormat.parse("04-02-2002").getTime()), mailbox.getStartBlokkering());
+
         Assert.assertEquals("pwd", mailbox.getMailboxpwd());
         Assert.assertEquals(123456, mailbox.getLimitNumber());
-        Assert.assertEquals(dateFormat.parse("01-01-2000"), mailbox.getEindeBlokkering());
-        Assert.assertEquals(dateFormat.parse("04-02-2002"), mailbox.getStartBlokkering());
-        Assert.assertEquals(dateFormat.parse("13-11-2008"), mailbox.getLaatsteWijzigingPwd());
-    }
-
-    @Test
-    public void testFormatCode() {
-        final Mailbox gemeenteMailbox = new Mailbox();
-        gemeenteMailbox.setInstantiecode(518);
-        gemeenteMailbox.setInstantietype(Mailbox.INSTANTIETYPE_GEMEENTE);
-        Assert.assertEquals("0518", gemeenteMailbox.getFormattedInstantiecode());
-
-        final Mailbox afnemerMailbox = new Mailbox();
-        afnemerMailbox.setInstantiecode(44444);
-        afnemerMailbox.setInstantietype(Mailbox.INSTANTIETYPE_AFNEMER);
-        Assert.assertEquals("044444", afnemerMailbox.getFormattedInstantiecode());
-
-        final Mailbox mailbox = new Mailbox();
-        mailbox.setInstantiecode(1);
-        mailbox.setInstantietype(Mailbox.INSTANTIETYPE_CENTRALE_VOORZIENING);
-        Assert.assertEquals("1", mailbox.getFormattedInstantiecode());
+        Assert.assertEquals(new Timestamp(dateFormat.parse("13-11-2008").getTime()), mailbox.getLaatsteWijzigingPwd());
+        Assert.assertEquals(Integer.valueOf(42), mailbox.getLaatsteMsSequenceNumber());
     }
 
     @Test
     public void testCompareTo() {
         final Mailbox mailboxA = new Mailbox();
-        mailboxA.setInstantiecode(518);
+        mailboxA.setMailboxnr("518");
 
         final Mailbox mailboxB = new Mailbox();
-        mailboxB.setInstantiecode(519);
+        mailboxB.setMailboxnr("519");
 
         final Mailbox mailboxC = new Mailbox();
-        mailboxC.setInstantiecode(519);
+        mailboxC.setMailboxnr("519");
 
         Assert.assertTrue(mailboxA.compareTo(mailboxB) < 0);
         Assert.assertTrue(mailboxB.compareTo(mailboxC) == 0);

@@ -43,27 +43,27 @@ public class BrpMinimaalTest extends AbstractComponentTest {
         Assert.assertNotNull(lo3Persoonslijst);
     }
 
-    
+
     private BrpStapel<BrpGeslachtsaanduidingInhoud> maakKindGeslachtsaaanduidingStapel() {
         return BrpStapelHelper.stapel(BrpStapelHelper.groep(
-            BrpStapelHelper.geslacht("M"),
-            BrpStapelHelper.his(20000101),
-            BrpStapelHelper.act(1, 20000102)));
+                BrpStapelHelper.geslacht("M"),
+                BrpStapelHelper.his(20000101),
+                BrpStapelHelper.act(1, 20000102)));
     }
 
-    
+
     private BrpStapel<BrpGeboorteInhoud> maakKindGeboorteStapel() {
         return BrpStapelHelper.stapel(BrpStapelHelper.groep(
-            BrpStapelHelper.geboorte(19991231, "0518"),
-            BrpStapelHelper.his(20000101),
-            BrpStapelHelper.act(1, 20000102)));
+                BrpStapelHelper.geboorte(19991231, "0518"),
+                BrpStapelHelper.his(20000101),
+                BrpStapelHelper.act(1, 20000102)));
     }
 
-    
+
     private BrpStapel<BrpSamengesteldeNaamInhoud> maakKindSamengesteldeNaamStapel() {
         return BrpStapelHelper.stapel(BrpStapelHelper.groep(
-            BrpStapelHelper.samengesteldnaam("Jaap", "Jansen"),
-            BrpStapelHelper.his(20000101),
-            BrpStapelHelper.act(1, 20000102)));
+                BrpStapelHelper.samengesteldnaam("Jaap", "Jansen"),
+                BrpStapelHelper.his(20000101),
+                BrpStapelHelper.act(1, 20000102)));
     }
 }

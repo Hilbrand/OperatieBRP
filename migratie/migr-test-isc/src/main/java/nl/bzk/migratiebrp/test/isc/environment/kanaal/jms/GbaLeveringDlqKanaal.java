@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
+
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
 /**
@@ -16,7 +17,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
  */
 public class GbaLeveringDlqKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "gbaLeveringDlq";
 
     /**

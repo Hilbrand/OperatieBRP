@@ -24,10 +24,10 @@ import org.jboss.gravel.common.annotation.TldTag;
  */
 @TldTag(name = "jmxServer", description = "Create a jmx server connection.",
         attributes = {@TldAttribute(name = "target", description = "An EL expression into which the filter should be stored.", required = true,
-                              deferredType = JmxServer.class),
-                      @TldAttribute(name = "url", description = "Server url", required = true, deferredType = JmxServer.class),
-                      @TldAttribute(name = "username", description = "Server url", required = false, deferredType = String.class),
-                      @TldAttribute(name = "password", description = "Server url", required = false, deferredType = String.class) })
+                deferredType = JmxServer.class),
+                @TldAttribute(name = "url", description = "Server url", required = true, deferredType = JmxServer.class),
+                @TldAttribute(name = "username", description = "Server url", required = false, deferredType = String.class),
+                @TldAttribute(name = "password", description = "Server url", required = false, deferredType = String.class)})
 public final class JmxServerHandler extends TagHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute urlTagAttribute;
@@ -36,9 +36,7 @@ public final class JmxServerHandler extends TagHandler {
 
     /**
      * Constructor waarbij de tag configuratie meegegeven kan worden.
-     * 
-     * @param config
-     *            Tag configuratie waarin o.a. migratie tags staan.
+     * @param config Tag configuratie waarin o.a. migratie tags staan.
      */
     public JmxServerHandler(final TagConfig config) {
         super(config);

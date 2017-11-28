@@ -7,9 +7,12 @@
 package nl.bzk.migratiebrp.isc.console.mig4jsf;
 
 import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.dto.Bericht;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.filter.BerichtenFilter;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.filter.Filter;
+import nl.bzk.migratiebrp.isc.console.mig4jsf.filter.FilterEnum;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.pager.PagerBean;
 import org.jbpm.jsf.JbpmActionListener;
 import org.junit.Assert;
@@ -21,19 +24,24 @@ public class ListBerichtenTest extends AbstractTagTest {
 
     @Test
     public void test() throws Exception {
-        final PagerBean pager = new PagerBean(0, 25);
-        final Filter filter = new BerichtenFilter("VOSPG", "I", "0518", "0519", "NAAM", "MSG-ID", "CORR-ID");
+        final PagerBean pager = new PagerBean(1, 25);
+        final Map<FilterEnum, String> waarden = new EnumMap<>(FilterEnum.class);
+        waarden.put(FilterEnum.KANAAL, "VOISC");
+        waarden.put(FilterEnum.RICHTING, "I");
+        waarden.put(FilterEnum.BRON, "0518");
+        waarden.put(FilterEnum.DOEL, "0519");
+        waarden.put(FilterEnum.TYPE, "NAAM");
+        waarden.put(FilterEnum.BERICHT_ID, "MSG-ID");
+        waarden.put(FilterEnum.PROCESS_INSTANCE_ID, "4321");
+        waarden.put(FilterEnum.CORRELATIE_ID, "CORR-ID");
+        final Filter filter = new BerichtenFilter(waarden);
 
         addTagAttribute("pager", pager);
         addTagAttribute("filter", filter);
         addTagAttribute("target", null);
 
-        setupDatabase(
-            "/sql/mig-drop.sql",
-            "/sql/jbpm-drop.sql",
-            "/sql/jbpm-create.sql",
-            "/sql/mig-create.sql",
-            "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
+        setupDatabase("/sql/hsqldb4postgres.sql", "/sql/mig-drop.sql", "/sql/jbpm-drop.sql", "/sql/jbpm-create.sql", "/sql/mig-create.sql",
+                "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
 
         // Execute
         final JbpmActionListener subject = initializeSubject(ListBerichtenHandler.class);

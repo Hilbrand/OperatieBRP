@@ -10,12 +10,12 @@ import java.sql.Timestamp;
 import java.util.Set;
 import javax.inject.Inject;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.AanduidingInhoudingOfVermissingReisdocumentConverter;
@@ -114,7 +114,6 @@ public final class PersoonReisdocumentHistorieConverter extends AbstractEntityHi
 
     /**
      * Geef de waarde van or create reisdocument.
-     *
      * @return or create reisdocument
      */
     private PersoonReisdocument getOrCreateReisdocument() {
@@ -136,12 +135,12 @@ public final class PersoonReisdocumentHistorieConverter extends AbstractEntityHi
         final PersoonReisdocument persoonReisdocument = getOrCreateReisdocument();
         final PersoonReisdocumentHistorie historie =
                 new PersoonReisdocumentHistorie(
-                    datumAanvangGeldigheidGegevensReisdocument,
-                    datumUitgifte,
-                    datumEindeDocument,
-                    nummer,
-                    autoriteitVanAfgifteReisdocument,
-                    persoonReisdocument);
+                        datumAanvangGeldigheidGegevensReisdocument,
+                        datumUitgifte,
+                        datumEindeDocument,
+                        nummer,
+                        autoriteitVanAfgifteReisdocument,
+                        persoonReisdocument);
         historie.setActieInhoud(actieInhoud);
         historie.setActieVerval(actieVerval);
         historie.setDatumInhoudingOfVermissing(datumInhoudingVermissing);

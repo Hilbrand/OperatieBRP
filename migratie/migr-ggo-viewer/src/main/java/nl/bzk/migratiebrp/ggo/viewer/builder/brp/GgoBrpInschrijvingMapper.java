@@ -6,21 +6,35 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
-import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
  */
-@Component
 public class GgoBrpInschrijvingMapper extends AbstractGgoBrpMapper<PersoonInschrijvingHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpInschrijvingMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+                                    final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(final GgoBrpVoorkomen voorkomen, final PersoonInschrijvingHistorie brpInhoud, final GgoBrpGroepEnum brpGroepEnum) {
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.DATUM_INSCHRIJVING, brpInhoud.getDatumInschrijving());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.VERSIENUMMER, brpInhoud.getVersienummer());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.DATUMTIJDSTEMPEL, brpInhoud.getDatumtijdstempel());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.DATUM_INSCHRIJVING, brpInhoud.getDatumInschrijving());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.VERSIENUMMER, brpInhoud.getVersienummer());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.DATUMTIJDSTEMPEL, brpInhoud.getDatumtijdstempel());
     }
 }

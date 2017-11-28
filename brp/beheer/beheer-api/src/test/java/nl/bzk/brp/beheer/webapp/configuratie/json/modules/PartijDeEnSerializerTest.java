@@ -9,84 +9,103 @@ package nl.bzk.brp.beheer.webapp.configuratie.json.modules;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.io.IOException;
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.beheer.webapp.configuratie.DatabaseConfiguration;
+import nl.bzk.brp.beheer.webapp.configuratie.JsonConfiguratie;
+import nl.bzk.brp.beheer.webapp.configuratie.RepositoryConfiguratie;
 import nl.bzk.brp.beheer.webapp.configuratie.json.BrpJsonObjectMapper;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumEvtDeelsOnbekendAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.JaNeeAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.NaamEnumeratiewaardeAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.PartijCodeAttribuut;
-import nl.bzk.brp.model.beheer.kern.Partij;
+import nl.bzk.brp.beheer.webapp.test.AbstractDatabaseTest;
+import nl.bzk.brp.beheer.webapp.test.Data;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-public class PartijDeEnSerializerTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {DatabaseConfiguration.class, RepositoryConfiguratie.class, JsonConfiguratie.class},
+        loader = AnnotationConfigContextLoader.class)
+@Data(resources = "classpath:/data/actieviewtest.xml", dataSourceRef = RepositoryConfiguratie.DATA_SOURCE_MASTER)
+public class PartijDeEnSerializerTest extends AbstractDatabaseTest {
 
-    private final BrpJsonObjectMapper subject = new BrpJsonObjectMapper();
+    private static final Logger LOG = LoggerFactory.getLogger();
+
+    @Inject
+    private BrpJsonObjectMapper subject;
 
     @Test
     public void testLeeg() throws IOException {
-        final ObjectReader reader = subject.reader(Partij.class);
-        final Partij value = reader.<Partij>readValue("{}");
+        final ObjectReader reader = subject.readerFor(Partij.class);
+        final Partij value = reader.readValue("{}");
 
         Assert.assertNotNull(value);
-        Assert.assertEquals(null, value.getID());
-        Assert.assertEquals(null, value.getCode());
-        Assert.assertEquals(null, value.getNaam());
-        Assert.assertEquals(null, value.getSoort());
-        Assert.assertEquals(null, value.getDatumIngang());
-        Assert.assertEquals(null, value.getDatumEinde());
-        Assert.assertEquals(null, value.getIndicatieVerstrekkingsbeperkingMogelijk());
+        Assert.assertNull(value.getId());
+        Assert.assertEquals(null, value.getCode()); // Primitive waarde van int is 0.
+        Assert.assertNull(value.getNaam());
+        Assert.assertNull(value.getSoortPartij());
+        Assert.assertNull(value.getDatumIngang());
+        Assert.assertNull(value.getDatumEinde());
+        Assert.assertNull(value.getIndicatieAutomatischFiatteren());
 
         controleerHeenEnWeer(value);
     }
 
     @Test
     public void testVolledig() throws IOException {
-        final ObjectReader reader = subject.reader(Partij.class);
-        final Partij value =
-                reader.<Partij>readValue("{\"Code\":19700101,\"Naam\":\"Naam\",\"Soort\":1,\"Datum ingang\":19710101,\"Datum einde\":19720102,\"Verstrekkingsbeperking mogelijk?\":\"Ja\"}");
+        final ObjectReader reader = subject.readerFor(Partij.class);
+        final Partij value = reader.readValue(
+                "{\"code\":\"197001\",\"naam\":\"Naam\",\"soort\":1,\"datumIngang\":19710101,\"datumEinde\":19720102,\"automatischFiatteren\":\"Ja\"}");
 
         Assert.assertNotNull(value);
-        Assert.assertEquals(null, value.getID());
-        Assert.assertEquals(new PartijCodeAttribuut(19700101), value.getCode());
-        Assert.assertEquals(new NaamEnumeratiewaardeAttribuut("Naam"), value.getNaam());
-        Assert.assertEquals(Short.valueOf("1"), value.getSoort().getID());
-        Assert.assertEquals(new DatumEvtDeelsOnbekendAttribuut(19710101), value.getDatumIngang());
-        Assert.assertEquals(new DatumEvtDeelsOnbekendAttribuut(19720102), value.getDatumEinde());
-        Assert.assertEquals(new JaNeeAttribuut(Boolean.TRUE), value.getIndicatieVerstrekkingsbeperkingMogelijk());
+        Assert.assertNull(value.getId());
+        Assert.assertEquals("197001", value.getCode());
+        Assert.assertEquals("Naam", value.getNaam());
+        // Assert.assertEquals(Short.valueOf("1"), value.getSoortPartij().getId());
+        Assert.assertEquals(Integer.valueOf(19710101), value.getDatumIngang());
+        Assert.assertEquals(Integer.valueOf(19720102), value.getDatumEinde());
+        Assert.assertEquals(Boolean.TRUE, value.getIndicatieAutomatischFiatteren());
 
         controleerHeenEnWeer(value);
     }
 
     @Test
     public void testVolledigTest() throws IOException {
-        final ObjectReader reader = subject.reader(Partij.class);
-        final Partij value =
-                reader.<Partij>readValue("{\"iD\":2212,\"Code\":602601,\"Naam\":\"'t Lange Land Ziekenhuis\",\"Datum ingang\":20040601,\"Automatisch fiatteren?\":\"Nee\",\"Verstrekkingsbeperking mogelijk?\":\"Ja\",\"Datum overgang naar BRP\":20150101}");
+        final ObjectReader reader = subject.readerFor(Partij.class);
+        final Partij value = reader.readValue(
+                "{\"id\":2212,\"code\":\"602601\",\"naam\":\"'t Lange Land Ziekenhuis\",\"datumIngang\":20040601,\"automatischFiatteren\":\"Nee\","
+                        + "\"datumOvergangNaarBrp\":20150101}");
+
         Assert.assertNotNull(value);
-        Assert.assertEquals(Short.valueOf("2212"), value.getID());
-        Assert.assertEquals(new PartijCodeAttribuut(602601), value.getCode());
-        Assert.assertEquals(new NaamEnumeratiewaardeAttribuut("'t Lange Land Ziekenhuis"), value.getNaam());
-        Assert.assertEquals(new DatumEvtDeelsOnbekendAttribuut(20040601), value.getDatumIngang());
-        Assert.assertEquals(new JaNeeAttribuut(Boolean.TRUE), value.getIndicatieVerstrekkingsbeperkingMogelijk());
-        Assert.assertEquals(new DatumAttribuut(20150101), value.getDatumOvergangNaarBRP());
+        Assert.assertEquals(Short.valueOf("2212"), value.getId());
+        Assert.assertEquals("602601", value.getCode());
+        Assert.assertEquals("'t Lange Land Ziekenhuis", value.getNaam());
+        Assert.assertEquals(Integer.valueOf(20040601), value.getDatumIngang());
+        Assert.assertEquals(Boolean.FALSE, value.getIndicatieAutomatischFiatteren());
+        Assert.assertEquals(Integer.valueOf(20150101), value.getDatumOvergangNaarBrp());
+
+        controleerHeenEnWeer(value);
     }
 
     private void controleerHeenEnWeer(final Partij heen) throws IOException {
         final ObjectWriter writer = subject.writer();
         final String json = writer.writeValueAsString(heen);
+        LOG.info("Json string: {}", json);
 
-        final ObjectReader reader = subject.reader(Partij.class);
-        final Partij weer = reader.<Partij>readValue(json);
+        final ObjectReader reader = subject.readerFor(Partij.class);
+        final Partij weer = reader.readValue(json);
 
-        Assert.assertEquals(heen.getID(), weer.getID());
+        Assert.assertEquals(heen.getId(), weer.getId());
         Assert.assertEquals(heen.getCode(), weer.getCode());
         Assert.assertEquals(heen.getNaam(), weer.getNaam());
-        if (heen.getSoort() != null) {
-            Assert.assertEquals(heen.getSoort().getID(), weer.getSoort().getID());
+        if (heen.getSoortPartij() != null) {
+            Assert.assertEquals(heen.getSoortPartij().getId(), weer.getSoortPartij().getId());
         }
         Assert.assertEquals(heen.getDatumIngang(), weer.getDatumIngang());
         Assert.assertEquals(heen.getDatumEinde(), weer.getDatumEinde());
-        Assert.assertEquals(heen.getIndicatieVerstrekkingsbeperkingMogelijk(), weer.getIndicatieVerstrekkingsbeperkingMogelijk());
+        Assert.assertEquals(heen.getIndicatieAutomatischFiatteren(), weer.getIndicatieAutomatischFiatteren());
     }
 }

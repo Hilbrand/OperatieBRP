@@ -23,11 +23,11 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "listGerelateerdeGegevensForProcessInstance", description = "Read a list of related information from a process instance.",
         attributes = {@TldAttribute(name = "target", description = "An EL expression into which the information list should be stored.", required = true,
-                              deferredType = List.class),
-                      @TldAttribute(name = "pager", description = "An EL expression of the PagerBean to be used.", required = true,
-                              deferredType = PagerBean.class),
-                      @TldAttribute(name = "processInstance", description = "The process instance whose related information is to be read.",
-                              required = true, deferredType = ProcessInstance.class) })
+                deferredType = List.class),
+                @TldAttribute(name = "pager", description = "An EL expression of the PagerBean to be used.", required = true,
+                        deferredType = PagerBean.class),
+                @TldAttribute(name = "processInstance", description = "The process instance whose related information is to be read.",
+                        required = true, deferredType = ProcessInstance.class)})
 public final class ListGerelateerdeGegevensForProcessInstanceHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute pagerTagAttribute;
@@ -35,9 +35,7 @@ public final class ListGerelateerdeGegevensForProcessInstanceHandler extends Abs
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public ListGerelateerdeGegevensForProcessInstanceHandler(final TagConfig config) {
         super(config);

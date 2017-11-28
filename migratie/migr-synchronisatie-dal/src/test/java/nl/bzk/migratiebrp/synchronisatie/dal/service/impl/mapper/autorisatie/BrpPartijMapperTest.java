@@ -8,14 +8,17 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+
 import javax.inject.Inject;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpPartijInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PartijHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PartijHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,15 +35,15 @@ public class BrpPartijMapperTest {
 
     @Test
     public void testMapInhoud() {
-        final Partij partij = new Partij("Partijnaam", 1);
+        final Partij partij = new Partij("Partijnaam", "000001");
         final Timestamp datumTijdRegistratie = new Timestamp(System.currentTimeMillis());
-        final PartijHistorie historie = new PartijHistorie(partij, datumTijdRegistratie, 20130101, false, partij.getNaam());
-        historie.setDatumEinde(20130202);
+        final PartijHistorie historie = new PartijHistorie(partij, datumTijdRegistratie, 2013_01_01, false, partij.getNaam());
+        historie.setDatumEinde(2013_02_02);
 
         final BrpPartijInhoud result = mapper.mapInhoud(historie, brpOnderzoekMapper);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(Integer.valueOf(20130202), result.getDatumEinde().getWaarde());
-        Assert.assertEquals(Integer.valueOf(20130101), result.getDatumIngang().getWaarde());
+        Assert.assertEquals(Integer.valueOf(2013_02_02), result.getDatumEinde().getWaarde());
+        Assert.assertEquals(Integer.valueOf(2013_01_01), result.getDatumIngang().getWaarde());
     }
 }

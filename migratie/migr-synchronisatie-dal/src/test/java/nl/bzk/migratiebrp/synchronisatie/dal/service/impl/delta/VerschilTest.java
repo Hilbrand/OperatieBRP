@@ -14,26 +14,26 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractDeltaEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
 
 /**
  * Unit test voor {@link Verschil}
@@ -52,8 +52,8 @@ public class VerschilTest extends AbstractDeltaTest {
         bestaandPersoon = maakPersoon(true);
         nieuwPersoon = maakPersoon(false);
         sleutel = new EntiteitSleutel(Persoon.class, "persoonBijhoudingHistorieSet");
-        bestaandeHistorie = new PersoonBijhoudingHistorie(bestaandPersoon, maakPartij(), Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL, false);
-        nieuweHistorie = new PersoonBijhoudingHistorie(nieuwPersoon, maakPartij(), Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL, false);
+        bestaandeHistorie = new PersoonBijhoudingHistorie(bestaandPersoon, maakPartij(), Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL);
+        nieuweHistorie = new PersoonBijhoudingHistorie(nieuwPersoon, maakPartij(), Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL);
 
         verschil = new Verschil(sleutel, bestaandPersoon, nieuwPersoon, bestaandeHistorie, nieuweHistorie);
     }
@@ -136,7 +136,7 @@ public class VerschilTest extends AbstractDeltaTest {
 
     @Test
     public void testMaakOnderzoekVerschil() {
-        final Sleutel onderzoekSleutel = new EntiteitSleutel(Persoon.class, AbstractDeltaEntiteit.GEGEVEN_IN_ONDERZOEK);
+        final Sleutel onderzoekSleutel = new EntiteitSleutel(Persoon.class, AbstractEntiteit.GEGEVEN_IN_ONDERZOEK);
         final Verschil verschil1 = Verschil.maakVerschil(onderzoekSleutel, bestaandPersoon, nieuwPersoon, bestaandeHistorie, nieuweHistorie);
         assertEquals(onderzoekSleutel, verschil1.getSleutel());
         assertEquals(bestaandPersoon, verschil1.getOudeWaarde());
@@ -150,7 +150,7 @@ public class VerschilTest extends AbstractDeltaTest {
 
     @Test
     public void testMaakKopieMetNieuweSleutel() {
-        final Sleutel onderzoekSleutel = new EntiteitSleutel(Persoon.class, AbstractDeltaEntiteit.GEGEVEN_IN_ONDERZOEK);
+        final Sleutel onderzoekSleutel = new EntiteitSleutel(Persoon.class, AbstractEntiteit.GEGEVEN_IN_ONDERZOEK);
         final Verschil kopieVerschil = verschil.maakKopieMetNieuweSleutel(onderzoekSleutel);
         assertEquals(onderzoekSleutel, kopieVerschil.getSleutel());
         assertEquals(verschil.getOudeWaarde(), kopieVerschil.getOudeWaarde());
@@ -198,30 +198,6 @@ public class VerschilTest extends AbstractDeltaTest {
     }
 
     @Test
-    public void testIsToegestaanVoorSchoneAnummerWijzigingPersoon() {
-        final List<String> veldnamen =
-                Arrays.asList(
-                    "datumtijdstempel",
-                    "versienummer",
-                    "vorigeAdministratienummer",
-                    "tijdstipLaatsteWijzigingGbaSystematiek",
-                    "administratienummer",
-                    "tijdstipLaatsteWijziging");
-        for (final String veldnaam : veldnamen) {
-            final Sleutel sleutel = new EntiteitSleutel(Persoon.class, veldnaam);
-            final Verschil verschilAangepast = new Verschil(sleutel, null, null, VerschilType.ELEMENT_AANGEPAST, null, null);
-            final Verschil verschilNieuw = new Verschil(sleutel, null, null, VerschilType.ELEMENT_NIEUW, null, null);
-
-            assertTrue(verschilAangepast.isToegestaanVoorAnummerWijziging());
-            assertTrue(verschilNieuw.isToegestaanVoorAnummerWijziging());
-        }
-
-        final Sleutel sleutel = new EntiteitSleutel(Persoon.class, "burgerservicenummer");
-        final Verschil verschil = new Verschil(sleutel, false, false, VerschilType.ELEMENT_AANGEPAST, null, null);
-        assertFalse(verschil.isToegestaanVoorAnummerWijziging());
-    }
-
-    @Test
     public void testIsToegestaanVoorSchoneAnummerWijzigingRijToegevoegd() {
         final FormeleHistorie rij = new PersoonGeslachtsaanduidingHistorie(bestaandPersoon, Geslachtsaanduiding.MAN);
         final Sleutel sleutel = new EntiteitSleutel(Persoon.class, "persoonGeslachtsaanduidingHistorieSet");
@@ -247,7 +223,7 @@ public class VerschilTest extends AbstractDeltaTest {
             assertTrue(verschilNieuw.isToegestaanVoorAnummerWijziging());
         }
 
-        final Sleutel sleutel = new EntiteitSleutel(PersoonGeslachtsaanduidingHistorie.class, "datumEindeGeldigheid");
+        final Sleutel sleutel = new EntiteitSleutel(PersoonGeslachtsaanduidingHistorie.class, "geslachtsaanduidingId");
         final Verschil verschil = new Verschil(sleutel, false, false, VerschilType.ELEMENT_AANGEPAST, null, null);
         assertFalse(verschil.isToegestaanVoorAnummerWijziging());
     }
@@ -281,12 +257,12 @@ public class VerschilTest extends AbstractDeltaTest {
     public void testIsToegestaanVoorInfrastructureleWijzigingPersoon() {
         final List<String> veldnamen =
                 Arrays.asList(
-                    Persoon.PERSOONMIGRATIEHISTORIESET,
-                    "versienummer",
-                    Persoon.REDENWIJZIGINGMIGRATIE,
-                    "tijdstipLaatsteWijzigingGbaSystematiek",
-                    Persoon.LANDOFGEBIEDMIGRATIE,
-                    "tijdstipLaatsteWijziging");
+                        Persoon.PERSOON_MIGRATIE_HISTORIE_SET,
+                        "versienummer",
+                        Persoon.REDEN_WIJZIGING_MIGRATIE,
+                        "tijdstipLaatsteWijzigingGbaSystematiek",
+                        Persoon.LAND_OF_GEBIED_MIGRATIE,
+                        "tijdstipLaatsteWijziging");
         for (final String veldnaam : veldnamen) {
             final Sleutel sleutel = new EntiteitSleutel(Persoon.class, veldnaam);
             final Verschil verschilAangepast = new Verschil(sleutel, null, null, VerschilType.ELEMENT_AANGEPAST, null, null);

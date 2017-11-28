@@ -20,13 +20,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:synchronisatie-logging-beans-test.xml", "classpath:synchronisatie-logging-jms-test.xml" })
+@ContextConfiguration(locations = {"classpath:synchronisatie-logging-beans-test.xml", "classpath:synchronisatie-logging-jms-test.xml"})
 public class TerugConversieMessageListenerTest {
 
     private static final String QUERY_RESPONSE_BERICHT_FORMAT =
@@ -49,7 +47,7 @@ public class TerugConversieMessageListenerTest {
     public void sendAndDiffTest() {
         assertNotNull(jmsTemplate);
         assertNotNull(initVullingNaarLo3Queue);
-        final String lg01Bericht = service.zoekInitVullingLog(3832803548L).getLo3Bericht();
+        final String lg01Bericht = service.zoekInitVullingLog("3832803548").getLo3Bericht();
         final String messageId = "3832803548";
         jmsTemplate.send(initVullingNaarLo3Queue, new MessageCreator() {
             @Override
@@ -59,7 +57,7 @@ public class TerugConversieMessageListenerTest {
                 return message;
             }
         });
-        service.zoekInitVullingLog(3832803548L);
+        service.zoekInitVullingLog("3832803548");
     }
 
     /**
@@ -69,7 +67,7 @@ public class TerugConversieMessageListenerTest {
     public void sendWithoutMessageIdTest() {
         assertNotNull(jmsTemplate);
         assertNotNull(initVullingNaarLo3Queue);
-        final String lg01Bericht = service.zoekInitVullingLog(3832803548L).getLo3Bericht();
+        final String lg01Bericht = service.zoekInitVullingLog("3832803548").getLo3Bericht();
 
         jmsTemplate.send(initVullingNaarLo3Queue, new MessageCreator() {
             @Override
@@ -79,7 +77,7 @@ public class TerugConversieMessageListenerTest {
                 return message;
             }
         });
-        service.zoekInitVullingLog(3832803548L);
+        service.zoekInitVullingLog("3832803548");
     }
 
     /**
@@ -89,7 +87,7 @@ public class TerugConversieMessageListenerTest {
     public void sendWithWrongMessageIdTest() {
         assertNotNull(jmsTemplate);
         assertNotNull(initVullingNaarLo3Queue);
-        final String lg01Bericht = service.zoekInitVullingLog(3832803548L).getLo3Bericht();
+        final String lg01Bericht = service.zoekInitVullingLog("3832803548").getLo3Bericht();
 
         jmsTemplate.send(initVullingNaarLo3Queue, new MessageCreator() {
             @Override
@@ -99,7 +97,7 @@ public class TerugConversieMessageListenerTest {
                 return message;
             }
         });
-        service.zoekInitVullingLog(3832803548L);
+        service.zoekInitVullingLog("3832803548");
     }
 
     /**
@@ -109,7 +107,7 @@ public class TerugConversieMessageListenerTest {
     public void sendWithoutExistingAnrTest() {
         assertNotNull(jmsTemplate);
         assertNotNull(initVullingNaarLo3Queue);
-        final String lg01Bericht = service.zoekInitVullingLog(3832803548L).getLo3Bericht();
+        final String lg01Bericht = service.zoekInitVullingLog("3832803548").getLo3Bericht();
 
         jmsTemplate.send(initVullingNaarLo3Queue, new MessageCreator() {
             @Override
@@ -119,6 +117,6 @@ public class TerugConversieMessageListenerTest {
                 return message;
             }
         });
-        service.zoekInitVullingLog(3832803548L);
+        service.zoekInitVullingLog("3832803548");
     }
 }

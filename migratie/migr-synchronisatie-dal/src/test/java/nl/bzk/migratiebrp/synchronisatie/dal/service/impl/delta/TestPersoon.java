@@ -8,27 +8,27 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta;
 
 import java.sql.Timestamp;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingOuder;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3AanduidingOuder;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RelatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3AanduidingOuder;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RelatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AanduidingOuder;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 
 /**
  * Test persoon die {@link Persoon} extend en extra functionaliteit bevat voor de vershillende unit-tests.
@@ -51,9 +51,7 @@ public class TestPersoon extends Persoon {
     /**
      * Constructor voor een standaard BRP Persoon met alleen de, volgens het BMR, verplichte groepen met standaard
      * waarde voor de verplichte velden.
-     * 
-     * @param soortPersoon
-     *            Geeft aan wat voor soort persoon dit is.
+     * @param soortPersoon Geeft aan wat voor soort persoon dit is.
      */
     public TestPersoon(final SoortPersoon soortPersoon) {
         this(soortPersoon, TIJDSTIP, "Vermeer", 1L, SoortAdministratieveHandeling.GBA_INITIELE_VULLING);
@@ -62,30 +60,22 @@ public class TestPersoon extends Persoon {
     /**
      * Constructor voor een standaard BRP Persoon met allen de, volgens BMR, verplichte groepen waarbij een aantal
      * velden instelbaar zijn.
-     * 
-     * @param soortPersoon
-     *            Geeft aan wat voor soort persoon dit is.
-     * @param datumTijdLaatsteWijziging
-     *            de datum/tijd van de laatste wijziging
-     * @param geslachtsnaamstam
-     *            de geslachtsnaam van deze persoon
-     * @param versienummer
-     *            versienummer van deze persoonslijst
+     * @param soortPersoon Geeft aan wat voor soort persoon dit is.
+     * @param datumTijdLaatsteWijziging de datum/tijd van de laatste wijziging
+     * @param geslachtsnaamstam de geslachtsnaam van deze persoon
+     * @param versienummer versienummer van deze persoonslijst
      */
     public TestPersoon(
-        final SoortPersoon soortPersoon,
-        final Timestamp datumTijdLaatsteWijziging,
-        final String geslachtsnaamstam,
-        final Long versienummer,
-        final SoortAdministratieveHandeling soortAdministratieveHandeling)
-    {
+            final SoortPersoon soortPersoon,
+            final Timestamp datumTijdLaatsteWijziging,
+            final String geslachtsnaamstam,
+            final Long versienummer,
+            final SoortAdministratieveHandeling soortAdministratieveHandeling) {
         this.soortAdministratieveHandeling = soortAdministratieveHandeling;
         setSoortPersoon(soortPersoon);
         voegSamengesteldeNaamToe(geslachtsnaamstam);
         voegAfgeleidAdministratiefToe(datumTijdLaatsteWijziging);
 
-        setDatumtijdstempel(datumTijdLaatsteWijziging);
-        setVersienummer(versienummer);
         setAdministratieveHandeling(maakAdministratieveHandeling(soortAdministratieveHandeling, datumTijdLaatsteWijziging));
     }
 
@@ -96,54 +86,47 @@ public class TestPersoon extends Persoon {
 
     /**
      * Voegt een nieuw afgeleid administratief historie toe aan de persoon.
-     * 
-     * @param datumTijdLaatsteWijziging
-     *            de datum/tijd van de laatste wijziging.
+     * @param datumTijdLaatsteWijziging de datum/tijd van de laatste wijziging.
      */
     public void voegAfgeleidAdministratiefToe(final Timestamp datumTijdLaatsteWijziging) {
 
         final PersoonAfgeleidAdministratiefHistorie historie =
                 new PersoonAfgeleidAdministratiefHistorie(
-                    (short) 0,
-                    this,
-                    maakAdministratieveHandeling(SoortAdministratieveHandeling.GBA_INITIELE_VULLING, datumTijdLaatsteWijziging),
-                    datumTijdLaatsteWijziging,
-                    false);
+                        (short) 0,
+                        this,
+                        maakAdministratieveHandeling(SoortAdministratieveHandeling.GBA_INITIELE_VULLING, datumTijdLaatsteWijziging),
+                        datumTijdLaatsteWijziging);
         addPersoonAfgeleidAdministratiefHistorie(historie);
     }
 
     private AdministratieveHandeling maakAdministratieveHandeling(
-        final SoortAdministratieveHandeling soortAdministratieveHandeling,
-        final Timestamp datumTijdLaatsteWijziging)
-    {
-        final AdministratieveHandeling administratieveHandeling = new AdministratieveHandeling(maakPartij(), soortAdministratieveHandeling);
-        administratieveHandeling.setDatumTijdRegistratie(datumTijdLaatsteWijziging);
+            final SoortAdministratieveHandeling soortAdministratieveHandeling,
+            final Timestamp datumTijdLaatsteWijziging) {
+        final AdministratieveHandeling administratieveHandeling =
+                new AdministratieveHandeling(maakPartij(), soortAdministratieveHandeling, datumTijdLaatsteWijziging);
         return administratieveHandeling;
     }
 
     /**
      * Maakt een partij voor de gemeente 's-Gravenhage (0518).
-     * 
      * @return een partij voor de gemeente 's-Gravenhage(0518)
      */
     private Partij maakPartij() {
-        return new Partij("Gemeente 's-Gravenhage", 51801);
+        return new Partij("Gemeente 's-Gravenhage", "051801");
     }
 
     private Gemeente maakGemeente(final Partij partij) {
-        return new Gemeente((short) 1, "'s-Gravenhage", (short) 518, partij);
+        return new Gemeente((short) 1, "'s-Gravenhage", "0518", partij);
     }
 
     private LandOfGebied maakLandOfGebied() {
-        return new LandOfGebied((short) 1, "één");
+        return new LandOfGebied("0001", "één");
     }
 
     /**
      * Voegt een ouder toe aan de persoonlijst. Afhankelijk van de parameter isOuder1 wordt dit gedaan voor ouder 1
      * (cat02) of ouder 2 (cat03).
-     * 
-     * @param isOuder1
-     *            true als het ouder 1 betreft, false als het ouder 2 betreft
+     * @param isOuder1 true als het ouder 1 betreft, false als het ouder 2 betreft
      */
     public void voegOuderToe(final boolean isOuder1) {
         controleerOfOuderBestaat(isOuder1);
@@ -168,13 +151,13 @@ public class TestPersoon extends Persoon {
 
         final Persoon ouder1Gerelateerde =
                 new TestPersoon(
-                    SoortPersoon.NIET_INGESCHREVENE,
-                    Timestamp.valueOf("1990-01-01 00:00:00.0"),
-                    "Kleinjan",
-                    1L,
-                    soortAdministratieveHandeling);
+                        SoortPersoon.PSEUDO_PERSOON,
+                        Timestamp.valueOf("1990-01-01 00:00:00.0"),
+                        "Kleinjan",
+                        1L,
+                        soortAdministratieveHandeling);
         final Betrokkenheid gerelateerdeBetrokkenheid = new Betrokkenheid(SoortBetrokkenheid.OUDER, relatie);
-        final BetrokkenheidOuderHistorie ouderHistorie = new BetrokkenheidOuderHistorie(gerelateerdeBetrokkenheid, true);
+        final BetrokkenheidOuderHistorie ouderHistorie = new BetrokkenheidOuderHistorie(gerelateerdeBetrokkenheid);
 
         gerelateerdeBetrokkenheid.addBetrokkenheidOuderHistorie(ouderHistorie);
         ouder1Gerelateerde.addBetrokkenheid(gerelateerdeBetrokkenheid);
@@ -182,10 +165,11 @@ public class TestPersoon extends Persoon {
 
         gerelateerdeBetrokkenheid.setAanduidingOuder(new Lo3AanduidingOuder(aanduidingOuder, gerelateerdeBetrokkenheid));
 
-        if (isOuder1)
+        if (isOuder1) {
             ouder1 = gerelateerdeBetrokkenheid;
-        else
+        } else {
             ouder2 = gerelateerdeBetrokkenheid;
+        }
     }
 
     private void controleerOfOuderBestaat(final boolean isOuder1) {
@@ -197,9 +181,7 @@ public class TestPersoon extends Persoon {
     /**
      * Voegt een puntouder toe aan de persoonlijst. Afhankelijk van de parameter isOuder1 wordt dit gedaan voor ouder 1
      * (cat02) of ouder 2 (cat03).
-     * 
-     * @param isOuder1
-     *            true als het ouder 1 betreft, false als het ouder 2 betreft
+     * @param isOuder1 true als het ouder 1 betreft, false als het ouder 2 betreft
      */
     public void voegPuntouderToe(final boolean isOuder1) {
         controleerOfOuderBestaat(isOuder1);
@@ -223,25 +205,24 @@ public class TestPersoon extends Persoon {
         voegIstStapelVoorkomenToe(istOuder1Stapel, true, 0);
 
         final Betrokkenheid gerelateerdeBetrokkenheid = new Betrokkenheid(SoortBetrokkenheid.OUDER, relatie);
-        final BetrokkenheidOuderHistorie ouderHistorie = new BetrokkenheidOuderHistorie(gerelateerdeBetrokkenheid, true);
+        final BetrokkenheidOuderHistorie ouderHistorie = new BetrokkenheidOuderHistorie(gerelateerdeBetrokkenheid);
 
         gerelateerdeBetrokkenheid.addBetrokkenheidOuderHistorie(ouderHistorie);
         relatie.addBetrokkenheid(gerelateerdeBetrokkenheid);
 
         gerelateerdeBetrokkenheid.setAanduidingOuder(new Lo3AanduidingOuder(aanduidingOuder, gerelateerdeBetrokkenheid));
 
-        if (isOuder1)
+        if (isOuder1) {
             ouder1 = gerelateerdeBetrokkenheid;
-        else
+        } else {
             ouder2 = gerelateerdeBetrokkenheid;
+        }
     }
 
     /**
      * Voegt een "juridisch geen ouder" toe aan de persoonlijst. Afhankelijk van de parameter isOuder1 wordt dit gedaan
      * voor ouder 1 (cat02) of ouder 2 (cat03).
-     *
-     * @param isOuder1
-     *            true als het ouder 1 betreft, false als het ouder 2 betreft
+     * @param isOuder1 true als het ouder 1 betreft, false als het ouder 2 betreft
      */
     public void voegJuridischGeenOuderToe(final boolean isOuder1) {
         controleerOfOuderBestaat(isOuder1);
@@ -276,7 +257,7 @@ public class TestPersoon extends Persoon {
         relatie.addBetrokkenheid(gerelateerdeBetrokkenheid);
 
         final Persoon gerelateerdePersoon =
-                new TestPersoon(SoortPersoon.NIET_INGESCHREVENE, Timestamp.valueOf("2005-03-30 00:00:00.0"), "Harvey", 1L, soortAdministratieveHandeling);
+                new TestPersoon(SoortPersoon.PSEUDO_PERSOON, Timestamp.valueOf("2005-03-30 00:00:00.0"), "Harvey", 1L, soortAdministratieveHandeling);
         gerelateerdePersoon.addBetrokkenheid(gerelateerdeBetrokkenheid);
 
         final Stapel istHuwelijkStapel = new Stapel(this, HUWELIJK_OF_GP_CATEGORIE, 0);
@@ -331,8 +312,8 @@ public class TestPersoon extends Persoon {
         final StapelVoorkomen voorkomen = new StapelVoorkomen(stapel, volgnr, maakAdministratieveHandeling(soortAdministratieveHandeling, TIJDSTIP));
 
         if (isMan) {
-            voorkomen.setAnummer(1234567890L);
-            voorkomen.setBsn(987654321);
+            voorkomen.setAnummer("1234567890");
+            voorkomen.setBsn("987654321");
             voorkomen.setAktenummer("A1 234");
             voorkomen.setDatumGeboorte(20150101);
             voorkomen.setGemeenteGeboorte(gemeente);
@@ -344,8 +325,8 @@ public class TestPersoon extends Persoon {
             voorkomen.setRubriek8610DatumVanOpneming(20120102);
             voorkomen.setVoornamen("Pietje");
         } else {
-            voorkomen.setAnummer(1236547890L);
-            voorkomen.setBsn(789654123);
+            voorkomen.setAnummer("1236547890");
+            voorkomen.setBsn("789654123");
             voorkomen.setAktenummer("A1 789");
             voorkomen.setDatumGeboorte(20120101);
             voorkomen.setGemeenteGeboorte(gemeente);

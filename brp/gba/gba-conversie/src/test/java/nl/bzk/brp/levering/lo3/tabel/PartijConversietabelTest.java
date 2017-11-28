@@ -8,10 +8,8 @@ package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.GemeenteCodeAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.PartijCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Gemeente;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,20 +22,14 @@ public class PartijConversietabelTest {
     @Test
     public void test() throws ReflectiveOperationException {
         final List<Gemeente> list = new ArrayList<>();
-        list.add(maakConversietabelRegel(517, 517010));
+        list.add(maakConversietabelRegel("0517", "517010"));
 
         final PartijConversietabel subject = new PartijConversietabel(list);
 
-        Assert.assertEquals("0517", subject.converteerNaarLo3(new BrpPartijCode(517010)).getWaarde());
+        Assert.assertEquals("0517", subject.converteerNaarLo3(new BrpPartijCode("517010")).getWaarde());
     }
 
-    private Gemeente maakConversietabelRegel(final Integer gemeenteCode, final Integer partijCode) throws ReflectiveOperationException {
-        return new Gemeente(null, new GemeenteCodeAttribuut(gemeenteCode.shortValue()), new Partij(
-            null,
-            null,
-            new PartijCodeAttribuut(partijCode),
-            null, null,
-            null,
-            null, null, null), null, null, null);
+    private Gemeente maakConversietabelRegel(final String gemeenteCode, final String partijCode) throws ReflectiveOperationException {
+        return new Gemeente(Short.valueOf(gemeenteCode), "Naam", gemeenteCode, new Partij(partijCode.toString(), partijCode));
     }
 }

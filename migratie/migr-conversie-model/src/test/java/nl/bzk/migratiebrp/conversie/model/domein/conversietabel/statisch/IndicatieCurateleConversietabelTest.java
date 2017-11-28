@@ -11,13 +11,12 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieCurateleregister;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 public class IndicatieCurateleConversietabelTest {
     private final IndicatieCurateleConversietabel subject = new IndicatieCurateleConversietabel();
-    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), Lo3Datum.NULL_DATUM, null);
+    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), new Lo3Datum(0), null);
 
     @Test
     public void converteerNaarBrp() {

@@ -7,21 +7,23 @@
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.pl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3PersoonslijstFormatter;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.SynchroniseerNaarBrpAntwoordType.Kandidaat;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerBrpNaarLo3Service;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
+import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerLo3NaarBrpService;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.PersoonslijstPersisteerResultaat;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.TeLeverenAdministratieveHandelingenAanwezigException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,55 +32,105 @@ import org.springframework.stereotype.Component;
 @Component(value = "plService")
 public final class PlServiceImpl implements PlService {
 
-    @Inject
-    private BrpNotificator notificator;
+    private final BrpDalService brpDalService;
+    private final BrpPersoonslijstService brpPersoonslijstService;
+    private final ConverteerBrpNaarLo3Service converteerBrpNaarLo3Service;
+    private final ConverteerLo3NaarBrpService converteerLo3NaarBrpService;
 
+    /**
+     * Constructor.
+     * @param brpDalService brp dal service
+     * @param brpPersoonslijstService brp persoonslijst service
+     * @param converteerBrpNaarLo3Service converteer brp naar lo3 service
+     * @param converteerLo3NaarBrpService converteer lo3 naar brp service
+     */
     @Inject
-    private BrpDalService brpDalService;
+    public PlServiceImpl(final BrpDalService brpDalService,
+                         final BrpPersoonslijstService brpPersoonslijstService,
+                         final ConverteerBrpNaarLo3Service converteerBrpNaarLo3Service,
+                         final ConverteerLo3NaarBrpService converteerLo3NaarBrpService) {
+        this.brpDalService = brpDalService;
+        this.brpPersoonslijstService = brpPersoonslijstService;
+        this.converteerBrpNaarLo3Service = converteerBrpNaarLo3Service;
+        this.converteerLo3NaarBrpService = converteerLo3NaarBrpService;
+    }
 
-    @Inject
-    private ConverteerBrpNaarLo3Service converteerBrpNaarLo3Service;
+    /* *************************************************** */
+    /* *************************************************** */
+    /* *** ZOEKEN **************************************** */
+    /* *************************************************** */
+    /* *************************************************** */
 
     @Override
-    public List<BrpPersoonslijst> zoekPersoonslijstenOpActueelAnummer(final long anummer) {
-        final BrpPersoonslijst brpPersoonslijst = brpDalService.zoekPersoonOpAnummer(anummer);
-        return brpPersoonslijst == null ? Collections.<BrpPersoonslijst>emptyList() : Collections.singletonList(brpPersoonslijst);
+    public BrpPersoonslijst zoekPersoonslijstOpTechnischeSleutel(final Long technischeSleutel) {
+        return brpPersoonslijstService.bevraagPersoonslijstOpTechnischeSleutelFoutiefOpgeschortUitsluiten(technischeSleutel);
     }
 
     @Override
-    public BrpPersoonslijst zoekNietFoutievePersoonslijstOpActueelAnummer(final long anummer) {
-        return brpDalService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(anummer);
+    public BrpPersoonslijst zoekNietFoutievePersoonslijstOpActueelAnummer(final String anummer) {
+        return brpPersoonslijstService.zoekPersoonOpAnummerFoutiefOpgeschortUitsluiten(anummer);
     }
 
     @Override
-    public List<BrpPersoonslijst> zoekPersoonslijstenOpHistorischAnummer(final long anummer) {
-        return brpDalService.zoekPersonenOpHistorischAnummer(anummer);
+    public List<BrpPersoonslijst> zoekNietFoutievePersoonslijstenOpHistorischAnummer(String anummer) {
+        return brpPersoonslijstService.zoekPersonenOpHistorischAnummerFoutiefOpgeschortUitsluiten(anummer);
     }
+
+    @Override
+    public BrpPersoonslijst zoekNietFoutievePersoonslijstOpActueelBurgerservicenummer(String burgerservicenummer) {
+        return brpPersoonslijstService.zoekPersoonOpBsnFoutiefOpgeschortUitsluiten(burgerservicenummer);
+    }
+
+    @Override
+    public List<BrpPersoonslijst> zoekNietFoutievePersoonslijstenOpHistorischBurgerservicenummer(String burgerservicenummer) {
+        return brpPersoonslijstService.zoekPersoonOpHistorischBsnFoutiefOpgeschortUitsluiten(burgerservicenummer);
+    }
+
+    @Override
+    public List<BrpPersoonslijst> zoekNietFoutievePersoonslijstenOpActueelVolgendeAnummer(String anummer) {
+        return brpPersoonslijstService.zoekPersoonOpVolgendeAnummerFoutiefOpgeschortUitsluiten(anummer);
+    }
+
+    @Override
+    public List<BrpPersoonslijst> zoekNietFoutievePersoonslijstenOpHistorischVolgendeAnummer(String anummer) {
+        return brpPersoonslijstService.zoekPersoonOpHistorischVolgendeAnummerFoutiefOpgeschortUitsluiten(anummer);
+    }
+
+    @Override
+    public List<BrpPersoonslijst> zoekNietFoutievePersoonslijstenOpActueelVorigeAnummer(String anummer) {
+        return brpPersoonslijstService.zoekPersoonOpVorigeAnummerFoutiefOpgeschortUitsluiten(anummer);
+    }
+
+    @Override
+    public List<BrpPersoonslijst> zoekNietFoutievePersoonslijstenOpHistorischVorigeAnummer(String anummer) {
+        return brpPersoonslijstService.zoekPersoonOpHistorischVorigeAnummerFoutiefOpgeschortUitsluiten(anummer);
+    }
+
+    /* *************************************************** */
+    /* *************************************************** */
+    /* *** PERSISTEREN *********************************** */
+    /* *************************************************** */
+    /* *************************************************** */
 
     @Override
     public List<Long> persisteerPersoonslijst(final BrpPersoonslijst brpPersoonslijst, final Lo3Bericht lo3Bericht) {
-        final PersoonslijstPersisteerResultaat persisteerResultaat = brpDalService.persisteerPersoonslijst(brpPersoonslijst, lo3Bericht);
+        final PersoonslijstPersisteerResultaat persisteerResultaat = brpPersoonslijstService.persisteerPersoonslijst(brpPersoonslijst, lo3Bericht);
 
         return verwerkPersisteerResultaat(persisteerResultaat);
     }
 
     @Override
-    public List<Long> persisteerPersoonslijst(
-        final BrpPersoonslijst brpPersoonslijst,
-        final long teVervangenAnummer,
-        final boolean isANummerWijziging,
-        final Lo3Bericht lo3Bericht)
-    {
+    public List<Long> persisteerPersoonslijst(final BrpPersoonslijst brpPersoonslijst, final Long teVervangenPersoonslijstId, final Lo3Bericht lo3Bericht)
+            throws TeLeverenAdministratieveHandelingenAanwezigException {
         final PersoonslijstPersisteerResultaat persisteerResultaat =
-                brpDalService.persisteerPersoonslijst(brpPersoonslijst, teVervangenAnummer, isANummerWijziging, lo3Bericht);
+                brpPersoonslijstService.persisteerPersoonslijst(brpPersoonslijst, teVervangenPersoonslijstId, lo3Bericht);
 
         return verwerkPersisteerResultaat(persisteerResultaat);
     }
 
     private List<Long> verwerkPersisteerResultaat(final PersoonslijstPersisteerResultaat resultaat) {
-        final Persoon persoon = resultaat.getPersoon();
+        resultaat.getPersoon();
         final Set<AdministratieveHandeling> administratieveHandelingen = resultaat.getAdministratieveHandelingen();
-        notificator.stuurGbaBijhoudingBerichten(administratieveHandelingen, persoon.getId());
 
         final List<Long> administratieveHandelingIds = new ArrayList<>();
         for (final AdministratieveHandeling administratieveHandeling : administratieveHandelingen) {
@@ -92,6 +144,17 @@ public final class PlServiceImpl implements PlService {
         brpDalService.persisteerLo3Bericht(bericht);
     }
 
+    /* *************************************************** */
+    /* *************************************************** */
+    /* *** CONVERTEREN *********************************** */
+    /* *************************************************** */
+    /* *************************************************** */
+
+    @Override
+    public BrpPersoonslijst converteerLo3PersoonlijstNaarBrpPersoonslijst(final Lo3Persoonslijst lo3Persoonslijst) {
+        return converteerLo3NaarBrpService.converteerLo3Persoonslijst(lo3Persoonslijst);
+    }
+
     @Override
     public String converteerKandidaat(final BrpPersoonslijst persoonslijst) {
         final Lo3Persoonslijst lo3Persoonslijst = converteerBrpNaarLo3Service.converteerBrpPersoonslijst(persoonslijst);
@@ -100,13 +163,16 @@ public final class PlServiceImpl implements PlService {
     }
 
     @Override
-    public String[] converteerKandidaten(final List<BrpPersoonslijst> persoonslijsten) {
-        final List<String> result = new ArrayList<>(persoonslijsten.size());
+    public Kandidaat[] converteerKandidaten(final List<BrpPersoonslijst> persoonslijsten) {
+        final List<Kandidaat> result = new ArrayList<>(persoonslijsten.size());
 
         for (final BrpPersoonslijst persoonslijst : persoonslijsten) {
-            result.add(converteerKandidaat(persoonslijst));
+            final Kandidaat huidigeKandidaat = new Kandidaat();
+            huidigeKandidaat.setPersoonId(persoonslijst.getPersoonId());
+            huidigeKandidaat.setVersie(persoonslijst.getAdministratieveHandelingId());
+            huidigeKandidaat.setLo3PersoonslijstAlsTeletexString(converteerKandidaat(persoonslijst));
+            result.add(huidigeKandidaat);
         }
-        return result.toArray(new String[persoonslijsten.size()]);
+        return result.toArray(new Kandidaat[persoonslijsten.size()]);
     }
-
 }

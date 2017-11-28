@@ -13,12 +13,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.AdellijkeTitelPredikaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RNIDeelnemer;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
-
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdellijkeTitelPredikaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RNIDeelnemer;
+import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest;
+import nl.bzk.algemeenbrp.test.dal.DBUnit.InsertBefore;
 
 public class ConversietabelRepositoryTest extends AbstractDatabaseTest {
 

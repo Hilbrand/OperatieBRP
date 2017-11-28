@@ -21,6 +21,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieDocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatiePKVolledigGeconverteerdCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Signalering;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.DalConversietabelFactory;
+
 import org.junit.Test;
 
 /**
@@ -28,7 +29,7 @@ import org.junit.Test;
  */
 public class DalConversietabelFactoryTest {
 
-    private static final DalConversietabelFactory FACTORY = new DalConversietabelFactory();
+    private static final DalConversietabelFactory FACTORY = new DalConversietabelFactory(null,null);
 
     @Test
     public void testIndicatiePKConversieTabel() {

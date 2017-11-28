@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * Configuratie.
  */
-@SuppressWarnings("checkstyle:designforextension")
+
 public class Configuratie implements Serializable {
     private static final long serialVersionUID = 1L;
     private String configuratie;
@@ -19,7 +19,6 @@ public class Configuratie implements Serializable {
 
     /**
      * Geeft de configuratie.
-     * 
      * @return de configuratie
      */
     public String getConfiguratie() {
@@ -28,9 +27,7 @@ public class Configuratie implements Serializable {
 
     /**
      * Zet de configuratie.
-     * 
-     * @param configuratie
-     *            De te zetten configuratie
+     * @param configuratie De te zetten configuratie
      */
     public void setConfiguratie(final String configuratie) {
         this.configuratie = configuratie;
@@ -38,7 +35,6 @@ public class Configuratie implements Serializable {
 
     /**
      * Geeft de waarde.
-     * 
      * @return de waarde
      */
     public String getWaarde() {
@@ -47,9 +43,7 @@ public class Configuratie implements Serializable {
 
     /**
      * Zet de waarde.
-     * 
-     * @param waarde
-     *            De te zetten waarde.
+     * @param waarde De te zetten waarde.
      */
     public void setWaarde(final String waarde) {
         this.waarde = waarde;

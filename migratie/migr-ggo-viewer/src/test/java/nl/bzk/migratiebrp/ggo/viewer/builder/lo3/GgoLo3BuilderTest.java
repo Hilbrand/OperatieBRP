@@ -12,17 +12,16 @@ import static org.junit.Assert.fail;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import java.util.List;
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.test.dal.DBUnit;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3PersoonslijstBuilder;
 import nl.bzk.migratiebrp.ggo.viewer.Lo3PersoonslijstTestHelper;
 import nl.bzk.migratiebrp.ggo.viewer.log.FoutMelder;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoStapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
+import nl.bzk.migratiebrp.ggo.viewer.util.PortInitializer;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,15 +37,15 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class })
-@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml" })
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class})
+@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml"}, initializers = {PortInitializer.class})
 public class GgoLo3BuilderTest {
 
     @Inject
     private GgoLo3Builder builder;
 
     @Test
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @DBUnit.InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     public void testBuildSuccess() throws Exception {
         final List<Lo3Persoonslijst> lo3Persoonslijsten =
                 Lo3PersoonslijstTestHelper.retrieveLo3Persoonslijsten("PL_alle_cats_elements.xls", new FoutMelder());

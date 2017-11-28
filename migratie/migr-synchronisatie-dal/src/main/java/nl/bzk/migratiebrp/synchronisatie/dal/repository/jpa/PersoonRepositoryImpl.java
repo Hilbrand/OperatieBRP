@@ -17,18 +17,19 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Melding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoonOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.alaag.ALaagAfleidingsUtil;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Melding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonCache;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.services.blobber.BlobException;
+import nl.bzk.algemeenbrp.services.blobber.Blobber;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.PersoonRepository;
 import org.springframework.stereotype.Repository;
 
@@ -40,17 +41,22 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public final class PersoonRepositoryImpl implements PersoonRepository {
+    private static final String TECHNISCHE_SLEUTEL_PARAM = "technischeSleutel";
     private static final String SOORT_PERSOON_NULL_MELDING = "soortPersoon mag niet null zijn";
     private static final String ADMINISTRATIENUMMER_NULL_MELDING = "administratienummer mag niet null zijn";
+    private static final String BURGERSERVICENUMMER_NULL_MELDING = "burgerservicenummer mag niet null zijn";
     private static final String TECHNISCHE_SLEUTEL_NULL_MELDING = "technische sleutel mag niet null zijn";
     private static final String SELECT_DEEL = "SELECT p FROM Persoon p ";
     private static final String ADMINISTRATIENUMMER_PARAM = "administratienummer";
+    private static final String BURGERSERVICENUMMER_PARAM = "burgerservicenummer";
     private static final String SOORT_PERSOON_ID_PARAM = "soortPersoonId";
-    private static final String OPSCHORTREDEN = "nadereBijhoudingsaard";
+
+    private static final String PARAM_NADERE_BIJHOUDINGINDSAARD_FOUT_ID = "nadereBijhoudingsaardFoutId";
+    private static final String PARAM_NADERE_BIJHOUDINGINDSAARD_GEWIST_ID = "nadereBijhoudingsaardGewistId";
 
     // Parameters bij JPA 2.0 query. Dit moeten de property namen zijn.
     private static final String PERSOON_ADMINISTRATIENUMMER_PROPERTY = ADMINISTRATIENUMMER_PARAM;
-    private static final String PERSOON_BURGERSERVICENUMMER_PROPERTY = "burgerservicenummer";
+    private static final String PERSOON_BURGERSERVICENUMMER_PROPERTY = BURGERSERVICENUMMER_PARAM;
     private static final String PERSOON_GESLACHTSNAAMSTAM_PROPERTY = "geslachtsnaamstam";
     private static final String PERSOON_BIJHOUDINGSPARTIJ_PROPERTY = "bijhoudingspartij.naam";
     private static final String PERSOON_GEBOORTEDATUM_PROPERTY = "datumGeboorte";
@@ -66,6 +72,27 @@ public final class PersoonRepositoryImpl implements PersoonRepository {
     private static final String PERSOON_SAMENGESTELDENAAM_HISTORIE_DATUMEINDEGELDIGHEID_PROPERTY = PERSOON_ID_HISTORIE_DATUMEINDEGELDIGHEID_PROPERTY;
     private static final String PERSOON = "persoon";
 
+    private static final String AND_NOT_PERSOON_OPGESCHORT =
+            "and not(p.nadereBijhoudingsaardId in (:nadereBijhoudingsaardFoutId, :nadereBijhoudingsaardGewistId)) ";
+    private static final String AND_NOT_HIS_PERSOON_OPGESCHORT =
+            "and not(his.persoon.nadereBijhoudingsaardId in (:nadereBijhoudingsaardFoutId, :nadereBijhoudingsaardGewistId)) ";
+
+
+    private static final String WHERE_CLAUSE_PERSOONCHACHE = "select pc from PersoonCache pc where pc.persoon = :persoon ";
+    private static final String WHERE_CLAUSE_TECHNISCHE_SLEUTEL_EN_SOORT_PERSOON = "where p.id = :technischeSleutel and p.soortPersoonId = :soortPersoonId ";
+    private static final String WHERE_CLAUSE_ANUMMER_EN_SOORT_PERSOON =
+            "where p.administratienummer = :administratienummer " + " and p.soortPersoonId = :soortPersoonId ";
+    private static final String AND_HIS_DATUM_EINDE_GELDIGHEID_IS_NOT_NULL_AND_HIS_DATUM_TIJD_VERVAL_IS_NULL =
+            "and his.datumEindeGeldigheid is not null and his.datumTijdVerval is null ";
+    private static final String AND_HIS_PERSOON_SOORT_PERSOON_ID_SOORT_PERSOON_ID = "and his.persoon.soortPersoonId = :soortPersoonId ";
+    private static final String SELECT_DISTINCT_HIS_PERSOON_FROM_PERSOON_NUMMERVERWIJZING_HISTORIE_HIS =
+            "select distinct his.persoon from PersoonNummerverwijzingHistorie his ";
+    private static final String AND_HIS_DATUM_EINDE_GELDIGHEID_IS_NULL_AND_HIS_DATUM_TIJD_VERVAL_IS_NULL =
+            "and his.datumEindeGeldigheid is null and his.datumTijdVerval is null ";
+    private static final String WHERE_HIS_VORIGE_ADMINISTRATIENUMMER_ADMINISTRATIENUMMER = "where his.vorigeAdministratienummer = :administratienummer ";
+    private static final String WHERE_HIS_VOLGENDE_ADMINISTRATIENUMMER_ADMINISTRATIENUMMER = "where his.volgendeAdministratienummer = :administratienummer ";
+
+
     @PersistenceContext(name = "syncDalEntityManagerFactory", unitName = "BrpEntities")
     private EntityManager em;
 
@@ -74,33 +101,52 @@ public final class PersoonRepositoryImpl implements PersoonRepository {
      */
     @Override
     public List<Persoon> findByAdministratienummer(
-        final long administratienummer,
-        final SoortPersoon soortPersoon,
-        final boolean indicatieFoutiefOpgeschortUitsluiten)
-    {
+            final String administratienummer,
+            final SoortPersoon soortPersoon,
+            final boolean indicatieFoutiefOpgeschortUitsluiten) {
         if (soortPersoon == null) {
             throw new NullPointerException(SOORT_PERSOON_NULL_MELDING);
         }
 
-        final String standaardQuery = SELECT_DEEL + "where p.administratienummer = :administratienummer " + " and p.soortPersoonId = :soortPersoonId";
-
         if (indicatieFoutiefOpgeschortUitsluiten) {
-            return em.createQuery(standaardQuery + " and not(p.nadereBijhoudingsaard = :nadereBijhoudingsaard) ", Persoon.class)
-                     .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
-                     .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
-                     .setParameter(OPSCHORTREDEN, NadereBijhoudingsaard.FOUT.getId())
-                     .getResultList();
+            return em.createQuery(SELECT_DEEL
+                            + WHERE_CLAUSE_ANUMMER_EN_SOORT_PERSOON
+                            + AND_NOT_PERSOON_OPGESCHORT
+                    , Persoon.class)
+                    .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
+                    .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                    .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_FOUT_ID, NadereBijhoudingsaard.FOUT.getId())
+                    .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_GEWIST_ID, NadereBijhoudingsaard.GEWIST.getId())
+                    .getResultList();
 
         } else {
-            return em.createQuery(standaardQuery, Persoon.class)
-                     .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
-                     .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
-                     .getResultList();
+            return em.createQuery(SELECT_DEEL + WHERE_CLAUSE_ANUMMER_EN_SOORT_PERSOON, Persoon.class)
+                    .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
+                    .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                    .getResultList();
         }
     }
 
     @Override
-    public List<Persoon> findByTechnischeSleutel(final Long technischeSleutel, final SoortPersoon soortPersoon) {
+    public List<Persoon> findByBurgerServiceNummer(
+            final String burgerServiceNummer) {
+
+        if (burgerServiceNummer == null) {
+            throw new NullPointerException(BURGERSERVICENUMMER_NULL_MELDING);
+        }
+
+        return em.createNamedQuery("Persoon.zoekPersonenMetDezelfdeBsn", Persoon.class).setParameter(PERSOON_BURGERSERVICENUMMER_PROPERTY, burgerServiceNummer)
+                .setParameter(SOORT_PERSOON_ID_PARAM, SoortPersoon.INGESCHREVENE.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_FOUT_ID, NadereBijhoudingsaard.FOUT.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_GEWIST_ID, NadereBijhoudingsaard.GEWIST.getId())
+                .getResultList();
+    }
+
+    @Override
+    public List<Persoon> findByTechnischeSleutel(
+            final Long technischeSleutel,
+            final SoortPersoon soortPersoon,
+            final boolean indicatieFoutiefOpgeschortUitsluiten) {
         if (technischeSleutel == null) {
             throw new NullPointerException(TECHNISCHE_SLEUTEL_NULL_MELDING);
         }
@@ -108,17 +154,29 @@ public final class PersoonRepositoryImpl implements PersoonRepository {
             throw new NullPointerException(SOORT_PERSOON_NULL_MELDING);
         }
 
-        return em.createQuery(SELECT_DEEL + "where p.id = :technischeSleutel " + "and p.soortPersoonId = :soortPersoonId ", Persoon.class)
-                 .setParameter("technischeSleutel", technischeSleutel)
-                 .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
-                 .getResultList();
+        if (indicatieFoutiefOpgeschortUitsluiten) {
+            return em.createQuery(SELECT_DEEL
+                            + WHERE_CLAUSE_TECHNISCHE_SLEUTEL_EN_SOORT_PERSOON
+                            + AND_NOT_PERSOON_OPGESCHORT,
+                    Persoon.class)
+                    .setParameter(TECHNISCHE_SLEUTEL_PARAM, technischeSleutel)
+                    .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                    .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_FOUT_ID, NadereBijhoudingsaard.FOUT.getId())
+                    .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_GEWIST_ID, NadereBijhoudingsaard.GEWIST.getId())
+                    .getResultList();
+        } else {
+            return em.createQuery(SELECT_DEEL + WHERE_CLAUSE_TECHNISCHE_SLEUTEL_EN_SOORT_PERSOON, Persoon.class)
+                    .setParameter(TECHNISCHE_SLEUTEL_PARAM, technischeSleutel)
+                    .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                    .getResultList();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Persoon> findByAdministratienummerHistorisch(final Long administratienummer, final SoortPersoon soortPersoon) {
+    public List<Persoon> findByAdministratienummerHistorisch(final String administratienummer, final SoortPersoon soortPersoon) {
         if (administratienummer == null) {
             throw new NullPointerException(ADMINISTRATIENUMMER_NULL_MELDING);
         }
@@ -126,33 +184,14 @@ public final class PersoonRepositoryImpl implements PersoonRepository {
             throw new NullPointerException(SOORT_PERSOON_NULL_MELDING);
         }
         return em.createQuery(
-                     "select distinct his.persoon from PersoonIDHistorie his "
-                             + "where his.administratienummer = :administratienummer "
-                             + "and his.datumEindeGeldigheid is not null and his.datumTijdVerval is null "
-                             + "and his.persoon.soortPersoonId = :soortPersoonId",
-                     Persoon.class)
-                 .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
-                 .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
-                 .getResultList();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Onderzoek> findOnderzoekenVoorPersoon(final Persoon persoon) {
-        if (persoon == null) {
-            throw new NullPointerException("persoon mag niet null zijn");
-        }
-
-        return em.createQuery(
-                     "select distinct o from Onderzoek o, in(o.persoonOnderzoekSet) as po "
-                             + "where po.persoon = :persoon "
-                             + "and po.soortPersoonOnderzoekId = :soortPersoonOnderzoekId",
-                     Onderzoek.class)
-                 .setParameter(PERSOON, persoon)
-                 .setParameter("soortPersoonOnderzoekId", SoortPersoonOnderzoek.DIRECT.getId())
-                 .getResultList();
+                "select distinct his.persoon from PersoonIDHistorie his "
+                        + "where his.administratienummer = :administratienummer "
+                        + AND_HIS_DATUM_EINDE_GELDIGHEID_IS_NOT_NULL_AND_HIS_DATUM_TIJD_VERVAL_IS_NULL
+                        + AND_HIS_PERSOON_SOORT_PERSOON_ID_SOORT_PERSOON_ID,
+                Persoon.class)
+                .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
+                .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                .getResultList();
     }
 
     /**
@@ -196,19 +235,37 @@ public final class PersoonRepositoryImpl implements PersoonRepository {
      */
     @Override
     public void save(final Persoon persoon) {
+        ALaagAfleidingsUtil.vulALaag(persoon);
         if (persoon.getId() == null) {
             em.persist(persoon);
         } else {
             em.flush();
         }
+        slaPersoonCacheOp(persoon);
     }
 
     /**
-     * {@inheritDoc}
+     * Sla de 'blob' cache van de persoon op in database.
+     * @param persoon de persoon waarvan de blob opgeslagen moet worden
      */
-    @Override
-    public void removeCache(final Persoon persoon) {
-        em.createQuery("delete from PersoonCache pc where pc.persoon = :persoon").setParameter(PERSOON, persoon).executeUpdate();
+    private void slaPersoonCacheOp(final Persoon persoon) {
+        final byte[] persoonBlob;
+        try {
+            persoonBlob = Blobber.toJsonBytes(Blobber.maakBlob(persoon));
+            PersoonCache persoonCache = findByPersoon(persoon);
+            if (persoonCache == null) {
+                persoonCache = new PersoonCache(persoon, (short) 1);
+            }
+            persoonCache.setPersoonHistorieVolledigGegevens(persoonBlob);
+            em.persist(persoonCache);
+        } catch (final BlobException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private PersoonCache findByPersoon(final Persoon persoon) {
+        final List<PersoonCache> resultaat = em.createQuery(WHERE_CLAUSE_PERSOONCHACHE, PersoonCache.class).setParameter(PERSOON, persoon).getResultList();
+        return resultaat.isEmpty() ? null : resultaat.get(0);
     }
 
     @Override
@@ -218,20 +275,16 @@ public final class PersoonRepositoryImpl implements PersoonRepository {
         final CriteriaQuery<Persoon> criteria = builder.createQuery(Persoon.class);
         final Root<Persoon> persoonRoot = criteria.from(Persoon.class);
         criteria.select(persoonRoot);
-
         criteria.where(maakZoekPersoonWhereCondities(persoon, builder, persoonRoot));
-
         return em.createQuery(criteria).getResultList();
 
     }
 
     private Predicate[] maakZoekPersoonWhereCondities(final Persoon persoon, final CriteriaBuilder builder, final Root<Persoon> persoonRoot) {
         final Set<Predicate> whereCondities = new HashSet<>();
-
         if (persoon.getAdministratienummer() != null) {
             whereCondities.add(builder.equal(persoonRoot.get(PERSOON_ADMINISTRATIENUMMER_PROPERTY), persoon.getAdministratienummer()));
         }
-
         if (persoon.getBijhoudingspartij() != null) {
             whereCondities.add(builder.equal(persoonRoot.get(PERSOON_BIJHOUDINGSPARTIJ_PROPERTY), persoon.getBijhoudingspartij().getNaam()));
         }
@@ -261,11 +314,10 @@ public final class PersoonRepositoryImpl implements PersoonRepository {
 
     @Override
     public List<Persoon> zoekPersonenOpActueleGegevens(
-        final Long administratienummer,
-        final Integer burgerservicenummer,
-        final String geslachtsnaamstam,
-        final String postcode)
-    {
+            final String administratienummer,
+            final String burgerservicenummer,
+            final String geslachtsnaamstam,
+            final String postcode) {
         final CriteriaBuilder builder = em.getCriteriaBuilder();
         final CriteriaQuery<Persoon> persoonQuery = builder.createQuery(Persoon.class);
         final Root<Persoon> persoonRoot = persoonQuery.from(Persoon.class);
@@ -304,10 +356,9 @@ public final class PersoonRepositoryImpl implements PersoonRepository {
 
     @Override
     public List<Persoon> zoekPersonenOpHistorischeGegevens(
-        final Long administratienummer,
-        final Integer burgerservicenummer,
-        final String geslachtsnaamstam)
-    {
+            final String administratienummer,
+            final String burgerservicenummer,
+            final String geslachtsnaamstam) {
         final CriteriaBuilder builder = em.getCriteriaBuilder();
         final CriteriaQuery<Persoon> persoonQuery = builder.createQuery(Persoon.class);
         final Root<Persoon> persoonRoot = persoonQuery.from(Persoon.class);
@@ -358,6 +409,116 @@ public final class PersoonRepositoryImpl implements PersoonRepository {
 
         persoonQuery.where(restrictions.toArray(new Predicate[restrictions.size()]));
         return em.createQuery(persoonQuery).getResultList();
+    }
 
+    @Override
+    public List<Persoon> findByBurgerservicenummerHistorisch(String burgerservicenummer, SoortPersoon soortPersoon) {
+        if (burgerservicenummer == null) {
+            throw new NullPointerException(BURGERSERVICENUMMER_NULL_MELDING);
+        }
+        if (soortPersoon == null) {
+            throw new NullPointerException(SOORT_PERSOON_NULL_MELDING);
+        }
+        return em.createQuery(
+                "select distinct his.persoon from PersoonIDHistorie his "
+                        + "where his.burgerservicenummer = :burgerservicenummer "
+                        + AND_HIS_DATUM_EINDE_GELDIGHEID_IS_NOT_NULL_AND_HIS_DATUM_TIJD_VERVAL_IS_NULL
+                        + AND_HIS_PERSOON_SOORT_PERSOON_ID_SOORT_PERSOON_ID
+                        + AND_NOT_HIS_PERSOON_OPGESCHORT,
+                Persoon.class)
+                .setParameter(BURGERSERVICENUMMER_PARAM, burgerservicenummer)
+                .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_FOUT_ID, NadereBijhoudingsaard.FOUT.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_GEWIST_ID, NadereBijhoudingsaard.GEWIST.getId())
+                .getResultList();
+    }
+
+    @Override
+    public List<Persoon> findByVolgendeAnummer(String administratienummer, SoortPersoon soortPersoon) {
+        if (administratienummer == null) {
+            throw new NullPointerException(ADMINISTRATIENUMMER_NULL_MELDING);
+        }
+        if (soortPersoon == null) {
+            throw new NullPointerException(SOORT_PERSOON_NULL_MELDING);
+        }
+        return em.createQuery(
+                SELECT_DISTINCT_HIS_PERSOON_FROM_PERSOON_NUMMERVERWIJZING_HISTORIE_HIS
+                        + WHERE_HIS_VOLGENDE_ADMINISTRATIENUMMER_ADMINISTRATIENUMMER
+                        + AND_HIS_DATUM_EINDE_GELDIGHEID_IS_NULL_AND_HIS_DATUM_TIJD_VERVAL_IS_NULL
+                        + AND_HIS_PERSOON_SOORT_PERSOON_ID_SOORT_PERSOON_ID
+                        + AND_NOT_HIS_PERSOON_OPGESCHORT,
+                Persoon.class)
+                .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
+                .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_FOUT_ID, NadereBijhoudingsaard.FOUT.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_GEWIST_ID, NadereBijhoudingsaard.GEWIST.getId())
+                .getResultList();
+    }
+
+
+    @Override
+    public List<Persoon> findByVolgendeAnummerHistorisch(String administratienummer, SoortPersoon soortPersoon) {
+        if (administratienummer == null) {
+            throw new NullPointerException(ADMINISTRATIENUMMER_NULL_MELDING);
+        }
+        if (soortPersoon == null) {
+            throw new NullPointerException(SOORT_PERSOON_NULL_MELDING);
+        }
+        return em.createQuery(
+                SELECT_DISTINCT_HIS_PERSOON_FROM_PERSOON_NUMMERVERWIJZING_HISTORIE_HIS
+                        + WHERE_HIS_VOLGENDE_ADMINISTRATIENUMMER_ADMINISTRATIENUMMER
+                        + AND_HIS_DATUM_EINDE_GELDIGHEID_IS_NOT_NULL_AND_HIS_DATUM_TIJD_VERVAL_IS_NULL
+                        + AND_HIS_PERSOON_SOORT_PERSOON_ID_SOORT_PERSOON_ID
+                        + AND_NOT_HIS_PERSOON_OPGESCHORT,
+                Persoon.class)
+                .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
+                .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_FOUT_ID, NadereBijhoudingsaard.FOUT.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_GEWIST_ID, NadereBijhoudingsaard.GEWIST.getId())
+                .getResultList();
+    }
+
+    @Override
+    public List<Persoon> findByVorigeAnummer(String administratienummer, SoortPersoon soortPersoon) {
+        if (administratienummer == null) {
+            throw new NullPointerException(ADMINISTRATIENUMMER_NULL_MELDING);
+        }
+        if (soortPersoon == null) {
+            throw new NullPointerException(SOORT_PERSOON_NULL_MELDING);
+        }
+        return em.createQuery(
+                SELECT_DISTINCT_HIS_PERSOON_FROM_PERSOON_NUMMERVERWIJZING_HISTORIE_HIS
+                        + WHERE_HIS_VORIGE_ADMINISTRATIENUMMER_ADMINISTRATIENUMMER
+                        + AND_HIS_DATUM_EINDE_GELDIGHEID_IS_NULL_AND_HIS_DATUM_TIJD_VERVAL_IS_NULL
+                        + AND_HIS_PERSOON_SOORT_PERSOON_ID_SOORT_PERSOON_ID
+                        + AND_NOT_HIS_PERSOON_OPGESCHORT,
+                Persoon.class)
+                .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
+                .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_FOUT_ID, NadereBijhoudingsaard.FOUT.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_GEWIST_ID, NadereBijhoudingsaard.GEWIST.getId())
+                .getResultList();
+    }
+
+    @Override
+    public List<Persoon> findByVorigeAnummerHistorisch(String administratienummer, SoortPersoon soortPersoon) {
+        if (administratienummer == null) {
+            throw new NullPointerException(ADMINISTRATIENUMMER_NULL_MELDING);
+        }
+        if (soortPersoon == null) {
+            throw new NullPointerException(SOORT_PERSOON_NULL_MELDING);
+        }
+        return em.createQuery(
+                SELECT_DISTINCT_HIS_PERSOON_FROM_PERSOON_NUMMERVERWIJZING_HISTORIE_HIS
+                        + WHERE_HIS_VORIGE_ADMINISTRATIENUMMER_ADMINISTRATIENUMMER
+                        + AND_HIS_DATUM_EINDE_GELDIGHEID_IS_NOT_NULL_AND_HIS_DATUM_TIJD_VERVAL_IS_NULL
+                        + AND_HIS_PERSOON_SOORT_PERSOON_ID_SOORT_PERSOON_ID
+                        + AND_NOT_HIS_PERSOON_OPGESCHORT,
+                Persoon.class)
+                .setParameter(ADMINISTRATIENUMMER_PARAM, administratienummer)
+                .setParameter(SOORT_PERSOON_ID_PARAM, soortPersoon.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_FOUT_ID, NadereBijhoudingsaard.FOUT.getId())
+                .setParameter(PARAM_NADERE_BIJHOUDINGINDSAARD_GEWIST_ID, NadereBijhoudingsaard.GEWIST.getId())
+                .getResultList();
     }
 }

@@ -7,11 +7,9 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -26,8 +24,8 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datumtijdstempel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOpschortingBijhoudingCode;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
@@ -36,21 +34,16 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Lo3LoggingUtil;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 
-import org.springframework.stereotype.Component;
-
 /**
- *
+ * PersoonLijstOpschoner.
  */
-@Component
 public final class Lo3PersoonslijstOpschoner {
 
     /**
      * Schoon de persoonlijst op aan de hand van de logging.
      *
      * Nota: LET OP! Gebruikt de Logging.context
-     *
-     * @param persoonslijst
-     *            op te schonen persoonslijst
+     * @param persoonslijst op te schonen persoonslijst
      * @return opgeschoonde persoonlijst
      */
     public Lo3Persoonslijst opschonen(final Lo3Persoonslijst persoonslijst) {
@@ -62,19 +55,12 @@ public final class Lo3PersoonslijstOpschoner {
             // stap 3 Controleer of de categorie niet onjuist is en de persoon is opgeschort met
             // reden 'F'
             if (bestaatErrorInJuisteCategorieOpgeschorteFoutPL(opgeschoondePersoonslijst, logging)
-                && persoonslijst.getActueelAdministratienummer() != null
-                && !checkLogErrorsVoorActueleCategorieen(logging))
-            {
+                    && persoonslijst.getActueelAdministratienummer() != null
+                    && !checkLogErrorsVoorActueleCategorieen(logging)) {
                 // Maak een dummy persoon aan als de PL is afgevoerd en er na opschoon stappen 1 en 2 nog
                 // preconditie fouten in de categolrie zitten.
                 opgeschoondePersoonslijst = maakDummyPL(persoonslijst);
-
-                // Zet alle logregels met severity Error naar Removed
-                for (final LogRegel regel : logging.getRegels()) {
-                    if (regel.hasSeverityLevelError()) {
-                        regel.setSeverity(LogSeverity.SUPPRESSED);
-                    }
-                }
+                zetErrorLogRegelsNaarRemoved(logging);
             }
 
             return opgeschoondePersoonslijst;
@@ -83,12 +69,19 @@ public final class Lo3PersoonslijstOpschoner {
         }
     }
 
+    private void zetErrorLogRegelsNaarRemoved(final Logging logging) {
+        // Zet alle logregels met severity Error naar Removed
+        for (final LogRegel regel : logging.getRegels()) {
+            if (regel.hasSeverityLevelError()) {
+                regel.setSeverity(LogSeverity.SUPPRESSED);
+            }
+        }
+    }
+
     /**
      * Om een Dummy-PL te mogen maken, mogen er geen preconditie/structuur fouten in categorie 01 (persoon), 07
      * (inschrijving) of 08 (verblijfplaats) zijn.
-     *
-     * @param logging
-     *            logging met alle logregels
+     * @param logging logging met alle logregels
      * @return true als er preconditie of structuurfouten zijn gevonden in categorie 01, 07 of 08.
      */
     private boolean checkLogErrorsVoorActueleCategorieen(final Logging logging) {
@@ -97,8 +90,8 @@ public final class Lo3PersoonslijstOpschoner {
             final Lo3CategorieEnum categorie = regel.getLo3Herkomst().getCategorie();
             final boolean dummyCatInError =
                     categorie.equals(Lo3CategorieEnum.CATEGORIE_01)
-                                            || categorie.equals(Lo3CategorieEnum.CATEGORIE_07)
-                                            || categorie.equals(Lo3CategorieEnum.CATEGORIE_08);
+                            || categorie.equals(Lo3CategorieEnum.CATEGORIE_07)
+                            || categorie.equals(Lo3CategorieEnum.CATEGORIE_08);
             if (regel.hasSeverityLevelError() && dummyCatInError) {
                 resultaat = true;
                 break;
@@ -194,9 +187,8 @@ public final class Lo3PersoonslijstOpschoner {
         for (final LogRegel regel : logging.getRegels()) {
             final Lo3Categorie<T> actueleCat = stapel.getLo3ActueelVoorkomen();
             if (actueleCat != null
-                && actueleCat.getLo3Herkomst().equalsCategorieStapelOnly(regel.getLo3Herkomst())
-                && SoortMeldingCode.PRE112.equals(regel.getSoortMeldingCode()))
-            {
+                    && actueleCat.getLo3Herkomst().equalsCategorieStapelOnly(regel.getLo3Herkomst())
+                    && SoortMeldingCode.PRE112.equals(regel.getSoortMeldingCode())) {
                 regel.setSeverity(LogSeverity.SUPPRESSED);
             }
         }
@@ -230,7 +222,7 @@ public final class Lo3PersoonslijstOpschoner {
                 }
             }
             stapel.clear();
-            stapel.addAll(alleenLegeRijen ? Collections.EMPTY_LIST : juisteRijen);
+            stapel.addAll(alleenLegeRijen ? Collections.emptyList() : juisteRijen);
         }
     }
 
@@ -243,7 +235,7 @@ public final class Lo3PersoonslijstOpschoner {
         final Lo3Categorie<Lo3InschrijvingInhoud> lo3Inschrijving = inschrijvingStapel.getLaatsteElement();
         final Lo3InschrijvingInhoud inhoud = lo3Inschrijving.getInhoud();
         final Lo3Datum lo3Datumstempel = BrpDatumTijd.fromLo3Datumtijdstempel(inhoud.getDatumtijdstempel()).converteerNaarLo3Datum();
-        final Lo3Historie inschrijvingFormeleHistorie = new Lo3Historie(null, Lo3Datum.NULL_DATUM, lo3Datumstempel);
+        final Lo3Historie inschrijvingFormeleHistorie = new Lo3Historie(null, null, lo3Datumstempel);
 
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> verblijfplaatsStapel = maakDummyVerblijfplaatsInhoud(persoonslijst, inschrijvingFormeleHistorie);
 
@@ -258,9 +250,8 @@ public final class Lo3PersoonslijstOpschoner {
     }
 
     private Lo3Stapel<Lo3VerblijfplaatsInhoud> maakDummyVerblijfplaatsInhoud(
-        final Lo3Persoonslijst persoonslijst,
-        final Lo3Historie inschrijvingFormeleHistorie)
-    {
+            final Lo3Persoonslijst persoonslijst,
+            final Lo3Historie inschrijvingFormeleHistorie) {
         final Lo3VerblijfplaatsInhoud verblijfplaatsBronInhoud;
         if (persoonslijst.getVerblijfplaatsStapel() != null && !persoonslijst.getVerblijfplaatsStapel().isEmpty()) {
             verblijfplaatsBronInhoud = persoonslijst.getVerblijfplaatsStapel().getLaatsteElement().getInhoud();
@@ -268,7 +259,7 @@ public final class Lo3PersoonslijstOpschoner {
             verblijfplaatsBronInhoud = new Lo3VerblijfplaatsInhoud();
         }
         final Lo3Datum datumInschrijvingGemeente =
-                verblijfplaatsBronInhoud.getDatumInschrijving() != null ? verblijfplaatsBronInhoud.getDatumInschrijving() : Lo3Datum.NULL_DATUM;
+                verblijfplaatsBronInhoud.getDatumInschrijving() != null ? verblijfplaatsBronInhoud.getDatumInschrijving() : new Lo3Datum(0);
         final Lo3GemeenteCode gemeenteInschrijving;
         if (verblijfplaatsBronInhoud.getGemeenteInschrijving() != null) {
             gemeenteInschrijving = verblijfplaatsBronInhoud.getGemeenteInschrijving();
@@ -288,70 +279,69 @@ public final class Lo3PersoonslijstOpschoner {
         if (inschrijvingBronInhoud.getDatumOpschortingBijhouding() != null) {
             datumOpschorting = inschrijvingBronInhoud.getDatumOpschortingBijhouding();
         } else {
-            datumOpschorting = Lo3Datum.NULL_DATUM;
+            datumOpschorting = new Lo3Datum(0);
         }
         final Lo3RedenOpschortingBijhoudingCode redenOpschorting = inschrijvingBronInhoud.getRedenOpschortingBijhoudingCode();
         final Lo3Datum datumInschrijving =
-                inschrijvingBronInhoud.getDatumEersteInschrijving() != null ? inschrijvingBronInhoud.getDatumEersteInschrijving() : Lo3Datum.NULL_DATUM;
+                inschrijvingBronInhoud.getDatumEersteInschrijving() != null ? inschrijvingBronInhoud.getDatumEersteInschrijving() : new Lo3Datum(0);
         final Lo3Integer versieNummer = inschrijvingBronInhoud.getVersienummer();
         final Lo3Datumtijdstempel datumtijdStempel =
                 inschrijvingBronInhoud.getDatumtijdstempel() != null ? inschrijvingBronInhoud.getDatumtijdstempel() : new Lo3Datumtijdstempel(0L);
 
         final Lo3InschrijvingInhoud lo3InschrijvingInhoud =
                 new Lo3InschrijvingInhoud(
-                    null,
-                    datumOpschorting,
-                    redenOpschorting,
-                    datumInschrijving,
-                    null,
-                    null,
-                    null,
-                    null,
-                    versieNummer,
-                    datumtijdStempel,
-                    null);
+                        null,
+                        datumOpschorting,
+                        redenOpschorting,
+                        datumInschrijving,
+                        null,
+                        null,
+                        null,
+                        null,
+                        versieNummer,
+                        datumtijdStempel,
+                        null);
         final Lo3Categorie<Lo3InschrijvingInhoud> inschrijvingCat =
                 new Lo3Categorie<>(
-                    lo3InschrijvingInhoud,
-                    null,
-                    persoonslijst.getInschrijvingStapel().getLaatsteElement().getHistorie(),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0));
-        return new Lo3Stapel<>(Arrays.asList(inschrijvingCat));
+                        lo3InschrijvingInhoud,
+                        null,
+                        persoonslijst.getInschrijvingStapel().getLaatsteElement().getHistorie(),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0));
+        return new Lo3Stapel<>(Collections.singletonList(inschrijvingCat));
     }
 
     private Lo3Stapel<Lo3PersoonInhoud> maakDummyPersoonInhoud(final Lo3Persoonslijst persoonslijst) {
         final Lo3PersoonInhoud lo3PersoonInhoud =
                 new Lo3PersoonInhoud(
-                    Lo3Long.wrap(persoonslijst.getActueelAdministratienummer()),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
+                        Lo3String.wrap(persoonslijst.getActueelAdministratienummer()),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
         final Lo3Categorie<Lo3PersoonInhoud> persoonCat =
                 new Lo3Categorie<>(
-                    lo3PersoonInhoud,
-                    null,
-                    persoonslijst.getPersoonStapel().getLaatsteElement().getHistorie(),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0));
-        return new Lo3Stapel<>(Arrays.asList(persoonCat));
+                        lo3PersoonInhoud,
+                        null,
+                        persoonslijst.getPersoonStapel().getLaatsteElement().getHistorie(),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0));
+        return new Lo3Stapel<>(Collections.singletonList(persoonCat));
     }
 
     private <T extends Lo3CategorieInhoud> boolean bestaatErrorInLegeJuisteCategorie(final List<Lo3Categorie<T>> stapelInhoud, final Logging logging) {
         for (final LogRegel regel : logging.getRegels()) {
             for (final Lo3Categorie<T> categorie : stapelInhoud) {
                 if (regel.hasSeverityLevelError()
-                    && regel.getLo3Herkomst().equals(categorie.getLo3Herkomst())
-                    && !categorie.getHistorie().isOnjuist()
-                    && categorie.getInhoud().isLeeg())
-                {
+                        && regel.getLo3Herkomst().equals(categorie.getLo3Herkomst())
+                        && !categorie.getHistorie().isOnjuist()
+                        && categorie.getInhoud().isLeeg()) {
                     return true;
                 }
             }
@@ -363,15 +353,15 @@ public final class Lo3PersoonslijstOpschoner {
     private boolean bestaatErrorInJuisteCategorieOpgeschorteFoutPL(final Lo3Persoonslijst persoonslijst, final Logging logging) {
         final boolean isOpgeschorteFoutPL =
                 persoonslijst.getInschrijvingStapel() != null
-                                            && persoonslijst.getInschrijvingStapel()
-                                                            .getLaatsteElement()
-                                                            .getInhoud()
-                                                            .getRedenOpschortingBijhoudingCode() != null
-                                            && persoonslijst.getInschrijvingStapel()
-                                                            .getLaatsteElement()
-                                                            .getInhoud()
-                                                            .getRedenOpschortingBijhoudingCode()
-                                                            .isFout();
+                        && persoonslijst.getInschrijvingStapel()
+                        .getLaatsteElement()
+                        .getInhoud()
+                        .getRedenOpschortingBijhoudingCode() != null
+                        && persoonslijst.getInschrijvingStapel()
+                        .getLaatsteElement()
+                        .getInhoud()
+                        .getRedenOpschortingBijhoudingCode()
+                        .isFout();
 
         return isOpgeschorteFoutPL && isErrorInJuisteCategorie(persoonslijst, logging);
     }
@@ -397,10 +387,9 @@ public final class Lo3PersoonslijstOpschoner {
     }
 
     private <T extends Lo3CategorieInhoud> boolean isErrorInJuisteCategorie(
-        final List<Lo3Stapel<T>> stapels,
-        final Lo3CategorieEnum categorieEnum,
-        final Logging logging)
-    {
+            final List<Lo3Stapel<T>> stapels,
+            final Lo3CategorieEnum categorieEnum,
+            final Logging logging) {
         boolean isError = false;
         if (stapels != null) {
             for (final Lo3Stapel<T> stapel : stapels) {
@@ -412,10 +401,9 @@ public final class Lo3PersoonslijstOpschoner {
     }
 
     private <T extends Lo3CategorieInhoud> boolean isErrorInJuisteCategorie(
-        final Lo3Stapel<T> stapel,
-        final Lo3CategorieEnum categorieEnum,
-        final Logging logging)
-    {
+            final Lo3Stapel<T> stapel,
+            final Lo3CategorieEnum categorieEnum,
+            final Logging logging) {
         boolean resultaat = false;
         for (final LogRegel regel : logging.getRegels()) {
             if (regel.hasSeverityLevelError()) {
@@ -424,10 +412,9 @@ public final class Lo3PersoonslijstOpschoner {
                 } else {
                     for (final Lo3Categorie<T> categorie : stapel) {
                         if (regel.hasSeverityLevelError()
-                            && regel.getLo3Herkomst().equals(categorie.getLo3Herkomst())
-                            && !categorie.getHistorie().isOnjuist()
-                            && !categorie.getInhoud().isLeeg())
-                        {
+                                && regel.getLo3Herkomst().equals(categorie.getLo3Herkomst())
+                                && !categorie.getHistorie().isOnjuist()
+                                && !categorie.getInhoud().isLeeg()) {
                             resultaat = true;
                             break;
                         }

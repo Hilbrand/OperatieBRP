@@ -8,15 +8,12 @@ package nl.bzk.migratiebrp.tools.deploy.check;
 
 import java.io.IOException;
 
-import org.junit.Test;
-
 public class AnalyseJars {
 
-	@Test
-	public void analyseJars() throws IOException {
-		Analysor analysor = new Analysor("D:\\mGBA\\runtime-22\\test-tooling\\migr-test-isc\\lib");
-		analysor.analyse();
-		analysor.printDuplicates();
-	}
+    public static void main(String[] args) throws IOException {
+        Analysor analysor = new Analysor("D:\\mGBA\\runtime-22\\test-tooling\\migr-test-isc\\lib");
+        analysor.analyse();
+        analysor.printDuplicates();
+    }
 
 }

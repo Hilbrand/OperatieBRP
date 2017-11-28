@@ -15,17 +15,13 @@ public interface Action {
 
     /**
      * Zet kanaal.
-     *
-     * @param kanaal
-     *            kanaal
+     * @param kanaal kanaal
      */
     void setKanaal(String kanaal);
 
     /**
      * Verwerk.
-     *
-     * @param message
-     *            message
+     * @param message message
      * @return false, als de verwerking van acties gestopt moet worden, anders true
      */
     boolean verwerk(Message message);

@@ -504,12 +504,8 @@
             </datumEuropeesKiesrecht>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <lo3Herkomst>
             <categorie>CATEGORIE_13</categorie>
@@ -559,12 +555,8 @@
             </indicatiePKVolledigGeconverteerdCode>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <lo3Herkomst>
             <categorie>CATEGORIE_07</categorie>

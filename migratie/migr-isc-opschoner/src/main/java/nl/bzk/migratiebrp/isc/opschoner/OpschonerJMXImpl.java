@@ -10,10 +10,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
 import nl.bzk.migratiebrp.isc.opschoner.service.OpschonerService;
 import nl.bzk.migratiebrp.util.common.jmx.UseDynamicDomain;
-import nl.bzk.migratiebrp.util.common.logging.MDC;
-import nl.bzk.migratiebrp.util.common.logging.MDC.MDCCloser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -28,13 +27,16 @@ public class OpschonerJMXImpl implements OpschonerJMX {
     @Autowired
     private OpschonerService opschonerService;
 
-    private int aantalUrenSindsVerwerkt = OpschonerService.STANDAARD_WACHT_TIJD_IN_UREN;
+    /**
+     * Standaard wachttijd voor opschonen.
+     */
+    public static final Integer STANDAARD_WACHT_TIJD_IN_UREN = 27;
+
+    private int aantalUrenSindsVerwerkt = STANDAARD_WACHT_TIJD_IN_UREN;
 
     /**
      * Zet de waarde van aantal uren sinds verwerkt.
-     *
-     * @param aantalUrenSindsVerwerkt
-     *            aantal uren sinds verwerkt
+     * @param aantalUrenSindsVerwerkt aantal uren sinds verwerkt
      */
     public final void setAantalUrenSindsVerwerkt(final int aantalUrenSindsVerwerkt) {
         this.aantalUrenSindsVerwerkt = aantalUrenSindsVerwerkt;
@@ -57,13 +59,6 @@ public class OpschonerJMXImpl implements OpschonerJMX {
         cal.set(Calendar.MILLISECOND, 0);
 
         final ExecutorService exec = Executors.newSingleThreadExecutor();
-        exec.submit(new Runnable() {
-            @Override
-            public void run() {
-                try (MDCCloser verwerkingCloser = MDC.startVerwerking()) {
-                    opschonerService.opschonenProcessen(new Timestamp(cal.getTimeInMillis()), aantalUren);
-                }
-            }
-        });
+        exec.submit(() -> MDCProcessor.startVerwerking().run(() -> opschonerService.opschonenProcessen(new Timestamp(cal.getTimeInMillis()), aantalUren)));
     }
 }

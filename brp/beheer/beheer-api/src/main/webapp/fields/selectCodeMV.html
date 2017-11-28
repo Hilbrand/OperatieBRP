@@ -1,5 +1,4 @@
-<div class="col-md-5 col-sm-8 col-xs-12">
-    <div ng-if="(!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly)">
+    <div id="{{kolom.id}}" ng-if="(!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly)">
         <div class="extratop">{{geselecteerdeOptie}}</div>
     </div>
     <div ng-if="!((!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly))">
@@ -9,7 +8,7 @@
                    thema="bootstrap"
                    ng-required="{{kolom.required}}">
             <ui-select-match id="{{kolom.id}}_match" allow-clear>{{$select.selected.naamMannelijk + '/' + $select.selected.naamVrouwelijk}}</ui-select-match>
-            <ui-select-choices repeat="item.iD as item in items | orderBy: 'code' | filter: $select.search">
+            <ui-select-choices repeat="item.id as item in items | orderBy: 'code' | filter: $select.search">
                 <div ng-bind-html="item.code + ' - ' + item.naamMannelijk + '/' + item.naamVrouwelijk | highlight: $select.search"></div>
             </ui-select-choices>
         </ui-select>
@@ -17,4 +16,3 @@
             <span ng-show="editForm[kolom.id].$error.required">Dit veld is verplicht</span>
         </div>
     </div>
-</div>

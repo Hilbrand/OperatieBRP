@@ -25,8 +25,16 @@ import org.springframework.stereotype.Component;
 @Component("foutafhandelingMaakPfAction")
 public final class MaakPfAction implements SpringAction {
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakPfAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -45,14 +53,11 @@ public final class MaakPfAction implements SpringAction {
             pfBericht = new Pf03Bericht(bericht.getMessageId());
         }
 
-        pfBericht.setBronGemeente(bericht.getDoelGemeente());
-        pfBericht.setDoelGemeente(bericht.getBronGemeente());
+        pfBericht.setBronPartijCode(bericht.getDoelPartijCode());
+        pfBericht.setDoelPartijCode(bericht.getBronPartijCode());
 
         final Map<String, Object> result = new HashMap<>();
-        // Bewaar met kanaal omdat we dit bericht *VOOR* het versturen al weer moeten lezen (voor de Vb01)
         result.put(FoutafhandelingConstants.BERICHT_PF, berichtenDao.bewaarBericht(pfBericht));
-        result.put(FoutafhandelingConstants.INDICATIE_VB01, pfBericht instanceof Pf03Bericht);
-
         return result;
     }
 }

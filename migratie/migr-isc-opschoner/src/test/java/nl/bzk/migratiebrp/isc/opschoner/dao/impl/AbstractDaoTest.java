@@ -14,7 +14,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
-import org.h2.jdbc.JdbcSQLException;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -22,7 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:isc-opschoner.xml", "classpath:test-datasource.xml" })
+@ContextConfiguration({"classpath:isc-opschoner.xml", "classpath:test-datasource.xml"})
 // @Transactional(transactionManager = "opschonerTransactionManager")
 // @Rollback(true)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -34,83 +33,49 @@ public abstract class AbstractDaoTest {
 
     /**
      * Geef de waarde van connection.
-     *
      * @return connection
-     * @throws SQLException
-     *             the SQL exception
+     * @throws SQLException the SQL exception
      */
     protected Connection getConnection() throws SQLException {
         return datasource.getConnection();
     }
 
     /**
-     * Geeft het resultaat van de query terug. De methode gaat er vanuit dat de query het verwachte class type
-     * teruggeeft.
-     *
-     * @param query
-     *            De count query.
-     * @param <T>
-     *            Type object dat terug wordt verwacht.
+     * Geeft het resultaat van de query terug. De methode gaat er vanuit dat de query het verwachte
+     * class type teruggeeft.
+     * @param query De count query.
+     * @param <T> Type object dat terug wordt verwacht.
      * @return Het resultaat van de query.
-     * @throws SQLException
-     *             In het geval iets mis gaat.
+     * @throws SQLException In het geval iets mis gaat.
      */
     protected <T> T geefQueryResultaat(final String query, final Class<T> clazz) throws SQLException {
-        final ResultSet resultSet = getConnection().createStatement().executeQuery(query);
-        resultSet.next();
-
-        try {
-
-            final T resultaat = clazz.cast(resultSet.getObject(1));
-
-            return resultaat;
-        } catch (final JdbcSQLException exceptie) {
-
-            if (!exceptie.getMessage().contains("No data is available")) {
-                throw exceptie;
+        try (final ResultSet resultSet = getConnection().createStatement().executeQuery(query)) {
+            if (resultSet.next() == false) {
+                // resultSet is after last row, so result didn't contain any records
+                return null;
+            } else {
+                final T resultaat = clazz.cast(resultSet.getObject(1));
+                return resultaat;
             }
-
-            return null;
-        } finally {
-
-            resultSet.close();
-
         }
     }
 
     /**
-     * Geeft het lijst resultaat van de query terug. De methode gaat er vanuit dat de query een lijst van het verwachte
-     * class type teruggeeft.
-     *
-     * @param query
-     *            De count query.
-     * @param <T>
-     *            Type object dat als lijst terug wordt verwacht.
+     * Geeft het lijst resultaat van de query terug. De methode gaat er vanuit dat de query een
+     * lijst van het verwachte class type teruggeeft.
+     * @param query De count query.
+     * @param <T> Type object dat als lijst terug wordt verwacht.
      * @return Het resultaat van de query.
-     * @throws SQLException
-     *             In het geval iets mis gaat.
+     * @throws SQLException In het geval iets mis gaat.
      */
     protected <T> List<T> geefQueryLijstResultaat(final String query, final Class<T> clazz) throws SQLException {
-        final ResultSet resultSet = getConnection().createStatement().executeQuery(query);
 
         final List<T> resultaat = new ArrayList<>();
 
-        try {
-            resultSet.next();
-
-            do {
+        try (final ResultSet resultSet = getConnection().createStatement().executeQuery(query)) {
+            while (resultSet.next()) {
                 resultaat.add(clazz.cast(resultSet.getObject(1)));
-            } while (resultSet.next());
-
-        } catch (final JdbcSQLException exceptie) {
-
-            if (!exceptie.getMessage().contains("No data is available")) {
-                throw exceptie;
             }
-        } finally {
-
-            resultSet.close();
-
         }
 
         return resultaat;

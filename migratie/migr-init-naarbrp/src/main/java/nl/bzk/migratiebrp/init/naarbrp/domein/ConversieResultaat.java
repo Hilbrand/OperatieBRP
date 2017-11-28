@@ -11,19 +11,15 @@ package nl.bzk.migratiebrp.init.naarbrp.domein;
  */
 public enum ConversieResultaat {
     /**
-     * conversie klaar, resultaat OK.
-     */
-    OK,
-    /**
-     * conversie klaar, resultaat niet OK.
-     */
-    NOK,
-    /**
      * bericht klaar voor verzending.
      */
     TE_VERZENDEN,
     /**
+     * bericht is klaar gemaakt voor verzending maar nog niet verzondern.
+     */
+    IN_VERZENDING,
+    /**
      * bericht verzonden, wacht op resultaat van conversie.
      */
-    VERZONDEN
+    VERZONDEN;
 }

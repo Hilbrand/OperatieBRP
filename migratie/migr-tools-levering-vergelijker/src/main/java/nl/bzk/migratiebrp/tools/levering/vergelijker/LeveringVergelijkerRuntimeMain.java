@@ -6,13 +6,14 @@
 
 package nl.bzk.migratiebrp.tools.levering.vergelijker;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.job.CombinatiesJob;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.job.KopieerGbavJob;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.job.LaadBrpJob;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.job.LaadGbavJob;
 import nl.bzk.migratiebrp.tools.levering.vergelijker.job.LeveringVergelijkerJob;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -28,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public final class LeveringVergelijkerRuntimeMain {
 
-    private static final String[] SPRING_CONFIG = {"classpath:levering-vergelijker-beans.xml" };
+    private static final String[] SPRING_CONFIG = {"classpath:levering-vergelijker-beans.xml"};
     private static final Options OPTIONS = getOptions();
 
     private static final String OPTION_LAAD_GBAV_BERICHTEN = "laadGbav";
@@ -48,9 +49,7 @@ public final class LeveringVergelijkerRuntimeMain {
 
     /**
      * Main methode, geen commandline argumenten worden verwerkt.
-     *
-     * @param args
-     *            De meegegeven commandline argumenten.
+     * @param args De meegegeven commandline argumenten.
      */
     public static void main(final String... args) {
         LOG.info("Application starting");
@@ -115,7 +114,6 @@ public final class LeveringVergelijkerRuntimeMain {
 
     /**
      * Geeft de beschikbare opties.
-     *
      * @return Options
      */
     private static Options getOptions() {

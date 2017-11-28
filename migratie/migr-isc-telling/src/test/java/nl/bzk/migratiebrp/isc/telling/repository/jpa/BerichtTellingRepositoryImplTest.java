@@ -13,13 +13,11 @@ import nl.bzk.migratiebrp.isc.telling.entiteit.BerichtTelling;
 import nl.bzk.migratiebrp.isc.telling.repository.BerichtTellingRepository;
 import nl.bzk.migratiebrp.isc.telling.util.DBUnit.InsertBefore;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class BerichtTellingRepositoryImplTest extends AbstractDatabaseTest {
 
-    private static final String KANAAL = "VOSPG";
+    private static final String KANAAL = "VOISC";
     private static final String GELDIG_BERICHT_TYPE = "La01";
     private static final String ONGELDIG_BERICHT_TYPE = "If01";
     private static final Timestamp GELDIGE_DATUM = new Timestamp(System.currentTimeMillis());

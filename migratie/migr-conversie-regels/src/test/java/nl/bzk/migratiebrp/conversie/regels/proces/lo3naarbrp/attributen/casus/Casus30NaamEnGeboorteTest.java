@@ -35,20 +35,20 @@ public class Casus30NaamEnGeboorteTest extends AbstractCasusTest {
     private final List<Lo3Categorie<Lo3PersoonInhoud>> categorieen = new ArrayList<>();
 
     private final BrpSamengesteldeNaamInhoud brpInhoudPiet = new BrpSamengesteldeNaamInhoud(null, new BrpString("Piet"), null, null, null, new BrpString(
-        JANSEN), new BrpBoolean(false, null), new BrpBoolean(true, null));
+            JANSEN), new BrpBoolean(false, null), new BrpBoolean(true, null));
     private final BrpSamengesteldeNaamInhoud brpInhoudKlaas = new BrpSamengesteldeNaamInhoud(
-        null,
-        new BrpString("Klaas"),
-        null,
-        null,
-        null,
-        new BrpString(JANSEN),
-        new BrpBoolean(false, null),
-        new BrpBoolean(true, null));
+            null,
+            new BrpString("Klaas"),
+            null,
+            null,
+            null,
+            new BrpString(JANSEN),
+            new BrpBoolean(false, null),
+            new BrpBoolean(true, null));
     private final BrpSamengesteldeNaamInhoud brpInhoudJan = new BrpSamengesteldeNaamInhoud(null, new BrpString("Jan"), null, null, null, new BrpString(
-        JANSEN), new BrpBoolean(false, null), new BrpBoolean(true, null));
+            JANSEN), new BrpBoolean(false, null), new BrpBoolean(true, null));
     private final BrpSamengesteldeNaamInhoud brpInhoudHenk = new BrpSamengesteldeNaamInhoud(null, new BrpString("Henk"), null, null, null, new BrpString(
-        JANSEN), new BrpBoolean(false, null), new BrpBoolean(true, null));
+            JANSEN), new BrpBoolean(false, null), new BrpBoolean(true, null));
 
     private final Lo3PersoonInhoud lo3PietRdam = buildPersoonMetNaamEnGeboorte("Piet", JANSEN, 20000101, RDAM);
     private final Lo3PersoonInhoud lo3PietAdam = buildPersoonMetNaamEnGeboorte("Piet", JANSEN, 20000101, ADAM);

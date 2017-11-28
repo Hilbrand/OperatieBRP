@@ -5,7 +5,7 @@
  */
 
 /**
- * 
+ *
  */
 package nl.bzk.migratiebrp.ggo.viewer.domein.protocollering.entity;
 

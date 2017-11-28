@@ -7,9 +7,11 @@
 package nl.bzk.migratiebrp.tools.amlezer;
 
 import nl.bzk.migratiebrp.voisc.database.entities.Mailbox;
-import nl.bzk.migratiebrp.voisc.spd.MailboxClient;
+import nl.bzk.migratiebrp.voisc.mailbox.client.Connection;
+import nl.bzk.migratiebrp.voisc.mailbox.client.MailboxClient;
 import nl.bzk.migratiebrp.voisc.spd.exception.SpdProtocolException;
 import nl.bzk.migratiebrp.voisc.spd.exception.VoaException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -24,11 +26,13 @@ public class MailboxVerwerkerTest {
     private MailboxClient mailboxServerProxy;
     private BerichtCallback berichtCallback;
     private Mailbox mailbox;
+    private Connection mailboxConnection;
 
     @Before
     public void setup() {
         mailboxServerProxy = Mockito.mock(MailboxClient.class);
         berichtCallback = Mockito.mock(BerichtCallback.class);
+        mailboxConnection = Mockito.mock(Connection.class);
         mailbox = new Mailbox();
 
         subject = new MailboxVerwerker();
@@ -37,26 +41,28 @@ public class MailboxVerwerkerTest {
 
     @Test
     public void testVoaException() throws Exception {
-        Mockito.doThrow(VoaException.class).when(mailboxServerProxy).logOn(mailbox);
-        Mockito.doThrow(SpdProtocolException.class).when(mailboxServerProxy).logOff();
+        Mockito.when(mailboxServerProxy.connect()).thenReturn(mailboxConnection);
+        Mockito.doThrow(VoaException.class).when(mailboxServerProxy).logOn(mailboxConnection, mailbox);
+        Mockito.doThrow(SpdProtocolException.class).when(mailboxServerProxy).logOff(mailboxConnection);
 
         subject.verwerkBerichten(mailbox, berichtCallback);
 
         Mockito.verify(mailboxServerProxy).connect();
-        Mockito.verify(mailboxServerProxy).logOn(mailbox);
-        Mockito.verify(mailboxServerProxy).logOff();
+        Mockito.verify(mailboxServerProxy).logOn(mailboxConnection, mailbox);
+        Mockito.verify(mailboxServerProxy).logOff(mailboxConnection);
         Mockito.verifyNoMoreInteractions(mailboxServerProxy);
     }
 
     @Test
     public void testBerichtCallbackException() throws Exception {
-        Mockito.doThrow(BerichtCallbackException.class).when(mailboxServerProxy).logOn(mailbox);
+        Mockito.when(mailboxServerProxy.connect()).thenReturn(mailboxConnection);
+        Mockito.doThrow(BerichtCallbackException.class).when(mailboxServerProxy).logOn(mailboxConnection, mailbox);
 
         subject.verwerkBerichten(mailbox, berichtCallback);
 
         Mockito.verify(mailboxServerProxy).connect();
-        Mockito.verify(mailboxServerProxy).logOn(mailbox);
-        Mockito.verify(mailboxServerProxy).logOff();
+        Mockito.verify(mailboxServerProxy).logOn(mailboxConnection, mailbox);
+        Mockito.verify(mailboxServerProxy).logOff(mailboxConnection);
         Mockito.verifyNoMoreInteractions(mailboxServerProxy);
     }
 }

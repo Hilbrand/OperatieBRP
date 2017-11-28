@@ -1,34 +1,29 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.controllers.stamgegevens.autaut;
 
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Leveringsautorisatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ToegangLeveringsAutorisatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ToegangLeveringsautorisatieHistorie;
 import nl.bzk.brp.beheer.webapp.configuratie.ControllerConstants;
 import nl.bzk.brp.beheer.webapp.controllers.AbstractHistorieVerwerker;
 import nl.bzk.brp.beheer.webapp.controllers.AbstractReadWriteController;
 import nl.bzk.brp.beheer.webapp.controllers.ErrorHandler.NotFoundException;
-import nl.bzk.brp.beheer.webapp.controllers.HistorieVerwerker;
-import nl.bzk.brp.beheer.webapp.controllers.VergelijkingUtil;
 import nl.bzk.brp.beheer.webapp.controllers.query.EqualPredicateBuilderFactory;
 import nl.bzk.brp.beheer.webapp.controllers.query.Filter;
 import nl.bzk.brp.beheer.webapp.controllers.query.IntegerValueAdapter;
-import nl.bzk.brp.beheer.webapp.controllers.query.ReferenceValueAdapter;
 import nl.bzk.brp.beheer.webapp.repository.ReadWriteRepository;
 import nl.bzk.brp.beheer.webapp.repository.ReadonlyRepository;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumTijdAttribuut;
-import nl.bzk.brp.model.beheer.autaut.HisToegangLeveringsautorisatie;
-import nl.bzk.brp.model.beheer.autaut.Leveringsautorisatie;
-import nl.bzk.brp.model.beheer.autaut.ToegangLeveringsautorisatie;
-import nl.bzk.brp.model.beheer.kern.Partij;
-import nl.bzk.brp.model.beheer.kern.PartijRol;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.bzk.brp.beheer.webapp.repository.stamgegevens.kern.PartijRolRepository;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,115 +32,81 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = ControllerConstants.TOEGANGABONNEMENT_URI)
-public final class ToegangLeveringsautorisatieController extends AbstractReadWriteController<ToegangLeveringsautorisatie, Integer> {
+public final class ToegangLeveringsautorisatieController extends AbstractReadWriteController<ToegangLeveringsAutorisatie, Integer> {
 
     /**
      * Parameter: filter op abonnement.
      */
-    public static final String PARAMETER_FILTER_LEVERINGSAUTORISATIE = "leveringsautorisatie";
+    static final String PARAMETER_FILTER_LEVERINGSAUTORISATIE = "leveringsautorisatie";
 
     private static final String LEVERINGSAUTORISATIE = PARAMETER_FILTER_LEVERINGSAUTORISATIE;
-    private static final String PARTIJ = "partij";
-    private static final List<String> SORTERINGEN = Arrays.asList(PARTIJ);
+    private static final String PARTIJ = "geautoriseerde";
+    private static final String DATUM_INGANG = "datumIngang";
+    private static final String DATUM_EINDE = "datumEinde";
+    private static final List<String> SORTERINGEN = Arrays.asList(PARTIJ, DATUM_INGANG, DATUM_EINDE);
 
     private final ReadonlyRepository<Leveringsautorisatie, Integer> leveringsautorisatieRepository;
 
-    @Autowired
-    private ReadonlyRepository<Partij, Short> partijRepository;
-
-    @Autowired
-    private ReadonlyRepository<PartijRol, Integer> partijRolRepository;
+    private final ReadonlyRepository<Partij, Short> partijRepository;
+    private final PartijRolRepository partijRolRepository;
 
     /**
      * Constructor voor LeveringsautoriteitController.
-     *
      * @param repository repo
      * @param leveringsautorisatieRepository repo voor leveringsautorisatie
+     * @param partijRepository repo voor partij
+     * @param partijRolRepository repo voor partijrol
      */
-    @Autowired
+    @Inject
     public ToegangLeveringsautorisatieController(
-            final ReadWriteRepository<ToegangLeveringsautorisatie, Integer> repository,
-            final ReadonlyRepository<Leveringsautorisatie, Integer> leveringsautorisatieRepository)
-    {
+            final ReadWriteRepository<ToegangLeveringsAutorisatie, Integer> repository,
+            final ReadonlyRepository<Leveringsautorisatie, Integer> leveringsautorisatieRepository, final ReadonlyRepository<Partij, Short> partijRepository,
+            final PartijRolRepository partijRolRepository) {
         super(repository,
-                Arrays.<Filter<?>>asList(new Filter<>(
-                        LEVERINGSAUTORISATIE,
-                        new ReferenceValueAdapter<>(new IntegerValueAdapter(), leveringsautorisatieRepository),
-                        new EqualPredicateBuilderFactory(LEVERINGSAUTORISATIE))),
-                Arrays.<HistorieVerwerker<ToegangLeveringsautorisatie, ?>>asList(new HisToegangLeveringsautorisatieVerwerker()),
+                Collections.singletonList(
+                        new Filter<>(LEVERINGSAUTORISATIE, new IntegerValueAdapter(), new EqualPredicateBuilderFactory(LEVERINGSAUTORISATIE))),
+                Collections.singletonList(new ToegangLeveringsautorisatieHistorieVerwerker()),
                 SORTERINGEN);
         this.leveringsautorisatieRepository = leveringsautorisatieRepository;
+        this.partijRepository = partijRepository;
+        this.partijRolRepository = partijRolRepository;
     }
 
     @Override
-    protected void wijzigObjectVoorOpslag(final ToegangLeveringsautorisatie item) throws NotFoundException {
-        // Abonnement niet updaten via het toegangabonnement (laden via id)
-        if (item.getLeveringsautorisatie() != null && item.getLeveringsautorisatie().getID() != null) {
-            item.setLeveringsautorisatie(leveringsautorisatieRepository.getOne(item.getLeveringsautorisatie().getID()));
-        }
+    protected void wijzigObjectVoorOpslag(final ToegangLeveringsAutorisatie item) throws NotFoundException {
+        getReadonlyTransactionTemplate().execute(status -> {
+            // Abonnement niet updaten via het toegangabonnement (laden via id)
+            item.setLeveringsautorisatie(leveringsautorisatieRepository.getOne(item.getLeveringsautorisatie().getId()));
 
-        // Geautoriseerde niet updaten via het toegangabonnement (laden via id)
-        if (item.getGeautoriseerde() != null && item.getGeautoriseerde().getID() != null) {
-            item.setGeautoriseerde(partijRolRepository.getOne(item.getGeautoriseerde().getID()));
-        }
+            // Geautoriseerde niet updaten via het toegangabonnement (laden via id)
+            item.setGeautoriseerde(partijRolRepository.getOne(item.getGeautoriseerde().getId()));
 
-        // Ondertekenaar niet updaten via het toegangabonnement (laden via id)
-        if (item.getOndertekenaar() != null && item.getOndertekenaar().getID() != null) {
-            item.setOndertekenaar(partijRepository.getOne(item.getOndertekenaar().getID()));
-        }
+            // Ondertekenaar niet updaten via het toegangabonnement (laden via id)
+            if (item.getOndertekenaar() != null && item.getOndertekenaar().getId() != null) {
+                item.setOndertekenaar(partijRepository.getOne(item.getOndertekenaar().getId()));
+            }
 
-        // Transporteur niet updaten via het toegangabonnement (laden via id)
-        if (item.getTransporteur() != null && item.getTransporteur().getID() != null) {
-            item.setTransporteur(partijRepository.getOne(item.getTransporteur().getID()));
-        }
-
+            // Transporteur niet updaten via het toegangabonnement (laden via id)
+            if (item.getTransporteur() != null && item.getTransporteur().getId() != null) {
+                item.setTransporteur(partijRepository.getOne(item.getTransporteur().getId()));
+            }
+            return null;
+        });
     }
 
     /**
      * Dienst historie verwerker.
      */
-    public static final class HisToegangLeveringsautorisatieVerwerker
-            extends AbstractHistorieVerwerker<ToegangLeveringsautorisatie, HisToegangLeveringsautorisatie>
-    {
-
+    static final class ToegangLeveringsautorisatieHistorieVerwerker
+            extends AbstractHistorieVerwerker<ToegangLeveringsAutorisatie, ToegangLeveringsautorisatieHistorie> {
         @Override
-        public HisToegangLeveringsautorisatie maakHistorie(final ToegangLeveringsautorisatie item) {
-            // Controle inhoudelijk leeg
-            if (item.getDatumIngang() == null && item.getDatumEinde() == null) {
-                return null;
-            }
-
-            final HisToegangLeveringsautorisatie historie = new HisToegangLeveringsautorisatie();
-
-            // A-laag
-            historie.setToegangLeveringsautorisatie(item);
-
-            // Gegevens
-            historie.setDatumIngang(item.getDatumIngang());
-            historie.setDatumEinde(item.getDatumEinde());
-
-            // Historie
-            historie.setDatumTijdRegistratie(new DatumTijdAttribuut(new Date()));
-
-            return historie;
+        public Class<ToegangLeveringsautorisatieHistorie> historieClass() {
+            return ToegangLeveringsautorisatieHistorie.class;
         }
 
         @Override
-        public boolean isHistorieInhoudelijkGelijk(final HisToegangLeveringsautorisatie nieuweHistorie, final HisToegangLeveringsautorisatie actueleRecord) {
-            return VergelijkingUtil.isEqual(nieuweHistorie.getDatumIngang(), actueleRecord.getDatumIngang())
-                    && VergelijkingUtil.isEqual(nieuweHistorie.getDatumEinde(), actueleRecord.getDatumEinde());
-        }
-
-        @Override
-        public Set<HisToegangLeveringsautorisatie> geefHistorie(final ToegangLeveringsautorisatie item) {
-            return item.getHisToegangLeveringsautorisatieLijst();
-        }
-
-        @Override
-        public void kopieerHistorie(final ToegangLeveringsautorisatie item, final ToegangLeveringsautorisatie managedItem) {
-            managedItem.setDatumIngang(item.getDatumIngang());
-            managedItem.setDatumEinde(item.getDatumEinde());
+        public Class<ToegangLeveringsAutorisatie> entiteitClass() {
+            return ToegangLeveringsAutorisatie.class;
         }
     }
 }
-

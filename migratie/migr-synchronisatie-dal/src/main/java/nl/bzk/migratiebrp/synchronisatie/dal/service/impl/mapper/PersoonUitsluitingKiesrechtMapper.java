@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonUitsluitingKiesrechtHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpUitsluitingKiesrechtInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonUitsluitingKiesrechtHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractPersoonHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
@@ -20,29 +20,22 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Onder
 /**
  * Mapper waarmee een {@link nl.bzk.migratiebrp.conversie.model.brp.BrpStapel <BrpUitsluitingKiesrechtInhoud>} gemapt
  * kan worden op een verzameling van
- * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonUitsluitingKiesrechtHistorie} en vice
+ * {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonUitsluitingKiesrechtHistorie} en vice
  * versa.
- * 
  */
 public final class PersoonUitsluitingKiesrechtMapper extends
-        AbstractPersoonHistorieMapperStrategie<BrpUitsluitingKiesrechtInhoud, PersoonUitsluitingKiesrechtHistorie>
-{
+        AbstractPersoonHistorieMapperStrategie<BrpUitsluitingKiesrechtInhoud, PersoonUitsluitingKiesrechtHistorie> {
 
     /**
      * Maakt een PersoonUitsluitingKiesrechtMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonUitsluitingKiesrechtMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -58,15 +51,6 @@ public final class PersoonUitsluitingKiesrechtMapper extends
      * {@inheritDoc}
      */
     @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonUitsluitingKiesrechtHistorie historie, final Persoon persoon) {
-        persoon.setIndicatieUitsluitingKiesrecht(historie.getIndicatieUitsluitingKiesrecht());
-        persoon.setDatumVoorzienEindeUitsluitingKiesrecht(historie.getDatumVoorzienEindeUitsluitingKiesrecht());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected PersoonUitsluitingKiesrechtHistorie mapHistorischeGroep(final BrpUitsluitingKiesrechtInhoud groepInhoud, final Persoon persoon) {
         final PersoonUitsluitingKiesrechtHistorie result;
         result = new PersoonUitsluitingKiesrechtHistorie(persoon, BrpBoolean.unwrap(groepInhoud.getIndicatieUitsluitingKiesrecht()));
@@ -76,9 +60,9 @@ public final class PersoonUitsluitingKiesrechtMapper extends
         // onderzoek
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getIndicatieUitsluitingKiesrecht(), Element.PERSOON_UITSLUITINGKIESRECHT_INDICATIE);
         getOnderzoekMapper().mapOnderzoek(
-            result,
-            groepInhoud.getDatumVoorzienEindeUitsluitingKiesrecht(),
-            Element.PERSOON_UITSLUITINGKIESRECHT_DATUMVOORZIENEINDE);
+                result,
+                groepInhoud.getDatumVoorzienEindeUitsluitingKiesrecht(),
+                Element.PERSOON_UITSLUITINGKIESRECHT_DATUMVOORZIENEINDE);
         return result;
     }
 }

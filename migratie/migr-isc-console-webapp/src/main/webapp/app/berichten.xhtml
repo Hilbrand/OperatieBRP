@@ -23,10 +23,11 @@
     <ga:parameter name="doel" target="#{filter_doel}" default="" />
     <ga:parameter name="type" target="#{filter_type}" default="" />
     <ga:parameter name="berichtId" target="#{filter_berichtid}" default="" />
+    <ga:parameter name="processInstanceId" target="#{filter_processInstanceId}" default="" />
     <ga:parameter name="correlatieId" target="#{filter_correlatieid}" default="" />
     <mig:berichtenFilter target="#{berichtenList_filter}" kanaal="#{filter_kanaal}" richting="#{filter_richting}"
         bron="#{filter_bron}" doel="#{filter_doel}" type="#{filter_type}" berichtId="#{filter_berichtid}"
-        correlatieId="#{filter_correlatieid}"
+        processInstanceId="#{filter_processInstanceId}" correlatieId="#{filter_correlatieid}"
      />
 
     <!-- paginering -->

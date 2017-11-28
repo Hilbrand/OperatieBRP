@@ -6,13 +6,12 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP DienstBundelGroepAttribuutInhoud.
@@ -26,19 +25,17 @@ public final class BrpDienstbundelGroepAttribuutInhoud extends AbstractBrpGroepI
 
     /**
      * Maak een BrpDienstBundelGroepAttribuutInhoud object.
-     *
-     * @param historieAttribuutId
-     *            historieAttribuutId
+     * @param historieAttribuutId historieAttribuutId
      */
     public BrpDienstbundelGroepAttribuutInhoud(@Element(name = "attr", required = false) final Integer historieAttribuutId) {
         super();
         this.historieAttribuutId = historieAttribuutId;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -46,9 +43,8 @@ public final class BrpDienstbundelGroepAttribuutInhoud extends AbstractBrpGroepI
     }
 
     /**
-     * Geef de waarde van historieAttribuutId.
-     *
-     * @return historieAttribuutId
+     * Geef de waarde van historie attribuut id van BrpDienstbundelGroepAttribuutInhoud.
+     * @return de waarde van historie attribuut id van BrpDienstbundelGroepAttribuutInhoud
      */
     public Integer getHistorieAttribuutId() {
         return historieAttribuutId;

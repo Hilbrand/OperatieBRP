@@ -16,15 +16,10 @@ import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 public final class OngeldigBericht extends AbstractOngeldigBericht implements SyncBericht {
     private static final long serialVersionUID = 1L;
 
-    // private static final ToStringStyle TO_STRING_STYLE = new OverridenClassToStringStyle("Ongeldig(Sync)Bericht");
-
     /**
      * Constructor (gebruikt in ESB).
-     *
-     * @param bericht
-     *            bericht inhoud
-     * @param melding
-     *            melding
+     * @param bericht bericht inhoud
+     * @param melding melding
      */
     public OngeldigBericht(final String bericht, final String melding) {
         super(bericht, melding);

@@ -10,9 +10,6 @@ import java.io.File;
 
 public class ProcessenTest extends IscTestConfiguration {
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getInputFolder()
-     */
     @Override
     public File getInputFolder() {
         return new File("./test");

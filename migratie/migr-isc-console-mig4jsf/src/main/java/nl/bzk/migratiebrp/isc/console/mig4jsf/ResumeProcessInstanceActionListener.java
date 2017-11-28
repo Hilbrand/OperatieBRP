@@ -10,11 +10,7 @@ import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import nl.bzk.migratiebrp.isc.jbpm.command.client.CommandClient;
-import nl.bzk.migratiebrp.isc.jbpm.command.exception.CommandException;
 import nl.bzk.migratiebrp.isc.jbpm.command.impl.JbpmResumeCommand;
-import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringService;
-import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringServiceFactory;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.jsf.JbpmJsfContext;
 import org.jbpm.logging.log.MessageLog;
@@ -31,9 +27,7 @@ public final class ResumeProcessInstanceActionListener extends AbstractActionLis
 
     /**
      * Constructor.
-     *
-     * @param processInstanceExpression
-     *            process instance expression
+     * @param processInstanceExpression process instance expression
      */
     public ResumeProcessInstanceActionListener(final ValueExpression processInstanceExpression) {
         super("resumeProcessInstance");
@@ -41,7 +35,7 @@ public final class ResumeProcessInstanceActionListener extends AbstractActionLis
     }
 
     @Override
-    public void verwerkAction(final JbpmJsfContext context, final ActionEvent event) throws CommandException {
+    public void verwerkAction(final JbpmJsfContext context, final ActionEvent event) throws ActionException {
         final FacesContext facesContext = FacesContext.getCurrentInstance();
         final ELContext elContext = facesContext.getELContext();
 
@@ -52,10 +46,7 @@ public final class ResumeProcessInstanceActionListener extends AbstractActionLis
         }
 
         final JbpmResumeCommand jbpmResumeCommand = new JbpmResumeCommand(processInstance.getId());
-
-        final SpringService springService = (SpringService) context.getJbpmContext().getServiceFactory(SpringServiceFactory.SERVICE_NAME).openService();
-        final CommandClient commandClient = springService.getBean(CommandClient.class);
-        commandClient.executeCommand(jbpmResumeCommand);
+        executeCommand(context, jbpmResumeCommand);
 
         processInstance.getRootToken().addLog(new MessageLog("Beheerder heeft procesinstantie (id=" + processInstance.getId() + ") hervat."));
 

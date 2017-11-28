@@ -48,9 +48,7 @@ public enum OndersteundeFormatenEnum {
 
     /**
      * Constructor om de enumeratie te maken.
-     * 
-     * @param bestandExtensie
-     *            extensie van het bestand
+     * @param bestandExtensie extensie van het bestand
      */
     OndersteundeFormatenEnum(final String bestandExtensie) {
         this.bestandExtensie = bestandExtensie;
@@ -58,7 +56,6 @@ public enum OndersteundeFormatenEnum {
 
     /**
      * Geeft de extensies terug die ondersteund worden.
-     * 
      * @return een array met de ondersteunde extensies
      */
     public static String[] getBestandExtensies() {
@@ -71,9 +68,7 @@ public enum OndersteundeFormatenEnum {
 
     /**
      * Geef de enumeratie waarde voor de gegeven code.
-     *
-     * @param extensie
-     *            de extensie van een bestand
+     * @param extensie de extensie van een bestand
      * @return de enumeratie waarde, null als de extensie niet gevonden kan worden
      */
     public static OndersteundeFormatenEnum getByExtensie(final String extensie) {
@@ -82,7 +77,6 @@ public enum OndersteundeFormatenEnum {
 
     /**
      * Geeft de bijbehorende bestand extensie terug.
-     * 
      * @return de bestand extensie
      */
     public String getBestandExtensie() {

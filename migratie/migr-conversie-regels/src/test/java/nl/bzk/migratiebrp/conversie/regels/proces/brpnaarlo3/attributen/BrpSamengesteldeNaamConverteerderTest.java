@@ -8,10 +8,10 @@ package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
@@ -29,14 +29,24 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-import nl.bzk.migratiebrp.conversie.regels.AbstractComponentTest;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @Requirement(Requirements.CEL0230_BL02)
-public class BrpSamengesteldeNaamConverteerderTest extends AbstractComponentTest {
+@RunWith(MockitoJUnitRunner.class)
+public class BrpSamengesteldeNaamConverteerderTest {
 
-    @Inject
+    @Mock
+    private BrpAttribuutConverteerder attribuutConverteerder;
     private BrpPersoonConverteerder converteerder;
+
+    @Before
+    public void setUp() {
+        converteerder = new BrpPersoonConverteerder(attribuutConverteerder);
+    }
 
     @Test
     public void testScheidingstekenSpatie() {
@@ -63,23 +73,32 @@ public class BrpSamengesteldeNaamConverteerderTest extends AbstractComponentTest
         final BrpHistorie historie = new BrpHistorie(new BrpDatum(20010101, null), null, BrpDatumTijd.fromDatum(20010101, null), null, null);
         final BrpActie actieInhoud =
                 new BrpActie(
-                    1L,
-                    BrpSoortActieCode.CONVERSIE_GBA,
-                    BrpPartijCode.MIGRATIEVOORZIENING,
+                        1L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        BrpPartijCode.MIGRATIEVOORZIENING,
                         BrpDatumTijd.fromDatum(20010101, null),
-                    null,
-                    null,
-                    0,
-                    null);
+                        null,
+                        null,
+                        0,
+                        null);
         final BrpGroep<BrpGroepInhoud> groep = new BrpGroep<>(inhoud, historie, actieInhoud, null, null);
-        final List<BrpGroep<BrpGroepInhoud>> groepen = Arrays.asList(groep);
+        final List<BrpGroep<BrpGroepInhoud>> groepen = Collections.singletonList(groep);
         final BrpStapel<? extends BrpGroepInhoud> brpStapels = new BrpStapel<>(groepen);
         return converteerder.converteer(brpStapels).getLaatsteElement().getInhoud();
     }
 
     private BrpGroepInhoud maakInhoud(final Character scheidingsteken, final String voorvoegsel) {
-        return new BrpSamengesteldeNaamInhoud(null, new BrpString("Voornaam", null), BrpString.wrap(voorvoegsel, null), BrpCharacter.wrap(
-            scheidingsteken,
-            null), null, new BrpString("Geslachtsnaam", null), new BrpBoolean(false, null), new BrpBoolean(false, null));
+        final BrpString brpVoorvoegsel = BrpString.wrap(voorvoegsel, null);
+        final BrpCharacter brpScheidingsteken = BrpCharacter.wrap(scheidingsteken, null);
+        if (scheidingsteken == null) {
+            when(attribuutConverteerder.converteerVoorvoegsel(brpVoorvoegsel, brpScheidingsteken)).thenReturn(null);
+        } else if (Character.valueOf(' ').equals(scheidingsteken)) {
+            when(attribuutConverteerder.converteerVoorvoegsel(brpVoorvoegsel, brpScheidingsteken)).thenReturn(new Lo3String(voorvoegsel));
+        } else {
+            when(attribuutConverteerder.converteerVoorvoegsel(brpVoorvoegsel, brpScheidingsteken)).thenReturn(new Lo3String(voorvoegsel + scheidingsteken));
+        }
+
+        return new BrpSamengesteldeNaamInhoud(null, new BrpString("Voornaam", null), brpVoorvoegsel,
+                brpScheidingsteken, null, new BrpString("Geslachtsnaam", null), new BrpBoolean(false, null), new BrpBoolean(false, null));
     }
 }

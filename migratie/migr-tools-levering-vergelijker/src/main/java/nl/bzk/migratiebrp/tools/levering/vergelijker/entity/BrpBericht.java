@@ -21,7 +21,6 @@ import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
 
 /**
  * Persistent klasse voor de berichten database tabel in BRP.
- *
  */
 @Entity
 @Table(name = "mig_bericht")
@@ -60,10 +59,10 @@ public class BrpBericht implements Bericht, Serializable {
     private Long procesInstantieId;
 
     @Column(name = "verzendende_partij", nullable = true, insertable = false, updatable = false)
-    private String bronGemeente;
+    private String bronPartijCode;
 
     @Column(name = "ontvangende_partij", nullable = true, insertable = false, updatable = false)
-    private String doelGemeente;
+    private String doelPartijCode;
 
     @Column(name = "actie", nullable = true, insertable = false, updatable = false)
     private String jbpmActie;
@@ -73,7 +72,6 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public final Long getId() {
@@ -82,9 +80,7 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public final void setId(final Long id) {
         this.id = id;
@@ -92,7 +88,6 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van naam.
-     *
      * @return naam
      */
     public final String getNaam() {
@@ -126,7 +121,6 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van tijdstip.
-     *
      * @return tijdstip
      */
     public final Timestamp getTijdstip() {
@@ -135,7 +129,6 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public final String getKanaal() {
@@ -144,7 +137,6 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van richting.
-     *
      * @return richting
      */
     public final Character getRichting() {
@@ -153,7 +145,6 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van message id.
-     *
      * @return message id
      */
     public final String getMessageId() {
@@ -162,7 +153,6 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van correlation id.
-     *
      * @return correlation id
      */
     public final String getCorrelationId() {
@@ -171,7 +161,6 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van proces instantie id.
-     *
      * @return proces instantie id
      */
     public final Long getProcesInstantieId() {
@@ -180,25 +169,22 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van bron gemeente.
-     *
      * @return bron gemeente
      */
-    public final String getBronGemeente() {
-        return bronGemeente;
+    public final String getBronPartijCode() {
+        return bronPartijCode;
     }
 
     /**
      * Geef de waarde van doel gemeente.
-     *
      * @return doel gemeente
      */
-    public final String getDoelGemeente() {
-        return doelGemeente;
+    public final String getDoelPartijCode() {
+        return doelPartijCode;
     }
 
     /**
      * Geef de waarde van jbpm actie.
-     *
      * @return jbpm actie
      */
     public final String getJbpmActie() {
@@ -207,7 +193,6 @@ public class BrpBericht implements Bericht, Serializable {
 
     /**
      * Geef de waarde van indicatie geteld.
-     *
      * @return indicatie geteld
      */
     public final Boolean getIndicatieGeteld() {

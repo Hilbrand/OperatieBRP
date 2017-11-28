@@ -10,10 +10,11 @@
     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
 <context:property-placeholder
-        location="classpath:datasource.properties,file:datasource.properties"
+        location="classpath:datasource.properties"
         ignore-resource-not-found="true" />
 
     <import resource="main-beans.xml"/>
+    <import resource="classpath:/test-dal-beans.xml"/>
 
     <beans>
         <!-- Configuratie voor beide profielen -->
@@ -67,8 +68,8 @@
     <beans profile="memoryDS">
         <!-- In memory profile -->
         <jdbc:embedded-database id="syncDalDataSource">
-            <jdbc:script location="classpath:sql/hsqldb/HSQLDB.sql" />
-            <jdbc:script location="classpath:sql/hsqldb/4_brp-migratie-tijdelijk.sql" />
+            <jdbc:script location="classpath:bmr/HSQLDB/HSQLDB.sql" encoding="UTF-8"/>
+            <jdbc:script location="classpath:bmr/HSQLDB/PENDING_BMR_CHANGES.sql" encoding="UTF-8"/>
         </jdbc:embedded-database>
 
         <bean id="syncDalEntityManagerFactory"
@@ -86,7 +87,9 @@
                     <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
                     <prop key="net.sf.ehcache.configurationResourceName">synchronisatie-dal-stamtabel-ehcache.xml</prop>
                     <prop key="hibernate.generate_statistics">false</prop>
-					<prop key="hibernate.transaction.jta.platform">nl.bzk.migratiebrp.synchronisatie.dal.repository.jta.AtomikosJtaPlatform</prop>
+                    <prop key="hibernate.transaction.jta.platform">
+                        nl.bzk.algemeenbrp.jta.AtomikosJtaPlatform
+                    </prop>
                     <!--<prop key="hibernate.hbm2ddl.auto">validate</prop>-->
                 </props>
             </property>
@@ -94,7 +97,7 @@
 
     </beans>
 
-    <beans profile="!memoryDS">
+    <beans profile="localDS">
         <bean id="syncDalDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
             <property name="driverClass" value="${jdbc.driverClassName:org.postgresql.Driver}"/>
             <property name="jdbcUrl" value="${jdbc.url:jdbc:postgresql://localhost/brp}"/>
@@ -123,7 +126,9 @@
                     <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
                     <prop key="net.sf.ehcache.configurationResourceName">synchronisatie-dal-stamtabel-ehcache.xml</prop>
                     <prop key="hibernate.generate_statistics">false</prop>
-                    <prop key="hibernate.transaction.jta.platform">nl.bzk.migratiebrp.synchronisatie.dal.repository.jta.AtomikosJtaPlatform</prop>
+                    <prop key="hibernate.transaction.jta.platform">
+                        nl.bzk.algemeenbrp.jta.AtomikosJtaPlatform
+                    </prop>
                     <!--<prop key="hibernate.hbm2ddl.auto">validate</prop>-->
                 </props>
             </property>

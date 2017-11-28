@@ -36,16 +36,11 @@ public final class ListJobsActionListener extends AbstractActionListener {
 
     /**
      * Constructor met expressie variabelen.
-     *
-     * @param pagerExpression
-     *            Expressie waarin de {@link PagerBean pager bean} staat.
-     * @param viewModeExpression
-     *            Expressie waarin de viewMode staat.
-     * @param targetExpression
-     *            Expressie waarin het resultaat komt te staan.
+     * @param pagerExpression Expressie waarin de {@link PagerBean pager bean} staat.
+     * @param viewModeExpression Expressie waarin de viewMode staat.
+     * @param targetExpression Expressie waarin het resultaat komt te staan.
      */
-    public ListJobsActionListener(final ValueExpression pagerExpression, final ValueExpression targetExpression, final ValueExpression viewModeExpression)
-    {
+    public ListJobsActionListener(final ValueExpression pagerExpression, final ValueExpression targetExpression, final ValueExpression viewModeExpression) {
         super("listJobs");
         this.pagerExpression = pagerExpression;
         this.targetExpression = targetExpression;

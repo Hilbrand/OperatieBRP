@@ -20,18 +20,16 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "listTasks", description = "Read a list of task instances from the database.",
         attributes = {@TldAttribute(name = "target", description = "An EL expression into which the task instance list should be stored.",
-                              required = true, deferredType = List.class),
-                      @TldAttribute(name = "includeEnded", description = "A flag specifying whether ended tasks should be included.",
-                              deferredType = boolean.class) })
+                required = true, deferredType = List.class),
+                @TldAttribute(name = "includeEnded", description = "A flag specifying whether ended tasks should be included.",
+                        deferredType = boolean.class)})
 public final class ListTasksHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute includeEndedTagAttribute;
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public ListTasksHandler(final TagConfig config) {
         super(config);
@@ -42,8 +40,8 @@ public final class ListTasksHandler extends AbstractHandler {
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new ListTasksActionListener(getValueExpression(includeEndedTagAttribute, ctx, Boolean.class), getValueExpression(
-            targetTagAttribute,
-            ctx,
-            List.class));
+                targetTagAttribute,
+                ctx,
+                List.class));
     }
 }

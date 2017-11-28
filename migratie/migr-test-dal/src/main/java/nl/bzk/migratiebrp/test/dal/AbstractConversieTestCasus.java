@@ -14,16 +14,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.LoggingContext;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lg01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
-import nl.bzk.migratiebrp.conversie.model.brp.util.BrpVergelijker;
 import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstException;
 import nl.bzk.migratiebrp.conversie.model.exceptions.PreconditieException;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -31,18 +34,16 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3Lg01BerichtWaarde;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConversieHook;
-import nl.bzk.migratiebrp.conversie.regels.proces.ConversieStap;
 import nl.bzk.migratiebrp.conversie.regels.proces.impl.ConverteerBrpNaarLo3ServiceImpl;
 import nl.bzk.migratiebrp.conversie.regels.proces.impl.ConverteerLo3NaarBrpServiceImpl;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.PreconditiesService;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.FingerPrint;
-import nl.bzk.migratiebrp.init.logging.model.domein.entities.VerschilAnalyseRegel;
+import nl.bzk.migratiebrp.init.logging.verschilanalyse.analyse.VergelijkResultaat;
 import nl.bzk.migratiebrp.init.logging.verschilanalyse.service.VerschilAnalyseService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.PersoonslijstPersisteerResultaat;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 import nl.bzk.migratiebrp.test.common.reader.Reader;
@@ -52,16 +53,14 @@ import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStatus;
 import nl.bzk.migratiebrp.test.common.sql.SqlUtil;
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkSql;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.LoggingContext;
-
+import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * Abstract conversie test casus met daarin methoden om bv van een Lo3 persoonslijst naar een BRP persoonslijst te
- * converteren.
+ * Abstract conversie test casus met daarin methoden om bv van een Lo3 persoonslijst naar een BRP
+ * persoonslijst te converteren.
  */
 public abstract class AbstractConversieTestCasus extends TestCasus {
     /**
@@ -72,15 +71,11 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
     /**
      * Lege hook tbv conversie.
      */
-    protected static final ConversieHook NULL_HOOK = new ConversieHook() {
-        @Override
-        public void stap(final ConversieStap stap, final Object object) {
-            // Niets
-        }
+    private static final ConversieHook NULL_HOOK = (stap, object) -> {
+        // Niets
     };
 
     private static final Logger LOG = LoggerFactory.getLogger();
-    private static final boolean CONTROLEREN_RELATIES = false;
     private final Lo3PersoonslijstParser parser = new Lo3PersoonslijstParser();
     @Inject
     private Lo3SyntaxControle syntaxControle;
@@ -93,6 +88,8 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
     @Inject
     private BrpDalService brpDalService;
     @Inject
+    private BrpPersoonslijstService brpPersoonslijstService;
+    @Inject
     private ReaderFactory readerFactory;
     @Inject
     private VerschilAnalyseService verschilAnalyseService;
@@ -102,15 +99,10 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
 
     /**
      * Constructor van de casus.
-     *
-     * @param thema
-     *            thema van de casus
-     * @param naam
-     *            naam van de casus
-     * @param outputFolder
-     *            folder waar de output naar toe moet
-     * @param expectedFolder
-     *            folder waar de verwachte resultaten staan
+     * @param thema thema van de casus
+     * @param naam naam van de casus
+     * @param outputFolder folder waar de output naar toe moet
+     * @param expectedFolder folder waar de verwachte resultaten staan
      */
     protected AbstractConversieTestCasus(final String thema, final String naam, final File outputFolder, final File expectedFolder) {
         super(thema, naam, outputFolder, expectedFolder);
@@ -118,11 +110,9 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
 
     /**
      * Test de syntax en precondities, zonder suffix in de bestandsnamen.
-     *
-     * @param input
-     *            de waarden van de verschillende LO3 categorieen
-     * @return een {@link Pair} met daarin links een {@link Lo3Persoonslijst} gevuld met de opgegeven input en rechts de
-     *         {@link TestStap} met de resultaten van deze stap.
+     * @param input de waarden van de verschillende LO3 categorieen
+     * @return een {@link Pair} met daarin links een {@link Lo3Persoonslijst} gevuld met de opgegeven input en rechts de {@link TestStap} met de resultaten van
+     * deze stap.
      */
     protected final Pair<Lo3Persoonslijst, TestStap> testSyntaxPrecondities(final List<Lo3CategorieWaarde> input) {
         return testSyntaxPrecondities(input, null);
@@ -130,13 +120,10 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
 
     /**
      * Test de syntax en precondities, met evt. suffix in de bestandsnamen.
-     *
-     * @param input
-     *            de waarden van de verschillende LO3 categorieen
-     * @param suffix
-     *            suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
-     * @return een {@link Pair} met daarin links een {@link Lo3Persoonslijst} gevuld met de opgegeven input en rechts de
-     *         {@link TestStap} met de resultaten van deze stap.
+     * @param input de waarden van de verschillende LO3 categorieen
+     * @param suffix suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
+     * @return een {@link Pair} met daarin links een {@link Lo3Persoonslijst} gevuld met de opgegeven input en rechts de {@link TestStap} met de resultaten van
+     * deze stap.
      */
     protected final Pair<Lo3Persoonslijst, TestStap> testSyntaxPrecondities(final List<Lo3CategorieWaarde> input, final String suffix) {
         Lo3Persoonslijst lo3Pl = null;
@@ -177,11 +164,8 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
 
     /**
      * Test conversie lo3 naar brp, zonder suffix in de bestandsnamen.
-     *
-     * @param input
-     *            Lo3 Persoonslijst welke geconvertereerd moet worden
-     * @return een {@link Pair} met daarin links een {@link BrpPersoonslijst} en rechts de {@link TestStap} met de
-     *         resultaten van deze stap.
+     * @param input Lo3 Persoonslijst welke geconvertereerd moet worden
+     * @return een {@link Pair} met daarin links een {@link BrpPersoonslijst} en rechts de {@link TestStap} met de resultaten van deze stap.
      */
     protected final Pair<BrpPersoonslijst, TestStap> testLo3NaarBrp(final Lo3Persoonslijst input) {
         return testLo3NaarBrp(input, null);
@@ -189,13 +173,9 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
 
     /**
      * Test conversie lo3 naar brp, met mogelijk een suffix in de bestandsnamen.
-     *
-     * @param input
-     *            Lo3 Persoonslijst welke geconvertereerd moet worden
-     * @param suffix
-     *            suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
-     * @return een {@link Pair} met daarin links een {@link BrpPersoonslijst} en rechts de {@link TestStap} met de
-     *         resultaten van deze stap.
+     * @param input Lo3 Persoonslijst welke geconvertereerd moet worden
+     * @param suffix suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
+     * @return een {@link Pair} met daarin links een {@link BrpPersoonslijst} en rechts de {@link TestStap} met de resultaten van deze stap.
      */
     protected final Pair<BrpPersoonslijst, TestStap> testLo3NaarBrp(final Lo3Persoonslijst input, final String suffix) {
         LOG.info("Test converteer LO3 naar BRP ...");
@@ -203,6 +183,7 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
         TestStap testStap;
         try {
             brp = converteerLo3NaarBrpService.converteerLo3Persoonslijst(input, NULL_HOOK);
+            brp.sorteer();
             testStap = controleerBrpResultaat(suffix, brp, null, TestCasusOutputStap.STAP_BRP);
         } catch (final Exception e) {
             final Foutmelding fout = new Foutmelding("Fout tijdens converteren LO3 naar BRP.", e);
@@ -213,12 +194,8 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
         return new ImmutablePair<>(brp, testStap);
     }
 
-    private TestStap controleerBrpResultaat(
-        final String suffix,
-        final BrpPersoonslijst brp,
-        final BrpPersoonslijst controleBrpPersoonslijst,
-        final TestCasusOutputStap outputStap)
-    {
+    private TestStap controleerBrpResultaat(final String suffix, final BrpPersoonslijst brp, final BrpPersoonslijst controleBrpPersoonslijst,
+                                            final TestCasusOutputStap outputStap) {
         final TestStap testStap;
         final String htmlBrp = debugOutputXmlEnHtml(brp, outputStap, suffix);
         final BrpPersoonslijst verwachteBrpPersoonslijst = leesVerwachteBrpPersoonslijst(outputStap, suffix);
@@ -230,11 +207,13 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
             if (verwachteBrpPersoonslijst == null) {
                 basisPersoonslijst = controleBrpPersoonslijst;
             } else {
+                // Niet zeker of de verwachte persoonslijst al gesorteerd is opgeslagen, dus voor de zekerheid sorteren
                 basisPersoonslijst = verwachteBrpPersoonslijst;
+                basisPersoonslijst.sorteer();
             }
             final StringBuilder verschillenLog = new StringBuilder();
-            // TODO: Relaties komen momenteel uit de IST (aanzetten voor BOP STAP 4.3)
-            if (BrpVergelijker.vergelijkPersoonslijsten(verschillenLog, basisPersoonslijst, brp, CONTROLEREN_RELATIES, false)) {
+            if (VergelijkXml
+                    .vergelijkXmlNegeerActieId(basisPersoonslijst, brp, outputStap == TestCasusOutputStap.STAP_LEZEN, verschillenLog)) {
                 testStap = new TestStap(TestStatus.OK, null, htmlBrp, null);
             } else {
                 final Foutmelding fout = new Foutmelding("Vergelijking (brp)", "Inhoud is ongelijk (brp)", verschillenLog.toString());
@@ -269,65 +248,35 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
     }
 
     /**
-     * Test opslaan in BRP, zonder een suffix in de bestandsnaam.
-     *
-     * @param berichtWaarde
-     *            object met daarin de gegevens uit een lg01 bericht.
-     * @param input
-     *            de BrpPersoonlijst die opgeslagen moet worden
-     * @return een {@link Pair} met daarin links een {@link Long} wat het a-nummer bevat en rechts de {@link TestStap}
-     *         met de resultaten van deze stap.
-     */
-    protected final Pair<Long, TestStap> testOpslaanBrp(final Lo3Lg01BerichtWaarde berichtWaarde, final BrpPersoonslijst input) {
-        return testOpslaanBrp(berichtWaarde, input, null);
-    }
-
-    /**
      * Test opslaan in BRP, met mogelijk een suffix in de bestandsnamen.
-     *
-     * @param lo3Lg01BerichtWaarde
-     *            object met daarin de gegevens uit een lg01 bericht.
-     * @param input
-     *            de BrpPersoonlijst die opgeslagen moet worden
-     * @param suffix
-     *            suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
-     * @return een {@link Pair} met daarin links een anummer en rechts de {@link TestStap} met de resultaten van deze
-     *         stap.
+     * @param lo3Lg01BerichtWaarde object met daarin de gegevens uit een lg01 bericht.
+     * @param input de BrpPersoonlijst die opgeslagen moet worden
+     * @param suffix suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
+     * @param teOverschrijvenPersoonId het Id van de te overschrijven persoon
+     * @return een {@link Pair} met daarin links een persoon.id en rechts de {@link TestStap} met de resultaten van deze stap.
      */
-    protected final Pair<Long, TestStap> testOpslaanBrp(
-        final Lo3Lg01BerichtWaarde lo3Lg01BerichtWaarde,
-        final BrpPersoonslijst input,
-        final String suffix)
-    {
-        Long anummer = null;
+    private Pair<Long, TestStap> testOpslaanBrp(final Lo3Lg01BerichtWaarde lo3Lg01BerichtWaarde, final BrpPersoonslijst input,
+                                                   final Long teOverschrijvenPersoonId, final String suffix) {
+        Long persoonId = null;
         TestStap testStap = null;
         if (input != null) {
             LOG.info("Test opslaan in BRP ...");
             try {
                 // Opslaan in database
-                final Lo3Bericht lo3Bericht =
-                        new Lo3Bericht(
-                            "ConversieTestCasus",
-                            Lo3BerichtenBron.INITIELE_VULLING,
-                            new Timestamp(System.currentTimeMillis()),
-                            maakLg01String(lo3Lg01BerichtWaarde),
-                            true);
+                final Lo3Bericht lo3Bericht = new Lo3Bericht("ConversieTestCasus", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()),
+                        maakLg01String(lo3Lg01BerichtWaarde), true);
                 final PersoonslijstPersisteerResultaat persoonslijstPersisteerResultaat;
-                if (lo3Lg01BerichtWaarde != null && lo3Lg01BerichtWaarde.isAnummerWijziging()) {
-                    persoonslijstPersisteerResultaat =
-                            brpDalService.persisteerPersoonslijst(
-                                input,
-                                Long.valueOf(lo3Lg01BerichtWaarde.getOudAnummer()),
-                                lo3Lg01BerichtWaarde.isAnummerWijziging(),
-                                lo3Bericht);
+                if (teOverschrijvenPersoonId != null) {
+                    persoonslijstPersisteerResultaat = getBrpPersoonslijstService().persisteerPersoonslijst(input, teOverschrijvenPersoonId, lo3Bericht);
                 } else {
-                    persoonslijstPersisteerResultaat = brpDalService.persisteerPersoonslijst(input, lo3Bericht);
+                    persoonslijstPersisteerResultaat = getBrpPersoonslijstService().persisteerPersoonslijst(input, lo3Bericht);
                 }
+                setAdministratieveHandelingenAlsGeleverd(persoonslijstPersisteerResultaat);
 
                 testStap = new TestStap(TestStatus.OK);
 
                 // Juiste *iets* teruggeven om test door te laten lopen naar 'lezen'.
-                anummer = persoonslijstPersisteerResultaat.getPersoon().getAdministratienummer();
+                persoonId = persoonslijstPersisteerResultaat.getPersoon().getId();
             } catch (final Exception e) {
                 final Foutmelding fout = new Foutmelding("Fout tijdens opslaan BRP.", e);
                 final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_OPSLAAN, suffix);
@@ -335,27 +284,25 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
                 testStap = new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (opslaan)", htmlFout, null);
             }
         }
-        return new ImmutablePair<>(anummer, testStap);
+        return new ImmutablePair<>(persoonId, testStap);
+    }
+
+    private void setAdministratieveHandelingenAlsGeleverd(final PersoonslijstPersisteerResultaat persoonslijstPersisteerResultaat) {
+        for (final AdministratieveHandeling administratieveHandeling : persoonslijstPersisteerResultaat.getAdministratieveHandelingen()) {
+            new JdbcTemplate(syncDalDataSource).update("update kern.admhnd set statuslev = 4 where id = ?", administratieveHandeling.getId());
+        }
     }
 
     /**
      * Test lezen uit brp.
-     *
-     * @param input
-     *            anummer
-     * @param result
-     *            resultaat
-     * @param opgeslagenLijst
-     *            (optioneel) opgeslagen brp lijst om te vergelijken
+     * @param teLezenPersoonId anummer
+     * @param result resultaat
+     * @param opgeslagenLijst (optioneel) opgeslagen brp lijst om te vergelijken
      * @return brp
      */
-    private BrpPersoonslijst testLezenBrp(
-        final Long input,
-        final ConversieTestResultaat result,
-        final BrpPersoonslijst opgeslagenLijst,
-        final String suffix)
-    {
-        if (input == null) {
+    private BrpPersoonslijst testLezenBrp(final Long teLezenPersoonId, final ConversieTestResultaat result, final BrpPersoonslijst opgeslagenLijst,
+                                          final String suffix) {
+        if (teLezenPersoonId == null) {
             return null;
         }
         BrpPersoonslijst resultaat = null;
@@ -365,7 +312,8 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
         final TestCasusOutputStap stap = TestCasusOutputStap.STAP_LEZEN;
         try {
             // Opvragen uit database
-            resultaat = getBrpDalService().bevraagPersoonslijst(input);
+            resultaat = getBrpPersoonslijstService().bevraagPersoonslijstOpTechnischeSleutel(teLezenPersoonId);
+            resultaat.sorteer();
             testStap = controleerBrpResultaat(suffix, resultaat, opgeslagenLijst, stap);
         } catch (final Exception e) {
             final Foutmelding fout = new Foutmelding("Fout tijdens lezen BRP.", e);
@@ -378,20 +326,13 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
         return resultaat;
     }
 
-    /**
-     * Geef de waarde van brp dal service.
-     *
-     * @return de BRP DAL service die toegang biedt tot de BRP database
-     */
-    protected final BrpDalService getBrpDalService() {
-        return brpDalService;
+    private BrpPersoonslijstService getBrpPersoonslijstService() {
+        return brpPersoonslijstService;
     }
 
     /**
      * Controleert de opgegeven logging tegen de eventuele verwachte logging.
-     *
-     * @param logging
-     *            de logging die gecontroleerd moet worden
+     * @param logging de logging die gecontroleerd moet worden
      * @return een {@link TestStap} met de resultaten van deze stap.
      */
     protected final TestStap controleerLogging(final Logging logging) {
@@ -400,11 +341,8 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
 
     /**
      * Controleert de opgegeven logging tegen de eventuele verwachte logging.
-     *
-     * @param logging
-     *            de logging die gecontroleerd moet worden
-     * @param suffix
-     *            suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
+     * @param logging de logging die gecontroleerd moet worden
+     * @param suffix suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
      * @return een {@link TestStap} met de resultaten van deze stap.
      */
     protected final TestStap controleerLogging(final Logging logging, final String suffix) {
@@ -431,11 +369,8 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
 
     /**
      * Controleert de opgegeven verwerkingsmelding tegen de eventuele verwachte verwerkingsmelding.
-     *
-     * @param verwerkingsmelding
-     *            de logging die gecontroleerd moet worden
-     * @param suffix
-     *            suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
+     * @param verwerkingsmelding de logging die gecontroleerd moet worden
+     * @param suffix suffix die in de bestandsnaam voorkomt. Indien null, dan wordt er geen suffix gebruikt
      * @return een {@link TestStap} met de resultaten van deze stap.
      */
     protected final TestStap controleerKruimelpad(final String verwerkingsmelding, final String suffix) {
@@ -455,20 +390,17 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
                 final Foutmelding fout =
                         new Foutmelding("Vergelijking (verwerkingsmelding)", "Inhoud is ongelijk (verwerkingsmelding)", verschillenLog.toString());
                 final String htmlVerschillen = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_VERWERKINGSMELDING, suffix + SUFFIX_VERSCHILLEN);
-                testStap =
-                        new TestStap(TestStatus.NOK, "Er zijn inhoudelijke verschillen (verwerkingsmelding)", verwerkingsmeldingFilename, htmlVerschillen);
+                testStap = new TestStap(TestStatus.NOK, "Er zijn inhoudelijke verschillen (verwerkingsmelding)", verwerkingsmeldingFilename, htmlVerschillen);
             }
         }
         return testStap;
     }
 
     /**
-     * Test de database met de meegegeven lijst van queries, met mogelijk een suffix in de bestandsnamen.
-     *
-     * @param sqlQueryFiles
-     *            een lijst met {@link File} objecten met daarin de SQL-queries die uitgevoerd moeten worden.
-     * @return een {@link Map} als key de naam van het uitgevoerde query-bestand en als value een {@link TestStap}
-     *         -object met de resultaten.
+     * Test de database met de meegegeven lijst van queries, met mogelijk een suffix in de
+     * bestandsnamen.
+     * @param sqlQueryFiles een lijst met {@link File} objecten met daarin de SQL-queries die uitgevoerd moeten worden.
+     * @return een {@link Map} als key de naam van het uitgevoerde query-bestand en als value een {@link TestStap} -object met de resultaten.
      */
     protected final Map<String, TestStap> testSqlQueries(final List<File> sqlQueryFiles) {
         final Map<String, TestStap> results = new TreeMap<>();
@@ -511,10 +443,9 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
 
     /**
      * Retourneer de Lo3PersoonslijstParser aan subclasses.
-     *
      * @return de Lo3PersoonslijstParser
      */
-    protected final Lo3PersoonslijstParser getLo3PersoonslijstParser() {
+    private Lo3PersoonslijstParser getLo3PersoonslijstParser() {
         return parser;
     }
 
@@ -529,33 +460,17 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
     }
 
     /**
-     * Initialiseert de logging en parsede lijst van categorie waarden naar een Lo3Persoonslijst. Deze lijst wordt
-     * vervolgens weg geschreven naar XML/Html en Lg01 formaat.
-     *
-     * @param lo3CategorieWaarden
-     *            lijst met waarden per categorie
+     * Initialiseert de logging en parsede lijst van categorie waarden naar een Lo3Persoonslijst.
+     * Deze lijst wordt vervolgens weg geschreven naar XML/Html en Lg01 formaat.
+     * @param lo3CategorieWaarden lijst met waarden per categorie
      * @return HTML representatie van de LO3 Persoonslijst.
      */
-    protected final String initializeerLogging(final List<Lo3CategorieWaarde> lo3CategorieWaarden) {
-        return initializeerLogging(lo3CategorieWaarden, null);
-    }
-
-    /**
-     * Initialiseert de logging en parsede lijst van categorie waarden naar een Lo3Persoonslijst. Deze lijst wordt
-     * vervolgens weg geschreven naar XML/Html en Lg01 formaat.
-     *
-     * @param lo3CategorieWaarden
-     *            lijst met waarden per categorie
-     * @param id
-     *            id van de persoonslijst als er meer dan 1 persoonslijst geconverteerd gaat worden
-     * @return HTML representatie van de LO3 Persoonslijst.
-     */
-    protected final String initializeerLogging(final List<Lo3CategorieWaarde> lo3CategorieWaarden, final String id) {
+    protected String initializeerLogging(final List<Lo3CategorieWaarde> lo3CategorieWaarden) {
         final TestCasusOutputStap stap = TestCasusOutputStap.STAP_LO3;
         final Lo3Persoonslijst uncheckedPl = getLo3PersoonslijstParser().parse(lo3CategorieWaarden);
-        final String htmlBron = debugOutputXmlEnHtml(uncheckedPl, stap, id);
+        final String htmlBron = debugOutputXmlEnHtml(uncheckedPl, stap, null);
 
-        debugOutputLg01(uncheckedPl, stap, id);
+        debugOutputLg01(uncheckedPl, stap, null);
 
         SynchronisatieLogging.init();
         Logging.initContext();
@@ -565,82 +480,58 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
 
     /**
      * Opslaan/lezen en terugconversie stappen.
-     *
-     * @param result
-     *            resultaat object waar de resultaten van de stappen in weg geschreven wordt
-     * @param lo3Lg01BerichtWaarde
-     *            object met daarin de bericht waarden uit het Lg01 bericht
-     * @param checkedPl
-     *            de LO3-persoonslijst die gecontroleerd is tegen syntax/precondities
-     * @param brp
-     *            de BRP Persoonslijst welke opgeslagen moet worden
+     * @param result resultaat object waar de resultaten van de stappen in weg geschreven wordt
+     * @param lo3Lg01BerichtWaarde object met daarin de bericht waarden uit het Lg01 bericht
+     * @param checkedPl de LO3-persoonslijst die gecontroleerd is tegen syntax/precondities
+     * @param brp de BRP Persoonslijst welke opgeslagen moet worden
+     * @return het persoonId van de persoon die is opgeslagen
      */
-    protected final void opslaanLezenTerugConversieBrp(
-        final ConversieTestResultaat result,
-        final Lo3Lg01BerichtWaarde lo3Lg01BerichtWaarde,
-        final Lo3Persoonslijst checkedPl,
-        final BrpPersoonslijst brp)
-    {
-        opslaanLezenTerugConversieBrp(result, lo3Lg01BerichtWaarde, checkedPl, brp, null);
+    protected final Long opslaanLezenTerugConversieBrp(final ConversieTestResultaat result, final Lo3Lg01BerichtWaarde lo3Lg01BerichtWaarde,
+                                                          final Lo3Persoonslijst checkedPl, final BrpPersoonslijst brp) {
+        return opslaanLezenTerugConversieBrp(result, lo3Lg01BerichtWaarde, checkedPl, brp, null, null);
     }
 
     /**
      * Opslaan/lezen en terugconversie stappen.
-     *
-     * @param result
-     *            resultaat object waar de resultaten van de stappen in weg geschreven wordt
-     * @param lo3Lg01BerichtWaarde
-     *            object met daarin de bericht waarden uit het Lg01 bericht
-     * @param checkedPl
-     *            de LO3-persoonslijst die gecontroleerd is tegen syntax/precondities
-     * @param brp
-     *            de BRP Persoonslijst welke opgeslagen moet worden
-     * @param suffix
-     *            de suffix als er meer dan 1 persoonlijst aangeboden is aan de test
+     * @param result resultaat object waar de resultaten van de stappen in weg geschreven wordt
+     * @param lo3Lg01BerichtWaarde object met daarin de bericht waarden uit het Lg01 bericht
+     * @param checkedPl de LO3-persoonslijst die gecontroleerd is tegen syntax/precondities
+     * @param brp de BRP Persoonslijst welke opgeslagen moet worden
+     * @param suffix de suffix als er meer dan 1 persoonlijst aangeboden is aan de test
+     * @param teVervangenPersoonId het Id van de te vervangen persoon Id
+     * @return het persoonId van de persoon die is opgeslagen
      */
-    protected final void opslaanLezenTerugConversieBrp(
-        final ConversieTestResultaat result,
-        final Lo3Lg01BerichtWaarde lo3Lg01BerichtWaarde,
-        final Lo3Persoonslijst checkedPl,
-        final BrpPersoonslijst brp,
-        final String suffix)
-    {
+    protected final Long opslaanLezenTerugConversieBrp(final ConversieTestResultaat result, final Lo3Lg01BerichtWaarde lo3Lg01BerichtWaarde,
+                                                          final Lo3Persoonslijst checkedPl, final BrpPersoonslijst brp, final Long teVervangenPersoonId,
+                                                          final String suffix) {
         // Test opslaan
-        final Pair<Long, TestStap> opslaanBrpResult = testOpslaanBrp(lo3Lg01BerichtWaarde, brp, suffix);
-        final Long anummer = opslaanBrpResult.getLeft();
+        final Pair<Long, TestStap> opslaanBrpResult = testOpslaanBrp(lo3Lg01BerichtWaarde, brp, teVervangenPersoonId, suffix);
+        final Long persoonId = opslaanBrpResult.getLeft();
         result.setOpslaanBrp(opslaanBrpResult.getRight());
 
         if (!checkedPl.isDummyPl()) {
             // Test lezen uit database
-            final BrpPersoonslijst brpGelezen = testLezenBrp(anummer, result, brp, suffix);
+            final BrpPersoonslijst brpGelezen = testLezenBrp(persoonId, result, brp, suffix);
             // Test conversie brp naar lo3
             final Pair<TestStap, TestStap> brpNaarLo3Stap = testTerugconversie(brpGelezen, checkedPl, TestCasusOutputStap.STAP_TERUG, suffix);
             result.setBrpNaarLo3(brpNaarLo3Stap.getLeft());
             result.setBrpNaarLo3VerschilAnalyse(brpNaarLo3Stap.getRight());
         }
+
+        return opslaanBrpResult.getLeft();
     }
 
     /**
-     * Voert de terug conversie uit en controleert de terug geconverteerde persoonslijst tegen of de orginele
-     * persoonslijst of tegen een verwachte persoonslijst als deze er is.
-     *
-     * @param brpPersoonslijst
-     *            BRP persoonslijst die terug geconverteerd moet worden
-     * @param origineel
-     *            origineel LO3 persoonslijst
-     * @param outputStap
-     *            outputstap voor de basis vergelijker. Deze stap zet intern ook de outputstap voor de verschilanalyse.
-     * @param suffix
-     *            de suffix als er meer dan 1 persoonlijst aangeboden is aan de test
-     * @return een {@link Pair} met daarin 2 {@link TestStap}. Links/key is de stap van de basis vergelijker,
-     *         rechts/value is de stap van de verschil analayse.
+     * Voert de terug conversie uit en controleert de terug geconverteerde persoonslijst tegen of de
+     * orginele persoonslijst of tegen een verwachte persoonslijst als deze er is.
+     * @param brpPersoonslijst BRP persoonslijst die terug geconverteerd moet worden
+     * @param origineel origineel LO3 persoonslijst
+     * @param outputStap outputstap voor de basis vergelijker. Deze stap zet intern ook de outputstap voor de verschilanalyse.
+     * @param suffix de suffix als er meer dan 1 persoonlijst aangeboden is aan de test
+     * @return een {@link Pair} met daarin 2 {@link TestStap}. Links/key is de stap van de basis vergelijker, rechts/value is de stap van de verschil analayse.
      */
-    protected final Pair<TestStap, TestStap> testTerugconversie(
-        final BrpPersoonslijst brpPersoonslijst,
-        final Lo3Persoonslijst origineel,
-        final TestCasusOutputStap outputStap,
-        final String suffix)
-    {
+    protected final Pair<TestStap, TestStap> testTerugconversie(final BrpPersoonslijst brpPersoonslijst, final Lo3Persoonslijst origineel,
+                                                                final TestCasusOutputStap outputStap, final String suffix) {
         if (brpPersoonslijst == null || origineel.isDummyPl()) {
             return new ImmutablePair<>(null, null);
         }
@@ -673,7 +564,8 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
         } catch (final PreconditieException pe) {
             final String htmlFout = debugOutputXmlEnHtml(pe, outputStap, suffix);
             resultaat = new ImmutablePair<>(null, new TestStap(TestStatus.EXCEPTIE, "Er is een preconditie exceptie opgetreden", htmlFout, null));
-            // Alle fouten die mogelijk kunnen optreden tijdens terug conversie hier opvangen en netjes tonen als fout.
+            // Alle fouten die mogelijk kunnen optreden tijdens terug conversie hier opvangen en
+            // netjes tonen als fout.
         } catch (final Exception e) {
             final Foutmelding fout = new Foutmelding("Fout tijdens terug conversie van BRP naar LO3.", e);
             final String htmlFout = debugOutputXmlEnHtml(fout, outputStap, suffix);
@@ -683,12 +575,8 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
         return resultaat;
     }
 
-    private TestStap controleerMetBasisVergelijker(
-        final Lo3Persoonslijst origineel,
-        final Lo3Persoonslijst terugConversie,
-        final TestCasusOutputStap outputStap,
-        final String suffix)
-    {
+    private TestStap controleerMetBasisVergelijker(final Lo3Persoonslijst origineel, final Lo3Persoonslijst terugConversie,
+                                                   final TestCasusOutputStap outputStap, final String suffix) {
         final String htmlLo3 = debugOutputXmlEnHtml(terugConversie, outputStap, suffix);
 
         // Controleer verwachting
@@ -707,16 +595,12 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
         return resultaat;
     }
 
-    private TestStap controleerMetVerschilAnalyse(
-        final Lo3Persoonslijst origineel,
-        final Lo3Persoonslijst terugConversie,
-        final TestCasusOutputStap outputStap,
-        final String suffix)
-    {
-        final List<Pair<List<VerschilAnalyseRegel>, FingerPrint>> verschillen = verschilAnalyseService.bepaalVerschillen(origineel, terugConversie);
+    private TestStap controleerMetVerschilAnalyse(final Lo3Persoonslijst origineel, final Lo3Persoonslijst terugConversie, final TestCasusOutputStap outputStap,
+                                                  final String suffix) {
+        final List<VergelijkResultaat> verschillen = verschilAnalyseService.bepaalVerschillen(origineel, terugConversie);
         final List<String> actualFingerprints = new ArrayList<>();
-        for (final Pair<List<VerschilAnalyseRegel>, FingerPrint> verschil : verschillen) {
-            final FingerPrint fingerPrint = verschil.getRight();
+        for (final VergelijkResultaat verschil : verschillen) {
+            final FingerPrint fingerPrint = verschil.getVingerafdruk();
             actualFingerprints.add(fingerPrint.getVoorkomenVerschil());
         }
 
@@ -736,7 +620,8 @@ public abstract class AbstractConversieTestCasus extends TestCasus {
             final List<String> notActual = checkFingerprints(actualFingerprints, expectedFingerPrints);
 
             if (!notExpected.isEmpty() || !notActual.isEmpty()) {
-                // een verkregen fingerprint is niet verwacht of een verwachte fingerprint is niet verkregen.
+                // een verkregen fingerprint is niet verwacht of een verwachte fingerprint is niet
+                // verkregen.
                 final StringBuilder sb = new StringBuilder();
                 opmakenVerschillenFingerprints(sb, notExpected, "Fingerprints verwacht, maar niet verkregen");
                 opmakenVerschillenFingerprints(sb, notActual, "Fingerprints verkregen, maar niet verwacht");

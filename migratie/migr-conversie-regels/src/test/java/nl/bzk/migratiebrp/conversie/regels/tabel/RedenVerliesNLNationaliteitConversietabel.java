@@ -6,30 +6,28 @@
 
 package nl.bzk.migratiebrp.conversie.regels.tabel;
 
-import java.text.DecimalFormat;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenVerliesNederlandschapCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
 
 public class RedenVerliesNLNationaliteitConversietabel implements
-        Conversietabel<Lo3RedenNederlandschapCode, BrpRedenVerliesNederlandschapCode>
-{
+        Conversietabel<Lo3RedenNederlandschapCode, BrpRedenVerliesNederlandschapCode> {
 
-    /** Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk). */
+    /**
+     * Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk).
+     */
     public static final Lo3RedenNederlandschapCode LO3_NIET_VALIDE_UITZONDERING = new Lo3RedenNederlandschapCode("999");
-
-    private static final DecimalFormat REDEN_VERLIES_FORMAT = new DecimalFormat("000");
 
     @Override
     public BrpRedenVerliesNederlandschapCode converteerNaarBrp(final Lo3RedenNederlandschapCode input) {
-        return input == null ? null : new BrpRedenVerliesNederlandschapCode(Short.parseShort(input.getWaarde()), input.getOnderzoek());
+        return input == null ? null : new BrpRedenVerliesNederlandschapCode(input.getWaarde(), input.getOnderzoek());
     }
 
     @Override
     public Lo3RedenNederlandschapCode converteerNaarLo3(final BrpRedenVerliesNederlandschapCode input) {
         Lo3RedenNederlandschapCode result = null;
         if (input != null) {
-            result = new Lo3RedenNederlandschapCode(REDEN_VERLIES_FORMAT.format(input.getWaarde()), input.getOnderzoek());
+            result = new Lo3RedenNederlandschapCode(input.getWaarde(), input.getOnderzoek());
         }
         return result;
     }

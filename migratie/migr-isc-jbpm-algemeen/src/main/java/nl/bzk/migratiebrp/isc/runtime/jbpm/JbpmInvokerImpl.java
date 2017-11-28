@@ -22,9 +22,7 @@ public final class JbpmInvokerImpl implements JbpmInvoker {
 
     /**
      * Zet de JBPM configuratie.
-     * 
-     * @param jbpmConfiguration
-     *            De te zetten configuratie.
+     * @param jbpmConfiguration De te zetten configuratie.
      */
     public void setJbpmConfiguration(final JbpmConfiguration jbpmConfiguration) {
         this.jbpmConfiguration = jbpmConfiguration;

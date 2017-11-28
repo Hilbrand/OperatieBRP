@@ -7,17 +7,20 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.ArrayList;
+
 import javax.inject.Inject;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVastgesteldNietNederlanderIndicatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
+
 import org.junit.Test;
 
 public class BrpVastgesteldNietNederlanderIndicatieMapperTest extends BrpAbstractTest {
@@ -31,8 +34,8 @@ public class BrpVastgesteldNietNederlanderIndicatieMapperTest extends BrpAbstrac
     public void testMapInhoud() {
         final PersoonIndicatieHistorie historie =
                 new PersoonIndicatieHistorie(new PersoonIndicatie(
-                    new Persoon(SoortPersoon.INGESCHREVENE),
-                    SoortIndicatie.VASTGESTELD_NIET_NEDERLANDER), true);
+                        new Persoon(SoortPersoon.INGESCHREVENE),
+                        SoortIndicatie.VASTGESTELD_NIET_NEDERLANDER), true);
 
         final BrpVastgesteldNietNederlanderIndicatieInhoud result = mapper.mapInhoud(historie, brpOnderzoekMapper);
 

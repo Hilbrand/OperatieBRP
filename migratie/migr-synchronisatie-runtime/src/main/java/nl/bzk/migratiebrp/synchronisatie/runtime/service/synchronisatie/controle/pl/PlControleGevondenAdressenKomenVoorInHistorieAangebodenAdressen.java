@@ -12,13 +12,11 @@ import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControleAdresHelper.AdresData;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-import org.springframework.stereotype.Component;
 
 /**
- * Controle dat de gevonden persoonslijst in de BRP een dares en een historie van adressen heeft dat voorkomt in de
+ * Controle dat de gevonden persoonslijst in de BRP een adres en een historie van adressen heeft dat voorkomt in de
  * historie van adressen op de aangeboden persoonslijst.
  */
-@Component(value = "plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressen")
 public final class PlControleGevondenAdressenKomenVoorInHistorieAangebodenAdressen implements PlControle {
 
     @Override

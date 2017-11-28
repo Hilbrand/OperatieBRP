@@ -7,9 +7,12 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -19,7 +22,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortDocumentCode;
@@ -29,24 +31,17 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstRelatieGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstStandaardGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
 
 /**
  * Mapped IST stapels van een Persoon op de IST stapels van de BrpPersoonslijst.
- * 
- * @param <T>
- *            het type IST groep inhoud
+ * @param <T> het type IST groep inhoud
  */
 abstract class AbstractBrpIstMapper<T extends AbstractBrpIstGroepInhoud> {
 
     /**
      * Zoekt de door gegeven set met stapels naar stapels van de meegegeven categorie en levert deze set op.
-     * 
-     * @param stapels
-     *            de set van stapels die moet worden doorzocht, mag niet null zijn
-     * @param categorie
-     *            de categorie waarop dient te worden gefiltert, mag niet null zijn
+     * @param stapels de set van stapels die moet worden doorzocht, mag niet null zijn
+     * @param categorie de categorie waarop dient te worden gefiltert, mag niet null zijn
      * @return de set van stapels voor deze categorie
      */
     protected Set<Stapel> filterStapels(final Set<Stapel> stapels, final Lo3CategorieEnum categorie) {
@@ -65,15 +60,13 @@ abstract class AbstractBrpIstMapper<T extends AbstractBrpIstGroepInhoud> {
 
     /**
      * Mapped van de set met stapels de juiste stapels op een lijst van BrpStapels met <T>.
-     * 
-     * @param stapels
-     *            de set met IST stapels
+     * @param stapels de set met IST stapels
      * @return een lijst van stapels van <T>
      */
     protected List<BrpStapel<T>> mapStapels(final Set<Stapel> stapels) {
         final Set<Stapel> istStapels = filterStapels(stapels, getActueleCategorie());
         if (istStapels.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
         final List<BrpStapel<T>> result = new ArrayList<>();
         for (final Stapel istRelatieStapel : istStapels) {
@@ -96,17 +89,14 @@ abstract class AbstractBrpIstMapper<T extends AbstractBrpIstGroepInhoud> {
 
     /**
      * Mapped een StapelVoorkomen op een IST groep.
-     * 
-     * @param voorkomen
-     *            het voorkomen dat gemapped moet worden
+     * @param voorkomen het voorkomen dat gemapped moet worden
      * @return het resultaat van de mapping
      */
     abstract T mapBrpIstGroepInhoud(final StapelVoorkomen voorkomen);
 
     /**
+     * @param voorkomen het voorkomen in de stapel data gemapped moet worden.
      * @return de categorie van het voorkomen in de stapel dat gemapped moet worden.
-     * @param voorkomen
-     *            het voorkomen in de stapel data gemapped moet worden.
      */
     final Lo3CategorieEnum getCategorie(final StapelVoorkomen voorkomen) {
         final Lo3CategorieEnum actueleCategorie = getActueleCategorie();
@@ -120,16 +110,13 @@ abstract class AbstractBrpIstMapper<T extends AbstractBrpIstGroepInhoud> {
 
     /**
      * Geef de waarde van actuele categorie.
-     *
      * @return de actuele categorie van de stapel die gemapped moet worden.
      */
     abstract Lo3CategorieEnum getActueleCategorie();
 
     /**
      * Mapped een StapelVoorkomen op een {@link BrpIstStandaardGroepInhoud}.
-     * 
-     * @param voorkomen
-     *            het voorkomen dat gemapped moet worden
+     * @param voorkomen het voorkomen dat gemapped moet worden
      * @return gevulde {@link BrpIstStandaardGroepInhoud}
      */
     BrpIstStandaardGroepInhoud mapBrpStandaardInhoud(final StapelVoorkomen voorkomen) {
@@ -177,16 +164,14 @@ abstract class AbstractBrpIstMapper<T extends AbstractBrpIstGroepInhoud> {
 
     /**
      * Mapped een StapelVoorkomen op een BrpIstRelatieGroepInhoud.
-     * 
-     * @param voorkomen
-     *            het voorkomen dat gemapped moet worden
+     * @param voorkomen het voorkomen dat gemapped moet worden
      * @return het resultaat van de mapping
      */
     BrpIstRelatieGroepInhoud mapBrpRelatieGroepInhoud(final StapelVoorkomen voorkomen) {
         final BrpInteger rubriek6210DatumIngangFamilierechtelijkeBetrekking =
                 BrpInteger.wrap(voorkomen.getRubriek6210DatumIngangFamilierechtelijkeBetrekking(), null);
-        final BrpLong anummer = BrpLong.wrap(voorkomen.getAnummer(), null);
-        final BrpInteger bsn = BrpInteger.wrap(voorkomen.getBsn(), null);
+        final BrpString anummer = BrpString.wrap(voorkomen.getAnummer(), null);
+        final BrpString bsn = BrpString.wrap(voorkomen.getBsn(), null);
         final BrpString voornamen = BrpString.wrap(voorkomen.getVoornamen(), null);
         final BrpGeslachtsaanduidingCode geslachtsaanduidingCode;
         geslachtsaanduidingCode =

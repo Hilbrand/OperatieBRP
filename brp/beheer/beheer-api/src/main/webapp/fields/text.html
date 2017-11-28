@@ -1,4 +1,4 @@
-<div class="col-md-5 col-sm-8 col-xs-12" ng-if="!((!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly))">
+<div ng-if="!((!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly))">
     <input
         id="{{kolom.id}}"
         name="{{kolom.id}}"
@@ -17,6 +17,6 @@
         <span ng-show="editForm[kolom.id].$error.pattern">Dit veld voldoet niet aan het verplichte patroon</span>
     </div>
 </div>
-<div class="col-md-5 col-sm-8 col-xs-12" ng-if="(!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly)">
+<div id="{{kolom.id}}" ng-if="(!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly)">
     {{waarde[kolom.display]}}
 </div>

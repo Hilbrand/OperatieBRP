@@ -28,7 +28,7 @@
         <brp:bronnen>
             <!--1 or more repetitions:-->
             [#list wijzigingUitsluitingKiesrecht.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -84,7 +84,7 @@
         <brp:bronnen>
             <!--1 or more repetitions:-->
             [#list wijzigingDeelnameEUVerkiezingen.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>

@@ -6,23 +6,26 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.GegevenInOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.OnderzoekHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortElement;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.StatusOnderzoek;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBetrokkenheid;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpOnderzoek;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
 import nl.bzk.migratiebrp.ggo.viewer.util.ViewerDateUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.GegevenInOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortElement;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StatusOnderzoek;
+
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Voegt Onderzoeken toe.
@@ -34,21 +37,15 @@ public class GgoBrpOnderzoekBuilder {
 
     /**
      * Maak de onderzoeken voor dit voorkomen.
-     *
-     * @param voorkomen
-     *            Het viewer-voorkomen
-     * @param persoon
-     *            Persoon
-     * @param brpGroep
-     *            Het entitymodel voorkomen
-     * @param aNummer
-     *            Het anummer van de persoon
+     * @param voorkomen Het viewer-voorkomen
+     * @param persoon Persoon
+     * @param brpGroep Het entitymodel voorkomen
      */
-    public final void createOnderzoeken(final GgoBrpVoorkomen voorkomen, final Persoon persoon, final FormeleHistorie brpGroep, final Long aNummer) {
-        for (final PersoonOnderzoek onderzoek : persoon.getPersoonOnderzoekSet()) {
+    final void createOnderzoeken(final GgoBrpVoorkomen voorkomen, final Persoon persoon, final FormeleHistorie brpGroep) {
+        for (final Onderzoek onderzoek : persoon.getOnderzoeken()) {
             boolean vanToepassing = false;
-            for (final GegevenInOnderzoek gegeven : onderzoek.getOnderzoek().getGegevenInOnderzoekSet()) {
-                if (gegeven.getObjectOfVoorkomen() == brpGroep) {
+            for (final GegevenInOnderzoek gegeven : onderzoek.getGegevenInOnderzoekSet()) {
+                if (gegeven.getEntiteitOfVoorkomen() == brpGroep) {
                     vanToepassing = true;
                 }
             }
@@ -61,22 +58,15 @@ public class GgoBrpOnderzoekBuilder {
 
     /**
      * Maak onderzoek aan voor betrokkenheid.
-     *
-     * @param ggoBetrokkenheid
-     *            De viewer-betrokkenheid.
-     * @param persoon
-     *            Persoon
-     * @param brpGroep
-     *            De entitymodel betrokkenheid
-     * @param aNummer
-     *            Het anummer van de persoon
+     * @param ggoBetrokkenheid De viewer-betrokkenheid.
+     * @param persoon Persoon
+     * @param brpGroep De entitymodel betrokkenheid
      */
-    public final void createOnderzoeken(final GgoBetrokkenheid ggoBetrokkenheid, final Persoon persoon, final FormeleHistorie brpGroep, final Long aNummer)
-    {
-        for (final PersoonOnderzoek onderzoek : persoon.getPersoonOnderzoekSet()) {
+    final void createOnderzoeken(final GgoBetrokkenheid ggoBetrokkenheid, final Persoon persoon, final FormeleHistorie brpGroep) {
+        for (final Onderzoek onderzoek : persoon.getOnderzoeken()) {
             boolean vanToepassing = false;
-            for (final GegevenInOnderzoek gegeven : onderzoek.getOnderzoek().getGegevenInOnderzoekSet()) {
-                if (gegeven.getObjectOfVoorkomen() == brpGroep) {
+            for (final GegevenInOnderzoek gegeven : onderzoek.getGegevenInOnderzoekSet()) {
+                if (gegeven.getEntiteitOfVoorkomen() == brpGroep) {
                     vanToepassing = true;
                 }
             }
@@ -87,39 +77,38 @@ public class GgoBrpOnderzoekBuilder {
         }
     }
 
-    private GgoBrpOnderzoek maakOnderzoek(final PersoonOnderzoek persoonOnderzoek) {
-        final GgoBrpOnderzoek onderzoek = new GgoBrpOnderzoek(persoonOnderzoek);
+    private GgoBrpOnderzoek maakOnderzoek(final Onderzoek onderzoek) {
+        final GgoBrpOnderzoek ggoBrpOnderzoek = new GgoBrpOnderzoek(onderzoek);
 
-        for (final GegevenInOnderzoek gegeven : persoonOnderzoek.getOnderzoek().getGegevenInOnderzoekSet()) {
+        for (final GegevenInOnderzoek gegeven : onderzoek.getGegevenInOnderzoekSet()) {
             // We willen velden die verwijzen naar een andere (parent) tabel niet laten zien, maar ze zijn lastig
             // te onderscheiden omdat ze in Dbobject ook van het type KOLOM zijn. Daarom als heuristiek maar ineens
             // alles overslaan wat met "Pers" begint.
-            if (SoortElement.ATTRIBUUT.equals(gegeven.getSoortGegeven().getSoort()) && !gegeven.getSoortGegeven().getLaatsteNaamDeel().startsWith(
-                "Pers"))
-            {
-                onderzoek.addBetrokkenVeld(getNaamVoorGroep(gegeven) + "." + getNaamVoorElement(gegeven));
+            if (SoortElement.ATTRIBUUT.equals(gegeven.getSoortGegeven().getSoort()) && !gegeven.getSoortGegeven().getLaatsteNaamDeel().startsWith("Pers")) {
+                ggoBrpOnderzoek.addBetrokkenVeld(getNaamVoorGroep(gegeven) + "." + getNaamVoorElement(gegeven));
             }
         }
 
+        final OnderzoekHistorie onderzoekHistorie = onderzoek.getOnderzoekHistorieSet().iterator().next();
         final Map<String, String> inhoud = new LinkedHashMap<>();
-        if (persoonOnderzoek.getOnderzoek().getDatumAanvang() != null) {
-            inhoud.put(DATUM_AANVANG, ViewerDateUtil.formatDatum(persoonOnderzoek.getOnderzoek().getDatumAanvang()));
+        if (onderzoekHistorie.getDatumAanvang() != null) {
+            inhoud.put(DATUM_AANVANG, ViewerDateUtil.formatDatum(onderzoekHistorie.getDatumAanvang()));
         }
-        if (persoonOnderzoek.getOnderzoek().getDatumEinde() != null) {
-            inhoud.put(DATUM_EINDE, ViewerDateUtil.formatDatum(persoonOnderzoek.getOnderzoek().getDatumEinde()));
+        if (onderzoekHistorie.getDatumEinde() != null) {
+            inhoud.put(DATUM_EINDE, ViewerDateUtil.formatDatum(onderzoekHistorie.getDatumEinde()));
         }
-        inhoud.put("Omschrijving", persoonOnderzoek.getOnderzoek().getOmschrijving());
+        inhoud.put("Omschrijving", onderzoekHistorie.getOmschrijving());
 
-        inhoud.put("Status", persoonOnderzoek.getOnderzoek().getDatumEinde() == null ? StatusOnderzoek.IN_UITVOERING.getNaam()
-                                                                                    : StatusOnderzoek.AFGESLOTEN.getNaam());
+        inhoud.put("Status",
+                onderzoekHistorie.getDatumEinde() == null ? StatusOnderzoek.IN_UITVOERING.getNaam() : StatusOnderzoek.AFGESLOTEN.getNaam());
 
-        onderzoek.setInhoud(inhoud);
-        return onderzoek;
+        ggoBrpOnderzoek.setInhoud(inhoud);
+        return ggoBrpOnderzoek;
     }
 
     private String getNaamVoorGroep(final GegevenInOnderzoek gegeven) {
-        if (gegeven.getObjectOfVoorkomen() instanceof PersoonIndicatieHistorie) {
-            final String result = ((PersoonIndicatieHistorie) gegeven.getObjectOfVoorkomen()).getPersoonIndicatie().getSoortIndicatie().getOmschrijving();
+        if (gegeven.getEntiteitOfVoorkomen() instanceof PersoonIndicatieHistorie) {
+            final String result = ((PersoonIndicatieHistorie) gegeven.getEntiteitOfVoorkomen()).getPersoonIndicatie().getSoortIndicatie().getOmschrijving();
             return result.substring(0, result.length() - 1);
         } else {
             final Element soortGegeven = gegeven.getSoortGegeven();
@@ -137,27 +126,35 @@ public class GgoBrpOnderzoekBuilder {
     private String getNaamVoorElement(final GegevenInOnderzoek gegeven) {
         final String result;
         final String naam = gegeven.getSoortGegeven().getLaatsteNaamDeel();
-        if ("DatumAanvang".equals(naam)) {
-            result = DATUM_AANVANG;
-        } else if ("DatumEinde".equals(naam)) {
-            result = DATUM_EINDE;
-        } else if ("DatumAanvangGeldigheid".equals(naam)) {
-            result = "Datum aanvang geldigheid";
-        } else if ("DatumEindeGeldigheid".equals(naam)) {
-            result = "Datum einde geldigheid";
-        } else if ("TijdstipRegistratie".equals(naam)) {
-            result = "Registratie";
-        } else if ("TijdstipVerval".equals(naam)) {
-            result = "Verval";
-        } else if ("NadereAanduidingVerval".equals(naam)) {
-            result = "Nadere aanduiding verval";
-        } else if ("Waarde".equals(naam)) {
-            result = "Heeft indicatie";
-        } else {
-            final GgoBrpElementEnum elementEnum = GgoBrpElementEnum.findByElement(gegeven.getSoortGegeven());
-            return elementEnum == null ? naam : elementEnum.getLabel();
+        switch (naam) {
+            case "DatumAanvang":
+                result = DATUM_AANVANG;
+                break;
+            case "DatumEinde":
+                result = DATUM_EINDE;
+                break;
+            case "DatumAanvangGeldigheid":
+                result = "Datum aanvang geldigheid";
+                break;
+            case "DatumEindeGeldigheid":
+                result = "Datum einde geldigheid";
+                break;
+            case "TijdstipRegistratie":
+                result = "Registratie";
+                break;
+            case "TijdstipVerval":
+                result = "Verval";
+                break;
+            case "NadereAanduidingVerval":
+                result = "Nadere aanduiding verval";
+                break;
+            case "Waarde":
+                result = "Heeft indicatie";
+                break;
+            default:
+                final GgoBrpElementEnum elementEnum = GgoBrpElementEnum.findByElement(gegeven.getSoortGegeven());
+                return elementEnum == null ? naam : elementEnum.getLabel();
         }
-
         return result;
     }
 }

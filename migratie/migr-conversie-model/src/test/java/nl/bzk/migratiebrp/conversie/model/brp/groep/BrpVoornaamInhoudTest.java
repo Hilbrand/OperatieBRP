@@ -13,7 +13,6 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
@@ -22,12 +21,10 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.exceptions.PreconditieException;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-
 import org.junit.Test;
 
 /**
  * Test het contract van BrpVoornaamInhoud.
- * 
  */
 public class BrpVoornaamInhoudTest {
 

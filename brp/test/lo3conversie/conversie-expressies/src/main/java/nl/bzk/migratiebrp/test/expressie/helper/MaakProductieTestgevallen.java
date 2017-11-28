@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.test.expressie.helper;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,15 +16,19 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Autorisatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3AutorisatieInhoud;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.ConverteerNaarExpressieServiceImpl;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertalerImpl;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.TekstHelper;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels.DatumVoorwaardeRegel;
 import nl.bzk.migratiebrp.test.common.autorisatie.CsvAutorisatieReader;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -37,10 +42,8 @@ public final class MaakProductieTestgevallen {
     /**
      * Verwerk autorisaties.
      *
-     * @param autorisaties
-     *            autorisaties
-     * @param outputDirectory
-     *            output directory
+     * @param autorisaties    autorisaties
+     * @param outputDirectory output directory
      */
     public void verwerk(final List<Lo3Autorisatie> autorisaties, final File outputDirectory) {
         final Map<String, String> volledigActueelAdhoc = new TreeMap<>();
@@ -57,32 +60,32 @@ public final class MaakProductieTestgevallen {
             for (final Lo3Categorie<Lo3AutorisatieInhoud> inhoud : autorisatie.getAutorisatieStapel()) {
                 final boolean isActueel = inhoud.getInhoud().getDatumEinde() == null;
                 verwerkVoorwaarde(
-                    autorisatie.getAfnemersindicatie(),
-                    isActueel,
-                    // inhoud.getInhoud().getVersieNr(),
-                    inhoud.getInhoud().getVoorwaarderegelAdHoc(),
-                    volledigActueelAdhoc,
-                    volledigHistorischAdhoc,
-                    enkelvoudigActueel,
-                    enkelvoudigHistorisch);
+                        autorisatie.getAfnemersindicatie(),
+                        isActueel,
+                        // inhoud.getInhoud().getVersieNr(),
+                        inhoud.getInhoud().getVoorwaarderegelAdHoc(),
+                        volledigActueelAdhoc,
+                        volledigHistorischAdhoc,
+                        enkelvoudigActueel,
+                        enkelvoudigHistorisch);
                 verwerkVoorwaarde(
-                    autorisatie.getAfnemersindicatie(),
-                    isActueel,
-                    // inhoud.getInhoud().getVersieNr(),
-                    inhoud.getInhoud().getVoorwaarderegelSelectie(),
-                    volledigActueelSelectie,
-                    volledigHistorischSelectie,
-                    enkelvoudigActueel,
-                    enkelvoudigHistorisch);
+                        autorisatie.getAfnemersindicatie(),
+                        isActueel,
+                        // inhoud.getInhoud().getVersieNr(),
+                        inhoud.getInhoud().getVoorwaarderegelSelectie(),
+                        volledigActueelSelectie,
+                        volledigHistorischSelectie,
+                        enkelvoudigActueel,
+                        enkelvoudigHistorisch);
                 verwerkVoorwaarde(
-                    autorisatie.getAfnemersindicatie(),
-                    isActueel,
-                    // inhoud.getInhoud().getVersieNr(),
-                    inhoud.getInhoud().getVoorwaarderegelSpontaan(),
-                    volledigActueelSpontaan,
-                    volledigHistorischSpontaan,
-                    enkelvoudigActueel,
-                    enkelvoudigHistorisch);
+                        autorisatie.getAfnemersindicatie(),
+                        isActueel,
+                        // inhoud.getInhoud().getVersieNr(),
+                        inhoud.getInhoud().getVoorwaarderegelSpontaan(),
+                        volledigActueelSpontaan,
+                        volledigHistorischSpontaan,
+                        enkelvoudigActueel,
+                        enkelvoudigHistorisch);
             }
         }
 
@@ -129,14 +132,13 @@ public final class MaakProductieTestgevallen {
     }
 
     private void verwerkVoorwaarde(
-        final Integer afnemersindicatie,
-        final boolean isActueel,
-        final String ruweVoorwaarderegel,
-        final Map<String, String> volledigActueel,
-        final Map<String, String> volledigHistorisch,
-        final Map<EnkelvoudigId, String> enkelvoudigeActueel,
-        final Map<EnkelvoudigId, String> enkelvoudigHistorisch)
-    {
+            final String afnemersindicatie,
+            final boolean isActueel,
+            final String ruweVoorwaarderegel,
+            final Map<String, String> volledigActueel,
+            final Map<String, String> volledigHistorisch,
+            final Map<EnkelvoudigId, String> enkelvoudigeActueel,
+            final Map<EnkelvoudigId, String> enkelvoudigHistorisch) {
         if (ruweVoorwaarderegel == null || "".equals(ruweVoorwaarderegel)) {
             return;
         }
@@ -178,10 +180,8 @@ public final class MaakProductieTestgevallen {
     /**
      * Bepaal of dit een verwachte NOK is.
      *
-     * @param voorwaarderegel
-     *            voorwaarde regel
-     * @param result
-     *            hieraan wordt NOK toegevoegd
+     * @param voorwaarderegel voorwaarde regel
+     * @param result          hieraan wordt NOK toegevoegd
      */
     public static void checkVerwachteNOK(final String voorwaarderegel, final StringBuilder result) {
         if (voorwaarderegel.contains("19.89.20")) {
@@ -190,9 +190,9 @@ public final class MaakProductieTestgevallen {
         if (Pattern.compile("[5|6]\\d{1}\\.\\d{2}\\.\\d{2}").matcher(voorwaarderegel).find()) {
             result.append(" HISTORIE_NOK");
         }
-        if (voorwaarderegel.contains(".81.20")) {
-            result.append(" AKTENUMMER_NOK");
-        }
+        // if (voorwaarderegel.contains(".81.20")) {
+        // result.append(" AKTENUMMER_NOK");
+        // }
         if (voorwaarderegel.contains(".83.10")) {
             result.append(" ONDERZOEK_NOK");
         }
@@ -205,12 +205,12 @@ public final class MaakProductieTestgevallen {
         /**
          * Main.
          *
-         * @param args
-         *            arguments (unused)
+         * @param args arguments (unused)
          */
         public static void main(final String[] args) {
             final CsvAutorisatieReader autorisatieReader = new CsvAutorisatieReader();
-            try (InputStream is = MaakProductieTestgevallen.class.getResourceAsStream("/Tabel35 Autorisatietabel.csv")) {
+            try (InputStream is = new FileInputStream("./regressie/productie 2017-01/Tabel35 " +
+                    "Autorisatietabel.csv")) {
                 final List<Lo3Autorisatie> autorisaties = autorisatieReader.read(is);
                 LOG.info("{} autorisaties ingelezen", autorisaties.size());
 
@@ -236,8 +236,7 @@ public final class MaakProductieTestgevallen {
         /**
          * Constructor.
          *
-         * @param voorwaardeRegel
-         *            voorwaarde regel
+         * @param voorwaardeRegel voorwaarde regel
          */
         public EnkelvoudigId(final String voorwaardeRegel) {
             id = bepaalId(voorwaardeRegel);
@@ -292,7 +291,8 @@ public final class MaakProductieTestgevallen {
         }
 
         private boolean isDatumRubriek(final String hoofdRubriek) {
-            return new DatumVoorwaardeRegel().filter(hoofdRubriek);
+            final GbaRubriekNaarBrpTypeVertaler vertaler = new GbaRubriekNaarBrpTypeVertalerImpl();
+            return new DatumVoorwaardeRegel(vertaler).filter(hoofdRubriek);
         }
 
         private String bepaalMatop(final String waardeDeel) {

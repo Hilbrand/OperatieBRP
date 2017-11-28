@@ -8,13 +8,12 @@ package nl.bzk.migratiebrp.isc.jbpm.uc301;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,8 +24,15 @@ public final class MaakLeesUitBrpVerzoekAction implements SpringAction {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    @Inject
-    private BerichtenDao berichtenDao;
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
+    protected MaakLeesUitBrpVerzoekAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -35,7 +41,7 @@ public final class MaakLeesUitBrpVerzoekAction implements SpringAction {
         final ZoekPersoonAntwoordBericht zoekPersoonAntwoordBericht =
                 (ZoekPersoonAntwoordBericht) berichtenDao.leesBericht((Long) parameters.get("zoekPersoonBinnenGemeenteAntwoordBericht"));
 
-        final LeesUitBrpVerzoekBericht leesUitBrpVerzoekBericht = new LeesUitBrpVerzoekBericht(Long.parseLong(zoekPersoonAntwoordBericht.getAnummer()));
+        final LeesUitBrpVerzoekBericht leesUitBrpVerzoekBericht = new LeesUitBrpVerzoekBericht(zoekPersoonAntwoordBericht.getAnummer());
 
         final Map<String, Object> result = new HashMap<>();
         result.put("leesUitBrpVerzoekBericht", berichtenDao.bewaarBericht(leesUitBrpVerzoekBericht));

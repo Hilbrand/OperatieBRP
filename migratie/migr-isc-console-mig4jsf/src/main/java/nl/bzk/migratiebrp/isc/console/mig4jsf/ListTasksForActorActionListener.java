@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.el.ELContext;
@@ -23,6 +24,8 @@ import javax.faces.event.ActionEvent;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.security.auth.Subject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.util.TaskComparator;
 import org.hibernate.Session;
 import org.jbpm.JbpmContext;
@@ -39,15 +42,14 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
  */
 public final class ListTasksForActorActionListener extends AbstractActionListener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private final ValueExpression targetExpression;
 
     /**
      * Constructor.
-     *
-     * @param targetExpression
-     *            target expression
+     * @param targetExpression target expression
      */
-    public ListTasksForActorActionListener(final ValueExpression targetExpression) {
+    ListTasksForActorActionListener(final ValueExpression targetExpression) {
         super("listTasksForActor");
         this.targetExpression = targetExpression;
     }
@@ -79,7 +81,7 @@ public final class ListTasksForActorActionListener extends AbstractActionListene
         final TaskComparator taakVergelijker = new TaskComparator();
         taakVergelijker.setCurrentActorId(actor);
         taakVergelijker.setOudsteEerst(true);
-        Collections.sort(tasks, taakVergelijker);
+        tasks.sort(taakVergelijker);
         final List<TaskInstance> taskList = Collections.unmodifiableList(tasks);
         targetExpression.setValue(elContext, taskList);
         context.selectOutcome("success");
@@ -104,14 +106,7 @@ public final class ListTasksForActorActionListener extends AbstractActionListene
                 } catch (final NamingException e) {
                     throw new IllegalArgumentException(e);
                 }
-
-                for (final java.security.acl.Group principal : subject.getPrincipals(java.security.acl.Group.class)) {
-                    final Enumeration<? extends Principal> rolesEnumeration = principal.members();
-                    while (rolesEnumeration.hasMoreElements()) {
-                        final Principal role = rolesEnumeration.nextElement();
-                        result.add(role.getName());
-                    }
-                }
+                result.addAll(addPrincipalRoles(subject));
             }
         } else {
             // Use JBPM identity session
@@ -130,12 +125,24 @@ public final class ListTasksForActorActionListener extends AbstractActionListene
         return result;
     }
 
-    private boolean isTomcatPrincipal(final Principal userPrincipal) {
+    private List<String> addPrincipalRoles(Subject subject) {
+        List<String> result = new LinkedList<>();
+        for (final java.security.acl.Group principal : subject.getPrincipals(java.security.acl.Group.class)) {
+            final Enumeration<? extends Principal> rolesEnumeration = principal.members();
+            while (rolesEnumeration.hasMoreElements()) {
+                final Principal role = rolesEnumeration.nextElement();
+                result.add(role.getName());
+            }
+        }
+        return result;
+    }
 
+    private boolean isTomcatPrincipal(final Principal userPrincipal) {
         Class<?> clazz;
         try {
             clazz = Class.forName("org.apache.catalina.User");
         } catch (final ClassNotFoundException e) {
+            LOGGER.debug(e.getMessage(), e);
             return false;
         }
 

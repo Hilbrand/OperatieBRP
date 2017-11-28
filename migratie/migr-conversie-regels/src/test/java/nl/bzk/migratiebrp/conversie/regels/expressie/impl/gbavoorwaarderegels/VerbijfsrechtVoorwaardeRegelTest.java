@@ -6,10 +6,10 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,12 +25,19 @@ public class VerbijfsrechtVoorwaardeRegelTest {
     @Inject
     private VerbijfsrechtVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test of vertaalWaardeVanRubriek method, of class VerbijfsrechtVoorwaardeRegel.
      */
     @Test
     public void testVertaalWaardeVanRubriek() throws GbaVoorwaardeOnvertaalbaarExceptie {
-        testVoorwaarde("10.39.10 GA1 09", "verblijfsrecht.aanduiding = 9");
+        testUtil.testVoorwaarde("10.39.10 GA1 09", "Persoon.Verblijfsrecht.AanduidingCode E= \"09\"");
     }
 
     /**
@@ -49,8 +56,4 @@ public class VerbijfsrechtVoorwaardeRegelTest {
         instance.filter("10.39.20 GA1 09");
     }
 
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
-    }
 }

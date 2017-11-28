@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.configuratie.jpa;
@@ -33,7 +33,6 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 
 /**
  * Aangepaste CustomSimpleJpaRepository om (count) queries te maximaliseren op een maximum aantal records.
- *
  * @param <T> entity type
  * @param <I> id type
  */
@@ -42,7 +41,7 @@ public final class CustomSimpleMaxedJpaRepository<T, I extends Serializable> ext
     /**
      * Default maximum aantal records.
      */
-    public static final int DEFAULT_MAX_RECORDS = 10000;
+    public static final int DEFAULT_MAX_RECORDS = 10_000;
 
     private static final String ERROR_MESSAGE = "Waarschuwing: er zijn meer dan %1$d resultaten gevonden. Verfijn uw zoekcriteria.";
 
@@ -51,9 +50,8 @@ public final class CustomSimpleMaxedJpaRepository<T, I extends Serializable> ext
 
     /**
      * Creates a new {@link CustomSimpleMaxedJpaRepository} to manage objects of the given {@link JpaEntityInformation}.
-     *
      * @param entityInformation must not be {@literal null}.
-     * @param entityManager     must not be {@literal null}.
+     * @param entityManager must not be {@literal null}.
      */
     public CustomSimpleMaxedJpaRepository(final JpaEntityInformation<T, ?> entityInformation, final EntityManager entityManager) {
         this(entityInformation, entityManager, DEFAULT_MAX_RECORDS);
@@ -61,12 +59,14 @@ public final class CustomSimpleMaxedJpaRepository<T, I extends Serializable> ext
 
     /**
      * Creates a new {@link CustomSimpleMaxedJpaRepository} to manage objects of the given {@link JpaEntityInformation}.
-     *
      * @param entityInformation must not be {@literal null}.
-     * @param entityManager     must not be {@literal null}.
-     * @param maximumRecords    maximum aantal records
+     * @param entityManager must not be {@literal null}.
+     * @param maximumRecords maximum aantal records
      */
-    public CustomSimpleMaxedJpaRepository(final JpaEntityInformation<T, ?> entityInformation, final EntityManager entityManager, final int maximumRecords) {
+    public CustomSimpleMaxedJpaRepository(
+            final JpaEntityInformation<T, ?> entityInformation,
+            final EntityManager entityManager,
+            final int maximumRecords) {
         super(entityInformation, entityManager);
         em = entityManager;
         this.maximumRecords = maximumRecords;
@@ -81,9 +81,9 @@ public final class CustomSimpleMaxedJpaRepository<T, I extends Serializable> ext
         final List<T> content = total > pageable.getOffset() ? query.getResultList() : Collections.<T>emptyList();
 
         if (total > maximumRecords) {
-            return new CustomPageImpl<T>(content, pageable, maximumRecords, String.format(ERROR_MESSAGE, maximumRecords));
+            return new CustomPageImpl<>(content, pageable, maximumRecords, String.format(ERROR_MESSAGE, maximumRecords));
         } else {
-            return new PageImpl<T>(content, pageable, total);
+            return new PageImpl<>(content, pageable, total);
         }
     }
 
@@ -91,11 +91,11 @@ public final class CustomSimpleMaxedJpaRepository<T, I extends Serializable> ext
     protected TypedQuery<Long> getCountQuery(final Specification<T> spec) {
         final CriteriaBuilder builder = em.getCriteriaBuilder();
         final CriteriaQuery<T> criteria = builder.createQuery(getDomainClass());
-        final Root<T> root = applySpecificationToCriteria(spec, criteria);
+        final Root<T> root = applySpecificationToQueryCriteria(spec, criteria);
         criteria.select(root);
         final TypedQuery<T> query = em.createQuery(criteria);
 
-        @SuppressWarnings("checkstyle:illegaltype")
+        
         final AbstractQueryImpl hibernateQuery = query.unwrap(AbstractQueryImpl.class);
         @SuppressWarnings("unchecked")
         final Map<String, TypedValue> pNamedParameters = (Map<String, TypedValue>) getField(hibernateQuery, AbstractQueryImpl.class, "namedParameters");
@@ -105,8 +105,8 @@ public final class CustomSimpleMaxedJpaRepository<T, I extends Serializable> ext
         final ASTQueryTranslatorFactory queryTranslatorFactory = new ASTQueryTranslatorFactory();
         final SessionImplementor hibernateSession = em.unwrap(SessionImplementor.class);
         final QueryTranslator queryTranslator =
-                queryTranslatorFactory.createQueryTranslator("", hql, java.util.Collections.EMPTY_MAP, hibernateSession.getFactory(), null);
-        queryTranslator.compile(java.util.Collections.EMPTY_MAP, false);
+                queryTranslatorFactory.createQueryTranslator("", hql, Collections.emptyMap(), hibernateSession.getFactory(), null);
+        queryTranslator.compile(Collections.emptyMap(), false);
         final String sql = queryTranslator.getSQLString();
         final ParameterTranslations paramTranslations = queryTranslator.getParameterTranslations();
 
@@ -114,7 +114,7 @@ public final class CustomSimpleMaxedJpaRepository<T, I extends Serializable> ext
 
         final Query nativeQuery = em.createNativeQuery(countSql);
 
-        @SuppressWarnings("checkstyle:illegaltype")
+        
         final AbstractQueryImpl resultQuery = nativeQuery.unwrap(AbstractQueryImpl.class);
 
         if (pNamedParameters != null) {

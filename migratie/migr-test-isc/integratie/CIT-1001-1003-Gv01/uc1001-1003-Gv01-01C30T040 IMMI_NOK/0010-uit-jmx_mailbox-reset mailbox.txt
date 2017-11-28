@@ -1,2 +1,0 @@
-nl.bzk.migratiebrp.mailbox:name=MAILBOX
-mailboxenLegen

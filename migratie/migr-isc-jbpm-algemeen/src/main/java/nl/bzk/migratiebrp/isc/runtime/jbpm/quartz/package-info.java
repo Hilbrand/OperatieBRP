@@ -5,9 +5,6 @@
  */
 
 /**
- * 
- */
-/**
- * 
+ * Quartz package.
  */
 package nl.bzk.migratiebrp.isc.runtime.jbpm.quartz;

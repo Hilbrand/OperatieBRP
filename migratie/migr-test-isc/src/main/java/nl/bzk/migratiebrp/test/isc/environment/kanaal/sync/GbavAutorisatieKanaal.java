@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Autorisatie;
@@ -32,8 +34,6 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
 import nl.bzk.migratiebrp.util.common.JdbcConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * Insert een autorisatie in de GBA-v tabellen.
@@ -59,8 +59,10 @@ public class GbavAutorisatieKanaal extends LazyLoadingKanaal {
         private static final String INSERT_AUTORISATIE_SQL =
                 "insert into lo3_autorisatie(autorisatie_id, afnemer_code, afnemer_naam, geheimhouding_ind, verstrekkings_beperking, "
                         + "conditionele_verstrekking, spontaan_medium, selectie_soort, "
-                        + "bericht_aand, eerste_selectie_datum, selectie_periode, selectie_medium, pl_plaatsings_bevoegdheid, adres_vraag_bevoegdheid, "
-                        + "ad_hoc_medium, adres_medium, tabel_regel_start_datum, tabel_regel_eind_datum, sleutel_rubrieken, spontaan_rubrieken, "
+                        + "bericht_aand, eerste_selectie_datum, selectie_periode, selectie_medium, "
+                        + "pl_plaatsings_bevoegdheid, adres_vraag_bevoegdheid, "
+                        + "ad_hoc_medium, adres_medium, tabel_regel_start_datum, tabel_regel_eind_datum, "
+                        + "sleutel_rubrieken, spontaan_rubrieken, "
                         + "selectie_rubrieken, ad_hoc_rubrieken, adres_rubrieken, afnemers_verstrekkingen) values "
                         + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         private static final int PARAM_AUTORISATIE_ID = 1;
@@ -110,7 +112,7 @@ public class GbavAutorisatieKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -120,7 +122,7 @@ public class GbavAutorisatieKanaal extends LazyLoadingKanaal {
 
         @Override
         public void verwerkUitgaand(final TestCasusContext testCasus, final Bericht bericht) throws KanaalException {
-            List<Lo3Autorisatie> lo3Autorisaties;
+            final List<Lo3Autorisatie> lo3Autorisaties;
             try {
                 lo3Autorisaties = autorisatieReader.read(new ByteArrayInputStream(bericht.getInhoud().getBytes(Charset.defaultCharset())));
             } catch (final IOException e) {
@@ -138,14 +140,16 @@ public class GbavAutorisatieKanaal extends LazyLoadingKanaal {
                     if (teller % DISPLAY_PER == 0) {
                         LOG.info("Verwerken autorisatie  " + teller + " ...");
                     }
-                    final Integer afnemerCode = lo3Autorisatie.getAfnemersindicatie();
-                    // LOG.info("Afnemer: " + afnemerCode);
+                    final String afnemerCode = lo3Autorisatie.getAfnemersindicatie();
                     for (final Lo3Categorie<Lo3AutorisatieInhoud> tabelRegel : lo3Autorisatie.getAutorisatieStapel()) {
                         final long autorisatieId = selectAutorisatieId(connection);
                         insertAutorisatie(connection, autorisatieId, afnemerCode, tabelRegel);
                         insertVoorwaardeRegel(connection, autorisatieId, VOORWAARDE_TYPE_ADHOC, tabelRegel.getInhoud().getVoorwaarderegelAdHoc());
-                        insertVoorwaardeRegel(connection, autorisatieId, VOORWAARDE_TYPE_ADRES, tabelRegel.getInhoud()
-                                                                                                          .getVoorwaarderegelAdresgeorienteerd());
+                        insertVoorwaardeRegel(
+                                connection,
+                                autorisatieId,
+                                VOORWAARDE_TYPE_ADRES,
+                                tabelRegel.getInhoud().getVoorwaarderegelAdresgeorienteerd());
                         insertVoorwaardeRegel(connection, autorisatieId, VOORWAARDE_TYPE_SELECTIE, tabelRegel.getInhoud().getVoorwaarderegelSelectie());
                         insertVoorwaardeRegel(connection, autorisatieId, VOORWAARDE_TYPE_SPONTAAN, tabelRegel.getInhoud().getVoorwaarderegelSpontaan());
                     }
@@ -158,41 +162,42 @@ public class GbavAutorisatieKanaal extends LazyLoadingKanaal {
         }
 
         private void insertAutorisatie(
-            final Connection connection,
-            final long autorisatieId,
-            final Integer afnemerCode,
-            final Lo3Categorie<Lo3AutorisatieInhoud> tabelRegel) throws SQLException
-        {
+                final Connection connection,
+                final long autorisatieId,
+                final String afnemerCode,
+                final Lo3Categorie<Lo3AutorisatieInhoud> tabelRegel) throws SQLException {
             final Lo3AutorisatieInhoud inhoud = tabelRegel.getInhoud();
             final Lo3Historie historie = tabelRegel.getHistorie();
 
             try (final PreparedStatement statement = connection.prepareStatement(INSERT_AUTORISATIE_SQL)) {
                 statement.setLong(PARAM_AUTORISATIE_ID, autorisatieId);
-                setInt(statement, PARAM_AFNEMER_CODE, afnemerCode);
+                setInt(statement, PARAM_AFNEMER_CODE, Integer.valueOf(afnemerCode));
 
                 final String afnemerNaam =
                         inhoud.getAfnemernaam().length() > MAX_LENGTE_AFNEMERS_NAAM ? inhoud.getAfnemernaam().substring(0, MAX_LENGTE_AFNEMERS_NAAM)
-                                                                                   : inhoud.getAfnemernaam();
+                                : inhoud.getAfnemernaam();
 
                 setString(statement, PARAM_AFNEMER_NAAM, afnemerNaam);
-                setInt(statement, PARAM_GEHEIDHOUDING_IND, inhoud.getIndicatieGeheimhouding() == null ? null : inhoud.getIndicatieGeheimhouding()
-                                                                                                                     .getIntegerWaarde());
+                setInt(statement, PARAM_GEHEIDHOUDING_IND, inhoud.getIndicatieGeheimhouding());
                 setInt(statement, PARAM_VERSTREKKINGS_BEPERKING, inhoud.getVerstrekkingsbeperking());
                 setInt(statement, PARAM_CONDITIONELE_VERSTREKKING, inhoud.getConditioneleVerstrekking());
                 setString(statement, PARAM_SPONTAAN_MEDIUM, inhoud.getMediumSpontaan());
                 setInt(statement, PARAM_SELECTIE_SOORT, inhoud.getSelectiesoort());
                 setInt(statement, PARAM_BERICHT_AAND, inhoud.getBerichtaanduiding());
-                setInt(statement, PARAM_EERSTE_SELECTIE_DATUM, inhoud.getEersteSelectiedatum() == null ? null : inhoud.getEersteSelectiedatum()
-                                                                                                                      .getIntegerWaarde());
+                setInt(
+                        statement,
+                        PARAM_EERSTE_SELECTIE_DATUM,
+                        inhoud.getEersteSelectiedatum() == null ? null : inhoud.getEersteSelectiedatum().getIntegerWaarde());
                 setInt(statement, PARAM_SELECTIE_PERIODE, inhoud.getSelectieperiode());
                 setString(statement, PARAM_SELECTIE_MEDIUM, inhoud.getMediumSelectie());
                 setInt(statement, PARAM_PL_PLAATSINGS_BEVOEGDHEID, inhoud.getPlaatsingsbevoegdheidPersoonslijst());
                 setInt(statement, PARAM_ADRES_VRAAG_BEVOEGDHEID, inhoud.getAdresvraagBevoegdheid());
                 setString(statement, PARAM_AD_HOC_MEDIUM, inhoud.getMediumAdHoc());
                 setString(statement, PARAM_ADRES_MEDIUM, inhoud.getMediumAdresgeorienteerd());
-                setInt(statement, PARAM_TABEL_REGEL_START_DATUM, historie.getIngangsdatumGeldigheid() == null ? null
-                                                                                                             : historie.getIngangsdatumGeldigheid()
-                                                                                                                       .getIntegerWaarde());
+                setInt(
+                        statement,
+                        PARAM_TABEL_REGEL_START_DATUM,
+                        historie.getIngangsdatumGeldigheid() == null ? null : historie.getIngangsdatumGeldigheid().getIntegerWaarde());
                 setInt(statement, PARAM_TABEL_REGEL_EIND_DATUM, inhoud.getDatumEinde() == null ? null : inhoud.getDatumEinde().getIntegerWaarde());
                 setString(statement, PARAM_SLEUTEL_RUBRIEKEN, vertaalRubrieken(inhoud.getSleutelrubriek()));
                 setString(statement, PARAM_SPONTAAN_RUBRIEKEN, vertaalRubrieken(inhoud.getRubrieknummerSpontaan()));
@@ -230,7 +235,7 @@ public class GbavAutorisatieKanaal extends LazyLoadingKanaal {
 
         private long selectAutorisatieId(final Connection connection) throws SQLException {
             try (final PreparedStatement idStatement = connection.prepareStatement(SELECT_AUTORISATIE_ID_SQL);
-                final ResultSet idResult = idStatement.executeQuery()) {
+                 final ResultSet idResult = idStatement.executeQuery()) {
                 idResult.next();
 
                 return idResult.getLong(JdbcConstants.COLUMN_1);
@@ -238,10 +243,12 @@ public class GbavAutorisatieKanaal extends LazyLoadingKanaal {
             }
         }
 
-        private void insertVoorwaardeRegel(final Connection connection, final long autorisatieId, final String voorwaardeType, final String voorwaarderegel)
-            throws SQLException
-        {
-            if (voorwaarderegel == null || !"".equals(voorwaarderegel)) {
+        private void insertVoorwaardeRegel(
+                final Connection connection,
+                final long autorisatieId,
+                final String voorwaardeType,
+                final String voorwaarderegel) throws SQLException {
+            if (voorwaarderegel == null || "".equals(voorwaarderegel)) {
                 return;
             }
 

@@ -3,7 +3,7 @@
 	<afnemersindicatie>
 		<stapelNummer>0</stapelNummer>
 		<volgNummer>0</volgNummer>
-		<afnemerCode>59901</afnemerCode>
+		<afnemerCode>059901</afnemerCode>
 		<geldigheidStartDatum>20000101</geldigheidStartDatum>
 	</afnemersindicatie>
 	<afnemersindicatie>
@@ -14,13 +14,13 @@
 	<afnemersindicatie>
 		<stapelNummer>0</stapelNummer>
 		<volgNummer>2</volgNummer>
-		<afnemerCode>59901</afnemerCode>
+		<afnemerCode>059901</afnemerCode>
 		<geldigheidStartDatum>19900101</geldigheidStartDatum>
 	</afnemersindicatie>
 	<afnemersindicatie>
 		<stapelNummer>1</stapelNummer>
 		<volgNummer>0</volgNummer>
-		<afnemerCode>62601</afnemerCode>
+		<afnemerCode>062601</afnemerCode>
 		<geldigheidStartDatum>20000101</geldigheidStartDatum>
 	</afnemersindicatie>
 	<afnemersindicatie>
@@ -31,7 +31,7 @@
 	<afnemersindicatie>
 		<stapelNummer>1</stapelNummer>
 		<volgNummer>2</volgNummer>
-		<afnemerCode>62601</afnemerCode>
+		<afnemerCode>062601</afnemerCode>
 		<geldigheidStartDatum>19900101</geldigheidStartDatum>
 	</afnemersindicatie>
 </afnemersindicaties>

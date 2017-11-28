@@ -6,25 +6,28 @@
 
 package nl.bzk.brp.gba.dataaccess;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.test.dal.DBUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import nl.bzk.brp.model.logisch.verconv.LO3Voorkomen;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
 
 public class VerConvRepositoryTest extends AbstractIntegratieTest {
 
     @Autowired
     private VerConvRepository verConvRepository;
 
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
     @Test
-    public final void zoekLo3VoorkomenVoorActie() {
-        final ActieModel actie = new ActieModel(null, null, null, null, null, null, null);
-        ReflectionTestUtils.setField(actie, "iD", 4563565L);
-
-        final LO3Voorkomen result = verConvRepository.zoekLo3VoorkomenVoorActie(actie);
+    public final void zoekLo3VoorkomenVoorActieNietGevonden() {
+        final Lo3Voorkomen result = verConvRepository.zoekLo3VoorkomenVoorActie(4563565L);
         Assert.assertNull(result);
+    }
+
+    @DBUnit.InsertBefore({"/data/kern.xml", "/data/autaut.xml", "/data/ist.xml"})
+    @Test
+    public final void zoekLo3VoorkomenVoorActieWelGevonden() {
+        final Lo3Voorkomen result = verConvRepository.zoekLo3VoorkomenVoorActie(28L);
+        Assert.assertNotNull(result);
     }
 }

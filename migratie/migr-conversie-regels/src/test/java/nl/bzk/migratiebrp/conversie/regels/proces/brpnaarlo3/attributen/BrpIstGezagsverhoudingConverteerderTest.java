@@ -8,11 +8,11 @@ package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen;
 
 import static nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper.lo3Documentatie;
 import static nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper.lo3Gezag;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
@@ -26,6 +26,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3GezagsverhoudingInhoud;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieCurateleregister;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import org.junit.Before;
@@ -33,12 +34,11 @@ import org.junit.Test;
 
 public class BrpIstGezagsverhoudingConverteerderTest extends AbstractBrpIstConverteerderTest<BrpIstGezagsVerhoudingGroepInhoud> {
 
-    @Inject
-    private BrpIstGezagsverhoudingConverteerder subject;
     private Lo3GezagsverhoudingInhoud expectedInhoud;
     private Lo3Documentatie expectedDocumentatie;
     private Lo3Historie expectedHistorie;
     private Lo3Herkomst expectedHerkomst;
+    private BrpIstGezagsverhoudingConverteerder subject;
 
     @Before
     public void setUp() {
@@ -46,18 +46,16 @@ public class BrpIstGezagsverhoudingConverteerderTest extends AbstractBrpIstConve
         expectedDocumentatie = maakDocumentatie(false);
         expectedHistorie = maakHistorie();
         expectedHerkomst = maakHerkomst(Lo3CategorieEnum.CATEGORIE_11);
+        subject = new BrpIstGezagsverhoudingConverteerder(attribuutConverteerder);
+
+        when(attribuutConverteerder.converteerIndicatieCurateleRegister(new BrpBoolean(true))).thenReturn(new Lo3IndicatieCurateleregister(1));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.AbstractBrpIstConverteerderTest#getTestSubject()
-     */
-    @Override
-    protected BrpIstGezagsverhoudingConverteerder getTestSubject() {
-        return subject;
+    @Test
+    public void testNullStapel() {
+        assertNull(subject.converteerGezagsverhouding(null));
     }
+
 
     @Test
     public void testOuder1HeeftGezag() {
@@ -65,7 +63,7 @@ public class BrpIstGezagsverhoudingConverteerderTest extends AbstractBrpIstConve
         final BrpIstGezagsVerhoudingGroepInhoud.Builder builder = maakGezagsverhoudingGroepInhoud(true);
         builder.indicatieOuder1HeeftGezag(new BrpBoolean(true, null));
         groepen.add(maakGroep(builder.build()));
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteerGezagsverhouding(new BrpStapel<>(groepen));
 
         controleerStapel(lo3Stapel, expectedInhoud, expectedDocumentatie, null, expectedHistorie, expectedHerkomst);
     }
@@ -77,7 +75,7 @@ public class BrpIstGezagsverhoudingConverteerderTest extends AbstractBrpIstConve
         builder.indicatieOuder2HeeftGezag(new BrpBoolean(true, null));
         final BrpIstGezagsVerhoudingGroepInhoud inhoud = builder.build();
         groepen.add(maakGroep(inhoud));
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteerGezagsverhouding(new BrpStapel<>(groepen));
 
         final Lo3GezagsverhoudingInhoud expectedInhoudParam = lo3Gezag("2", false);
         controleerStapel(lo3Stapel, expectedInhoudParam, expectedDocumentatie, null, expectedHistorie, expectedHerkomst);
@@ -90,7 +88,7 @@ public class BrpIstGezagsverhoudingConverteerderTest extends AbstractBrpIstConve
         builder.indicatieDerdeHeeftGezag(new BrpBoolean(true, null));
         final BrpIstGezagsVerhoudingGroepInhoud inhoud = builder.build();
         groepen.add(maakGroep(inhoud));
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteerGezagsverhouding(new BrpStapel<>(groepen));
 
         final Lo3GezagsverhoudingInhoud expectedInhoudParam = lo3Gezag("D", false);
         controleerStapel(lo3Stapel, expectedInhoudParam, expectedDocumentatie, null, expectedHistorie, expectedHerkomst);
@@ -104,7 +102,7 @@ public class BrpIstGezagsverhoudingConverteerderTest extends AbstractBrpIstConve
         builder.indicatieDerdeHeeftGezag(new BrpBoolean(true, null));
         final BrpIstGezagsVerhoudingGroepInhoud inhoud = builder.build();
         groepen.add(maakGroep(inhoud));
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteerGezagsverhouding(new BrpStapel<>(groepen));
 
         final Lo3GezagsverhoudingInhoud expectedInhoudParam = lo3Gezag("1D", false);
         controleerStapel(lo3Stapel, expectedInhoudParam, expectedDocumentatie, null, expectedHistorie, expectedHerkomst);
@@ -118,7 +116,7 @@ public class BrpIstGezagsverhoudingConverteerderTest extends AbstractBrpIstConve
         builder.indicatieDerdeHeeftGezag(new BrpBoolean(true, null));
         final BrpIstGezagsVerhoudingGroepInhoud inhoud = builder.build();
         groepen.add(maakGroep(inhoud));
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteerGezagsverhouding(new BrpStapel<>(groepen));
 
         final Lo3GezagsverhoudingInhoud expectedInhoudParam = lo3Gezag("2D", false);
         controleerStapel(lo3Stapel, expectedInhoudParam, expectedDocumentatie, null, expectedHistorie, expectedHerkomst);
@@ -131,7 +129,7 @@ public class BrpIstGezagsverhoudingConverteerderTest extends AbstractBrpIstConve
         builder.indicatieOnderCuratele(new BrpBoolean(true, null));
         final BrpIstGezagsVerhoudingGroepInhoud inhoud = builder.build();
         groepen.add(maakGroep(inhoud));
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteerGezagsverhouding(new BrpStapel<>(groepen));
 
         final Lo3GezagsverhoudingInhoud expectedInhoudParam = lo3Gezag(null, true);
         controleerStapel(lo3Stapel, expectedInhoudParam, expectedDocumentatie, null, expectedHistorie, expectedHerkomst);
@@ -160,7 +158,7 @@ public class BrpIstGezagsverhoudingConverteerderTest extends AbstractBrpIstConve
 
         final BrpIstGezagsVerhoudingGroepInhoud inhoud = builder.build();
         groepen.add(maakGroep(inhoud));
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3GezagsverhoudingInhoud> lo3Stapel = subject.converteerGezagsverhouding(new BrpStapel<>(groepen));
 
         final Lo3Documentatie expectedDocument = lo3Documentatie(0L, null, null, null, null, null);
         controleerStapel(lo3Stapel, expectedInhoud, expectedDocument, null, expectedHistorie, expectedHerkomst);

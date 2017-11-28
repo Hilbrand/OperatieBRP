@@ -10,6 +10,21 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
@@ -23,29 +38,16 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblij
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortMigratieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpMigratieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersoonMigratieMapperTest {
 
     private static final char AANGEVER = 'I';
     private static final char REDEN_WIJZIGING = 'P';
-    private static final short LAND_OF_GEBIED = (short) 1234;
+    private static final String LAND_OF_GEBIED = "1234";
 
     @Mock
     private DynamischeStamtabelRepository dynamischeStamtabelRepository;
@@ -77,13 +79,7 @@ public class PersoonMigratieMapperTest {
         final LandOfGebied testLandOfGebied = new LandOfGebied(LAND_OF_GEBIED, "Test land");
         Mockito.when(dynamischeStamtabelRepository.getLandOfGebiedByCode(LAND_OF_GEBIED)).thenReturn(testLandOfGebied);
 
-        mapper.mapVanMigratie(brpStapel, persoon);
-
-        // Test A-laag
-        assertEquals(SoortMigratie.IMMIGRATIE, persoon.getSoortMigratie());
-        assertEquals('I', persoon.getAangeverMigratie().getCode());
-        assertEquals('P', persoon.getRedenWijzigingMigratie().getCode());
-        assertEquals((short) 1234, persoon.getLandOfGebiedMigratie().getCode());
+        mapper.mapVanMigratie(brpStapel, persoon, null);
 
         // Test historie
         assertEquals(1, persoon.getPersoonMigratieHistorieSet().size());
@@ -91,28 +87,28 @@ public class PersoonMigratieMapperTest {
         assertEquals(SoortMigratie.IMMIGRATIE, historie.getSoortMigratie());
         assertEquals('I', historie.getAangeverMigratie().getCode());
         assertEquals('P', historie.getRedenWijzigingMigratie().getCode());
-        assertEquals((short) 1234, historie.getLandOfGebied().getCode());
+        assertEquals("1234", historie.getLandOfGebied().getCode());
     }
 
     private BrpGroep<BrpMigratieInhoud> maakGroep() {
         final BrpMigratieInhoud inhoud =
                 new BrpMigratieInhoud(
-                    BrpSoortMigratieCode.IMMIGRATIE,
-                    new BrpRedenWijzigingVerblijfCode(REDEN_WIJZIGING),
-                    new BrpAangeverCode(AANGEVER),
-                    new BrpLandOfGebiedCode(LAND_OF_GEBIED),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
+                        BrpSoortMigratieCode.IMMIGRATIE,
+                        new BrpRedenWijzigingVerblijfCode(REDEN_WIJZIGING),
+                        new BrpAangeverCode(AANGEVER),
+                        new BrpLandOfGebiedCode(LAND_OF_GEBIED),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
         final BrpHistorie historie =
                 new BrpHistorie(new BrpDatum(20000101, null), null, BrpDatumTijd.fromDatumTijdMillis(20000101121212L, null), null, null);
         final BrpActie actieInhoud =
-                new BrpActie(1L, BrpSoortActieCode.CONVERSIE_GBA, new BrpPartijCode(1), BrpDatumTijd.fromDatumTijdMillis(
-                    20000101121212L,
-                    null), null, null, 1, null);
+                new BrpActie(1L, BrpSoortActieCode.CONVERSIE_GBA, new BrpPartijCode("000001"), BrpDatumTijd.fromDatumTijdMillis(
+                        20000101121212L,
+                        null), null, null, 1, null);
         return new BrpGroep<>(inhoud, historie, actieInhoud, null, null);
     }
 }

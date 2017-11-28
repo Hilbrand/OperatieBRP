@@ -14,18 +14,18 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import org.junit.Before;
+import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeboorteHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeboorteHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class TransformatieDw012Test extends AbstractTransformatieTest {
 
@@ -68,8 +68,8 @@ public class TransformatieDw012Test extends AbstractTransformatieTest {
         assertTrue(nieuwVerschil.getNieuweWaarde() instanceof BRPActie);
         final BRPActie actieMuts = (BRPActie) nieuwVerschil.getNieuweWaarde();
         assertEquals(
-            geboorteActualisering.get(0).getNieuweHistorieRij().getActieInhoud().getAdministratieveHandeling(),
-            actieMuts.getAdministratieveHandeling());
+                geboorteActualisering.get(0).getNieuweHistorieRij().getActieInhoud().getAdministratieveHandeling(),
+                actieMuts.getAdministratieveHandeling());
         assertEquals(geboorteActualisering.get(0).getSleutel().getDelen(), sleutel.getDelen());
         assertEquals(((EntiteitSleutel) geboorteActualisering.get(0).getSleutel()).getEntiteit(), sleutel.getEntiteit());
     }
@@ -90,7 +90,7 @@ public class TransformatieDw012Test extends AbstractTransformatieTest {
         final char nieuweNadereAanduidingVerval = 'O';
 
         final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        final LandOfGebied landOfGebied = new LandOfGebied((short) 0, "testLand");
+        final LandOfGebied landOfGebied = new LandOfGebied("0000", "testLand");
         final PersoonGeboorteHistorie oudeRij = new PersoonGeboorteHistorie(persoon, 19900101, landOfGebied);
         oudeRij.setActieInhoud(nieuweActieVerval);
         oudeRij.setDatumTijdRegistratie(nieuweDatumTijdVerval);

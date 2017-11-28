@@ -26,11 +26,8 @@ public final class Lo3Stapels {
 
     /**
      * Maak een stapel van categorieen.
-     * 
-     * @param <T>
-     *            inhoud type
-     * @param categorieen
-     *            categorieen
+     * @param <T> inhoud type
+     * @param categorieen categorieen
      * @return stapel
      */
     public static <T extends Lo3CategorieInhoud> Lo3Stapel<T> of(final List<Lo3Categorie<T>> categorieen) {
@@ -40,11 +37,8 @@ public final class Lo3Stapels {
     /**
      * Sorteer lo3 categorieen zoals dat zou moeten voor een lg01 bericht. Let op dat de laatste categorie (actueel)
      * niet meegesorteerd wordt.
-     * 
-     * @param <T>
-     *            inhoud type
-     * @param categorieen
-     *            te sorteren lijst categorieen
+     * @param <T> inhoud type
+     * @param categorieen te sorteren lijst categorieen
      */
     public static <T extends Lo3CategorieInhoud> void sorteerCategorieenLg01(final List<Lo3Categorie<T>> categorieen) {
         if (categorieen == null || categorieen.isEmpty()) {
@@ -80,11 +74,8 @@ public final class Lo3Stapels {
 
     /**
      * Sorteer een lo3 stapel zoals dat zou moeten voor een lg01 bericht.
-     * 
-     * @param <T>
-     *            inhoud type
-     * @param stapel
-     *            te sorteren stapel
+     * @param <T> inhoud type
+     * @param stapel te sorteren stapel
      * @return gesorteerde stapel
      */
     public static <T extends Lo3CategorieInhoud> Lo3Stapel<T> sorteerStapelLg01(final Lo3Stapel<T> stapel) {
@@ -100,11 +91,8 @@ public final class Lo3Stapels {
 
     /**
      * Sorteer lo3 stapels zoals dat zou moeten voor een lg01 bericht.
-     * 
-     * @param <T>
-     *            inhoud type
-     * @param stapels
-     *            te sorteren stapels
+     * @param <T> inhoud type
+     * @param stapels te sorteren stapels
      * @return gesorteerde stapels in de juiste volgorde
      */
     public static <T extends Lo3CategorieInhoud> List<Lo3Stapel<T>> sorteerStapelsLg01(final List<Lo3Stapel<T>> stapels) {

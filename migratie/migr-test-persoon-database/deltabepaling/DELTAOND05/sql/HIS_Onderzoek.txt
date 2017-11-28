@@ -5,7 +5,7 @@ ai_v.lo3categorie || ai_v.lo3stapelvolgnr::text || ai_v.lo3voorkomenvolgnr::text
 av_v.lo3categorie || av_v.lo3stapelvolgnr::text || av_v.lo3voorkomenvolgnr::text as Av_herkomst, 
 a.indvoorkomentbvlevmuts, case when a.actievervaltbvlevmuts is null then null else true end as isActieMutsGevuld, 
 
-a.dataanv, a.verwachteafhandeldat, a.dateinde, a.oms, a.status, d.admhnd as admhndai, f.admhnd as admhndav, g.admhnd as admhndgaav, l.naam as naamai, n.naam as naamav, o.naam as naamgaav
+a.dataanv, a.dateinde, a.oms, a.status, d.admhnd as admhndai, f.admhnd as admhndav, g.admhnd as admhndgaav, l.naam as naamai, n.naam as naamav, o.naam as naamgaav
 from kern.his_onderzoek a
 
 left join kern.actie d on d.id = a.actieinh

@@ -12,31 +12,26 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.DynamischeStamtabel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.DynamischeStamtabel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonDeelnameEuVerkiezingenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonPersoonskaartHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonUitsluitingKiesrechtHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DocumentHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonDeelnameEuVerkiezingenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonPersoonskaartHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonUitsluitingKiesrechtHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.util.PersistenceUtil;
 
 /**
  * Utility class voor het gebruik van (Identificatie)Sleutels in Delta functionaliteit.
@@ -52,40 +47,24 @@ public final class SleutelUtil {
     /**
      * Maakt een sleutel aan de hand van de opgegeven attributen. Als het meegegeven Object o een DeltaEntiteit is, dan
      * wordt de sleutel verder aangevuld met de unique constraint die op de deltaEntiteit zit.
-     *
-     * @param deltaEntiteit
-     *            object waar de sleutel voor gemaakt wordt.
-     * @param eigenaarSleutel
-     *            sleutel van de eigenaar van het object.
-     * @param veld
-     *            veld waar deze sleutel voor gemaakt wordt.
+     * @param deltaEntiteit object waar de sleutel voor gemaakt wordt.
+     * @param eigenaarSleutel sleutel van de eigenaar van het object.
+     * @param veld veld waar deze sleutel voor gemaakt wordt.
      * @return een {@link EntiteitSleutel}
-     * @throws java.lang.ReflectiveOperationException
-     *             als de velden van o niet benaderd kunnen worden dmv reflection
      */
-    public static EntiteitSleutel maakSleutel(final DeltaEntiteit deltaEntiteit, final EntiteitSleutel eigenaarSleutel, final Field veld)
-        throws ReflectiveOperationException
-    {
+    public static EntiteitSleutel maakSleutel(final Entiteit deltaEntiteit, final EntiteitSleutel eigenaarSleutel, final Field veld){
         return maakSleutel(deltaEntiteit, eigenaarSleutel, veld.getName());
     }
 
     /**
      * Maakt een sleutel aan de hand van de opgegeven attributen. Als het meegegeven Object oo een DeltaEntiteit is, dan
      * wordt de sleutel verder aangevuld met de unique constraint die op de deltaEntiteit zit.
-     *
-     * @param deltaEntiteit
-     *            object waar de sleutel voor gemaakt wordt.
-     * @param eigenaarSleutel
-     *            sleutel van de eigenaar van het object.
-     * @param veldnaam
-     *            veldnaam waar deze sleutel voor gemaakt wordt.
+     * @param deltaEntiteit object waar de sleutel voor gemaakt wordt.
+     * @param eigenaarSleutel sleutel van de eigenaar van het object.
+     * @param veldnaam veldnaam waar deze sleutel voor gemaakt wordt.
      * @return een {@link EntiteitSleutel}
-     * @throws java.lang.ReflectiveOperationException
-     *             als de velden van o niet benaderd kunnen worden dmv reflection
      */
-    public static EntiteitSleutel maakSleutel(final DeltaEntiteit deltaEntiteit, final EntiteitSleutel eigenaarSleutel, final String veldnaam)
-        throws ReflectiveOperationException
-    {
+    public static EntiteitSleutel maakSleutel(final Entiteit deltaEntiteit, final EntiteitSleutel eigenaarSleutel, final String veldnaam) {
         final Class<?> entiteitClass = deltaEntiteit.getClass();
         return new EntiteitSleutel(entiteitClass, veldnaam, eigenaarSleutel);
     }
@@ -93,18 +72,12 @@ public final class SleutelUtil {
     /**
      * Vult de meegegeven sleutel aan met de unique contraint eigenschappen van de meegegeven entiteit. Als er geen
      * unique constraint eigenschappen zijn, dan wordt de sleutel niet aangevuld.
-     *
-     * @param sleutel
-     *            sleutel die aangevuld moet worden.
-     * @param entiteit
-     *            entiteit die voor de aanvullende gegevens moet zorgen.
-     * @param eigenaarSleutel
-     *            sleutel die gebruikt wordt om het eigenaar veld terug te vinden. Dit veld zal niet gebruikt worden om
-     *            de sleutel aan te vullen.
-     * @throws ReflectiveOperationException
-     *             als de velden van entiteit niet benaderd kunnen worden dmv reflection
+     * @param sleutel sleutel die aangevuld moet worden.
+     * @param entiteit entiteit die voor de aanvullende gegevens moet zorgen.
+     * @param eigenaarSleutel sleutel die gebruikt wordt om het eigenaar veld terug te vinden. Dit veld zal niet gebruikt worden om de sleutel aan te vullen.
+     * @throws ReflectiveOperationException als de velden van entiteit niet benaderd kunnen worden dmv reflection
      */
-    static void vulSleutelAan(final Sleutel sleutel, final Object entiteit, final EntiteitSleutel eigenaarSleutel) throws ReflectiveOperationException {
+    private static void vulSleutelAan(final Sleutel sleutel, final Object entiteit, final EntiteitSleutel eigenaarSleutel) throws ReflectiveOperationException {
         if (entiteit != null) {
             final Class<?> entiteitClass = entiteit.getClass();
             final Field eigenaarVeld = eigenaarSleutel != null ? SleutelUtil.bepaalEigenaarVeld(entiteit, eigenaarSleutel) : null;
@@ -123,7 +96,7 @@ public final class SleutelUtil {
              * Verwijder kolommen die afkomstig zijn uit datumtijdstempel, zodat deze rijen zonder historie inhoudelijk
              * vergeleken kunnen worden ipv rij verwijderd - rij toegevoegd.
              */
-            sleutelKolommen.removeAll(SleutelUtil.bepaalKolommenDieAfkomstigZijnUitDatumTijdStempel(entiteit, eigenaarSleutel));
+            sleutelKolommen.removeAll(SleutelUtil.bepaalKolommenDieAfkomstigZijnUitDatumTijdStempel(entiteit));
 
             for (final Field objectVeld : DeltaUtil.getDeclaredEntityFields(entiteitClass)) {
                 SleutelUtil.verwerkVeldInEntiteitSleutel(sleutel, entiteit, objectVeld, eigenaarVeld, sleutelKolommen);
@@ -132,12 +105,11 @@ public final class SleutelUtil {
     }
 
     private static void verwerkVeldInEntiteitSleutel(
-        final Sleutel sleutel,
-        final Object entiteit,
-        final Field objectVeld,
-        final Field eigenaarVeld,
-        final List<String> sleutelKolommen) throws ReflectiveOperationException
-    {
+            final Sleutel sleutel,
+            final Object entiteit,
+            final Field objectVeld,
+            final Field eigenaarVeld,
+            final List<String> sleutelKolommen) throws ReflectiveOperationException {
         final Id idColumn = objectVeld.getAnnotation(Id.class);
         final boolean isBrpActieEntiteit = BRPActie.class.isAssignableFrom(entiteit.getClass());
 
@@ -156,13 +128,12 @@ public final class SleutelUtil {
     }
 
     private static void verwerkDatabaseVeld(
-        final Sleutel sleutel,
-        final Object entiteit,
-        final Field objectVeld,
-        final List<String> sleutelKolommen,
-        final Id idColumn,
-        final Column column) throws IllegalAccessException
-    {
+            final Sleutel sleutel,
+            final Object entiteit,
+            final Field objectVeld,
+            final List<String> sleutelKolommen,
+            final Id idColumn,
+            final Column column) throws IllegalAccessException {
         final Object waarde = objectVeld.get(entiteit);
         if (idColumn != null) {
             sleutel.setId(waarde != null ? (Long) waarde : null);
@@ -174,12 +145,8 @@ public final class SleutelUtil {
         }
     }
 
-    private static void verwerkDynamischStamtabelVeld(
-        final Sleutel sleutel,
-        final Object entiteit,
-        final Field objectVeld,
-        final List<String> sleutelKolommen) throws IllegalAccessException
-    {
+    private static void verwerkDynamischStamtabelVeld(final Sleutel sleutel, final Object entiteit, final Field objectVeld, final List<String> sleutelKolommen)
+            throws IllegalAccessException {
         final JoinColumn joinColumn = objectVeld.getAnnotation(JoinColumn.class);
         final String kolomnaam = SleutelUtil.bepaalKolomnaam(joinColumn.name(), objectVeld);
         if (sleutelKolommen.contains(kolomnaam)) {
@@ -203,18 +170,15 @@ public final class SleutelUtil {
     }
 
     private static List<String> bepaalExtraSleutelKolommen(final Class<?> entiteitClass) {
-        final String srtVeldnaam = "srt";
         final List<String> extraKolommen = new ArrayList<>();
-        if (PersoonReisdocument.class.isAssignableFrom(entiteitClass)) {
-            extraKolommen.addAll(Arrays.asList(srtVeldnaam, "nr", "autvanafgifte", "dateindedoc", "datuitgifte"));
-        } else if (PersoonVerificatie.class.isAssignableFrom(entiteitClass)) {
-            extraKolommen.addAll(Arrays.asList("dat", "partij", srtVeldnaam));
+        if (PersoonVerificatie.class.isAssignableFrom(entiteitClass)) {
+            extraKolommen.addAll(Arrays.asList("dat", "partij", "srt"));
         }
         return extraKolommen;
     }
 
-    private static List<String> bepaalKolommenDieAfkomstigZijnUitDatumTijdStempel(final Object entiteit, final EntiteitSleutel eigenaarSleutel) {
-        if (isBrpGroepMetTsRegAfkomstigUitDatumTijdStempel(entiteit, eigenaarSleutel)) {
+    private static List<String> bepaalKolommenDieAfkomstigZijnUitDatumTijdStempel(final Object entiteit) {
+        if (isBrpGroepMetTsRegAfkomstigUitDatumTijdStempel(entiteit)) {
             return Collections.singletonList("tsreg");
         }
 
@@ -223,28 +187,22 @@ public final class SleutelUtil {
 
     /**
      * Bepaal of de gegeven BRP groep een tsreg heeft die afkomstig is uit een datumtijdstempel.
-     *
-     * @param entiteit
-     *            de entiteit
-     * @param eigenaarSleutel
-     *            de sleutel van de eigenaar van de entiteit
+     * @param entiteit de entiteit
      * @return true als dit een groep is met uit Cat07 afgeleide historie.
      */
-    public static boolean isBrpGroepMetTsRegAfkomstigUitDatumTijdStempel(final Object entiteit, final EntiteitSleutel eigenaarSleutel) {
-        final Object entiteitPojo = PersistenceUtil.getPojoFromObject(entiteit);
+    public static boolean isBrpGroepMetTsRegAfkomstigUitDatumTijdStempel(final Object entiteit) {
+        final Object entiteitPojo = Entiteit.convertToPojo(entiteit);
         final Class<?> entiteitClass = entiteitPojo.getClass();
         final boolean isCat07Groep =
                 PersoonPersoonskaartHistorie.class.isAssignableFrom(entiteitClass) || PersoonVerificatieHistorie.class.isAssignableFrom(entiteitClass);
         final boolean isCat13Groep =
                 PersoonDeelnameEuVerkiezingenHistorie.class.isAssignableFrom(entiteitClass)
-                                     || PersoonUitsluitingKiesrechtHistorie.class.isAssignableFrom(entiteitClass);
+                        || PersoonUitsluitingKiesrechtHistorie.class.isAssignableFrom(entiteitClass);
         final boolean isCat07Indicatie =
                 PersoonIndicatieHistorie.class.isAssignableFrom(entiteitClass) && isCat07HistorieIndicatieGroep((PersoonIndicatieHistorie) entiteit);
-        final boolean isCat13DocumentHistorie = DocumentHistorie.class.isAssignableFrom(entiteitClass) && isCat13DocumentHistorie(eigenaarSleutel);
 
         final boolean isCat07 = isCat07Groep || isCat07Indicatie || isBijhoudingGroepAfkomstigUitCategorie07(entiteitPojo);
-        final boolean isCat13 = isCat13Groep || isCat13DocumentHistorie;
-        return isCat07 || isCat13;
+        return isCat07 || isCat13Groep;
     }
 
     private static boolean isBijhoudingGroepAfkomstigUitCategorie07(final Object entiteit) {
@@ -259,44 +217,20 @@ public final class SleutelUtil {
     private static boolean isCat07HistorieIndicatieGroep(final PersoonIndicatieHistorie indicatie) {
         final SoortIndicatie soortIndicatie = indicatie.getPersoonIndicatie().getSoortIndicatie();
         return SoortIndicatie.BIJZONDERE_VERBLIJFSRECHTELIJKE_POSITIE.equals(soortIndicatie)
-               || SoortIndicatie.VOLLEDIGE_VERSTREKKINGSBEPERKING.equals(soortIndicatie);
-    }
-
-    private static boolean isCat13DocumentHistorie(final EntiteitSleutel eigenaarSleutel) {
-        final boolean result;
-
-        final boolean heeftDrieNiveaus =
-                eigenaarSleutel != null
-                                         && eigenaarSleutel.getEigenaarSleutel() != null
-                                         && eigenaarSleutel.getEigenaarSleutel().getEigenaarSleutel() != null;
-
-        if (heeftDrieNiveaus) {
-            final Class<?> historieRijClass = eigenaarSleutel.getEigenaarSleutel().getEigenaarSleutel().getEntiteit();
-            result =
-                    PersoonDeelnameEuVerkiezingenHistorie.class.isAssignableFrom(historieRijClass)
-                     || PersoonUitsluitingKiesrechtHistorie.class.isAssignableFrom(historieRijClass);
-        } else {
-            result = false;
-        }
-
-        return result;
+                || SoortIndicatie.VOLLEDIGE_VERSTREKKINGSBEPERKING.equals(soortIndicatie);
     }
 
     /**
      * Bepaal welk veld in een object de referentie naar de eigenaar van het object bevat. Gaat ervan uit dat er
      * maximaal 1 veld in het object is met hetzelfde type als de eigenaar.
-     *
-     * @param entiteit
-     *            Het object wn het eigenaar veld moet worden bepaald
-     * @param eigenaarSleutel
-     *            De sleutel van de eigenaar van het object
+     * @param entiteit Het object wn het eigenaar veld moet worden bepaald
+     * @param eigenaarSleutel De sleutel van de eigenaar van het object
      * @return Het eigenaar veld, of null als dit niet bepaald kon worden.
-     * @throws java.lang.IllegalAccessException
-     *             als het object o niet als Collection kan worden gemaakt
+     * @throws java.lang.IllegalAccessException als het object o niet als Collection kan worden gemaakt
      */
     private static Field bepaalEigenaarVeld(final Object entiteit, final EntiteitSleutel eigenaarSleutel) throws IllegalAccessException {
         final Class<?> eigenaarClass = eigenaarSleutel.getEntiteit();
-        final Class<?> entiteitClass = PersistenceUtil.bepaalEntiteitClass(entiteit.getClass());
+        final Class<?> entiteitClass = Entiteit.bepaalEntiteitClass(entiteit.getClass());
 
         Field eigenaarVeld = null;
         for (final Field veld : DeltaUtil.getDeclaredEntityFields(entiteitClass)) {
@@ -311,28 +245,21 @@ public final class SleutelUtil {
 
     /**
      * Maakt een sleutel aan voor een rij in een collectie.
-     *
-     * @param eigenaar
-     *            eigenaar van de collectie.
-     * @param eigenaarSleutel
-     *            de sleutel van de eigenaar van de collectie.
-     * @param lijstInhoudObject
-     *            inhoud object van de collectie
-     * @param veldnaam
-     *            veld waar de collectie zit.
+     * @param eigenaar eigenaar van de collectie.
+     * @param eigenaarSleutel de sleutel van de eigenaar van de collectie.
+     * @param lijstInhoudObject inhoud object van de collectie
+     * @param veldnaam veld waar de collectie zit.
      * @return de sleutel voor de rij van de lijst
-     * @throws ReflectiveOperationException
-     *             als de velden van o niet benaderd kunnen worden dmv reflection
+     * @throws ReflectiveOperationException als de velden van o niet benaderd kunnen worden dmv reflection
      */
     public static EntiteitSleutel maakRijSleutel(
-        final DeltaEntiteit eigenaar,
-        final EntiteitSleutel eigenaarSleutel,
-        final DeltaEntiteit lijstInhoudObject,
-        final String veldnaam) throws ReflectiveOperationException
-    {
+            final Entiteit eigenaar,
+            final EntiteitSleutel eigenaarSleutel,
+            final Entiteit lijstInhoudObject,
+            final String veldnaam) throws ReflectiveOperationException {
         final EntiteitSleutel sleutel = new EntiteitSleutel(eigenaar.getClass(), veldnaam, eigenaarSleutel);
 
-        final DeltaEntiteit lijstInhoudPojo = PersistenceUtil.getPojoFromObject(lijstInhoudObject);
+        final Entiteit lijstInhoudPojo = Entiteit.convertToPojo(lijstInhoudObject);
         final Class<?> lijstInhoudPojoClass = lijstInhoudPojo.getClass();
         if (lijstInhoudPojoClass.getAnnotation(Entity.class) != null) {
             vulSleutelAan(sleutel, lijstInhoudPojo, eigenaarSleutel);

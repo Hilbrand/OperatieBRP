@@ -12,15 +12,16 @@ import static org.junit.Assert.assertNotNull;
 import java.sql.Timestamp;
 import java.util.List;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3Severity;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3SoortMelding;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoFoutRegel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Severity;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3SoortMelding;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,14 +33,18 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DbServiceTest {
-    private static final Long A_NR = 8172387435L;
-    private static final String LO3PL =
-            "00697011640110010"
-                    + A_NR
-                    + "01200092995889450210004Mart0240005Vries03100081990010103200040599033000460300410001M6110001E8110004059981200071 A9102851000819900101861000819900102021720110010192829389501200099911223340210006Jannie0240004Smit03100081969010103200041901033000460300410001M6210008199001018110004059981200071 A9102851000819900101861000819900102031750110010172625463201200093827261340210008Mitchell0240005Vries03100081970010103200041900033000460300410001M6210008199001018110004059981200071 A910285100081990010186100081990010207055681000819900101701000108010001180200172012010100000000008106091000405990920008199001011010001W102000405991030008199001011110001.7210001G851000819900101861000819900102";
+    private static final String A_NR = "8172387435";
+    private static final String LO3PL = "00697011640110010"
+            + A_NR
+            + "01200092995889450210004Mart0240005Vries03100081990010103200040599033000460300410001M6110001E8110004059981200071 "
+            +
+            "A9102851000819900101861000819900102021720110010192829389501200099911223340210006Jannie0240004Smit03100081969010103200041901033000460300410001M6210008199001018110004059981200071 A9102851000819900101861000819900102031750110010172625463201200093827261340210008Mitchell0240005Vries03100081970010103200041900033000460300410001M6210008199001018110004059981200071 A910285100081990010186100081990010207055681000819900101701000108010001180200172012010100000000008106091000405990920008199001011010001W102000405991030008199001011110001.7210001G851000819900101861000819900102";
 
     @Mock
     private BrpDalService brpDalService;
+
+    @Mock
+    private BrpPersoonslijstService brpPersoonslijstService;
 
     @Mock
     private LogRegelConverter logRegelConverter;
@@ -50,7 +55,7 @@ public class DbServiceTest {
     @Test
     public void testZoekBerichtLog() {
         final Lo3Bericht lo3Bericht = createBerichtLog(LO3PL);
-        Mockito.when(brpDalService.zoekLo3PeroonslijstBerichtOpAnummer(Matchers.anyLong())).thenReturn(lo3Bericht);
+        Mockito.when(brpDalService.zoekLo3PeroonslijstBerichtOpAnummer(Matchers.anyString())).thenReturn(lo3Bericht);
         final Lo3Bericht foundLo3Bericht = dbService.zoekLo3Bericht(A_NR);
 
         assertNotNull("BerichtLog mag niet null zijn", foundLo3Bericht);
@@ -75,14 +80,13 @@ public class DbServiceTest {
 
     @Test
     public void testZoekBrpPersoonsLijst() {
-        Mockito.when(brpDalService.zoekPersoonOpAnummer(Matchers.anyLong())).thenReturn(createBrpPersoonslijst());
+        Mockito.when(brpPersoonslijstService.zoekPersoonOpAnummer(Matchers.anyString())).thenReturn(createBrpPersoonslijst());
         final BrpPersoonslijst brpPersoonslijst = dbService.zoekBrpPersoonsLijst(A_NR);
         assertNotNull("BrpPersoonslijst mag niet null zijn", brpPersoonslijst);
     }
 
     private Lo3Bericht createBerichtLog(final String pl) {
-        final Lo3Bericht bericht =
-                new Lo3Bericht("test_ref", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()), pl, true);
+        final Lo3Bericht bericht = new Lo3Bericht("test_ref", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(System.currentTimeMillis()), pl, true);
         bericht.addMelding("01", 0, 0, null, Lo3SoortMelding.PRE001, Lo3Severity.INFO, null, null);
         return bericht;
     }

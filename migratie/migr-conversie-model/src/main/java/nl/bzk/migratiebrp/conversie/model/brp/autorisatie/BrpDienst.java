@@ -6,58 +6,51 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.migratiebrp.conversie.model.Sortable;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpEffectAfnemerindicatiesCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpSoortDienstCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstAttenderingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstSelectieInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert het BRP objecttype Dienst.
  *
  * Deze class is immutable en thread-safe.
  */
-public final class BrpDienst {
+public final class BrpDienst implements Sortable{
 
-    @Element(name = "effectAfnemersindicatie", required = false)
+    @Element(name = "effectAfnemersindicatie")
     private final BrpEffectAfnemerindicatiesCode effectAfnemersindicatie;
-    @Element(name = "soort", required = false)
+    @Element(name = "soort")
     private final BrpSoortDienstCode soortDienstCode;
-    @Element(name = "dienstStapel", required = false)
+    @Element(name = "dienstStapel")
     private final BrpStapel<BrpDienstInhoud> dienstStapel;
-    @Element(name = "dienstAttenderingStapel", required = false)
+    @Element(name = "dienstAttenderingStapel")
     private final BrpStapel<BrpDienstAttenderingInhoud> dienstAttenderingStapel;
-    @Element(name = "dienstSelectieStapel", required = false)
+    @Element(name = "dienstSelectieStapel")
     private final BrpStapel<BrpDienstSelectieInhoud> dienstSelectieStapel;
 
     /**
      * Maak een nieuw BrpDienst object.
-     *
-     * @param effectAfnemersindicatie
-     *            de effectAfnemersindicatie
-     * @param soortDienstCode
-     *            de soortDienstCode
-     * @param dienstStapel
-     *            de dienst stapels
-     * @param dienstAttenderingStapel
-     *            de dienst attendering stapels
-     * @param dienstSelectieStapel
-     *            de dienst selectie stapels
+     * @param effectAfnemersindicatie de effectAfnemersindicatie
+     * @param soortDienstCode de soortDienstCode
+     * @param dienstStapel de dienst stapels
+     * @param dienstAttenderingStapel de dienst attendering stapels
+     * @param dienstSelectieStapel de dienst selectie stapels
      */
     public BrpDienst(
-        @Element(name = "effectAfnemersindicatie", required = false) final BrpEffectAfnemerindicatiesCode effectAfnemersindicatie,
-        @Element(name = "soort", required = false) final BrpSoortDienstCode soortDienstCode,
-        @Element(name = "dienstStapel", required = false) final BrpStapel<BrpDienstInhoud> dienstStapel,
-        @Element(name = "dienstAttenderingStapel", required = false) final BrpStapel<BrpDienstAttenderingInhoud> dienstAttenderingStapel,
-        @Element(name = "dienstSelectieStapel", required = false) final BrpStapel<BrpDienstSelectieInhoud> dienstSelectieStapel)
-    {
+            @Element(name = "effectAfnemersindicatie") final BrpEffectAfnemerindicatiesCode effectAfnemersindicatie,
+            @Element(name = "soort") final BrpSoortDienstCode soortDienstCode,
+            @Element(name = "dienstStapel") final BrpStapel<BrpDienstInhoud> dienstStapel,
+            @Element(name = "dienstAttenderingStapel") final BrpStapel<BrpDienstAttenderingInhoud> dienstAttenderingStapel,
+            @Element(name = "dienstSelectieStapel") final BrpStapel<BrpDienstSelectieInhoud> dienstSelectieStapel) {
         super();
         this.effectAfnemersindicatie = effectAfnemersindicatie;
         this.soortDienstCode = soortDienstCode;
@@ -68,7 +61,6 @@ public final class BrpDienst {
 
     /**
      * Geef de waarde van soort dienst code.
-     *
      * @return de soort dienst code
      */
     public BrpSoortDienstCode getSoortDienstCode() {
@@ -77,7 +69,6 @@ public final class BrpDienst {
 
     /**
      * Geef de waarde van dienst stapel.
-     *
      * @return dienst stapel
      */
     public BrpStapel<BrpDienstInhoud> getDienstStapel() {
@@ -86,7 +77,6 @@ public final class BrpDienst {
 
     /**
      * Geef de waarde van effectAfnemersindicatie.
-     *
      * @return effectAfnemersindicatie
      */
     public BrpEffectAfnemerindicatiesCode getEffectAfnemersindicatie() {
@@ -95,7 +85,6 @@ public final class BrpDienst {
 
     /**
      * Geef de waarde van dienst attendering stapel.
-     *
      * @return dienst attendering stapel
      */
     public BrpStapel<BrpDienstAttenderingInhoud> getDienstAttenderingStapel() {
@@ -104,7 +93,6 @@ public final class BrpDienst {
 
     /**
      * Geef de waarde van dienst selectie stapel.
-     *
      * @return dienst selectie stapel
      */
     public BrpStapel<BrpDienstSelectieInhoud> getDienstSelectieStapel() {
@@ -131,11 +119,11 @@ public final class BrpDienst {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(effectAfnemersindicatie)
-                                    .append(soortDienstCode)
-                                    .append(dienstStapel)
-                                    .append(dienstAttenderingStapel)
-                                    .append(dienstSelectieStapel)
-                                    .toHashCode();
+                .append(soortDienstCode)
+                .append(dienstStapel)
+                .append(dienstAttenderingStapel)
+                .append(dienstSelectieStapel)
+                .toHashCode();
     }
 
     @Override
@@ -148,4 +136,16 @@ public final class BrpDienst {
                 .toString();
     }
 
+    @Override
+    public void sorteer() {
+        if (dienstStapel != null && !dienstStapel.isEmpty()) {
+            dienstStapel.sorteer();
+        }
+        if (dienstAttenderingStapel != null && !dienstAttenderingStapel.isEmpty()) {
+            dienstAttenderingStapel.sorteer();
+        }
+        if (dienstSelectieStapel != null && !dienstSelectieStapel.isEmpty()) {
+            dienstSelectieStapel.sorteer();
+        }
+    }
 }

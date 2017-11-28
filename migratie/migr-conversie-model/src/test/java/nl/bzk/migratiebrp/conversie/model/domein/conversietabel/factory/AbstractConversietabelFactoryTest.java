@@ -7,7 +7,9 @@
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory;
 
 import static org.junit.Assert.assertTrue;
+
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
@@ -37,12 +39,9 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOntbindingHuwelijk
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOpschortingBijhoudingCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-
 import org.junit.Test;
 
-/**
- * Created by oskar on 11/9/15.
- */
+
 public class AbstractConversietabelFactoryTest {
 
     TestClass test = new TestClass();
@@ -179,8 +178,8 @@ public class AbstractConversietabelFactoryTest {
         }
 
         @Override
-        public Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode> createAanduidingInhoudingVermissingReisdocumentConversietabel()
-        {
+        public Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode>
+        createAanduidingInhoudingVermissingReisdocumentConversietabel() {
             return null;
         }
 
@@ -216,6 +215,12 @@ public class AbstractConversietabelFactoryTest {
 
         @Override
         public Conversietabel<String, String> createLo3RubriekConversietabel() {
+            return null;
+        }
+
+        @Override
+        public Conversietabel<Lo3NationaliteitCode, BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer>
+        createAutoriteitVanAfgifteBuitenlandsPersoonsnummertabel() {
             return null;
         }
     }

@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
@@ -32,7 +30,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenEindeRelatieCode;
@@ -63,7 +60,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieOnjuist;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
@@ -74,8 +70,8 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenRelatie;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.testutils.ReflectionUtil;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -90,11 +86,7 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
     private static final String VOORVOEGSEL = "van";
     private static final String GESLACHTSNAAM = "Klaveren";
     private static final Character SCHEIDINGSTEKEN = ' ';
-    private static final short BRP_GEMEENTE_CODE = (short) 518;
-    private static final int BRP_PARTIJ_CODE = 51801;
-    private static final String LO3_GEMEENTE_CODE = "0" + BRP_GEMEENTE_CODE;
-    private static final String LO3_LAND_CODE = "" + 6030;
-    private static final short BRP_LAND_CODE_NL = (short) 6030;
+    private static final String BRP_PARTIJ_CODE = "051801";
     private static final Integer DATUM_GEBOORTE = 1980101;
     private static final String GESLACHT_MAN = "M";
     private static final String GESLACHT_VROUW = "V";
@@ -127,8 +119,7 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
     private Lo3CategorieEnum categorie;
     private BrpGeslachtsaanduidingCode geslachtsaanduiding;
 
-    @Inject
-    private HuwelijkOfGpConverteerder huwelijkOfGpConverteerder;
+    private HuwelijkOfGpConverteerder huwelijkOfGpConverteerder = new HuwelijkOfGpConverteerder(new Lo3AttribuutConverteerder(new ConversietabelFactoryImpl()));
 
     @Before
     public void setup() {
@@ -149,53 +140,53 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
                 maakHuwelijkOfGpRij(null, null, null, null, null, null, null, AKTENUMMER, JUIST, 20100101, 20100102);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> hist1 =
                 maakHuwelijkOfGpRij(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    GESLACHTSNAAM,
-                    DATUM_SLUITING,
-                    null,
-                    HUWELIJK,
-                    AKTENUMMER,
-                    JUIST,
-                    DATUM_SLUITING,
-                    DATUM_SLUITING + 1);
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        GESLACHTSNAAM,
+                        DATUM_SLUITING,
+                        null,
+                        HUWELIJK,
+                        AKTENUMMER,
+                        JUIST,
+                        DATUM_SLUITING,
+                        DATUM_SLUITING + 1);
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkOfGpStapels = maakHuwelijksStapels(actueel, hist1);
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkOfGpStapels, builder, null);
         final List<TussenRelatie> relatieStapels = getMigratieRelaties(builder);
-        Assert.assertEquals(0, relatieStapels.size());
+        assertEquals(0, relatieStapels.size());
     }
 
     @Test
     public void testOntbindingActueleSluiting() {
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> actueel =
                 maakHuwelijkOfGpRij(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    GESLACHTSNAAM,
-                    DATUM_SLUITING,
-                    null,
-                    HUWELIJK,
-                    AKTENUMMER,
-                    JUIST,
-                    DATUM_SLUITING,
-                    DATUM_SLUITING + 1);
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        GESLACHTSNAAM,
+                        DATUM_SLUITING,
+                        null,
+                        HUWELIJK,
+                        AKTENUMMER,
+                        JUIST,
+                        DATUM_SLUITING,
+                        DATUM_SLUITING + 1);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> hist1 =
                 maakHuwelijkOfGpRij(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    GESLACHTSNAAM,
-                    null,
-                    DATUM_ONTBINDING,
-                    HUWELIJK,
-                    Lo3String.wrap("2A"),
-                    JUIST,
-                    DATUM_ONTBINDING,
-                    DATUM_ONTBINDING + 1);
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        GESLACHTSNAAM,
+                        null,
+                        DATUM_ONTBINDING,
+                        HUWELIJK,
+                        Lo3String.wrap("2A"),
+                        JUIST,
+                        DATUM_ONTBINDING,
+                        DATUM_ONTBINDING + 1);
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkOfGpStapels = maakHuwelijksStapels(actueel, hist1);
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
@@ -209,49 +200,49 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
         Logging.initContext();
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> actueelHuwelijk =
                 maakHuwelijkOfGpRij(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    GESLACHTSNAAM,
-                    DATUM_SLUITING,
-                    null,
-                    HUWELIJK,
-                    AKTENUMMER,
-                    JUIST,
-                    DATUM_SLUITING,
-                    DATUM_SLUITING + 1);
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        GESLACHTSNAAM,
+                        DATUM_SLUITING,
+                        null,
+                        HUWELIJK,
+                        AKTENUMMER,
+                        JUIST,
+                        DATUM_SLUITING,
+                        DATUM_SLUITING + 1);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> gp1 =
                 maakHuwelijkOfGpRij(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    GESLACHTSNAAM,
-                    DATUM_SLUITING,
-                    null,
-                    GEREGISTREERD_PARTNERSCHAP,
-                    Lo3String.wrap("2A"),
-                    JUIST,
-                    DATUM_SLUITING,
-                    DATUM_SLUITING + 1);
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        GESLACHTSNAAM,
+                        DATUM_SLUITING,
+                        null,
+                        GEREGISTREERD_PARTNERSCHAP,
+                        Lo3String.wrap("2A"),
+                        JUIST,
+                        DATUM_SLUITING,
+                        DATUM_SLUITING + 1);
         final Lo3Categorie<Lo3HuwelijkOfGpInhoud> gp2 =
                 maakHuwelijkOfGpRij(
-                    A_NUMMER,
-                    null,
-                    VOORNAMEN,
-                    GESLACHTSNAAM,
-                    DATUM_SLUITING,
-                    null,
-                    GEREGISTREERD_PARTNERSCHAP,
-                    Lo3String.wrap("2A"),
-                    JUIST,
-                    20120101,
-                    DATUM_SLUITING + 1);
+                        A_NUMMER,
+                        null,
+                        VOORNAMEN,
+                        GESLACHTSNAAM,
+                        DATUM_SLUITING,
+                        null,
+                        GEREGISTREERD_PARTNERSCHAP,
+                        Lo3String.wrap("2A"),
+                        JUIST,
+                        20120101,
+                        DATUM_SLUITING + 1);
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkOfGpStapels = maakHuwelijksStapels(actueelHuwelijk, gp1, gp2);
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkOfGpStapels, builder, null);
         final List<TussenRelatie> relatieStapels = getMigratieRelaties(builder);
-        Assert.assertEquals(2, relatieStapels.size());
+        assertEquals(2, relatieStapels.size());
         Logging.destroyContext();
     }
 
@@ -260,24 +251,24 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(maakHuwelijkOfGpRij(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    GESLACHTSNAAM,
-                    DATUM_SLUITING,
-                    null,
-                    HUWELIJK,
-                    AKTENUMMER,
-                    JUIST,
-                    DATUM_SLUITING,
-                    DATUM_SLUITING + 1));
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        GESLACHTSNAAM,
+                        DATUM_SLUITING,
+                        null,
+                        HUWELIJK,
+                        AKTENUMMER,
+                        JUIST,
+                        DATUM_SLUITING,
+                        DATUM_SLUITING + 1));
 
         final Lo3Stapel<Lo3OverlijdenInhoud> overlijdenStapel =
                 new Lo3Stapel<>(Collections.singletonList(new Lo3Categorie<>(
-                    new Lo3OverlijdenInhoud(new Lo3Datum(DATUM_ONTBINDING), new Lo3GemeenteCode(LO3_GEMEENTE_CODE), new Lo3LandCode(LO3_LAND_CODE)),
-                    new Lo3Documentatie(667, null, null, null, null, null, null, null),
-                    new Lo3Historie(null, new Lo3Datum(DATUM_ONTBINDING), new Lo3Datum(DATUM_ONTBINDING + 1)),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 0))));
+                        new Lo3OverlijdenInhoud(new Lo3Datum(DATUM_ONTBINDING), new Lo3GemeenteCode(GEMEENTE_CODE), new Lo3LandCode(LAND_CODE)),
+                        new Lo3Documentatie(667, null, null, null, null, null, null, null),
+                        new Lo3Historie(null, new Lo3Datum(DATUM_ONTBINDING), new Lo3Datum(DATUM_ONTBINDING + 1)),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 0))));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, overlijdenStapel);
@@ -290,8 +281,8 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final TussenGroep<BrpRelatieInhoud> ontbinding = relatieStapel.getLaatsteElement();
         assertEquals(new BrpRedenEindeRelatieCode('O'), ontbinding.getInhoud().getRedenEindeRelatieCode());
-        assertEquals(new BrpGemeenteCode(BRP_GEMEENTE_CODE), ontbinding.getInhoud().getGemeenteCodeEinde());
-        assertEquals(new BrpLandOfGebiedCode(BRP_LAND_CODE_NL), ontbinding.getInhoud().getLandOfGebiedCodeEinde());
+        assertEquals(new BrpGemeenteCode(GEMEENTE_CODE), ontbinding.getInhoud().getGemeenteCodeEinde());
+        assertEquals(new BrpLandOfGebiedCode(LAND_CODE), ontbinding.getInhoud().getLandOfGebiedCodeEinde());
         assertEquals(new BrpDatum(DATUM_ONTBINDING, null), ontbinding.getInhoud().getDatumEinde());
         assertSame(overlijdenStapel.get(0).getHistorie(), ontbinding.getHistorie());
         assertSame(overlijdenStapel.get(0).getLo3Herkomst(), ontbinding.getLo3Herkomst());
@@ -303,17 +294,17 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(maakHuwelijkOfGpRij(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    GESLACHTSNAAM,
-                    DATUM_SLUITING,
-                    null,
-                    HUWELIJK,
-                    AKTENUMMER,
-                    JUIST,
-                    DATUM_SLUITING,
-                    DATUM_SLUITING + 1));
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        GESLACHTSNAAM,
+                        DATUM_SLUITING,
+                        null,
+                        HUWELIJK,
+                        AKTENUMMER,
+                        JUIST,
+                        DATUM_SLUITING,
+                        DATUM_SLUITING + 1));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
@@ -330,24 +321,24 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(maakHuwelijkOfGpRij(
-                    null,
-                    null,
-                    JAN,
-                    JANSEN,
-                    19900102,
-                    null,
-                    HUWELIJK,
-                    Lo3String.wrap("1A"),
-                    JUIST,
-                    19900102,
-                    19900103));
+                        null,
+                        null,
+                        JAN,
+                        JANSEN,
+                        19900102,
+                        null,
+                        HUWELIJK,
+                        Lo3String.wrap("1A"),
+                        JUIST,
+                        19900102,
+                        19900103));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
 
         checkRelaties(
-            getMigratieRelaties(builder),
-            verwachtRelatie(null, JAN, JANSEN, Lo3String.wrap("1A"), rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
+                getMigratieRelaties(builder),
+                verwachtRelatie(null, JAN, JANSEN, Lo3String.wrap("1A"), rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
     }
 
     /**
@@ -358,15 +349,15 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(
-                    maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19920102, 19920103),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
+                        maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19920102, 19920103),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
 
         checkRelaties(
-            getMigratieRelaties(builder),
-            verwachtRelatie(A_NUMMER, JAN, JANSEN, Lo3String.wrap("2A"), rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
+                getMigratieRelaties(builder),
+                verwachtRelatie(A_NUMMER, JAN, JANSEN, Lo3String.wrap("2A"), rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
     }
 
     /**
@@ -377,21 +368,21 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19950102, 19950103),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19950102, 19950103),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
 
         checkRelaties(
-            getMigratieRelaties(builder),
-            verwachtRelatie(
-                null,
-                JAN,
-                JANSEN,
-                Lo3String.wrap("2A"),
-                rij(19900102, 19950102, 19950103, Lo3String.wrap("2A")),
-                rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
+                getMigratieRelaties(builder),
+                verwachtRelatie(
+                        null,
+                        JAN,
+                        JANSEN,
+                        Lo3String.wrap("2A"),
+                        rij(19900102, 19950102, 19950103, Lo3String.wrap("2A")),
+                        rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
     }
 
     /**
@@ -402,22 +393,22 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(
-                    maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("3A"), JUIST, 19970102, 19970103),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19950102, 19950103),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
+                        maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("3A"), JUIST, 19970102, 19970103),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19950102, 19950103),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
 
         checkRelaties(
-            getMigratieRelaties(builder),
-            verwachtRelatie(
-                A_NUMMER,
-                JAN,
-                JANSEN,
-                Lo3String.wrap("3A"),
-                rij(19900102, 19950102, 19950103, Lo3String.wrap("2A")),
-                rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
+                getMigratieRelaties(builder),
+                verwachtRelatie(
+                        A_NUMMER,
+                        JAN,
+                        JANSEN,
+                        Lo3String.wrap("3A"),
+                        rij(19900102, 19950102, 19950103, Lo3String.wrap("2A")),
+                        rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
     }
 
     /**
@@ -428,22 +419,22 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(
-                    maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("3A"), JUIST, 19970102, 19970103),
-                    maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19950102, 19950103),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
+                        maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("3A"), JUIST, 19970102, 19970103),
+                        maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19950102, 19950103),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
 
         checkRelaties(
-            getMigratieRelaties(builder),
-            verwachtRelatie(
-                A_NUMMER,
-                JAN,
-                JANSEN,
-                Lo3String.wrap("3A"),
-                rij(19900102, 19950102, 19970103, Lo3String.wrap("3A")),
-                rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
+                getMigratieRelaties(builder),
+                verwachtRelatie(
+                        A_NUMMER,
+                        JAN,
+                        JANSEN,
+                        Lo3String.wrap("3A"),
+                        rij(19900102, 19950102, 19970103, Lo3String.wrap("3A")),
+                        rij(19900102, null, 19900103, Lo3String.wrap("1A"))));
     }
 
     /**
@@ -454,9 +445,9 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(
-                    maakHuwelijkOfGpRij(null, null, null, null, null, null, null, Lo3String.wrap("3A"), JUIST, 19900102, 19950104),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("2A"), ONJUIST, 19950102, 19950103),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), ONJUIST, 19900102, 19900103));
+                        maakHuwelijkOfGpRij(null, null, null, null, null, null, null, Lo3String.wrap("3A"), JUIST, 19900102, 19950104),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, null, 19950102, HUWELIJK, Lo3String.wrap("2A"), ONJUIST, 19950102, 19950103),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), ONJUIST, 19900102, 19900103));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
@@ -472,15 +463,15 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(
-                    maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, 19900303, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19920102, 19920102),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
+                        maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, 19900303, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19920102, 19920102),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900102, 19900103));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
 
         checkRelaties(
-            getMigratieRelaties(builder),
-            verwachtRelatie(A_NUMMER, JAN, JANSEN, Lo3String.wrap("2A"), rij(19900303, null, 19920102, Lo3String.wrap("2A"))));
+                getMigratieRelaties(builder),
+                verwachtRelatie(A_NUMMER, JAN, JANSEN, Lo3String.wrap("2A"), rij(19900303, null, 19920102, Lo3String.wrap("2A"))));
     }
 
     /**
@@ -491,15 +482,15 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(
-                    maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19920102, 19920102),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900103, 19900103));
+                        maakHuwelijkOfGpRij(A_NUMMER, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19920102, 19920102),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900103, 19900103));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
 
         checkRelaties(
-            getMigratieRelaties(builder),
-            verwachtRelatie(A_NUMMER, JAN, JANSEN, Lo3String.wrap("2A"), rij(19900102, null, 19920102, Lo3String.wrap("2A"))));
+                getMigratieRelaties(builder),
+                verwachtRelatie(A_NUMMER, JAN, JANSEN, Lo3String.wrap("2A"), rij(19900102, null, 19920102, Lo3String.wrap("2A"))));
     }
 
     /**
@@ -510,16 +501,16 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> huwelijkStapels =
                 maakHuwelijksStapels(
-                    maakHuwelijkOfGpRij(A_NUMMER, null, VOORNAMEN, JANSEN, 19900303, null, HUWELIJK, Lo3String.wrap("3A"), JUIST, 19940102, 19940102),
-                    maakHuwelijkOfGpRij(null, null, VOORNAMEN, JANSEN, 19900303, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19920102, 19920102),
-                    maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900103, 19900103));
+                        maakHuwelijkOfGpRij(A_NUMMER, null, VOORNAMEN, JANSEN, 19900303, null, HUWELIJK, Lo3String.wrap("3A"), JUIST, 19940102, 19940102),
+                        maakHuwelijkOfGpRij(null, null, VOORNAMEN, JANSEN, 19900303, null, HUWELIJK, Lo3String.wrap("2A"), JUIST, 19920102, 19920102),
+                        maakHuwelijkOfGpRij(null, null, JAN, JANSEN, 19900102, null, HUWELIJK, Lo3String.wrap("1A"), JUIST, 19900103, 19900103));
 
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
         huwelijkOfGpConverteerder.converteer(huwelijkStapels, builder, null);
 
         checkRelaties(
-            getMigratieRelaties(builder),
-            verwachtRelatie(A_NUMMER, VOORNAMEN, JANSEN, Lo3String.wrap("3A"), rij(19900303, null, 19940102, Lo3String.wrap("3A"))));
+                getMigratieRelaties(builder),
+                verwachtRelatie(A_NUMMER, VOORNAMEN, JANSEN, Lo3String.wrap("3A"), rij(19900303, null, 19940102, Lo3String.wrap("3A"))));
     }
 
     @Test
@@ -530,31 +521,31 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final Lo3HuwelijkOfGpInhoud huwelijk =
                 lo3HuwelijkOfGp(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    LO3_PREDIKAAT_VROUW,
-                    VOORVOEGSEL,
-                    GESLACHTSNAAM,
-                    DATUM_GEBOORTE,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    GESLACHT_VROUW,
-                    DATUM_SLUITING,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    null,
-                    null,
-                    null,
-                    null,
-                    HUWELIJK.getCode());
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        LO3_PREDIKAAT_VROUW,
+                        VOORVOEGSEL,
+                        GESLACHTSNAAM,
+                        DATUM_GEBOORTE,
+                        GEMEENTE_CODE,
+                        LAND_CODE,
+                        GESLACHT_VROUW,
+                        DATUM_SLUITING,
+                        GEMEENTE_CODE,
+                        LAND_CODE,
+                        null,
+                        null,
+                        null,
+                        null,
+                        HUWELIJK.getCode());
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> huwelijkStapel = maakLo3Stapel(huwelijk);
         final TussenStapel<BrpIstHuwelijkOfGpGroepInhoud> istStapel = huwelijkOfGpConverteerder.converteerIst(huwelijkStapel);
 
-        Assert.assertNotNull(istStapel);
-        Assert.assertEquals(1, istStapel.size());
+        assertNotNull(istStapel);
+        assertEquals(1, istStapel.size());
         final BrpIstHuwelijkOfGpGroepInhoud inhoud = istStapel.get(0).getInhoud();
-        Assert.assertNotNull(inhoud);
+        assertNotNull(inhoud);
 
         assertStandaardEnIdentificatie(inhoud.getStandaardGegevens());
         assertGerelateerden(inhoud.getRelatie());
@@ -568,31 +559,31 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final Lo3HuwelijkOfGpInhoud huwelijk =
                 lo3HuwelijkOfGp(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    LO3_ADELLIJKE_TITEL_MAN,
-                    VOORVOEGSEL,
-                    GESLACHTSNAAM,
-                    DATUM_GEBOORTE,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    GESLACHT_MAN,
-                    null,
-                    null,
-                    null,
-                    DATUM_ONTBINDING,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    "" + REDEN_EINDE,
-                    HUWELIJK.getCode());
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        LO3_ADELLIJKE_TITEL_MAN,
+                        VOORVOEGSEL,
+                        GESLACHTSNAAM,
+                        DATUM_GEBOORTE,
+                        GEMEENTE_CODE,
+                        LAND_CODE,
+                        GESLACHT_MAN,
+                        null,
+                        null,
+                        null,
+                        DATUM_ONTBINDING,
+                        GEMEENTE_CODE,
+                        LAND_CODE,
+                        "" + REDEN_EINDE,
+                        HUWELIJK.getCode());
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> huwelijkStapel = maakLo3Stapel(huwelijk);
         final TussenStapel<BrpIstHuwelijkOfGpGroepInhoud> istStapel = huwelijkOfGpConverteerder.converteerIst(huwelijkStapel);
 
-        Assert.assertNotNull(istStapel);
-        Assert.assertEquals(1, istStapel.size());
+        assertNotNull(istStapel);
+        assertEquals(1, istStapel.size());
         final BrpIstHuwelijkOfGpGroepInhoud inhoud = istStapel.get(0).getInhoud();
-        Assert.assertNotNull(inhoud);
+        assertNotNull(inhoud);
 
         assertStandaardEnIdentificatie(inhoud.getStandaardGegevens());
         assertGerelateerden(inhoud.getRelatie());
@@ -608,29 +599,29 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
         final Lo3HuwelijkOfGpInhoud huwelijk =
                 lo3HuwelijkOfGp(
-                    A_NUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    null,
-                    VOORVOEGSEL,
-                    GESLACHTSNAAM,
-                    DATUM_GEBOORTE,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    GESLACHT_MAN,
-                    DATUM_SLUITING,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    null,
-                    null,
-                    null,
-                    null,
-                    HUWELIJK.getCode());
+                        A_NUMMER,
+                        BSN,
+                        VOORNAMEN,
+                        null,
+                        VOORVOEGSEL,
+                        GESLACHTSNAAM,
+                        DATUM_GEBOORTE,
+                        GEMEENTE_CODE,
+                        LAND_CODE,
+                        GESLACHT_MAN,
+                        DATUM_SLUITING,
+                        GEMEENTE_CODE,
+                        LAND_CODE,
+                        null,
+                        null,
+                        null,
+                        null,
+                        HUWELIJK.getCode());
         final Lo3Stapel<Lo3HuwelijkOfGpInhoud> huwelijkStapel = maakLo3Stapel(huwelijk);
         final TussenStapel<BrpIstHuwelijkOfGpGroepInhoud> istStapel = huwelijkOfGpConverteerder.converteerIst(huwelijkStapel);
 
         assertNotNull(istStapel);
-        Assert.assertEquals(1, istStapel.size());
+        assertEquals(1, istStapel.size());
         final BrpIstHuwelijkOfGpGroepInhoud inhoud = istStapel.get(0).getInhoud();
         assertNotNull(inhoud);
 
@@ -649,39 +640,38 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
     }
 
     private Lo3Categorie<Lo3HuwelijkOfGpInhoud> maakHuwelijkOfGpRij(
-        final Long aNummerPartner,
-        final Integer bsnPartner,
-        final String voornaamPartner,
-        final String achternaamPartner,
-        final Integer sluitingsDatum,
-        final Integer ontbindingsDatum,
-        final Lo3SoortVerbintenisEnum soortRelatie,
-        final Lo3String aktenummer,
-        final boolean onjuist,
-        final Integer ingangsdatumGeldigheid,
-        final Integer datumOpneming)
-    {
+            final String aNummerPartner,
+            final String bsnPartner,
+            final String voornaamPartner,
+            final String achternaamPartner,
+            final Integer sluitingsDatum,
+            final Integer ontbindingsDatum,
+            final Lo3SoortVerbintenisEnum soortRelatie,
+            final Lo3String aktenummer,
+            final boolean onjuist,
+            final Integer ingangsdatumGeldigheid,
+            final Integer datumOpneming) {
         final Lo3HuwelijkOfGpInhoud.Builder builder = new Lo3HuwelijkOfGpInhoud.Builder();
-        builder.aNummer(Lo3Long.wrap(aNummerPartner))
-               .burgerservicenummer(Lo3Integer.wrap(bsnPartner))
-               .voornamen(Lo3String.wrap(voornaamPartner))
-               .geslachtsnaam(Lo3String.wrap(achternaamPartner))
-               .geboortedatum(new Lo3Datum(DATUM_GEBOORTE))
-               .geboorteGemeenteCode(GEMEENTE)
-               .geboorteLandCode(LAND)
-               .geslachtsaanduiding(MAN.asElement());
+        builder.aNummer(Lo3String.wrap(aNummerPartner))
+                .burgerservicenummer(Lo3String.wrap(bsnPartner))
+                .voornamen(Lo3String.wrap(voornaamPartner))
+                .geslachtsnaam(Lo3String.wrap(achternaamPartner))
+                .geboortedatum(new Lo3Datum(DATUM_GEBOORTE))
+                .geboorteGemeenteCode(GEMEENTE)
+                .geboorteLandCode(LAND)
+                .geslachtsaanduiding(MAN.asElement());
         if (soortRelatie != null) {
             builder.soortVerbintenis(soortRelatie.asElement());
         }
         if (sluitingsDatum != null) {
             builder.datumSluitingHuwelijkOfAangaanGp(new Lo3Datum(sluitingsDatum))
-                   .gemeenteCodeSluitingHuwelijkOfAangaanGp(GEMEENTE)
-                   .landCodeSluitingHuwelijkOfAangaanGp(LAND);
+                    .gemeenteCodeSluitingHuwelijkOfAangaanGp(GEMEENTE)
+                    .landCodeSluitingHuwelijkOfAangaanGp(LAND);
         }
         if (ontbindingsDatum != null) {
             builder.datumOntbindingHuwelijkOfGp(new Lo3Datum(ontbindingsDatum))
-                   .gemeenteCodeOntbindingHuwelijkOfGp(GEMEENTE)
-                   .landCodeOntbindingHuwelijkOfGp(LAND);
+                    .gemeenteCodeOntbindingHuwelijkOfGp(GEMEENTE)
+                    .landCodeOntbindingHuwelijkOfGp(LAND);
         }
 
         final Lo3Documentatie documentatie = maakAkte(aktenummer);
@@ -701,12 +691,12 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
     }
 
     private void checkRelaties(final List<TussenRelatie> tussenRelaties, final RelatieVerwachting... relatieVerwachting) {
-        Assert.assertEquals("Aantal relaties", relatieVerwachting.length, tussenRelaties.size());
+        assertEquals("Aantal relaties", relatieVerwachting.length, tussenRelaties.size());
 
         for (final RelatieVerwachting verwachting : relatieVerwachting) {
             TussenRelatie relatie = null;
             for (final TussenRelatie tussenRelatie : tussenRelaties) {
-                Assert.assertEquals("1 betrokkenheid per relatie", 1, tussenRelatie.getBetrokkenheden().size());
+                assertEquals("1 betrokkenheid per relatie", 1, tussenRelatie.getBetrokkenheden().size());
                 final TussenBetrokkenheid betrokkene = tussenRelatie.getBetrokkenheden().get(0);
                 if (betrokkene.getSamengesteldeNaamStapel().get(0).getDocumentatie().getNummerAkte().equals(verwachting.partnerActieInhoud)) {
                     relatie = tussenRelatie;
@@ -722,10 +712,10 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
             checkPartnerVoornaam(verwachting, betrokkene);
             checkPartnerGeslachtsnaam(verwachting, betrokkene);
 
-            Assert.assertEquals("verwachtte aantal rijen klopt niet", verwachting.rijen.length, relatie.getRelatieStapel().size());
+            assertEquals("verwachtte aantal rijen klopt niet", verwachting.rijen.length, relatie.getRelatieStapel().size());
 
             final List<TussenGroep<BrpRelatieInhoud>> tussenGroepen = relatie.getRelatieStapel().getGroepen();
-            Collections.sort(tussenGroepen, new DatumGeldigheidComparator());
+            tussenGroepen.sort(new DatumGeldigheidComparator());
             final Iterator<TussenGroep<BrpRelatieInhoud>> migratieRijIterator = tussenGroepen.iterator();
             final Iterator<RelatieRij> verwachtteRijIterator = Arrays.asList(verwachting.rijen).iterator();
 
@@ -733,14 +723,14 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
                 final TussenGroep<BrpRelatieInhoud> migratieRij = migratieRijIterator.next();
                 final RelatieRij verwachtteRij = verwachtteRijIterator.next();
 
-                Assert.assertEquals("Datum sluiting", verwachtteRij.datumSluiting, migratieRij.getInhoud().getDatumAanvang().getWaarde());
-                Assert.assertEquals("Datum-tijd registratie", verwachtteRij.tsRegistratie, migratieRij.getHistorie()
-                                                                                                      .getDatumVanOpneming()
-                                                                                                      .getIntegerWaarde());
-                Assert.assertEquals("Aktenummer", verwachtteRij.relatieActieInhoud, migratieRij.getDocumentatie().getNummerAkte());
+                assertEquals("Datum sluiting", verwachtteRij.datumSluiting, migratieRij.getInhoud().getDatumAanvang().getWaarde());
+                assertEquals("Datum-tijd registratie", verwachtteRij.tsRegistratie, migratieRij.getHistorie()
+                        .getDatumVanOpneming()
+                        .getIntegerWaarde());
+                assertEquals("Aktenummer", verwachtteRij.relatieActieInhoud, migratieRij.getDocumentatie().getNummerAkte());
                 if (verwachtteRij.datumOntbinding != null) {
                     assertNotNull("Datum ontbinding verwacht", migratieRij.getInhoud().getDatumEinde());
-                    Assert.assertEquals("Datum ontbinding", verwachtteRij.datumOntbinding, migratieRij.getInhoud().getDatumEinde().getWaarde());
+                    assertEquals("Datum ontbinding", verwachtteRij.datumOntbinding, migratieRij.getInhoud().getDatumEinde().getWaarde());
                 } else {
                     assertNull("Geen datum ontbinding verwacht", migratieRij.getInhoud().getDatumEinde());
                 }
@@ -751,49 +741,48 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
     private void checkPartnerGeslachtsnaam(final RelatieVerwachting verwachting, final TussenBetrokkenheid betrokkene) {
         if (verwachting.partnerGeslachtsnaam == null) {
             assertTrue("Geen geslachtsnaam partner verwacht", betrokkene.getSamengesteldeNaamStapel() == null
-                                                              || betrokkene.getSamengesteldeNaamStapel().get(0).getInhoud().getGeslachtsnaamstam() == null);
+                    || betrokkene.getSamengesteldeNaamStapel().get(0).getInhoud().getGeslachtsnaamstam() == null);
         } else {
             assertNotNull("Geslachtsnaam partner verwacht", betrokkene.getSamengesteldeNaamStapel());
-            Assert.assertEquals(
-                "Geslachtsnaam partner",
-                verwachting.partnerGeslachtsnaam,
-                BrpString.unwrap(betrokkene.getSamengesteldeNaamStapel().get(0).getInhoud().getGeslachtsnaamstam()));
+            assertEquals(
+                    "Geslachtsnaam partner",
+                    verwachting.partnerGeslachtsnaam,
+                    BrpString.unwrap(betrokkene.getSamengesteldeNaamStapel().get(0).getInhoud().getGeslachtsnaamstam()));
         }
     }
 
     private void checkPartnerVoornaam(final RelatieVerwachting verwachting, final TussenBetrokkenheid betrokkene) {
         if (verwachting.partnerVoornaam == null) {
             assertTrue("Geen voornaam partner verwacht", betrokkene.getSamengesteldeNaamStapel() == null
-                                                         || betrokkene.getSamengesteldeNaamStapel().get(0).getInhoud().getVoornamen() == null);
+                    || betrokkene.getSamengesteldeNaamStapel().get(0).getInhoud().getVoornamen() == null);
         } else {
             assertNotNull("Voornaam partner verwacht", betrokkene.getSamengesteldeNaamStapel());
-            Assert.assertEquals(
-                "Voornaam partner",
-                verwachting.partnerVoornaam,
-                BrpString.unwrap(betrokkene.getSamengesteldeNaamStapel().get(0).getInhoud().getVoornamen()));
+            assertEquals(
+                    "Voornaam partner",
+                    verwachting.partnerVoornaam,
+                    BrpString.unwrap(betrokkene.getSamengesteldeNaamStapel().get(0).getInhoud().getVoornamen()));
         }
     }
 
     private void checkPartnerANummer(final RelatieVerwachting verwachting, final TussenBetrokkenheid betrokkene) {
         if (verwachting.partnerANummer == null) {
             assertTrue("Geen A-nummer partner verwacht", betrokkene.getIdentificatienummersStapel() == null
-                                                         || betrokkene.getIdentificatienummersStapel().get(0).getInhoud().getAdministratienummer() == null);
+                    || betrokkene.getIdentificatienummersStapel().get(0).getInhoud().getAdministratienummer() == null);
         } else {
             assertNotNull("A-nummer partner verwacht", betrokkene.getIdentificatienummersStapel());
-            Assert.assertEquals(
-                "A-nummer partner",
-                verwachting.partnerANummer,
-                BrpLong.unwrap(betrokkene.getIdentificatienummersStapel().get(0).getInhoud().getAdministratienummer()));
+            assertEquals(
+                    "A-nummer partner",
+                    verwachting.partnerANummer,
+                    BrpString.unwrap(betrokkene.getIdentificatienummersStapel().get(0).getInhoud().getAdministratienummer()));
         }
     }
 
     private RelatieVerwachting verwachtRelatie(
-        final Long partnerANummer,
-        final String partnerVoornaam,
-        final String partnerGeslachtsnaam,
-        final Lo3String partnerActieInhoud,
-        final RelatieRij... rijen)
-    {
+            final String partnerANummer,
+            final String partnerVoornaam,
+            final String partnerGeslachtsnaam,
+            final Lo3String partnerActieInhoud,
+            final RelatieRij... rijen) {
         return new RelatieVerwachting(partnerANummer, partnerVoornaam, partnerGeslachtsnaam, partnerActieInhoud, rijen);
     }
 
@@ -802,28 +791,28 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
     }
 
     private void checkRelatieStapels(final List<TussenRelatie> relaties) {
-        Assert.assertEquals(1, relaties.size());
+        assertEquals(1, relaties.size());
         final TussenRelatie relatie = relaties.get(0);
 
         assertNotNull(relatie);
-        Assert.assertEquals(BrpSoortRelatieCode.HUWELIJK, relatie.getSoortRelatieCode());
+        assertEquals(BrpSoortRelatieCode.HUWELIJK, relatie.getSoortRelatieCode());
 
         final TussenStapel<BrpRelatieInhoud> relatieStapel = relatie.getRelatieStapel();
         assertNotNull(relatieStapel);
-        Assert.assertEquals(1, relatieStapel.size());
+        assertEquals(1, relatieStapel.size());
         final TussenGroep<BrpRelatieInhoud> relatieGroep = relatieStapel.get(0);
         assertNotNull(relatieGroep);
-        Assert.assertEquals(new BrpDatum(DATUM_SLUITING, null), relatieGroep.getInhoud().getDatumAanvang());
+        assertEquals(new BrpDatum(DATUM_SLUITING, null), relatieGroep.getInhoud().getDatumAanvang());
 
-        Assert.assertEquals(BrpSoortBetrokkenheidCode.PARTNER, relatie.getRolCode());
+        assertEquals(BrpSoortBetrokkenheidCode.PARTNER, relatie.getRolCode());
 
         final List<TussenBetrokkenheid> betrokkenheden = relatie.getBetrokkenheden();
         assertNotNull(betrokkenheden);
-        Assert.assertEquals(1, betrokkenheden.size());
+        assertEquals(1, betrokkenheden.size());
 
         final TussenBetrokkenheid betrokkenheid = betrokkenheden.get(0);
         assertNotNull(betrokkenheid);
-        Assert.assertEquals(BrpSoortBetrokkenheidCode.PARTNER, betrokkenheid.getRol());
+        assertEquals(BrpSoortBetrokkenheidCode.PARTNER, betrokkenheid.getRol());
 
         final TussenStapel<BrpGeboorteInhoud> geboorteStapel = betrokkenheid.getGeboorteStapel();
         final TussenStapel<BrpGeslachtsaanduidingInhoud> geslachtStapel = betrokkenheid.getGeslachtsaanduidingStapel();
@@ -832,37 +821,37 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
         final TussenStapel<BrpSamengesteldeNaamInhoud> naamStapel = betrokkenheid.getSamengesteldeNaamStapel();
 
         assertNotNull(geboorteStapel);
-        Assert.assertEquals(1, geboorteStapel.size());
+        assertEquals(1, geboorteStapel.size());
         final TussenGroep<BrpGeboorteInhoud> geboorteGroep = geboorteStapel.get(0);
         assertNotNull(geboorteGroep);
-        Assert.assertEquals(new BrpDatum(DATUM_GEBOORTE, null), geboorteGroep.getInhoud().getGeboortedatum());
+        assertEquals(new BrpDatum(DATUM_GEBOORTE, null), geboorteGroep.getInhoud().getGeboortedatum());
 
         assertNotNull(geslachtStapel);
-        Assert.assertEquals(1, geslachtStapel.size());
+        assertEquals(1, geslachtStapel.size());
         final TussenGroep<BrpGeslachtsaanduidingInhoud> geslachtGroep = geslachtStapel.get(0);
         assertNotNull(geslachtGroep);
-        Assert.assertEquals(BrpGeslachtsaanduidingCode.MAN, geslachtGroep.getInhoud().getGeslachtsaanduidingCode());
+        assertEquals(BrpGeslachtsaanduidingCode.MAN, geslachtGroep.getInhoud().getGeslachtsaanduidingCode());
 
         assertNotNull(identificatieStapel);
-        Assert.assertEquals(1, identificatieStapel.size());
+        assertEquals(1, identificatieStapel.size());
         final TussenGroep<BrpIdentificatienummersInhoud> identificatieGroep = identificatieStapel.get(0);
         assertNotNull(identificatieGroep);
-        Assert.assertEquals(Long.valueOf(A_NUMMER), BrpLong.unwrap(identificatieGroep.getInhoud().getAdministratienummer()));
-        Assert.assertEquals(Integer.valueOf(BSN), BrpInteger.unwrap(identificatieGroep.getInhoud().getBurgerservicenummer()));
+        assertEquals(A_NUMMER, BrpString.unwrap(identificatieGroep.getInhoud().getAdministratienummer()));
+        assertEquals(BSN, BrpString.unwrap(identificatieGroep.getInhoud().getBurgerservicenummer()));
 
         assertNull(gezagStapel);
 
         assertNotNull(naamStapel);
-        Assert.assertEquals(1, naamStapel.size());
+        assertEquals(1, naamStapel.size());
         final TussenGroep<BrpSamengesteldeNaamInhoud> naamGroep = naamStapel.get(0);
         assertNotNull(naamGroep);
-        Assert.assertEquals(VOORNAMEN, BrpString.unwrap(naamGroep.getInhoud().getVoornamen()));
+        assertEquals(VOORNAMEN, BrpString.unwrap(naamGroep.getInhoud().getVoornamen()));
     }
 
     private <T extends Lo3CategorieInhoud> Lo3Stapel<T> maakLo3Stapel(final T inhoud) {
         Lo3Documentatie documentatie = null;
         if (heeftDocumentatie) {
-            final Lo3GemeenteCode gemeente = new Lo3GemeenteCode(LO3_GEMEENTE_CODE);
+            final Lo3GemeenteCode gemeente = new Lo3GemeenteCode(GEMEENTE_CODE);
             if (heeftAkte) {
                 documentatie = new Lo3Documentatie(0L, gemeente, AKTENUMMER, null, null, null, null, null);
             } else {
@@ -886,19 +875,19 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
     private void assertStandaardEnIdentificatie(final BrpIstStandaardGroepInhoud inhoud) {
         // Identificatie
-        Assert.assertEquals(categorie, inhoud.getCategorie());
-        Assert.assertEquals(0, inhoud.getStapel());
-        Assert.assertEquals(0, inhoud.getVoorkomen());
+        assertEquals(categorie, inhoud.getCategorie());
+        assertEquals(0, inhoud.getStapel());
+        assertEquals(0, inhoud.getVoorkomen());
         // Standaard
         if (heeftDocumentatie) {
-            Assert.assertEquals(new BrpPartijCode(BRP_PARTIJ_CODE), inhoud.getPartij());
+            assertEquals(new BrpPartijCode(BRP_PARTIJ_CODE), inhoud.getPartij());
             if (heeftAkte) {
-                Assert.assertEquals(new BrpSoortDocumentCode("1"), inhoud.getSoortDocument());
-                Assert.assertEquals(new BrpString(Lo3String.unwrap(AKTENUMMER)), inhoud.getAktenummer());
+                assertEquals(new BrpSoortDocumentCode("1"), inhoud.getSoortDocument());
+                assertEquals(new BrpString(Lo3String.unwrap(AKTENUMMER)), inhoud.getAktenummer());
             } else {
-                Assert.assertEquals(BrpSoortDocumentCode.HISTORIE_CONVERSIE, inhoud.getSoortDocument());
-                Assert.assertEquals(DATUM_DOCUMENT, inhoud.getRubriek8220DatumDocument().getWaarde());
-                Assert.assertEquals(Lo3String.unwrap(DOCUMENT_OMSCHRIJVING), inhoud.getDocumentOmschrijving().getWaarde());
+                assertEquals(BrpSoortDocumentCode.HISTORIE_CONVERSIE, inhoud.getSoortDocument());
+                assertEquals(DATUM_DOCUMENT, inhoud.getRubriek8220DatumDocument().getWaarde());
+                assertEquals(Lo3String.unwrap(DOCUMENT_OMSCHRIJVING), inhoud.getDocumentOmschrijving().getWaarde());
             }
         } else {
             assertNull(inhoud.getSoortDocument());
@@ -909,9 +898,9 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
         }
 
         if (heeftOnderzoek) {
-            Assert.assertEquals(GEGEVENS_IN_ONDERZOEK, Lo3Integer.wrap(BrpInteger.unwrap(inhoud.getRubriek8310AanduidingGegevensInOnderzoek())));
-            Assert.assertEquals(new BrpInteger(DATUM_INGANG_ONDERZOEK), inhoud.getRubriek8320DatumIngangOnderzoek());
-            Assert.assertEquals(new BrpInteger(DATUM_EINDE_ONDERZOEK), inhoud.getRubriek8330DatumEindeOnderzoek());
+            assertEquals(GEGEVENS_IN_ONDERZOEK, Lo3Integer.wrap(BrpInteger.unwrap(inhoud.getRubriek8310AanduidingGegevensInOnderzoek())));
+            assertEquals(new BrpInteger(DATUM_INGANG_ONDERZOEK), inhoud.getRubriek8320DatumIngangOnderzoek());
+            assertEquals(new BrpInteger(DATUM_EINDE_ONDERZOEK), inhoud.getRubriek8330DatumEindeOnderzoek());
         } else {
             assertNull(inhoud.getRubriek8310AanduidingGegevensInOnderzoek());
             assertNull(inhoud.getRubriek8320DatumIngangOnderzoek());
@@ -919,23 +908,23 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
         }
 
         if (heeftOnjuist) {
-            Assert.assertEquals(new BrpCharacter(Lo3IndicatieOnjuist.O.getCodeAsCharacter()), inhoud.getRubriek8410OnjuistOfStrijdigOpenbareOrde());
+            assertEquals(new BrpCharacter(Lo3IndicatieOnjuist.O.getCodeAsCharacter()), inhoud.getRubriek8410OnjuistOfStrijdigOpenbareOrde());
         } else {
             assertNull(inhoud.getRubriek8410OnjuistOfStrijdigOpenbareOrde());
         }
 
-        Assert.assertEquals(DATUM_GELDIGHEID, BrpInteger.unwrap(inhoud.getRubriek8510IngangsdatumGeldigheid()).intValue());
-        Assert.assertEquals(DATUM_OPNEMING, BrpInteger.unwrap(inhoud.getRubriek8610DatumVanOpneming()).intValue());
+        assertEquals(DATUM_GELDIGHEID, BrpInteger.unwrap(inhoud.getRubriek8510IngangsdatumGeldigheid()).intValue());
+        assertEquals(DATUM_OPNEMING, BrpInteger.unwrap(inhoud.getRubriek8610DatumVanOpneming()).intValue());
     }
 
     private void assertGerelateerden(final BrpIstRelatieGroepInhoud inhoud) {
-        Assert.assertEquals(A_NUMMER, BrpLong.unwrap(inhoud.getAnummer()).longValue());
-        Assert.assertEquals(BSN, BrpInteger.unwrap(inhoud.getBsn()).intValue());
-        Assert.assertEquals(new BrpString(VOORNAMEN), inhoud.getVoornamen());
+        assertEquals(A_NUMMER, BrpString.unwrap(inhoud.getAnummer()));
+        assertEquals(BSN, BrpString.unwrap(inhoud.getBsn()));
+        assertEquals(new BrpString(VOORNAMEN), inhoud.getVoornamen());
         if (heeftPredikaat) {
             final BrpPredicaatCode predikaat = new BrpPredicaatCode(BRP_PREDIKAAT);
             predikaat.setGeslachtsaanduiding(geslachtsaanduiding);
-            Assert.assertEquals(predikaat, inhoud.getPredicaatCode());
+            assertEquals(predikaat, inhoud.getPredicaatCode());
         } else {
             assertNull(inhoud.getPredicaatCode());
         }
@@ -943,28 +932,28 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
         if (heeftAdellijkeTitel) {
             final BrpAdellijkeTitelCode adellijkeTitel = new BrpAdellijkeTitelCode(BRP_ADELLIJKE_TITEL);
             adellijkeTitel.setGeslachtsaanduiding(geslachtsaanduiding);
-            Assert.assertEquals(adellijkeTitel, inhoud.getAdellijkeTitelCode());
+            assertEquals(adellijkeTitel, inhoud.getAdellijkeTitelCode());
         } else {
             assertNull(inhoud.getAdellijkeTitelCode());
         }
 
-        Assert.assertEquals(new BrpString(VOORVOEGSEL), inhoud.getVoorvoegsel());
-        Assert.assertEquals(new BrpCharacter(SCHEIDINGSTEKEN), inhoud.getScheidingsteken());
-        Assert.assertEquals(new BrpString(GESLACHTSNAAM), inhoud.getGeslachtsnaamstam());
-        Assert.assertEquals(new BrpInteger(DATUM_GEBOORTE), inhoud.getDatumGeboorte());
-        Assert.assertEquals(new BrpGemeenteCode(BRP_GEMEENTE_CODE), inhoud.getGemeenteCodeGeboorte());
+        assertEquals(new BrpString(VOORVOEGSEL), inhoud.getVoorvoegsel());
+        assertEquals(new BrpCharacter(SCHEIDINGSTEKEN), inhoud.getScheidingsteken());
+        assertEquals(new BrpString(GESLACHTSNAAM), inhoud.getGeslachtsnaamstam());
+        assertEquals(new BrpInteger(DATUM_GEBOORTE), inhoud.getDatumGeboorte());
+        assertEquals(new BrpGemeenteCode(GEMEENTE_CODE), inhoud.getGemeenteCodeGeboorte());
         assertNull(inhoud.getBuitenlandsePlaatsGeboorte());
         assertNull(inhoud.getOmschrijvingLocatieGeboorte());
-        Assert.assertEquals(geslachtsaanduiding, inhoud.getGeslachtsaanduidingCode());
+        assertEquals(geslachtsaanduiding, inhoud.getGeslachtsaanduidingCode());
     }
 
     private void assertHuwelijk(final BrpIstHuwelijkOfGpGroepInhoud inhoud, final boolean sluiting) {
         if (sluiting) {
-            Assert.assertEquals(new BrpInteger(DATUM_SLUITING), inhoud.getDatumAanvang());
-            Assert.assertEquals(new BrpGemeenteCode(BRP_GEMEENTE_CODE), inhoud.getGemeenteCodeAanvang());
+            assertEquals(new BrpInteger(DATUM_SLUITING), inhoud.getDatumAanvang());
+            assertEquals(new BrpGemeenteCode(GEMEENTE_CODE), inhoud.getGemeenteCodeAanvang());
             assertNull(inhoud.getBuitenlandsePlaatsAanvang());
             assertNull(inhoud.getOmschrijvingLocatieAanvang());
-            Assert.assertEquals(new BrpLandOfGebiedCode(BRP_LAND_CODE_NL), inhoud.getLandOfGebiedCodeAanvang());
+            assertEquals(new BrpLandOfGebiedCode(LAND_CODE), inhoud.getLandOfGebiedCodeAanvang());
             assertNull(inhoud.getDatumEinde());
             assertNull(inhoud.getGemeenteCodeEinde());
             assertNull(inhoud.getBuitenlandsePlaatsEinde());
@@ -977,14 +966,14 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
             assertNull(inhoud.getBuitenlandsePlaatsAanvang());
             assertNull(inhoud.getOmschrijvingLocatieAanvang());
             assertNull(inhoud.getLandOfGebiedCodeAanvang());
-            Assert.assertEquals(new BrpInteger(DATUM_ONTBINDING), inhoud.getDatumEinde());
-            Assert.assertEquals(new BrpGemeenteCode(BRP_GEMEENTE_CODE), inhoud.getGemeenteCodeEinde());
+            assertEquals(new BrpInteger(DATUM_ONTBINDING), inhoud.getDatumEinde());
+            assertEquals(new BrpGemeenteCode(GEMEENTE_CODE), inhoud.getGemeenteCodeEinde());
             assertNull(inhoud.getBuitenlandsePlaatsEinde());
             assertNull(inhoud.getOmschrijvingLocatieEinde());
-            Assert.assertEquals(new BrpLandOfGebiedCode(BRP_LAND_CODE_NL), inhoud.getLandOfGebiedCodeEinde());
-            Assert.assertEquals(new BrpRedenEindeRelatieCode(REDEN_EINDE), inhoud.getRedenEindeRelatieCode());
+            assertEquals(new BrpLandOfGebiedCode(LAND_CODE), inhoud.getLandOfGebiedCodeEinde());
+            assertEquals(new BrpRedenEindeRelatieCode(REDEN_EINDE), inhoud.getRedenEindeRelatieCode());
         }
-        Assert.assertEquals(new BrpSoortRelatieCode(HUWELIJK.getCode()), inhoud.getSoortRelatieCode());
+        assertEquals(new BrpSoortRelatieCode(HUWELIJK.getCode()), inhoud.getSoortRelatieCode());
     }
 
     /*
@@ -1000,18 +989,17 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
 
     private static final class RelatieVerwachting {
         private final RelatieRij[] rijen;
-        private final Long partnerANummer;
+        private final String partnerANummer;
         private final String partnerVoornaam;
         private final String partnerGeslachtsnaam;
         private final Lo3String partnerActieInhoud;
 
-        public RelatieVerwachting(
-            final Long partnerANummer,
-            final String partnerVoornaam,
-            final String partnerGeslachtsnaam,
-            final Lo3String partnerActieInhoud,
-            final RelatieRij... rijen)
-        {
+        RelatieVerwachting(
+                final String partnerANummer,
+                final String partnerVoornaam,
+                final String partnerGeslachtsnaam,
+                final Lo3String partnerActieInhoud,
+                final RelatieRij... rijen) {
             this.partnerANummer = partnerANummer;
             this.partnerVoornaam = partnerVoornaam;
             this.partnerGeslachtsnaam = partnerGeslachtsnaam;
@@ -1026,7 +1014,7 @@ public class HuwelijkOfGpConverteerderTest extends AbstractRelatieConverteerderT
         private final Integer tsRegistratie;
         private final Lo3String relatieActieInhoud;
 
-        public RelatieRij(final Integer datumSluiting, final Integer datumOntbinding, final Integer tsRegistratie, final Lo3String relatieActieInhoud) {
+        RelatieRij(final Integer datumSluiting, final Integer datumOntbinding, final Integer tsRegistratie, final Lo3String relatieActieInhoud) {
             this.datumSluiting = datumSluiting;
             this.datumOntbinding = datumOntbinding;
             this.tsRegistratie = tsRegistratie;

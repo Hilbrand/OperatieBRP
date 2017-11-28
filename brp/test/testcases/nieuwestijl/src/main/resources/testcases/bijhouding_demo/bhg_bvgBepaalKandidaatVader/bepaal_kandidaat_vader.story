@@ -1,7 +1,6 @@
 Meta:
 @status         Onderhanden
 @sleutelwoorden diana55
-@jiraIssue      TEAMBRP-4514
 @regels         BRBY0002,R1281
 
 Narrative: De vader van Oliver was echtgenoot van de moeder van Oliver,

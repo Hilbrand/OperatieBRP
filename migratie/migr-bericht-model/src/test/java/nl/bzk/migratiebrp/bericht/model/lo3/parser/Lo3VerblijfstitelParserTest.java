@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -36,9 +36,9 @@ public class Lo3VerblijfstitelParserTest extends AbstractParserTest {
         final List<Lo3Categorie<Lo3VerblijfstitelInhoud>> categorieInhoudLijst = new ArrayList<>();
         final Lo3VerblijfstitelInhoud verblijfstitelInhoud =
                 new Lo3VerblijfstitelInhoud(
-                    new Lo3AanduidingVerblijfstitelCode(WAARDE_ELEMENT_3910, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_3920, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_3930, onderzoek));
+                        new Lo3AanduidingVerblijfstitelCode(WAARDE_ELEMENT_3910, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_3920, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_3930, onderzoek));
         final Lo3Categorie<Lo3VerblijfstitelInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(verblijfstitelInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_10, 0, 0));
         categorieInhoudLijst.add(categorieInhoudCategorie);

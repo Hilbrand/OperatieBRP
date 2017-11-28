@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.init.logging.runtime.repository;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatie;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAutorisatie;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingLog;
+import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingProtocollering;
 
 /**
  * Init vulling log repository.
@@ -17,54 +18,55 @@ public interface InitVullingLogRepository {
 
     /**
      * Maak een log regel.
-     *
-     * @param log
-     *            de InitVullingLog
+     * @param log de InitVullingLog
      */
     void saveInitVullingLogPersoon(final InitVullingLog log);
 
     /**
-     * Queried een InitVullingLog entiteit voor het meegegeven a-nummer. Deze methode geeft precies 1 InitVullingLog als
-     * resultaat. Worden er geen of meerdere InitVullingLog entiteiten voor het meegegeven a-nummer gevonden naar wordt
-     * er een runtime exception gegooid.
-     *
-     * @param anummer
-     *            het anummer
+     * Queried een InitVullingLog entiteit voor het meegegeven a-nummer. Deze methode geeft precies
+     * 1 InitVullingLog als resultaat. Worden er geen of meerdere InitVullingLog entiteiten voor het
+     * meegegeven a-nummer gevonden naar wordt er een runtime exception gegooid.
+     * @param anummer het anummer
      * @return een InitVullingLog
      */
-    InitVullingLog findInitVullingLogPersoon(final Long anummer);
+    InitVullingLog findInitVullingLogPersoon(final String anummer);
 
     /**
      * Zoek de init vulling regel obv administratienummer.
-     *
-     * @param administratienummer
-     *            administratienummer
+     * @param administratienummer administratienummer
      * @return regel, of null als niet gevonden
      */
-    InitVullingAfnemersindicatie findInitVullingAfnemersindicatie(Long administratienummer);
+    InitVullingAfnemersindicatie findInitVullingAfnemersindicatie(String administratienummer);
 
     /**
      * Sla de regel op.
-     *
-     * @param initVullingAfnemersindicatie
-     *            de indicatie
+     * @param initVullingAfnemersindicatie de indicatie
      */
     void saveInitVullingAfnemersindicatie(InitVullingAfnemersindicatie initVullingAfnemersindicatie);
 
     /**
-     * Zoek de init vulling autorisatie obv afnemer code.
-     *
-     * @param afnemerCode
-     *            afnemer code.
+     * Zoek de init vulling autorisatie obv autorisatie id.
+     * @param autorisatieId autorisatie id
      * @return autorisatie, of null als niet gevonden
      */
-    InitVullingAutorisatie findInitVullingAutorisatie(Integer afnemerCode);
+    InitVullingAutorisatie findInitVullingAutorisatie(Long autorisatieId);
 
     /**
      * Sla de autorisatie op.
-     *
-     * @param initVullingAutorisatie
-     *            de autorisatie
+     * @param initVullingAutorisatie de autorisatie
      */
     void saveInitVullingAutorisatie(InitVullingAutorisatie initVullingAutorisatie);
+
+    /**
+     * Zoek de init vulling protocollering aan de hand van activiteit id.
+     * @param activiteitId activiteit id
+     * @return de gevonden protocollering data, of null als niet gevonden
+     */
+    InitVullingProtocollering findInitVullingProtocollering(long activiteitId);
+
+    /**
+     * Sla de protocollering data op.
+     * @param initVullingProtocollering protocollering data
+     */
+    void saveInitVullingProtocollering(InitVullingProtocollering initVullingProtocollering);
 }

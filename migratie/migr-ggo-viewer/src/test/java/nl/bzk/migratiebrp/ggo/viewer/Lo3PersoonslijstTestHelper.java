@@ -16,8 +16,8 @@ import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.AbstractOngeldigLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.OnbekendBericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.OngeldigBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
@@ -43,24 +43,16 @@ public class Lo3PersoonslijstTestHelper {
 
     /**
      * Test helper methode om een lo3Persoonslijst te maken adhv een txt bestand.
-     *
-     * @param filename
-     *            De filenaam
-     * @param foutMelder
-     *            De foutMelder waar fouten gelogt worden.
+     * @param filename De filenaam
+     * @param foutMelder De foutMelder waar fouten gelogt worden.
      * @return Lijst met Lo3Persoonslijsten.
-     * @throws IOException
-     *             Als het lezen van het bestand niet goed ging.
-     * @throws BerichtSyntaxException
-     *             bij parse fouten
-     * @throws Lo3SyntaxException
-     *             bij syntax fouten
-     * @throws ExcelAdapterException
-     *             bij excel lees fouten
+     * @throws IOException Als het lezen van het bestand niet goed ging.
+     * @throws BerichtSyntaxException bij parse fouten
+     * @throws Lo3SyntaxException bij syntax fouten
+     * @throws ExcelAdapterException bij excel lees fouten
      */
     public static List<List<Lo3CategorieWaarde>> retrieveLo3CategorieWaarden(final String filename, final FoutMelder foutMelder) throws IOException,
-        BerichtSyntaxException, ExcelAdapterException, Lo3SyntaxException
-    {
+            BerichtSyntaxException, ExcelAdapterException, Lo3SyntaxException {
         final InputStream inputStream = foutMelder.getClass().getClassLoader().getResourceAsStream(filename);
         List<List<Lo3CategorieWaarde>> lo3CategorieWaarde = null;
         if (filename.toLowerCase().endsWith(".txt")) {
@@ -74,8 +66,7 @@ public class Lo3PersoonslijstTestHelper {
     }
 
     public static List<Lo3Persoonslijst> retrieveLo3Persoonslijsten(final String filename, final FoutMelder foutMelder) throws IOException,
-        BerichtSyntaxException, ExcelAdapterException, Lo3SyntaxException
-    {
+            BerichtSyntaxException, ExcelAdapterException, Lo3SyntaxException {
         final List<List<Lo3CategorieWaarde>> lo3CategorieWaarde = retrieveLo3CategorieWaarden(filename, foutMelder);
         final List<Lo3Persoonslijst> lo3Persoonslijsten = new ArrayList<>();
         final Lo3PersoonslijstParser parser = new Lo3PersoonslijstParser();
@@ -102,8 +93,8 @@ public class Lo3PersoonslijstTestHelper {
         final Lo3BerichtFactory bf = new Lo3BerichtFactory();
         final Lo3Bericht lo3Bericht = bf.getBericht(lg01);
 
-        if (lo3Bericht instanceof OngeldigBericht) {
-            foutMelder.log(LogSeverity.ERROR, "Ongeldig bericht", ((OngeldigBericht) lo3Bericht).getMelding());
+        if (lo3Bericht instanceof AbstractOngeldigLo3Bericht) {
+            foutMelder.log(LogSeverity.ERROR, "Ongeldig bericht", ((AbstractOngeldigLo3Bericht) lo3Bericht).getMelding());
         } else if (lo3Bericht instanceof OnbekendBericht) {
             foutMelder.log(LogSeverity.ERROR, "Obekend bericht", ((OnbekendBericht) lo3Bericht).getMelding());
         } else {
@@ -115,11 +106,8 @@ public class Lo3PersoonslijstTestHelper {
     /**
      * Kopieert de meegegeven Lo3Persoonslijst naar een nieuwe Lo3Persoonslijst. Stapels en Categorien worden nieuw
      * aangemaakt en gevuld met dezelfde inhoud.
-     *
-     * @param lo3Persoonslijst
-     *            origineel
-     * @param kopieerLo3Herkomst
-     *            boolean
+     * @param lo3Persoonslijst origineel
+     * @param kopieerLo3Herkomst boolean
      * @return gekopieerde lo3Persoonslijst
      */
     public static Lo3Persoonslijst kopieerLo3Persoonslijst(final Lo3Persoonslijst lo3Persoonslijst, final boolean kopieerLo3Herkomst) {
@@ -145,15 +133,11 @@ public class Lo3PersoonslijstTestHelper {
 
     /**
      * Kopieert de gegevens in de meegegeven lo3Stapels naar een nieuwe List<Lo3Stapel>.
-     *
-     * @param lo3Stapels
-     *            List<Lo3Stapel>
-     * @param kopieerLo3Herkomst
-     *            boolean
+     * @param lo3Stapels List<Lo3Stapel>
+     * @param kopieerLo3Herkomst boolean
      * @return gekopieerde lo3Stapels
      */
-    private static <T extends Lo3CategorieInhoud> List<Lo3Stapel<T>> kopieerStapels(final List<Lo3Stapel<T>> lo3Stapels, final boolean kopieerLo3Herkomst)
-    {
+    private static <T extends Lo3CategorieInhoud> List<Lo3Stapel<T>> kopieerStapels(final List<Lo3Stapel<T>> lo3Stapels, final boolean kopieerLo3Herkomst) {
         final List<Lo3Stapel<T>> stapels = new ArrayList<>();
         for (final Lo3Stapel<T> lo3Stapel : lo3Stapels) {
             stapels.add(kopieerStapel(lo3Stapel, kopieerLo3Herkomst));
@@ -163,11 +147,8 @@ public class Lo3PersoonslijstTestHelper {
 
     /**
      * Kopieert de gegevens in de meegegeven lo3Stapel naar een nieuwe Lo3Stapel.
-     *
-     * @param lo3Stapel
-     *            Lo3Stapel
-     * @param kopieerLo3Herkomst
-     *            boolean
+     * @param lo3Stapel Lo3Stapel
+     * @param kopieerLo3Herkomst boolean
      * @return gekopieerde lo3Stapel
      */
     private static <T extends Lo3CategorieInhoud> Lo3Stapel<T> kopieerStapel(final Lo3Stapel<T> lo3Stapel, final boolean kopieerLo3Herkomst) {

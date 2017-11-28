@@ -7,7 +7,11 @@
 package nl.bzk.migratiebrp.isc.jbpm.uc311;
 
 import java.util.Map;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Wa01Bericht;
@@ -19,8 +23,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +36,16 @@ public final class MaakWa01BerichtAction implements SpringAction {
     private static final Integer MAX_GBA_HERHALING = 9;
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakWa01BerichtAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -48,12 +59,12 @@ public final class MaakWa01BerichtAction implements SpringAction {
 
         // Maak wa01 Bericht
         final Wa01Bericht wa01Bericht = new Wa01Bericht();
-        wa01Bericht.setBronGemeente(input.getBronGemeente());
+        wa01Bericht.setBronPartijCode(input.getBronPartijCode());
 
         final ExecutionContext executionContext = ExecutionContext.currentExecutionContext();
-        final String doelGemeente = (String) executionContext.getVariable(BepaalGemeentenAction.DOEL_GEMEENTE);
+        final String doelPartijCode = (String) executionContext.getVariable(BepaalGemeentenAction.DOEL_GEMEENTE);
 
-        wa01Bericht.setDoelGemeente(doelGemeente);
+        wa01Bericht.setDoelPartijCode(doelPartijCode);
 
         wa01Bericht.setNieuwANummer(input.getNieuwAnummer());
         wa01Bericht.setOudANummer(input.getOudAnummer());
@@ -78,10 +89,8 @@ public final class MaakWa01BerichtAction implements SpringAction {
             wa01Bericht.setMessageId(orgineel.getMessageId());
         }
 
-        executionContext.getContextInstance().setVariable(
-            BepaalGemeentenAction.WA01_BERICHT,
-            berichtenDao.bewaarBericht(wa01Bericht),
-            executionContext.getToken());
+        executionContext.getContextInstance()
+                .setVariable(BepaalGemeentenAction.WA01_BERICHT, berichtenDao.bewaarBericht(wa01Bericht), executionContext.getToken());
         return null;
     }
 
@@ -89,8 +98,11 @@ public final class MaakWa01BerichtAction implements SpringAction {
         Integer herhalingInteger = Integer.valueOf(herhaling.toString());
         if (herhalingInteger > MAX_GBA_HERHALING) {
             herhalingInteger = MAX_GBA_HERHALING;
-            LOG.warn("wa01Herhaling '{}' is groter dat toegestaan in GBA Herhaalteller."
-                     + " Maximaal 1 positie. Herhaalteller op het Wa01 bericht zal op {} blijven staan.", herhaling, MAX_GBA_HERHALING);
+            LOG.warn(
+                    "wa01Herhaling '{}' is groter dat toegestaan in GBA Herhaalteller."
+                            + " Maximaal 1 positie. Herhaalteller op het Wa01 bericht zal op {} blijven staan.",
+                    herhaling,
+                    MAX_GBA_HERHALING);
         }
         return String.valueOf(herhalingInteger);
     }

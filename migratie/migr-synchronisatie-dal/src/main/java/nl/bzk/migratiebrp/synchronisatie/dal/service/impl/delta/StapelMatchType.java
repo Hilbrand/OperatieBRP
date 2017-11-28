@@ -31,9 +31,7 @@ public enum StapelMatchType {
 
     /**
      * Constructor voor enumeratie.
-     * 
-     * @param sorteerVolgorde
-     *            geeft de volgorde aan waarin deze enumeratie gesorteerd moet worden
+     * @param sorteerVolgorde geeft de volgorde aan waarin deze enumeratie gesorteerd moet worden
      */
     StapelMatchType(final int sorteerVolgorde) {
         this.sorteerVolgorde = sorteerVolgorde;

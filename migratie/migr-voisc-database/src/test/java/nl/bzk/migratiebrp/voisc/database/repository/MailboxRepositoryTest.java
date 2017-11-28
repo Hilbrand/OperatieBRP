@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.voisc.database.repository;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,7 +26,8 @@ public class MailboxRepositoryTest extends AbstractRepositoryTest {
     @Inject
     private MailboxRepository mailboxRepository;
 
-    private SimpleDateFormat dateFormat;;
+    private SimpleDateFormat dateFormat;
+    ;
 
     @Before
     public void setup() {
@@ -34,13 +35,18 @@ public class MailboxRepositoryTest extends AbstractRepositoryTest {
     }
 
     @Test
-    public void testNotFound() throws ParseException {
-        Assert.assertNull(mailboxRepository.getMailboxByInstantiecode(475643385));
+    public void testNotFound() {
+        Assert.assertNull(mailboxRepository.getMailboxByPartijcode("xxxxxx"));
+    }
+
+    @Test(expected = CentraleMailboxException.class)
+    public void zoekOpPartijCodeCentraleVoorziening() {
+        mailboxRepository.getMailboxByPartijcode("199902");
     }
 
     @Test
     @Transactional(value = "voiscTransactionManager")
-    public void test() throws ParseException {
+    public void test() throws ParseException, CentraleMailboxException {
 
         em.flush();
 
@@ -48,29 +54,27 @@ public class MailboxRepositoryTest extends AbstractRepositoryTest {
         System.out.println(test);
 
         final Mailbox mailBox = new Mailbox();
-        mailBox.setInstantietype(Mailbox.INSTANTIETYPE_GEMEENTE);
-        mailBox.setInstantiecode(9994);
+        mailBox.setPartijcode("808999");
         mailBox.setMailboxnr("8089994");
+        mailBox.setVerzender("8089995");
         mailBox.setMailboxpwd("secret");
         mailBox.setLimitNumber(10);
-        mailBox.setStartBlokkering(new Date());
-        mailBox.setEindeBlokkering(new Date());
-        mailBox.setLaatsteWijzigingPwd(new Date());
+        mailBox.setStartBlokkering(new Timestamp(System.currentTimeMillis()));
+        mailBox.setEindeBlokkering(new Timestamp(System.currentTimeMillis()));
+        mailBox.setLaatsteWijzigingPwd(new Timestamp(System.currentTimeMillis()));
 
         mailboxRepository.save(mailBox);
 
         em.flush();
 
-        mailBox.setStartBlokkering(dateFormat.parse("01-01-2000"));
-        mailBox.setEindeBlokkering(dateFormat.parse("01-01-2002"));
-        mailBox.setLaatsteWijzigingPwd(dateFormat.parse("01-01-2012"));
+        mailBox.setStartBlokkering(new Timestamp(dateFormat.parse("01-01-2000").getTime()));
+        mailBox.setEindeBlokkering(new Timestamp(dateFormat.parse("01-01-2002").getTime()));
+        mailBox.setLaatsteWijzigingPwd(new Timestamp(dateFormat.parse("01-01-2012").getTime()));
         mailboxRepository.save(mailBox);
 
         em.flush();
 
-        Assert.assertNotNull(mailboxRepository.getGemeenteMailboxes());
-
-        final Mailbox viaGemeenteCode = mailboxRepository.getMailboxByInstantiecode(9994);
+        final Mailbox viaGemeenteCode = mailboxRepository.getMailboxByPartijcode("808999");
         final Mailbox viaMailboxnr = mailboxRepository.getMailboxByNummer("8089994");
         mailBoxEquals(mailBox, viaGemeenteCode);
         mailBoxEquals(mailBox, viaMailboxnr);
@@ -81,8 +85,8 @@ public class MailboxRepositoryTest extends AbstractRepositoryTest {
         Assert.assertNotNull(other);
 
         Assert.assertEquals(mailBox.getId(), other.getId());
-        Assert.assertEquals(mailBox.getInstantiecode(), other.getInstantiecode());
-        Assert.assertEquals(mailBox.getInstantietype(), other.getInstantietype());
+        Assert.assertEquals(mailBox.getPartijcode(), other.getPartijcode());
+        Assert.assertEquals(mailBox.getVerzender(), other.getVerzender());
         Assert.assertEquals(mailBox.getMailboxnr(), other.getMailboxnr());
         Assert.assertEquals(mailBox.getMailboxpwd(), other.getMailboxpwd());
         Assert.assertEquals(mailBox.getLimitNumber(), other.getLimitNumber());

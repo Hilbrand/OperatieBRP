@@ -8,14 +8,18 @@ package nl.bzk.migratiebrp.conversie.model;
 
 /**
  * Definieert het generieke gedrag van persoonslijsten.
- * 
  */
 public interface Persoonslijst {
 
     /**
      * Geef de waarde van actueel administratienummer.
-     *
      * @return het actuele A-nummer van deze persoonslijst
      */
-    Long getActueelAdministratienummer();
+    String getActueelAdministratienummer();
+
+    /**
+     * Geef de waarde van actuele burgerservicenummer.
+     * @return het actuele burgerservicenummer van deze persoonslijst
+     */
+    String getActueelBurgerservicenummer();
 }

@@ -9,14 +9,14 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 import java.io.IOException;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
-import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTest;
+import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTestBasis;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
 import org.junit.Test;
 
-public class Wf01BerichtTest extends AbstractLo3BerichtTest {
+public class Wf01BerichtTest extends AbstractLo3BerichtTestBasis {
 
     @Test
     public void testEmpty() throws ClassNotFoundException, BerichtInhoudException, IOException {

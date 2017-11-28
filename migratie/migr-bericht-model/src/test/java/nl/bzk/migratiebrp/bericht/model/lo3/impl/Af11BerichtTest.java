@@ -7,15 +7,16 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.IOException;
+import java.util.Collections;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
-import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTest;
+import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTestBasis;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Af11Bericht.Foutreden;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Af11BerichtTest extends AbstractLo3BerichtTest {
+public class Af11BerichtTest extends AbstractLo3BerichtTestBasis {
 
     private static final String A_NUMMER = "9876543210";
     private static final String BRON_GEMEENTE = "0600";
@@ -41,8 +42,8 @@ public class Af11BerichtTest extends AbstractLo3BerichtTest {
         final Af11Bericht af11Bericht = new Af11Bericht();
         af11Bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "G");
         af11Bericht.setANummer(A_NUMMER);
-        af11Bericht.setBronGemeente(BRON_GEMEENTE);
-        af11Bericht.setDoelGemeente(DOEL_GEMEENTE);
+        af11Bericht.setBronPartijCode(BRON_GEMEENTE);
+        af11Bericht.setDoelPartijCode(DOEL_GEMEENTE);
         af11Bericht.setMessageId(MessageIdGenerator.generateId());
 
         testFormatAndParseBericht(af11Bericht);
@@ -54,15 +55,15 @@ public class Af11BerichtTest extends AbstractLo3BerichtTest {
         final Af11Bericht controleBericht = new Af11Bericht();
         controleBericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "G");
         controleBericht.setANummer(A_NUMMER);
-        controleBericht.setBronGemeente(BRON_GEMEENTE);
-        controleBericht.setDoelGemeente(DOEL_GEMEENTE);
+        controleBericht.setBronPartijCode(BRON_GEMEENTE);
+        controleBericht.setDoelPartijCode(DOEL_GEMEENTE);
         controleBericht.setMessageId(af11Bericht.getMessageId());
 
         Assert.assertEquals(af11Bericht.hashCode(), controleBericht.hashCode());
         Assert.assertEquals(af11Bericht.toString(), controleBericht.toString());
         Assert.assertTrue(af11Bericht.equals(af11Bericht));
         Assert.assertTrue(controleBericht.equals(af11Bericht));
-        Assert.assertNull(af11Bericht.getGerelateerdeAnummers());
+        Assert.assertEquals(Collections.emptyList(), af11Bericht.getGerelateerdeAnummers());
 
         Assert.assertFalse(af11Bericht.equals(new Lq01Bericht()));
 

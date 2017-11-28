@@ -6,7 +6,6 @@
 
 /**
  * Levert de classes die de verschillende processtappen uitvoerd voor de pre-condities.
- *
  * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie;

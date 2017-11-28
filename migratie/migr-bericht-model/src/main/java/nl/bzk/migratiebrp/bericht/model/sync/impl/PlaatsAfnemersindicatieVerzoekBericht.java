@@ -28,9 +28,7 @@ public final class PlaatsAfnemersindicatieVerzoekBericht extends AbstractSyncBer
 
     /**
      * JAXB constructor.
-     *
-     * @param plaatsAfnemersindicatieVerzoekType
-     *            Het plaats afnemersindicatie verzoek type {@link PlaatsAfnemersindicatieVerzoekType}
+     * @param plaatsAfnemersindicatieVerzoekType Het plaats afnemersindicatie verzoek type {@link PlaatsAfnemersindicatieVerzoekType}
      */
     public PlaatsAfnemersindicatieVerzoekBericht(final PlaatsAfnemersindicatieVerzoekType plaatsAfnemersindicatieVerzoekType) {
         super("PlaatsAfnemersindicatieVerzoek");
@@ -47,35 +45,23 @@ public final class PlaatsAfnemersindicatieVerzoekBericht extends AbstractSyncBer
     /* ************************************************************************************************************* */
 
     /**
-     * Geef de waarde van persoon id.
-     *
-     * @return persoon id
+     * Geef de waarde van BSN.
+     * @return BSN
      */
-    public Integer getPersoonId() {
-        return plaatsAfnemersindicatieVerzoekType.getPersoonId();
+    public String getBsn() {
+        return plaatsAfnemersindicatieVerzoekType.getBsn();
     }
 
     /**
-     * Geef de waarde van toegang leveringsautorisatie id.
-     *
-     * @return toegang leveringsautorisatie id
+     * Geeft de partijCode op het bericht terug.
+     * @return De partijCode op het bericht.
      */
-    public Integer getToegangLeveringsautorisatieId() {
-        return plaatsAfnemersindicatieVerzoekType.getToegangLeveringsautorisatieId();
-    }
-
-    /**
-     * Geef de waarde van dienst id.
-     *
-     * @return dienst id
-     */
-    public Integer getDienstId() {
-        return plaatsAfnemersindicatieVerzoekType.getDienstId();
+    public String getPartijCode() {
+        return plaatsAfnemersindicatieVerzoekType.getPartijCode();
     }
 
     /**
      * Geef de waarde van referentie.
-     *
      * @return referentie
      */
     public String getReferentie() {
@@ -83,43 +69,26 @@ public final class PlaatsAfnemersindicatieVerzoekBericht extends AbstractSyncBer
     }
 
     /**
-     * Zet de waarde van persoon id.
-     *
-     * @param persoonId
-     *            persoon id
+     * Zet de waarde van BSN.
+     * @param bsn BSN
      */
-    public void setPersoonId(final Integer persoonId) {
-        plaatsAfnemersindicatieVerzoekType.setPersoonId(persoonId);
-    }
-
-    /**
-     * Zet de waarde van toegang leveringsautorisatie id.
-     *
-     * @param toegangleveringsautorisatieId
-     *            toegang leveringsautorisatie id
-     */
-    public void setToegangLeveringsautorisatieId(final int toegangleveringsautorisatieId) {
-        plaatsAfnemersindicatieVerzoekType.setToegangLeveringsautorisatieId(toegangleveringsautorisatieId);
-    }
-
-    /**
-     * Zet de waarde van dienst id.
-     *
-     * @param dienstId
-     *            dienst id
-     */
-    public void setDienstId(final Integer dienstId) {
-        plaatsAfnemersindicatieVerzoekType.setDienstId(dienstId);
+    public void setBsn(final String bsn) {
+        plaatsAfnemersindicatieVerzoekType.setBsn(bsn);
     }
 
     /**
      * Zet de waarde van referentie.
-     *
-     * @param referentie
-     *            referentie
+     * @param referentie referentie
      */
     public void setReferentie(final String referentie) {
         plaatsAfnemersindicatieVerzoekType.setReferentie(referentie);
     }
 
+    /**
+     * Zet de partijCode op het bericht.
+     * @param partijCode De te zetten partijCode.
+     */
+    public void setPartijCode(final String partijCode) {
+        plaatsAfnemersindicatieVerzoekType.setPartijCode(partijCode);
+    }
 }

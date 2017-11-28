@@ -6,22 +6,21 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingVerblijfstitelCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de LO3 categorie Verblijfstitel (10).
  *
  * Deze class is immutable en threadsafe.
- *
  */
 public final class Lo3VerblijfstitelInhoud implements Lo3CategorieInhoud {
 
@@ -44,19 +43,14 @@ public final class Lo3VerblijfstitelInhoud implements Lo3CategorieInhoud {
 
     /**
      * Maakt een Lo3VerblijfstitelInhoud object.
-     *
-     * @param aanduidingVerblijfstitelCode
-     *            de aanduiding verblijfstitel code, mag niet null zijn
-     * @param datumEindeVerblijfstitel
-     *            de datum einde verblijftitel, mag null zijn
-     * @param datumAanvangVerblijfstitel
-     *            de datum aanvang verblijfstitel, mag niet null zijn
+     * @param aanduidingVerblijfstitelCode de aanduiding verblijfstitel code, mag niet null zijn
+     * @param datumEindeVerblijfstitel de datum einde verblijftitel, mag null zijn
+     * @param datumAanvangVerblijfstitel de datum aanvang verblijfstitel, mag niet null zijn
      */
     public Lo3VerblijfstitelInhoud(
-        @Element(name = "aanduidingVerblijfstitelCode", required = false) final Lo3AanduidingVerblijfstitelCode aanduidingVerblijfstitelCode,
-        @Element(name = "datumEindeVerblijfstitel", required = false) final Lo3Datum datumEindeVerblijfstitel,
-        @Element(name = "datumAanvangVerblijfstitel", required = false) final Lo3Datum datumAanvangVerblijfstitel)
-    {
+            @Element(name = "aanduidingVerblijfstitelCode", required = false) final Lo3AanduidingVerblijfstitelCode aanduidingVerblijfstitelCode,
+            @Element(name = "datumEindeVerblijfstitel", required = false) final Lo3Datum datumEindeVerblijfstitel,
+            @Element(name = "datumAanvangVerblijfstitel", required = false) final Lo3Datum datumAanvangVerblijfstitel) {
         this.aanduidingVerblijfstitelCode = aanduidingVerblijfstitelCode;
         this.datumEindeVerblijfstitel = datumEindeVerblijfstitel;
         this.datumAanvangVerblijfstitel = datumAanvangVerblijfstitel;
@@ -69,31 +63,28 @@ public final class Lo3VerblijfstitelInhoud implements Lo3CategorieInhoud {
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(aanduidingVerblijfstitelCode, datumEindeVerblijfstitel, datumAanvangVerblijfstitel);
+        return !Lo3Validatie.isEenParameterGevuld(aanduidingVerblijfstitelCode, datumEindeVerblijfstitel, datumAanvangVerblijfstitel);
     }
 
     /**
-     * Geef de waarde van aanduiding verblijfstitel code.
-     *
-     * @return the aanduidingVerblijfstitelCode
+     * Geef de waarde van aanduiding verblijfstitel code van Lo3VerblijfstitelInhoud.
+     * @return de waarde van aanduiding verblijfstitel code van Lo3VerblijfstitelInhoud
      */
     public Lo3AanduidingVerblijfstitelCode getAanduidingVerblijfstitelCode() {
         return aanduidingVerblijfstitelCode;
     }
 
     /**
-     * Geef de waarde van datum einde verblijfstitel.
-     *
-     * @return the datumEindeVerblijfstitel, of null
+     * Geef de waarde van datum einde verblijfstitel van Lo3VerblijfstitelInhoud.
+     * @return de waarde van datum einde verblijfstitel van Lo3VerblijfstitelInhoud
      */
     public Lo3Datum getDatumEindeVerblijfstitel() {
         return datumEindeVerblijfstitel;
     }
 
     /**
-     * Geef de waarde van aanvangsdatum verblijfstitel.
-     *
-     * @return the datumAanvangVerblijfstitel
+     * Geef de waarde van datum aanvang verblijfstitel van Lo3VerblijfstitelInhoud.
+     * @return de waarde van datum aanvang verblijfstitel van Lo3VerblijfstitelInhoud
      */
     public Lo3Datum getDatumAanvangVerblijfstitel() {
         return datumAanvangVerblijfstitel;
@@ -109,9 +100,9 @@ public final class Lo3VerblijfstitelInhoud implements Lo3CategorieInhoud {
         }
         final Lo3VerblijfstitelInhoud castOther = (Lo3VerblijfstitelInhoud) other;
         return new EqualsBuilder().append(aanduidingVerblijfstitelCode, castOther.aanduidingVerblijfstitelCode)
-                                  .append(datumEindeVerblijfstitel, castOther.datumEindeVerblijfstitel)
-                                  .append(datumAanvangVerblijfstitel, castOther.datumAanvangVerblijfstitel)
-                                  .isEquals();
+                .append(datumEindeVerblijfstitel, castOther.datumEindeVerblijfstitel)
+                .append(datumAanvangVerblijfstitel, castOther.datumAanvangVerblijfstitel)
+                .isEquals();
     }
 
     @Override
@@ -122,9 +113,9 @@ public final class Lo3VerblijfstitelInhoud implements Lo3CategorieInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("aanduidingVerblijfstitelCode", aanduidingVerblijfstitelCode)
-                                                                          .append("datumEindeVerblijfstitel", datumEindeVerblijfstitel)
-                                                                          .append("datumAanvangVerblijfstitel", datumAanvangVerblijfstitel)
-                                                                          .toString();
+                .append("datumEindeVerblijfstitel", datumEindeVerblijfstitel)
+                .append("datumAanvangVerblijfstitel", datumAanvangVerblijfstitel)
+                .toString();
     }
 
     /**
@@ -135,15 +126,16 @@ public final class Lo3VerblijfstitelInhoud implements Lo3CategorieInhoud {
         private Lo3Datum datumEindeVerblijfstitel;
         private Lo3Datum datumAanvangVerblijfstitel;
 
-        /** Maak een lege builder. */
+        /**
+         * Maak een lege builder.
+         */
         public Builder() {
+            //lege builder
         }
 
         /**
          * Maak een initieel gevulde builder.
-         *
-         * @param inhoud
-         *            initiele vulling
+         * @param inhoud initiele vulling
          */
         public Builder(final Lo3VerblijfstitelInhoud inhoud) {
             aanduidingVerblijfstitelCode = inhoud.aanduidingVerblijfstitelCode;
@@ -153,7 +145,6 @@ public final class Lo3VerblijfstitelInhoud implements Lo3CategorieInhoud {
 
         /**
          * Build.
-         *
          * @return inhoud
          */
         public Lo3VerblijfstitelInhoud build() {
@@ -161,30 +152,24 @@ public final class Lo3VerblijfstitelInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * Zet de waarde van aanduiding verblijfstitel code.
-         *
-         * @param aanduidingVerblijfstitelCode
-         *            the aanduidingVerblijfstitelCode to set
+         * Zet de waarden voor aanduiding verblijfstitel code van Lo3VerblijfstitelInhoud.
+         * @param aanduidingVerblijfstitelCode de nieuwe waarde voor aanduiding verblijfstitel code van Lo3VerblijfstitelInhoud
          */
         public void setAanduidingVerblijfstitelCode(final Lo3AanduidingVerblijfstitelCode aanduidingVerblijfstitelCode) {
             this.aanduidingVerblijfstitelCode = aanduidingVerblijfstitelCode;
         }
 
         /**
-         * Zet de waarde van datum einde verblijfstitel.
-         *
-         * @param datumEindeVerblijfstitel
-         *            the datumEindeVerblijfstitel to set
+         * Zet de waarden voor datum einde verblijfstitel van Lo3VerblijfstitelInhoud.
+         * @param datumEindeVerblijfstitel de nieuwe waarde voor datum einde verblijfstitel van Lo3VerblijfstitelInhoud
          */
         public void setDatumEindeVerblijfstitel(final Lo3Datum datumEindeVerblijfstitel) {
             this.datumEindeVerblijfstitel = datumEindeVerblijfstitel;
         }
 
         /**
-         * Zet de waarde van Aanvangsdatum verblijfstitel.
-         *
-         * @param datumAanvangVerblijfstitel
-         *            the datumAanvangVerblijfstitel to set
+         * Zet de waarden voor datum aanvang verblijfstitel van Lo3VerblijfstitelInhoud.
+         * @param datumAanvangVerblijfstitel de nieuwe waarde voor datum aanvang verblijfstitel van Lo3VerblijfstitelInhoud
          */
         public void setDatumAanvangVerblijfstitel(final Lo3Datum datumAanvangVerblijfstitel) {
             this.datumAanvangVerblijfstitel = datumAanvangVerblijfstitel;

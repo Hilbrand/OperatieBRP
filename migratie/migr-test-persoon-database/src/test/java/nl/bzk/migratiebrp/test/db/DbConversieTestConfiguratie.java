@@ -12,8 +12,8 @@ import nl.bzk.migratiebrp.test.common.util.NotEqualsFilter;
 import nl.bzk.migratiebrp.test.dal.TestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie;
 import nl.bzk.migratiebrp.test.dal.runner.TestRunner;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.junit.runner.RunWith;
 import org.springframework.context.support.GenericXmlApplicationContext;
 

@@ -27,10 +27,8 @@ public class TestCaseReader extends PathMatchingResourcePatternResolver {
 
     /**
      * Geef de waarde van input lo3.
-     *
      * @return input lo3
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public String getInputLo3() throws IOException {
         final Set<Resource> files = doFindMatchingFileSystemResources(dataFolder.getFile(), testcase + ".txt");
@@ -43,10 +41,8 @@ public class TestCaseReader extends PathMatchingResourcePatternResolver {
 
     /**
      * Geef de waarde van input brp lo3 file.
-     *
      * @return input brp lo3 file
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public String getInputBrpLo3File() throws IOException {
         final Set<Resource> files = doFindMatchingFileSystemResources(dataFolder.getFile(), testcase + ".xml");
@@ -55,10 +51,8 @@ public class TestCaseReader extends PathMatchingResourcePatternResolver {
 
     /**
      * Geef de waarde van expected fingerprints.
-     *
      * @return expected fingerprints
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public Set<String> getExpectedFingerprints() throws IOException {
         final Set<Resource> files = doFindMatchingFileSystemResources(dataFolder.getFile(), testcase + "-expected.txt");
@@ -68,7 +62,7 @@ public class TestCaseReader extends PathMatchingResourcePatternResolver {
     private String readFile(final File file) throws IOException {
         final StringBuilder result = new StringBuilder();
         try (
-            BufferedReader br = new BufferedReader(new FileReader(file))) {
+                BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line = br.readLine();
             while (line != null) {
                 result.append(line);
@@ -81,7 +75,7 @@ public class TestCaseReader extends PathMatchingResourcePatternResolver {
     private Set<String> readFileAsSet(final File file) throws IOException {
         final Set<String> result = new HashSet<>();
         try (
-            BufferedReader br = new BufferedReader(new FileReader(file))) {
+                BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line = br.readLine();
             while (line != null) {
                 if (!line.isEmpty()) {

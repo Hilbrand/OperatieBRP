@@ -8,15 +8,15 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Leveringsautorisatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfnemerindicatie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAfnemersindicatie;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAfnemersindicaties;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpPartij;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpAfnemersindicatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.Leveringsautorisatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.PersoonAfnemerindicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
 
 /**
  * Mapper naar een BrpAfnemersindicaties object.
@@ -25,11 +25,8 @@ public final class BrpAfnemersindicatiesMapper {
 
     /**
      * Map van de database entiteiten naar een BrpAfnemersindicaties object.
-     *
-     * @param persoon
-     *            persoon waarvoor de afnemers indicaties zijn
-     * @param afnemersindicaties
-     *            lijst met afnemers indicaties
+     * @param persoon persoon waarvoor de afnemers indicaties zijn
+     * @param afnemersindicaties lijst met afnemers indicaties
      * @return BrpAfnemersindicaties object, null als persoon null is
      */
     public BrpAfnemersindicaties mapNaarMigratie(final Persoon persoon, final List<PersoonAfnemerindicatie> afnemersindicaties) {
@@ -37,7 +34,7 @@ public final class BrpAfnemersindicatiesMapper {
             return null;
         }
 
-        final Long administratienummer = persoon.getAdministratienummer();
+        final String administratienummer = persoon.getAdministratienummer();
         final List<BrpAfnemersindicatie> brpAfnemersindicaties = new ArrayList<>();
         if (afnemersindicaties != null) {
             for (final PersoonAfnemerindicatie afnemersindicatie : afnemersindicaties) {
@@ -50,9 +47,7 @@ public final class BrpAfnemersindicatiesMapper {
 
     /**
      * Map een enkele afnemersindicatie uit de database naar een BrpAfnemersindicatie object.
-     *
-     * @param afnemersindicatie
-     *            afnemersindicatie uit de database
+     * @param afnemersindicatie afnemersindicatie uit de database
      * @return BrpAfnemersindicatie object
      */
     private BrpAfnemersindicatie mapNaarMigratie(final PersoonAfnemerindicatie afnemersindicatie) {
@@ -64,7 +59,7 @@ public final class BrpAfnemersindicatiesMapper {
         final String leveringautorisatie = mapLeveringautorisatie(afnemersindicatie.getLeveringsautorisatie());
 
         // Partij
-        final BrpPartij partij = new BrpPartijMapper().mapPartij(afnemersindicatie.getAfnemer(), null);
+        final BrpPartij partij = new BrpPartijMapper().mapPartij(afnemersindicatie.getPartij(), null);
         final BrpPartijCode partijCode = partij.getPartijCode();
 
         return new BrpAfnemersindicatie(partijCode, afnemersindicatieStapel, leveringautorisatie);
@@ -72,9 +67,7 @@ public final class BrpAfnemersindicatiesMapper {
 
     /**
      * Leveringsautorisatie word voor het lezen van afnemersindicaties bepaald op de naam.
-     *
-     * @param leveringsautorisatie
-     *            leveringsautorisatie
+     * @param leveringsautorisatie leveringsautorisatie
      * @return identificatie (tbv lezen en testen afnemersindicaties)
      */
     private String mapLeveringautorisatie(final Leveringsautorisatie leveringsautorisatie) {

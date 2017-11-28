@@ -17,7 +17,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.telling.entiteit.Bericht;
 import nl.bzk.migratiebrp.isc.telling.entiteit.BerichtTelling;
 import nl.bzk.migratiebrp.isc.telling.entiteit.ProcesExtractie;
@@ -28,8 +32,7 @@ import nl.bzk.migratiebrp.isc.telling.repository.ProcesExtractieRepository;
 import nl.bzk.migratiebrp.isc.telling.repository.ProcesTellingenRepository;
 import nl.bzk.migratiebrp.isc.telling.repository.RuntimeRepository;
 import nl.bzk.migratiebrp.isc.telling.runtime.TellingenRuntimeService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -54,20 +57,15 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
     private static final Integer BERICHT_SLEUTEL_INDEX_KANAAL = 2;
     private static final String RUNTIME_NAAM = "tellingen";
 
-    @Inject
-    private BerichtRepository berichtRepositoryService;
+    private final BerichtRepository berichtRepositoryService;
 
-    @Inject
-    private ProcesExtractieRepository procesExtractieRepositoryService;
+    private final ProcesExtractieRepository procesExtractieRepositoryService;
 
-    @Inject
-    private BerichtTellingRepository berichtTellingenRepositoryService;
+    private final BerichtTellingRepository berichtTellingenRepositoryService;
 
-    @Inject
-    private ProcesTellingenRepository procesTellingenRepositoryService;
+    private final ProcesTellingenRepository procesTellingenRepositoryService;
 
-    @Inject
-    private RuntimeRepository runtimeRepositoryService;
+    private final RuntimeRepository runtimeRepositoryService;
 
     private Map<String, List<ProcesExtractie>> teVerwerkenGestarteProcesExtracties;
     private Map<String, List<ProcesExtractie>> teVerwerkenBeeindigdeProcesExtracties;
@@ -75,6 +73,26 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
     private List<Bericht> opgehaaldeGestarteProcesExtractieBerichten;
     private List<ProcesExtractie> opgehaaldeGestarteProcesExtracties;
     private List<ProcesExtractie> opgehaaldeBeeindigdeProcesExtracties;
+
+    /**
+     * constructor.
+     * @param berichtRepositoryService bericht repo
+     * @param procesExtractieRepositoryService proces
+     * @param berichtTellingenRepositoryService bericht telling
+     * @param procesTellingenRepositoryService proces telling
+     * @param runtimeRepositoryService runtime
+     */
+    @Inject
+    public TellingenRuntimeServiceImpl(final BerichtRepository berichtRepositoryService, final ProcesExtractieRepository procesExtractieRepositoryService,
+                                       final BerichtTellingRepository berichtTellingenRepositoryService,
+                                       final ProcesTellingenRepository procesTellingenRepositoryService,
+                                       final RuntimeRepository runtimeRepositoryService) {
+        this.berichtRepositoryService = berichtRepositoryService;
+        this.procesExtractieRepositoryService = procesExtractieRepositoryService;
+        this.berichtTellingenRepositoryService = berichtTellingenRepositoryService;
+        this.procesTellingenRepositoryService = procesTellingenRepositoryService;
+        this.runtimeRepositoryService = runtimeRepositoryService;
+    }
 
     @Override
     public void werkLopendeTellingenBij(final Timestamp procesDatum) {
@@ -232,7 +250,7 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
 
         teVerwerkenBerichten = Collections.synchronizedMap(new HashMap<String, List<Bericht>>());
 
-        if (opgehaaldeGestarteProcesExtractieBerichten != null && opgehaaldeGestarteProcesExtractieBerichten.size() > 0) {
+        if (opgehaaldeGestarteProcesExtractieBerichten != null && !opgehaaldeGestarteProcesExtractieBerichten.isEmpty()) {
             LOG.info(opgehaaldeGestarteProcesExtractieBerichten.size() + " berichten gevonden voor tellingen.");
 
             // Maak een map waarin de opgehaalde gestarte berichten per berichttype worden gegroepeerd.
@@ -263,25 +281,24 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
 
         teVerwerkenGestarteProcesExtracties = Collections.synchronizedMap(new HashMap<String, List<ProcesExtractie>>());
 
-        if (opgehaaldeGestarteProcesExtracties != null && opgehaaldeGestarteProcesExtracties.size() > 0) {
+        if (opgehaaldeGestarteProcesExtracties != null && !opgehaaldeGestarteProcesExtracties.isEmpty()) {
             LOG.info(opgehaaldeGestarteProcesExtracties.size() + " processen gevonden voor 'gestart'.");
 
             // Maak een map waarin de opgehaalde gestarte procesextractie per proces worden gegroepeerd.
             for (final ProcesExtractie huidigeProcesExtractie : opgehaaldeGestarteProcesExtracties) {
 
-                final String mapSleutelHuidigeProcesExtractie =
-                        new Date(huidigeProcesExtractie.getStartDatum().getTime())
-                                + MAP_SLEUTEL_SPLITTER
-                                + huidigeProcesExtractie.getProcesnaam()
-                                + MAP_SLEUTEL_SPLITTER
-                                + huidigeProcesExtractie.getKanaal()
-                                + MAP_SLEUTEL_SPLITTER
-                                + huidigeProcesExtractie.getBerichtType();
+                final String mapSleutelHuidigeProcesExtractie = new Date(huidigeProcesExtractie.getStartDatum().getTime())
+                        + MAP_SLEUTEL_SPLITTER
+                        + huidigeProcesExtractie.getProcesnaam()
+                        + MAP_SLEUTEL_SPLITTER
+                        + huidigeProcesExtractie.getKanaal()
+                        + MAP_SLEUTEL_SPLITTER
+                        + huidigeProcesExtractie.getBerichtType();
 
                 if (!teVerwerkenGestarteProcesExtracties.containsKey(mapSleutelHuidigeProcesExtractie)) {
                     teVerwerkenGestarteProcesExtracties.put(
-                        mapSleutelHuidigeProcesExtractie,
-                        Collections.synchronizedList(new ArrayList<>(Arrays.asList(huidigeProcesExtractie))));
+                            mapSleutelHuidigeProcesExtractie,
+                            Collections.synchronizedList(new ArrayList<>(Arrays.asList(huidigeProcesExtractie))));
                 } else {
                     teVerwerkenGestarteProcesExtracties.get(mapSleutelHuidigeProcesExtractie).add(huidigeProcesExtractie);
                 }
@@ -297,24 +314,23 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
 
         teVerwerkenBeeindigdeProcesExtracties = Collections.synchronizedMap(new HashMap<String, List<ProcesExtractie>>());
 
-        if (opgehaaldeBeeindigdeProcesExtracties != null && opgehaaldeBeeindigdeProcesExtracties.size() > 0) {
+        if (opgehaaldeBeeindigdeProcesExtracties != null && !opgehaaldeBeeindigdeProcesExtracties.isEmpty()) {
             LOG.info(opgehaaldeBeeindigdeProcesExtracties.size() + " processen gevonden voor 'beëindigd'.");
             // Maak een map waarin de opgehaalde gestrarte procesextractie per proces worden gegroepeerd.
             for (final ProcesExtractie huidigeProcesExtractie : opgehaaldeBeeindigdeProcesExtracties) {
 
-                final String mapSleutelHuidigeProcesExtractie =
-                        new Date(huidigeProcesExtractie.getStartDatum().getTime())
-                                + MAP_SLEUTEL_SPLITTER
-                                + huidigeProcesExtractie.getProcesnaam()
-                                + MAP_SLEUTEL_SPLITTER
-                                + huidigeProcesExtractie.getKanaal()
-                                + MAP_SLEUTEL_SPLITTER
-                                + huidigeProcesExtractie.getBerichtType();
+                final String mapSleutelHuidigeProcesExtractie = new Date(huidigeProcesExtractie.getStartDatum().getTime())
+                        + MAP_SLEUTEL_SPLITTER
+                        + huidigeProcesExtractie.getProcesnaam()
+                        + MAP_SLEUTEL_SPLITTER
+                        + huidigeProcesExtractie.getKanaal()
+                        + MAP_SLEUTEL_SPLITTER
+                        + huidigeProcesExtractie.getBerichtType();
 
                 if (!teVerwerkenBeeindigdeProcesExtracties.containsKey(mapSleutelHuidigeProcesExtractie)) {
                     teVerwerkenBeeindigdeProcesExtracties.put(
-                        mapSleutelHuidigeProcesExtractie,
-                        Collections.synchronizedList(new ArrayList<>(Arrays.asList(huidigeProcesExtractie))));
+                            mapSleutelHuidigeProcesExtractie,
+                            Collections.synchronizedList(new ArrayList<>(Arrays.asList(huidigeProcesExtractie))));
                 } else {
                     teVerwerkenBeeindigdeProcesExtracties.get(mapSleutelHuidigeProcesExtractie).add(huidigeProcesExtractie);
                 }
@@ -330,15 +346,16 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
 
         if (teVerwerkenGestarteProcesExtracties != null && teVerwerkenGestarteProcesExtracties.size() > 0) {
             LOG.info("Bijwerken tellingen processen voor 'gestart'.");
-            for (final String mapSleutelHuidigeProcesExtractieLijst : teVerwerkenGestarteProcesExtracties.keySet()) {
+            for (Iterator<String> iterator = teVerwerkenGestarteProcesExtracties.keySet().iterator(); iterator.hasNext(); ) {
+                final String mapSleutelHuidigeProcesExtractieLijst = iterator.next();
 
                 final String[] mapSleutelGesplit = mapSleutelHuidigeProcesExtractieLijst.split(MAP_SLEUTEL_SPLITTER);
 
                 final Timestamp datum;
                 try {
                     datum =
-                            new Timestamp(new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).parse(mapSleutelGesplit[PROCES_EXTRACTIE_SLEUTEL_INDEX_DATUM])
-                                                                                         .getTime());
+                            new Timestamp(
+                                    new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).parse(mapSleutelGesplit[PROCES_EXTRACTIE_SLEUTEL_INDEX_DATUM]).getTime());
                 } catch (final ParseException e) {
                     resultaat = false;
                     break;
@@ -369,15 +386,16 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
 
         if (teVerwerkenBeeindigdeProcesExtracties != null && teVerwerkenBeeindigdeProcesExtracties.size() > 0) {
             LOG.info("Bijwerken tellingen processen voor 'beëindigd'.");
-            for (final String mapSleutelHuidigeProcesExtractieLijst : teVerwerkenBeeindigdeProcesExtracties.keySet()) {
+            for (Iterator<String> iterator = teVerwerkenBeeindigdeProcesExtracties.keySet().iterator(); iterator.hasNext(); ) {
+                final String mapSleutelHuidigeProcesExtractieLijst = iterator.next();
 
                 final String[] mapSleutelGesplit = mapSleutelHuidigeProcesExtractieLijst.split(MAP_SLEUTEL_SPLITTER);
 
                 final Timestamp datum;
                 try {
                     datum =
-                            new Timestamp(new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).parse(mapSleutelGesplit[PROCES_EXTRACTIE_SLEUTEL_INDEX_DATUM])
-                                                                                         .getTime());
+                            new Timestamp(
+                                    new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).parse(mapSleutelGesplit[PROCES_EXTRACTIE_SLEUTEL_INDEX_DATUM]).getTime());
                 } catch (final ParseException e) {
                     resultaat = false;
                     break;
@@ -391,8 +409,9 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
                 procesTelling.setBerichtType(berichtType);
                 procesTelling.setKanaal(kanaal);
                 procesTelling.setProcesnaam(procesnaam);
-                procesTelling.setAantalBeeindigdeProcessen(procesTelling.getAantalBeeindigdeProcessen()
-                                                           + teVerwerkenBeeindigdeProcesExtracties.get(mapSleutelHuidigeProcesExtractieLijst).size());
+                procesTelling.setAantalBeeindigdeProcessen(
+                        procesTelling.getAantalBeeindigdeProcessen()
+                                + teVerwerkenBeeindigdeProcesExtracties.get(mapSleutelHuidigeProcesExtractieLijst).size());
                 procesTellingenRepositoryService.save(procesTelling);
             }
         }
@@ -414,8 +433,9 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
                 final Timestamp datum;
                 try {
                     datum =
-                            new Timestamp(new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).parse(
-                                mapSleutelHuidigeBerichtLijstGesplit[BERICHT_SLEUTEL_INDEX_DATUM]).getTime());
+                            new Timestamp(
+                                    new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).parse(mapSleutelHuidigeBerichtLijstGesplit[BERICHT_SLEUTEL_INDEX_DATUM])
+                                            .getTime());
                 } catch (final ParseException e) {
                     resultaat = false;
                     break;
@@ -436,7 +456,7 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
         int aantalUitgaand = berichtTelling.getAantalUitgaand();
 
         final List<Bericht> berichtList = teVerwerkenBerichten.get(mapSleutelHuidigeBerichtLijst);
-        for (final Iterator<Bericht> iterator = berichtList.iterator(); iterator.hasNext();) {
+        for (final Iterator<Bericht> iterator = berichtList.iterator(); iterator.hasNext(); ) {
             final Bericht huidigBericht = iterator.next();
             final boolean genegeerd = "herhalingGenegeerd".equals(huidigBericht.getJbpmActie());
             if (!genegeerd) {
@@ -465,8 +485,9 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
 
         if (berichtTelling == null) {
             LOG.info(
-                "Nog geen bericht tellingen gevonden (berichttype={}, kanaal={}, datum={}); " + "nieuwe bericht telling aangemaakt.",
-                new Object[] {berichtType, kanaal, new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).format(datum), });
+                    "Nog geen bericht tellingen gevonden (berichttype={}, kanaal={}, datum={}); "
+                            + "nieuwe bericht telling aangemaakt.",
+                    new Object[]{berichtType, kanaal, new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).format(datum),});
             berichtTelling = new BerichtTelling();
             berichtTelling.setBerichtType(berichtType);
             berichtTelling.setKanaal(kanaal);
@@ -485,8 +506,9 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
 
         if (procesTelling == null) {
             LOG.info(
-                "Nog geen proces tellingen gevonden(procesnaam={}, berichttype={}, kanaal={}, datum={}); " + "nieuwe proces telling aangemaakt.",
-                new Object[] {procesnaam, berichtType, kanaal, new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).format(datum), });
+                    "Nog geen proces tellingen gevonden(procesnaam={}, berichttype={}, kanaal={}, datum={}); "
+                            + "nieuwe proces telling aangemaakt.",
+                    new Object[]{procesnaam, berichtType, kanaal, new SimpleDateFormat(MAP_SLEUTEL_DATUM_FORMAAT).format(datum),});
             procesTelling = new ProcesTelling();
             procesTelling.setProcesnaam(procesnaam);
             procesTelling.setDatum(datum);
@@ -561,7 +583,7 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
             }
 
         } catch (final HibernateException exceptie) {
-            LOG.error("Fout opgetreden bij het bijwerken van de indicatie van processen.");
+            LOG.error("Fout opgetreden bij het bijwerken van de indicatie van processen.",exceptie);
         }
 
         return resultaat;
@@ -579,7 +601,7 @@ public final class TellingenRuntimeServiceImpl implements TellingenRuntimeServic
 
             return berichtRepositoryService.updateIndicatieGeteldBerichten(teUpdatenIds);
         } catch (final HibernateException exceptie) {
-            LOG.error("Fout opgetreden bij het bijwerken van geteld indicatie berichten.");
+            LOG.error("Fout opgetreden bij het bijwerken van geteld indicatie berichten.",exceptie);
             return false;
         }
     }

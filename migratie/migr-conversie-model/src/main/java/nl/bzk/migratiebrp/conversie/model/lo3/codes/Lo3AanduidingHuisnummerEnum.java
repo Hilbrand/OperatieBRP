@@ -9,16 +9,20 @@ package nl.bzk.migratiebrp.conversie.model.lo3.codes;
 import java.util.HashMap;
 import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingHuisnummer;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze enum type representeert de LO3 waarde voor Aanduiding bij huisnummer.
  */
 public enum Lo3AanduidingHuisnummerEnum {
 
-    /** bij. */
+    /**
+     * bij.
+     */
     BY("by", "Bij"),
-    /** tegenover. */
+    /**
+     * tegenover.
+     */
     TEGENOVER("to", "Tegenover");
 
     /* ************************************************************************************************************* */
@@ -27,14 +31,13 @@ public enum Lo3AanduidingHuisnummerEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private static final Map<String, Lo3AanduidingHuisnummerEnum> CODE_MAP = new HashMap<String, Lo3AanduidingHuisnummerEnum>() {
-        private static final long serialVersionUID = 1L;
-        {
-            for (final Lo3AanduidingHuisnummerEnum value : Lo3AanduidingHuisnummerEnum.values()) {
-                put(value.getCode(), value);
-            }
+    private static final Map<String, Lo3AanduidingHuisnummerEnum> CODE_MAP = new HashMap<>();
+
+    static {
+        for (final Lo3AanduidingHuisnummerEnum value : Lo3AanduidingHuisnummerEnum.values()) {
+            CODE_MAP.put(value.getCode(), value);
         }
-    };
+    }
 
     private final String code;
     private final String label;
@@ -45,7 +48,7 @@ public enum Lo3AanduidingHuisnummerEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private Lo3AanduidingHuisnummerEnum(final String code, final String label) {
+    Lo3AanduidingHuisnummerEnum(final String code, final String label) {
         this.code = code;
         this.label = label;
     }
@@ -58,9 +61,7 @@ public enum Lo3AanduidingHuisnummerEnum {
 
     /**
      * Bestaat de gegeven code in de enumeratie.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return true, als de code bestaat, anders false
      */
     public static boolean containsCode(final String code) {
@@ -69,9 +70,7 @@ public enum Lo3AanduidingHuisnummerEnum {
 
     /**
      * Geef de enumeratie waarde voor de gegeven code.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3AanduidingHuisnummerEnum getByCode(final String code) {
@@ -80,9 +79,7 @@ public enum Lo3AanduidingHuisnummerEnum {
 
     /**
      * Geef de enumeratie waarde voor (de code van) het gegeven element.
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3AanduidingHuisnummerEnum getByElement(final Lo3AanduidingHuisnummer element) {
@@ -97,7 +94,6 @@ public enum Lo3AanduidingHuisnummerEnum {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {
@@ -106,7 +102,6 @@ public enum Lo3AanduidingHuisnummerEnum {
 
     /**
      * Geef de enumeratie als element.
-     * 
      * @return element
      */
     public Lo3AanduidingHuisnummer asElement() {
@@ -115,18 +110,15 @@ public enum Lo3AanduidingHuisnummerEnum {
 
     /**
      * Is de enumeratie waarde gelijk aan (de code van) het element?
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return true, als de waarde gelijk is, anders false
      */
     public boolean equalsElement(final Lo3AanduidingHuisnummer element) {
-        return Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
+        return Lo3Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
     }
 
     /**
      * Geef de waarde van label.
-     *
      * @return the label
      */
     public String getLabel() {

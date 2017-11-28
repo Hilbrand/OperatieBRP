@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.test.levering.mutatiebericht;
 import java.io.File;
 import java.io.FilenameFilter;
 import nl.bzk.migratiebrp.test.common.util.Filters.DirectoryFilters;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 
 public class DeltaTest extends LeveringMutatieberichtTestConfiguratie {
 
@@ -24,11 +25,16 @@ public class DeltaTest extends LeveringMutatieberichtTestConfiguratie {
 
     @Override
     public FilenameFilter getThemaFilter() {
-        return DirectoryFilters.notEndsWith("NOK", "NO TEST");
+        return DirectoryFilters.notEndsWith("NO TEST");
     }
 
     @Override
     public FilenameFilter getCasusFilter() {
-        return DirectoryFilters.notEndsWith("NOK", "NO TEST");
+        return DirectoryFilters.notEndsWith("NO TEST");
+    }
+
+    @Override
+    public TestSkipper getTestSkipper() {
+        return TestSkipper.regressie();
     }
 }

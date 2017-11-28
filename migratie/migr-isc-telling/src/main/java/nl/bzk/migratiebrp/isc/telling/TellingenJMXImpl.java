@@ -10,10 +10,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
 import nl.bzk.migratiebrp.isc.telling.runtime.TellingenRuntimeService;
 import nl.bzk.migratiebrp.util.common.jmx.UseDynamicDomain;
-import nl.bzk.migratiebrp.util.common.logging.MDC;
-import nl.bzk.migratiebrp.util.common.logging.MDC.MDCCloser;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -32,9 +31,7 @@ public final class TellingenJMXImpl implements TellingenJMX {
 
     /**
      * Zet de tellingen service.
-     *
-     * @param tellingenService
-     *            De te zetten tellingen service
+     * @param tellingenService De te zetten tellingen service
      */
     @Required
     public void setTellingenService(final TellingenRuntimeService tellingenService) {
@@ -43,9 +40,7 @@ public final class TellingenJMXImpl implements TellingenJMX {
 
     /**
      * Zet de waarde van aantal uren sinds verwerkt.
-     *
-     * @param aantalUrenSindsVerwerkt
-     *            aantal uren sinds verwerkt
+     * @param aantalUrenSindsVerwerkt aantal uren sinds verwerkt
      */
     public void setAantalUrenSindsVerwerkt(final int aantalUrenSindsVerwerkt) {
         this.aantalUrenSindsVerwerkt = aantalUrenSindsVerwerkt;
@@ -62,9 +57,7 @@ public final class TellingenJMXImpl implements TellingenJMX {
 
     /**
      * JMX service voor het bijwerken van de telling met een aangepast aan uren sinds verwerking.
-     *
-     * @param aantalUren
-     *            het aantal uren sinds verwerking
+     * @param aantalUren het aantal uren sinds verwerking
      */
     @Override
     @ManagedOperation(description = "Werk tellingen bij (aangepaste aantal uren sinds verwerking).")
@@ -77,13 +70,6 @@ public final class TellingenJMXImpl implements TellingenJMX {
         cal.set(Calendar.MILLISECOND, 0);
 
         final ExecutorService exec = Executors.newSingleThreadExecutor();
-        exec.submit(new Runnable() {
-            @Override
-            public void run() {
-                try (MDCCloser verwerkingCloser = MDC.startVerwerking()) {
-                    tellingenService.werkLopendeTellingenBij(new Timestamp(cal.getTimeInMillis()));
-                }
-            }
-        });
+        exec.submit(() -> MDCProcessor.startVerwerking().run(() -> tellingenService.werkLopendeTellingenBij(new Timestamp(cal.getTimeInMillis()))));
     }
 }

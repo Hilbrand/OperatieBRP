@@ -8,10 +8,15 @@ package nl.bzk.migratiebrp.conversie.regels.proces.impl;
 
 import java.util.List;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.LoggingContext;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAfnemersindicaties;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAutorisatie;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenis;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
+import nl.bzk.migratiebrp.conversie.model.lo3.Lo3ToevalligeGebeurtenis;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Afnemersindicatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Autorisatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
@@ -23,16 +28,16 @@ import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenAutorisatie;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConversieHook;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConversieStap;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerLo3NaarBrpService;
+import nl.bzk.migratiebrp.conversie.regels.proces.NullHook;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.Lo3BepalenAfgeleideGegevens;
 import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.Lo3HistorieConversie;
 import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.Lo3InhoudNaarBrpConversieStap;
 import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.Lo3VerzamelBrpOnderzoeken;
 import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.Lo3VerzamelLo3Onderzoeken;
+import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.BepaalVoornamen;
 import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.autorisatie.AfnemersIndicatieConversie;
-import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3.Foutmelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.LoggingContext;
+import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.toevalligegebeurtenis.ToevalligeGebeurtenisConversie;
 import org.springframework.stereotype.Service;
 
 /**
@@ -43,19 +48,41 @@ import org.springframework.stereotype.Service;
 public final class ConverteerLo3NaarBrpServiceImpl implements ConverteerLo3NaarBrpService {
 
     private static final Logger LOG = LoggerFactory.getLogger();
+    private static final String CONVERSIE_AFNEMERSINDICATIE_GEREED = "Conversie afnemersindicatie gereed";
 
+    private final Lo3InhoudNaarBrpConversieStap lo3InhoudNaarBrpConversieStap;
+    private final Lo3VerzamelLo3Onderzoeken lo3VerzamelLo3Onderzoeken;
+    private final Lo3VerzamelBrpOnderzoeken lo3VerzamelBrpOnderzoeken;
+    private final Lo3HistorieConversie lo3HistorieConversie;
+    private final Lo3BepalenAfgeleideGegevens lo3BepalenAfgeleideGegevens;
+    private final AfnemersIndicatieConversie afnemersIndicatieConversie;
+    private final ToevalligeGebeurtenisConversie toevalligeGebeurtenisConversie;
+    private BepaalVoornamen bepaalVoornamen;
+
+    /**
+     * Constructor.
+     * @param lo3InhoudNaarBrpConversieStap lo3 inhoud
+     * @param lo3VerzamelLo3Onderzoeken lo3 onderzoeken
+     * @param lo3VerzamelBrpOnderzoeken brp onderzoeken
+     * @param lo3HistorieConversie historie conversie
+     * @param afnemersIndicatieConversie indicatie conversie
+     * @param toevalligeGebeurtenisConversie toevallige gebeurtenis
+     */
     @Inject
-    private Lo3InhoudNaarBrpConversieStap lo3InhoudNaarBrpConversieStap;
-    @Inject
-    private Lo3VerzamelLo3Onderzoeken lo3VerzamelLo3Onderzoeken;
-    @Inject
-    private Lo3VerzamelBrpOnderzoeken lo3VerzamelBrpOnderzoeken;
-    @Inject
-    private Lo3HistorieConversie lo3HistorieConversie;
-    @Inject
-    private Lo3BepalenAfgeleideGegevens lo3BepalenAfgeleideGegevens;
-    @Inject
-    private AfnemersIndicatieConversie afnemersIndicatieConversie;
+    public ConverteerLo3NaarBrpServiceImpl(final Lo3InhoudNaarBrpConversieStap lo3InhoudNaarBrpConversieStap,
+                                           final Lo3VerzamelLo3Onderzoeken lo3VerzamelLo3Onderzoeken,
+                                           final Lo3VerzamelBrpOnderzoeken lo3VerzamelBrpOnderzoeken, final Lo3HistorieConversie lo3HistorieConversie,
+                                           final AfnemersIndicatieConversie afnemersIndicatieConversie,
+                                           final ToevalligeGebeurtenisConversie toevalligeGebeurtenisConversie){
+        bepaalVoornamen = new BepaalVoornamen();
+        lo3BepalenAfgeleideGegevens = new Lo3BepalenAfgeleideGegevens(bepaalVoornamen);
+        this.lo3InhoudNaarBrpConversieStap = lo3InhoudNaarBrpConversieStap;
+        this.lo3VerzamelLo3Onderzoeken = lo3VerzamelLo3Onderzoeken;
+        this.lo3VerzamelBrpOnderzoeken = lo3VerzamelBrpOnderzoeken;
+        this.lo3HistorieConversie = lo3HistorieConversie;
+        this.afnemersIndicatieConversie = afnemersIndicatieConversie;
+        this.toevalligeGebeurtenisConversie = toevalligeGebeurtenisConversie;
+    }
 
     /**
      * Converteert een Lo3Persoonslijst naar een BrpPersoonslijst. Hiervoor worden de volgende stappen uitgevoerd:
@@ -65,24 +92,18 @@ public final class ConverteerLo3NaarBrpServiceImpl implements ConverteerLo3NaarB
      * <li>Stap 3: conversie historie ({@link Lo3HistorieConversie})</li>
      * <li>Stap 4: afgeleide gegevens ({@link Lo3BepalenAfgeleideGegevens})</li>
      * </ul>
-     *
-     * @param lo3Persoonslijst
-     *            de LO3 persoonslijst
-     *
+     * @param lo3Persoonslijst de LO3 persoonslijst
      * @return een BrpPersoonslijst
      */
     @Override
     public BrpPersoonslijst converteerLo3Persoonslijst(final Lo3Persoonslijst lo3Persoonslijst) {
-        return converteerLo3Persoonslijst(lo3Persoonslijst, ConversieHook.NULL_HOOK);
+        return converteerLo3Persoonslijst(lo3Persoonslijst, new NullHook());
     }
 
     /**
      * Converteert een Lo3Persoonslijst naar een BrpPersoonslijst.
-     *
-     * @param lo3Persoonslijst
-     *            de LO3 persoonslijst
-     * @param hook
-     *            hook
+     * @param lo3Persoonslijst de LO3 persoonslijst
+     * @param hook hook
      * @return een BrpPersoonslijst
      */
     public BrpPersoonslijst converteerLo3Persoonslijst(final Lo3Persoonslijst lo3Persoonslijst, final ConversieHook hook) {
@@ -124,16 +145,13 @@ public final class ConverteerLo3NaarBrpServiceImpl implements ConverteerLo3NaarB
 
     @Override
     public BrpAutorisatie converteerLo3Autorisatie(final Lo3Autorisatie lo3Autorisatie) {
-        return converteerLo3Autorisatie(lo3Autorisatie, ConversieHook.NULL_HOOK);
+        return converteerLo3Autorisatie(lo3Autorisatie, new NullHook());
     }
 
     /**
      * Converteert een lo3Autorisatie naar een BrpAutorisatie.
-     *
-     * @param lo3Autorisatie
-     *            de te converteren lo3Autorisatie
-     * @param hook
-     *            hook
+     * @param lo3Autorisatie de te converteren lo3Autorisatie
+     * @param hook hook
      * @return een BrpAutorisatie
      */
     public BrpAutorisatie converteerLo3Autorisatie(final Lo3Autorisatie lo3Autorisatie, final ConversieHook hook) {
@@ -144,8 +162,12 @@ public final class ConverteerLo3NaarBrpServiceImpl implements ConverteerLo3NaarB
         hook.stap(ConversieStap.LO3_NAAR_BRP_CONVERSIE_INHOUD, tussenAutorisatie);
 
         LOG.debug("Stap 2: Converteer historie");
-        final BrpAutorisatie brpAutorisatie = lo3HistorieConversie.converteer(tussenAutorisatie);
+        BrpAutorisatie brpAutorisatie = lo3HistorieConversie.converteer(tussenAutorisatie);
         hook.stap(ConversieStap.LO3_NAAR_BRP_CONVERSIE_HISTORIE, brpAutorisatie);
+
+        LOG.debug("Stap 2b: Verwijder redundantie");
+        brpAutorisatie = lo3HistorieConversie.opschonenVerantwooding(brpAutorisatie);
+        hook.stap(ConversieStap.LO3_NAAR_BRP_VERWIJDER_REDUNDANTIE, brpAutorisatie);
 
         // Result
         LOG.debug("Conversie autorisatie gereed");
@@ -154,16 +176,13 @@ public final class ConverteerLo3NaarBrpServiceImpl implements ConverteerLo3NaarB
 
     @Override
     public BrpAfnemersindicaties converteerLo3Afnemersindicaties(final Lo3Afnemersindicatie lo3Afnemersindicaties) {
-        return converteerLo3Afnemersindicaties(lo3Afnemersindicaties, ConversieHook.NULL_HOOK);
+        return converteerLo3Afnemersindicaties(lo3Afnemersindicaties, new NullHook());
     }
 
     /**
      * Converteert een lo3Afnemersindicaties naar een BrpAfnemersindicaties.
-     *
-     * @param input
-     *            de te converteren lo3Afnemersindicaties
-     * @param hook
-     *            hook
+     * @param input de te converteren lo3Afnemersindicaties
+     * @param hook hook
      * @return een BrpAfnemersindicaties
      */
     public BrpAfnemersindicaties converteerLo3Afnemersindicaties(final Lo3Afnemersindicatie input, final ConversieHook hook) {
@@ -186,7 +205,16 @@ public final class ConverteerLo3NaarBrpServiceImpl implements ConverteerLo3NaarB
         hook.stap(ConversieStap.LO3_NAAR_BRP_AFGELEIDE_GEGEVENS, brpAfnemersindicaties);
 
         // Result
-        LOG.debug("Conversie afnemersindicatie gereed");
+        LOG.debug(CONVERSIE_AFNEMERSINDICATIE_GEREED);
         return brpAfnemersindicaties;
+    }
+
+    @Override
+    public BrpToevalligeGebeurtenis converteerLo3ToevalligeGebeurtenis(final Lo3ToevalligeGebeurtenis lo3ToevalligeGebeurtenis) {
+        LOG.debug("Stap 1: Conversie inhoud (toevallige gebeurtenis)");
+        final BrpToevalligeGebeurtenis brpToevalligeGebeurtenis = toevalligeGebeurtenisConversie.converteer(lo3ToevalligeGebeurtenis);
+        // Result
+        LOG.debug(CONVERSIE_AFNEMERSINDICATIE_GEREED);
+        return brpToevalligeGebeurtenis;
     }
 }

@@ -12,10 +12,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.Definitie;
 import nl.bzk.migratiebrp.conversie.model.Definities;
@@ -45,17 +43,16 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 import nl.bzk.migratiebrp.conversie.regels.proces.AbstractReisdocumentTest;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Test het contract van ReisdocumentConverteerder.
- * 
  */
 public class ReisdocumentConverteerderTest extends AbstractReisdocumentTest {
 
-    @Inject
-    private ReisdocumentConverteerder converteerder;
+    private ReisdocumentConverteerder converteerder = new ReisdocumentConverteerder(new Lo3AttribuutConverteerder(new ConversietabelFactoryImpl()));
     private TussenPersoonslijstBuilder tussenPersoonslijstBuilder;
 
     @Before
@@ -70,7 +67,7 @@ public class ReisdocumentConverteerderTest extends AbstractReisdocumentTest {
 
     @Test(expected = NullPointerException.class)
     public void testNullInputs2() {
-        converteerder.converteer(Arrays.asList(maakStapel(nederlandsReisdocumentBuilder())), null);
+        converteerder.converteer(Collections.singletonList(maakStapel(nederlandsReisdocumentBuilder())), null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -84,11 +81,11 @@ public class ReisdocumentConverteerderTest extends AbstractReisdocumentTest {
     public void testConverteerNederlandsReisdocument() {
         final Lo3ReisdocumentInhoud.Builder builder = nederlandsReisdocumentBuilder();
         builder.aanduidingInhoudingNederlandsReisdocument(
-            new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(String.valueOf(AANDUIDING_INHOUDING_OF_VERMISSING)));
+                new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(String.valueOf(AANDUIDING_INHOUDING_OF_VERMISSING)));
         builder.datumInhoudingVermissingNederlandsReisdocument(new Lo3Datum(DATUM_INHOUDING_OF_VERMISSING));
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> reisdocumentLo3Stapel = maakStapel(builder);
-        converteerder.converteer(Arrays.asList(reisdocumentLo3Stapel), tussenPersoonslijstBuilder);
+        converteerder.converteer(Collections.singletonList(reisdocumentLo3Stapel), tussenPersoonslijstBuilder);
         final TussenPersoonslijst tussenPersoonslijst = tussenPersoonslijstBuilder.build();
         final List<TussenStapel<BrpReisdocumentInhoud>> reisdocumentStapels = tussenPersoonslijst.getReisdocumentStapels();
 
@@ -112,8 +109,8 @@ public class ReisdocumentConverteerderTest extends AbstractReisdocumentTest {
 
         assertEquals(new BrpDatum(DATUM_INHOUDING_OF_VERMISSING, null), reisdocumentInhoud.getDatumInhoudingOfVermissing());
         assertEquals(
-            new BrpAanduidingInhoudingOfVermissingReisdocumentCode(AANDUIDING_INHOUDING_OF_VERMISSING),
-            reisdocumentInhoud.getAanduidingInhoudingOfVermissing());
+                new BrpAanduidingInhoudingOfVermissingReisdocumentCode(AANDUIDING_INHOUDING_OF_VERMISSING),
+                reisdocumentInhoud.getAanduidingInhoudingOfVermissing());
 
         assertGeenSignalering(tussenPersoonslijst);
     }
@@ -126,7 +123,7 @@ public class ReisdocumentConverteerderTest extends AbstractReisdocumentTest {
         final Lo3ReisdocumentInhoud.Builder builder = signaleringBuilder();
 
         final Lo3Stapel<Lo3ReisdocumentInhoud> reisdocumentLo3Stapel = maakStapel(builder);
-        converteerder.converteer(Arrays.asList(reisdocumentLo3Stapel), tussenPersoonslijstBuilder);
+        converteerder.converteer(Collections.singletonList(reisdocumentLo3Stapel), tussenPersoonslijstBuilder);
         converteerEnControleerSignalering();
         assertAantalInfos(1);
         assertSoortMeldingCode(SoortMeldingCode.BIJZ_CONV_LB026, 1);
@@ -141,13 +138,13 @@ public class ReisdocumentConverteerderTest extends AbstractReisdocumentTest {
 
         final Lo3Categorie<Lo3ReisdocumentInhoud> voorkomen =
                 Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, DATUM_INGANG_GELDIGHEID, DATUM_INGANG_GELDIGHEID),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_12, 0, 0));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, DATUM_INGANG_GELDIGHEID, DATUM_INGANG_GELDIGHEID),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_12, 0, 0));
         final Lo3Stapel<Lo3ReisdocumentInhoud> reisdocumentLo3Stapel = Lo3StapelHelper.lo3Stapel(voorkomen);
 
-        converteerder.converteer(Arrays.asList(reisdocumentLo3Stapel), tussenPersoonslijstBuilder);
+        converteerder.converteer(Collections.singletonList(reisdocumentLo3Stapel), tussenPersoonslijstBuilder);
         converteerEnControleerSignalering();
         assertAantalInfos(0);
         assertSoortMeldingCode(SoortMeldingCode.BIJZ_CONV_LB026, 0);
@@ -168,7 +165,6 @@ public class ReisdocumentConverteerderTest extends AbstractReisdocumentTest {
     }
 
     /**
-     * 
      * @return builder voor nederlands reisdocument welke niet ingehouden/vermist is.
      */
     private Lo3ReisdocumentInhoud.Builder nederlandsReisdocumentBuilder() {
@@ -183,7 +179,6 @@ public class ReisdocumentConverteerderTest extends AbstractReisdocumentTest {
     }
 
     /**
-     * 
      * @return builder voor belemmering verstrekking(signalering).
      */
     private Lo3ReisdocumentInhoud.Builder signaleringBuilder() {
@@ -204,10 +199,10 @@ public class ReisdocumentConverteerderTest extends AbstractReisdocumentTest {
 
     private Lo3Categorie<Lo3ReisdocumentInhoud> maakCategorie(final Lo3ReisdocumentInhoud.Builder builder) {
         return Lo3StapelHelper.lo3Cat(
-            builder.build(),
-            Lo3StapelHelper.lo3Akt(1),
-            Lo3StapelHelper.lo3His(null, DATUM_INGANG_GELDIGHEID, DATUM_OPNEMING),
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_12, 0, 0));
+                builder.build(),
+                Lo3StapelHelper.lo3Akt(1),
+                Lo3StapelHelper.lo3His(null, DATUM_INGANG_GELDIGHEID, DATUM_OPNEMING),
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_12, 0, 0));
     }
 
     private Lo3Stapel<Lo3ReisdocumentInhoud> maakStapel(final Lo3ReisdocumentInhoud.Builder builder) {

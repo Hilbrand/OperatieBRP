@@ -14,16 +14,20 @@
              | Tijdens jUnit testen kan de ApplicationContext meerdere keren worden geinstantieerd.
              | Elke keer dient een unique naam gebruikt te worden, anders gaat Atomikos fout.
               -->
-            <bean class="nl.bzk.migratiebrp.util.common.UniqueName" >
+            <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName" >
             	<property name="baseName" value="iscDatabase" />
             </bean>
         </property>
-        <property name="url" value="jdbc:h2:tcp://localhost:9098/isc"/>
+        <!-- 
+        <property name="url" value="jdbc:h2:tcp://localhost:${test.database.isc.port}/isc"/>
         <property name="driverClassName" value="org.h2.Driver"/>
+		 -->
+		<property name="url" value="jdbc:hsqldb:hsql://localhost:${test.database.port}/isc" />
+		<property name="driverClassName" value="org.hsqldb.jdbc.JDBCDriver" />
         <property name="user" value="sa"/>
         <property name="password" value="" />
         <property name="maxPoolSize" value="20" />
-        <property name="minPoolSize" value="10"/>
+        <property name="minPoolSize" value="1"/>
     </bean>
 
 </beans>

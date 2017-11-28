@@ -24,15 +24,15 @@ import org.jboss.gravel.common.annotation.TldTag;
  */
 @TldTag(name = "jmxAttribute", description = "Get a JMX value",
         attributes = {@TldAttribute(name = "target", description = "An EL expression into which the filter should be stored.", required = true,
-                              deferredType = Object.class),
-                      @TldAttribute(name = "server", description = "An EL expression referring to the jmx server", required = true,
-                              deferredType = JmxServer.class),
-                      @TldAttribute(name = "object", description = "An EL expression containing the object name", required = true,
-                              deferredType = String.class),
-                      @TldAttribute(name = "attribute", description = "An EL expression containing the attribute name", required = true,
-                              deferredType = String.class),
-                      @TldAttribute(name = "ignoreErrors", description = "An EL expression containing the indication if errors should be ignored",
-                              required = false, deferredType = Boolean.class)
+                deferredType = Object.class),
+                @TldAttribute(name = "server", description = "An EL expression referring to the jmx server", required = true,
+                        deferredType = JmxServer.class),
+                @TldAttribute(name = "object", description = "An EL expression containing the object name", required = true,
+                        deferredType = String.class),
+                @TldAttribute(name = "attribute", description = "An EL expression containing the attribute name", required = true,
+                        deferredType = String.class),
+                @TldAttribute(name = "ignoreErrors", description = "An EL expression containing the indication if errors should be ignored",
+                        required = false, deferredType = Boolean.class)
 
         })
 public final class JmxAttributeHandler extends TagHandler {
@@ -45,9 +45,7 @@ public final class JmxAttributeHandler extends TagHandler {
 
     /**
      * Constructor waarbij de tag configuratie meegegeven kan worden.
-     * 
-     * @param config
-     *            Tag configuratie waarin o.a. migratie tags staan.
+     * @param config Tag configuratie waarin o.a. migratie tags staan.
      */
     public JmxAttributeHandler(final TagConfig config) {
         super(config);

@@ -10,9 +10,8 @@
  * Het BRP model beschrijft de MigratieSpecifieke kijk op het BRP model en moet voldoende
  * informatie bevatten om de BRP database te vullen. Dit model dient ter ondersteuning aan
  * de conversieregels en niet om het BRP datamodel te beschrijven.
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.model
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.model.brp;
 

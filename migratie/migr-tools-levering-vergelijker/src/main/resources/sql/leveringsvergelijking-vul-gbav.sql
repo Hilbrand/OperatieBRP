@@ -32,7 +32,7 @@ SELECT ber1.lo3_bericht_id as bijhouding_ber_id, ber2.originator_or_recipient as
 		act1.activiteit_type = 100 AND act1.activiteit_subtype IN (1111, 1112) AND act1.toestand >= 8000 and act1.toestand < 9000
 	LEFT JOIN activiteit AS act2 ON -- Spontaan activiteit, heeft zelfde moeder activiteit als Lg/La berichtactiviteit
 		act1.moeder_id = act2.moeder_id AND
-		act2.activiteit_type = 107 AND act2.activiteit_subtype = 1220 AND act2.toestand >= 8000 and act2.toestand < 9000
+		act2.activiteit_type = 107 AND act2.activiteit_subtype = 1221 AND act2.toestand >= 8000 and act2.toestand < 9000
 	LEFT JOIN activiteit AS act3 ON -- Verstrekkingsbericht activiteit (101)
 		act3.moeder_id = act2.activiteit_id AND
 		act3.activiteit_type = 101 AND act3.toestand >= 8000 and act3.toestand < 9000

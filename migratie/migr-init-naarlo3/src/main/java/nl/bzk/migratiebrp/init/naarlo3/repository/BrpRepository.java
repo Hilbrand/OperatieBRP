@@ -8,17 +8,13 @@ package nl.bzk.migratiebrp.init.naarlo3.repository;
 
 /**
  * De repository die het mogelijk maakt om te querien in de BRP database.
- * 
  */
 public interface BrpRepository {
 
     /**
      * Zoekt in de BRP naar ingeschreven personen en geef elk gevonden A-Nummer door aan de verwerker.
-     * 
-     * @param verwerker
-     *            de verwerker voor de A-Nummers
-     * @param batchGrootte
-     *            de grootte van te verwerken batches
+     * @param verwerker de verwerker voor de A-Nummers
+     * @param batchGrootte de grootte van te verwerken batches
      */
     void verwerkANummersVanIngeschrevenPersonen(ANummerVerwerker verwerker, int batchGrootte);
 }

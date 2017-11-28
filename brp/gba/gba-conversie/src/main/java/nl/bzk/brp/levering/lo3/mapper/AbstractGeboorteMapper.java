@@ -1,14 +1,14 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.mapper;
 
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.ElementEnum;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.HisPersoonGeboorteModel;
+import nl.bzk.brp.domain.element.AttribuutElement;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
 import org.springframework.stereotype.Component;
 
@@ -16,50 +16,49 @@ import org.springframework.stereotype.Component;
  * Mapt de geboorte.
  */
 @Component
-public abstract class AbstractGeboorteMapper extends AbstractFormeelMapper<PersoonHisVolledig, HisPersoonGeboorteModel, BrpGeboorteInhoud> {
+public abstract class AbstractGeboorteMapper extends AbstractMapper<BrpGeboorteInhoud> {
 
-    private final ElementEnum datum;
-    private final ElementEnum gemeenteCode;
-    private final ElementEnum woonplaatsnaam;
-    private final ElementEnum buitenlandsePlaats;
-    private final ElementEnum buitenlandseRegio;
-    private final ElementEnum landgebiedCode;
-    private final ElementEnum omschrijvingLocatie;
+    private final AttribuutElement datum;
+    private final AttribuutElement gemeenteCode;
+    private final AttribuutElement woonplaatsnaam;
+    private final AttribuutElement buitenlandsePlaats;
+    private final AttribuutElement buitenlandseRegio;
+    private final AttribuutElement landgebiedCode;
+    private final AttribuutElement omschrijvingLocatie;
 
     /**
      * Constructor.
-     * 
-     * @param tijdstipRegistratie
-     *            element voor tijdstip registratie
-     * @param tijdstipVerval
-     *            element voor tijdstip verval
-     * @param datum
-     *            element voor datum
-     * @param gemeenteCode
-     *            element voor gemeente
-     * @param woonplaatsnaam
-     *            element voor woonplaats
-     * @param buitenlandsePlaats
-     *            element voor buitenlandse plaats
-     * @param buitenlandseRegio
-     *            element voor buitenlandse regio
-     * @param landgebiedCode
-     *            element voor land/gebied
-     * @param omschrijvingLocatie
-     *            element voor omschrijving locatie
+     * @param identiteitGroep element voor identiteit groep
+     * @param groep element voor geboorte groep
+     * @param tijdstipRegistratie element voor tijdstip registratie
+     * @param tijdstipVerval element voor tijdstip verval
+     * @param datum element voor datum
+     * @param gemeenteCode element voor gemeente
+     * @param woonplaatsnaam element voor woonplaats
+     * @param buitenlandsePlaats element voor buitenlandse plaats
+     * @param buitenlandseRegio element voor buitenlandse regio
+     * @param landgebiedCode element voor land/gebied
+     * @param omschrijvingLocatie element voor omschrijving locatie
+     */
+    //
+    /*
+     * squid:S00107 Methods should not have too many parameters
+     *
+     * Terecht, geaccepteerd voor deze klasse.
      */
     protected AbstractGeboorteMapper(
-        final ElementEnum tijdstipRegistratie,
-        final ElementEnum tijdstipVerval,
-        final ElementEnum datum,
-        final ElementEnum gemeenteCode,
-        final ElementEnum woonplaatsnaam,
-        final ElementEnum buitenlandsePlaats,
-        final ElementEnum buitenlandseRegio,
-        final ElementEnum landgebiedCode,
-        final ElementEnum omschrijvingLocatie)
-    {
-        super(tijdstipRegistratie, tijdstipVerval);
+            final GroepElement identiteitGroep,
+            final GroepElement groep,
+            final AttribuutElement tijdstipRegistratie,
+            final AttribuutElement tijdstipVerval,
+            final AttribuutElement datum,
+            final AttribuutElement gemeenteCode,
+            final AttribuutElement woonplaatsnaam,
+            final AttribuutElement buitenlandsePlaats,
+            final AttribuutElement buitenlandseRegio,
+            final AttribuutElement landgebiedCode,
+            final AttribuutElement omschrijvingLocatie) {
+        super(identiteitGroep, groep, null, null, tijdstipRegistratie, tijdstipVerval);
         this.datum = datum;
         this.gemeenteCode = gemeenteCode;
         this.woonplaatsnaam = woonplaatsnaam;
@@ -71,27 +70,26 @@ public abstract class AbstractGeboorteMapper extends AbstractFormeelMapper<Perso
     }
 
     @Override
-    protected final Iterable<HisPersoonGeboorteModel> getHistorieIterable(final PersoonHisVolledig persoonHisVolledig) {
-        return persoonHisVolledig.getPersoonGeboorteHistorie();
-    }
-
-    @Override
-    public final BrpGeboorteInhoud mapInhoud(final HisPersoonGeboorteModel historie, final OnderzoekMapper onderzoekMapper) {
+    public final BrpGeboorteInhoud mapInhoud(final MetaRecord identiteitRecord, final MetaRecord record, final OnderzoekMapper onderzoekMapper) {
         return new BrpGeboorteInhoud(
-            BrpMapperUtil.mapBrpDatum(historie.getDatumGeboorte(), onderzoekMapper.bepaalOnderzoek(historie.getID(), datum, true)),
-            BrpMapperUtil.mapBrpGemeenteCode(historie.getGemeenteGeboorte(), onderzoekMapper.bepaalOnderzoek(historie.getID(), gemeenteCode, true)),
-            BrpMapperUtil.mapBrpString(historie.getWoonplaatsnaamGeboorte(), onderzoekMapper.bepaalOnderzoek(historie.getID(), woonplaatsnaam, true)),
-            BrpMapperUtil.mapBrpString(
-                historie.getBuitenlandsePlaatsGeboorte(),
-                onderzoekMapper.bepaalOnderzoek(historie.getID(), buitenlandsePlaats, true)),
-            BrpMapperUtil.mapBrpString(
-                historie.getBuitenlandseRegioGeboorte(),
-                onderzoekMapper.bepaalOnderzoek(historie.getID(), buitenlandseRegio, true)),
-            BrpMapperUtil.mapBrpLandOfGebiedCode(
-                historie.getLandGebiedGeboorte(),
-                onderzoekMapper.bepaalOnderzoek(historie.getID(), landgebiedCode, true)),
-            BrpMapperUtil.mapBrpString(
-                historie.getOmschrijvingLocatieGeboorte(),
-                onderzoekMapper.bepaalOnderzoek(historie.getID(), omschrijvingLocatie, true)));
+                BrpMetaAttribuutMapper.mapBrpDatum(record.getAttribuut(datum), onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), datum, true)),
+                BrpMetaAttribuutMapper.mapBrpGemeenteCode(
+                        record.getAttribuut(gemeenteCode),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), gemeenteCode, true)),
+                BrpMetaAttribuutMapper.mapBrpString(
+                        record.getAttribuut(woonplaatsnaam),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), woonplaatsnaam, true)),
+                BrpMetaAttribuutMapper.mapBrpString(
+                        record.getAttribuut(buitenlandsePlaats),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), buitenlandsePlaats, true)),
+                BrpMetaAttribuutMapper.mapBrpString(
+                        record.getAttribuut(buitenlandseRegio),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), buitenlandseRegio, true)),
+                BrpMetaAttribuutMapper.mapBrpLandOfGebiedCode(
+                        record.getAttribuut(landgebiedCode),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), landgebiedCode, true)),
+                BrpMetaAttribuutMapper.mapBrpString(
+                        record.getAttribuut(omschrijvingLocatie),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), omschrijvingLocatie, true)));
     }
 }

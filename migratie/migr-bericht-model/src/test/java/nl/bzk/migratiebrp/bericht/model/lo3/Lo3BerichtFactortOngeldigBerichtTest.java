@@ -6,16 +6,16 @@
 
 package nl.bzk.migratiebrp.bericht.model.lo3;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ii01Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.OngeldigBericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.AbstractOngeldigLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.OngeldigeInhoudBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.OngeldigeSyntaxBericht;
 import org.junit.Test;
 
 /**
- * Test situaties wanneer een OngeldigBericht wordt terug gegeven. Dit splitst voor Lo3 zich uit in een
+ * Test situaties wanneer een AbstractOngeldigLo3Bericht wordt terug gegeven. Dit splitst voor Lo3 zich uit in een
  * OngeldigeSyntaxBericht of een OngeldigeInhoudBericht.
  */
 public class Lo3BerichtFactortOngeldigBerichtTest {
@@ -26,14 +26,14 @@ public class Lo3BerichtFactortOngeldigBerichtTest {
     @Test
     public void testOk() {
         final String ii01 = "00000000" // random key
-                            + "Ii01" // bericht nummer
-                            + "0" // herhaling
-                            + "00022" // bericht lengte
-                            + "01" // categorie
-                            + "017" // categorie lengte
-                            + "0110" // element
-                            + "010" // element lengte
-                            + "1234567890"; // element inhoud
+                + "Ii01" // bericht nummer
+                + "0" // herhaling
+                + "00022" // bericht lengte
+                + "01" // categorie
+                + "017" // categorie lengte
+                + "0110" // element
+                + "010" // element lengte
+                + "1234567890"; // element inhoud
 
         final Lo3BerichtFactory factory = new Lo3BerichtFactory();
         final Lo3Bericht bericht = factory.getBericht(ii01);
@@ -47,21 +47,21 @@ public class Lo3BerichtFactortOngeldigBerichtTest {
     @Test
     public void testOngeldigeSyntaxBericht() {
         final String ii01 = "00000000" // random key
-                            + "Ii01" // bericht nummer
-                            + "0" // herhaling
-                            + "00022" // bericht lengte
-                            + "01" // categorie
-                            + "017" // categorie lengte
-                            + "0110" // element
-                            + "010" // element lengte
-                            + "123456789"; // element inhoud
+                + "Ii01" // bericht nummer
+                + "0" // herhaling
+                + "00022" // bericht lengte
+                + "01" // categorie
+                + "017" // categorie lengte
+                + "0110" // element
+                + "010" // element lengte
+                + "123456789"; // element inhoud
 
         final Lo3BerichtFactory factory = new Lo3BerichtFactory();
         final Lo3Bericht bericht = factory.getBericht(ii01);
         Assert.assertEquals(OngeldigeSyntaxBericht.class, bericht.getClass());
         Assert.assertEquals(
-            "Berichtlengte klopt niet. Genoemde lengte=22, daadwerkelijke lengte=21",
-            ((OngeldigBericht) bericht).getMelding());
+                "Berichtlengte klopt niet. Genoemde lengte=22, daadwerkelijke lengte=21",
+                ((AbstractOngeldigLo3Bericht) bericht).getMelding());
     }
 
     /**
@@ -71,18 +71,18 @@ public class Lo3BerichtFactortOngeldigBerichtTest {
     @Test
     public void testOngeldigeInhoudBericht() {
         final String ii01 = "00000000" // random key
-                            + "Ii01" // bericht nummer
-                            + "0" // herhaling
-                            + "00022" // bericht lengte
-                            + "01" // categorie
-                            + "017" // categorie lengte
-                            + "0110" // element
-                            + "010" // element lengte
-                            + "12345a6789"; // element inhoud
+                + "Ii01" // bericht nummer
+                + "0" // herhaling
+                + "00022" // bericht lengte
+                + "01" // categorie
+                + "017" // categorie lengte
+                + "0110" // element
+                + "010" // element lengte
+                + "12345a6789"; // element inhoud
 
         final Lo3BerichtFactory factory = new Lo3BerichtFactory();
         final Lo3Bericht bericht = factory.getBericht(ii01);
         Assert.assertEquals(OngeldigeInhoudBericht.class, bericht.getClass());
-        Assert.assertEquals("Element 0110 moet een numerieke waarde bevatten.", ((OngeldigBericht) bericht).getMelding());
+        Assert.assertEquals("Element 0110 moet een numerieke waarde bevatten.", ((AbstractOngeldigLo3Bericht) bericht).getMelding());
     }
 }

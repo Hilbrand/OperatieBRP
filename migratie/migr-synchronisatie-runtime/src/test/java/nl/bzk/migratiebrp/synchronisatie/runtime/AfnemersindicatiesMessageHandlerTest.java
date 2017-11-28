@@ -8,29 +8,31 @@ package nl.bzk.migratiebrp.synchronisatie.runtime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import nl.bzk.brp.gba.domain.afnemerindicatie.AfnemerindicatieOnderhoudAntwoord;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AfnemersindicatieFoutcodeType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkAfnemersindicatieAntwoordBericht;
-import nl.bzk.migratiebrp.synchronisatie.runtime.bericht.brp.AfnemerindicatieOnderhoudAntwoord;
 import nl.bzk.migratiebrp.synchronisatie.runtime.exception.ServiceException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AfnemersindicatiesMessageHandlerTest {
@@ -39,13 +41,19 @@ public class AfnemersindicatiesMessageHandlerTest {
     private Destination destination;
     @Mock
     private JmsTemplate jmsTemplate;
-    @InjectMocks
+
     private AfnemerindicatiesMessageHandler subject;
 
     @Mock
     private Session session;
     @Mock
     private TextMessage syncAntwoordMessage;
+
+    @Before
+    public void setup() {
+        subject = new AfnemerindicatiesMessageHandler(destination, Mockito.mock(ConnectionFactory.class));
+        ReflectionTestUtils.setField(subject, AbstractMessageHandler.class, "jmsTemplate", jmsTemplate, JmsTemplate.class);
+    }
 
     @Test
     public void testOk() throws JMSException, IOException {

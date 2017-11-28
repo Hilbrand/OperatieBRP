@@ -25,6 +25,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.GemeenteConversietabel;
 import org.junit.Test;
 
@@ -34,8 +35,7 @@ import org.junit.Test;
 public class Lo3InschrijvingPreconditiesTest extends AbstractPreconditieTest {
 
     private static final Lo3Herkomst LO3_HERKOMST_INSCHRIJVING = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0);
-    @Inject
-    private Lo3InschrijvingPrecondities precondities;
+    private Lo3InschrijvingPrecondities precondities = new Lo3InschrijvingPrecondities(new ConversietabelFactoryImpl());
 
     private Lo3InschrijvingInhoud.Builder builder() {
         final Lo3InschrijvingInhoud.Builder builder = new Lo3InschrijvingInhoud.Builder();
@@ -73,7 +73,7 @@ public class Lo3InschrijvingPreconditiesTest extends AbstractPreconditieTest {
     /* ************************************************************************************************************* */
 
     private Lo3Stapel<Lo3InschrijvingInhoud> createLo3Stapel(final Lo3InschrijvingInhoud.Builder builder) {
-        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(builder.build(), null, Lo3Historie.NULL_HISTORIE, LO3_HERKOMST_INSCHRIJVING));
+        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(builder.build(), null, new Lo3Historie(null, null, null), LO3_HERKOMST_INSCHRIJVING));
 
     }
 
@@ -396,11 +396,12 @@ public class Lo3InschrijvingPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPreconditie098GroepNietAanwezig() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_INSCHRIJVING));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                builder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_INSCHRIJVING));
         precondities.controleerStapel(stapel);
         assertAantalErrors(0);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 0);
@@ -412,7 +413,7 @@ public class Lo3InschrijvingPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie098GroepAanwezig8810NietGevuld() {
         final Lo3Documentatie lo3Doc = Lo3StapelHelper.lo3Documentatie(1L, null, null, null, null, null, null, "omschrijvingVerdrag");
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(builder().build(), lo3Doc, Lo3Historie.NULL_HISTORIE, LO3_HERKOMST_INSCHRIJVING));
+                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(builder().build(), lo3Doc, new Lo3Historie(null, null, null), LO3_HERKOMST_INSCHRIJVING));
         precondities.controleerStapel(stapel);
         assertAantalErrors(1);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 1);
@@ -426,7 +427,7 @@ public class Lo3InschrijvingPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie098GroepAanwezig8810Gevuld() {
         final Lo3Documentatie lo3Doc = Lo3StapelHelper.lo3Documentatie(1L, null, null, null, null, null, "0000", null);
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(builder().build(), lo3Doc, Lo3Historie.NULL_HISTORIE, LO3_HERKOMST_INSCHRIJVING));
+                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(builder().build(), lo3Doc, new Lo3Historie(null, null, null), LO3_HERKOMST_INSCHRIJVING));
         precondities.controleerStapel(stapel);
         assertAantalErrors(0);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 0);

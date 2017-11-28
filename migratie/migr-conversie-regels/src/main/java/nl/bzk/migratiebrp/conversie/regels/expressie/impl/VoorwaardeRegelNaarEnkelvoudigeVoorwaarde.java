@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import nl.bzk.migratiebrp.conversie.regels.expressie.Lo3VoorwaardeRegelOnvertaalbaarExceptie;
 
 /**
@@ -29,7 +28,6 @@ import nl.bzk.migratiebrp.conversie.regels.expressie.Lo3VoorwaardeRegelOnvertaal
  *
  * In de bijbehorende map komen de voorwaarden: sleutel: voorwaarde K0: 01.04.10 GA1 \"V\" K1: 01.03.10 KDOG1 19.89.20 -
  * 0029 K2: 01.04.10 GA1 \"M\" K3: 01.03.10 KDOG1 19.89.20 - 0054
- *
  */
 class VoorwaardeRegelNaarEnkelvoudigeVoorwaarde {
 
@@ -44,9 +42,7 @@ class VoorwaardeRegelNaarEnkelvoudigeVoorwaarde {
     /**
      * Instantieert een nieuw VoorwaardeRegelNaarEnkelvoudigeVoorwaarde object met de te vertalen GBA voorwaarde
      * meegegeven.
-     *
-     * @param gbaVoorwaardeRegel
-     *            De GBA voorwaarderegel welke vertaald moet worden
+     * @param gbaVoorwaardeRegel De GBA voorwaarderegel welke vertaald moet worden
      */
     public VoorwaardeRegelNaarEnkelvoudigeVoorwaarde(final String gbaVoorwaardeRegel) {
         this.gbaVoorwaardeRegel = gbaVoorwaardeRegel;
@@ -56,7 +52,6 @@ class VoorwaardeRegelNaarEnkelvoudigeVoorwaarde {
     /**
      * Geeft de voorwaarderegel terug met placeholders voor de gebruikte voorwaarden. Na vertaling van deze voorwaarden
      * kunnen deze worden ingevoegd op de plaats van de placeholder
-     *
      * @return de voorwaarderegel geschikt voor verdere verwerking
      */
     public String getVoorwaardeRegel() {
@@ -66,7 +61,6 @@ class VoorwaardeRegelNaarEnkelvoudigeVoorwaarde {
     /**
      * Geeft de losse GBA voorwaarden in een map terug, waarvan de sleutel overeenkomt met voorwaarde regel uit
      * getVoorwaardeRegel.
-     *
      * @return map met de losse GBA voorwaarden
      */
     public Map<String, String> getGbaVoorwaardeMap() {

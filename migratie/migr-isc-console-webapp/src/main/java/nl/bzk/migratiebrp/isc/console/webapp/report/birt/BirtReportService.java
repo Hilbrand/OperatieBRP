@@ -42,9 +42,7 @@ public final class BirtReportService implements ReportService {
 
     /**
      * Constructor.
-     *
-     * @param config
-     *            configuratie
+     * @param config configuratie
      */
     public BirtReportService(final ReportConfig config) {
         this.config = config;
@@ -108,8 +106,7 @@ public final class BirtReportService implements ReportService {
     }
 
     private void setParameters(final IRunAndRenderTask runAndRenderReportTask, final IReportRunnable reportDesign, final Map<String, Object> parameters)
-        throws ReportException
-    {
+            throws ReportException {
 
         // Set parameters (on run and render task)
         if (parameters != null) {

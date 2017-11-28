@@ -11,8 +11,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import junit.framework.Assert;
-import nl.bzk.migratiebrp.conversie.model.Stapel;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -39,7 +38,6 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.testutils.StapelUtils;
 import nl.bzk.migratiebrp.conversie.model.testutils.VerplichteStapel;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
-import org.apache.poi.hssf.record.formula.functions.T;
 import org.junit.Test;
 
 public class Lo3PersoonslijstOpschonerTest {
@@ -104,18 +102,18 @@ public class Lo3PersoonslijstOpschonerTest {
 
         final Lo3InschrijvingInhoud inhoud =
                 new Lo3InschrijvingInhoud(
-                    null,
-                    new Lo3Datum(20110101),
-                    new Lo3RedenOpschortingBijhoudingCode(Lo3RedenOpschortingBijhoudingCodeEnum.FOUT.getCode()),
-                    new Lo3Datum(18000101),
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Lo3Integer(1),
-                    new Lo3Datumtijdstempel(18000101120000000L),
-                    null);
-        final Lo3Historie historie = Lo3Historie.NULL_HISTORIE;
+                        null,
+                        new Lo3Datum(20110101),
+                        new Lo3RedenOpschortingBijhoudingCode(Lo3RedenOpschortingBijhoudingCodeEnum.FOUT.getCode()),
+                        new Lo3Datum(18000101),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Lo3Integer(1),
+                        new Lo3Datumtijdstempel(18000101120000000L),
+                        null);
+        final Lo3Historie historie = new Lo3Historie(null, null, null);
         final Lo3Documentatie documentatie =
                 new Lo3Documentatie(-1000, new Lo3GemeenteCode(GEM_CODE), Lo3String.wrap("Inschr-Akte"), null, null, null, null, null);
 
@@ -144,10 +142,14 @@ public class Lo3PersoonslijstOpschonerTest {
         Logging.log(pl.getOuder1Stapel().getLaatsteElement().getLo3Herkomst(), LogSeverity.ERROR, SoortMeldingCode.PRE001, null);
         final Lo3Categorie<Lo3OuderInhoud> ouder1element = pl.getOuder1Stapel().getLaatsteElement();
         final Lo3Categorie<Lo3OuderInhoud> onjuistOuder1Element =
-                new Lo3Categorie<>(ouder1element.getInhoud(), ouder1element.getDocumentatie(), new Lo3Historie(
-                    Lo3IndicatieOnjuist.O,
-                    ouder1element.getHistorie().getIngangsdatumGeldigheid(),
-                    ouder1element.getHistorie().getDatumVanOpneming()), ouder1element.getLo3Herkomst());
+                new Lo3Categorie<>(
+                        ouder1element.getInhoud(),
+                        ouder1element.getDocumentatie(),
+                        new Lo3Historie(
+                                Lo3IndicatieOnjuist.O,
+                                ouder1element.getHistorie().getIngangsdatumGeldigheid(),
+                                ouder1element.getHistorie().getDatumVanOpneming()),
+                        ouder1element.getLo3Herkomst());
 
         final List<Lo3Categorie<Lo3OuderInhoud>> ouder1stapelInhoud = new ArrayList<>();
         ouder1stapelInhoud.add(onjuistOuder1Element);
@@ -168,8 +170,8 @@ public class Lo3PersoonslijstOpschonerTest {
         final Lo3Herkomst c4Lo3Herkomst0 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 0);
         final Lo3Herkomst c4Lo3Herkomst1 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1);
 
-        final Lo3NationaliteitInhoud c4InhoudDuits = new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6029"), null, null, null);
-        final Lo3NationaliteitInhoud c4InhoudLegeRij = new Lo3NationaliteitInhoud(null, null, null, null);
+        final Lo3NationaliteitInhoud c4InhoudDuits = new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("6029"), null, null, null, null);
+        final Lo3NationaliteitInhoud c4InhoudLegeRij = new Lo3NationaliteitInhoud(null, null, null, null, null);
         final Lo3Historie c4HistorieLegeRij = new Lo3Historie(null, defaultDatum, defaultDatum);
 
         final Lo3IndicatieOnjuist onjuist = gevuldeRijOnjuist ? new Lo3IndicatieOnjuist("O") : null;
@@ -280,18 +282,18 @@ public class Lo3PersoonslijstOpschonerTest {
 
         final Lo3InschrijvingInhoud inhoud =
                 new Lo3InschrijvingInhoud(
-                    null,
-                    new Lo3Datum(20110101),
-                    new Lo3RedenOpschortingBijhoudingCode(Lo3RedenOpschortingBijhoudingCodeEnum.FOUT.getCode()),
-                    new Lo3Datum(18000101),
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Lo3Integer(1),
-                    new Lo3Datumtijdstempel(18000101120000000L),
-                    null);
-        final Lo3Historie historie = Lo3Historie.NULL_HISTORIE;
+                        null,
+                        new Lo3Datum(20110101),
+                        new Lo3RedenOpschortingBijhoudingCode(Lo3RedenOpschortingBijhoudingCodeEnum.FOUT.getCode()),
+                        new Lo3Datum(18000101),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Lo3Integer(1),
+                        new Lo3Datumtijdstempel(18000101120000000L),
+                        null);
+        final Lo3Historie historie = new Lo3Historie(null, null, null);
         final Lo3Documentatie documentatie =
                 new Lo3Documentatie(-1000, new Lo3GemeenteCode(GEM_CODE), Lo3String.wrap("Inschr-Akte"), null, null, null, null, null);
 
@@ -326,18 +328,18 @@ public class Lo3PersoonslijstOpschonerTest {
 
         final Lo3InschrijvingInhoud inhoud =
                 new Lo3InschrijvingInhoud(
-                    null,
-                    new Lo3Datum(20110101),
-                    new Lo3RedenOpschortingBijhoudingCode(Lo3RedenOpschortingBijhoudingCodeEnum.FOUT.getCode()),
-                    new Lo3Datum(18000101),
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Lo3Integer(1),
-                    new Lo3Datumtijdstempel(18000101120000000L),
-                    null);
-        final Lo3Historie historie = Lo3Historie.NULL_HISTORIE;
+                        null,
+                        new Lo3Datum(20110101),
+                        new Lo3RedenOpschortingBijhoudingCode(Lo3RedenOpschortingBijhoudingCodeEnum.FOUT.getCode()),
+                        new Lo3Datum(18000101),
+                        null,
+                        null,
+                        null,
+                        null,
+                        new Lo3Integer(1),
+                        new Lo3Datumtijdstempel(18000101120000000L),
+                        null);
+        final Lo3Historie historie = new Lo3Historie(null, null, null);
         final Lo3Documentatie documentatie =
                 new Lo3Documentatie(-1000, new Lo3GemeenteCode(GEM_CODE), Lo3String.wrap("Inschr-Akte"), null, null, null, null, null);
 
@@ -359,61 +361,60 @@ public class Lo3PersoonslijstOpschonerTest {
 
     @Test
     public void testIsErrorInJuisteCategorieStapelsNull() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Lo3PersoonslijstOpschoner opschoner = new Lo3PersoonslijstOpschoner();
-        Method pm = getDeclareMethodIsErrorInJuisteCat();
-        Assert.assertFalse((boolean) pm.invoke(opschoner,null,Lo3CategorieEnum.CATEGORIE_02,Logging.getLogging()));
+        final Lo3PersoonslijstOpschoner opschoner = new Lo3PersoonslijstOpschoner();
+        final Method pm = getDeclareMethodIsErrorInJuisteCat();
+        Assert.assertFalse((boolean) pm.invoke(opschoner, null, Lo3CategorieEnum.CATEGORIE_02, Logging.getLogging()));
     }
 
     @Test
     public void testIsErrorInJuisteCategorieNoLogging() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Lo3PersoonslijstOpschoner opschoner = new Lo3PersoonslijstOpschoner();
-        Method pm = getDeclareMethodIsErrorInJuisteCat();
-        Assert.assertFalse((boolean) pm.invoke(opschoner,Collections.EMPTY_LIST,Lo3CategorieEnum.CATEGORIE_02,Logging.getLogging()));
+        final Lo3PersoonslijstOpschoner opschoner = new Lo3PersoonslijstOpschoner();
+        final Method pm = getDeclareMethodIsErrorInJuisteCat();
+        Assert.assertFalse((boolean) pm.invoke(opschoner, Collections.EMPTY_LIST, Lo3CategorieEnum.CATEGORIE_02, Logging.getLogging()));
     }
 
     @Test
     public void testIsErrorInJuisteCategorieWithCorrectLogging() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Lo3PersoonslijstOpschoner opschoner = new Lo3PersoonslijstOpschoner();
-        Method pm = getDeclareMethodIsErrorInJuisteCat();
+        final Lo3PersoonslijstOpschoner opschoner = new Lo3PersoonslijstOpschoner();
+        final Method pm = getDeclareMethodIsErrorInJuisteCat();
         Logging.initContext();
         Logging.log(new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_02, 0, 0), LogSeverity.ERROR, SoortMeldingCode.PRE065, null);
 
-        Lo3Stapel<Lo3OuderInhoud> stapel = VerplichteStapel.createOuder1Stapel();
-        List<Lo3Stapel<Lo3OuderInhoud>> stapels = new ArrayList<>();
+        final Lo3Stapel<Lo3OuderInhoud> stapel = VerplichteStapel.createOuder1Stapel();
+        final List<Lo3Stapel<Lo3OuderInhoud>> stapels = new ArrayList<>();
         stapels.add(stapel);
 
-        Assert.assertTrue((boolean) pm.invoke(opschoner,stapels,Lo3CategorieEnum.CATEGORIE_02,Logging.getLogging()));
+        Assert.assertTrue((boolean) pm.invoke(opschoner, stapels, Lo3CategorieEnum.CATEGORIE_02, Logging.getLogging()));
     }
 
     @Test
     public void testIsErrorInJuisteCategorieWithLoggingForWrongCat() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Lo3PersoonslijstOpschoner opschoner = new Lo3PersoonslijstOpschoner();
-        Method pm = getDeclareMethodIsErrorInJuisteCat();
+        final Lo3PersoonslijstOpschoner opschoner = new Lo3PersoonslijstOpschoner();
+        final Method pm = getDeclareMethodIsErrorInJuisteCat();
         Logging.initContext();
         Logging.log(new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_03, 0, 0), LogSeverity.ERROR, SoortMeldingCode.PRE065, null);
 
-        Lo3Stapel<Lo3OuderInhoud> stapel = VerplichteStapel.createOuder1Stapel();
-        List<Lo3Stapel<Lo3OuderInhoud>> stapels = new ArrayList<>();
+        final Lo3Stapel<Lo3OuderInhoud> stapel = VerplichteStapel.createOuder1Stapel();
+        final List<Lo3Stapel<Lo3OuderInhoud>> stapels = new ArrayList<>();
         stapels.add(stapel);
 
-        Assert.assertFalse((boolean) pm.invoke(opschoner,stapels,Lo3CategorieEnum.CATEGORIE_02,Logging.getLogging()));
+        Assert.assertFalse((boolean) pm.invoke(opschoner, stapels, Lo3CategorieEnum.CATEGORIE_02, Logging.getLogging()));
     }
 
-
     private Method getDeclareMethodIsErrorInJuisteCat() throws NoSuchMethodException {
-        Class[] cArg = new Class[3];
+        final Class[] cArg = new Class[3];
         cArg[0] = List.class;
         cArg[1] = Lo3CategorieEnum.class;
         cArg[2] = Logging.class;
-        Method pm = Lo3PersoonslijstOpschoner.class.getDeclaredMethod("isErrorInJuisteCategorie", cArg);
+        final Method pm = Lo3PersoonslijstOpschoner.class.getDeclaredMethod("isErrorInJuisteCategorie", cArg);
         pm.setAccessible(true);
         return pm;
     }
 
-    private static Lo3Persoonslijst buildLo3Persoonslijst(boolean opgeschort) {
+    private static Lo3Persoonslijst buildLo3Persoonslijst(final boolean opgeschort) {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         builder.persoonStapel(VerplichteStapel.createPersoonStapel());
-        if(opgeschort){
+        if (opgeschort) {
             builder.inschrijvingStapel(VerplichteStapel.createInschrijvingStapelOpgeschort());
         } else {
             builder.inschrijvingStapel(VerplichteStapel.createInschrijvingStapel());

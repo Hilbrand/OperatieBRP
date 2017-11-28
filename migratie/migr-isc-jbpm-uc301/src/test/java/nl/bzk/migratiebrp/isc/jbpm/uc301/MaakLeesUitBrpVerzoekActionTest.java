@@ -17,28 +17,19 @@ import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakLeesUitBrpVerzoekActionTest {
 
-    private MaakLeesUitBrpVerzoekAction subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new MaakLeesUitBrpVerzoekAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakLeesUitBrpVerzoekAction subject = new MaakLeesUitBrpVerzoekAction(berichtenDao);
 
     @Test
     public void testOk() throws BerichtSyntaxException, BerichtInhoudException {
         final ZoekPersoonAntwoordBericht antwoord = new ZoekPersoonAntwoordBericht();
         antwoord.setStatus(StatusType.OK);
         antwoord.setResultaat(ZoekPersoonResultaatType.GEVONDEN);
-        antwoord.setPersoonId(1);
+        antwoord.setPersoonId(1L);
         antwoord.setAnummer("8172387435");
         antwoord.setGemeente("1900");
 
@@ -50,6 +41,6 @@ public class MaakLeesUitBrpVerzoekActionTest {
 
         final LeesUitBrpVerzoekBericht queryBericht = (LeesUitBrpVerzoekBericht) berichtenDao.leesBericht((Long) result.get("leesUitBrpVerzoekBericht"));
         Assert.assertNotNull(queryBericht);
-        Assert.assertEquals(Long.valueOf(8172387435L), queryBericht.getANummer());
+        Assert.assertEquals("8172387435", queryBericht.getANummer());
     }
 }

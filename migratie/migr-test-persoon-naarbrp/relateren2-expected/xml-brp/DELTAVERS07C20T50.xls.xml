@@ -16,7 +16,7 @@
                         <partijCode>
                            <waarde>199902</waarde>
                         </partijCode>
-                        
+
                         <soortActieCode>
                            <waarde>Conversie GBA</waarde>
                         </soortActieCode>
@@ -108,9 +108,7 @@
                         </datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>
-                           <waarde>true</waarde>
-                        </indicatieOuder>
+
                      </inhoud>
                   </brpGroep>
                </ouderStapel>
@@ -168,7 +166,7 @@
                         <partijCode>
                            <waarde>199902</waarde>
                         </partijCode>
-                        
+
                         <soortActieCode>
                            <waarde>Conversie GBA</waarde>
                         </soortActieCode>
@@ -260,9 +258,7 @@
                         </datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>
-                           <waarde>true</waarde>
-                        </indicatieOuder>
+
                      </inhoud>
                   </brpGroep>
                </ouderStapel>
@@ -441,7 +437,7 @@
             <partijCode>
                <waarde>199902</waarde>
             </partijCode>
-            
+
             <soortActieCode>
                <waarde>Conversie GBA</waarde>
             </soortActieCode>
@@ -711,7 +707,7 @@
                <partijCode>
                   <waarde>199902</waarde>
                </partijCode>
-               
+
                <soortActieCode>
                   <waarde>Conversie GBA</waarde>
                </soortActieCode>
@@ -752,7 +748,7 @@
             <partijCode>
                <waarde>199902</waarde>
             </partijCode>
-            
+
             <soortActieCode>
                <waarde>Conversie GBA</waarde>
             </soortActieCode>
@@ -826,7 +822,7 @@
             <partijCode>
                <waarde>199902</waarde>
             </partijCode>
-            
+
             <soortActieCode>
                <waarde>Conversie GBA</waarde>
             </soortActieCode>
@@ -854,9 +850,6 @@
             <nadereBijhoudingsaardCode>
                <waarde>A</waarde>
             </nadereBijhoudingsaardCode>
-            <indicatieOnverwerktDocumentAanwezig>
-               <waarde>false</waarde>
-            </indicatieOnverwerktDocumentAanwezig>
          </inhoud>
       </brpGroep>
    </bijhoudingStapel>
@@ -907,7 +900,7 @@
             <partijCode>
                <waarde>199902</waarde>
             </partijCode>
-            
+
             <soortActieCode>
                <waarde>Conversie GBA</waarde>
             </soortActieCode>
@@ -952,7 +945,7 @@
                <partijCode>
                   <waarde>199902</waarde>
                </partijCode>
-               
+
                <soortActieCode>
                   <waarde>Conversie GBA</waarde>
                </soortActieCode>

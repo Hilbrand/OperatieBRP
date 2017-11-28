@@ -7,12 +7,10 @@
 package nl.bzk.migratiebrp.init.logging.model.domein.entities;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
 import nl.bzk.migratiebrp.conversie.model.validatie.ValidationUtils;
 
 /**
@@ -20,7 +18,6 @@ import nl.bzk.migratiebrp.conversie.model.validatie.ValidationUtils;
  */
 @Entity
 @Table(name = "initvullingresult_afnind_stapel", schema = "initvul")
-@SuppressWarnings("checkstyle:designforextension")
 public class InitVullingAfnemersindicatieStapel implements Serializable {
 
     /**
@@ -34,6 +31,9 @@ public class InitVullingAfnemersindicatieStapel implements Serializable {
     @Column(name = "conversie_resultaat", insertable = true, updatable = true, length = 200)
     private String conversieResultaat;
 
+    @Column(name = "conversie_melding", insertable = true, updatable = true)
+    private String conversieMelding;
+
     /**
      * Default JPA constructor.
      */
@@ -42,9 +42,7 @@ public class InitVullingAfnemersindicatieStapel implements Serializable {
 
     /**
      * Maakt een InitVullingAfnemersindicatieRegel object.
-     *
-     * @param stapelPk
-     *            de gecombineerde sleutel
+     * @param stapelPk de gecombineerde sleutel
      */
     public InitVullingAfnemersindicatieStapel(final InitVullingAfnemersindicatieStapelPk stapelPk) {
         setStapelPk(stapelPk);
@@ -52,7 +50,6 @@ public class InitVullingAfnemersindicatieStapel implements Serializable {
 
     /**
      * Geef de waarde van regel pk.
-     *
      * @return the regelPk
      */
     public InitVullingAfnemersindicatieStapelPk getStapelPk() {
@@ -61,9 +58,7 @@ public class InitVullingAfnemersindicatieStapel implements Serializable {
 
     /**
      * Zet de waarde van stapel pk.
-     *
-     * @param stapelPk
-     *            the stapelPk to set
+     * @param stapelPk the stapelPk to set
      */
     public void setStapelPk(final InitVullingAfnemersindicatieStapelPk stapelPk) {
         ValidationUtils.controleerOpNullWaarden("embedded PK mag niet null zijn", stapelPk);
@@ -72,7 +67,6 @@ public class InitVullingAfnemersindicatieStapel implements Serializable {
 
     /**
      * Geef de waarde van het conversieResultaat.
-     *
      * @return conversieResultaat
      */
     public String getConversieResultaat() {
@@ -81,11 +75,25 @@ public class InitVullingAfnemersindicatieStapel implements Serializable {
 
     /**
      * Zet de waarde van het conversieResultaat.
-     *
-     * @param conversieResultaat
-     *            Het conversieResultaat
+     * @param conversieResultaat Het conversieResultaat
      */
     public void setConversieResultaat(final String conversieResultaat) {
         this.conversieResultaat = conversieResultaat;
+    }
+
+    /**
+     * Geef de waarde van de conversie melding.
+     * @return conversie melding
+     */
+    public String getConversieMelding() {
+        return conversieMelding;
+    }
+
+    /**
+     * Zet de waarde van het conversie melding.
+     * @param conversieMelding conversie melding
+     */
+    public void setConversieMelding(String conversieMelding) {
+        this.conversieMelding = conversieMelding;
     }
 }

@@ -8,7 +8,7 @@
     <brp:parameters brp:communicatieID="${parameters.communicatieID}">
         <brp:leveringsautorisatieIdentificatie>${parameters.leveringsautorisatieIdentificatie}</brp:leveringsautorisatieIdentificatie>
     </brp:parameters>
-    <brp:zoekcriteriaPersoon brp:communicatieID="${zoekcriteriaPersoon.communicatieID}">
-        <brp:burgerservicenummer>${zoekcriteriaPersoon.burgerservicenummer}</brp:burgerservicenummer>
-    </brp:zoekcriteriaPersoon>
+    <brp:identificatiecriteria brp:communicatieID="${identificatiecriteria.communicatieID}">
+        <brp:burgerservicenummer>${identificatiecriteria.burgerservicenummer}</brp:burgerservicenummer>
+    </brp:identificatiecriteria>
 </brp:lvg_synGeefSynchronisatiePersoon>

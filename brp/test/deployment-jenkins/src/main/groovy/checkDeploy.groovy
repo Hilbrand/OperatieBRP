@@ -1,14 +1,14 @@
+import static groovyx.net.http.ContentType.HTML
+import static groovyx.net.http.Method.GET
+
+@Grab('org.codehaus.groovy.modules.http-builder:http-builder:0.6')
+import groovy.util.slurpersupport.GPathResult
 @Grab('org.codehaus.groovy.modules.http-builder:http-builder:0.6')
 import groovy.util.slurpersupport.GPathResult
 import groovyx.net.http.HTTPBuilder
-
+import java.security.KeyStore
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.ssl.SSLSocketFactory
-
-import java.security.KeyStore
-
-import static groovyx.net.http.ContentType.HTML
-import static groovyx.net.http.Method.GET
 
 // local properties
 def keyStoreName = 'pt-links-mGBA_client.jks'

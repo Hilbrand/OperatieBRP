@@ -8,13 +8,12 @@ package nl.bzk.migratiebrp.isc.runtime.jbpm.model;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import org.jbpm.graph.exe.ProcessInstance;
 
 /**
  * Bericht.
  */
-@SuppressWarnings("checkstyle:designforextension")
+
 public class Bericht implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,12 +30,12 @@ public class Bericht implements Serializable {
     private String verzendendePartij;
     private String ontvangendePartij;
     private Long msSequenceNumber;
+    private Boolean requestNonReceipt;
     private String actie;
     private Boolean indicatieGeteld;
 
     /**
      * Geeft het ID terug.
-     *
      * @return het ID
      */
     public Long getId() {
@@ -45,9 +44,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet het ID.
-     *
-     * @param id
-     *            Het te zetten ID.
+     * @param id Het te zetten ID.
      */
     public void setId(final Long id) {
         this.id = id;
@@ -55,7 +52,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft het tijdstip terug.
-     *
      * @return het tijdstip
      */
     public Date getTijdstip() {
@@ -64,9 +60,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet het tijstip.
-     *
-     * @param tijdstip
-     *            Het te zetten tijdstip.
+     * @param tijdstip Het te zetten tijdstip.
      */
     public void setTijdstip(final Date tijdstip) {
         this.tijdstip = tijdstip == null ? null : new Date(tijdstip.getTime());
@@ -74,7 +68,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft het kanaal terug.
-     *
      * @return het kanaal
      */
     public String getKanaal() {
@@ -83,9 +76,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet het kanaal.
-     *
-     * @param kanaal
-     *            Het te zetten kanaal.
+     * @param kanaal Het te zetten kanaal.
      */
     public void setKanaal(final String kanaal) {
         this.kanaal = kanaal;
@@ -93,7 +84,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft de richting terug.
-     *
      * @return de richting
      */
     public Character getRichting() {
@@ -102,9 +92,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de richting.
-     *
-     * @param richting
-     *            De te zetten richting.
+     * @param richting De te zetten richting.
      */
     public void setRichting(final Character richting) {
         this.richting = richting;
@@ -112,7 +100,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft het messageID terug.
-     *
      * @return het messageID
      */
     public String getMessageId() {
@@ -121,9 +108,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet het messageID.
-     *
-     * @param messageId
-     *            Het te zetten messageID.
+     * @param messageId Het te zetten messageID.
      */
     public void setMessageId(final String messageId) {
         this.messageId = messageId;
@@ -131,7 +116,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft het correlatieID terug.
-     *
      * @return het correlatieID
      */
     public String getCorrelationId() {
@@ -140,9 +124,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet het correlatieID.
-     *
-     * @param correlationId
-     *            Het te zetten correlatieID.
+     * @param correlationId Het te zetten correlatieID.
      */
     public void setCorrelationId(final String correlationId) {
         this.correlationId = correlationId;
@@ -150,7 +132,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft het bericht terug.
-     *
      * @return het bericht
      */
     public String getBericht() {
@@ -159,9 +140,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet het bericht.
-     *
-     * @param bericht
-     *            Het te zetten bericht.
+     * @param bericht Het te zetten bericht.
      */
     public void setBericht(final String bericht) {
         this.bericht = bericht;
@@ -169,7 +148,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft de naam terug.
-     *
      * @return de naam
      */
     public String getNaam() {
@@ -178,9 +156,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de naam.
-     *
-     * @param naam
-     *            De te zetten naam.
+     * @param naam De te zetten naam.
      */
     public void setNaam(final String naam) {
         this.naam = naam;
@@ -188,7 +164,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft de proces instantie terug.
-     *
      * @return de proces instantie
      */
     public ProcessInstance getProcessInstance() {
@@ -197,9 +172,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de proces instantie.
-     *
-     * @param processInstance
-     *            De te zetten proces instantie.
+     * @param processInstance De te zetten proces instantie.
      */
     public void setProcessInstance(final ProcessInstance processInstance) {
         this.processInstance = processInstance;
@@ -207,7 +180,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft het virtueel proces terug.
-     *
      * @return het virtueel proces
      */
     public VirtueelProces getVirtueelProces() {
@@ -216,9 +188,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet het virtueel proces.
-     *
-     * @param virtueelProces
-     *            Het te zetten virtueel proces.
+     * @param virtueelProces Het te zetten virtueel proces.
      */
     public void setVirtueelProces(final VirtueelProces virtueelProces) {
         this.virtueelProces = virtueelProces;
@@ -226,7 +196,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft de verzendende partij terug.
-     *
      * @return de verzenden partij
      */
     public String getVerzendendePartij() {
@@ -235,9 +204,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de verzendende partij.
-     *
-     * @param verzendendePartij
-     *            De te zetten verzendende partij.
+     * @param verzendendePartij De te zetten verzendende partij.
      */
     public void setVerzendendePartij(final String verzendendePartij) {
         this.verzendendePartij = verzendendePartij;
@@ -245,7 +212,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft de ontvangende partij terug.
-     *
      * @return de ontvangende partij
      */
     public String getOntvangendePartij() {
@@ -254,9 +220,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de ontvangende partij.
-     *
-     * @param ontvangendePartij
-     *            De te zetten ontvangende partij.
+     * @param ontvangendePartij De te zetten ontvangende partij.
      */
     public void setOntvangendePartij(final String ontvangendePartij) {
         this.ontvangendePartij = ontvangendePartij;
@@ -264,7 +228,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft het msSequenceNumber terug.
-     *
      * @return het msSequenceNumber
      */
     public Long getMsSequenceNumber() {
@@ -273,17 +236,30 @@ public class Bericht implements Serializable {
 
     /**
      * Zet het MsSequenceNumber.
-     *
-     * @param msSequenceNumber
-     *            Het te zetten MsSequenceNumber.
+     * @param msSequenceNumber Het te zetten MsSequenceNumber.
      */
     public void setMsSequenceNumber(final Long msSequenceNumber) {
         this.msSequenceNumber = msSequenceNumber;
     }
 
     /**
+     * Geeft het requestNonReceipt terug.
+     * @return het requestNonReceipt
+     */
+    public Boolean getRequestNonReceipt() {
+        return requestNonReceipt;
+    }
+
+    /**
+     * Zet het requestNonReceipt.
+     * @param requestNonReceipt Het te zetten requestNonReceipt.
+     */
+    public void setRequestNonReceipt(final Boolean requestNonReceipt) {
+        this.requestNonReceipt = requestNonReceipt;
+    }
+
+    /**
      * Geeft de actie terug.
-     *
      * @return de actie
      */
     public String getActie() {
@@ -292,9 +268,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de actie.
-     *
-     * @param actie
-     *            De te zetten actie.
+     * @param actie De te zetten actie.
      */
     public void setActie(final String actie) {
         this.actie = actie;
@@ -302,7 +276,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geeft de indicatie dat het bericht is geteld terug.
-     *
      * @return de indicatie dat het bericht is geteld
      */
     public Boolean getIndicatieGeteld() {
@@ -311,9 +284,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet de indicatie dat het bericht is geteld.
-     *
-     * @param indicatieGeteld
-     *            De te zetten indicatie dat het bericht is geteld.
+     * @param indicatieGeteld De te zetten indicatie dat het bericht is geteld.
      */
     public void setIndicatieGeteld(final Boolean indicatieGeteld) {
         this.indicatieGeteld = indicatieGeteld;

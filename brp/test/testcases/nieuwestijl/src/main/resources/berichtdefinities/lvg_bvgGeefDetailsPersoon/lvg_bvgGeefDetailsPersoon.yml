@@ -12,7 +12,9 @@ parameters:
   peilmomentMaterieelResultaat: '[]'
   peilmomentFormeelResultaat: '[]'
   historievorm: '[]'
-zoekcriteriaPersoon:
-  communicatieID: 'comid.zoekCriteria'
-  burgerservicenummer: ''
+identificatiecriteria:
+  burgerservicenummer: '[]'
   administratienummer: '[]'
+scopeElementen:
+  -
+    elementnaam: '[]'

@@ -6,15 +6,14 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import static org.junit.Assert.assertFalse;
+
+import java.util.ArrayList;
+import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class BrpIdentiteitInhoudTest {
 
@@ -27,7 +26,7 @@ public class BrpIdentiteitInhoudTest {
     }
 
     @Test
-    public void testIsLeeg(){
+    public void testIsLeeg() {
         assertFalse(BrpIdentiteitInhoud.IDENTITEIT.isLeeg());
     }
 }

@@ -8,6 +8,8 @@ package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
@@ -17,28 +19,21 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3CategorieInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * Basis voor omzetten categorieen die geen materiele historie hebben.
- * 
- * @param <L>
- *            Lo3 categorie inhoud type
+ * @param <L> Lo3 categorie inhoud type
  */
-@Component
-public abstract class AbstractBrpImmaterieleCategorienConverteerder<L extends Lo3CategorieInhoud> {
+public abstract class AbstractBrpImmaterieleCategorienConverteerder<L extends Lo3CategorieInhoud> implements BrpImmaterieleCategorienConverteerder<L> {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
     /**
      * Converteer.
-     * 
-     * @param brpStapels
-     *            brp stapels
+     * @param brpStapels brp stapels
      * @return lo3 stapel
      */
+    @Override
     @SafeVarargs
     public final Lo3Stapel<L> converteer(final BrpStapel<? extends BrpGroepInhoud>... brpStapels) {
         LOG.debug("converteer(#brpStapel={})", brpStapels.length);
@@ -68,13 +63,6 @@ public abstract class AbstractBrpImmaterieleCategorienConverteerder<L extends Lo
         return new Lo3Stapel<>(categorieen);
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-
     private L bepaalInhoud(final List<BrpGroep<? extends BrpGroepInhoud>> groepen) {
         LOG.debug("bepaalInhoud(#groepen={})", groepen.size());
         L inhoud = null;
@@ -95,20 +83,10 @@ public abstract class AbstractBrpImmaterieleCategorienConverteerder<L extends Lo
         return converteerder.vulInhoud(beginInhoud == null ? converteerder.maakNieuweInhoud() : beginInhoud, groep.getInhoud(), null);
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-
     /**
      * Bepaal de meeste recente (datum registratie), niet beeindige en niet vervallen groep uit een stapel.
-     * 
-     * @param <T>
-     *            BrpGroepInhoud
-     * @param brpStapel
-     *            stapel
+     * @param <T> BrpGroepInhoud
+     * @param brpStapel stapel
      * @return meest recente, niet vervallen groep
      */
     protected static <T extends BrpGroepInhoud> BrpGroep<T> bepaalActueleGroep(final BrpStapel<T> brpStapel) {
@@ -129,59 +107,40 @@ public abstract class AbstractBrpImmaterieleCategorienConverteerder<L extends Lo
         return recentste;
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-
     /**
      * Bepaal de te converteren groep. In de meeste gevallen zal dit de actuele zijn. Maar voor bijvoorbeeld bijhouding
      * geld dit weer niet.
-     * 
-     * @param <T>
-     *            BrpGroepInhoud
-     * @param brpStapel
-     *            stapel
+     * @param <T> BrpGroepInhoud
+     * @param brpStapel stapel
      * @return de te converteren groep
      */
     protected abstract <T extends BrpGroepInhoud> BrpGroep<T> bepaalGroep(final BrpStapel<T> brpStapel);
 
     /**
      * Bepaal de historie om toe te voegen.
-     * 
-     * @param groepen
-     *            meeste recente niet vervallen groepen
+     * @param groepen meeste recente niet vervallen groepen
      * @return documentatie
      */
     protected abstract Lo3Historie bepaalHistorie(List<BrpGroep<? extends BrpGroepInhoud>> groepen);
 
     /**
      * Bepaal de herkomst om toe te voegen.
-     * 
-     * @param groepen
-     *            meeste recente niet vervallen groepen
+     * @param groepen meeste recente niet vervallen groepen
      * @return documentatie
      */
     protected abstract Lo3Herkomst bepaalHerkomst(List<BrpGroep<? extends BrpGroepInhoud>> groepen);
 
     /**
      * Bepaal de documentatie om toe te voegen.
-     * 
-     * @param groepen
-     *            meeste recente niet vervallen groepen
+     * @param groepen meeste recente niet vervallen groepen
      * @return documentatie
      */
     protected abstract Lo3Documentatie bepaalDocumentatie(List<BrpGroep<? extends BrpGroepInhoud>> groepen);
 
     /**
      * Bepaal de BrpGroepConverteerder voor een bepaalde inhoud. Wordt 1 keer aangeroepen per stapel.
-     * 
-     * @param <B>
-     *            brp groep inhoud type
-     * @param inhoud
-     *            inhoud
+     * @param <B> brp groep inhoud type
+     * @param inhoud inhoud
      * @return brp groep converteerder
      */
     protected abstract <B extends BrpGroepInhoud> BrpGroepConverteerder<B, L> bepaalConverteerder(B inhoud);

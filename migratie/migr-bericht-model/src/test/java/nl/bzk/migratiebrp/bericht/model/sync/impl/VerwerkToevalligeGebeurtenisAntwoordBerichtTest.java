@@ -8,10 +8,10 @@ package nl.bzk.migratiebrp.bericht.model.sync.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
@@ -20,8 +20,8 @@ import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.FoutredenType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.VerwerkToevalligeGebeurtenisAntwoordType;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -44,7 +44,7 @@ public class VerwerkToevalligeGebeurtenisAntwoordBerichtTest {
         assertEquals(StatusType.FOUT, verwerkToevalligeGebeurtenisAntwoordBericht.getStatus());
         assertEquals(null, verwerkToevalligeGebeurtenisAntwoordBericht.getStartCyclus());
         assertEquals(FoutredenType.V, verwerkToevalligeGebeurtenisAntwoordBericht.getFoutreden());
-        assertEquals(GEMEENTE_NAAR, verwerkToevalligeGebeurtenisAntwoordBericht.getGemeentecode());
+        assertEquals(GEMEENTE_NAAR, verwerkToevalligeGebeurtenisAntwoordBericht.getBijhoudingGemeenteCode());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class VerwerkToevalligeGebeurtenisAntwoordBerichtTest {
         assertEquals("VerwerkToevalligeGebeurtenisAntwoord", syncBericht.getBerichtType());
         assertEquals(StatusType.FOUT, syncBericht.getStatus());
         assertEquals(FoutredenType.V, syncBericht.getFoutreden());
-        assertEquals(GEMEENTE_NAAR, syncBericht.getGemeentecode());
+        assertEquals(GEMEENTE_NAAR, syncBericht.getBijhoudingGemeenteCode());
     }
 
     @Test
@@ -68,15 +68,15 @@ public class VerwerkToevalligeGebeurtenisAntwoordBerichtTest {
         final Long ADMINISTRATIEVE_HANDELING_ID = Long.valueOf(1234L);
         final VerwerkToevalligeGebeurtenisAntwoordBericht bericht = new VerwerkToevalligeGebeurtenisAntwoordBericht();
         bericht.setStatus(StatusType.FOUT);
-        bericht.setGemeentecode(GEMEENTE_NAAR);
-        bericht.setAdministratieveHandelingIds(Arrays.asList(ADMINISTRATIEVE_HANDELING_ID));
+        bericht.setBijhoudingGemeenteCode(GEMEENTE_NAAR);
+        bericht.setAdministratieveHandelingId(ADMINISTRATIEVE_HANDELING_ID);
 
         LOG.info("Geformat: {}", bericht.format());
         assertEquals("VerwerkToevalligeGebeurtenisAntwoord", bericht.getBerichtType());
         assertEquals(StatusType.FOUT, bericht.getStatus());
-        assertEquals(GEMEENTE_NAAR, bericht.getGemeentecode());
-        assertEquals(1, bericht.getAdministratieveHandelingIds().size());
-        assertEquals(ADMINISTRATIEVE_HANDELING_ID, bericht.getAdministratieveHandelingIds().get(0));
+        assertEquals(GEMEENTE_NAAR, bericht.getBijhoudingGemeenteCode());
+        assertNotNull(bericht.getAdministratieveHandelingId());
+        assertEquals(ADMINISTRATIEVE_HANDELING_ID, bericht.getAdministratieveHandelingId());
     }
 
     @Test(expected = NullPointerException.class)
@@ -114,17 +114,19 @@ public class VerwerkToevalligeGebeurtenisAntwoordBerichtTest {
         final VerwerkToevalligeGebeurtenisAntwoordBericht verwerkToevalligeGebeurtenisAntwoordBericht = new VerwerkToevalligeGebeurtenisAntwoordBericht();
         verwerkToevalligeGebeurtenisAntwoordBericht.setStatus(StatusType.FOUT);
         verwerkToevalligeGebeurtenisAntwoordBericht.setFoutreden(FoutredenType.V);
-        verwerkToevalligeGebeurtenisAntwoordBericht.setGemeentecode(GEMEENTE_NAAR);
+        verwerkToevalligeGebeurtenisAntwoordBericht.setBijhoudingGemeenteCode(GEMEENTE_NAAR);
 
         assertEquals(StatusType.FOUT, verwerkToevalligeGebeurtenisAntwoordBericht.getStatus());
         assertEquals(FoutredenType.V, verwerkToevalligeGebeurtenisAntwoordBericht.getFoutreden());
-        assertEquals(GEMEENTE_NAAR, verwerkToevalligeGebeurtenisAntwoordBericht.getGemeentecode());
+        assertEquals(GEMEENTE_NAAR, verwerkToevalligeGebeurtenisAntwoordBericht.getBijhoudingGemeenteCode());
     }
 
     @Test
     public void testBerichtSyntaxException() throws IOException {
         final String berichtOrigineel =
-                IOUtils.toString(VerwerkToevalligeGebeurtenisAntwoordBerichtTest.class.getResourceAsStream("verwerkToevalligeGebeurtenisAntwoordBerichtSyntaxException.xml"));
+                IOUtils.toString(
+                        VerwerkToevalligeGebeurtenisAntwoordBerichtTest.class.getResourceAsStream(
+                                "verwerkToevalligeGebeurtenisAntwoordBerichtSyntaxException.xml"));
 
         final SyncBericht syncBericht = factory.getBericht(berichtOrigineel);
         Assert.assertTrue(syncBericht instanceof OngeldigBericht);

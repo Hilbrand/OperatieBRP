@@ -9,76 +9,78 @@ package nl.bzk.brp.beheer.webapp.configuratie.json.modules;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.io.IOException;
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Leveringsautorisatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Protocolleringsniveau;
+import nl.bzk.brp.beheer.webapp.configuratie.DatabaseConfiguration;
+import nl.bzk.brp.beheer.webapp.configuratie.JsonConfiguratie;
+import nl.bzk.brp.beheer.webapp.configuratie.RepositoryConfiguratie;
 import nl.bzk.brp.beheer.webapp.configuratie.json.BrpJsonObjectMapper;
-import nl.bzk.brp.model.algemeen.attribuuttype.autaut.PopulatiebeperkingAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DatumAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.JaNeeAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.NaamEnumeratiewaardeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.autaut.Protocolleringsniveau;
-import nl.bzk.brp.model.beheer.autaut.Leveringsautorisatie;
+import nl.bzk.brp.beheer.webapp.test.AbstractDatabaseTest;
+import nl.bzk.brp.beheer.webapp.test.Data;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-public class LeveringsautorisatieDeEnSerializerTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {DatabaseConfiguration.class, RepositoryConfiguratie.class, JsonConfiguratie.class},
+        loader = AnnotationConfigContextLoader.class)
+@Data(resources = "classpath:/data/actieviewtest.xml", dataSourceRef = RepositoryConfiguratie.DATA_SOURCE_MASTER)
+public class LeveringsautorisatieDeEnSerializerTest extends AbstractDatabaseTest {
 
-    private final BrpJsonObjectMapper subject = new BrpJsonObjectMapper();
+    @Inject
+    private BrpJsonObjectMapper subject;
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testLeeg() throws IOException {
-        final ObjectReader reader = subject.reader(Leveringsautorisatie.class);
-        final Leveringsautorisatie value = reader.<Leveringsautorisatie>readValue("{}");
-
-        Assert.assertNotNull(value);
-        Assert.assertEquals(null, value.getID());
-        Assert.assertEquals(null, value.getNaam());
-        Assert.assertEquals(null, value.getPopulatiebeperking());
-        Assert.assertEquals(null, value.getProtocolleringsniveau());
-        Assert.assertEquals(null, value.getDatumIngang());
-        Assert.assertEquals(null, value.getDatumEinde());
-        Assert.assertEquals(new JaNeeAttribuut(Boolean.FALSE), value.getIndicatieAliasSoortAdministratieveHandelingLeveren());
-
-        controleerHeenEnWeer(value);
+        final ObjectReader reader = subject.readerFor(Leveringsautorisatie.class);
+        reader.<Leveringsautorisatie>readValue("{}");
     }
 
     @Test
     public void testVolledig() throws IOException {
-        final ObjectReader reader = subject.reader(Leveringsautorisatie.class);
-        final Leveringsautorisatie value =
-                reader.<Leveringsautorisatie>readValue("{\"iD\":2,\"naam\":\"naampje\",\"populatieBeperking\":\"popBeperk\",\"protocolleringsniveau\":2,"
-                                             + "\"datumIngang\":19710101,\"datumEinde\":\"19720202\",\"toestand\":3,\"indicatieAliasLeveren\":\"Nee\",\"diensten\":["
-                                             + "{\"iD\":42,\"abonnement\":\"2\",\"catalogusoptie\":4,\"naderePopulatieBeperking\":\"popBeperk\",\"attenderingscriterium\":\"att\","
-                                             + "\"datumIngang\":19710101,\"datumEinde\":\"19720202\",\"toestand\":2,\"eersteSelectiedatum\":\"19730303\",\"selectieperiodeInMaanden\":3},"
-                                             + "{\"iD\":43,\"abonnement\":\"2\",\"catalogusoptie\":5,\"naderePopulatieBeperking\":\"popBeperk\",\"attenderingscriterium\":\"att\","
-                                             + "\"datumIngang\":19710101,\"datumEinde\":\"19720202\",\"toestand\":2,\"eersteSelectiedatum\":\"19730303\",\"selectieperiodeInMaanden\":3}"
-                                             + "]}");
+        final ObjectReader reader = subject.readerFor(Leveringsautorisatie.class);
+        final Leveringsautorisatie value = reader.readValue(
+                "{\"id\":2,\"naam\":\"naampje\",\"stelsel\":2,\"populatieBeperking\":\"popBeperk\",\"protocolleringsniveau\":2,"
+                        + "\"datumIngang\":19710101,\"datumEinde\":\"19720202\",\"toestand\":3,\"indicatieAliasLeveren\":\"Nee\",\"diensten\":["
+                        + "{\"id\":42,\"abonnement\":\"2\",\"catalogusoptie\":4,\"naderePopulatieBeperking\":\"popBeperk\",\"attenderingscriterium\":\"att\","
+                        + "\"datumIngang\":19710101,\"datumEinde\":\"19720202\",\"toestand\":2,\"eersteSelectiedatum\":\"19730303\","
+                        + "\"selectieperiodeInMaanden\":3},"
+                        + "{\"id\":43,\"abonnement\":\"2\",\"catalogusoptie\":5,\"naderePopulatieBeperking\":\"popBeperk\",\"attenderingscriterium\":\"att\","
+                        + "\"datumIngang\":19710101,\"datumEinde\":\"19720202\",\"toestand\":2,\"eersteSelectiedatum\":\"19730303\","
+                        + "\"selectieperiodeInMaanden\":3}"
+                        + "]}");
 
         Assert.assertNotNull(value);
-        Assert.assertEquals(Integer.valueOf(2), value.getID());
-        Assert.assertEquals(new NaamEnumeratiewaardeAttribuut("naampje"), value.getNaam());
-        Assert.assertEquals(new PopulatiebeperkingAttribuut("popBeperk"), value.getPopulatiebeperking());
+        Assert.assertEquals(Integer.valueOf(2), value.getId());
+        Assert.assertEquals("naampje", value.getNaam());
+        Assert.assertEquals("popBeperk", value.getPopulatiebeperking());
         Assert.assertEquals(Protocolleringsniveau.GEHEIM, value.getProtocolleringsniveau());
-        Assert.assertEquals(new DatumAttribuut(19710101), value.getDatumIngang());
-        Assert.assertEquals(new DatumAttribuut(19720202), value.getDatumEinde());
-        Assert.assertEquals(new JaNeeAttribuut(Boolean.FALSE), value.getIndicatieAliasSoortAdministratieveHandelingLeveren());
+        Assert.assertEquals(Integer.valueOf(19710101), value.getDatumIngang());
+        Assert.assertEquals(Integer.valueOf(19720202), value.getDatumEinde());
+        Assert.assertEquals(Boolean.FALSE, value.getIndicatieAliasSoortAdministratieveHandelingLeveren());
 
         controleerHeenEnWeer(value);
     }
 
     @Test
     public void testNieuw() throws IOException {
-        final ObjectReader reader = subject.reader(Leveringsautorisatie.class);
+        final ObjectReader reader = subject.readerFor(Leveringsautorisatie.class);
         final Leveringsautorisatie value =
-                reader.<Leveringsautorisatie>readValue("{\"naam\":\"naampje2\",\"populatieBeperking\":\"popBeperkt\",\"protocolleringsniveau\":2,"
-                                             + "\"datumIngang\":19710101,\"datumEinde\":\"19720202\",\"toestand\":3}");
+                reader.<Leveringsautorisatie>readValue("{\"naam\":\"naampje2\",\"stelsel\":2,\"populatieBeperking\":\"popBeperkt\",\"protocolleringsniveau\":2,"
+                        + "\"datumIngang\":19710101,\"datumEinde\":\"19720202\",\"toestand\":3}");
 
         Assert.assertNotNull(value);
-        Assert.assertNull(value.getID());
-        Assert.assertEquals(new NaamEnumeratiewaardeAttribuut("naampje2"), value.getNaam());
-        Assert.assertEquals(new PopulatiebeperkingAttribuut("popBeperkt"), value.getPopulatiebeperking());
+        Assert.assertNull(value.getId());
+        Assert.assertEquals("naampje2", value.getNaam());
+        Assert.assertEquals("popBeperkt", value.getPopulatiebeperking());
         Assert.assertEquals(Protocolleringsniveau.GEHEIM, value.getProtocolleringsniveau());
-        Assert.assertEquals(new DatumAttribuut(19710101), value.getDatumIngang());
-        Assert.assertEquals(new DatumAttribuut(19720202), value.getDatumEinde());
-        Assert.assertEquals(new JaNeeAttribuut(Boolean.FALSE), value.getIndicatieAliasSoortAdministratieveHandelingLeveren());
+        Assert.assertEquals(Integer.valueOf(19710101), value.getDatumIngang());
+        Assert.assertEquals(Integer.valueOf(19720202), value.getDatumEinde());
+        Assert.assertEquals(Boolean.FALSE, value.getIndicatieAliasSoortAdministratieveHandelingLeveren());
 
         controleerHeenEnWeer(value);
     }
@@ -87,10 +89,10 @@ public class LeveringsautorisatieDeEnSerializerTest {
         final ObjectWriter writer = subject.writer();
         final String json = writer.writeValueAsString(heen);
 
-        final ObjectReader reader = subject.reader(Leveringsautorisatie.class);
-        final Leveringsautorisatie weer = reader.<Leveringsautorisatie>readValue(json);
+        final ObjectReader reader = subject.readerFor(Leveringsautorisatie.class);
+        final Leveringsautorisatie weer = reader.readValue(json);
 
-        Assert.assertEquals(heen.getID(), weer.getID());
+        Assert.assertEquals(heen.getId(), weer.getId());
         Assert.assertEquals(heen.getNaam(), weer.getNaam());
         Assert.assertEquals(heen.getPopulatiebeperking(), weer.getPopulatiebeperking());
         Assert.assertEquals(heen.getProtocolleringsniveau(), weer.getProtocolleringsniveau());

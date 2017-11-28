@@ -32,9 +32,7 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een storebericht te maken.
-     *
-     * @param blokkeringVerzoekType
-     *            het blokkeringVerzoek type
+     * @param blokkeringVerzoekType het blokkeringVerzoek type
      */
     public BlokkeringVerzoekBericht(final BlokkeringVerzoekType blokkeringVerzoekType) {
         super("BlokkeringVerzoek");
@@ -52,7 +50,6 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Geeft het A-nummer dat op het bericht staat.
-     *
      * @return Het A-nummer dat op het bericht staat.
      */
     public String getANummer() {
@@ -61,9 +58,7 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Zet het A-nummer op het bericht.
-     *
-     * @param aNummer
-     *            Het te zetten A-nummer.
+     * @param aNummer Het te zetten A-nummer.
      */
     public void setANummer(final String aNummer) {
         blokkeringVerzoekType.setANummer(aNummer);
@@ -71,7 +66,6 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Geef de waarde van persoonsaanduiding.
-     *
      * @return de persoonsaanduiding
      */
     public PersoonsaanduidingType getPersoonsaanduiding() {
@@ -80,9 +74,7 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Zet de waarde van persoonsaanduiding.
-     *
-     * @param persoonsaanduiding
-     *            de persoonsaanduiding
+     * @param persoonsaanduiding de persoonsaanduiding
      */
     public void setPersoonsaanduiding(final PersoonsaanduidingType persoonsaanduiding) {
         blokkeringVerzoekType.setPersoonsaanduiding(persoonsaanduiding);
@@ -90,7 +82,6 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Geeft het process ID dat op het bericht staat.
-     *
      * @return Het process ID
      */
     public String getProcessId() {
@@ -99,9 +90,7 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Zet het proces ID op het bericht.
-     *
-     * @param processId
-     *            Het te zetten proces ID.
+     * @param processId Het te zetten proces ID.
      */
     public void setProcessId(final String processId) {
         blokkeringVerzoekType.setProcessId(processId);
@@ -109,7 +98,6 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Geeft de gemeenteNaar die op het bericht staat.
-     *
      * @return De gemeenteNaar
      */
     public String getGemeenteNaar() {
@@ -118,9 +106,7 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Zet de gemeenteNaar op het bericht.
-     *
-     * @param gemeenteNaar
-     *            De te zetten gemeenteNaar.
+     * @param gemeenteNaar De te zetten gemeenteNaar.
      */
     public void setGemeenteNaar(final String gemeenteNaar) {
         blokkeringVerzoekType.setGemeenteNaar(gemeenteNaar);
@@ -128,7 +114,6 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Geeft de gemeenteRegistratie die op het bericht staat.
-     *
      * @return De gemeenteRegistratie
      */
     public String getGemeenteRegistratie() {
@@ -137,9 +122,7 @@ public final class BlokkeringVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Zet de gemeenteRegistratie op het bericht.
-     *
-     * @param gemeenteRegistratie
-     *            De te zetten gemeenteRegistratie.
+     * @param gemeenteRegistratie De te zetten gemeenteRegistratie.
      */
     public void setGemeenteRegistratie(final String gemeenteRegistratie) {
         blokkeringVerzoekType.setGemeenteRegistratie(gemeenteRegistratie);

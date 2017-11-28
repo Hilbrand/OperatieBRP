@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import nl.bzk.migratiebrp.isc.opschoner.exception.NietVerwijderbareProcesInstantieException;
-import nl.bzk.migratiebrp.isc.opschoner.service.OpschonerService;
 import nl.bzk.migratiebrp.isc.opschoner.service.ProcesService;
 import nl.bzk.migratiebrp.isc.opschoner.service.RuntimeService;
 import org.junit.Test;
@@ -41,7 +40,7 @@ public class OpschonerServiceImplTest {
     private PlatformTransactionManager transactionManager;
 
     @InjectMocks
-    private final OpschonerService subject = new OpschonerServiceImpl();
+    private OpschonerServiceImpl subject;
 
     @Test
     public void testOk() throws NietVerwijderbareProcesInstantieException {
@@ -63,18 +62,18 @@ public class OpschonerServiceImplTest {
         procesIdsTweedeLoop.add(procesVier);
 
         Mockito.when(procesService.selecteerIdsVanOpTeSchonenProcessen(ouderDan))
-               .thenReturn(procesIdsEersteLoop)
-               .thenReturn(procesIdsTweedeLoop)
-               .thenReturn(Collections.<Long>emptyList());
+                .thenReturn(procesIdsEersteLoop)
+                .thenReturn(procesIdsTweedeLoop)
+                .thenReturn(Collections.<Long>emptyList());
 
         subject.opschonenProcessen(ouderDan, 0);
 
         Mockito.verify(runtimeService).lockRuntime(RUNTIME_NAAM);
         Mockito.verify(procesService, times(3)).selecteerIdsVanOpTeSchonenProcessen(ouderDan);
         Mockito.verify(procesService, times(4)).controleerProcesVerwijderbaar(
-            Matchers.anyLong(),
-            Matchers.anyListOf(Long.class),
-            Matchers.anyListOf(Long.class));
+                Matchers.anyLong(),
+                Matchers.anyListOf(Long.class),
+                Matchers.anyListOf(Long.class));
         Mockito.verify(procesService, times(4)).verwijderProces(Matchers.anyLong(), Matchers.anyListOf(Long.class), Matchers.anyListOf(Long.class));
         Mockito.verify(runtimeService).unlockRuntime(RUNTIME_NAAM);
 
@@ -111,17 +110,17 @@ public class OpschonerServiceImplTest {
 
         Mockito.when(procesService.selecteerIdsVanOpTeSchonenProcessen(ouderDan)).thenReturn(procesIds).thenReturn(Collections.<Long>emptyList());
         Mockito.doThrow(new NietVerwijderbareProcesInstantieException("Proces niet beeindigd", laatsteActiviteitDatum))
-               .when(procesService)
-               .controleerProcesVerwijderbaar(Matchers.anyLong(), Matchers.anyListOf(Long.class), Matchers.anyListOf(Long.class));
+                .when(procesService)
+                .controleerProcesVerwijderbaar(Matchers.anyLong(), Matchers.anyListOf(Long.class), Matchers.anyListOf(Long.class));
 
         subject.opschonenProcessen(ouderDan, 0);
 
         Mockito.verify(runtimeService).lockRuntime(RUNTIME_NAAM);
         Mockito.verify(procesService, times(2)).selecteerIdsVanOpTeSchonenProcessen(ouderDan);
         Mockito.verify(procesService, times(1)).controleerProcesVerwijderbaar(
-            Matchers.anyLong(),
-            Matchers.anyListOf(Long.class),
-            Matchers.anyListOf(Long.class));
+                Matchers.anyLong(),
+                Matchers.anyListOf(Long.class),
+                Matchers.anyListOf(Long.class));
         Mockito.verify(procesService, times(1)).updateVerwachteVerwijderDatumProces(Matchers.anyLong(), Matchers.any(Timestamp.class));
         Mockito.verify(runtimeService).unlockRuntime(RUNTIME_NAAM);
 
@@ -159,8 +158,8 @@ public class OpschonerServiceImplTest {
 
         Mockito.when(procesService.selecteerIdsVanOpTeSchonenProcessen(ouderDan)).thenReturn(procesIds).thenReturn(Collections.<Long>emptyList());
         Mockito.doThrow(new NullPointerException("NullPointer"))
-               .when(procesService)
-               .controleerProcesVerwijderbaar(Matchers.anyLong(), Matchers.anyListOf(Long.class), Matchers.anyListOf(Long.class));
+                .when(procesService)
+                .controleerProcesVerwijderbaar(Matchers.anyLong(), Matchers.anyListOf(Long.class), Matchers.anyListOf(Long.class));
 
         try {
             subject.opschonenProcessen(ouderDan, 0);
@@ -171,9 +170,9 @@ public class OpschonerServiceImplTest {
         Mockito.verify(runtimeService).lockRuntime(RUNTIME_NAAM);
         Mockito.verify(procesService, times(1)).selecteerIdsVanOpTeSchonenProcessen(ouderDan);
         Mockito.verify(procesService, times(1)).controleerProcesVerwijderbaar(
-            Matchers.anyLong(),
-            Matchers.anyListOf(Long.class),
-            Matchers.anyListOf(Long.class));
+                Matchers.anyLong(),
+                Matchers.anyListOf(Long.class),
+                Matchers.anyListOf(Long.class));
         Mockito.verify(runtimeService).unlockRuntime(RUNTIME_NAAM);
 
         Mockito.verifyNoMoreInteractions(runtimeService, procesService);

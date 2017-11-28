@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een Soort relatie.
@@ -17,20 +17,24 @@ import org.simpleframework.xml.Element;
  */
 public final class BrpSoortRelatieCode extends AbstractBrpAttribuutMetOnderzoek implements Comparable<BrpSoortRelatieCode> {
 
-    /** Huwelijk in BRP. */
+    /**
+     * Huwelijk in BRP.
+     */
     public static final BrpSoortRelatieCode HUWELIJK = new BrpSoortRelatieCode("H");
-    /** Geregistreerd partnerschap in BRP. */
+    /**
+     * Geregistreerd partnerschap in BRP.
+     */
     public static final BrpSoortRelatieCode GEREGISTREERD_PARTNERSCHAP = new BrpSoortRelatieCode("G");
-    /** Familierechtelijke betrekking in BRP. */
+    /**
+     * Familierechtelijke betrekking in BRP.
+     */
     public static final BrpSoortRelatieCode FAMILIERECHTELIJKE_BETREKKING = new BrpSoortRelatieCode("F");
 
     private static final long serialVersionUID = 1L;
 
     /**
      * Maakt een BrpSoortRelatieCode.
-     *
-     * @param waarde
-     *            BRP waarde
+     * @param waarde BRP waarde
      */
     public BrpSoortRelatieCode(final String waarde) {
         this(waarde, null);
@@ -38,22 +42,18 @@ public final class BrpSoortRelatieCode extends AbstractBrpAttribuutMetOnderzoek 
 
     /**
      * Maakt een BrpSoortRelatieCode met onderzoek.
-     *
-     * @param waarde
-     *            BRP waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde BRP waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpSoortRelatieCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -69,7 +69,6 @@ public final class BrpSoortRelatieCode extends AbstractBrpAttribuutMetOnderzoek 
 
     /**
      * Geeft een kopie van het attribuut terug zonder onderzoek.
-     *
      * @return Geeft een kopie van het attribuut terug zonder onderzoek
      */
     public BrpSoortRelatieCode verwijderOnderzoek() {
@@ -81,11 +80,8 @@ public final class BrpSoortRelatieCode extends AbstractBrpAttribuutMetOnderzoek 
 
     /**
      * Wrap de waarde en onderzoek naar een BrpSoortRelatieCode.
-     *
-     * @param waarde
-     *            de String waarde
-     * @param onderzoek
-     *            het Lo3 onderzoek
+     * @param waarde de String waarde
+     * @param onderzoek het Lo3 onderzoek
      * @return BrpSoortRelatieCode object met daarin waarde en onderzoek
      */
     public static BrpSoortRelatieCode wrap(final String waarde, final Lo3Onderzoek onderzoek) {

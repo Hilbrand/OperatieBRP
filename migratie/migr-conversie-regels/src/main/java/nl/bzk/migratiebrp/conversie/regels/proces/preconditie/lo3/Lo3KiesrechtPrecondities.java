@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -19,28 +20,34 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Preconditie controles voor categorie 13: Kiesrecht.
- * 
+ *
  * Maakt gebruik van de {@link nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging#log Logging.log} methode.
  */
-@Component
 public final class Lo3KiesrechtPrecondities extends AbstractLo3Precondities {
 
     /**
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
+     */
+    public Lo3KiesrechtPrecondities(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
+
+    /**
      * Controleer precondities op stapel niveau.
-     * 
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      */
     public void controleerStapel(final Lo3Stapel<Lo3KiesrechtInhoud> stapel) {
         if (stapel == null || stapel.isEmpty()) {
             return;
         }
 
-        if (stapel.size() >= 2) {
+        final int minimum = 2;
+        if (stapel.size() >= minimum) {
             for (int i = 1; i < stapel.size(); i++) {
                 Foutmelding.logMeldingFout(stapel.get(i).getLo3Herkomst(), LogSeverity.ERROR, SoortMeldingCode.STRUC_CATEGORIE_13, null);
             }
@@ -53,9 +60,7 @@ public final class Lo3KiesrechtPrecondities extends AbstractLo3Precondities {
 
     /**
      * Controleer precondities op categorie niveau.
-     * 
-     * @param categorie
-     *            categorie
+     * @param categorie categorie
      */
     private void controleerCategorie(final Lo3Categorie<Lo3KiesrechtInhoud> categorie) {
         final Lo3KiesrechtInhoud inhoud = categorie.getInhoud();
@@ -69,10 +74,10 @@ public final class Lo3KiesrechtPrecondities extends AbstractLo3Precondities {
         // Groep 31: Europees kiesrecht
         if (groep31Aanwezig) {
             controleerGroep31EuropeesKiesrecht(
-                inhoud.getAanduidingEuropeesKiesrecht(),
-                inhoud.getDatumEuropeesKiesrecht(),
-                inhoud.getEinddatumUitsluitingEuropeesKiesrecht(),
-                herkomst);
+                    inhoud.getAanduidingEuropeesKiesrecht(),
+                    inhoud.getDatumEuropeesKiesrecht(),
+                    inhoud.getEinddatumUitsluitingEuropeesKiesrecht(),
+                    herkomst);
         }
 
         // Groep 38: Uitsluiting kiesrecht
@@ -92,42 +97,40 @@ public final class Lo3KiesrechtPrecondities extends AbstractLo3Precondities {
     /* ************************************************************************************************************ */
 
     private void controleerGroep31EuropeesKiesrecht(
-        final Lo3AanduidingEuropeesKiesrecht aanduidingEuropeesKiesrecht,
-        final Lo3Datum datumEuropeesKiesrecht,
-        final Lo3Datum einddatumUitsluitingEuropeesKiesrecht,
-        final Lo3Herkomst herkomst)
-    {
+            final Lo3AanduidingEuropeesKiesrecht aanduidingEuropeesKiesrecht,
+            final Lo3Datum datumEuropeesKiesrecht,
+            final Lo3Datum einddatumUitsluitingEuropeesKiesrecht,
+            final Lo3Herkomst herkomst) {
         controleerAanwezig(aanduidingEuropeesKiesrecht, Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE090, null));
         Lo3PreconditieEnumCodeChecks.controleerCode(
-            aanduidingEuropeesKiesrecht,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_3110));
+                aanduidingEuropeesKiesrecht,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_3110));
 
         controleerAanwezig(
-            datumEuropeesKiesrecht,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_3120));
+                datumEuropeesKiesrecht,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_3120));
         controleerDatum(
-            datumEuropeesKiesrecht,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3120));
+                datumEuropeesKiesrecht,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3120));
 
         controleerDatum(
-            einddatumUitsluitingEuropeesKiesrecht,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3130));
+                einddatumUitsluitingEuropeesKiesrecht,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3130));
 
     }
 
     private void controleerGroep38UitsluitingKiesrecht(
-        final Lo3AanduidingUitgeslotenKiesrecht aanduidingUitgeslotenKiesrecht,
-        final Lo3Datum einddatumUitsluitingKiesrecht,
-        final Lo3Herkomst herkomst)
-    {
+            final Lo3AanduidingUitgeslotenKiesrecht aanduidingUitgeslotenKiesrecht,
+            final Lo3Datum einddatumUitsluitingKiesrecht,
+            final Lo3Herkomst herkomst) {
         controleerAanwezig(aanduidingUitgeslotenKiesrecht, Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE089, null));
         Lo3PreconditieEnumCodeChecks.controleerCode(
-            aanduidingUitgeslotenKiesrecht,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_3810));
+                aanduidingUitgeslotenKiesrecht,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_3810));
 
         controleerDatum(
-            einddatumUitsluitingKiesrecht,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3820));
+                einddatumUitsluitingKiesrecht,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_3820));
     }
 
 }

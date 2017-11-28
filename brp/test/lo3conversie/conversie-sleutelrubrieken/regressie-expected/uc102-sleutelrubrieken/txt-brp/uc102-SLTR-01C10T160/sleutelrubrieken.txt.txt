@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [inschrijving.datum])
+GEWIJZIGD(oud, nieuw, [Persoon.Inschrijving.Datum])

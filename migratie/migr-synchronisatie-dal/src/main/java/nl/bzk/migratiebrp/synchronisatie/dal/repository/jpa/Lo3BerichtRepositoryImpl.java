@@ -14,7 +14,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.Lo3BerichtRepository;
 
 import org.springframework.stereotype.Repository;
@@ -31,9 +31,9 @@ public final class Lo3BerichtRepositoryImpl implements Lo3BerichtRepository {
 
     private static final String LAATSTE_LO3BERICHT_ANRS_QUERY_ZONDER_GEM_CODE =
             "select anummer FROM Lo3Bericht "
-                                                                                + "WHERE tijdstipConversie >= :vanaf "
-                                                                                + "AND tijdstipConversie < :tot "
-                                                                                + "AND isBerichtsoortOnderdeelLo3Stelsel = :isBerichtsoortOnderdeelLo3Stelsel";
+                    + "WHERE tijdstipConversie >= :vanaf "
+                    + "AND tijdstipConversie < :tot "
+                    + "AND isBerichtsoortOnderdeelLo3Stelsel = :isBerichtsoortOnderdeelLo3Stelsel";
 
     @PersistenceContext(name = "syncDalEntityManagerFactory", unitName = "BrpEntities")
     private EntityManager entityManager;
@@ -42,17 +42,17 @@ public final class Lo3BerichtRepositoryImpl implements Lo3BerichtRepository {
      * {@inheritDoc}
      */
     @Override
-    public Lo3Bericht findLaatsteLo3PersoonslijstBerichtVoorANummer(final long administratienummer) {
+    public Lo3Bericht findLaatsteLo3PersoonslijstBerichtVoorANummer(final String administratienummer) {
         // where referentie != 'referentie' and referentie not like 'IV.AUT%' and referentie not like 'IV.IND%'
         final String laatsteLo3BerichtQuery =
                 "FROM Lo3Bericht WHERE anummer = :anummer AND isBerichtsoortOnderdeelLo3Stelsel = true "
-                                              + "AND referentie != 'referentie' AND referentie NOT LIKE 'IV.AUT%' AND referentie NOT LIKE 'IV.IND%'"
-                                              + "ORDER BY tijdstipConversie DESC";
+                        + "AND referentie != 'referentie' AND referentie NOT LIKE 'IV.AUT%' AND referentie NOT LIKE 'IV.IND%'"
+                        + "ORDER BY tijdstipConversie DESC";
         final List<Lo3Bericht> resultList =
                 entityManager.createQuery(laatsteLo3BerichtQuery, Lo3Bericht.class)
-                             .setMaxResults(1)
-                             .setParameter("anummer", administratienummer)
-                             .getResultList();
+                        .setMaxResults(1)
+                        .setParameter("anummer", administratienummer)
+                        .getResultList();
         if (resultList.isEmpty()) {
             return null;
         } else {
@@ -64,13 +64,13 @@ public final class Lo3BerichtRepositoryImpl implements Lo3BerichtRepository {
      * {@inheritDoc}
      */
     @Override
-    public Set<Long> findLaatsteBerichtLogAnrs(final Date vanaf, final Date tot) {
+    public Set<String> findLaatsteBerichtLogAnrs(final Date vanaf, final Date tot) {
         return new HashSet<>(
-            entityManager.createQuery(LAATSTE_LO3BERICHT_ANRS_QUERY_ZONDER_GEM_CODE, Long.class)
-                         .setParameter(PARAM_VANAF, vanaf)
-                         .setParameter(PARAM_TOT, tot)
-                         .setParameter(PARAM_TYPE, true)
-                         .getResultList());
+                entityManager.createQuery(LAATSTE_LO3BERICHT_ANRS_QUERY_ZONDER_GEM_CODE, String.class)
+                        .setParameter(PARAM_VANAF, vanaf)
+                        .setParameter(PARAM_TOT, tot)
+                        .setParameter(PARAM_TYPE, true)
+                        .getResultList());
     }
 
     /**

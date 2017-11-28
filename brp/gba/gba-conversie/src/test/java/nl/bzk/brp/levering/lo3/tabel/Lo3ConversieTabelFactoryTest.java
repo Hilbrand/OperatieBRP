@@ -6,8 +6,21 @@
 
 package nl.bzk.brp.levering.lo3.tabel;
 
-import nl.bzk.brp.gba.dataaccess.ConversieTabelRepository;
-import nl.bzk.brp.gba.dataaccess.StamTabelRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.AanduidingInhoudingVermissingReisdocumentRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.AangifteAdreshoudingRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.AdellijkeTitelPredikaatRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.RNIDeelnemerRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.RedenOntbindingHuwelijkPartnerschapRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.RedenOpschortingRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.SoortNlReisdocumentRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.VoorvoegselConversieRepository;
+import nl.bzk.brp.gba.dataaccess.stam.GemeenteRepository;
+import nl.bzk.brp.gba.dataaccess.stam.LandOfGebiedRepository;
+import nl.bzk.brp.gba.dataaccess.stam.NationaliteitRepository;
+import nl.bzk.brp.gba.dataaccess.stam.PlaatsRepository;
+import nl.bzk.brp.gba.dataaccess.stam.RedenVerkrijgingNLNationaliteitRepository;
+import nl.bzk.brp.gba.dataaccess.stam.RedenVerliesNLNationaliteitRepository;
+import nl.bzk.brp.gba.dataaccess.stam.VerblijfsrechtRepository;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,17 +32,41 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class Lo3ConversieTabelFactoryTest {
 
     @Mock
-    private ConversieTabelRepository conversieTabelRepository;
+    private AanduidingInhoudingVermissingReisdocumentRepository aanduidingInhoudingVermissingReisdocumentRepository;
     @Mock
-    private StamTabelRepository stamTabelRepository;
+    private AangifteAdreshoudingRepository aangifteAdreshoudingRepository;
+    @Mock
+    private AdellijkeTitelPredikaatRepository adellijkeTitelPredikaatRepository;
+    @Mock
+    private RedenOntbindingHuwelijkPartnerschapRepository redenOntbindingHuwelijkPartnerschapRepository;
+    @Mock
+    private RedenOpschortingRepository redenOpschortingRepository;
+    @Mock
+    private RNIDeelnemerRepository rniDeelnemerRepository;
+    @Mock
+    private SoortNlReisdocumentRepository soortNlReisdocumentRepository;
+    @Mock
+    private VoorvoegselConversieRepository voorvoegselConversieRepository;
+    @Mock
+    private GemeenteRepository gemeenteRepository;
+    @Mock
+    private LandOfGebiedRepository landOfGebiedRepository;
+    @Mock
+    private NationaliteitRepository nationaliteitRepository;
+    @Mock
+    private PlaatsRepository plaatsRepository;
+    @Mock
+    private RedenVerkrijgingNLNationaliteitRepository redenVerkrijgingNLNationaliteitRepository;
+    @Mock
+    private RedenVerliesNLNationaliteitRepository redenVerliesNLNationaliteitRepository;
+    @Mock
+    private VerblijfsrechtRepository verblijfsrechtRepository;
 
     @InjectMocks
     private Lo3ConversieTabelFactory subject;
 
     @Test
     public void test() {
-        Assert.assertNotNull(conversieTabelRepository);
-        Assert.assertNotNull(stamTabelRepository);
         Assert.assertNotNull(subject.createAdellijkeTitelPredikaatConversietabel());
         Assert.assertNotNull(subject.createRedenEindeRelatieConversietabel());
         Assert.assertNotNull(subject.createVerblijfsrechtConversietabel());

@@ -7,7 +7,6 @@
 /**
  * Deze package bevat interfaces die het mappen van en naar het BRP-datamodel vergemakkelijken, doordat herhalende
  * patronen ook als zodanig behandeld kunnen worden.
- * 
  * @since 1.0
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern;

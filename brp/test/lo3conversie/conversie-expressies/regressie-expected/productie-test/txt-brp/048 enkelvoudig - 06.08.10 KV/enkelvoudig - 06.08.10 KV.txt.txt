@@ -1,1 +1,1 @@
-NIET IS_NULL(overlijden.datum)
+KV(Persoon.Overlijden.Datum)

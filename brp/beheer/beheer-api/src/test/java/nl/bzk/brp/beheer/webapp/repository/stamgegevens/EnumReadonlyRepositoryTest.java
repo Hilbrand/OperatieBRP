@@ -6,6 +6,9 @@
 
 package nl.bzk.brp.beheer.webapp.repository.stamgegevens;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.EnumParser;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Enumeratie;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
@@ -35,8 +38,10 @@ public class EnumReadonlyRepositoryTest {
     /**
      * maak pageable.
      *
-     * @param page zero-based page index
-     * @param size page size
+     * @param page
+     *            zero-based page index
+     * @param size
+     *            page size
      * @return pageable
      */
     private Pageable pageable(final int page, final int size) {
@@ -53,8 +58,67 @@ public class EnumReadonlyRepositoryTest {
         Assert.assertEquals("Aantal paginas klopt niet", 2, actualPage.getTotalPages());
     }
 
-    private enum TestEnum {
-        DUMMY, EEN, TWEE, DRIE;
+    private enum TestEnum implements Enumeratie {
+        EEN(1, "Een", "Waarde 1 van de enum."), TWEE(2, "Twee", "Waarde 2 van de enum."), DRIE(3, "Drie", "Waarde 3 van de enum.");
+
+        private static final EnumParser<TestEnum> PARSER = new EnumParser<>(TestEnum.class);
+        private final int id;
+        private final String naam;
+        private final String code;
+
+        /**
+         * Maak een nieuw EffectAfnemerindicaties object.
+         *
+         * @param id
+         *            id
+         * @param naam
+         *            naam
+         * @param code
+         *            code
+         */
+        TestEnum(final int id, final String naam, final String code) {
+            this.id = id;
+            this.naam = naam;
+            this.code = code;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see nl.bzk.algemeen.dal.domein.brp.kern.enums.Enumeratie#getId()
+         */
+        @Override
+        public int getId() {
+            return id;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see nl.bzk.algemeen.dal.domein.brp.kern.enums.Enumeratie#getCode()
+         */
+        @Override
+        public String getCode() {
+            return code;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean heeftCode() {
+            return false;
+        }
+
+        /**
+         * Geef de waarde van naam van EffectAfnemerindicaties.
+         *
+         * @return de waarde van naam van EffectAfnemerindicaties
+         */
+        @Override
+        public String getNaam() {
+            return naam;
+        }
     }
 
     private static final class TestEnumRepository extends EnumReadonlyRepository<TestEnum> {

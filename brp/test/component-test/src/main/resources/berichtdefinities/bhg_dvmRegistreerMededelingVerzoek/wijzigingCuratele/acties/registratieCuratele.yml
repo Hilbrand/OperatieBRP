@@ -1,6 +1,0 @@
-wijzigingCuratele:
-  acties:
-    registratieCuratele:
-      datumAanvangGeldigheid: ${vandaag(-10,0,0)}
-      persoon:
-        objectSleutel: '330298628'

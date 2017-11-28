@@ -6,13 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class geeft weer wat het type van een relatie is.
@@ -24,15 +24,15 @@ public final class BrpVerbintenisInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een BrpVerbintenisInhoud object.
-     * 
-     * @param soortRelatieCode
-     *            soort relatie
+     * @param soortRelatieCode soort relatie
      */
     public BrpVerbintenisInhoud(@Element(name = "soortRelatieCode", required = false) final BrpSoortRelatieCode soortRelatieCode) {
         this.soortRelatieCode = soortRelatieCode;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
@@ -41,9 +41,8 @@ public final class BrpVerbintenisInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van soort relatie code.
-     *
-     * @return the soortRelatieCode
+     * Geef de waarde van soort relatie code van BrpVerbintenisInhoud.
+     * @return de waarde van soort relatie code van BrpVerbintenisInhoud
      */
     public BrpSoortRelatieCode getSoortRelatieCode() {
         return soortRelatieCode;

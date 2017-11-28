@@ -80,5 +80,6 @@ public final class MigratieLoggingService implements LoggingService {
 
     @Override
     public void close() {
+        // Interface methode hoeft niks te sluiten
     }
 }

@@ -11,21 +11,17 @@ package nl.bzk.migratiebrp.synchronisatie.runtime.service.zoeken;
  */
 public final class GevondenPersoon {
 
-    private final Integer persoonId;
-    private final Long administratienummer;
+    private final Long persoonId;
+    private final String administratienummer;
     private final String bijhoudingsgemeente;
 
     /**
      * Constructor.
-     * 
-     * @param persoonId
-     *            technische id persoon
-     * @param administratienummer
-     *            actueel administratienummer
-     * @param bijhoudingsgemeente
-     *            actuele bijhoudingsgemeente
+     * @param persoonId technische id persoon
+     * @param administratienummer actueel administratienummer
+     * @param bijhoudingsgemeente actuele bijhoudingsgemeente
      */
-    public GevondenPersoon(final Integer persoonId, final Long administratienummer, final String bijhoudingsgemeente) {
+    public GevondenPersoon(final Long persoonId, final String administratienummer, final String bijhoudingsgemeente) {
         super();
         this.persoonId = persoonId;
         this.administratienummer = administratienummer;
@@ -34,25 +30,22 @@ public final class GevondenPersoon {
 
     /**
      * Geef de waarde van persoon id.
-     *
      * @return technisch id persoon
      */
-    public Integer getPersoonId() {
+    public Long getPersoonId() {
         return persoonId;
     }
 
     /**
      * Geef de waarde van administratienummer.
-     *
      * @return actueel administratienummer
      */
-    public Long getAdministratienummer() {
+    public String getAdministratienummer() {
         return administratienummer;
     }
 
     /**
      * Geef de waarde van bijhoudingsgemeente.
-     *
      * @return actuele bijhoudingsgemeente
      */
     public String getBijhoudingsgemeente() {

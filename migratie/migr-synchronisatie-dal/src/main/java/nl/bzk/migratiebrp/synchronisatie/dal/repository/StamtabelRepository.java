@@ -9,12 +9,13 @@ package nl.bzk.migratiebrp.synchronisatie.dal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Verblijfsrecht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Voorvoegsel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenBeeindigingNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenOpnameNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenOpnameNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Voorvoegsel;
 
 /**
  * Stamtabel service.
@@ -23,56 +24,61 @@ public interface StamtabelRepository {
 
     /**
      * Geef een lijst van alle geldige gemeentes.
-     * 
      * @return lijst van alle geldige gemeentes
      */
     Collection<Gemeente> findAllGemeentes();
 
     /**
+     * Geef een lijst van alle geldige gemeentes.
+     * @return lijst van alle geldige gemeentes
+     */
+    Collection<Partij> findAllPartijen();
+
+    /**
+     * Geef de partij behorende bij de code.
+     * @param partijCode De code van de benodigde partij
+     * @return gevonden Partij
+     */
+    Partij findPartijByCode(String partijCode);
+
+    /**
      * Geef een lijst van alle geldige gemeente codes.
-     * 
      * @return lijst van alle geldige gemeente codes
      */
-    Collection<Short> findAllGemeenteCodes();
+    Collection<String> findAllGemeenteCodes();
 
     /**
      * Geef een lijst van alle geldige land codes.
-     * 
      * @return lijst van alle geldige land codes
      */
-    Collection<Short> findAllLandOfGebiedCodes();
+    Collection<String> findAllLandOfGebiedCodes();
 
     /**
      * Geef een lijst van alle geldige nationaliteit codes.
-     * 
      * @return lijst van alle geldige nationaliteit codes
      */
-    Collection<Short> findAllNationaliteitCodes();
+    Collection<String> findAllNationaliteitCodes();
 
     /**
      * Geef een lijst van alle geldige plaatsnamen.
-     * 
      * @return lijst van alle geldige plaatsnamen
      */
     Collection<String> findAllPlaatsnamen();
 
     /**
      * Geef een lijst van alle geldige namen openbare ruimte.
-     * 
      * @return lijst van alle geldige namen openbare ruimte
      */
     Collection<String> findAllNamenOpenbareRuimte();
 
     /**
      * Geeft een lijst van alle verblijfstitels.
-     * 
      * @return de lijst met alle verblijfstitels
      */
     List<Verblijfsrecht> findAllVerblijfsrecht();
 
     /**
      * Geeft een lijst met alle voorvoegsels.
-     * 
      * @return de lijst met alle voorvoegsels
      */
     List<Voorvoegsel> findAllVoorvoegsels();
@@ -88,8 +94,13 @@ public interface StamtabelRepository {
     List<RedenBeeindigingNationaliteit> findAllRedenBeeindigingNationaliteit();
 
     /**
-     * @return het soort document dat gebruikt wordt voor conversie.
      * @param naam de naam die het soort document beschrijft
+     * @return het soort document dat gebruikt wordt voor conversie.
      */
-    SoortDocument findSoortDocumentConversie(final String naam);
+    SoortDocument findSoortDocumentConversie(String naam);
+
+    /**
+     * @return een collectie met alle autorisaties van afgifte buitenlands persoonsnummer.
+     */
+    Collection<String> findAllAutorisatiesVanAfgifteBuitenlandsPersoonsnummer();
 }

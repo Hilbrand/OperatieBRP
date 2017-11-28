@@ -50,12 +50,9 @@ public class PrettyXml {
 
     /**
      * Pretty print XML.
-     *
-     * @param xml
-     *            xml
+     * @param xml xml
      * @return pretty printed xml
      */
-    @SuppressWarnings("checkstyle:illegalcatch")
     public final String prettyPrint(final String xml) {
         final StringBuilder sb = new StringBuilder();
         try {
@@ -63,7 +60,7 @@ public class PrettyXml {
             beforeXml(sb, document);
             outputXml(sb, document);
             afterXml(sb, document);
-        } catch (final Exception e /* Catch exception voor robustheid */) {
+        } catch (final Exception e) {
             sb.append("<br/>Fout opgetreden tijdens parsen: ").append(e.getMessage());
         }
         return sb.toString();
@@ -71,11 +68,8 @@ public class PrettyXml {
 
     /**
      * Hook before XML output.
-     *
-     * @param sb
-     *            output
-     * @param document
-     *            document
+     * @param sb output
+     * @param document document
      */
     protected void beforeXml(final StringBuilder sb, final Document document) {
         // hook
@@ -83,11 +77,8 @@ public class PrettyXml {
 
     /**
      * Hook after XML output.
-     *
-     * @param sb
-     *            output
-     * @param document
-     *            document
+     * @param sb output
+     * @param document document
      */
     protected void afterXml(final StringBuilder sb, final Document document) {
         // hook
@@ -131,24 +122,18 @@ public class PrettyXml {
         for (int i = 0; i < xml.length(); i++) {
             final char ch = xml.charAt(i);
 
-            switch (ch) {
-                case '<':
-                    sb.append("&lt;");
-                    break;
-                default:
-                    sb.append(ch);
-                    break;
+            if (ch == '<') {
+                sb.append("&lt;");
+            } else {
+                sb.append(ch);
             }
         }
     }
 
     /**
      * Execute an xpath expression.
-     *
-     * @param expression
-     *            expression
-     * @param source
-     *            source
+     * @param expression expression
+     * @param source source
      * @return string result
      */
     protected final String evaluateXPath(final String expression, final Node source) {
@@ -161,7 +146,6 @@ public class PrettyXml {
 
     /**
      * Geef de waarde van x path.
-     *
      * @return x path
      */
     protected final XPath getXPath() {

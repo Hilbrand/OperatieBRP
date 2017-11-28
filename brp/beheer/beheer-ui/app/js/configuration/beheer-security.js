@@ -36,14 +36,16 @@ beheerApp.config([ '$routeProvider', '$httpProvider', 'localStorageServiceProvid
 
                         return deferred.promise;
                     }
-                    if(response.status == 403) {
+                    if(response.status === 403) {
                     	$rootScope.$broadcast('event:unauthorised');
                     	return $q.defer().promise;
                     }
-                    if(response.status == 404) {
+                    if(response.status === 404) {
                         $rootScope.$broadcast('info', {type: 'danger', code: "SEARCH_FAILED", message: "Geen resultaat beschikbaar"});
                         return $q.reject(response);
                     }
+
+                    $rootScope.$broadcast('info', {type: 'danger', code: "UNEXPECTED_ERROR", message: "Onverwachte fout opgetreden"});
                     return $q.reject(response);
 			    }
 			  };
@@ -71,7 +73,7 @@ beheerApp.run(function ($rootScope, $http, $location, Base64Service, Authenticat
     $rootScope.$on('event:loginRequired', function () {
         $rootScope.requests401 = [];
 
-        if ($location.path().indexOf("/login") == -1) {
+        if ($location.path().indexOf("/login") === -1) {
             $rootScope.navigateTo = $location.path();
         }
 

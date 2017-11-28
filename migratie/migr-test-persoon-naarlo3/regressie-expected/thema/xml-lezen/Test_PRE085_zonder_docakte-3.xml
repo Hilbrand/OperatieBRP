@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <brpPersoonslijst>
    <identificatienummerStapel>
       <brpGroep>
@@ -16,7 +17,7 @@
                <brpActieBron>
                   <documentStapel>
                      <brpGroep>
-                        <actieInhoud ref="89"/>
+                        
                         <historie>
                            <datumTijdRegistratie>
                               <waarde>19200101000000000</waarde>
@@ -24,7 +25,7 @@
                         </historie>
                         <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                            <partijCode>
-                              <waarde>51801</waarde>
+                              <waarde>051801</waarde>
                            </partijCode>
                            <soortDocumentCode>
                               <waarde>Overlijdensakte</waarde>
@@ -55,7 +56,7 @@
    </identificatienummerStapel>
    <geboorteStapel>
       <brpGroep>
-         <actieInhoud ref="89"/>
+         
          <historie>
             <datumTijdRegistratie>
                <waarde>19200101000000000</waarde>
@@ -66,7 +67,7 @@
                <waarde>19200101</waarde>
             </geboortedatum>
             <gemeenteCode>
-               <waarde>519</waarde>
+               <waarde>0519</waarde>
             </gemeenteCode>
             <woonplaatsnaamGeboorte>
                <waarde>s-Gravenhage</waarde>
@@ -75,11 +76,45 @@
                <waarde>6030</waarde>
             </landOfGebiedCode>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="89">
+            <datumTijdRegistratie>
+               <waarde>19200101000000000</waarde>
+            </datumTijdRegistratie>
+            <sortering>0</sortering>
+            <partijCode>
+               <waarde>051801</waarde>
+            </partijCode>
+            <soortActieCode>
+               <waarde>Conversie GBA</waarde>
+            </soortActieCode>
+            <actieBronnen>
+               <brpActieBron>
+                  <documentStapel>
+                     <brpGroep>
+                        
+                        <historie>
+                           <datumTijdRegistratie>
+                              <waarde>19200101000000000</waarde>
+                           </datumTijdRegistratie>
+                        </historie>
+                        <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                           <partijCode>
+                              <waarde>051801</waarde>
+                           </partijCode>
+                           <soortDocumentCode>
+                              <waarde>Overlijdensakte</waarde>
+                           </soortDocumentCode>
+                        </inhoud>
+                     </brpGroep>
+                  </documentStapel>
+               </brpActieBron>
+            </actieBronnen>
+         </actieInhoud>
+        </brpGroep>
    </geboorteStapel>
    <samengesteldeNaamStapel>
       <brpGroep>
-         <actieInhoud ref="89"/>
+         
          <historie>
             <datumAanvangGeldigheid>
                <waarde>19200101</waarde>
@@ -102,11 +137,45 @@
                <waarde>true</waarde>
             </indicatieAfgeleid>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="89">
+            <datumTijdRegistratie>
+               <waarde>19200101000000000</waarde>
+            </datumTijdRegistratie>
+            <sortering>0</sortering>
+            <partijCode>
+               <waarde>051801</waarde>
+            </partijCode>
+            <soortActieCode>
+               <waarde>Conversie GBA</waarde>
+            </soortActieCode>
+            <actieBronnen>
+               <brpActieBron>
+                  <documentStapel>
+                     <brpGroep>
+                        
+                        <historie>
+                           <datumTijdRegistratie>
+                              <waarde>19200101000000000</waarde>
+                           </datumTijdRegistratie>
+                        </historie>
+                        <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                           <partijCode>
+                              <waarde>051801</waarde>
+                           </partijCode>
+                           <soortDocumentCode>
+                              <waarde>Overlijdensakte</waarde>
+                           </soortDocumentCode>
+                        </inhoud>
+                     </brpGroep>
+                  </documentStapel>
+               </brpActieBron>
+            </actieBronnen>
+         </actieInhoud>
+        </brpGroep>
    </samengesteldeNaamStapel>
    <geslachtsaanduidingStapel>
       <brpGroep>
-         <actieInhoud ref="89"/>
+         
          <historie>
             <datumAanvangGeldigheid>
                <waarde>19200101</waarde>
@@ -120,7 +189,41 @@
                <waarde>V</waarde>
             </geslachtsaanduidingCode>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="89">
+            <datumTijdRegistratie>
+               <waarde>19200101000000000</waarde>
+            </datumTijdRegistratie>
+            <sortering>0</sortering>
+            <partijCode>
+               <waarde>051801</waarde>
+            </partijCode>
+            <soortActieCode>
+               <waarde>Conversie GBA</waarde>
+            </soortActieCode>
+            <actieBronnen>
+               <brpActieBron>
+                  <documentStapel>
+                     <brpGroep>
+                        
+                        <historie>
+                           <datumTijdRegistratie>
+                              <waarde>19200101000000000</waarde>
+                           </datumTijdRegistratie>
+                        </historie>
+                        <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                           <partijCode>
+                              <waarde>051801</waarde>
+                           </partijCode>
+                           <soortDocumentCode>
+                              <waarde>Overlijdensakte</waarde>
+                           </soortDocumentCode>
+                        </inhoud>
+                     </brpGroep>
+                  </documentStapel>
+               </brpActieBron>
+            </actieBronnen>
+         </actieInhoud>
+        </brpGroep>
    </geslachtsaanduidingStapel>
    <nationaliteitStapels class="java.util.ArrayList"/>
    <relaties class="java.util.ArrayList">
@@ -147,7 +250,7 @@
                         <waarde>1 A1234</waarde>
                      </aktenummer>
                      <partij>
-                        <waarde>51801</waarde>
+                        <waarde>051801</waarde>
                      </partij>
                      <rubriek8510IngangsdatumGeldigheid>
                         <waarde>19760304</waarde>
@@ -175,7 +278,7 @@
                      <waarde>19200101</waarde>
                   </datumGeboorte>
                   <gemeenteCodeGeboorte>
-                     <waarde>519</waarde>
+                     <waarde>0519</waarde>
                   </gemeenteCodeGeboorte>
                   <landOfGebiedCodeGeboorte>
                      <waarde>6030</waarde>
@@ -203,7 +306,7 @@
                      <brpActieBron>
                         <documentStapel>
                            <brpGroep>
-                              <actieInhoud ref="85"/>
+                              
                               <historie>
                                  <datumTijdRegistratie>
                                     <waarde>19760304114500000</waarde>
@@ -211,7 +314,7 @@
                               </historie>
                               <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
                                  <partijCode>
-                                    <waarde>51801</waarde>
+                                    <waarde>051801</waarde>
                                  </partijCode>
                                  <soortDocumentCode>
                                     <waarde>Overlijdensakte</waarde>
@@ -234,7 +337,7 @@
             <betrokkenheid>
                <geboorteStapel>
                   <brpGroep>
-                     <actieInhoud ref="85"/>
+                     
                      <historie>
                         <datumTijdRegistratie>
                            <waarde>19760304114500000</waarde>
@@ -245,7 +348,7 @@
                            <waarde>19760304</waarde>
                         </geboortedatum>
                         <gemeenteCode>
-                           <waarde>519</waarde>
+                           <waarde>0519</waarde>
                         </gemeenteCode>
                         <woonplaatsnaamGeboorte>
                            <waarde>s-Gravenhage</waarde>
@@ -254,11 +357,45 @@
                            <waarde>6030</waarde>
                         </landOfGebiedCode>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="85">
+                  <datumTijdRegistratie>
+                     <waarde>19760304114500000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>051801</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              <historie>
+                                 <datumTijdRegistratie>
+                                    <waarde>19760304114500000</waarde>
+                                 </datumTijdRegistratie>
+                              </historie>
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>051801</waarde>
+                                 </partijCode>
+                                 <soortDocumentCode>
+                                    <waarde>Overlijdensakte</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+               </actieInhoud>
+                        </brpGroep>
                </geboorteStapel>
                <samengesteldeNaamStapel>
                   <brpGroep>
-                     <actieInhoud ref="85"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19760304</waarde>
@@ -281,11 +418,45 @@
                            <waarde>true</waarde>
                         </indicatieAfgeleid>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="85">
+                  <datumTijdRegistratie>
+                     <waarde>19760304114500000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>051801</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              <historie>
+                                 <datumTijdRegistratie>
+                                    <waarde>19760304114500000</waarde>
+                                 </datumTijdRegistratie>
+                              </historie>
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>051801</waarde>
+                                 </partijCode>
+                                 <soortDocumentCode>
+                                    <waarde>Overlijdensakte</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+               </actieInhoud>
+                        </brpGroep>
                </samengesteldeNaamStapel>
                <ouderStapel>
                   <brpGroep>
-                     <actieInhoud ref="85"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19760304</waarde>
@@ -295,18 +466,50 @@
                         </datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>
-                           <waarde>true</waarde>
-                        </indicatieOuder>
+                        
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="85">
+                  <datumTijdRegistratie>
+                     <waarde>19760304114500000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>051801</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              <historie>
+                                 <datumTijdRegistratie>
+                                    <waarde>19760304114500000</waarde>
+                                 </datumTijdRegistratie>
+                              </historie>
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>051801</waarde>
+                                 </partijCode>
+                                 <soortDocumentCode>
+                                    <waarde>Overlijdensakte</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+               </actieInhoud>
+                        </brpGroep>
                </ouderStapel>
                <rol>
                   <waarde>K</waarde>
                </rol>
                <identificatienummerStapel>
                   <brpGroep>
-                     <actieInhoud ref="85"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19760304</waarde>
@@ -323,11 +526,45 @@
                            <waarde>888010009</waarde>
                         </burgerservicenummer>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="85">
+                  <datumTijdRegistratie>
+                     <waarde>19760304114500000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>051801</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              <historie>
+                                 <datumTijdRegistratie>
+                                    <waarde>19760304114500000</waarde>
+                                 </datumTijdRegistratie>
+                              </historie>
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>051801</waarde>
+                                 </partijCode>
+                                 <soortDocumentCode>
+                                    <waarde>Overlijdensakte</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+               </actieInhoud>
+                        </brpGroep>
                </identificatienummerStapel>
                <geslachtsaanduidingStapel>
                   <brpGroep>
-                     <actieInhoud ref="85"/>
+                     
                      <historie>
                         <datumAanvangGeldigheid>
                            <waarde>19760304</waarde>
@@ -341,18 +578,86 @@
                            <waarde>M</waarde>
                         </geslachtsaanduidingCode>
                      </inhoud>
-                  </brpGroep>
+                  <actieInhoud id="85">
+                  <datumTijdRegistratie>
+                     <waarde>19760304114500000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>051801</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              <historie>
+                                 <datumTijdRegistratie>
+                                    <waarde>19760304114500000</waarde>
+                                 </datumTijdRegistratie>
+                              </historie>
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>051801</waarde>
+                                 </partijCode>
+                                 <soortDocumentCode>
+                                    <waarde>Overlijdensakte</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+               </actieInhoud>
+                        </brpGroep>
                </geslachtsaanduidingStapel>
                <identiteitStapel>
                   <brpGroep>
-                     <actieInhoud ref="85"/>
+                     
                      <historie>
                         <datumTijdRegistratie>
                            <waarde>19760304114500000</waarde>
                         </datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentiteitInhoud"/>
-                  </brpGroep>
+                  <actieInhoud id="85">
+                  <datumTijdRegistratie>
+                     <waarde>19760304114500000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>051801</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              <historie>
+                                 <datumTijdRegistratie>
+                                    <waarde>19760304114500000</waarde>
+                                 </datumTijdRegistratie>
+                              </historie>
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>051801</waarde>
+                                 </partijCode>
+                                 <soortDocumentCode>
+                                    <waarde>Overlijdensakte</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+               </actieInhoud>
+                        </brpGroep>
                </identiteitStapel>
             </betrokkenheid>
          </betrokkenheden>
@@ -372,7 +677,7 @@
                         <waarde>Geboorteakte</waarde>
                      </soortDocument>
                      <partij>
-                        <waarde>51801</waarde>
+                        <waarde>051801</waarde>
                      </partij>
                      <rubriek8510IngangsdatumGeldigheid>
                         <waarde>19760304</waarde>
@@ -400,7 +705,7 @@
                      <waarde>19200101</waarde>
                   </datumGeboorte>
                   <gemeenteCodeGeboorte>
-                     <waarde>519</waarde>
+                     <waarde>0519</waarde>
                   </gemeenteCodeGeboorte>
                   <landOfGebiedCodeGeboorte>
                      <waarde>6030</waarde>
@@ -420,14 +725,48 @@
             </rol>
             <identiteitStapel>
                <brpGroep>
-                  <actieInhoud ref="85"/>
+                  
                   <historie>
                      <datumTijdRegistratie>
                         <waarde>19760304114500000</waarde>
                      </datumTijdRegistratie>
                   </historie>
                   <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentiteitInhoud"/>
-               </brpGroep>
+               <actieInhoud id="85">
+                  <datumTijdRegistratie>
+                     <waarde>19760304114500000</waarde>
+                  </datumTijdRegistratie>
+                  <sortering>0</sortering>
+                  <partijCode>
+                     <waarde>051801</waarde>
+                  </partijCode>
+                  <soortActieCode>
+                     <waarde>Conversie GBA</waarde>
+                  </soortActieCode>
+                  <actieBronnen>
+                     <brpActieBron>
+                        <documentStapel>
+                           <brpGroep>
+                              
+                              <historie>
+                                 <datumTijdRegistratie>
+                                    <waarde>19760304114500000</waarde>
+                                 </datumTijdRegistratie>
+                              </historie>
+                              <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                                 <partijCode>
+                                    <waarde>051801</waarde>
+                                 </partijCode>
+                                 <soortDocumentCode>
+                                    <waarde>Overlijdensakte</waarde>
+                                 </soortDocumentCode>
+                              </inhoud>
+                           </brpGroep>
+                        </documentStapel>
+                     </brpActieBron>
+                  </actieBronnen>
+               </actieInhoud>
+                    </brpGroep>
             </identiteitStapel>
          </ikBetrokkenheid>
       </relatie>
@@ -436,7 +775,7 @@
    <verificatieStapels class="java.util.ArrayList"/>
    <inschrijvingStapel>
       <brpGroep>
-         <actieInhoud ref="89"/>
+         
          <historie>
             <datumTijdRegistratie>
                <waarde>19200101000000000</waarde>
@@ -453,11 +792,46 @@
                <waarde>19200101000000000</waarde>
             </datumtijdstempel>
          </inhoud>
-      </brpGroep>
+      <actieInhoud id="89">
+            <datumTijdRegistratie>
+               <waarde>19200101000000000</waarde>
+            </datumTijdRegistratie>
+            <sortering>0</sortering>
+            <partijCode>
+               <waarde>051801</waarde>
+            </partijCode>
+            <soortActieCode>
+               <waarde>Conversie GBA</waarde>
+            </soortActieCode>
+            <actieBronnen>
+               <brpActieBron>
+                  <documentStapel>
+                     <brpGroep>
+                        
+                        <historie>
+                           <datumTijdRegistratie>
+                              <waarde>19200101000000000</waarde>
+                           </datumTijdRegistratie>
+                        </historie>
+                        <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud">
+                           <partijCode>
+                              <waarde>051801</waarde>
+                           </partijCode>
+                           <soortDocumentCode>
+                              <waarde>Overlijdensakte</waarde>
+                           </soortDocumentCode>
+                        </inhoud>
+                     </brpGroep>
+                  </documentStapel>
+               </brpActieBron>
+            </actieBronnen>
+         </actieInhoud>
+        </brpGroep>
    </inschrijvingStapel>
    <istKindStapels class="java.util.ArrayList"/>
    <reisdocumentStapels class="java.util.ArrayList"/>
    <geslachtsnaamcomponentStapels class="java.util.ArrayList"/>
    <voornaamStapels class="java.util.ArrayList"/>
    <persoonId>51</persoonId>
+<buitenlandsPersoonsnummerStapels/>
 </brpPersoonslijst>

@@ -11,18 +11,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.operatie.ExceptionWrapper;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
 import nl.bzk.migratiebrp.util.common.operatie.StopHerhalingExceptionWrapper;
@@ -38,12 +36,13 @@ public final class DeletePersonenKanaal extends LazyLoadingKanaal {
      * Constructor.
      */
     public DeletePersonenKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-jta.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:infra-em-sync.xml"));
+        super(new Worker(),
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-db-brp.xml",
+                        "classpath:infra-jta.xml",
+                        "classpath:infra-db-sync.xml",
+                        "classpath:infra-em-sync.xml"));
     }
 
     /**
@@ -51,53 +50,49 @@ public final class DeletePersonenKanaal extends LazyLoadingKanaal {
      */
     public static final class Worker extends AbstractKanaal {
 
-        private static final List<String> HISTORIE_TABELLEN = Arrays.asList(
-            "kern.his_doc",
-            "kern.his_onderzoek",
-            "kern.his_onderzoekafgeleidadminis ",
-            "kern.his_ouderouderlijkgezag",
-            "kern.his_ouderouderschap",
-            "kern.his_partij",
-            "kern.his_partijonderzoek",
-            "kern.his_persadres",
-            "kern.his_persafgeleidadministrati",
-            "kern.his_persbijhouding",
-            "kern.his_persdeelneuverkiezingen",
-            "kern.his_persgeboorte",
-            "kern.his_persgeslachtsaand",
-            "kern.his_persgeslnaamcomp",
-            "kern.his_persids",
-            "kern.his_persindicatie",
-            "kern.his_persinschr",
-            "kern.his_persmigratie",
-            "kern.his_persnaamgebruik",
-            "kern.his_persnation",
-            "kern.his_persnrverwijzing",
-            "kern.his_personderzoek",
-            "kern.his_persoverlijden",
-            "kern.his_perspk",
-            "kern.his_persreisdoc",
-            "kern.his_perssamengesteldenaam",
-            "kern.his_persuitslkiesr",
-            "kern.his_persverblijfsr",
-            "kern.his_persverificatie",
-            "kern.his_persverstrbeperking",
-            "kern.his_persvoornaam");
+        private static final List<String> HISTORIE_TABELLEN =
+                Arrays.asList(
+                        "kern.his_onderzoek",
+                        "kern.his_ouderouderlijkgezag",
+                        "kern.his_ouderouderschap",
+                        "kern.his_persadres",
+                        "kern.his_persafgeleidadministrati",
+                        "kern.his_persbijhouding",
+                        "kern.his_persdeelneuverkiezingen",
+                        "kern.his_persgeboorte",
+                        "kern.his_persgeslachtsaand",
+                        "kern.his_persgeslnaamcomp",
+                        "kern.his_persids",
+                        "kern.his_persindicatie",
+                        "kern.his_persinschr",
+                        "kern.his_persmigratie",
+                        "kern.his_persnaamgebruik",
+                        "kern.his_persnation",
+                        "kern.his_persnrverwijzing",
+                        "kern.his_persoverlijden",
+                        "kern.his_perspk",
+                        "kern.his_persreisdoc",
+                        "kern.his_perssamengesteldenaam",
+                        "kern.his_persuitslkiesr",
+                        "kern.his_persverblijfsr",
+                        "kern.his_persverificatie",
+                        "kern.his_persverstrbeperking",
+                        "kern.his_persvoornaam");
 
-        private static final List<String> PERSOON_TABELLEN = Arrays.asList(
-            "kern.betr",
-            "kern.persadres",
-            "kern.persgeslnaamcomp",
-            "kern.persindicatie",
-            "kern.persnation",
-            "kern.personderzoek",
-            "kern.persreisdoc",
-            "kern.persverificatie",
-            "kern.persverstrbeperking",
-            "kern.persvoornaam",
-            "kern.relatie",
-            "kern.perscache",
-            "kern.pers");
+        private static final List<String> PERSOON_TABELLEN =
+                Arrays.asList(
+                        "kern.betr",
+                        "kern.persadres",
+                        "kern.persgeslnaamcomp",
+                        "kern.persindicatie",
+                        "kern.persnation",
+                        "kern.persreisdoc",
+                        "kern.persverificatie",
+                        "kern.persverstrbeperking",
+                        "kern.persvoornaam",
+                        "kern.relatie",
+                        "kern.perscache",
+                        "kern.pers");
 
         @Inject
         @Named("brpDataSource")
@@ -105,7 +100,7 @@ public final class DeletePersonenKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -165,6 +160,7 @@ public final class DeletePersonenKanaal extends LazyLoadingKanaal {
             verwijderIst(connection);
             verwijderTabellen(connection, HISTORIE_TABELLEN);
             verwijderTabellen(connection, PERSOON_TABELLEN);
+            aanpassenLeveringsStatussen(connection);
         }
 
         private static void verwijderBlokkering(final Connection connection) throws SQLException {
@@ -196,5 +192,10 @@ public final class DeletePersonenKanaal extends LazyLoadingKanaal {
             }
         }
 
+        private static void aanpassenLeveringsStatussen(Connection connection) throws SQLException {
+            try (final Statement statement = connection.createStatement()) {
+                statement.executeUpdate("update kern.admhnd set statuslev = 4 where statuslev <> 4");
+            }
+        }
     }
 }

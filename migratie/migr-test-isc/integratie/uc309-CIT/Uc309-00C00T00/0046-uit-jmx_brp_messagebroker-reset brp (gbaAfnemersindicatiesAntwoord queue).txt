@@ -1,2 +1,0 @@
-nl.bzk.brp:type=Broker,brokerName=BrpMessageBroker,destinationType=Queue,destinationName=GbaAfnemerindicatiesAntwoorden
-purge

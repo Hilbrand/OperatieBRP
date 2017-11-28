@@ -7,26 +7,11 @@
 package nl.bzk.migratiebrp.test.isc;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import nl.bzk.migratiebrp.test.common.util.EqualsFilter;
-import nl.bzk.migratiebrp.test.common.util.FilterType;
 
-public class IntegratieProefsyncTest extends IscTestConfiguration {
+public class IntegratieProefsyncTest extends IscRegressieConfiguration {
 
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getCasusFilter()
-     */
-    @Override
-    public FilenameFilter getCasusFilter() {
-        return new EqualsFilter("dev", FilterType.DIRECTORY);
-    }
-
-    /* (non-Javadoc)
-     * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getInputFolder()
-     */
     @Override
     public File getInputFolder() {
         return new File("./integratie-proefsync");
     }
-
 }

@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,20 +20,24 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNummerverwijzingHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteitPaar;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
 
 /**
  * Immutable data class om de resultaten van de delta in te bewaren.
  */
 public final class DeltaVergelijkerResultaat implements VergelijkerResultaat {
+
+    private static final Set<String> TOEGESTANE_VELDEN_ANUMMER_WIJZIGING = new HashSet<>();
 
     private final Map<Verschil, VerschilGroep> interneVerschilNaarVerschilGroepMap = new LinkedHashMap<>();
     private final List<VerschilGroep> interneVerschilGroepen = new ArrayList<>();
@@ -43,6 +48,14 @@ public final class DeltaVergelijkerResultaat implements VergelijkerResultaat {
     private final Map<BRPActie, Lo3Voorkomen> actieHerkomstMap = new IdentityHashMap<>();
     private final ActieConsolidatieData actieConsolidatieData = new ActieConsolidatieData();
     private final Set<DeltaEntiteitPaar> deltaEntiteitPaarSet = new LinkedHashSet<>();
+
+    static {
+        TOEGESTANE_VELDEN_ANUMMER_WIJZIGING.add("persoon");
+        TOEGESTANE_VELDEN_ANUMMER_WIJZIGING.add("id");
+        TOEGESTANE_VELDEN_ANUMMER_WIJZIGING.add("versienummer");
+        TOEGESTANE_VELDEN_ANUMMER_WIJZIGING.add("datumtijdstempel");
+        TOEGESTANE_VELDEN_ANUMMER_WIJZIGING.add("administratienummer");
+    }
 
     @Override
     public Set<Verschil> getVerschillen() {
@@ -248,14 +261,10 @@ public final class DeltaVergelijkerResultaat implements VergelijkerResultaat {
     /**
      * Groepeer verschillen tot VerschilGroepen. Alle verschillen die over 1 historie rij gaan worden gegroepeerd. Alle
      * andere verschillen worden groepen van 1 verschil.
-     *
-     * @param verschillenParam
-     *            De te groeperen verschillen
+     * @param verschillenParam De te groeperen verschillen
      */
     private void groepeerVerschillen(final Collection<Verschil> verschillenParam) {
-        for (final Verschil verschil : verschillenParam) {
-            groepeerVerschil(verschil);
-        }
+        verschillenParam.forEach(this::groepeerVerschil);
     }
 
     private void groepeerVerschil(final Verschil verschil) {
@@ -300,7 +309,7 @@ public final class DeltaVergelijkerResultaat implements VergelijkerResultaat {
     }
 
     @Override
-    public void addDeltaEntiteitPaar(final DeltaEntiteit bestaandEntiteit, final DeltaEntiteit nieuweEntiteit) {
+    public void addDeltaEntiteitPaar(final Entiteit bestaandEntiteit, final Entiteit nieuweEntiteit) {
         if (bestaandEntiteit != null && nieuweEntiteit != null) {
             deltaEntiteitPaarSet.add(new DeltaEntiteitPaar(bestaandEntiteit, nieuweEntiteit));
         }
@@ -308,7 +317,6 @@ public final class DeltaVergelijkerResultaat implements VergelijkerResultaat {
 
     /**
      * Geef de verzameling van delta entiteit paren.
-     * 
      * @return de verzameling van delta entiteit paren
      */
     @Override
@@ -327,15 +335,54 @@ public final class DeltaVergelijkerResultaat implements VergelijkerResultaat {
     }
 
     @Override
-    public boolean bevatAlleenAnummerWijzigingen() {
-        boolean result = false;
-        if (bevatNummerverwijzingHistorieWijziging()) {
-            for (final Verschil verschil : interneVerschilNaarVerschilGroepMap.keySet()) {
-                if (!verschil.isToegestaanVoorAnummerWijziging()) {
-                    result = false;
-                    break;
+    public boolean bevatAlleenAnummerWijzigingen(final Persoon persoon) throws ReflectiveOperationException {
+        boolean result = bevatNummerverwijzingHistorieWijziging();
+        final Iterator<Verschil> verschilIterator = interneVerschilNaarVerschilGroepMap.keySet().iterator();
+        while (result && verschilIterator.hasNext()) {
+            final Verschil verschil = verschilIterator.next();
+            if (verschil.getVerschilType().equals(VerschilType.RIJ_TOEGEVOEGD)
+                    && ((EntiteitSleutel) verschil.getSleutel()).getEntiteit().isAssignableFrom(Persoon.class)) {
+                final Field bestaandeRijenVeld = persoon.getClass().getDeclaredField(verschil.getSleutel().getVeld());
+                bestaandeRijenVeld.setAccessible(true);
+                final Set<FormeleHistorie> bestaandeRijen = (Set<FormeleHistorie>) bestaandeRijenVeld.get(persoon);
+                final FormeleHistorie actueleRij = FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandeRijen);
+                if (actueleRij == null) {
+                    result = verschil.getNieuweHistorieRij() instanceof PersoonNummerverwijzingHistorie;
+                } else {
+                    result = bevatRijGeenOfToegestaneWijzigingenVoorAnummerWijziging(actueleRij, verschil.getNieuweHistorieRij());
                 }
-                result = true;
+            } else {
+                result = verschil.isToegestaanVoorAnummerWijziging();
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void addVergelijkerResultaat(final VergelijkerResultaat controleResultaat) {
+        for (final Verschil verschil : controleResultaat.getVerschillen()) {
+            voegToeOfVervangVerschil(verschil);
+        }
+
+        actieHerkomstMap.putAll(controleResultaat.getActieHerkomstMap());
+        actieConsolidatieData.addConsoldatieData(controleResultaat.getActieConsolidatieData());
+        deltaEntiteitPaarSet.addAll(controleResultaat.getDeltaEntiteitPaarSet());
+    }
+
+    private boolean bevatRijGeenOfToegestaneWijzigingenVoorAnummerWijziging(
+            final FormeleHistorie actueleRij,
+            final FormeleHistorie nieuweRij) throws ReflectiveOperationException {
+        boolean result = true;
+
+        final Field[] velden = actueleRij.getClass().getDeclaredFields();
+        for (final Field actueleVeld : velden) {
+            final String veldnaam = actueleVeld.getName();
+            final Field nieuweRijVeld = nieuweRij.getClass().getDeclaredField(veldnaam);
+            actueleVeld.setAccessible(true);
+            nieuweRijVeld.setAccessible(true);
+            if (!Objects.equals(actueleVeld.get(actueleRij), nieuweRijVeld.get(nieuweRij)) && !TOEGESTANE_VELDEN_ANUMMER_WIJZIGING.contains(veldnaam)) {
+                result = false;
+                break;
             }
         }
         return result;

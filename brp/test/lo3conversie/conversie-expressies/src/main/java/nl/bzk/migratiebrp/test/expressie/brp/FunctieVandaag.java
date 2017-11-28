@@ -6,40 +6,36 @@
 
 package nl.bzk.migratiebrp.test.expressie.brp;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.expressietaal.Context;
-import nl.bzk.brp.expressietaal.Expressie;
-import nl.bzk.brp.expressietaal.ExpressieType;
-import nl.bzk.brp.expressietaal.expressies.functies.Functieberekening;
-import nl.bzk.brp.expressietaal.expressies.functies.signatuur.Signatuur;
-import nl.bzk.brp.expressietaal.expressies.functies.signatuur.SignatuurOptie;
-import nl.bzk.brp.expressietaal.expressies.functies.signatuur.SimpeleSignatuur;
-import nl.bzk.brp.expressietaal.expressies.literals.DatumLiteralExpressie;
-import nl.bzk.brp.expressietaal.expressies.literals.GetalLiteralExpressie;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import nl.bzk.algemeenbrp.util.common.DatumUtil;
+import nl.bzk.brp.domain.expressie.Context;
+import nl.bzk.brp.domain.expressie.DatumLiteral;
+import nl.bzk.brp.domain.expressie.Expressie;
+import nl.bzk.brp.domain.expressie.ExpressieType;
+import nl.bzk.brp.domain.expressie.GetalLiteral;
+import nl.bzk.brp.domain.expressie.functie.Functie;
+import nl.bzk.brp.domain.expressie.signatuur.Signatuur;
+import nl.bzk.brp.domain.expressie.signatuur.SignatuurOptie;
+import nl.bzk.brp.domain.expressie.signatuur.SimpeleSignatuur;
 
 /**
  * Representeert de functie VANDAAG(X). De functie geeft als resultaat de huidige datum (bij executie van de expressie),
  * waarbij opgeteld X jaar. Echter deze implementatie kan op een vaste datum worden gezet tbv regressie testen
  */
-public final class FunctieVandaag implements Functieberekening {
+public final class FunctieVandaag implements Functie {
 
     private static final Signatuur SIGNATUUR = new SignatuurOptie(new SimpeleSignatuur(ExpressieType.GETAL), new SimpeleSignatuur());
 
-    private static DateTime vandaag = new DateTime();
+    private static String vandaag = String.valueOf(DatumUtil.vandaag());
 
     /**
      * Zet de waarde 'vandaag'.
-     * 
-     * @param waarde
-     *            De te zetten waarde.
+     * @param waarde De te zetten waarde.
      */
     public static void setVandaag(final String waarde) {
-        final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd");
-        vandaag = fmt.parseDateTime(waarde);
+        vandaag = waarde;
     }
 
     /**
@@ -50,11 +46,11 @@ public final class FunctieVandaag implements Functieberekening {
     }
 
     @Override
-    public List<Expressie> vulDefaultArgumentenIn(final List<Expressie> argumenten) {
-        List<Expressie> volledigeArgumenten;
+    public List<Expressie> init(final List<Expressie> argumenten) {
+        final List<Expressie> volledigeArgumenten;
         if (argumenten.isEmpty()) {
-            volledigeArgumenten = new ArrayList<Expressie>();
-            volledigeArgumenten.add(new GetalLiteralExpressie(0));
+            volledigeArgumenten = new ArrayList<>();
+            volledigeArgumenten.add(new GetalLiteral(0));
         } else {
             volledigeArgumenten = argumenten;
         }
@@ -72,8 +68,12 @@ public final class FunctieVandaag implements Functieberekening {
     }
 
     @Override
-    public ExpressieType getTypeVanElementen(final List<Expressie> argumenten, final Context context) {
-        return ExpressieType.ONBEKEND_TYPE;
+    public Expressie evalueer(final List<Expressie> argumenten, final Context context) {
+        final GetalLiteral argument = (GetalLiteral) argumenten.get(0);
+        final ZonedDateTime zonedDateTime = vandaag != null
+                ? DatumUtil.vanDateNaarZonedDateTime(DatumUtil.vanStringNaarDatum(vandaag))
+                : DatumUtil.nuAlsZonedDateTime();
+        return new DatumLiteral(zonedDateTime.plusYears(argument.getWaarde()));
     }
 
     @Override
@@ -82,18 +82,8 @@ public final class FunctieVandaag implements Functieberekening {
     }
 
     @Override
-    public Expressie pasToe(final List<Expressie> argumenten, final Context context) {
-        final Expressie argument = argumenten.get(0);
-        return new DatumLiteralExpressie((vandaag == null ? new DateTime() : vandaag).plusYears(argument.alsInteger()));
+    public String getKeyword() {
+        return "VANDAAG";
     }
 
-    @Override
-    public boolean berekenBijOptimalisatie() {
-        return false;
-    }
-
-    @Override
-    public Expressie optimaliseer(final List<Expressie> argumenten, final Context context) {
-        return null;
-    }
 }

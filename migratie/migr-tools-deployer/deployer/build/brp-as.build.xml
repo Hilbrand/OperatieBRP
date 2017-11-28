@@ -1,270 +1,417 @@
 <project name="BRP" basedir="." default="fail">
 
-	<!--
-	 | Algemene properties
-	 |
-	 | server.host
-	 | server.username
-	 | server.password
-	 |
-	 | File properties
-	 |
-	 | application.bin.source
-	 | application.bin.file
-	 | application.gbacentrale.war.source
-	 | application.gbacentrale.war.file
-	 | application.bijhouding.war.source
-	 | application.bijhouding.war.file
-	 | application.bevraging.war.source
+    <!--
+     | Algemene properties
+     |
+     | server.host
+     | server.username
+     | server.password
+     |
+     | File properties
+     |
+     | application.bin.source
+     | application.bin.file
+     | application.jmx.source
+     | application.jxm.file
+     | application.afnemerindicatie-gba.war.source
+     | application.afnemerindicatie-gba.war.file
+     | application.bevraging-gba.war.source
+     | application.bevraging-gba.war.file
+     | application.bijhouding.war.source
+     | application.bijhouding.war.file
+     | application.bijhouding-gba.war.source
+     | application.bijhouding-gba.war.file
+     | application.bevraging.war.source
      | application.bevraging.war.file
-	 | application.ahnotificatiebezemwagen.war.source
-	 | application.ahnotificatiebezemwagen.war.file
-	 | application.ahnotificatieverwerker.war.source
-	 | application.ahnotificatieverwerker.war.file
-	 | application.kennisgevingverstuurder.war.source
-	 | application.kennisgevingverstuurder.war.file
-	 | application.afnemer.war.source
-	 | application.afnemer.war.file
-	 | application.beheer.war.source
-	 | application.beheer.war.file
-	 |
-	 | BRP properties
-	 |
-	 | brp.port
-	 | brp.rmi.registry.port
-	 | brp.jmx.service.port
-	 | brp.ajp.port
+     | application.mutatielevering.zip.source
+     | application.mutatielevering.zip.file
+     | application.kennisgevingverstuurder.war.source
+     | application.kennisgevingverstuurder.war.file
+     | application.afnemer.war.source
+     | application.afnemer.war.file
+     | application.beheer.war.source
+     | application.beheer.war.file
      |
-	 | brp.database.host
-	 | brp.database.name
-	 | brp.database.username
-	 | brp.database.password
-	 |
-	 | isc.host
-	 | isc.activemq.port
+     | JMX properties
      |
-	-->
+     | application.jmx.port
+     | application.jmx.mutatielevering.port
+     |
+     | BRP properties
+     |
+     | brp.port
+     | brp.rmi.registry.port
+     | brp.jmx.service.port
+     | brp.ajp.port
+     |
+     | brp.database.host
+     | brp.database.name
+     | brp.database.username
+     | brp.database.password
+     |
+     | brp.messagebroker.host
+     | brp.messagebroker.port
+     |
+     | isc.console.host
+     | isc.console.port
+     |
+    -->
 
-	<property name="application.directory" value="brp" />
-	<property name="brp.port" value="8280" />
-	<property name="brp.rmi.registry.port" value="1299" />
-	<property name="brp.jmx.service.port" value="10201" />
+    <property name="application.directory" value="brp"/>
+    <property name="brp.port" value="8281"/>
+    <property name="brp.rmi.registry.port" value="1299"/>
+    <property name="brp.jmx.service.port" value="10201"/>
 
-	<target name="checkProperties">
-		<fail unless="server.host" message="server.host property is verplicht." />
-		<fail unless="server.username" message="server.username property is verplicht." />
-		<fail unless="server.password" message="server.password property is verplicht." />
-	</target>
-
-	<target name="checkInstallProperties" depends="checkProperties">
-		<!-- Check file settings -->
-		<fail unless="application.bin.source" message="application.bin.source property is verplicht bij het installeren." />
-		<fail unless="application.bin.file" message="application.bin.file property is verplicht bij het installeren." />
-		<fail unless="application.gbacentrale.war.source" message="application.gbacentrale.war.source property is verplicht bij het installeren." />
-		<fail unless="application.gbacentrale.war.file" message="application.gbacentrale.war.file property is verplicht bij het installeren." />
-		<fail unless="application.bijhouding.war.source" message="application.bijhouding.war.source property is verplicht bij het installeren." />
-		<fail unless="application.bijhouding.war.file" message="application.bijhouding.war.file property is verplicht bij het installeren." />
-		<fail unless="application.bevraging.war.source" message="application.bevraging.war.source property is verplicht bij het installeren." />
-        <fail unless="application.bevraging.war.file" message="application.bevraging.war.file property is verplicht bij het installeren." />
-		<fail unless="application.ahnotificatiebezemwagen.war.source" message="application.ahnotificatiebezemwagen.war.source property is verplicht bij het installeren." />
-		<fail unless="application.ahnotificatiebezemwagen.war.file" message="application.ahnotificatiebezemwagen.war.file property is verplicht bij het installeren." />
-		<fail unless="application.ahnotificatieverwerker.war.source" message="application.ahnotificatieverwerker.war.source property is verplicht bij het installeren." />
-		<fail unless="application.ahnotificatieverwerker.war.file" message="application.ahnotificatieverwerker.war.file property is verplicht bij het installeren." />
-		<fail unless="application.kennisgevingverstuurder.war.source" message="application.kennisgevingverstuurder.war.source property is verplicht bij het installeren." />
-		<fail unless="application.kennisgevingverstuurder.war.file" message="application.kennisgevingverstuurder.war.file property is verplicht bij het installeren." />
-		<fail unless="application.afnemer.war.source" message="application.afnemer.war.source property is verplicht bij het installeren." />
-		<fail unless="application.afnemer.war.file" message="application.afnemer.war.file property is verplicht bij het installeren." />
-		<fail unless="application.beheer.war.source" message="application.beheer.war.source property is verplicht bij het installeren." />
-		<fail unless="application.beheer.war.file" message="application.beheer.war.file property is verplicht bij het installeren." />
-
-		<fail unless="brp.port" message="brp.port property is verplicht." />
-		<fail unless="brp.rmi.registry.port" message="brp.rmi.registry.port property is verplicht." />
-		<fail unless="brp.jmx.service.port" message="brp.jmx.service.port property is verplicht." />
-		<fail unless="brp.database.host" message="brp.database.host property is verplicht." />
-		<fail unless="brp.database.name" message="brp.database.name property is verplicht." />
-		<fail unless="brp.database.username" message="brp.database.username property is verplicht." />
-		<fail unless="brp.database.password" message="brp.database.password property is verplicht." />
-		<fail unless="brp.ajp.port" message="brp.ajp.port property is verplicht."/>
-
-		<fail unless="isc.host" message="isc.host property is verplicht." />
-		<fail unless="isc.activemq.port" message="isc.activemq.port property is verplicht." />
-	</target>
-
-    <target name="install" depends="checkInstallProperties,createLocalConfigurationFile">
-		<echo message="Installing ${ant.project.name} ...." />
-		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
-                 command="cd /tmp; mkdir ${application.directory}; cd ${application.directory}; rm -rf *;" />
-
-		<echo message="Copying ${application.bin.file}" />
-		<scp todir="${server.username}:${server.password}@${server.host}:/tmp/${application.directory}" trust="true" failonerror="true">
-			<fileset dir="${application.bin.source}">
-				<include name="${application.bin.file}" />
-			</fileset>
-		</scp>
-
-		<echo message="Unpacking ${application.bin.file}" />
-		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
-                 command="cd ~; mkdir ${application.directory}; cd ${application.directory}; unzip -o /tmp/${application.directory}/${application.bin.file} -d .;" />
-		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
-				 command="cd ~/${application.directory}; cd apache-tomcat-*; mv * ..; cd ..; rm -rf apache-tomcat-*; chmod u+x bin/*.sh" />
-
-		<echo message="Copying configuration files" />
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/conf" trust="true" failonerror="true">
-			<fileset dir="tmp">
-				<include name="server.xml" />
-			</fileset>
-		</scp>
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps" trust="true" failonerror="false">
-			<fileset dir="${application.bin.source}">
-				<include name="jvm-beheer.war" />
-			</fileset>
-		</scp>
-
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/lib" trust="true" failonerror="true">
-			<fileset dir="tmp">
-				<include name="brp-alles.properties" />
-				<include name="beheer.properties" />
-			</fileset>
-		</scp>
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/lib" trust="true" failonerror="true">
-			<fileset dir="deps/brp">
-				<include name="bzm_client_publickeys.jks" />
-				<include name="bzm_server_privatekey.jks" />
-				<include name="log4j.xml" />
-				<include name="log4j2.xml" />
-			</fileset>
-		</scp>
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/lib" trust="true" failonerror="true">
-			<fileset dir="deps/tomcat">
-				<include name="catalina-jmx-remote.jar" />
-				<include name="postgresql-9.2-1004-jdbc41.jar" />
-			</fileset>
-		</scp>
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/bin" trust="true" failonerror="true">
-			<fileset dir="deps/brp">
-				<include name="catalina.sh" />
-			</fileset>
-		</scp>
-		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
-				 command="cd ~/${application.directory}/bin; chmod u+x catalina.sh" />
-
-		<antcall target="update" />
-
-		<echo message="Succesfully installed ${ant.project.name}" />
+    <target name="checkProperties">
+        <fail unless="server.host" message="server.host property is verplicht."/>
+        <fail unless="server.username" message="server.username property is verplicht."/>
+        <fail unless="server.password" message="server.password property is verplicht."/>
     </target>
 
-	<target name="update" depends="checkInstallProperties">
-		<echo message="Updating ${ant.project.name} ..." />
+    <target name="checkInstallProperties" depends="checkProperties">
+        <!-- Check file settings -->
+        <fail unless="application.bin.source"
+              message="application.bin.source property is verplicht bij het installeren."/>
+        <fail unless="application.bin.file"
+              message="application.bin.file property is verplicht bij het installeren."/>
+        <fail unless="application.jmx.source"
+              message="application.jmx.source property is verplicht bij het installeren."/>
+        <fail unless="application.jmx.file"
+              message="application.jmx.file property is verplicht bij het installeren."/>
+        <fail unless="application.afnemerindicatie-gba.war.source"
+              message="application.afnemerindicatie-gba.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.afnemerindicatie-gba.war.file"
+              message="application.afnemerindicatie-gba.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.bevraging-gba.war.source"
+              message="application.bevraging-gba.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.bevraging-gba.war.file"
+              message="application.bevraging-gba.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.bijhouding.war.source"
+              message="application.bijhouding.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.bijhouding.war.file"
+              message="application.bijhouding.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.bijhouding-gba.war.source"
+              message="application.bijhouding-gba.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.bijhouding-gba.war.file"
+              message="application.bijhouding-gba.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.bevraging.war.source"
+              message="application.bevraging.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.bevraging.war.file"
+              message="application.bevraging.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.protocollering.war.source"
+              message="application.protocollering.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.protocollering.war.file"
+              message="application.protocollering.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.vrijbericht.war.source"
+              message="application.vrijbericht.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.vrijbericht.war.file"
+              message="application.vrijbericht.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.mutatielevering.zip.source"
+              message="application.mutatielevering.zip.source property is verplicht bij het installeren."/>
+        <fail unless="application.mutatielevering.zip.file"
+              message="application.mutatielevering.zip.file property is verplicht bij het installeren."/>
+        <fail unless="application.admhnd.publicatie.war.source"
+              message="application.admhnd.publicatie.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.admhnd.publicatie.war.file"
+              message="application.admhnd.publicatie.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.kennisgevingverstuurder.war.source"
+              message="application.kennisgevingverstuurder.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.kennisgevingverstuurder.war.file"
+              message="application.kennisgevingverstuurder.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.afnemer.war.source"
+              message="application.afnemer.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.afnemer.war.file"
+              message="application.afnemer.war.file property is verplicht bij het installeren."/>
+        <fail unless="application.beheer.war.source"
+              message="application.beheer.war.source property is verplicht bij het installeren."/>
+        <fail unless="application.beheer.war.file"
+              message="application.beheer.war.file property is verplicht bij het installeren."/>
 
-		<antcall target="internalUpdate" />
+        <fail unless="application.jmx.port"
+              message="application.jmx.port property is verplicht bij het installeren."/>
+        <fail unless="application.jmx.mutatielevering.port"
+              message="application.jmx.mutatielevering.port property is verplicht bij het installeren."/>
 
-		<echo message="Succesfully updated ${ant.project.name}" />
-	</target>
+        <fail unless="brp.port" message="brp.port property is verplicht."/>
+        <fail unless="brp.rmi.registry.port"
+              message="brp.rmi.registry.port property is verplicht."/>
+        <fail unless="brp.jmx.service.port" message="brp.jmx.service.port property is verplicht."/>
+        <fail unless="brp.database.host" message="brp.database.host property is verplicht."/>
+        <fail unless="brp.database.name" message="brp.database.name property is verplicht."/>
+        <fail unless="brp.database.username"
+              message="brp.database.username property is verplicht."/>
+        <fail unless="brp.database.password"
+              message="brp.database.password property is verplicht."/>
+        <fail unless="brp.ajp.port" message="brp.ajp.port property is verplicht."/>
 
-	<target name="internalUpdate" depends="internalUpdateGbaCentrale, internalUpdateBijhouding, internalUpdateBevraging, internalUpdateBezemwagen, internalUpdateNotificatieVerwerker, internalUpdateVerstuurder, internalUpdateAfnemer, internalUpdateBeheer">
-	</target>
+        <fail unless="brp.messagebroker.host"
+              message="brp.messagebroker.host property is verplicht."/>
+        <fail unless="brp.messagebroker.port"
+              message="brp.messagebroker.port property is verplicht."/>
+        <fail unless="isc.console.host" message="isc.console.host property is verplicht."/>
+        <fail unless="isc.console.port" message="isc.console.port property is verplicht."/>
+    </target>
 
-	<target name="internalUpdateGbaCentrale" unless="brp-as.skip.update.gbacentrale">
-		<echo message="Copying ${application.gbacentrale.war.file}" />
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps" trust="true" failonerror="true">
-			<fileset dir="${application.gbacentrale.war.source}">
-				<include name="${application.gbacentrale.war.file}" />
-			</fileset>
-		</scp>
-	</target>
+    <target name="install" depends="checkInstallProperties,createLocalConfigurationFile">
+        <echo message="Installing ${ant.project.name} ...."/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd /tmp; mkdir ${application.directory}; cd ${application.directory}; rm -rf *;"/>
 
-	<target name="internalUpdateBijhouding" unless="brp-as.skip.update.bijhouding">
-		<echo message="Copying ${application.bijhouding.war.file}" />
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps" trust="true" failonerror="true">
-			<fileset dir="${application.bijhouding.war.source}">
-				<include name="${application.bijhouding.war.file}" />
-			</fileset>
-		</scp>
-	</target>
-
-	<target name="internalUpdateBevraging" unless="brp-as.skip.update.bevraging">
-		<echo message="Copying ${application.bevraging.war.file}" />
-        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps" trust="true" failonerror="true">
-            <fileset dir="${application.bevraging.war.source}">
-                <include name="${application.bevraging.war.file}" />
+        <echo message="Copying ${application.bin.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:/tmp/${application.directory}"
+             trust="true" failonerror="true">
+            <fileset dir="${application.bin.source}">
+                <include name="${application.bin.file}"/>
             </fileset>
         </scp>
-	</target>
 
-	<target name="internalUpdateBezemwagen" unless="brp-as.skip.update.bezemwagen">
-		<echo message="Copying ${application.ahnotificatiebezemwagen.war.file}" />
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps" trust="true" failonerror="true">
-			<fileset dir="${application.ahnotificatiebezemwagen.war.source}">
-				<include name="${application.ahnotificatiebezemwagen.war.file}" />
-			</fileset>
-		</scp>
-	</target>
+        <echo message="Unpacking ${application.bin.file}"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd ~; mkdir ${application.directory}; cd ${application.directory}; unzip -o /tmp/${application.directory}/${application.bin.file} -d .;"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd ~/${application.directory}; cd apache-tomcat-*; mv * ..; cd ..; rm -rf apache-tomcat-*; chmod u+x bin/*.sh"/>
 
-	<target name="internalUpdateNotificatieVerwerker" unless="brp-as.skip.update.notificatieverwerker">
-		<echo message="Copying ${application.ahnotificatieverwerker.war.file}" />
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps" trust="true" failonerror="true">
-			<fileset dir="${application.ahnotificatieverwerker.war.source}">
-				<include name="${application.ahnotificatieverwerker.war.file}" />
-			</fileset>
-		</scp>
-	</target>
+        <echo message="Copying ${application.jmx.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="false">
+            <fileset dir="${application.jmx.source}">
+                <include name="${application.jmx.file}"/>
+            </fileset>
+        </scp>
 
-	<target name="internalUpdateVerstuurder" unless="brp-as.skip.update.verstuurder">
-		<echo message="Copying ${application.kennisgevingverstuurder.war.file}" />
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps" trust="true" failonerror="true">
-			<fileset dir="${application.kennisgevingverstuurder.war.source}">
-				<include name="${application.kennisgevingverstuurder.war.file}" />
-			</fileset>
-		</scp>
-	</target>
+        <echo message="Copying configuration files"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/conf"
+             trust="true" failonerror="true">
+            <fileset dir="tmp">
+                <include name="server.xml"/>
+            </fileset>
+        </scp>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="false">
+            <fileset dir="${application.bin.source}">
+                <include name="jvm-beheer.war"/>
+            </fileset>
+        </scp>
 
-	<target name="internalUpdateAfnemer" unless="brp-as.skip.update.afnemer">
-		<echo message="Copying ${application.afnemer.war.file}" />
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps" trust="true" failonerror="true">
-			<fileset dir="${application.afnemer.war.source}">
-				<include name="${application.afnemer.war.file}" />
-			</fileset>
-		</scp>
-	</target>
+        <echo message="Copying ${application.mutatielevering.zip.file}"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd /tmp; mkdir brp-mutatielevering; cd brp-mutatielevering; rm -rf *;"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:/tmp/brp-mutatielevering"
+             trust="true" failonerror="true">
+            <fileset dir="${application.mutatielevering.zip.source}">
+                <include name="${application.mutatielevering.zip.file}"/>
+            </fileset>
+        </scp>
 
-	<target name="internalUpdateBeheer" unless="brp-as.skip.update.beheer">
-		<echo message="Copying ${application.beheer.war.file}" />
-		<scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps" trust="true" failonerror="true">
-			<fileset dir="${application.beheer.war.source}">
-				<include name="${application.beheer.war.file}" />
-			</fileset>
-		</scp>
-	</target>
-		
-	<target name="createLocalConfigurationFile" depends="checkProperties">
-	<echo message="Creating configuration ${ant.project.name}" />
-		<delete dir="tmp" />
-		<mkdir dir="tmp" />
-		<echo file="tmp/brp-alles.properties" append="false" force="true"><![CDATA[
+        <echo message="Unpacking ${application.mutatielevering.zip.file}"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd ~; mkdir brp-mutatielevering; cd brp-mutatielevering; unzip -o /tmp/brp-mutatielevering/${application.mutatielevering.zip.file} -d .;"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd ~/brp-mutatielevering; cd conf; rm -rf *; cd ..; chmod u+x *.sh"/>
+
+        <scp todir="${server.username}:${server.password}@${server.host}:~/brp-mutatielevering/conf"
+             trust="true" failonerror="true">
+            <fileset dir="tmp">
+                <include name="brp-jmx-mutatielevering.properties"/>
+                <include name="brp-alles.properties"/>
+            </fileset>
+        </scp>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/brp-mutatielevering/conf"
+             trust="true" failonerror="true">
+            <fileset dir="deps/brp">
+                <include name="log4j2.xml"/>
+            </fileset>
+        </scp>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/brp-mutatielevering/lib"
+             trust="true" failonerror="true">
+            <fileset dir="deps/tomcat">
+                <include name="postgresql-9.4-1201-jdbc41.jar"/>
+            </fileset>
+        </scp>
+
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/lib"
+             trust="true" failonerror="true">
+            <fileset dir="tmp">
+                <include name="jmx.properties"/>
+                <include name="brp-alles.properties"/>
+                <include name="beheer.properties"/>
+            </fileset>
+        </scp>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/lib"
+             trust="true" failonerror="true">
+            <fileset dir="deps/brp">
+                <include name="bzm_client_publickeys.jks"/>
+                <include name="bzm_server_privatekey.jks"/>
+                <include name="log4j.xml"/>
+                <include name="log4j2.xml"/>
+            </fileset>
+        </scp>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/lib"
+             trust="true" failonerror="true">
+            <fileset dir="deps/tomcat">
+                <include name="catalina-jmx-remote.jar"/>
+                <include name="postgresql-9.4-1201-jdbc41.jar"/>
+            </fileset>
+        </scp>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/bin"
+             trust="true" failonerror="true">
+            <fileset dir="deps/brp">
+                <include name="catalina.sh"/>
+            </fileset>
+        </scp>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd ~/${application.directory}/bin; chmod u+x catalina.sh"/>
+
+        <antcall target="update"/>
+
+        <echo message="Succesfully installed ${ant.project.name}"/>
+    </target>
+
+    <target name="update" depends="checkInstallProperties">
+        <echo message="Updating ${ant.project.name} ..."/>
+
+        <antcall target="internalUpdate"/>
+
+        <echo message="Succesfully updated ${ant.project.name}"/>
+    </target>
+
+    <target name="internalUpdate"
+            depends="internalUpdateBijhouding, internalUpdateBevraging, internalUpdateMutatielevering, internalUpdateProtocollering, internalUpdateVrijbericht, internalUpdateVerstuurder, internalUpdateAfnemer">
+    </target>
+
+    <target name="internalUpdateBijhouding" unless="brp-as.skip.update.bijhouding">
+        <echo message="Copying ${application.bijhouding.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.bijhouding.war.source}">
+                <include name="${application.bijhouding.war.file}"/>
+            </fileset>
+        </scp>
+        <echo message="Copying ${application.bijhouding-gba.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.bijhouding-gba.war.source}">
+                <include name="${application.bijhouding-gba.war.file}"/>
+            </fileset>
+        </scp>
+    </target>
+
+    <target name="internalUpdateBevraging" unless="brp-as.skip.update.bevraging">
+        <echo message="Copying ${application.bevraging.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.bevraging.war.source}">
+                <include name="${application.bevraging.war.file}"/>
+            </fileset>
+        </scp>
+        <echo message="Copying ${application.bevraging-gba.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.bevraging-gba.war.source}">
+                <include name="${application.bevraging-gba.war.file}"/>
+            </fileset>
+        </scp>
+    </target>
+
+    <target name="internalUpdateMutatielevering"
+            unless="brp-as.skip.update.notificatieverwerker">
+        <echo message="Copying ${application.admhnd.publicatie.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.admhnd.publicatie.war.source}">
+                <include name="${application.admhnd.publicatie.war.file}"/>
+            </fileset>
+        </scp>
+    </target>
+
+    <target name="internalUpdateProtocollering" unless="brp-as.skip.update.protocollering">
+        <echo message="Copying ${application.bevraging.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.protocollering.war.source}">
+                <include name="${application.protocollering.war.file}"/>
+            </fileset>
+        </scp>
+    </target>
+
+    <target name="internalUpdateVrijbericht" unless="brp-as.skip.update.vrijbericht">
+        <echo message="Copying ${application.vrijbericht.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.vrijbericht.war.source}">
+                <include name="${application.vrijbericht.war.file}"/>
+            </fileset>
+        </scp>
+    </target>
+
+    <target name="internalUpdateVerstuurder" unless="brp-as.skip.update.verstuurder">
+        <echo message="Copying ${application.kennisgevingverstuurder.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.kennisgevingverstuurder.war.source}">
+                <include name="${application.kennisgevingverstuurder.war.file}"/>
+            </fileset>
+        </scp>
+    </target>
+
+    <target name="internalUpdateAfnemer" unless="brp-as.skip.update.afnemer">
+        <echo message="Copying ${application.afnemer.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.afnemer.war.source}">
+                <include name="${application.afnemer.war.file}"/>
+            </fileset>
+        </scp>
+        <echo message="Copying ${application.afnemerindicatie-gba.war.file}"/>
+        <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/webapps"
+             trust="true" failonerror="true">
+            <fileset dir="${application.afnemerindicatie-gba.war.source}">
+                <include name="${application.afnemerindicatie-gba.war.file}"/>
+            </fileset>
+        </scp>
+    </target>
+
+    <target name="createLocalConfigurationFile" depends="checkProperties">
+        <echo message="Creating configuration ${ant.project.name}"/>
+        <delete dir="tmp"/>
+        <mkdir dir="tmp"/>
+
+        <echo file="tmp/jmx.properties" append="false" force="true"><![CDATA[
+jmx.port=${application.jmx.port}
+]]></echo>
+
+        <echo file="tmp/brp-jmx-mutatielevering.properties" append="false" force="true"><![CDATA[
+jmx.port=${application.jmx.mutatielevering.port}
+]]></echo>
+
+        <echo file="tmp/brp-alles.properties" append="false" force="true"><![CDATA[
+
 #################################################################
 # DATASOURCES
 #################################################################
 
 # datasource algemeen
-
-jdbc.driverClassName=org.postgresql.Driver
-jdbc.url=jdbc:postgresql://${brp.database.host}/${brp.database.name}
-jdbc.username=${brp.database.username}
-jdbc.password=${brp.database.password}
-jdbc.pool.initialSize=1
-jdbc.pool.maxActive=20
-jdbc.pool.minIdle=1
-jdbc.pool.maxIdle=5
-
+atomikos.base.dir=/opt/appserver/brp/work
 brp.database.timeout.seconden=10
 brp.locking.timeout.seconden=10
-jdbc.transactionisolation=2
+
 #Voor bevraging servers kan de readonly property op true worden gezet
 jdbc.readonly=false
 
 # datasource naar de master database om locks te kunnen plaatsen en wijzigingen te kunnen doorvoeren
-jdbc.master.driverClassName=org.postgresql.Driver
+jdbc.master.driverClassName=org.postgresql.xa.PGXADataSource
 jdbc.master.url=jdbc:postgresql://${brp.database.host}/${brp.database.name}
+jdbc.master.database.driver=org.postgresql.xa.PGXADataSource
+jdbc.master.database.host=${brp.database.host}
+jdbc.master.database.port=5432
+jdbc.master.database.name=${brp.database.name}
 jdbc.master.username=${brp.database.username}
 jdbc.master.password=${brp.database.password}
 jdbc.master.pool.initialSize=1
@@ -272,10 +419,56 @@ jdbc.master.pool.maxActive=20
 jdbc.master.pool.minIdle=1
 jdbc.master.pool.maxIdle=5
 
-# datasource voor protocolleren
+# shorthand notatie
 
-jdbc.protocollering.driverClassName=org.postgresql.Driver
+jdbc.driverClassName=org.postgresql.xa.PGXADataSource
+jdbc.url=jdbc:postgresql://${brp.database.host}/${brp.database.name}
+jdbc.username=${brp.database.username}
+jdbc.password=${brp.database.password}
+jdbc.db.host=${brp.database.host}
+jdbc.db.port=5432
+jdbc.db.name=${brp.database.name}
+jdbc.transactionisolation=2
+
+# datasource voor bijhouding
+
+brp.bijhouding.database.driver=org.postgresql.xa.PGXADataSource
+brp.bijhouding.database.host=${brp.database.host}
+brp.bijhouding.database.port=5432
+brp.bijhouding.database.name=${brp.database.name}
+brp.bijhouding.database.username=${brp.database.username}
+brp.bijhouding.database.password=${brp.database.password}
+brp.bijhouding.database.maxpool=5
+brp.bijhouding.database.minpool=1
+
+# datasource voor archivering bijhouding
+
+brp.bijhouding.archivering.database.driver=org.postgresql.xa.PGXADataSource
+brp.bijhouding.archivering.database.host=${brp.database.host}
+brp.bijhouding.archivering.database.port=5432
+brp.bijhouding.archivering.database.name=${brp.database.name}
+brp.bijhouding.archivering.database.username=${brp.database.username}
+brp.bijhouding.archivering.database.password=${brp.database.password}
+brp.bijhouding.archivering.database.maxpool=5
+brp.bijhouding.archivering.database.minpool=1
+
+# datasource voor bevraging
+
+brp.bevraging.database.driver=org.postgresql.xa.PGXADataSource
+brp.bevraging.database.host=${brp.database.host}
+brp.bevraging.database.port=5432
+brp.bevraging.database.name=${brp.database.name}
+brp.bevraging.database.username=${brp.database.username}
+brp.bevraging.database.password=${brp.database.password}
+brp.bevraging.database.maxpool=5
+brp.bevraging.database.minpool=1
+
+# datasource voor protocolleren
+jdbc.protocollering.database.driver=org.postgresql.xa.PGXADataSource
 jdbc.protocollering.url=jdbc:postgresql://${brp.database.host}/${brp.database.name}
+jdbc.protocollering.database.host=${brp.database.host}
+jdbc.protocollering.database.port=5432
+jdbc.protocollering.database.name=${brp.database.name}
 jdbc.protocollering.username=${brp.database.username}
 jdbc.protocollering.password=${brp.database.password}
 jdbc.protocollering.pool.initialSize=1
@@ -285,7 +478,7 @@ jdbc.protocollering.pool.maxIdle=5
 
 # datasource voor archivering
 
-jdbc.archivering.driverClassName=org.postgresql.Driver
+jdbc.archivering.driverClassName=org.postgresql.xa.PGXADataSource
 jdbc.archivering.url=jdbc:postgresql://${brp.database.host}/${brp.database.name}
 jdbc.archivering.username=${brp.database.username}
 jdbc.archivering.password=${brp.database.password}
@@ -293,6 +486,10 @@ jdbc.archivering.pool.initialSize=1
 jdbc.archivering.pool.maxActive=20
 jdbc.archivering.pool.minIdle=1
 jdbc.archivering.pool.maxIdle=5
+jdbc.archivering.database.driver=org.postgresql.xa.PGXADataSource
+jdbc.archivering.database.host=${brp.database.host}
+jdbc.archivering.database.port=5432
+jdbc.archivering.database.name=${brp.database.name}
 
 # Connectie naar de database voor de JMS Broker (ActiveMQ)
 jdbc.activemq.driverClassName=org.postgresql.Driver
@@ -300,40 +497,67 @@ jdbc.activemq.url=jdbc:postgresql://${brp.database.host}/${brp.database.name}
 jdbc.activemq.username=${brp.database.username}
 jdbc.activemq.password=${brp.database.password}
 
-
 #################################################################
 # JMS
 #################################################################
 
-# Broker connecties, wie mogen er verbinden?
-berichtencentrale.url=tcp://0.0.0.0:61616
-berichtcentrale.consumer-producer.url=tcp://0.0.0.0:61616
+# De url waarop de broker beschikbaar is.
+# Voor de host zijn een aantal mogelijkheden:
+#
+# Localhost; ActiveMQ accepteert alleen connecties via de
+# loopback interface,# dus van de lokale machine.
+#
+# Fullyqualified name van de host, bijvoorbeeld app01.modernodam.nl;
+#   activeMQ accepteert connecties van buitenaf.
+#
+# 0.0.0.0; ActiveMQ accepteert connecties op alle interfaces,
+# dus zowel van# buitenaf als vanaf de lokale machine.
+#
+brp.jms.broker.url=tcp://${brp.messagebroker.host}:${brp.messagebroker.port}
+brp.jms.client.url=tcp://${brp.messagebroker.host}:${brp.messagebroker.port}
+jms.broker.afnemers.url=tcp://${brp.messagebroker.host}:${brp.messagebroker.port}
 
-brp.queue.minpool=3
+brp.queue.minpool=1
 brp.queue.maxpool=20
 
 # Data opslag
+
+# Voor het redelivery mechanisme van ActiveMQ is een
+# data directory nodig waar tijdelijk berichten worden
+# neergezet die opnieuw verzonden moeten worden.
+# Deze directory heeft toegangsrechten nodig, zodat de gebruiker
+# waarmee tomcat op het systeem draait in deze directory kan
+# lezen en schrijven.
 berichtencentrale.data.directory=../data/activemq-data
+berichtencentrale.kahadb.directory=../data/activemq-kahadb
 berichtencentrale.scheduler.directory=../data/activemq-data/scheduler
+
+# Vrije geheugen voor activemq broker. Zodra deze verzadigd is, wordt er naar
+# de temporary storage geschreven.
 berichtencentrale.memory.usage=512mb
+
+# Deze instelling wordt gebruikt als persistent messages niet in de database
+# worden opgeslagen, maar op het lokale filesysteem (kahaDB). Momenteel wordt
+# er nog een jdbcPersistenceAdapter gebruikt, dus wordt deze instelling genegeerd.
 berichtencentrale.store.usage=1024mb
+
+# Zodra memory verzadigd is, zal naar de temp locatie weggeschreven worden.
+# Dit loopt op bij grote hoeveelheden non-persistent messages (topics). De temp
+# storage wordt voor de zekerheid vrij ruim gezet in productieachtige omgevingen, omdat
+# er niet gerecoverd wordt als de tempstorage verzadigd raakt.
+# http://tmielke.blogspot.nl/2011/02/observations-on-activemqs-temp-storage.html
+# http://akuntamukkala.blogspot.nl/2014/01/understanding-memory-usage-in-activemq.html
 berichtencentrale.temp.usage=1024mb
 
-protocollering.bronapplicatie=BRPTest
 protocollering.jms.queue=ProtocolleringQueue
-protocollering.jms.url=tcp://localhost:61616
 protocollering.jms.concurrency=10
 
 # Queue voor mutatielevering waarop te verwerken administratieve handelingen worden geplaatst door bijvoorbeeld Bijhouding.
-jms.broker.ah.url=tcp://localhost:61616
-jms.broker.ah.queue=AdministratieveHandelingen
+jms.broker.ah.queue=${bijhouding.gba.admhnd.publicatie.queue.name}
 
-# Broker url waar de queue voor afnemerindicaties zich bevindt
-jms.broker.afnemerindicaties.url=tcp://localhost:61616
-
-#Uitgaande berichten queues
-jms.broker.afnemers.url=tcp://localhost:61616
-
+verzending.jms.concurrency=10
+verzending.jms.afnemer.queue=VerzendingAfnemerQueue
+verzending.jms.bijh.notificatie.queue=BijhoudingNotificatieQueue
 
 #################################################################
 # JMS (GBA)
@@ -345,9 +569,6 @@ afnemerindicaties.migratie.antwoord.queue.name=${afnemerindicaties.migratie.antw
 
 # GBA queue, waarop archivering verzoeken vanuit migratie worden geplaatst.
 archief.migratie.queue.name=${archief.migratie.queue.name}
-
-# GBA queue, waarop bijhoudingen vanuit migratie op worden genotificeerd.
-bijhouding.gba.admhnd.publicatie.queue.name=${bijhouding.gba.admhnd.publicatie.queue.name}
 
 # GBA queue, waarop de module Verzending LO3 berichten plaatst.
 jms.broker.lo3.leveringen.queue=GbaLeveringen
@@ -367,24 +588,26 @@ security.keystore.private.file=bzm_server_privatekey.jks
 security.privatekey.alias=1
 security.privatekey.password=M1gratie
 
-
 #################################################################
 # BRP SOFTWARE
 #################################################################
 
-# Bepaalt welke administratieve handelingen niet door de bezemwagen
-# opgepakt moeten worden en niet in de verifierstap meegenomen worden.
-soort.administratieve.handelingen.overslaan=G_B_A_INITIELE_VULLING, G_B_A_BIJHOUDING_ACTUEEL
+#atomikos.unique.name=brp-bijhouding
+atomikos.max.actives=50
+atomikos.default.timeout=10000
+atomikos.max.timeout=300000
 
+routering.activemq.url=tcp://${brp.messagebroker.host}:${brp.messagebroker.port}
 
 #################################################################
 # BRP MODULE MUTATIELEVERING
 #################################################################
 
-#
+# Definieert het aantal parallele threads in het mutatielevering
+# process. Zet deze waarde op niet (veel) meer dan het fysiek
+# aantal CPUs van de node. Als er meerdere modules op dezelfde
+# node actief zijn wees dan nog behoudender.
 mutatielevering.concurrent.listeners=10
-
-
 
 #################################################################
 # BRP MODULE VERZENDING
@@ -394,14 +617,14 @@ mutatielevering.concurrent.listeners=10
 # Selectie van queues (zie http://activemq.apache.org/wildcards.html)
 jms.broker.redelivery.queue=>
 # Wachttijd voor hersturing na eerste poging
-jms.broker.redelivery.initial.delay=60
+jms.broker.redelivery.initial.delay=$60
 # Wachttijd voor hersturing
 jms.broker.redelivery.delay=60
 # Aantal pogingen van hersturen
 jms.broker.redelivery.max.redeliveries=10
 
-
 # SSL
+
 security.keystore.type=JKS
 security.keystore.bestand=bzm_server_privatekey.jks
 security.keystore.wachtwoord=M1gratie
@@ -413,57 +636,51 @@ security.truststore.wachtwoord=hallo123
 
 security.disable.cn.check=true
 
-
-#################################################################
-# BRP MODULE BEZEMWAGEN
-#################################################################
-
-#De uitstel in milliseconden na elke "opruimsessie"
-opruim.uitstel=30000
-
-# Met maximale aantal administratieve handelingen dat per keer
-# door de bezemwagen opgepakt wordt. Geen property betekent geen
-# limiet.
-aantal.administratieve.handelingen.per.keer=10
-
-
 #################################################################
 # BRP MODULE AFNEMER VOORBEELD
 #################################################################
 
 brp.afnemervoorbeeld.ispersistent=false
 
+#################################################################
+# BRP MODULE CACHE
+#################################################################
+
+brp.cache.ververs.tijdinterval.sec=0
+
+#################################################################
+# BRP MODULE BEVRAGING
+#################################################################
+
+brp.bevraging.zoekpersoon.max.conc.request=10
+brp.bevraging.zoekpersoon.max.tussenresultaat=50
+brp.bevraging.zoekpersoon.max.costs.queryplan=250
 
 #################################################################
 # BRP MODULE RELATEREN
 #################################################################
-
-jms.relateerservice.listener.broker.url=tcp://localhost:61616
-
+jms.relateerservice.listener.broker.url=${brp.jms.broker.url}
+jms.relateerservice.concurrent=5
+jms.relateerservice.queue=Relateren
 
 #################################################################
-# TWEAKS
+# HIBERNATE
 #################################################################
-
-# Gebruik SMILE (= binary) JSON voor de blob of leesbare tekst JSON
-# nl.bzk.brp.serialisatie.persoon.PersoonHisVolledigStringSerializer
-# Serialiseerder die gebruikt dient te worden voor de blobs. Bij geen waarde wordt default de smile serializer gebruikt.
-#serialisatie.persoonHisVolledig.klassenaam=nl.bzk.brp.serialisatie.persoon.PersoonHisVolledigStringSerializer
-serialisatie.persoonHisVolledig.klassenaam=nl.bzk.brp.serialisatie.persoon.PersoonHisVolledigStringSerializer
-serialisatie.afnemerIndicatie.klassenaam=nl.bzk.brp.serialisatie.afnemerindicatie.AfnemerIndicatieStringSerializer
-
-jms.persoonserialisatienotificatie.listener.broker.url=tcp://localhost:61616
-jms.persoonserialisatienotificatie.queue=PersoonSerialisatie
-
-#Bepaalt of bestaande caches overschreven moeten worden. Zo niet, worden bestaande caches overgeslagen.
-persoonserialisatienotificatie.overschijfbestaandecaches=false
 
 hibernate.use.second.level.cache=false
 hibernate.use.query.cache=false
 hibernate.generate.statistics=false
+
+#################################################################
+# GBA LEVERING ROUTE
+#################################################################
+
+isc.levering.queue=levering
+isc.provider.url=${brp.jms.broker.url}
+
 ]]></echo>
 
-		<echo file="tmp/server.xml" append="false" force="true"><![CDATA[<?xml version='1.0' encoding='utf-8'?>
+        <echo file="tmp/server.xml" append="false" force="true"><![CDATA[<?xml version='1.0' encoding='utf-8'?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -537,7 +754,7 @@ hibernate.generate.statistics=false
     <Connector port="${brp.port}" protocol="HTTP/1.1"
                connectionTimeout="20000"
                redirectPort="8443"
-			   URIEncoding="UTF-8"/>
+               URIEncoding="UTF-8"/>
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"
@@ -610,7 +827,7 @@ hibernate.generate.statistics=false
 </Server>
 ]]></echo>
 
-		<echo file="tmp/beheer.properties" append="false" force="true"><![CDATA[
+        <echo file="tmp/beheer.properties" append="false" force="true"><![CDATA[
 database.driver=org.postgresql.Driver
 
 # DATABASE (MASTER; SCHRIJVEN)
@@ -651,50 +868,100 @@ transaction.timeout=300
 useInMemoryAuthentication=true
 
 # ISC-CONSOLE
-isc.url=http://${server.host}:8080/jbpm-console/
+isc.url=http://${isc.console.host}:${isc.console.port}/jbpm-console/
 isc.processenOpAh=app/processinstances.jsf?root=true&fr=true&fs=true&fe=true&ah=
 ]]></echo>
-	
 
-		</target>
-
+    </target>
 
     <target name="deinstall" depends="checkProperties">
-		<echo message="Removing ${ant.project.name}" />
-		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
-		         command="cd ~; rm -Rf ${application.directory}" />
+        <echo message="Removing ${ant.project.name}"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd ~; rm -Rf ${application.directory}"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd ~; rm -Rf brp-mutatielevering"/>
     </target>
 
-	<target name="start" depends="checkProperties">
-		<echo message="Starting ${ant.project.name}" />
+    <target name="start" depends="checkProperties,internalStart,internalWaiters">
+        <echo message="Succesfully started ${ant.project.name}"/>
+    </target>
 
-		<echo message="Server host: ${server.host}" />
-		<echo message="Registry port: ${brp.rmi.registry.port}" />
+    <target name="internalStart">
+        <echo message="Starting ${ant.project.name}"/>
 
-		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
-		         command="cd ~; cd ${application.directory}; cd bin; ./startup.sh" />
+        <echo message="Server host: ${server.host}"/>
+        <echo message="Registry port: ${brp.rmi.registry.port}"/>
 
-        <java classname="nl.bzk.migratiebrp.tools.controle.waiter.BrpInitializationWaiter" failonerror="true" >
-        	<arg line="${waiter.arguments}" />
-            <sysproperty key="brp.server" value="service:jmx:rmi:///jndi/rmi://${server.host}:${brp.rmi.registry.port}/jmxrmi"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd ~; cd ${application.directory}; cd bin; ./startup.sh"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command="cd ~; cd brp-mutatielevering; ./runBrpMutatielevering.sh"/>
+    </target>
+
+    <target name="internalWaiters"
+            depends="internalBevragingWaiter,internalBijhoudingWaiter,internalMutatieleveringWaiter,internalVerzendingWaiter">
+    </target>
+
+    <target name="internalBevragingWaiter" unless="brp-as.skip.update.bevraging">
+        <java classname="nl.bzk.migratiebrp.tools.controle.waiter.BevragingInitializationWaiter"
+              failonerror="true">
+            <sysproperty key="jmx.service.url"
+                         value="service:jmx:simple://${server.host}:${application.jmx.port}"/>
+            <sysproperty key="jmx.service.username" value="admin"/>
+            <sysproperty key="jmx.service.password" value="admin"/>
         </java>
-
+    </target>
+    <target name="internalBijhoudingWaiter" unless="brp-as.skip.update.bijhouding">
+        <java classname="nl.bzk.migratiebrp.tools.controle.waiter.BijhoudingInitializationWaiter"
+              failonerror="true">
+            <sysproperty key="jmx.service.url"
+                         value="service:jmx:simple://${server.host}:${application.jmx.port}"/>
+            <sysproperty key="jmx.service.username" value="admin"/>
+            <sysproperty key="jmx.service.password" value="admin"/>
+        </java>
+    </target>
+    <target name="internalMutatieleveringWaiter" unless="brp-as.skip.update.notificatieverwerker">
+        <java classname="nl.bzk.migratiebrp.tools.controle.waiter.MutatieleveringInitializationWaiter"
+              failonerror="true">
+            <sysproperty key="jmx.service.url"
+                         value="service:jmx:simple://${server.host}:${application.jmx.mutatielevering.port}"/>
+            <sysproperty key="jmx.service.username" value="admin"/>
+            <sysproperty key="jmx.service.password" value="admin"/>
+        </java>
+    </target>
+    <target name="internalVerzendingWaiter" unless="brp-as.skip.update.verstuurder">
+        <java classname="nl.bzk.migratiebrp.tools.controle.waiter.VerzendingInitializationWaiter"
+              failonerror="true">
+            <sysproperty key="jmx.service.url"
+                         value="service:jmx:simple://${server.host}:${application.jmx.port}"/>
+            <sysproperty key="jmx.service.username" value="admin"/>
+            <sysproperty key="jmx.service.password" value="admin"/>
+        </java>
     </target>
 
-	<target name="stop" depends="checkProperties">
-		<echo message="Stopping ${ant.project.name} (and sleeping 15s)" />
-		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" failonerror="false"
-		         command="cd ~; cd ${application.directory}; cd bin; ./shutdown.sh" />
-		<echo message="Killing tomcat (catalina) processes to force shutdown"/>
-		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
-		                 command=" if [[ $( ps aux | grep catalin[a] -c) != 0 ]]; then echo &quot;still running&quot;; pkill -f catalin[a]; else echo &quot;already stopped&quot;; fi" />
+    <target name="stop" depends="checkProperties">
+        <echo message="Stopping ${ant.project.name} (and sleeping 15s)"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}" failonerror="false"
+                 command="cd ~; cd brp-mutatielevering; ./stopBrpMutatielevering.sh"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}" failonerror="false"
+                 command="cd ~; cd ${application.directory}; cd bin; ./shutdown.sh"/>
+        <echo message="Killing tomcat (catalina) processes to force shutdown"/>
+        <sshexec host="${server.host}" trust="true" username="${server.username}"
+                 password="${server.password}"
+                 command=" if [[ $( ps aux | grep catalin[a] -c) != 0 ]]; then echo &quot;still running&quot;; pkill -f catalin[a]; else echo &quot;already stopped&quot;; fi"/>
     </target>
 
     <target name="clean" depends="checkProperties">
     </target>
 
-	<target name="fail">
-		<fail message="Call with valid task" />
-	</target>
+    <target name="fail">
+        <fail message="Call with valid task"/>
+    </target>
 
 </project>

@@ -30,9 +30,7 @@ public final class Lo3HeaderUtils {
 
     /**
      * Haal de headers uit een string-representatie van een LO3-bericht.
-     *
-     * @param berichtAlsString
-     *            Het bericht als string.
+     * @param berichtAlsString Het bericht als string.
      * @return Array van header-waarden.
      */
     public static String[] haalHeadersUitBericht(final String berichtAlsString) {
@@ -42,17 +40,14 @@ public final class Lo3HeaderUtils {
         try {
             return header.parseHeaders(berichtAlsString);
         } catch (final BerichtSyntaxException bse) {
-            return new String[] {};
+            return new String[]{};
         }
     }
 
     /**
      * Vergelijkt de twee arrays met headers inhoudelijk en op lengte.
-     *
-     * @param headersGbaBericht
-     *            Headers van het GBA-V bericht.
-     * @param headersBrpBericht
-     *            Headers van het BRP bericht.
+     * @param headersGbaBericht Headers van het GBA-V bericht.
+     * @param headersBrpBericht Headers van het BRP bericht.
      * @return String met daarin de nummers van de afwijkend/ontbrekende koppen.
      */
     public static String vergelijkHeaders(final String[] headersGbaBericht, final String[] headersBrpBericht) {

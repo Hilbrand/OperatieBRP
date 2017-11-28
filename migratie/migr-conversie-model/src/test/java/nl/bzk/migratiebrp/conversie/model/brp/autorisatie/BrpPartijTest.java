@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.conversie.model.brp.autorisatie;
 
 import java.util.Collections;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
@@ -18,12 +17,11 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpPartijInhoud;
 import nl.bzk.migratiebrp.conversie.model.testutils.EqualsAndHashcodeTester;
-
 import org.junit.Test;
 
 public class BrpPartijTest {
 
-    public static BrpPartij maak(final int partijCode) {
+    public static BrpPartij maak(final String partijCode) {
         return new BrpPartij(null, "Partij " + partijCode, new BrpPartijCode(partijCode), maakStapel(new BrpDatum(19900101, null)));
     }
 
@@ -32,14 +30,14 @@ public class BrpPartijTest {
         final BrpHistorie historie = new BrpHistorie(BrpDatumTijd.fromDatum(datumIngang.getWaarde(), null), null, null);
         final BrpActie actie =
                 new BrpActie(
-                    1L,
-                    BrpSoortActieCode.CONVERSIE_GBA,
-                    BrpPartijCode.MIGRATIEVOORZIENING,
-                    historie.getDatumTijdRegistratie(),
-                    null,
-                    null,
-                    1,
-                    null);
+                        1L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        BrpPartijCode.MIGRATIEVOORZIENING,
+                        historie.getDatumTijdRegistratie(),
+                        null,
+                        null,
+                        1,
+                        null);
 
         final BrpGroep<BrpPartijInhoud> groep = new BrpGroep<>(inhoud, historie, actie, null, null);
 
@@ -48,9 +46,9 @@ public class BrpPartijTest {
 
     @Test
     public void test() throws NoSuchMethodException, IllegalAccessException {
-        final BrpPartij subject = maak(19900101);
-        final BrpPartij equals = maak(19900101);
-        final BrpPartij different = maak(20000101);
+        final BrpPartij subject = maak("199001");
+        final BrpPartij equals = maak("199001");
+        final BrpPartij different = maak("200001");
 
         EqualsAndHashcodeTester.testEqualsHashcodeAndToString(subject, equals, different);
     }

@@ -10,8 +10,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -26,7 +29,7 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    private static final Map<Configuration, ConfigurableApplicationContext> SHARED_CONTEXTS = new HashMap<>();
+    private static final Map<Configuration, FutureTask<ConfigurableApplicationContext>> SHARED_CONTEXTS = new HashMap<>();
 
     private final Kanaal worker;
     private final Configuration configuration;
@@ -35,11 +38,8 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
     /**
      * Constructor.
-     *
-     * @param worker
-     *            de 'verwerkende' kanaal instantie
-     * @param configuration
-     *            lazy loading configuratie
+     * @param worker de 'verwerkende' kanaal instantie
+     * @param configuration lazy loading configuratie
      */
     protected LazyLoadingKanaal(final Kanaal worker, final Configuration configuration) {
         this.worker = worker;
@@ -48,7 +48,7 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.
      * ApplicationContext)
      */
@@ -62,17 +62,26 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
             LOG.info("Initializing kanaal: " + worker.getKanaal());
             if (configuration.isShared()) {
                 LOG.info("Looking for shared application context ...");
-                context = SHARED_CONTEXTS.get(configuration);
-            }
-
-            if (context == null) {
-                LOG.info("Starting new application context ({}) ...", Arrays.asList(configuration.getConfigLocations()));
-                context = new ClassPathXmlApplicationContext(configuration.getConfigLocations(), parentContext);
-                context.registerShutdownHook();
-
-                if (configuration.isShared()) {
-                    SHARED_CONTEXTS.put(configuration, context);
+                FutureTask<ConfigurableApplicationContext> sharedContextLoader;
+                synchronized (SHARED_CONTEXTS) {
+                    sharedContextLoader = SHARED_CONTEXTS.get(configuration);
+                    if (sharedContextLoader == null) {
+                        LOG.info("Creating new shared application context ...");
+                        sharedContextLoader = new FutureTask<>(new ContextLoader(configuration, parentContext));
+                        new Thread(sharedContextLoader).start();
+                        SHARED_CONTEXTS.put(configuration, sharedContextLoader);
+                    }
                 }
+
+                LOG.info("Retrieving shared application context ...");
+                try {
+                    context = sharedContextLoader.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new IllegalStateException("Could not start context", e);
+                }
+                LOG.info("Retrieved shared application context ...");
+            } else {
+                context = new ContextLoader(configuration, parentContext).call();
             }
 
             LOG.info("Autowiring worker ...");
@@ -84,7 +93,6 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
     /**
      * Geef de geinitialiseerde verwerkende kanaal instantie. Let op: dit veroorzaakt initialisatie.
-     *
      * @return verwerkende kanaal instantie.
      */
     protected final Kanaal getWorker() {
@@ -94,7 +102,7 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
      */
     @Override
@@ -136,7 +144,7 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getStandaardVerzendendePartij()
      */
     @Override
@@ -146,7 +154,7 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getStandaardOntvangendePartij()
      */
     @Override
@@ -163,9 +171,7 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
         /**
          * Constructor (voor een deelbare spring configuratie).
-         *
-         * @param configLocations
-         *            spring configuratie bestanden
+         * @param configLocations spring configuratie bestanden
          */
         public Configuration(final String... configLocations) {
             this(configLocations, true);
@@ -173,12 +179,8 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
         /**
          * Constructor.
-         *
-         * @param configLocations
-         *            spring configuratie bestanden
-         * @param shared
-         *            true, als een ander kanaal met exact dezelfde spring configuratie bestanden dezelfde
-         *            ApplicationContext mag gebruiken
+         * @param configLocations spring configuratie bestanden
+         * @param shared true, als een ander kanaal met exact dezelfde spring configuratie bestanden dezelfde ApplicationContext mag gebruiken
          */
         public Configuration(final String[] configLocations, final boolean shared) {
             this.configLocations = ArrayUtils.clone(configLocations);
@@ -187,7 +189,6 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
         /**
          * Geef de waarde van config locations.
-         *
          * @return config locations
          */
         public String[] getConfigLocations() {
@@ -196,7 +197,6 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
 
         /**
          * Geef de shared.
-         *
          * @return shared
          */
         public boolean isShared() {
@@ -227,6 +227,33 @@ public class LazyLoadingKanaal implements Kanaal, ApplicationContextAware {
                 return false;
             }
             return true;
+        }
+    }
+
+    /**
+     * Context loader.
+     */
+    private static final class ContextLoader implements Callable<ConfigurableApplicationContext> {
+
+        private final Configuration configuration;
+        private final ApplicationContext parentContext;
+
+        /**
+         * Create a context loader.
+         * @param configuration configuration
+         * @param parentContext parent context
+         */
+        public ContextLoader(final Configuration configuration, final ApplicationContext parentContext) {
+            this.configuration = configuration;
+            this.parentContext = parentContext;
+        }
+
+        @Override
+        public ConfigurableApplicationContext call() {
+            LOG.info("Starting new application context ({}) ...", Arrays.asList(configuration.getConfigLocations()));
+            final ConfigurableApplicationContext result = new ClassPathXmlApplicationContext(configuration.getConfigLocations(), parentContext);
+            result.registerShutdownHook();
+            return result;
         }
     }
 }

@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.test.common.resultaat;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Attribute;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Test stap resultaat.
@@ -21,9 +21,7 @@ public final class TestStap {
 
     /**
      * Constructor.
-     * 
-     * @param status
-     *            status
+     * @param status status
      */
     public TestStap(final TestStatus status) {
         this(status, null, null, null);
@@ -31,20 +29,16 @@ public final class TestStap {
 
     /**
      * Constructor.
-     * 
-     * @param status
-     *            status
-     * @param omschrijving
-     *            omschrijving
-     * @param bestand
-     *            filename
-     * @param verschillenBestand
-     *            filename2
+     * @param status status
+     * @param omschrijving omschrijving
+     * @param bestand filename
+     * @param verschillenBestand filename2
      */
-    public TestStap(@Attribute(name = "status", required = false) final TestStatus status, @Attribute(name = "omschrijving",
-            required = false) final String omschrijving, @Element(name = "bestand", required = false) final String bestand, @Element(
-            name = "verschillenBestand", required = false) final String verschillenBestand)
-    {
+    public TestStap(
+            @Attribute(name = "status", required = false) final TestStatus status,
+            @Attribute(name = "omschrijving", required = false) final String omschrijving,
+            @Element(name = "bestand", required = false) final String bestand,
+            @Element(name = "verschillenBestand", required = false) final String verschillenBestand) {
         super();
         this.status = status;
         this.omschrijving = omschrijving;
@@ -55,7 +49,6 @@ public final class TestStap {
 
     /**
      * Geef de waarde van status.
-     *
      * @return status
      */
     @Attribute(name = "status", required = false)
@@ -65,7 +58,6 @@ public final class TestStap {
 
     /**
      * Geef de waarde van omschrijving.
-     *
      * @return omschrijving
      */
     @Attribute(name = "omschrijving", required = false)
@@ -75,7 +67,6 @@ public final class TestStap {
 
     /**
      * Geef de waarde van bestand.
-     *
      * @return bestand
      */
     @Element(name = "bestand", required = false)
@@ -85,7 +76,6 @@ public final class TestStap {
 
     /**
      * Geef de waarde van verschillen bestand.
-     *
      * @return verschillen bestand
      */
     @Element(name = "verschillenBestand", required = false)

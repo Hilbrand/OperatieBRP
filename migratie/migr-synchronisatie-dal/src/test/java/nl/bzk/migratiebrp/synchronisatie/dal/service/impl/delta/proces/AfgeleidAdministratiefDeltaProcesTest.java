@@ -11,14 +11,22 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.HistorieUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
+import java.util.Collections;
+import java.util.Set;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaRootEntiteitMatch;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaVergelijkerResultaat;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,12 +40,22 @@ public class AfgeleidAdministratiefDeltaProcesTest extends AbstractDeltaTest {
     private Persoon bestaandPersoon;
     private Persoon nieuwPersoon;
 
-    @Before public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         bestaandPersoon = maakPersoon(true);
         nieuwPersoon = maakPersoon(false);
 
         context = new DeltaBepalingContext(nieuwPersoon, bestaandPersoon, null, false);
         proces = new AfgeleidAdministratiefDeltaProces();
+
+        final DeltaRootEntiteitMatch match = new DeltaRootEntiteitMatch(bestaandPersoon, nieuwPersoon, null, null);
+        final VergelijkerResultaat vergelijkerResultaat = new DeltaVergelijkerResultaat();
+        final Sleutel sleutel = new EntiteitSleutel(Persoon.class, "test");
+        vergelijkerResultaat.voegToeOfVervangVerschil(new Verschil(sleutel, null, null, null, null));
+        match.setVergelijkerResultaat(vergelijkerResultaat);
+        final Set<DeltaRootEntiteitMatch> matches = Collections.singleton(match);
+        context.setDeltaRootEntiteitMatches(matches);
+
     }
 
     @Test
@@ -49,11 +67,12 @@ public class AfgeleidAdministratiefDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testVerwerkVerschillenAdministratieveHandelingNietUitAanCat07() {
-        assertTrue(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size() == 1);
+        assertEquals(1, bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size());
         proces.verwerkVerschillen(context);
-        assertTrue(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size() == 2);
-        final AdministratieveHandeling administratieveHandeling = nieuwPersoon.getAdministratieveHandeling();
-        final PersoonAfgeleidAdministratiefHistorie historie = HistorieUtil.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet());
+        assertEquals(2, bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size());
+        final PersoonAfgeleidAdministratiefHistorie historie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet());
+        final AdministratieveHandeling administratieveHandeling = historie.getAdministratieveHandeling();
         final Timestamp datumTijdRegistratie = administratieveHandeling.getDatumTijdRegistratie();
         assertEquals(datumTijdRegistratie, historie.getDatumTijdRegistratie());
         assertEquals(datumTijdRegistratie, historie.getDatumTijdLaatsteWijziging());
@@ -63,13 +82,16 @@ public class AfgeleidAdministratiefDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testVerwerkVerschillenAdministratieveHandelingUitAanCat07() {
-        final AdministratieveHandeling administratieveHandeling = nieuwPersoon.getAdministratieveHandeling();
-        HistorieUtil.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud().setAdministratieveHandeling(administratieveHandeling);
+        final AdministratieveHandeling administratieveHandeling = getAdministratieveHandeling(nieuwPersoon);
+        FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet())
+                .getActieInhoud()
+                .setAdministratieveHandeling(administratieveHandeling);
 
-        assertTrue(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size() == 1);
+        assertEquals(1, bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size());
         proces.verwerkVerschillen(context);
-        assertTrue(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size() == 2);
-        final PersoonAfgeleidAdministratiefHistorie historie = HistorieUtil.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet());
+        assertEquals(2, bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size());
+        final PersoonAfgeleidAdministratiefHistorie historie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet());
         final Timestamp datumTijdRegistratie = administratieveHandeling.getDatumTijdRegistratie();
         assertEquals(datumTijdRegistratie, historie.getDatumTijdRegistratie());
         assertEquals(datumTijdRegistratie, historie.getDatumTijdLaatsteWijziging());
@@ -82,12 +104,18 @@ public class AfgeleidAdministratiefDeltaProcesTest extends AbstractDeltaTest {
         context.setBijhoudingAnummerWijziging();
         context.setBijhoudingOverig();
 
-        assertTrue(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size() == 1);
+        assertEquals(1, bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size());
         proces.verwerkVerschillen(context);
-        assertTrue(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size() == 3);
-        final AdministratieveHandeling administratieveHandeling = nieuwPersoon.getAdministratieveHandeling();
-        final PersoonAfgeleidAdministratiefHistorie historie = HistorieUtil.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet());
+        assertEquals(3, bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet().size());
+        final AdministratieveHandeling administratieveHandeling = getAdministratieveHandeling(nieuwPersoon);
+        final PersoonAfgeleidAdministratiefHistorie historie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonAfgeleidAdministratiefHistorieSet());
         assertEquals(administratieveHandeling, historie.getAdministratieveHandeling());
         assertEquals(SoortAdministratieveHandeling.GBA_BIJHOUDING_OVERIG, historie.getAdministratieveHandeling().getSoort());
+    }
+
+    private AdministratieveHandeling getAdministratieveHandeling(final Persoon persoon) {
+        return FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(persoon.getPersoonAfgeleidAdministratiefHistorieSet())
+                .getAdministratieveHandeling();
     }
 }

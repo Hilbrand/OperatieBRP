@@ -12,10 +12,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
+
 import javax.sql.DataSource;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.JdbcConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -32,9 +35,7 @@ public final class KopieerGbavJob {
 
     /**
      * Main execute methode voor het uitvoeren van de job.
-     *
-     * @param context
-     *            De context van de job.
+     * @param context De context van de job.
      */
     public void execute(final ConfigurableApplicationContext context) {
 
@@ -47,8 +48,9 @@ public final class KopieerGbavJob {
 
         try (Connection leveringConnection = leveringDataSource.getConnection()) {
             final PreparedStatement insertStatement =
-                    leveringConnection.prepareStatement("insert into mig_leveringsvergelijking_berichtcorrelatie_gbav(id, bijhouding_ber_id, afnemer_code, "
-                                                        + "levering_ber_id, berichtnummer) values (?, ?, ?, ?, ?)");
+                    leveringConnection.prepareStatement(
+                            "insert into mig_leveringsvergelijking_berichtcorrelatie_gbav(id, bijhouding_ber_id, afnemer_code, "
+                                    + "levering_ber_id, berichtnummer) values (?, ?, ?, ?, ?)");
 
             final DataSource gbavDataSource = context.getBean("gbaDataSource", DataSource.class);
             final NamedParameterJdbcTemplate gbavJdbcTemplate = new NamedParameterJdbcTemplate(gbavDataSource);

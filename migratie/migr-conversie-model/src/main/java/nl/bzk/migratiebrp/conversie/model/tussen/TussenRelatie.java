@@ -22,7 +22,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * Deze class representeert een specifieke TussenStapel, namelijk de TussenRelatie stapel. Deze stapel heeft associaties
  * met betrokkenheid stapels. Deze associaties reflecteren de relaties in de BRP A-laag (zonder historie).
- *
  */
 public final class TussenRelatie {
 
@@ -42,42 +41,28 @@ public final class TussenRelatie {
 
     /**
      * Maakt een MigratieRelatieStapel object.
-     *
-     * @param soortRelatieCode
-     *            de soort relatie code, mag niet null zijn
-     * @param rolCode
-     *            de IK-rol, mag niet null zijn
-     * @param betrokkenheden
-     *            de lijst met betrokkenheden, deze lijst moet minimaal 1 stapel bevatten en mag niet null zijn
-     * @param relatieStapel
-     *            de stapel met relatie inhoud. Deze mag null zijn.
-     * @param istOuder1
-     *            lijst van IST-gegevens van de ouder1 relatie. Alleen gevuld als relatie over de ouders gaat
-     * @param istOuder2
-     *            lijst van IST-gegevens van de ouder2 relatie. Alleen gevuld als relatie over de ouders gaat
-     * @param istHuwelijkOfGp
-     *            lijst van IST-gegevens van het huwelijkOfGp relatie. Alleen gevuld als relatie over een huwelijk/
-     *            geregistreerd partnerschap gaat
-     * @param istKind
-     *            lijst van IST-gegevens van de kind relatie. Alleen gevuld als relatie over kind gaat
-     * @param istGezagsverhouding
-     *            lijst van IST-gegevens van de gezagsverhouding. Alleen gevuld als relatie over de ouders gaat
-     * @throws IllegalArgumentException
-     *             als groepen een lege lijst is of als betrokkenheidStapels minder dan 1 of meer dan 4 stapels bevat
-     * @throws NullPointerException
-     *             als soortRelatieCode, ikBetrokkenheidStapel, betrokkenheidStapels of groepen null is
+     * @param soortRelatieCode de soort relatie code, mag niet null zijn
+     * @param rolCode de IK-rol, mag niet null zijn
+     * @param betrokkenheden de lijst met betrokkenheden, deze lijst moet minimaal 1 stapel bevatten en mag niet null zijn
+     * @param relatieStapel de stapel met relatie inhoud. Deze mag null zijn.
+     * @param istOuder1 lijst van IST-gegevens van de ouder1 relatie. Alleen gevuld als relatie over de ouders gaat
+     * @param istOuder2 lijst van IST-gegevens van de ouder2 relatie. Alleen gevuld als relatie over de ouders gaat
+     * @param istHuwelijkOfGp lijst van IST-gegevens van het huwelijkOfGp relatie. Alleen gevuld als relatie over een huwelijk/ geregistreerd partnerschap gaat
+     * @param istKind lijst van IST-gegevens van de kind relatie. Alleen gevuld als relatie over kind gaat
+     * @param istGezagsverhouding lijst van IST-gegevens van de gezagsverhouding. Alleen gevuld als relatie over de ouders gaat
+     * @throws IllegalArgumentException als groepen een lege lijst is of als betrokkenheidStapels minder dan 1 of meer dan 4 stapels bevat
+     * @throws NullPointerException als soortRelatieCode, ikBetrokkenheidStapel, betrokkenheidStapels of groepen null is
      */
     public TussenRelatie(
-        final BrpSoortRelatieCode soortRelatieCode,
-        final BrpSoortBetrokkenheidCode rolCode,
-        final List<TussenBetrokkenheid> betrokkenheden,
-        final TussenStapel<BrpRelatieInhoud> relatieStapel,
-        final TussenStapel<BrpIstRelatieGroepInhoud> istOuder1,
-        final TussenStapel<BrpIstRelatieGroepInhoud> istOuder2,
-        final TussenStapel<BrpIstHuwelijkOfGpGroepInhoud> istHuwelijkOfGp,
-        final TussenStapel<BrpIstRelatieGroepInhoud> istKind,
-        final TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> istGezagsverhouding)
-    {
+            final BrpSoortRelatieCode soortRelatieCode,
+            final BrpSoortBetrokkenheidCode rolCode,
+            final List<TussenBetrokkenheid> betrokkenheden,
+            final TussenStapel<BrpRelatieInhoud> relatieStapel,
+            final TussenStapel<BrpIstRelatieGroepInhoud> istOuder1,
+            final TussenStapel<BrpIstRelatieGroepInhoud> istOuder2,
+            final TussenStapel<BrpIstHuwelijkOfGpGroepInhoud> istHuwelijkOfGp,
+            final TussenStapel<BrpIstRelatieGroepInhoud> istKind,
+            final TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> istGezagsverhouding) {
         if (soortRelatieCode == null) {
             throw new NullPointerException(SOORT_RELATIE_CODE_ONTBREEKT);
         }
@@ -108,9 +93,8 @@ public final class TussenRelatie {
     }
 
     /**
-     * Geef de waarde van soort relatie code.
-     *
-     * @return the soortRelatieCode
+     * Geef de waarde van soort relatie code van TussenRelatie.
+     * @return de waarde van soort relatie code van TussenRelatie
      */
 
     public BrpSoortRelatieCode getSoortRelatieCode() {
@@ -118,9 +102,8 @@ public final class TussenRelatie {
     }
 
     /**
-     * Geef de waarde van rol code.
-     *
-     * @return the rolCode
+     * Geef de waarde van rol code van TussenRelatie.
+     * @return de waarde van rol code van TussenRelatie
      */
 
     public BrpSoortBetrokkenheidCode getRolCode() {
@@ -128,66 +111,68 @@ public final class TussenRelatie {
     }
 
     /**
-     * Geef de waarde van betrokkenheden.
-     *
-     * @return the betrokkenheden
+     * Geef de waarde van betrokkenheden van TussenRelatie.
+     * @return de waarde van betrokkenheden van TussenRelatie
      */
     public List<TussenBetrokkenheid> getBetrokkenheden() {
         return betrokkenheden;
     }
 
     /**
-     * Geef de waarde van relatie stapel.
-     *
-     * @return the relatieStapel
+     * Geef de waarde van relatie stapel van TussenRelatie.
+     * @return de waarde van relatie stapel van TussenRelatie
      */
     public TussenStapel<BrpRelatieInhoud> getRelatieStapel() {
         return relatieStapel;
     }
 
     /**
-     * Geef de waarde van ist ouder1.
-     *
-     * @return IST gegevens voor ouder1.
+     * Geef de waarde van ist ouder1 van TussenRelatie.
+     * @return de waarde van ist ouder1 van TussenRelatie
      */
     public TussenStapel<BrpIstRelatieGroepInhoud> getIstOuder1() {
         return istOuder1;
     }
 
     /**
-     * Geef de waarde van ist ouder2.
-     *
-     * @return IST gegevens voor ouder2.
+     * Geef de waarde van ist ouder2 van TussenRelatie.
+     * @return de waarde van ist ouder2 van TussenRelatie
      */
     public TussenStapel<BrpIstRelatieGroepInhoud> getIstOuder2() {
         return istOuder2;
     }
 
     /**
-     * Geef de waarde van ist huwelijk of gp.
-     *
-     * @return IST gegevens voor huwelijkOfGp.
+     * Geef de waarde van ist huwelijk of gp van TussenRelatie.
+     * @return de waarde van ist huwelijk of gp van TussenRelatie
      */
     public TussenStapel<BrpIstHuwelijkOfGpGroepInhoud> getIstHuwelijkOfGp() {
         return istHuwelijkOfGp;
     }
 
     /**
-     * Geef de waarde van ist kind.
-     *
-     * @return IST gegevens voor kind.
+     * Geef de waarde van ist kind van TussenRelatie.
+     * @return de waarde van ist kind van TussenRelatie
      */
     public TussenStapel<BrpIstRelatieGroepInhoud> getIstKind() {
         return istKind;
     }
 
     /**
-     * Geef de waarde van ist gezagsverhouding.
-     *
-     * @return IST gegevens voor gezagsverhouding.
+     * Geef de waarde van ist gezagsverhouding van TussenRelatie.
+     * @return de waarde van ist gezagsverhouding van TussenRelatie
      */
     public TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> getIstGezagsverhouding() {
         return istGezagsverhouding;
+    }
+
+    /**
+     * Geeft aan of deze {@link TussenRelatie} een huwelijk/gp relatie is.
+     * @return true als {@link #soortRelatieCode} een {@link BrpSoortRelatieCode#GEREGISTREERD_PARTNERSCHAP} of een {@link BrpSoortRelatieCode#HUWELIJK} is
+     */
+    public boolean isRelatieHuwelijkOfGp() {
+        return BrpSoortRelatieCode.equalsWaarde(BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP, soortRelatieCode)
+                || BrpSoortRelatieCode.equalsWaarde(BrpSoortRelatieCode.HUWELIJK, soortRelatieCode);
     }
 
     @Override
@@ -200,44 +185,44 @@ public final class TussenRelatie {
         }
         final TussenRelatie castOther = (TussenRelatie) other;
         return new EqualsBuilder().append(soortRelatieCode, castOther.soortRelatieCode)
-                                  .append(rolCode, castOther.rolCode)
-                                  .append(betrokkenheden, castOther.betrokkenheden)
-                                  .append(relatieStapel, castOther.relatieStapel)
-                                  .append(istOuder1, castOther.istOuder1)
-                                  .append(istOuder2, castOther.istOuder2)
-                                  .append(istHuwelijkOfGp, castOther.istHuwelijkOfGp)
-                                  .append(istKind, castOther.istKind)
-                                  .append(istGezagsverhouding, castOther.istGezagsverhouding)
-                                  .isEquals();
+                .append(rolCode, castOther.rolCode)
+                .append(betrokkenheden, castOther.betrokkenheden)
+                .append(relatieStapel, castOther.relatieStapel)
+                .append(istOuder1, castOther.istOuder1)
+                .append(istOuder2, castOther.istOuder2)
+                .append(istHuwelijkOfGp, castOther.istHuwelijkOfGp)
+                .append(istKind, castOther.istKind)
+                .append(istGezagsverhouding, castOther.istGezagsverhouding)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(soortRelatieCode)
-                                    .append(rolCode)
-                                    .append(betrokkenheden)
-                                    .append(relatieStapel)
-                                    .append(istOuder1)
-                                    .append(istOuder2)
-                                    .append(istHuwelijkOfGp)
-                                    .append(istKind)
-                                    .append(istGezagsverhouding)
-                                    .toHashCode();
+                .append(rolCode)
+                .append(betrokkenheden)
+                .append(relatieStapel)
+                .append(istOuder1)
+                .append(istOuder2)
+                .append(istHuwelijkOfGp)
+                .append(istKind)
+                .append(istGezagsverhouding)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("soortRelatieCode", soortRelatieCode)
-                                                                          .append("rolCode", rolCode)
-                                                                          .append("betrokkenheden", betrokkenheden)
-                                                                          .append("relatieStapel", relatieStapel)
-                                                                          .append("istOuder1", istOuder1)
-                                                                          .append("istOuder2", istOuder2)
-                                                                          .append("istHuwelijkOfGp", istHuwelijkOfGp)
-                                                                          .append("istKind", istKind)
-                                                                          .append("istGezagsverhouding", istGezagsverhouding)
-                                                                          .toString();
+                .append("soortRelatieCode", soortRelatieCode)
+                .append("rolCode", rolCode)
+                .append("betrokkenheden", betrokkenheden)
+                .append("relatieStapel", relatieStapel)
+                .append("istOuder1", istOuder1)
+                .append("istOuder2", istOuder2)
+                .append("istHuwelijkOfGp", istHuwelijkOfGp)
+                .append("istKind", istKind)
+                .append("istGezagsverhouding", istGezagsverhouding)
+                .toString();
     }
 
     /**
@@ -256,11 +241,8 @@ public final class TussenRelatie {
 
         /**
          * Constructor voor Builder met verplichte velden soortRelatieCode en rolCode.
-         *
-         * @param soortRelatieCode
-         *            soort relatie code
-         * @param rolCode
-         *            rol code
+         * @param soortRelatieCode soort relatie code
+         * @param rolCode rol code
          */
         public Builder(final BrpSoortRelatieCode soortRelatieCode, final BrpSoortBetrokkenheidCode rolCode) {
             if (soortRelatieCode == null) {
@@ -275,9 +257,7 @@ public final class TussenRelatie {
 
         /**
          * Maakt en vult een Builder op basis van een bestaande relatie.
-         *
-         * @param relatie
-         *            bestaande migratie relatie
+         * @param relatie bestaande migratie relatie
          */
         public Builder(final TussenRelatie relatie) {
             soortRelatieCode = relatie.soortRelatieCode;
@@ -293,9 +273,7 @@ public final class TussenRelatie {
 
         /**
          * zet de betrokkenheden.
-         *
-         * @param param
-         *            lijst van betrokkenheden de relatie
+         * @param param lijst van betrokkenheden de relatie
          * @return de builder
          */
         public final Builder betrokkenheden(final List<TussenBetrokkenheid> param) {
@@ -305,9 +283,7 @@ public final class TussenRelatie {
 
         /**
          * zet de relatiestapel.
-         *
-         * @param param
-         *            details van deze relatie
+         * @param param details van deze relatie
          * @return de builder
          */
         public final Builder relatieStapel(final TussenStapel<BrpRelatieInhoud> param) {
@@ -317,9 +293,7 @@ public final class TussenRelatie {
 
         /**
          * zet de IST-stapel voor ouder1.
-         *
-         * @param param
-         *            stapel met IST-gegevens van deze relatie voor ouder1
+         * @param param stapel met IST-gegevens van deze relatie voor ouder1
          * @return de builder
          */
         public final Builder istOuder1(final TussenStapel<BrpIstRelatieGroepInhoud> param) {
@@ -329,9 +303,7 @@ public final class TussenRelatie {
 
         /**
          * zet de IST-stapel voor ouder2.
-         *
-         * @param param
-         *            stapel met IST-gegevens van deze relatie voor ouder2
+         * @param param stapel met IST-gegevens van deze relatie voor ouder2
          * @return de builder
          */
         public final Builder istOuder2(final TussenStapel<BrpIstRelatieGroepInhoud> param) {
@@ -341,9 +313,7 @@ public final class TussenRelatie {
 
         /**
          * zet de IST-stapel voor huwelijkOfGp.
-         *
-         * @param param
-         *            stapel met IST-gegevens van deze relatie voor HuwelijkOfGp
+         * @param param stapel met IST-gegevens van deze relatie voor HuwelijkOfGp
          * @return de builder
          */
         public final Builder istHuwelijkOfGp(final TussenStapel<BrpIstHuwelijkOfGpGroepInhoud> param) {
@@ -353,9 +323,7 @@ public final class TussenRelatie {
 
         /**
          * zet de IST-stapel voor kind.
-         *
-         * @param param
-         *            stapel met IST-gegevens van deze relatie voor kind
+         * @param param stapel met IST-gegevens van deze relatie voor kind
          * @return de builder
          */
         public final Builder istKind(final TussenStapel<BrpIstRelatieGroepInhoud> param) {
@@ -365,9 +333,7 @@ public final class TussenRelatie {
 
         /**
          * zet de IST-stapel voor Gezagsverhouding.
-         *
-         * @param param
-         *            stapel met IST-gegevens van deze relatie voor gezagsverhouding
+         * @param param stapel met IST-gegevens van deze relatie voor gezagsverhouding
          * @return de builder
          */
         public final Builder istGezagsverhouding(final TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> param) {
@@ -377,7 +343,6 @@ public final class TussenRelatie {
 
         /**
          * Maakt een nieuwe {@link TussenRelatie} object aan met de opgegeven gegevens.
-         *
          * @return een nieuwe {@link TussenRelatie}
          */
         public final TussenRelatie build() {

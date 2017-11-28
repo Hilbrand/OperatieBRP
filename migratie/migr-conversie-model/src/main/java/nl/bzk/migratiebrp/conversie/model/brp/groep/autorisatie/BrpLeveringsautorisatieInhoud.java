@@ -6,15 +6,14 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpProtocolleringsniveauCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP LeveringsAutorisatie.
@@ -31,8 +30,6 @@ public final class BrpLeveringsautorisatieInhoud extends AbstractBrpGroepInhoud 
     private final Boolean indicatieAliasSoortAdministratieHandelingLeveren;
     @Element(name = "indicatieGeblokkeerd", required = false)
     private final Boolean indicatieGeblokkeerd;
-    @Element(name = "indicatiePopulatiebeperkingVolledigGeconverteerd", required = false)
-    private final Boolean indicatiePopulatiebeperkingVolledigGeconverteerd;
     @Element(name = "populatiebeperking", required = false)
     private final String populatiebeperking;
     @Element(name = "datumIngang", required = false)
@@ -44,53 +41,40 @@ public final class BrpLeveringsautorisatieInhoud extends AbstractBrpGroepInhoud 
 
     /**
      * Maak een nieuw BrpLeveringsAutorisatieInhoud object.
-     *
-     * @param naam
-     *            naam
-     * @param protocolleringsniveau
-     *            protocolleringsniveau
-     * @param indicatieAliasSoortAdministratieHandelingLeveren
-     *            indicatieAliasSoortAdministratieHandelingLeveren
-     * @param indicatieGeblokkeerd
-     *            indicatieGeblokkeerd
-     * @param indicatiePopulatiebeperkingVolledigGeconverteerd
-     *            indicatiePopulatiebeperkingVolledigGeconverteerd
-     * @param populatiebeperking
-     *            populatiebeperking
-     * @param datumIngang
-     *            datumIngang
-     * @param datumEinde
-     *            datumEinde
-     * @param toelichting
-     *            toelichting
+     * @param naam naam
+     * @param protocolleringsniveau protocolleringsniveau
+     * @param indicatieAliasSoortAdministratieHandelingLeveren indicatieAliasSoortAdministratieHandelingLeveren
+     * @param indicatieGeblokkeerd indicatieGeblokkeerd
+     * @param populatiebeperking populatiebeperking
+     * @param datumIngang datumIngang
+     * @param datumEinde datumEinde
+     * @param toelichting toelichting
      */
     public BrpLeveringsautorisatieInhoud(
-        @Element(name = "naam", required = false) final String naam,
-        @Element(name = "protocolleringsniveau", required = false) final BrpProtocolleringsniveauCode protocolleringsniveau,
-        @Element(name = "indicatieAliasSoortAdministratieHandelingLeveren", required = false) final Boolean indicatieAliasSoortAdministratieHandelingLeveren,
-        @Element(name = "indicatieGeblokkeerd", required = false) final Boolean indicatieGeblokkeerd,
-        @Element(name = "indicatiePopulatiebeperkingVolledigGeconverteerd", required = false) final Boolean indicatiePopulatiebeperkingVolledigGeconverteerd,
-        @Element(name = "populatiebeperking", required = false) final String populatiebeperking,
-        @Element(name = "datumIngang", required = false) final BrpDatum datumIngang,
-        @Element(name = "datumEinde", required = false) final BrpDatum datumEinde,
-        @Element(name = "toelichting", required = false) final String toelichting)
-    {
+            @Element(name = "naam", required = false) final String naam,
+            @Element(name = "protocolleringsniveau", required = false) final BrpProtocolleringsniveauCode protocolleringsniveau,
+            @Element(name = "indicatieAliasSoortAdministratieHandelingLeveren",
+                    required = false) final Boolean indicatieAliasSoortAdministratieHandelingLeveren,
+            @Element(name = "indicatieGeblokkeerd", required = false) final Boolean indicatieGeblokkeerd,
+            @Element(name = "populatiebeperking", required = false) final String populatiebeperking,
+            @Element(name = "datumIngang", required = false) final BrpDatum datumIngang,
+            @Element(name = "datumEinde", required = false) final BrpDatum datumEinde,
+            @Element(name = "toelichting", required = false) final String toelichting) {
         super();
         this.naam = naam;
         this.protocolleringsniveau = protocolleringsniveau;
         this.indicatieAliasSoortAdministratieHandelingLeveren = indicatieAliasSoortAdministratieHandelingLeveren;
         this.indicatieGeblokkeerd = indicatieGeblokkeerd;
-        this.indicatiePopulatiebeperkingVolledigGeconverteerd = indicatiePopulatiebeperkingVolledigGeconverteerd;
         this.populatiebeperking = populatiebeperking;
         this.datumIngang = datumIngang;
         this.datumEinde = datumEinde;
         this.toelichting = toelichting;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -98,81 +82,64 @@ public final class BrpLeveringsautorisatieInhoud extends AbstractBrpGroepInhoud 
     }
 
     /**
-     * Geef de waarde van naam.
-     *
-     * @return naam.
+     * Geef de waarde van naam van BrpLeveringsautorisatieInhoud.
+     * @return de waarde van naam van BrpLeveringsautorisatieInhoud
      */
     public String getNaam() {
         return naam;
     }
 
     /**
-     * Geef de waarde van protocolleringsniveau.
-     *
-     * @return protocolleringsniveau.
+     * Geef de waarde van protocolleringsniveau van BrpLeveringsautorisatieInhoud.
+     * @return de waarde van protocolleringsniveau van BrpLeveringsautorisatieInhoud
      */
     public BrpProtocolleringsniveauCode getProtocolleringsniveau() {
         return protocolleringsniveau;
     }
 
     /**
-     * Geef de waarde van indicatieAliasSoortAdministratieHandelingLeveren.
-     *
-     * @return indicatieAliasSoortAdministratieHandelingLeveren.
+     * Geef de waarde van indicatie alias soort administratie handeling leveren van BrpLeveringsautorisatieInhoud.
+     * @return de waarde van indicatie alias soort administratie handeling leveren van BrpLeveringsautorisatieInhoud
      */
     public Boolean getIndicatieAliasSoortAdministratieHandelingLeveren() {
         return indicatieAliasSoortAdministratieHandelingLeveren;
     }
 
     /**
-     * Geef de waarde van indicatieGeblokkeerd.
-     *
-     * @return indicatieGeblokkeerd.
+     * Geef de waarde van indicatie geblokkeerd van BrpLeveringsautorisatieInhoud.
+     * @return de waarde van indicatie geblokkeerd van BrpLeveringsautorisatieInhoud
      */
     public Boolean getIndicatieGeblokkeerd() {
         return indicatieGeblokkeerd;
     }
 
     /**
-     * Geef de waarde van indicatiePopulatiebeperkingVolledigGeconverteerd.
-     *
-     * @return indicatiePopulatiebeperkingVolledigGeconverteerd.
-     */
-    public Boolean getIndicatiePopulatiebeperkingVolledigGeconverteerd() {
-        return indicatiePopulatiebeperkingVolledigGeconverteerd;
-    }
-
-    /**
-     * Geef de waarde van populatiebeperking.
-     *
-     * @return populatiebeperking.
+     * Geef de waarde van populatiebeperking van BrpLeveringsautorisatieInhoud.
+     * @return de waarde van populatiebeperking van BrpLeveringsautorisatieInhoud
      */
     public String getPopulatiebeperking() {
         return populatiebeperking;
     }
 
     /**
-     * Geef de waarde van datumIngang.
-     *
-     * @return datumIngang.
+     * Geef de waarde van datum ingang van BrpLeveringsautorisatieInhoud.
+     * @return de waarde van datum ingang van BrpLeveringsautorisatieInhoud
      */
     public BrpDatum getDatumIngang() {
         return datumIngang;
     }
 
     /**
-     * Geef de waarde van datumEinde.
-     *
-     * @return datumEinde.
+     * Geef de waarde van datum einde van BrpLeveringsautorisatieInhoud.
+     * @return de waarde van datum einde van BrpLeveringsautorisatieInhoud
      */
     public BrpDatum getDatumEinde() {
         return datumEinde;
     }
 
     /**
-     * Geef de waarde van toelichting.
-     *
-     * @return toelichting.
+     * Geef de waarde van toelichting van BrpLeveringsautorisatieInhoud.
+     * @return de waarde van toelichting van BrpLeveringsautorisatieInhoud
      */
     public String getToelichting() {
         return toelichting;
@@ -188,15 +155,14 @@ public final class BrpLeveringsautorisatieInhoud extends AbstractBrpGroepInhoud 
         }
         final BrpLeveringsautorisatieInhoud castOther = (BrpLeveringsautorisatieInhoud) other;
         return new EqualsBuilder().append(naam, castOther.naam)
-                                  .append(protocolleringsniveau, castOther.protocolleringsniveau)
-                                  .append(indicatieAliasSoortAdministratieHandelingLeveren, castOther.indicatieAliasSoortAdministratieHandelingLeveren)
-                                  .append(indicatieGeblokkeerd, castOther.indicatieGeblokkeerd)
-                                  .append(indicatiePopulatiebeperkingVolledigGeconverteerd, castOther.indicatiePopulatiebeperkingVolledigGeconverteerd)
-                                  .append(populatiebeperking, castOther.populatiebeperking)
-                                  .append(datumIngang, castOther.datumIngang)
-                                  .append(datumEinde, castOther.datumEinde)
-                                  .append(toelichting, castOther.toelichting)
-                                  .isEquals();
+                .append(protocolleringsniveau, castOther.protocolleringsniveau)
+                .append(indicatieAliasSoortAdministratieHandelingLeveren, castOther.indicatieAliasSoortAdministratieHandelingLeveren)
+                .append(indicatieGeblokkeerd, castOther.indicatieGeblokkeerd)
+                .append(populatiebeperking, castOther.populatiebeperking)
+                .append(datumIngang, castOther.datumIngang)
+                .append(datumEinde, castOther.datumEinde)
+                .append(toelichting, castOther.toelichting)
+                .isEquals();
     }
 
     @Override
@@ -205,29 +171,25 @@ public final class BrpLeveringsautorisatieInhoud extends AbstractBrpGroepInhoud 
                 .append(protocolleringsniveau)
                 .append(indicatieAliasSoortAdministratieHandelingLeveren)
                 .append(indicatieGeblokkeerd)
-                .append(indicatiePopulatiebeperkingVolledigGeconverteerd)
                 .append(populatiebeperking)
                 .append(datumIngang)
                 .append(datumEinde)
                 .append(toelichting)
-                                    .toHashCode();
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("naam", naam)
-                                                                          .append("protocolleringsniveau", protocolleringsniveau)
-                                                                          .append(
-                                                                              "indicatieAliasSoortAdministratieHandelingLeveren",
-                                                                              indicatieAliasSoortAdministratieHandelingLeveren)
-                                                                          .append("indicatieGeblokkeerd", indicatieGeblokkeerd)
-                                                                          .append(
-                                                                              "indicatiePopulatiebeperkingVolledigGeconverteerd",
-                                                                              indicatiePopulatiebeperkingVolledigGeconverteerd)
-                                                                          .append("populatiebeperking", populatiebeperking)
-                                                                          .append("datumIngang", datumIngang)
-                                                                          .append("datumEinde", datumEinde)
-                                                                          .append("toelichting", toelichting)
-                                                                          .toString();
+                .append("protocolleringsniveau", protocolleringsniveau)
+                .append(
+                        "indicatieAliasSoortAdministratieHandelingLeveren",
+                        indicatieAliasSoortAdministratieHandelingLeveren)
+                .append("indicatieGeblokkeerd", indicatieGeblokkeerd)
+                .append("populatiebeperking", populatiebeperking)
+                .append("datumIngang", datumIngang)
+                .append("datumEinde", datumEinde)
+                .append("toelichting", toelichting)
+                .toString();
     }
 }

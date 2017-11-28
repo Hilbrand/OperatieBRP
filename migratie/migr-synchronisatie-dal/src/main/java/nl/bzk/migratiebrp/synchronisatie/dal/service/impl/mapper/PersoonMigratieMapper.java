@@ -6,39 +6,34 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpMigratieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractPersoonHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
 
 /**
  * Mapper waarmee een {@link nl.bzk.migratiebrp.conversie.model.brp.BrpStapel <BrpMigratieInhoud>} gemapt kan worden op
- * een verzameling van {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie} en
+ * een verzameling van {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie} en
  * vice versa.
  */
 public final class PersoonMigratieMapper extends AbstractPersoonHistorieMapperStrategie<BrpMigratieInhoud, PersoonMigratieHistorie> {
 
     /**
      * Maakt een PersoonMigratieMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonMigratieMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -48,23 +43,6 @@ public final class PersoonMigratieMapper extends AbstractPersoonHistorieMapperSt
     @Override
     protected void voegHistorieToeAanEntiteit(final PersoonMigratieHistorie historie, final Persoon persoon) {
         persoon.addPersoonMigratieHistorie(historie);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonMigratieHistorie historie, final Persoon persoon) {
-        persoon.setSoortMigratie(historie.getSoortMigratie());
-        persoon.setRedenWijzigingMigratie(historie.getRedenWijzigingMigratie());
-        persoon.setAangeverMigratie(historie.getAangeverMigratie());
-        persoon.setLandOfGebiedMigratie(historie.getLandOfGebied());
-        persoon.setBuitenlandsAdresRegel1Migratie(historie.getBuitenlandsAdresRegel1());
-        persoon.setBuitenlandsAdresRegel2Migratie(historie.getBuitenlandsAdresRegel2());
-        persoon.setBuitenlandsAdresRegel3Migratie(historie.getBuitenlandsAdresRegel3());
-        persoon.setBuitenlandsAdresRegel4Migratie(historie.getBuitenlandsAdresRegel4());
-        persoon.setBuitenlandsAdresRegel5Migratie(historie.getBuitenlandsAdresRegel5());
-        persoon.setBuitenlandsAdresRegel6Migratie(historie.getBuitenlandsAdresRegel6());
     }
 
     /**

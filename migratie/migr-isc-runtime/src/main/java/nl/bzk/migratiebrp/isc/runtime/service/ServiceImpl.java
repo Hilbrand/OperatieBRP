@@ -7,10 +7,12 @@
 package nl.bzk.migratiebrp.isc.runtime.service;
 
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
 import nl.bzk.migratiebrp.util.common.logging.FunctioneleMelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -26,13 +28,9 @@ public final class ServiceImpl implements Service, InitializingBean {
 
     /**
      * Constructor.
-     *
-     * @param kanaal
-     *            kanaal
-     * @param actions
-     *            actions
-     * @param melding
-     *            melding;
+     * @param kanaal kanaal
+     * @param actions actions
+     * @param melding melding;
      */
     protected ServiceImpl(final String kanaal, final List<Action> actions, final FunctioneleMelding melding) {
         this.kanaal = kanaal;

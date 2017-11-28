@@ -9,18 +9,15 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaam;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaam;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaamHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,16 +26,21 @@ import org.springframework.stereotype.Component;
 @Component
 public final class BrpVoornaamMapper {
 
+    private final BrpVoornaamInhoudMapper mapper;
+
+    /**
+     * Constructor.
+     * @param mapper inhoud mapper
+     */
     @Inject
-    private BrpVoornaamInhoudMapper mapper;
+    public BrpVoornaamMapper(final BrpVoornaamInhoudMapper mapper) {
+        this.mapper = mapper;
+    }
 
     /**
      * Map de database voornamen naar conversiemodel voornamen.
-     * 
-     * @param persoonVoornaamSet
-     *            database voornamen
-     * @param brpOnderzoekMapper
-     *            De mapper voor onderzoeken
+     * @param persoonVoornaamSet database voornamen
+     * @param brpOnderzoekMapper De mapper voor onderzoeken
      * @return conversiemodel voornamen
      */
     public List<BrpStapel<BrpVoornaamInhoud>> map(final Set<PersoonVoornaam> persoonVoornaamSet, final BrpOnderzoekMapper brpOnderzoekMapper) {
@@ -69,8 +71,8 @@ public final class BrpVoornaamMapper {
             final BrpString naam = BrpString.wrap(historie.getNaam(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_VOORNAAM_NAAM, true));
             final BrpInteger volgnummer =
                     BrpInteger.wrap(
-                        historie.getPersoonVoornaam().getVolgnummer(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_VOORNAAM_VOLGNUMMER, true));
+                            historie.getPersoonVoornaam().getVolgnummer(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_VOORNAAM_VOLGNUMMER, true));
 
             return new BrpVoornaamInhoud(naam, volgnummer);
 

@@ -1,1 +1,1 @@
-mvn clean install -U -P LOCALHOST,nieuwste,tomcat,bijhouding,bevraging -Dnieuwste
+mvn clean install -o -U -P LOCALHOST,nieuwste,bijhouding,bevraging,protocollering,tomcat -Dnieuwste

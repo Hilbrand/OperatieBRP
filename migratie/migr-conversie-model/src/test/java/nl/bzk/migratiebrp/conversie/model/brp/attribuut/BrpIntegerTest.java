@@ -13,18 +13,17 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 public class BrpIntegerTest {
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testVerwijderOnderzoek() throws Exception {
         BrpInteger code = new BrpInteger(209, onderzoek);
         assertNotNull(code.getOnderzoek());
-        BrpInteger newCode = code.verwijderOnderzoek();
+        final BrpInteger newCode = code.verwijderOnderzoek();
         assertNotNull(code.getOnderzoek());
         assertNull(newCode.getOnderzoek());
         code = new BrpInteger(null, onderzoek);
@@ -39,23 +38,23 @@ public class BrpIntegerTest {
 
     @Test
     public void testWrapMetWaardeEnZonderOnderzoek() throws Exception {
-        BrpInteger result = BrpInteger.wrap(207, null);
+        final BrpInteger result = BrpInteger.wrap(207, null);
         assertNull(result.getOnderzoek());
         assertEquals(207, result.getWaarde().intValue());
     }
 
     @Test
     public void testWrapZonderWaardeEnMetOnderzoek() throws Exception {
-        BrpInteger result = BrpInteger.wrap(null, onderzoek);
+        final BrpInteger result = BrpInteger.wrap(null, onderzoek);
         assertNotNull(result.getOnderzoek());
         assertNull(result.getWaarde());
     }
 
     @Test
     public void testBrpInteger() {
-        BrpInteger int1 = new BrpInteger(1, null);
-        BrpInteger int2 = new BrpInteger(1, onderzoek);
-        BrpInteger int3 = new BrpInteger(2, null);
+        final BrpInteger int1 = new BrpInteger(1, null);
+        final BrpInteger int2 = new BrpInteger(1, onderzoek);
+        final BrpInteger int3 = new BrpInteger(2, null);
         Assert.assertEquals(0, int1.compareTo(int2));
         Assert.assertEquals(1, int3.compareTo(int1));
         Assert.assertEquals(-1, int1.compareTo(int3));
@@ -63,7 +62,7 @@ public class BrpIntegerTest {
 
     @Test(expected = NullPointerException.class)
     public void testBrpIntegerNull() {
-        BrpInteger i = new BrpInteger(12, null);
+        final BrpInteger i = new BrpInteger(12, null);
         i.compareTo(null);
     }
 

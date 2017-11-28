@@ -8,12 +8,12 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.sql;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.sql.DataSource;
-
 import org.apache.commons.io.IOUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -28,13 +28,9 @@ public final class IvUc105Helper {
 
     /**
      * Default constructor.
-     *
-     * @param scriptResource
-     *            Het te gebruiken script
-     * @param source
-     *            De bron datasource
-     * @param destination
-     *            De doel datasource
+     * @param scriptResource Het te gebruiken script
+     * @param source De bron datasource
+     * @param destination De doel datasource
      */
     public IvUc105Helper(final String scriptResource, final DataSource source, final DataSource destination) {
         this.scriptResource = scriptResource;
@@ -44,14 +40,12 @@ public final class IvUc105Helper {
 
     /**
      * Voer het script uit tegen de bron- en doeldatasource.
-     *
      * @return Het resultaat.
-     * @throws IOException
-     *             In het geval er tijdens het lezen van het script wat fout gaat.
+     * @throws IOException In het geval er tijdens het lezen van het script wat fout gaat.
      */
     public String execute() throws IOException {
         final List<String> sourceScript = leesScript(scriptResource);
-        final List<String> destinationScript = executeScript(source, sourceScript);
+        final List<String> destinationScript = normaliseerScript(executeScript(source, sourceScript));
         executeScript(destination, destinationScript);
 
         final StringBuilder resultaat = new StringBuilder();
@@ -67,13 +61,13 @@ public final class IvUc105Helper {
             if (is == null) {
                 throw new IllegalArgumentException("Resource '" + resource + "' bestaat niet.");
             }
-            input = IOUtils.toString(is);
+            input = IOUtils.toString(is, Charset.defaultCharset());
         }
 
         // Verwijderen psql regels (beginnen met '\p')
         final String sqlScript = input.replaceAll("(?m)^\\\\p.*$", "");
 
-        final List<String> statements = new LinkedList<String>();
+        final List<String> statements = new LinkedList<>();
         ScriptUtils.splitSqlScript(sqlScript, ';', statements);
 
         return statements;
@@ -93,6 +87,40 @@ public final class IvUc105Helper {
         }
 
         return resultaat;
+    }
+
+    private List<String> normaliseerScript(final List<String> scriptRegels) {
+        Iterator<String> iterator = scriptRegels.iterator();
+        final List<String> resultaat = new ArrayList<>(scriptRegels.size());
+        while (iterator.hasNext()) {
+            final String statement = iterator.next();
+            // Voor inserts nemen we alles samen tot een statement
+            if (statement.startsWith("insert")) {
+                bepaalInsertStatement(resultaat, iterator, statement);
+            } else {
+                resultaat.add(statement);
+            }
+        }
+
+        return resultaat;
+    }
+
+    private void bepaalInsertStatement(List<String> resultaat, Iterator<String> iterator, String statement) {
+        int containingInserts = 0;
+        StringBuilder statementBuilder = new StringBuilder(statement);
+        while (iterator.hasNext()) {
+            final String nextStatement = iterator.next();
+            if (!";".equals(nextStatement)) {
+                statementBuilder.append(nextStatement);
+                containingInserts++;
+            } else {
+                break;
+            }
+        }
+        if (containingInserts > 0) {
+            statementBuilder.append(";");
+            resultaat.add(statementBuilder.toString());
+        }
     }
 
 }

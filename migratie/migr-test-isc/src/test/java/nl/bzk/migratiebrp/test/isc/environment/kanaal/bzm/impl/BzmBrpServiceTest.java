@@ -32,8 +32,14 @@ public class BzmBrpServiceTest {
     @Mock
     private DispatchClient dispatchClient;
 
+    @Mock
+    private BzmSoapUtil bzmSoapUtil;
+
     @InjectMocks
     private BzmBrpServiceImpl bzmService;
+
+    @Mock
+    private SOAPMessage soapMessage;
 
     public void verstuurBzmBericht() {
         final String resultaat = bzmService.verstuurBzmBericht("<testRequest/>", "123ABC", "987ZYX");
@@ -42,12 +48,14 @@ public class BzmBrpServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void verstuurBzmBerichtInvalidXML() {
+        Mockito.when(bzmSoapUtil.maakSOAPBericht(Matchers.anyString())).thenReturn(null);
         bzmService.verstuurBzmBericht("bladiebla ongeldige xml", "123ABC", "987ZYX");
     }
 
     @Test
     public void verstuurBzmBerichtInvalidBzmBericht() {
         Mockito.when(dispatchClient.doInvokeService(Matchers.any(SOAPMessage.class), Matchers.anyString(), Matchers.anyString())).thenReturn(null);
+        Mockito.when(bzmSoapUtil.maakSOAPBericht(Matchers.anyString())).thenReturn(soapMessage);
         final String resultaat = bzmService.verstuurBzmBericht("<testRequest/>", "123ABC", "987ZYX");
         assertNull(resultaat);
     }
@@ -55,8 +63,9 @@ public class BzmBrpServiceTest {
     @Test
     public void verstuurBzmBerichtValid() {
         final String responseBody = "<testResponse/>";
-        final SOAPMessage soapResponse = BzmSoapUtil.maakSOAPBericht(responseBody);
-        Mockito.when(dispatchClient.doInvokeService(Matchers.any(SOAPMessage.class), Matchers.anyString(), Matchers.anyString())).thenReturn(soapResponse);
+        Mockito.when(dispatchClient.doInvokeService(Matchers.any(SOAPMessage.class), Matchers.anyString(), Matchers.anyString())).thenReturn(soapMessage);
+        Mockito.when(bzmSoapUtil.maakSOAPBericht(Matchers.anyString())).thenReturn(soapMessage);
+        Mockito.when(bzmSoapUtil.getSOAPResultaat(Matchers.any(SOAPMessage.class))).thenReturn(responseBody);
         final String resultaat = bzmService.verstuurBzmBericht("<testRequest/>", "123ABC", "987ZYX");
         assertNotNull(resultaat);
         assertEquals(responseBody, resultaat);

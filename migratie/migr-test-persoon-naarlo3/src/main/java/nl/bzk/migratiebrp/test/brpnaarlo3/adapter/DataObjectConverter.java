@@ -13,18 +13,14 @@ public interface DataObjectConverter {
 
     /**
      * Type entiteit dat deze converter kan converteren.
-     * 
      * @return type
      */
     String getType();
 
     /**
      * Converteer.
-     * 
-     * @param dataObject
-     *            data object
-     * @param context
-     *            context van de conversie
+     * @param dataObject data object
+     * @param context context van de conversie
      */
     void convert(DataObject dataObject, ConverterContext context);
 }

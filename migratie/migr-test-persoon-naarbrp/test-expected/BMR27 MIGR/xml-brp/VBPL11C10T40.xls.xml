@@ -319,7 +319,7 @@
                         <datumTijdRegistratie>19761031010000000</datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>true</indicatieOuder>
+                        
                      </inhoud>
                   </brpGroep>
                </ouderStapel>
@@ -398,7 +398,7 @@
                         <datumTijdRegistratie>19761031010000000</datumTijdRegistratie>
                      </historie>
                      <inhoud class="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud">
-                        <indicatieOuder>true</indicatieOuder>
+                        
                      </inhoud>
                   </brpGroep>
                </ouderStapel>

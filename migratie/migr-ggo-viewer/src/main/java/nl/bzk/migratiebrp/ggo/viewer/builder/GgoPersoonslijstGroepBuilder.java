@@ -8,7 +8,10 @@ package nl.bzk.migratiebrp.ggo.viewer.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.ggo.viewer.builder.brp.GgoBrpBuilder;
@@ -20,7 +23,7 @@ import nl.bzk.migratiebrp.ggo.viewer.model.GgoResultaatIndex;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoStapel;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoVoorkomenVergelijking;
 import nl.bzk.migratiebrp.ggo.viewer.util.NaamUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,33 +38,23 @@ public class GgoPersoonslijstGroepBuilder {
 
     /**
      * Bouwt de GgoPersoonslijstGroep met alle onderliggende componenten.
-     *
-     * @param lo3Persoonslijst
-     *            De te verwerken Lo3Persoonslijst
-     * @param brpPersoonslijst
-     *            De te verwerken BrpPersoonslijst
-     * @param brpPersoon
-     *            De te verwerken entitymodel persoonslijst
-     *
-     * @param teruggeconverteerd
-     *            De te verwerken teruggeconverteerde Lo3Persoonslijst
-     * @param verschillen
-     *            De op te nemen matches
-     * @param meldingen
-     *            De op te nemen meldingen/signaleringen van BCM en Conversie
-     * @param foutLog
-     *            De foutlog meldingen welke zijn opgetreden tijdens de verwerking
+     * @param lo3Persoonslijst De te verwerken Lo3Persoonslijst
+     * @param brpPersoonslijst De te verwerken BrpPersoonslijst
+     * @param brpPersoon De te verwerken entitymodel persoonslijst
+     * @param teruggeconverteerd De te verwerken teruggeconverteerde Lo3Persoonslijst
+     * @param verschillen De op te nemen matches
+     * @param meldingen De op te nemen meldingen/signaleringen van BCM en Conversie
+     * @param foutLog De foutlog meldingen welke zijn opgetreden tijdens de verwerking
      * @return Een nieuwe GgoPersoonslijstGroep
      */
     public final GgoPersoonslijstGroep build(
-        final Lo3Persoonslijst lo3Persoonslijst,
-        final BrpPersoonslijst brpPersoonslijst,
-        final Persoon brpPersoon,
-        final Lo3Persoonslijst teruggeconverteerd,
-        final List<GgoVoorkomenVergelijking> verschillen,
-        final List<GgoFoutRegel> meldingen,
-        final List<GgoFoutRegel> foutLog)
-    {
+            final Lo3Persoonslijst lo3Persoonslijst,
+            final BrpPersoonslijst brpPersoonslijst,
+            final Persoon brpPersoon,
+            final Lo3Persoonslijst teruggeconverteerd,
+            final List<GgoVoorkomenVergelijking> verschillen,
+            final List<GgoFoutRegel> meldingen,
+            final List<GgoFoutRegel> foutLog) {
         // Build GGO Model
         final List<GgoStapel> ggoLo3PL = ggoLo3Builder.build(lo3Persoonslijst);
         final List<GgoStapel> ggoLo3PLTerugConversie = ggoLo3Builder.build(teruggeconverteerd);
@@ -71,38 +64,32 @@ public class GgoPersoonslijstGroepBuilder {
         final List<GgoResultaatIndex> resultaatIndex = bepaalResultaatIndex(lo3Persoonslijst, brpPersoonslijst, meldingen, verschillen);
 
         // Resultaat
-        final Long aNummer = lo3Persoonslijst != null ? lo3Persoonslijst.getActueelAdministratienummer() : null;
+        final String aNummer = lo3Persoonslijst != null ? lo3Persoonslijst.getActueelAdministratienummer() : null;
         return new GgoPersoonslijstGroep(
-            aNummer,
-            NaamUtil.createVolledigeNaam(lo3Persoonslijst),
-            ggoLo3PL,
-            ggoLo3PLTerugConversie,
-            ggoBrpPL,
-            verschillen,
-            meldingen,
-            resultaatIndex,
-            foutLog);
+                aNummer,
+                NaamUtil.createVolledigeNaam(lo3Persoonslijst),
+                ggoLo3PL,
+                ggoLo3PLTerugConversie,
+                ggoBrpPL,
+                verschillen,
+                meldingen,
+                resultaatIndex,
+                foutLog);
     }
 
     /**
      * Bepaalt het resultaat van de conversie en voegt deze aan de index.
-     *
-     * @param lo3Persoonslijst
-     *            De LO3 persoonslijst.
-     * @param brpPersoonslijst
-     *            De BRP persoonslijst.
-     * @param foutRegels
-     *            De foutregels.
-     * @param verschillen
-     *            De verschillen
+     * @param lo3Persoonslijst De LO3 persoonslijst.
+     * @param brpPersoonslijst De BRP persoonslijst.
+     * @param foutRegels De foutregels.
+     * @param verschillen De verschillen
      * @return Volledigenaam.
      */
     protected final List<GgoResultaatIndex> bepaalResultaatIndex(
-        final Lo3Persoonslijst lo3Persoonslijst,
-        final BrpPersoonslijst brpPersoonslijst,
-        final List<GgoFoutRegel> foutRegels,
-        final List<GgoVoorkomenVergelijking> verschillen)
-    {
+            final Lo3Persoonslijst lo3Persoonslijst,
+            final BrpPersoonslijst brpPersoonslijst,
+            final List<GgoFoutRegel> foutRegels,
+            final List<GgoVoorkomenVergelijking> verschillen) {
         final List<GgoResultaatIndex> resultaatIndex = new ArrayList<>();
 
         // inlezen pl

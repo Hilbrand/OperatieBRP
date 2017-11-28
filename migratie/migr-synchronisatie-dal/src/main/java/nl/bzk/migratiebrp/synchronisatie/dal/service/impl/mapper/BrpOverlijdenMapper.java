@@ -6,13 +6,13 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonOverlijdenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonOverlijdenHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -29,37 +29,37 @@ public final class BrpOverlijdenMapper extends AbstractBrpMapper<PersoonOverlijd
         final BrpGemeenteCode gemeenteOverlijden;
         gemeenteOverlijden =
                 BrpMapperUtil.mapBrpGemeenteCode(
-                    historie.getGemeente(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_GEMEENTECODE, true));
+                        historie.getGemeente(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_GEMEENTECODE, true));
         final BrpString woonplaatsnaamOverlijden =
                 BrpString.wrap(
-                    historie.getWoonplaatsnaamOverlijden(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_WOONPLAATSNAAM, true));
+                        historie.getWoonplaatsnaamOverlijden(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_WOONPLAATSNAAM, true));
         final BrpString buitenlandsePlaatsOverlijden =
                 BrpString.wrap(
-                    historie.getBuitenlandsePlaatsOverlijden(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_BUITENLANDSEPLAATS, true));
+                        historie.getBuitenlandsePlaatsOverlijden(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_BUITENLANDSEPLAATS, true));
         final BrpString buitenlandseRegioOverlijden =
                 BrpString.wrap(
-                    historie.getBuitenlandseRegioOverlijden(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_BUITENLANDSEREGIO, true));
+                        historie.getBuitenlandseRegioOverlijden(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_BUITENLANDSEREGIO, true));
         final BrpLandOfGebiedCode landOfGebiedOverlijden;
         landOfGebiedOverlijden =
                 BrpMapperUtil.mapBrpLandOfGebiedCode(
-                    historie.getLandOfGebied(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_LANDGEBIEDCODE, true));
+                        historie.getLandOfGebied(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_LANDGEBIEDCODE, true));
         final BrpString omschrijvingLocatieOverlijden =
                 BrpString.wrap(
-                    historie.getOmschrijvingLocatieOverlijden(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_OMSCHRIJVINGLOCATIE, true));
+                        historie.getOmschrijvingLocatieOverlijden(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_OVERLIJDEN_OMSCHRIJVINGLOCATIE, true));
 
         return new BrpOverlijdenInhoud(
-            datumOverlijden,
-            gemeenteOverlijden,
-            woonplaatsnaamOverlijden,
-            buitenlandsePlaatsOverlijden,
-            buitenlandseRegioOverlijden,
-            landOfGebiedOverlijden,
-            omschrijvingLocatieOverlijden);
+                datumOverlijden,
+                gemeenteOverlijden,
+                woonplaatsnaamOverlijden,
+                buitenlandsePlaatsOverlijden,
+                buitenlandseRegioOverlijden,
+                landOfGebiedOverlijden,
+                omschrijvingLocatieOverlijden);
     }
 }

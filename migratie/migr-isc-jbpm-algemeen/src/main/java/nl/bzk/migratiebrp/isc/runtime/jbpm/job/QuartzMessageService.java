@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.isc.runtime.jbpm.job;
 
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.jbpm.JbpmContext;
 import org.jbpm.JbpmException;
 import org.jbpm.job.Job;
@@ -32,9 +32,7 @@ public final class QuartzMessageService implements MessageService {
 
     /**
      * Constructor.
-     *
-     * @param scheduler
-     *            scheduler
+     * @param scheduler scheduler
      */
     public QuartzMessageService(final Scheduler scheduler) {
         this.scheduler = scheduler;
@@ -53,12 +51,12 @@ public final class QuartzMessageService implements MessageService {
 
         final JobDetail jobDetail =
                 JobBuilder.newJob(ExecuteJobJob.class)
-                          .withIdentity("job-" + job.getId(), "jbpm-jobs")
-                          .usingJobData(ExecuteJobJob.JOB_ID_KEY, job.getId())
-                          .storeDurably()
-                          .withDescription("Job voor JBPM job " + job.getId())
-                          .requestRecovery()
-                          .build();
+                        .withIdentity("job-" + job.getId(), "jbpm-jobs")
+                        .usingJobData(ExecuteJobJob.JOB_ID_KEY, job.getId())
+                        .storeDurably()
+                        .withDescription("Job voor JBPM job " + job.getId())
+                        .requestRecovery()
+                        .build();
 
         final Trigger trigger = TriggerBuilder.newTrigger().withIdentity("trigger-" + job.getId(), "jbpm-jobs").build();
 

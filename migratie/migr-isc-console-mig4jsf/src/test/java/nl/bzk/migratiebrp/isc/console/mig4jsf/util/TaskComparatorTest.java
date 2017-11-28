@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.isc.console.mig4jsf.util;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,7 +103,7 @@ public class TaskComparatorTest {
     public void testNullSafeDate() throws InterruptedException {
         final Date nullDate = null;
         final Date olderCurrentDate = new Date();
-        Thread.sleep(100l);
+        TimeUnit.MILLISECONDS.sleep(100l);
         final Date newerCurrentDate = new Date();
 
         int result = TASK_COMPARATOR.nullSafeDateComparator(nullDate, nullDate);

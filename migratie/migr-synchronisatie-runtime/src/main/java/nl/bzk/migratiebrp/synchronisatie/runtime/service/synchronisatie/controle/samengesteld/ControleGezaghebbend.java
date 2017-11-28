@@ -8,14 +8,19 @@ package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.control
 
 import java.util.List;
 import javax.inject.Inject;
-import javax.inject.Named;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.Controle;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.lijst.LijstControle;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.lijst.LijstControleEenActueelAnummer;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControle;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControleBijhoudingsPartijGelijk;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControleGevondenDatumtijdstempelGelijkOfOuder;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControleGevondenVersienummerGelijkOfKleiner;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.zoeker.PlZoeker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.zoeker.PlZoekerOpActueelAnummerEnNietFoutiefOpgeschortObvActueelAnummer;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.pl.PlService;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
 import org.springframework.stereotype.Component;
 
@@ -25,37 +30,37 @@ import org.springframework.stereotype.Component;
 @Component(value = "controleGezaghebbend")
 public final class ControleGezaghebbend implements Controle {
 
-    @Inject
-    @Named(value = "plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummer")
-    private PlZoeker plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummer;
+    private final PlZoeker plZoekerObvActueelAnummer;
+    private final LijstControle lijstControleEen;
+    private final PlControle plControleBijhoudingsPartijGelijk;
+    private final PlControle plControleGevondenVersienummerGelijkOfKleiner;
+    private final PlControle plControleGevondenDatumtijdstempelGelijkOfOuder;
 
+    /**
+     * Constructor voor deze implementatie van een {@link Controle}.
+     * @param plService implementatie van de {@link PlService}
+     */
     @Inject
-    @Named(value = "lijstControleEen")
-    private LijstControle lijstControleEen;
-
-    @Inject
-    @Named(value = "plControleBijhoudingsPartijGelijk")
-    private PlControle plControleBijhoudingsPartijGelijk;
-    @Inject
-    @Named(value = "plControleGevondenVersienummerGelijkOfKleiner")
-    private PlControle plControleGevondenVersienummerGelijkOfKleiner;
-    @Inject
-    @Named(value = "plControleGevondenDatumtijdstempelGelijkOfOuder")
-    private PlControle plControleGevondenDatumtijdstempelGelijkOfOuder;
+    public ControleGezaghebbend(final PlService plService) {
+        this.plZoekerObvActueelAnummer = new PlZoekerOpActueelAnummerEnNietFoutiefOpgeschortObvActueelAnummer(plService);
+        this.lijstControleEen = new LijstControleEenActueelAnummer();
+        this.plControleBijhoudingsPartijGelijk = new PlControleBijhoudingsPartijGelijk();
+        this.plControleGevondenVersienummerGelijkOfKleiner = new PlControleGevondenVersienummerGelijkOfKleiner();
+        this.plControleGevondenDatumtijdstempelGelijkOfOuder = new PlControleGevondenDatumtijdstempelGelijkOfOuder();
+    }
 
     @Override
     public boolean controleer(final VerwerkingsContext context) {
         final ControleLogging logging = new ControleLogging(ControleMelding.CONTROLE_GEZAGHEBBEND);
-        final List<BrpPersoonslijst> dbPersoonslijsten = plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummer.zoek(context);
+        final List<BrpPersoonslijst> dbPersoonslijsten = plZoekerObvActueelAnummer.zoek(context);
 
         if (lijstControleEen.controleer(dbPersoonslijsten)) {
             final BrpPersoonslijst dbPersoonslijst = dbPersoonslijsten.get(0);
 
             if (dbPersoonslijst != null
-                && plControleBijhoudingsPartijGelijk.controleer(context, dbPersoonslijst)
-                && plControleGevondenVersienummerGelijkOfKleiner.controleer(context, dbPersoonslijst)
-                && plControleGevondenDatumtijdstempelGelijkOfOuder.controleer(context, dbPersoonslijst))
-            {
+                    && plControleBijhoudingsPartijGelijk.controleer(context, dbPersoonslijst)
+                    && plControleGevondenVersienummerGelijkOfKleiner.controleer(context, dbPersoonslijst)
+                    && plControleGevondenDatumtijdstempelGelijkOfOuder.controleer(context, dbPersoonslijst)) {
                 logging.logResultaat(true);
                 return true;
             }

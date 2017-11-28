@@ -6,13 +6,13 @@
 
 package nl.bzk.brp.levering.lo3.mapper;
 
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.maakIngeschrevene;
+
+import java.util.Arrays;
 import java.util.List;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
 import nl.bzk.brp.gba.dataaccess.VerConvRepository;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.VolgnummerAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.predikaatview.kern.PersoonHisVolledigView;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonGeslachtsnaamcomponentHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
+import nl.bzk.brp.levering.lo3.support.MetaObjectUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud;
 import org.junit.Assert;
@@ -21,80 +21,62 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class GeslachtsnaamcomponentenMapperTest {
+public class GeslachtsnaamcomponentenMapperTest extends AbstractMapperTestBasis {
 
-    private static final String STAM = "Baronnetje";
-
-    private final GeslachtsnaamcomponentenMapper mapper = new GeslachtsnaamcomponentenMapper();
+    private final GeslachtsnaamcomponentMapper singleMapper = new GeslachtsnaamcomponentMapper();
+    private final GeslachtsnaamcomponentenMapper mapper = new GeslachtsnaamcomponentenMapper(singleMapper);
 
     @Before
     public void setupSingleMapper() throws ReflectiveOperationException {
-        final GeslachtsnaamcomponentMapper singleMapper = new GeslachtsnaamcomponentMapper();
         ReflectionTestUtils.setField(singleMapper, "verConvRepository", Mockito.mock(VerConvRepository.class, Mockito.RETURNS_DEFAULTS));
-        ReflectionTestUtils.setField(mapper, "geslachtsnaamcomponentMapper", singleMapper);
-    }
-
-    @Test
-    public void testLeeg() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> brpInhoud =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
-
-        Assert.assertTrue(brpInhoud.size() == 0);
-    }
-
-    /**
-     * Verwacht NPE vanwege hardgecodeerde controle op conversie model
-     */
-    @Test(expected = NullPointerException.class)
-    public void testGeenWaarde() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        builder.voegPersoonGeslachtsnaamcomponentToe(new PersoonGeslachtsnaamcomponentHisVolledigImplBuilder(new VolgnummerAttribuut(1)).nieuwStandaardRecord(
-                                                                                                                                            MapperTestUtil.maakActieModel(
-                                                                                                                                                20131211000000L,
-                                                                                                                                                20131212,
-                                                                                                                                                20131213))
-                                                                                                                                        .eindeRecord()
-                                                                                                                                        .build());
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
     }
 
     @Test
     public void testSucces() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        maak(builder).voegPersoonGeslachtsnaamcomponentToe(
-            new PersoonGeslachtsnaamcomponentHisVolledigImplBuilder(new VolgnummerAttribuut(2)).nieuwStandaardRecord(
-                                                                                                   MapperTestUtil.maakActieModel(
-                                                                                                       20131211000000L,
-                                                                                                       20131212,
-                                                                                                       20121213))
-                                                                                               .stam("Bastaard")
-                                                                                               .eindeRecord()
-                                                                                               .build());
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> brpInhoud =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+        final MetaObject.Builder builder = maakIngeschrevene(() -> MetaObjectUtil.maakPersoonGeslachtsnaamcomponent(1, "Baronnetje"));
+        final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> brpInhoud = doMapping(mapper, builder);
+
+        Assert.assertNotNull(brpInhoud);
+        Assert.assertTrue(brpInhoud.size() == 1);
+        Assert.assertEquals(Integer.valueOf(1), brpInhoud.get(0).get(0).getInhoud().getVolgnummer().getWaarde());
+        Assert.assertEquals("Baronnetje", brpInhoud.get(0).get(0).getInhoud().getStam().getWaarde());
+        Assert.assertTrue(brpInhoud.get(0).size() == 1);
+    }
+
+    @Test
+    public void testTweeComponenten() {
+        final MetaObject.Builder builder =
+                maakIngeschrevene(
+                        Arrays.asList(
+                                () -> MetaObjectUtil.maakPersoonGeslachtsnaamcomponent(1, "Bastaard"),
+                                () -> MetaObjectUtil.maakPersoonGeslachtsnaamcomponent(2, "Pekela")),
+                        java.util.Collections.emptyList());
+
+        final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> brpInhoud = doMapping(mapper, builder);
 
         Assert.assertNotNull(brpInhoud);
         Assert.assertTrue(brpInhoud.size() == 2);
+
+        brpInhoud.sort((o1, o2) -> o1.get(0).getInhoud().getVolgnummer().compareTo(o2.get(0).getInhoud().getVolgnummer()));
+
         Assert.assertTrue(brpInhoud.get(0).size() == 1);
         Assert.assertEquals(Integer.valueOf(1), brpInhoud.get(0).get(0).getInhoud().getVolgnummer().getWaarde());
-        Assert.assertEquals(STAM, brpInhoud.get(0).get(0).getInhoud().getStam().getWaarde());
+        Assert.assertEquals("Bastaard", brpInhoud.get(0).get(0).getInhoud().getStam().getWaarde());
+
+        Assert.assertTrue(brpInhoud.get(1).size() == 1);
+        Assert.assertEquals(Integer.valueOf(2), brpInhoud.get(1).get(0).getInhoud().getVolgnummer().getWaarde());
+        Assert.assertEquals("Pekela", brpInhoud.get(1).get(0).getInhoud().getStam().getWaarde());
     }
 
-    public static PersoonHisVolledigImplBuilder maak(final PersoonHisVolledigImplBuilder builder) {
-        // @formatter:off
-        return builder.voegPersoonGeslachtsnaamcomponentToe(
-                new PersoonGeslachtsnaamcomponentHisVolledigImplBuilder(new VolgnummerAttribuut(1))
-                        .nieuwStandaardRecord(MapperTestUtil.maakActieModel(20131211000000L, 20131212, 20121213))
-                        .adellijkeTitel("B")
-                        .stam(STAM)
-                        .predicaat("J")
-                        .scheidingsteken("-")
-                        .voorvoegsel("van der")
-                        .eindeRecord().build());
-        // @formatter:on
+    @Test
+    public void testLeeg() {
+        final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> brpInhoud = doMapping(mapper, maakIngeschrevene());
+        Assert.assertTrue(brpInhoud.size() == 0);
+    }
+
+    @Test(expected = java.lang.NullPointerException.class)
+    public void testGeenWaarde() {
+        final MetaObject.Builder builder = maakIngeschrevene(() -> MetaObjectUtil.maakPersoonGeslachtsnaamcomponent(1, null));
+        doMapping(mapper, builder);
     }
 }

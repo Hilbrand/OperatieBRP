@@ -16,10 +16,10 @@ import javax.jms.TextMessage;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwijderAfnemersindicatieVerzoekBericht;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -30,18 +30,25 @@ import org.springframework.jms.core.MessageCreator;
 @RunWith(MockitoJUnitRunner.class)
 public class VerwijderAfnemersindicatieServiceTest {
 
-    @Mock(name = "gbaAfnemersindicaties")
+    private static final String PARTIJ_CODE = "059901";
+    private static final String BSN = "123456789";
+
+    @Mock
     private Destination gbaAfnemersindicatiesQueue;
-    @Mock(name = "brpQueueJmsTemplate")
+    @Mock
     private JmsTemplate jmsTemplate;
     @Mock
     private Session jmsSession;
 
-    @InjectMocks
     private VerwijderAfnemersindicatieService subject;
 
     @Mock
     private TextMessage messageToBrp;
+
+    @Before
+    public void setup() {
+        subject = new VerwijderAfnemersindicatieService(jmsTemplate, gbaAfnemersindicatiesQueue);
+    }
 
     @Test
     public void test() throws Exception {
@@ -50,9 +57,8 @@ public class VerwijderAfnemersindicatieServiceTest {
 
         final VerwijderAfnemersindicatieVerzoekBericht verzoek = new VerwijderAfnemersindicatieVerzoekBericht();
         verzoek.setMessageId("MSG-ID");
-        verzoek.setPersoonId(123);
-        verzoek.setToegangLeveringsautorisatieId(67656);
-        verzoek.setDienstId(432);
+        verzoek.setBsn(BSN);
+        verzoek.setPartijCode(PARTIJ_CODE);
 
         // Execute voor subject
         subject.verwerkBericht(verzoek);
@@ -75,7 +81,7 @@ public class VerwijderAfnemersindicatieServiceTest {
         Mockito.verify(messageToBrp).setStringProperty(JMSConstants.BERICHT_REFERENTIE, "MSG-ID");
 
         final String expectedMessage =
-                "{\"effectAfnemerindicatie\":\"VERWIJDERING\",\"persoonId\":123,\"toegangLeveringsautorisatieId\":67656,\"dienstId\":432}";
+                "{\"effectAfnemerindicatie\":\"VERWIJDERING\",\"partijCode\":\"059901\",\"bsn\":\"123456789\"}";
         final String message = messageCaptor.getValue();
 
         final ObjectMapper objectMapper = new ObjectMapper();

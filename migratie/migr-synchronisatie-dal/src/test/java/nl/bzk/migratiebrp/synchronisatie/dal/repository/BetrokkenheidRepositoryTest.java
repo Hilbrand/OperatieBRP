@@ -7,14 +7,17 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.repository;
 
 import java.sql.Timestamp;
+
 import javax.persistence.EntityManager;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderlijkGezagHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderlijkGezagHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.jpa.BetrokkenheidRepositoryImpl;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -35,9 +38,9 @@ public class BetrokkenheidRepositoryTest {
         final Relatie doelRelatie = new Relatie(SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
         final Betrokkenheid doel = new Betrokkenheid(SoortBetrokkenheid.KIND, doelRelatie);
 
-        doel.addBetrokkenheidOuderHistorie(maakBetrokkenheidOuderHistorie(doel, true));
-        doel.addBetrokkenheidOuderHistorie(maakBetrokkenheidOuderHistorie(doel, false));
-        doel.addBetrokkenheidOuderHistorie(maakBetrokkenheidOuderHistorie(doel, true));
+        doel.addBetrokkenheidOuderHistorie(maakBetrokkenheidOuderHistorie(doel));
+        doel.addBetrokkenheidOuderHistorie(maakBetrokkenheidOuderHistorie(doel));
+        doel.addBetrokkenheidOuderHistorie(maakBetrokkenheidOuderHistorie(doel));
 
         doel.addBetrokkenheidOuderlijkGezagHistorie(maakBetrokkenheidOuderlijkGezagHistorie(doel, true));
         doel.addBetrokkenheidOuderlijkGezagHistorie(maakBetrokkenheidOuderlijkGezagHistorie(doel, false));
@@ -51,7 +54,7 @@ public class BetrokkenheidRepositoryTest {
         final Relatie bronRelatie = new Relatie(SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
         final Betrokkenheid bron = new Betrokkenheid(SoortBetrokkenheid.KIND, bronRelatie);
 
-        bron.addBetrokkenheidOuderHistorie(maakBetrokkenheidOuderHistorie(bron, true));
+        bron.addBetrokkenheidOuderHistorie(maakBetrokkenheidOuderHistorie(bron));
         bron.addBetrokkenheidOuderlijkGezagHistorie(maakBetrokkenheidOuderlijkGezagHistorie(bron, true));
 
         bronRelatie.addBetrokkenheid(bron);
@@ -59,17 +62,16 @@ public class BetrokkenheidRepositoryTest {
         betrokkenheidRepository.overschrijfBetrokkenheid(doel, bron);
     }
 
-    private BetrokkenheidOuderHistorie maakBetrokkenheidOuderHistorie(final Betrokkenheid betrokkenheid, final boolean indicatieOuder) {
-        final BetrokkenheidOuderHistorie result = new BetrokkenheidOuderHistorie(betrokkenheid, indicatieOuder);
+    private BetrokkenheidOuderHistorie maakBetrokkenheidOuderHistorie(final Betrokkenheid betrokkenheid) {
+        final BetrokkenheidOuderHistorie result = new BetrokkenheidOuderHistorie(betrokkenheid);
         result.setDatumTijdRegistratie(new Timestamp(1L));
         result.setDatumAanvangGeldigheid(20010101);
         return result;
     }
 
     private BetrokkenheidOuderlijkGezagHistorie maakBetrokkenheidOuderlijkGezagHistorie(
-        final Betrokkenheid betrokkenheid,
-        final boolean indicatieOuderHeeftGezag)
-    {
+            final Betrokkenheid betrokkenheid,
+            final boolean indicatieOuderHeeftGezag) {
         final BetrokkenheidOuderlijkGezagHistorie result = new BetrokkenheidOuderlijkGezagHistorie(betrokkenheid, indicatieOuderHeeftGezag);
         result.setDatumTijdRegistratie(new Timestamp(1L));
         result.setDatumAanvangGeldigheid(20010101);

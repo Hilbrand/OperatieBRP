@@ -42,7 +42,6 @@ public final class RegisterHandler implements MessageListener {
 
     /**
      * Geef oudste bericht.
-     * 
      * @return bericht
      */
     public Bericht getBericht() {
@@ -51,7 +50,6 @@ public final class RegisterHandler implements MessageListener {
 
     /**
      * Geef alle berichten.
-     * 
      * @return berichten
      */
     public List<Bericht> getBerichten() {

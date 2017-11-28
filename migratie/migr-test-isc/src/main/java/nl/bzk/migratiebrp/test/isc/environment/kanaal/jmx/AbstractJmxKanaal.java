@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.IntrospectionException;
@@ -23,13 +22,12 @@ import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.operatie.ExceptionWrapper;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
@@ -53,7 +51,6 @@ public abstract class AbstractJmxKanaal extends AbstractKanaal {
 
     /**
      * Geef de MBeanServer connectie.
-     *
      * @return MBeanServer connectie
      */
     protected abstract MBeanServerConnection getConnection();
@@ -62,9 +59,10 @@ public abstract class AbstractJmxKanaal extends AbstractKanaal {
     public final void verwerkUitgaand(final TestCasusContext testCasus, final Bericht bericht) throws KanaalException {
         final String[] parts = bericht.getInhoud().replaceAll("\r", "").split("\n");
         if (parts.length < 2) {
-            throw new KanaalException("JMX kanaal verwacht een bericht met meerdere regels; de eerste regel bevat de object naam; "
-                    + "de tweede regel de operatie of attribuut waarde; de volgende regels bevatten parameters (voor een operatie); "
-                    + "eventueel volgt een verwacht resultaat");
+            throw new KanaalException(
+                    "JMX kanaal verwacht een bericht met meerdere regels; de eerste regel bevat de object naam; "
+                            + "de tweede regel de operatie of attribuut waarde; de volgende regels bevatten parameters (voor een operatie); "
+                            + "eventueel volgt een verwacht resultaat");
         }
 
         // "brp.levering.mutaties:name=AbonnementService"
@@ -88,11 +86,10 @@ public abstract class AbstractJmxKanaal extends AbstractKanaal {
         try {
             info = connection.getMBeanInfo(name);
         } catch (final
-                InstanceNotFoundException
+        InstanceNotFoundException
                 | IntrospectionException
                 | ReflectionException
-                | IOException e)
-        {
+                | IOException e) {
             if ("true".equalsIgnoreCase(bericht.getTestBericht().getTestBerichtProperty("jmx.ignore.instancenotfound"))) {
                 return;
             }
@@ -127,6 +124,7 @@ public abstract class AbstractJmxKanaal extends AbstractKanaal {
 
     private MBeanOperationInfo findOperationInfo(final MBeanInfo info, final String operationName, final String[] parts) {
         for (final MBeanOperationInfo operationInfo : info.getOperations()) {
+            LOGGER.info("Operatie: {}", operationInfo.getName());
             if (operationInfo.getName().equals(operationName)) {
                 LOGGER.info("Operatie met correcte naam gevonden: {}", operationName);
 
@@ -140,7 +138,7 @@ public abstract class AbstractJmxKanaal extends AbstractKanaal {
                 }
                 verwachtAantal = +operationInfo.getSignature().length;
                 LOGGER.info("Operatie verwacht {} parts", verwachtAantal);
-                LOGGER.info("Test heeft {}", new Object[] {parts });
+                LOGGER.info("Test heeft {}", new Object[]{parts});
 
                 // Parts heeft ook ObjectName en OperationName
                 if (verwachtAantal + 2 == parts.length) {
@@ -216,15 +214,10 @@ public abstract class AbstractJmxKanaal extends AbstractKanaal {
 
         /**
          * Constructor.
-         *
-         * @param connection
-         *            connectie
-         * @param name
-         *            object name
-         * @param attribute
-         *            attribute
-         * @param parts
-         *            parts
+         * @param connection connectie
+         * @param name object name
+         * @param attribute attribute
+         * @param parts parts
          */
         public GetAttribute(final MBeanServerConnection connection, final ObjectName name, final MBeanAttributeInfo attribute, final String[] parts) {
             this.connection = connection;
@@ -240,23 +233,18 @@ public abstract class AbstractJmxKanaal extends AbstractKanaal {
             try {
                 result = connection.getAttribute(name, attribute.getName());
             } catch (final
-                    AttributeNotFoundException
+            AttributeNotFoundException
                     | InstanceNotFoundException
                     | MBeanException
                     | ReflectionException
-                    | IOException e)
-            {
+                    | IOException e) {
                 throw new StopHerhalingExceptionWrapper(new KanaalException(String.format(ERROR_ATTRIBUUT_UITVOEREN, attribute.getName(), name), e));
             }
 
             if (expectedResult != null) {
                 if (result == null || !expectedResult.equals(result.toString())) {
-                    throw new ExceptionWrapper(new KanaalException(String.format(
-                        ERROR_ONVERWACHT_ATTRIBUUT_RESULTAAT,
-                        attribute.getName(),
-                        name,
-                        result,
-                        expectedResult)));
+                    throw new ExceptionWrapper(
+                            new KanaalException(String.format(ERROR_ONVERWACHT_ATTRIBUUT_RESULTAAT, attribute.getName(), name, result, expectedResult)));
                 }
             }
         }
@@ -275,21 +263,14 @@ public abstract class AbstractJmxKanaal extends AbstractKanaal {
 
         /**
          * Constructor.
-         *
-         * @param connection
-         *            connectie
-         * @param name
-         *            object name
-         * @param operation
-         *            operation
-         * @param parts
-         *            parts
-         * @throws KanaalException
-         *             bij parameter fouten
+         * @param connection connectie
+         * @param name object name
+         * @param operation operation
+         * @param parts parts
+         * @throws KanaalException bij parameter fouten
          */
         public InvokeOperation(final MBeanServerConnection connection, final ObjectName name, final MBeanOperationInfo operation, final String[] parts)
-                throws KanaalException
-        {
+                throws KanaalException {
             this.connection = connection;
             this.name = name;
             this.operation = operation;
@@ -315,27 +296,22 @@ public abstract class AbstractJmxKanaal extends AbstractKanaal {
             try {
                 result =
                         connection.invoke(
-                            name,
-                            operation.getName(),
-                            parameters.toArray(new Object[parameters.size()]),
-                            signature.toArray(new String[signature.size()]));
+                                name,
+                                operation.getName(),
+                                parameters.toArray(new Object[parameters.size()]),
+                                signature.toArray(new String[signature.size()]));
             } catch (final
-                    InstanceNotFoundException
+            InstanceNotFoundException
                     | MBeanException
                     | ReflectionException
-                    | IOException e)
-            {
+                    | IOException e) {
                 throw new StopHerhalingExceptionWrapper(new KanaalException(String.format(ERROR_OPERATIE_UITVOEREN, operation.getName(), name), e));
             }
 
             if (expectedResult != null) {
                 if (result == null || !expectedResult.equals(result.toString())) {
-                    throw new ExceptionWrapper(new KanaalException(String.format(
-                        ERROR_ONVERWACHT_OPERATIE_RESULTAAT,
-                        operation.getName(),
-                        name,
-                        result,
-                        expectedResult)));
+                    throw new ExceptionWrapper(
+                            new KanaalException(String.format(ERROR_ONVERWACHT_OPERATIE_RESULTAAT, operation.getName(), name, result, expectedResult)));
                 }
             }
         }

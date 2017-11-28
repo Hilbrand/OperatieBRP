@@ -6,14 +6,13 @@
 
 package nl.bzk.migratiebrp.test.expressie;
 
-import nl.bzk.brp.versie.Versie;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.brpkern.DBUnitBrpUtil;
+import nl.bzk.algemeenbrp.test.dal.DBUnitBrpUtil;
+import nl.bzk.algemeenbrp.util.common.Version;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie;
 import nl.bzk.migratiebrp.test.dal.runner.TestRunner;
-import nl.bzk.migratiebrp.util.common.Version;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.junit.runner.RunWith;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
@@ -22,16 +21,10 @@ public abstract class ConversieTestConfiguratie extends TestConfiguratie {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getCasusFactory()
-     */
     @Override
     public TestCasusFactory getCasusFactory() {
         LOG.info("\n#####\n#####\n##### VERSIES\n#####\n#####");
-        LOG.info("Migratie: {}", Version.readVersion("nl.bzk.migratiebrp.test", "migr-test-expressie").toDetailsString());
-        LOG.info("BRP: \n{}", Versie.leesVersie("nl.bzk.migratiebrp.test", "migr-test-expressie").toDetailsString());
+        LOG.info("{}", Version.readVersion("nl.bzk.migratiebrp.test", "migr-test-expressie").toDetailsString());
 
         LOG.info("\n#####\n#####\n##### Starting application context (database)\n#####\n#####");
 
@@ -52,18 +45,8 @@ public abstract class ConversieTestConfiguratie extends TestConfiguratie {
         migratieContext.refresh();
         migratieContext.registerShutdownHook();
 
-        LOG.info("\n#####\n#####\n##### Starting application context (brp datasource)");
-        final GenericXmlApplicationContext brpDatasourceContext = new GenericXmlApplicationContext();
-        if (useMemoryDS()) {
-            brpDatasourceContext.getEnvironment().setActiveProfiles("memoryDS");
-        }
-        brpDatasourceContext.load("classpath:test-brp-datasource.xml");
-        brpDatasourceContext.refresh();
-        brpDatasourceContext.registerShutdownHook();
-
         LOG.info("\n#####\n#####\n##### Starting application context (brp levering)");
         final GenericXmlApplicationContext brpLeveringContext = new GenericXmlApplicationContext();
-        brpLeveringContext.setParent(brpDatasourceContext);
         if (useMemoryDS()) {
             brpLeveringContext.getEnvironment().setActiveProfiles("memoryDS");
         }
@@ -72,6 +55,6 @@ public abstract class ConversieTestConfiguratie extends TestConfiguratie {
         brpLeveringContext.registerShutdownHook();
 
         LOG.info("\n#####\n#####\n##### Returning new test casus factory...");
-        return new ConversieTestCasusFactory(migratieContext.getAutowireCapableBeanFactory(), brpLeveringContext.getAutowireCapableBeanFactory());
+        return new ConversieTestCasusFactory(migratieContext.getAutowireCapableBeanFactory(), brpLeveringContext.getAutowireCapableBeanFactory(), getTestSkipper());
     }
 }

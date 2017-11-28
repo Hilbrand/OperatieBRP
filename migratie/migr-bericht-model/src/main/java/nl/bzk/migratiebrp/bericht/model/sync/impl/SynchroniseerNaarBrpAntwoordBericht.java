@@ -6,7 +6,6 @@
 
 package nl.bzk.migratiebrp.bericht.model.sync.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -15,16 +14,14 @@ import nl.bzk.migratiebrp.bericht.model.sync.AbstractSyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.ObjectFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.SynchroniseerNaarBrpAntwoordType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.SynchroniseerNaarBrpAntwoordType.Persoonslijsten;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.SynchroniseerNaarBrpAntwoordType.Kandidaat;
 import nl.bzk.migratiebrp.bericht.model.sync.xml.SyncXml;
-import nl.bzk.migratiebrp.bericht.model.xml.XmlTeletexEncoding;
 import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
 
 /**
  * Dit bericht wordt verstuurd om een LO3 Persoonslijst (serialized) te valideren op pre-condities, te converteren naar
  * een BRP-persoon en vervolgens op te slaan in de BRP database. Dit bericht wordt beantwoord met een
  * SynchroniseerNaarBrpAntwoordBericht.
- *
  * @see SynchroniseerNaarBrpAntwoordBericht
  */
 public final class SynchroniseerNaarBrpAntwoordBericht extends AbstractSyncBericht {
@@ -44,9 +41,7 @@ public final class SynchroniseerNaarBrpAntwoordBericht extends AbstractSyncBeric
 
     /**
      * JAXB constructor.
-     *
-     * @param synchroniseerBrpAntwoordType
-     *            Het synchronisatieantwoord type.
+     * @param synchroniseerBrpAntwoordType Het synchronisatieantwoord type.
      */
     public SynchroniseerNaarBrpAntwoordBericht(final SynchroniseerNaarBrpAntwoordType synchroniseerBrpAntwoordType) {
         super("SynchroniseerNaarBrpAntwoord");
@@ -64,7 +59,6 @@ public final class SynchroniseerNaarBrpAntwoordBericht extends AbstractSyncBeric
 
     /**
      * Geeft de status {@link StatusType} van het bericht terug.
-     *
      * @return De status {@link StatusType} van het bericht.
      */
     public StatusType getStatus() {
@@ -73,9 +67,7 @@ public final class SynchroniseerNaarBrpAntwoordBericht extends AbstractSyncBeric
 
     /**
      * Zet de status {@link StatusType} op het bericht.
-     *
-     * @param status
-     *            De te zetten status {@link StatusType}.
+     * @param status De te zetten status {@link StatusType}.
      */
     public void setStatus(final StatusType status) {
         synchroniseerNaarBrpAntwoordType.setStatus(status);
@@ -83,7 +75,6 @@ public final class SynchroniseerNaarBrpAntwoordBericht extends AbstractSyncBeric
 
     /**
      * Geeft de melding van het bericht terug.
-     *
      * @return De melding van het bericht.
      */
     public String getMelding() {
@@ -92,9 +83,7 @@ public final class SynchroniseerNaarBrpAntwoordBericht extends AbstractSyncBeric
 
     /**
      * Zet de melding op het bericht.
-     *
-     * @param melding
-     *            De te zetten melding.
+     * @param melding De te zetten melding.
      */
     public void setMelding(final String melding) {
         synchroniseerNaarBrpAntwoordType.setMelding(melding);
@@ -102,7 +91,6 @@ public final class SynchroniseerNaarBrpAntwoordBericht extends AbstractSyncBeric
 
     /**
      * Geeft de logregels op het bericht terug.
-     *
      * @return De logregels op het bericht.
      */
     public List<LogRegel> getLogging() {
@@ -111,60 +99,48 @@ public final class SynchroniseerNaarBrpAntwoordBericht extends AbstractSyncBeric
 
     /**
      * Zet de logregels op het bericht.
-     *
-     * @param logRegels
-     *            De te zetten logregels.
+     * @param logRegels De te zetten logregels.
      */
     public void setLogging(final Set<LogRegel> logRegels) {
         synchroniseerNaarBrpAntwoordType.setLogging(asLogRegelType(logRegels));
     }
 
     /**
-     * Geef de kandidaat persoonslijsten.
-     *
-     * @return kandidaat persoonslijsten (lo3 teletex string geformatteerd)
+     * Kandidaat toevoegen.
+     * @param persoonid persoon id
+     * @param versie versie
+     * @param plAlsTeletexString persoonslijst als lo3 teletex string
      */
-    public List<String> getKandidaten() {
-        if (synchroniseerNaarBrpAntwoordType.getPersoonslijsten() != null) {
-            final List<String> lo3Pl = synchroniseerNaarBrpAntwoordType.getPersoonslijsten().getLo3Pl();
-            final List<String> kandidaten = new ArrayList<>(lo3Pl.size());
-            for (final String pl : lo3Pl) {
-                kandidaten.add(XmlTeletexEncoding.decodeer(pl));
-            }
-            return kandidaten;
-        } else {
-            return Collections.emptyList();
-        }
+    public void toevoegenKandidaat(final int persoonid, final int versie, final String plAlsTeletexString) {
+        final Kandidaat kandidaat = new Kandidaat();
+        kandidaat.setPersoonId(persoonid);
+        kandidaat.setVersie(versie);
+        kandidaat.setLo3PersoonslijstAlsTeletexString(plAlsTeletexString);
+        synchroniseerNaarBrpAntwoordType.getKandidaat().add(kandidaat);
     }
 
     /**
-     * Zet de kandidaat persoonslijsten.
-     *
-     * @param kandidaten
-     *            kandidaat persoonslijsten (lo3 teletex string geformatteerd)
+     * Geef de kandidaten.
+     * @return kandidaten
      */
-    public void setKandidaten(final List<String> kandidaten) {
-        if (kandidaten == null || kandidaten.isEmpty()) {
-            // Verwijder lijst element
-            synchroniseerNaarBrpAntwoordType.setPersoonslijsten(null);
-            return;
-        }
+    public List<Kandidaat> getKandidaten() {
+        return synchroniseerNaarBrpAntwoordType.getKandidaat();
+    }
 
-        if (synchroniseerNaarBrpAntwoordType.getPersoonslijsten() == null) {
-            synchroniseerNaarBrpAntwoordType.setPersoonslijsten(new Persoonslijsten());
-        }
+    /**
+     * Zet de kandidaten.
+     * @param kandidaten kandidaten
+     */
+    public void setKandidaten(final List<Kandidaat> kandidaten) {
+        synchroniseerNaarBrpAntwoordType.getKandidaat().clear();
 
-        final List<String> lo3Pl = synchroniseerNaarBrpAntwoordType.getPersoonslijsten().getLo3Pl();
-        lo3Pl.clear();
-
-        for (final String kandidaat : kandidaten) {
-            lo3Pl.add(XmlTeletexEncoding.codeer(kandidaat));
+        if (kandidaten != null) {
+            synchroniseerNaarBrpAntwoordType.getKandidaat().addAll(kandidaten);
         }
     }
 
     /**
      * Geeft de administratie handeling ids.
-     *
      * @return administratie handeling ids
      */
     public List<Long> getAdministratieveHandelingIds() {
@@ -173,9 +149,7 @@ public final class SynchroniseerNaarBrpAntwoordBericht extends AbstractSyncBeric
 
     /**
      * Zet de administratieve handeling ids.
-     *
-     * @param administratieveHandelingIds
-     *            lijst van de administratieve handeling ids
+     * @param administratieveHandelingIds lijst van de administratieve handeling ids
      */
     public void setAdministratieveHandelingIds(final List<Long> administratieveHandelingIds) {
         synchroniseerNaarBrpAntwoordType.getAdministratieveHandelingId().clear();

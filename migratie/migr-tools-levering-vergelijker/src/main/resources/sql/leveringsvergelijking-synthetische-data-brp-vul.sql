@@ -59,17 +59,17 @@ BEGIN
 	FOR lo3_bericht_var IN SELECT * FROM dblink('dbname=GBAV user=postgres password=zielig', 'SELECT lo3_bericht_id FROM lo3_bericht WHERE kop_berichtsoort_nummer = ''Lg01'' AND originator_or_recipient = ''06666''') AS t(lo3_bericht_id bigint)
 	LOOP
 		bericht_id = lo3_bericht_var.lo3_bericht_id;
-		
+
 		-- in sommige gevallen geen bijhoudingsbericht maken
 		IF ROUND(RANDOM() * 30) <> 1 THEN
-		
+
 			-- proces van het bijhoudingsbericht maken
 			INSERT INTO mig_proces_gerelateerd (soort_gegeven) VALUES ('ADH');
 			process_instance_id_var := LASTVAL();
 			gegeven_var := CURRVAL('mig_proces_gerelateerd_gegeven_seq');
-			
+
 			-- bijhoudingsbericht zelf maken
-			INSERT INTO mig_bericht (message_id, ontvangende_partij, naam, richting, kanaal, process_instance_id, bericht) VALUES ('' || bericht_id, '06666', 'Lg01', 'I', 'VOSPG', process_instance_id_var, '00000000Lg01');
+			INSERT INTO mig_bericht (message_id, ontvangende_partij, naam, richting, kanaal, process_instance_id, bericht) VALUES ('' || bericht_id, '06666', 'Lg01', 'I', 'VOISC', process_instance_id_var, '00000000Lg01');
 
 			-- in sommige gevallen geen levering maken
 			IF ROUND(RANDOM() * 10) <> 4 THEN
@@ -102,9 +102,9 @@ BEGIN
 								END IF;
 							END LOOP;
 
-							
-							INSERT INTO mig_bericht (message_id, ontvangende_partij, naam, richting, kanaal, virtueel_proces_id, bericht) VALUES (get_random_bericht_id(), afnemer_var, 'Levering', 'U', 'VOSPG', virtueel_proces_id_var, '00000000' || berichtnummer_var);
-							
+
+							INSERT INTO mig_bericht (message_id, ontvangende_partij, naam, richting, kanaal, virtueel_proces_id, bericht) VALUES (get_random_bericht_id(), afnemer_var, 'Levering', 'U', 'VOISC', virtueel_proces_id_var, '00000000' || berichtnummer_var);
+
 							count_ber = count_ber + 1;
 							IF count_ber >= max_ber THEN
 								EXIT;

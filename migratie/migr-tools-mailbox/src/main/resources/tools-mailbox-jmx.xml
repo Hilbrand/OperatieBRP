@@ -1,31 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="mailboxJmx" class= "nl.bzk.migratiebrp.tools.mailbox.jmx.MailboxJmxImpl" />
+    <bean id="mailboxJmx" class="nl.bzk.migratiebrp.tools.mailbox.jmx.MailboxJmxImpl"/>
 
     <bean id="mailboxMBeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
         <!-- Only use the PlatformMBeanServer -->
         <property name="agentId" value=""/>
     </bean>
 
-    <bean id="mailboxMBeanExporter" class="org.springframework.jmx.export.annotation.AnnotationMBeanExporter">
-        <property name="server" ref="mailboxMBeanServer" />
+    <bean id="mailboxServerConnectorSsl" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
+        <property name="serviceUrl" value="service:jmx:simple://0.0.0.0:${mailbox.jmx.serialize.port:3481}"/>
+        <property name="environmentMap">
+            <map>
+                <entry key="jmx.remote.authenticator">
+                    <bean class="nl.bzk.algemeenbrp.util.jmx.authenticator.PropertiesAuthenticator">
+                        <constructor-arg>
+                            <props>
+                                <prop key="admin">admin</prop>
+                            </props>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="jmx.remote.accesscontroller">
+                    <bean class="nl.bzk.algemeenbrp.util.jmx.access.AllAccessController"/>
+                </entry>
+            </map>
+        </property>
     </bean>
 
-    <!--
-    <bean id="mailboxRmiRegistry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">
-        <property name="port" value="${mailbox.rmi.registry:1099}"/>
+    <bean id="mailboxMBeanExporter" class="org.springframework.jmx.export.annotation.AnnotationMBeanExporter"
+          lazy-init="false">
+        <property name="server" ref="mailboxMBeanServer"/>
     </bean>
-
-    <bean id="mailboxJmxServerConnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean" depends-on="mailboxRmiRegistry">
-        <property name="server" ref="mailboxMBeanServer" />
-        <property name="serviceUrl" value="service:jmx:rmi://localhost:${mailbox.jmx.service:9875}/jndi/rmi://localhost:${mailbox.rmi.registry:1099}/jmxrmi"/>
-    </bean>
-    -->
-
 </beans>

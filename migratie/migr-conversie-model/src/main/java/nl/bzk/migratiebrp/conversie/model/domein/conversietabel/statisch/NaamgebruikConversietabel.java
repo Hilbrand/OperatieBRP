@@ -11,7 +11,7 @@ import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingNaamgebruikCodeEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingNaamgebruikCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Dit is een statische conversie (er wordt geen tabel gebruikt) tussen de LO3 en BRP naamgebruik.
@@ -29,7 +29,7 @@ public final class NaamgebruikConversietabel implements Conversietabel<Lo3Aandui
     @Override
     public BrpNaamgebruikCode converteerNaarBrp(final Lo3AanduidingNaamgebruikCode input) {
         final BrpNaamgebruikCode resultaat;
-        if (!Validatie.isElementGevuld(input)) {
+        if (!Lo3Validatie.isElementGevuld(input)) {
             final Lo3Onderzoek onderzoek = input == null ? null : input.getOnderzoek();
             resultaat = new BrpNaamgebruikCode("E", onderzoek);
         } else {
@@ -40,7 +40,7 @@ public final class NaamgebruikConversietabel implements Conversietabel<Lo3Aandui
 
     @Override
     public boolean valideerLo3(final Lo3AanduidingNaamgebruikCode input) {
-        return !Validatie.isElementGevuld(input) || Lo3AanduidingNaamgebruikCodeEnum.getByCode(input.getWaarde()) != null;
+        return !Lo3Validatie.isElementGevuld(input) || Lo3AanduidingNaamgebruikCodeEnum.getByCode(input.getWaarde()) != null;
     }
 
     @Override

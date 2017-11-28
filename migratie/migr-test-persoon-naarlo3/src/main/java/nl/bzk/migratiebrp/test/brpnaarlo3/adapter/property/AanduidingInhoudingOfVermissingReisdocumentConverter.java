@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.PropertyConverter;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public final class AanduidingInhoudingOfVermissingReisdocumentConverter implements
-        PropertyConverter<AanduidingInhoudingOfVermissingReisdocument>
-{
+        PropertyConverter<AanduidingInhoudingOfVermissingReisdocument> {
     @PersistenceContext
     private EntityManager em;
 

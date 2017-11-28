@@ -18,12 +18,11 @@ public class LSResourceResolver implements org.w3c.dom.ls.LSResourceResolver {
 
     @Override
     public final LSInput resolveResource(
-        final String type,
-        final String namespaceURI,
-        final String publicId,
-        final String systemId,
-        final String baseURI)
-    {
+            final String type,
+            final String namespaceURI,
+            final String publicId,
+            final String systemId,
+            final String baseURI) {
 
         InputStream resourceAsStream = BrpBerichtFactory.class.getResourceAsStream(MIGRATIE_XSD_PATH + systemId);
         if (resourceAsStream == null) {

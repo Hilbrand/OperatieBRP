@@ -18,13 +18,21 @@ import org.jbpm.graph.exe.ExecutionContext;
  */
 public final class EsbHandlerUtil {
 
-    /** XML element for mapping (in JBPM processdefinition). */
+    /**
+     * XML element for mapping (in JBPM processdefinition).
+     */
     public static final String MAPPING_TAG = "mapping";
-    /** XML element for esb (in JBPM processdefinition). */
+    /**
+     * XML element for esb (in JBPM processdefinition).
+     */
     public static final String ESB_VARNAME_TAG = "esb";
-    /** XML element for bpm (in JBPM processdefinition). */
+    /**
+     * XML element for bpm (in JBPM processdefinition).
+     */
     public static final String BPM_VARNAME_TAG = "bpm";
-    /** XML value for body content (in JBPM processdefinition). */
+    /**
+     * XML value for body content (in JBPM processdefinition).
+     */
     public static final String BODY_CONTENT_VARIABLE_NAME = "BODY_CONTENT";
 
     private EsbHandlerUtil() {
@@ -33,11 +41,8 @@ public final class EsbHandlerUtil {
 
     /**
      * Map attributes from the execution context (JBPM) to the ESB map.
-     *
-     * @param bpmToEsbVars
-     *            configuration
-     * @param executionContext
-     *            execution context (JBPM variables with values)
+     * @param bpmToEsbVars configuration
+     * @param executionContext execution context (JBPM variables with values)
      * @return values mapped to esb variables
      */
     @SuppressWarnings("unchecked")
@@ -55,11 +60,8 @@ public final class EsbHandlerUtil {
 
     /**
      * Map attribute from the ESB map to the JBPM map.
-     *
-     * @param esbToBpmVars
-     *            configuration
-     * @param attributes
-     *            ESB attributes (with values)
+     * @param esbToBpmVars configuration
+     * @param attributes ESB attributes (with values)
      * @return vlues mapped to JBPM variables
      */
     @SuppressWarnings("unchecked")

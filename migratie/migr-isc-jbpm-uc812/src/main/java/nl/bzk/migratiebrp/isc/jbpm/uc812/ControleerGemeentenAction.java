@@ -8,10 +8,12 @@ package nl.bzk.migratiebrp.isc.jbpm.uc812;
 
 import java.util.Date;
 import java.util.Map;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.NoSignal;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
 import org.springframework.stereotype.Component;
@@ -43,7 +45,7 @@ public final class ControleerGemeentenAction implements SpringAction, NoSignal {
 
                 // Token is nu parent token
                 token = token.getParent();
-                if (!token.getLockOwner().startsWith(BepaalVoorkomensAction.LOCK)) {
+                if (token.getLockOwner() != null && !token.getLockOwner().startsWith(BepaalVoorkomensAction.LOCK)) {
                     throw new IllegalStateException("Hoofd token niet correct gelocked!");
                 }
 
@@ -54,7 +56,13 @@ public final class ControleerGemeentenAction implements SpringAction, NoSignal {
                 throw new IllegalStateException("Onbekend soort child token!");
             }
         }
+        controleJuisteHoofdToken(executionContext, token);
 
+        LOG.info("done");
+        return null;
+    }
+
+    private void controleJuisteHoofdToken(final ExecutionContext executionContext, final Token token) {
         // Controle juiste 'hoofd-token'
         LOG.debug("token (zou parent moeten zijn): {}", token.getId());
         if (!token.getNode().equals(executionContext.getNode())) {
@@ -74,8 +82,5 @@ public final class ControleerGemeentenAction implements SpringAction, NoSignal {
                 }
             }
         }
-
-        LOG.info("done");
-        return null;
     }
 }

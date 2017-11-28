@@ -8,13 +8,21 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class BrpGeslachtsaanduidingInhoudTest {
+
+    @Test
+    public void test(){
+        final BrpGeslachtsaanduidingInhoud inhoud = BrpGeslachtsaanduidingInhoudTest.createInhoud();
+        Assert.assertEquals(BrpGeslachtsaanduidingCode.MAN,inhoud.getGeslachtsaanduidingCode());
+    }
+
     public static BrpGeslachtsaanduidingInhoud createInhoud() {
         return new BrpGeslachtsaanduidingInhoud(BrpGeslachtsaanduidingCode.MAN);
     }
@@ -23,8 +31,7 @@ public class BrpGeslachtsaanduidingInhoudTest {
         List<BrpGroep<BrpGeslachtsaanduidingInhoud>> groepen = new ArrayList<>();
         BrpGroep<BrpGeslachtsaanduidingInhoud> groep = new BrpGroep<>(createInhoud(), BrpHistorieTest.createdefaultInhoud(), null, null, null);
         groepen.add(groep);
-        BrpStapel<BrpGeslachtsaanduidingInhoud> result = new BrpStapel<>(groepen);
-        return result;
+        return new BrpStapel<>(groepen);
     }
 
 }

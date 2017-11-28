@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import nl.bzk.algemeenbrp.util.common.Version;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.service.ProefSynchronisatieService;
-import nl.bzk.migratiebrp.util.common.Version;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -43,7 +45,7 @@ public final class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    private static String[] springConfig = {"proefSynchronisatie-beans.xml" };
+    private static String[] springConfig = {"proefSynchronisatie-beans.xml"};
     private static final String PARAMETER_CONFIG = "config";
     private static final String PARAMETER_CREATE = "create";
     private static final String PARAMETER_DATUM_VANAF = "datumVanaf";
@@ -59,15 +61,14 @@ public final class Main {
 
     /**
      * Maakt de command line options aan welke meegegevens kunnen worden. Dit zijn: -config, -create en -datumVanaf.
-     *
      * @return Options object met daarin de options.
      */
     private static Options createOptions() {
         final Options options = new Options();
         final Option batchSizeOption = new Option(PARAMETER_BATCH_GROOTTE, true, "Grootte van de batches.");
         final Option configOption = new Option(PARAMETER_CONFIG, true, "configuratie (.properties)");
-        final Option datumVanafOption = new Option(PARAMETER_DATUM_VANAF, true, "Lees alleen Lg01 en La01 berichten vanaf de opgegeven datum");
-        final Option datumTotOption = new Option(PARAMETER_DATUM_TOT, true, "Lees alleen Lg01 en La01 berichten tot de opgegeven datum");
+        final Option datumVanafOption = new Option(PARAMETER_DATUM_VANAF, true, "Lees alleen Lg01, La01, Ap01 en Av01 berichten vanaf de opgegeven datum");
+        final Option datumTotOption = new Option(PARAMETER_DATUM_TOT, true, "Lees alleen Lg01, La01, Ap01 en Av01 berichten tot de opgegeven datum");
         final Option initOption = new Option(PARAMETER_CREATE, false, "Maak een tabel met proef sync data.");
         final Option timeoutOption = new Option(PARAMETER_TIME_OUT, true, "Time out tussen batches in milliseconde.");
         batchSizeOption.setRequired(false);
@@ -103,9 +104,7 @@ public final class Main {
      *
      * De configuratie in de spring bean definities is als volgt {$prop:default}. Hiermee kan een zinnige default worden
      * gezet voor properties.
-     *
-     * @param args
-     *            De command line argumenten.
+     * @param args De command line argumenten.
      */
     public static void main(final String[] args) {
         final Version version = Version.readVersion("nl.bzk.migratiebrp.tools", "migr-tools-proefsynchronisatie");
@@ -174,16 +173,15 @@ public final class Main {
                 final Matcher matcher = patternTime.matcher(datumVanaf);
 
                 if (!matcher.matches()) {
-                    throw new IllegalArgumentException("De opgegeven vanafdatum '"
-                                                       + datumVanaf
-                                                       + "' voldoet niet aan de formattering (jjjj-MM-dd) of (jjjj-MM-dd hh:mm:ss.mmm). ");
+                    throw new IllegalArgumentException(
+                            "De opgegeven vanafdatum '" + datumVanaf + "' voldoet niet aan de formattering (jjjj-MM-dd) of (jjjj-MM-dd hh:mm:ss.mmm). ");
                 }
 
                 config.put(options.getOption(PARAMETER_DATUM_VANAF).getOpt(), datumVanaf);
                 LOG.info("Lees Lg01/La01 berichten vanaf: " + datumVanaf);
             } else if (voerCreatieUit) {
-                throw new IllegalArgumentException("Voor initialisatie dient een vanaf datum (jjjj-MM-dd) of "
-                                                   + "(jjjj-MM-dd hh:mm:ss.mmm) opgegeven te worden.");
+                throw new IllegalArgumentException(
+                        "Voor initialisatie dient een vanaf datum (jjjj-MM-dd) of " + "(jjjj-MM-dd hh:mm:ss.mmm) opgegeven te worden.");
             }
 
             if (cmd.hasOption(options.getOption(PARAMETER_DATUM_TOT).getOpt())) {
@@ -193,9 +191,8 @@ public final class Main {
                 final Matcher matcher = patternTime.matcher(datumTot);
 
                 if (!matcher.matches()) {
-                    throw new IllegalArgumentException("De opgegeven totdatum '"
-                                                       + datumTot
-                                                       + "' voldoet niet aan de formattering (jjjj-MM-dd) of (jjjj-MM-dd hh:mm:ss.mmm).");
+                    throw new IllegalArgumentException(
+                            "De opgegeven totdatum '" + datumTot + "' voldoet niet aan de formattering (jjjj-MM-dd) of (jjjj-MM-dd hh:mm:ss.mmm).");
                 }
 
                 config.put(options.getOption(PARAMETER_DATUM_TOT).getOpt(), datumTot);
@@ -204,9 +201,8 @@ public final class Main {
 
             startService(config, voerCreatieUit);
         } catch (final
-            ParseException
-            | InterruptedException e)
-        {
+        ParseException
+                | InterruptedException e) {
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("main\n" + e.getMessage(), options);
         } catch (final IOException e) {
@@ -220,13 +216,9 @@ public final class Main {
 
     /**
      * Start de service op basis van de meegegeven configuratie.
-     *
-     * @param config
-     *            De meegegeven configuratie.
-     * @param voerInitialisatieUit
-     *            Indicator of er een initialisatie wordt uitgevoerd of niet.
-     * @throws InterruptedException
-     *             Wanneer de sleep wordt onderbroken.
+     * @param config De meegegeven configuratie.
+     * @param voerInitialisatieUit Indicator of er een initialisatie wordt uitgevoerd of niet.
+     * @throws InterruptedException Wanneer de sleep wordt onderbroken.
      */
     private static void startService(final Properties config, final boolean voerInitialisatieUit) throws InterruptedException {
         LOG.info("Starting application context");
@@ -250,9 +242,7 @@ public final class Main {
 
     /**
      * Zet het bestand met de spring configuratie.
-     *
-     * @param springConfig
-     *            Het te gebruiken bestand met de spring configuratie.
+     * @param springConfig Het te gebruiken bestand met de spring configuratie.
      */
     public static void setSpringConfig(final String[] springConfig) {
         Main.springConfig = ArrayUtils.clone(springConfig);

@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonDeelnameEuVerkiezingenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDeelnameEuVerkiezingenInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonDeelnameEuVerkiezingenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractPersoonHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
@@ -20,28 +20,22 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Onder
 /**
  * Mapper waarmee een {@link nl.bzk.migratiebrp.conversie.model.brp.BrpStapel <BrpDeelnameEuVerkiezingenInhoud>} gemapt
  * kan worden op een verzameling van
- * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonDeelnameEuVerkiezingenHistorie} en vice
+ * {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonDeelnameEuVerkiezingenHistorie} en vice
  * versa.
  */
 public final class PersoonDeelnameEuVerkiezingenMapper extends
-        AbstractPersoonHistorieMapperStrategie<BrpDeelnameEuVerkiezingenInhoud, PersoonDeelnameEuVerkiezingenHistorie>
-{
+        AbstractPersoonHistorieMapperStrategie<BrpDeelnameEuVerkiezingenInhoud, PersoonDeelnameEuVerkiezingenHistorie> {
 
     /**
      * Maakt een PersoonDeelnameEuVerkiezingenMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonDeelnameEuVerkiezingenMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -51,16 +45,6 @@ public final class PersoonDeelnameEuVerkiezingenMapper extends
     @Override
     protected void voegHistorieToeAanEntiteit(final PersoonDeelnameEuVerkiezingenHistorie historie, final Persoon persoon) {
         persoon.addPersoonDeelnameEuVerkiezingenHistorie(historie);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonDeelnameEuVerkiezingenHistorie historie, final Persoon persoon) {
-        persoon.setIndicatieDeelnameEuVerkiezingen(historie.getIndicatieDeelnameEuVerkiezingen());
-        persoon.setDatumAanleidingAanpassingDeelnameEuVerkiezingen(historie.getDatumAanleidingAanpassingDeelnameEuVerkiezingen());
-        persoon.setDatumVoorzienEindeUitsluitingEuVerkiezingen(historie.getDatumVoorzienEindeUitsluitingEuVerkiezingen());
     }
 
     /**
@@ -78,17 +62,17 @@ public final class PersoonDeelnameEuVerkiezingenMapper extends
 
         // onderzoek
         getOnderzoekMapper().mapOnderzoek(
-            result,
-            groepInhoud.getIndicatieDeelnameEuVerkiezingen(),
-            Element.PERSOON_DEELNAMEEUVERKIEZINGEN_INDICATIEDEELNAME);
+                result,
+                groepInhoud.getIndicatieDeelnameEuVerkiezingen(),
+                Element.PERSOON_DEELNAMEEUVERKIEZINGEN_INDICATIEDEELNAME);
         getOnderzoekMapper().mapOnderzoek(
-            result,
-            groepInhoud.getDatumAanleidingAanpassingDeelnameEuVerkiezingen(),
-            Element.PERSOON_DEELNAMEEUVERKIEZINGEN_DATUMAANLEIDINGAANPASSING);
+                result,
+                groepInhoud.getDatumAanleidingAanpassingDeelnameEuVerkiezingen(),
+                Element.PERSOON_DEELNAMEEUVERKIEZINGEN_DATUMAANLEIDINGAANPASSING);
         getOnderzoekMapper().mapOnderzoek(
-            result,
-            groepInhoud.getDatumVoorzienEindeUitsluitingEuVerkiezingen(),
-            Element.PERSOON_DEELNAMEEUVERKIEZINGEN_DATUMVOORZIENEINDEUITSLUITING);
+                result,
+                groepInhoud.getDatumVoorzienEindeUitsluitingEuVerkiezingen(),
+                Element.PERSOON_DEELNAMEEUVERKIEZINGEN_DATUMVOORZIENEINDEUITSLUITING);
 
         return result;
     }

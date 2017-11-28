@@ -1,1 +1,1 @@
-ALLE(RMAP(afnemerindicaties, x, x.afnemer), v, NIET(v = 250001))
+NIET(Persoon.Afnemerindicatie.PartijCode E= "250001")

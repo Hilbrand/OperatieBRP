@@ -7,6 +7,8 @@
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.sql;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.sql.DataSource;
 
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
@@ -19,7 +21,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
  */
 public class SqlGbavKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "sql_gbav";
 
     /**
@@ -27,12 +31,8 @@ public class SqlGbavKanaal extends LazyLoadingKanaal {
      */
     public SqlGbavKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-db-gbav.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:infra-db-voisc.xml",
+                "classpath:configuratie.xml",
+                "classpath:infra-db-gbav.xml",
                 "classpath:infra-sql.xml"));
     }
 
@@ -40,8 +40,13 @@ public class SqlGbavKanaal extends LazyLoadingKanaal {
      * Verwerker.
      */
     public static final class Worker extends AbstractKanaal {
+
         @Inject
         private SqlHelper sqlHelper;
+
+        @Inject
+        @Named("gbavDataSource")
+        private DataSource gbavDataSource;
 
         /*
          * (non-Javadoc)
@@ -55,7 +60,7 @@ public class SqlGbavKanaal extends LazyLoadingKanaal {
 
         @Override
         public void verwerkUitgaand(final TestCasusContext testCasus, final Bericht bericht) throws KanaalException {
-            sqlHelper.uitvoerenSql("GBAV", bericht.getInhoud(), false);
+            sqlHelper.uitvoerenSql(gbavDataSource, bericht.getInhoud(), false);
         }
     }
 }

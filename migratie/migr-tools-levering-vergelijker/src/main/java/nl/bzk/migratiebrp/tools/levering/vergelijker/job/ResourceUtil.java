@@ -8,8 +8,8 @@ package nl.bzk.migratiebrp.tools.levering.vergelijker.job;
 
 import java.io.IOException;
 import java.io.InputStream;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -27,11 +27,8 @@ public final class ResourceUtil {
 
     /**
      * Haalt de string op die in het opgegeven resource pad zit.
-     *
-     * @param object
-     *            Het resource object.
-     * @param resourcePath
-     *            Het pad van de resource.
+     * @param object Het resource object.
+     * @param resourcePath Het pad van de resource.
      * @return String representatie van de resource.
      */
     protected static String getStringResourceData(final Object object, final String resourcePath) {

@@ -9,12 +9,11 @@ package nl.bzk.migratiebrp.isc.opschoner.service.impl;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
 import nl.bzk.migratiebrp.isc.opschoner.dao.ExtractieDao;
 import nl.bzk.migratiebrp.isc.opschoner.dao.JbpmDao;
 import nl.bzk.migratiebrp.isc.opschoner.dao.MigDao;
 import nl.bzk.migratiebrp.isc.opschoner.exception.NietVerwijderbareProcesInstantieException;
-import nl.bzk.migratiebrp.isc.opschoner.service.ProcesService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -37,7 +36,7 @@ public class ProcesServiceImplTest {
     private ExtractieDao extractieDao;
 
     @InjectMocks
-    private final ProcesService subject = new ProcesServiceImpl();
+    private ProcesServiceImpl subject;
 
     @Test
     public void testSelecterenIdsVanOpTeSchonenProcessen() {
@@ -136,8 +135,7 @@ public class ProcesServiceImplTest {
 
     @Test
     public void testControleerProcesVerwijderbaarOkBeeindigdeSubEnGereleteerdeProcessenDubbeleVerwijzingen()
-        throws NietVerwijderbareProcesInstantieException
-    {
+            throws NietVerwijderbareProcesInstantieException {
 
         final List<Long> verwerkteProcesIds = new ArrayList<>();
         final List<Long> verwijderdeProcesIds = new ArrayList<>();
@@ -189,8 +187,7 @@ public class ProcesServiceImplTest {
 
     @Test
     public void testControleerProcesVerwijderbaarNietBeeindigdGeenSubEnGerelateerdeProcessen()
-        throws NietVerwijderbareProcesInstantieException
-    {
+            throws NietVerwijderbareProcesInstantieException {
 
         final List<Long> verwerkteProcesIds = new ArrayList<>();
         final List<Long> verwijderdeProcesIds = new ArrayList<>();
@@ -209,9 +206,9 @@ public class ProcesServiceImplTest {
             Assert.assertNotNull(exceptie.getLaatsteActiviteitDatum());
             Assert.assertNotSame(datumLaatsteBericht, exceptie.getLaatsteActiviteitDatum());
             Assert.assertEquals("Het proces (id="
-                                + procesId
-                                + " )kan niet worden verwijderd aangezien er nog een of meerdere sub- of gerelateerd(e) "
-                                + "proces(sen) nog niet is/zijn beeindigd).", exceptie.getMessage());
+                    + procesId
+                    + " )kan niet worden verwijderd aangezien er nog een of meerdere sub- of gerelateerd(e) "
+                    + "proces(sen) nog niet is/zijn beeindigd).", exceptie.getMessage());
         }
 
         Mockito.verify(jbpmDao, Mockito.times(1)).haalEinddatumProcesOp(procesId);
@@ -225,8 +222,7 @@ public class ProcesServiceImplTest {
 
     @Test
     public void testControleerProcesVerwijderbaarBerichtNaBeeindigingGeenSubEnGerelateerdeProcessen()
-        throws NietVerwijderbareProcesInstantieException
-    {
+            throws NietVerwijderbareProcesInstantieException {
 
         final List<Long> verwerkteProcesIds = new ArrayList<>();
         final List<Long> verwijderdeProcesIds = new ArrayList<>();
@@ -245,9 +241,9 @@ public class ProcesServiceImplTest {
             Assert.assertNotNull(exceptie.getLaatsteActiviteitDatum());
             Assert.assertEquals(datumLaatsteBericht, exceptie.getLaatsteActiviteitDatum());
             Assert.assertEquals("Het proces (id= "
-                                + procesId
-                                + " ) kan niet worden verwijderd (er is nog een bericht binnengekomen nadat het proces is "
-                                + "beeindigd).", exceptie.getMessage());
+                    + procesId
+                    + " ) kan niet worden verwijderd (er is nog een bericht binnengekomen nadat het proces is "
+                    + "beeindigd).", exceptie.getMessage());
         }
 
         Mockito.verify(jbpmDao, Mockito.times(1)).haalEinddatumProcesOp(procesId);
@@ -261,8 +257,7 @@ public class ProcesServiceImplTest {
 
     @Test
     public void testControleerProcesVerwijderbaarBerichtDatumNullGeenSubEnGerelateerdeProcessen()
-        throws NietVerwijderbareProcesInstantieException
-    {
+            throws NietVerwijderbareProcesInstantieException {
 
         final List<Long> verwerkteProcesIds = new ArrayList<>();
         final List<Long> verwijderdeProcesIds = new ArrayList<>();
@@ -288,8 +283,7 @@ public class ProcesServiceImplTest {
 
     @Test
     public void testControleerProcesVerwijderbaarProcesAlVerwijderdGeenSubEnGerelateerdeProcessen()
-        throws NietVerwijderbareProcesInstantieException
-    {
+            throws NietVerwijderbareProcesInstantieException {
 
         final List<Long> verwerkteProcesIds = new ArrayList<>();
         final List<Long> verwijderdeProcesIds = new ArrayList<>();

@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.decorators;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,14 +15,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
+import java.util.stream.Collectors;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.validatie.ValidationUtils;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -42,9 +39,7 @@ public final class StapelDecorator {
 
     /**
      * Maakt een StapelRelateerDecorator object.
-     *
-     * @param stapel
-     *            het object waaraan relateer functionaliteit moet worden toegevoegd
+     * @param stapel het object waaraan relateer functionaliteit moet worden toegevoegd
      */
     private StapelDecorator(final Stapel stapel) {
         ValidationUtils.controleerOpNullWaarden("stapel mag niet null zijn", stapel);
@@ -52,8 +47,7 @@ public final class StapelDecorator {
     }
 
     /**
-     * @param stapel
-     *            het te decoreren Stapel object
+     * @param stapel het te decoreren Stapel object
      * @return een StapelDecorator object
      */
     public static StapelDecorator decorate(final Stapel stapel) {
@@ -77,17 +71,17 @@ public final class StapelDecorator {
     }
 
     private List<RelatieDecorator> decorateRelaties() {
-        final List<RelatieDecorator> decoratedRelaties = new ArrayList<>();
-        for (final Relatie relatie : stapel.getRelaties()) {
-            decoratedRelaties.add(RelatieDecorator.decorate(relatie));
-        }
+        final List<RelatieDecorator> decoratedRelaties = decorateRelatiesOngesorteerd();
         Collections.sort(decoratedRelaties, RelatieDecorator.getSorteerder());
         return decoratedRelaties;
     }
 
+    private List<RelatieDecorator> decorateRelatiesOngesorteerd() {
+        return stapel.getRelaties().stream().map(RelatieDecorator::decorate).collect(Collectors.toList());
+    }
+
     /**
      * Geef de waarde van stapel.
-     *
      * @return stapel
      */
     public Stapel getStapel() {
@@ -96,7 +90,6 @@ public final class StapelDecorator {
 
     /**
      * Geef de huidig (in de dabatase) gekoppelde voorkomens.
-     *
      * @return de voorkomens van deze stapel
      */
     public Set<StapelVoorkomenDecorator> getVoorkomens() {
@@ -108,14 +101,11 @@ public final class StapelDecorator {
      * voorkomens, dan wordt dit voorkomen verwijderd. Als er een voorkomen uit de nieuwe set nog niet bestaat in de
      * huidige set, dan wordt deze toegevoegd. Anders wordt het huidige voorkomen overschreven met de inhoud van het
      * nieuwe voorkomen.
-     *
-     * @param nieuweVoorkomens
-     *            de nieuwe voorkomens
-     * @param directVerwijderen
-     *            indien true dan wordt het voorkomen ook daadwerkelijk verwijderd, anders word deze tegevoegd aan een
-     *            lijst met te verwijderen voorkomens
-     * @return Set<StapelVoorkomenDecorator> lijst met te verwijderen {@link StapelVoorkomenDecorator}, indien
-     *         directverwijderen is true wordt een lege lijst terug gegeven.
+     * @param nieuweVoorkomens de nieuwe voorkomens
+     * @param directVerwijderen indien true dan wordt het voorkomen ook daadwerkelijk verwijderd, anders word deze tegevoegd aan een lijst met te verwijderen
+     * voorkomens
+     * @return Set<StapelVoorkomenDecorator> lijst met te verwijderen {@link StapelVoorkomenDecorator}, indien directverwijderen is true wordt een lege lijst
+     * terug gegeven.
      */
     public Set<StapelVoorkomenDecorator> setVoorkomens(final Set<StapelVoorkomenDecorator> nieuweVoorkomens, final boolean directVerwijderen) {
         final Set<StapelVoorkomenDecorator> teVerwijderenVoorKomens = new HashSet<>();
@@ -152,22 +142,16 @@ public final class StapelDecorator {
      * nieuwe set van voorkomens, dan wordt dit voorkomen verwijderd. Als er een voorkomen uit de nieuwe set nog niet
      * bestaat in de huidige set, dan wordt deze toegevoegd. Anders wordt het huidige voorkomen overschreven met de
      * inhoud van het nieuwe voorkomen.
-     * 
-     * @param nieuweVoorkomens
-     *            de nieuwe voorkomens
-     * @param nieuweRelaties
-     *            nieuwe relaties
-     * @param voorkomensDirectVerwijderen
-     *            indien true worden voorkomens direct verwijderd
-     *
-     * @return Set<StapelVoorkomenDecorator> indien voorkomensDirectVerwijderen als false word meegegeven word een lijst
-     *         met te verwijderen Voorkomens teruggegeven. (anders een lege Lijst)
+     * @param nieuweVoorkomens de nieuwe voorkomens
+     * @param nieuweRelaties nieuwe relaties
+     * @param voorkomensDirectVerwijderen indien true worden voorkomens direct verwijderd
+     * @return Set<StapelVoorkomenDecorator> indien voorkomensDirectVerwijderen als false word meegegeven word een lijst met te verwijderen Voorkomens
+     * teruggegeven. (anders een lege Lijst)
      */
     public Set<StapelVoorkomenDecorator> setVoorkomensEnRelaties(
-        final Set<StapelVoorkomenDecorator> nieuweVoorkomens,
-        final List<RelatieDecorator> nieuweRelaties,
-        final boolean voorkomensDirectVerwijderen)
-    {
+            final Set<StapelVoorkomenDecorator> nieuweVoorkomens,
+            final List<RelatieDecorator> nieuweRelaties,
+            final boolean voorkomensDirectVerwijderen) {
         final Set<StapelVoorkomenDecorator> teVerwijderenVoorkomens = setVoorkomens(nieuweVoorkomens, voorkomensDirectVerwijderen);
 
         for (final RelatieDecorator relatie : nieuweRelaties) {
@@ -178,9 +162,7 @@ public final class StapelDecorator {
 
     /**
      * verwijder een voorkomen van een stapel.
-     * 
-     * @param voorkomen
-     *            te verwijderen voorkomen
+     * @param voorkomen te verwijderen voorkomen
      */
     public void verwijderVoorkomen(final StapelVoorkomenDecorator voorkomen) {
         stapel.getStapelvoorkomens().remove(voorkomen.getVoorkomen());
@@ -193,7 +175,6 @@ public final class StapelDecorator {
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return de categorie van deze stapel
      */
     public String getCategorie() {
@@ -202,7 +183,6 @@ public final class StapelDecorator {
 
     /**
      * Geef de waarde van stapel nummer.
-     *
      * @return het stapelnummer van deze stapel
      */
     public int getStapelNummer() {
@@ -211,7 +191,6 @@ public final class StapelDecorator {
 
     /**
      * Geef de waarde van actueel categorienummer.
-     *
      * @return Het actuele categorienummer waar deze stapel bij hoort
      */
     public int getActueelCategorienummer() {
@@ -224,7 +203,6 @@ public final class StapelDecorator {
 
     /**
      * Geeft aan of de stapel een stapel uit LO3 Categorie Kind (09) betreft.
-     *
      * @return true als het een kind stapel is
      */
     public boolean isKindStapel() {
@@ -233,7 +211,6 @@ public final class StapelDecorator {
 
     /**
      * Geeft aan of de stapel een stapel uit LO3 Categorie Ouder1/Ouder2 (02/03) betreft.
-     *
      * @return true als het een ouder stapel is
      */
     public boolean isOuderStapel() {
@@ -242,7 +219,6 @@ public final class StapelDecorator {
 
     /**
      * Geeft aan of de stapel een stapel uit LO3 Categorie Ouder1 (Categorie 02) betreft.
-     *
      * @return true als het een ouder1 stapel is
      */
     public boolean isOuder1Stapel() {
@@ -251,7 +227,6 @@ public final class StapelDecorator {
 
     /**
      * Geeft aan of de stapel een stapel uit LO3 Categorie Ouder2 (Categorie 03) betreft.
-     *
      * @return true als het een ouder1 stapel is
      */
     public boolean isOuder2Stapel() {
@@ -260,7 +235,6 @@ public final class StapelDecorator {
 
     /**
      * Geeft aan of de stapel een stapel uit LO3 Categorie Huwelijk/Geregistreerd partnerschap (05) betreft.
-     *
      * @return true als het een ouder stapel is
      */
     public boolean isHuwelijkOfGpStapel() {
@@ -269,7 +243,6 @@ public final class StapelDecorator {
 
     /**
      * Geeft aan of de stapel een stapel uit LO3 Categorie Gezagsverhouding (11) betreft.
-     *
      * @return true als het een gezagsverhouding stapel is
      */
     public boolean isGezagsverhoudingStapel() {
@@ -278,7 +251,6 @@ public final class StapelDecorator {
 
     /**
      * Geeft het actuele voorkomen terug van deze stapel.
-     *
      * @return het actuele voorkomen van deze stapel
      */
     public StapelVoorkomenDecorator getActueelVoorkomen() {
@@ -295,9 +267,7 @@ public final class StapelDecorator {
     /**
      * Geeft aan of het gezochte voorkomen in de stapel voorkomt. Controle wordt gedaan op inhoudelijk velden op de
      * groepen 81, 82, 83, 84 en 86 na.
-     *
-     * @param gezochtStapelVoorkomen
-     *            het gezochte voorkomen
+     * @param gezochtStapelVoorkomen het gezochte voorkomen
      * @return true als het voorkomen in de stapel voorkomt
      */
     public boolean bevatStapelVoorkomen(final StapelVoorkomenDecorator gezochtStapelVoorkomen) {
@@ -319,7 +289,6 @@ public final class StapelDecorator {
     /**
      * * Geef de huidig (in de dabatase) gekoppelde relaties. Elke keer als deze methode wordt aangeroepen wordt er een
      * nieuwe lijst samen gesteld met opnieuw decorated relaties.
-     *
      * @return alle relaties als @{link RelatieDecorator}
      */
     public List<RelatieDecorator> getRelaties() {
@@ -329,14 +298,9 @@ public final class StapelDecorator {
     /**
      * Controleert of de meegegven set van voorkomens een match is met de voorkomens van deze stapel. Als het aantal
      * voorkomens niet overeenkomt of als de voorkomens inhoudelijk niet overeenkomen, dan is het geen match.
-     *
-     * @param andereVoorkomens
-     *            set met voorkomens van de nieuwe persoonslijst
-     * @param gelijkVolgnr
-     *            true als volgnummer gelijk moet zijn. Indien false, dan mag volgnr in de andere stapel max 1 hoger
-     *            zijn.
-     * @return true als het aantal voorkomens gelijk is aan het aantal voorkomens van de stapel en deze ook inhoudelijk
-     *         gelijk zijn.
+     * @param andereVoorkomens set met voorkomens van de nieuwe persoonslijst
+     * @param gelijkVolgnr true als volgnummer gelijk moet zijn. Indien false, dan mag volgnr in de andere stapel max 1 hoger zijn.
+     * @return true als het aantal voorkomens gelijk is aan het aantal voorkomens van de stapel en deze ook inhoudelijk gelijk zijn.
      */
     public boolean isVoorkomenSetMatch(final Set<StapelVoorkomenDecorator> andereVoorkomens, final boolean gelijkVolgnr) {
         final Set<StapelVoorkomenDecorator> eigenVoorkomens = getVoorkomens();
@@ -347,9 +311,8 @@ public final class StapelDecorator {
             if (matchingVoorkomen == null) {
                 result = false;
             } else {
-                if (gelijkVolgnr && matchingVoorkomen.getVolgnummer() != voorkomen.getVolgnummer()) {
-                    result = false;
-                } else if (!gelijkVolgnr && matchingVoorkomen.getVolgnummer() - 1 != voorkomen.getVolgnummer()) {
+                if ((gelijkVolgnr && matchingVoorkomen.getVolgnummer() != voorkomen.getVolgnummer())
+                        || (!gelijkVolgnr && matchingVoorkomen.getVolgnummer() - 1 != voorkomen.getVolgnummer())) {
                     result = false;
                 }
             }
@@ -402,15 +365,13 @@ public final class StapelDecorator {
         final Stapel stapel2 = ander.stapel;
 
         return new EqualsBuilder().append(stapel.getCategorie(), stapel2.getCategorie())
-                                  .append(stapel.getVolgnummer(), stapel2.getVolgnummer())
-                                  .isEquals();
+                .append(stapel.getVolgnummer(), stapel2.getVolgnummer())
+                .isEquals();
     }
 
     /**
      * Controleert of de betrokkenheid in een relatie voorkomt die aan deze stapel is gekoppeld.
-     *
-     * @param betrokkenheid
-     *            de betrokkenheid waarvan vastgesteld moet worden of deze in de relatie voorkomt binnen deze stapel
+     * @param betrokkenheid de betrokkenheid waarvan vastgesteld moet worden of deze in de relatie voorkomt binnen deze stapel
      * @return true als de betrokkenheid voorkomt in een relatie binnen deze stapel.
      */
     public boolean bevatRelatie(final BetrokkenheidDecorator betrokkenheid) {
@@ -426,16 +387,12 @@ public final class StapelDecorator {
 
     /**
      * Voegt een nieuw actueel voorkomen toe aan de set van voorkomens.
-     *
-     * @param nieuwActueelVoorkomen
-     *            het nieuw toe te voegen actuele voorkomen.
-     * @param teVerwijderenVoorkomens
-     *            set met voorkomens welke gemarkeerd staan om te worden verwijderd
+     * @param nieuwActueelVoorkomen het nieuw toe te voegen actuele voorkomen.
+     * @param teVerwijderenVoorkomens set met voorkomens welke gemarkeerd staan om te worden verwijderd
      */
     public void voegNieuwActueelVoorkomenToe(
-        final StapelVoorkomenDecorator nieuwActueelVoorkomen,
-        final Set<StapelVoorkomenDecorator> teVerwijderenVoorkomens)
-    {
+            final StapelVoorkomenDecorator nieuwActueelVoorkomen,
+            final Set<StapelVoorkomenDecorator> teVerwijderenVoorkomens) {
         final Map<Integer, StapelVoorkomenDecorator> teVerwijderenVolgnummers = new HashMap<>();
         for (StapelVoorkomenDecorator teVerwijderenVoorkomen : teVerwijderenVoorkomens) {
             teVerwijderenVolgnummers.put(teVerwijderenVoorkomen.getVolgnummer(), teVerwijderenVoorkomen);
@@ -472,9 +429,7 @@ public final class StapelDecorator {
 
     /**
      * Koppelt een relatie aan een stapel.
-     *
-     * @param relatie
-     *            de relatie die toegevoegd wordt
+     * @param relatie de relatie die toegevoegd wordt
      */
     public void koppelRelatie(final RelatieDecorator relatie) {
         stapel.addRelatie(relatie.getRelatie());
@@ -482,9 +437,7 @@ public final class StapelDecorator {
 
     /**
      * Ontkoppelt een relatie bij een stapel.
-     *
-     * @param relatie
-     *            de relatie die verwijderd wordt
+     * @param relatie de relatie die verwijderd wordt
      */
     public void ontkoppelRelatie(final RelatieDecorator relatie) {
         stapel.removeRelatie(relatie.getRelatie());
@@ -494,19 +447,16 @@ public final class StapelDecorator {
      * Ontkoppelt alle relaties van deze stapel.
      */
     public void ontkoppelRelaties() {
-        for (final RelatieDecorator relatie : getRelaties()) {
+        for (final RelatieDecorator relatie : decorateRelatiesOngesorteerd()) {
             stapel.removeRelatie(relatie.getRelatie());
         }
     }
 
     /**
      * Geeft de andere relaties, dan de meegegeven relaties, terug die gekoppeld zijn aan de stapel.
-     *
-     * @param matchingRelaties
-     *            bestaande relaties uit deze stapel zodat de andere relaties goed geidentificeerd kan worden
-     * @param exactMatch
-     *            true als de relatie exact moet matchen. False indien de ontbinding genegeerd kan worden als de relatie
-     *            waar tegen gematched wordt niet ontbonden is.
+     * @param matchingRelaties bestaande relaties uit deze stapel zodat de andere relaties goed geidentificeerd kan worden
+     * @param exactMatch true als de relatie exact moet matchen. False indien de ontbinding genegeerd kan worden als de relatie waar tegen gematched wordt niet
+     * ontbonden is.
      * @return de andere relaties van deze stapel of een lege lijst.
      */
     public Set<RelatieDecorator> getOverigeRelaties(final Set<RelatieDecorator> matchingRelaties, final boolean exactMatch) {
@@ -533,11 +483,8 @@ public final class StapelDecorator {
     /**
      * Geeft de relatie terug die bij de stapel hoort. Deze methode kan alleen iets terug geven als de stapel een ouder
      * of kind stapel is.
-     *
      * @return de relatie van deze stapel
-     * @throws IllegalStateException
-     *             Als de stapel bij een huwelijk/geregistreerd partnerschap hoort. Hier kunnen meerdere relaties aan de
-     *             stapel hangen.
+     * @throws IllegalStateException Als de stapel bij een huwelijk/geregistreerd partnerschap hoort. Hier kunnen meerdere relaties aan de stapel hangen.
      */
     public RelatieDecorator getRelatie() {
         if (isHuwelijkOfGpStapel()) {
@@ -556,9 +503,7 @@ public final class StapelDecorator {
 
         /**
          * Constructor.
-         * 
-         * @param reverseOrder
-         *            Indicator of de volgorde omgekeerd is.
+         * @param reverseOrder Indicator of de volgorde omgekeerd is.
          */
         StapelVoorkomenSorter(final boolean reverseOrder) {
             this.reverseOrder = reverseOrder;

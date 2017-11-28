@@ -10,8 +10,8 @@ import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Af11Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Av01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.NullBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.AdHocZoekPersoonVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwijderAfnemersindicatieVerzoekBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonOpActueleGegevensVerzoekBericht;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.AbstractUc1003Test;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -35,12 +35,12 @@ public class Uc1003VerwijderenTest extends AbstractUc1003Test {
     @Test
     public void happyFlowVerwijderd() {
         // Start
-        startProcess(VerwijderenAfnIndTestUtil.maakAv01Bericht("580001", "1234567890"));
+        startProcess(VerwijderenAfnIndTestUtil.maakAv01Bericht("059901", "1234567890"));
 
         // Zoek Persoon
         controleerBerichten(0, 0, 1);
-        final ZoekPersoonOpActueleGegevensVerzoekBericht zoekPersoonVerzoek = getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
-        signalSync(maakZoekPersoonAntwoordBericht(zoekPersoonVerzoek, 1));
+        final AdHocZoekPersoonVerzoekBericht adHocZoekPersoonVerzoekBericht = getBericht(AdHocZoekPersoonVerzoekBericht.class);
+        signalSync(maakAdHocZoekPersoonAntwoordBericht(adHocZoekPersoonVerzoekBericht, 1));
 
         // Verwijderen
         controleerBerichten(0, 0, 1);
@@ -55,41 +55,22 @@ public class Uc1003VerwijderenTest extends AbstractUc1003Test {
     }
 
     @Test
-    public void badFlowAfnemerBestaatNiet() {
-        // Start
-        final Av01Bericht av01 = VerwijderenAfnIndTestUtil.maakAv01Bericht("123456", "1234567890");
-        startProcess(av01);
-
-        // Af11
-        controleerBerichten(0, 1, 0);
-        final Af11Bericht af11 = getBericht(Af11Bericht.class);
-        Assert.assertEquals("X", af11.getHeader(Lo3HeaderVeld.FOUTREDEN));
-        Assert.assertEquals("0000", af11.getHeader(Lo3HeaderVeld.GEMEENTE));
-        Assert.assertEquals("0000000000", af11.getHeader(Lo3HeaderVeld.A_NUMMER));
-        Assert.assertEquals(av01.getANummer(), af11.getANummer());
-
-        // Einde
-        controleerBerichten(0, 0, 0);
-        Assert.assertTrue(processEnded());
-    }
-
-    @Test
     public void badFlowGeenPersoonGevonden() {
         // Start
-        final Av01Bericht av01 = VerwijderenAfnIndTestUtil.maakAv01Bericht("580001", "1234567890");
+        final Av01Bericht av01 = VerwijderenAfnIndTestUtil.maakAv01Bericht("059901", "1234567890");
         startProcess(av01);
 
         // Zoek Persoon
         controleerBerichten(0, 0, 1);
-        final ZoekPersoonOpActueleGegevensVerzoekBericht zoekPersoonVerzoek = getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
-        signalSync(maakZoekPersoonAntwoordBericht(zoekPersoonVerzoek, 0));
+        final AdHocZoekPersoonVerzoekBericht adHocZoekPersoonVerzoekBericht = getBericht(AdHocZoekPersoonVerzoekBericht.class);
+        signalSync(maakAdHocZoekPersoonAntwoordBericht(adHocZoekPersoonVerzoekBericht, 0));
 
         // Af11
         controleerBerichten(0, 1, 0);
         final Af11Bericht af11 = getBericht(Af11Bericht.class);
-        Assert.assertEquals("G", af11.getHeader(Lo3HeaderVeld.FOUTREDEN));
-        Assert.assertEquals("0000", af11.getHeader(Lo3HeaderVeld.GEMEENTE));
-        Assert.assertEquals("0000000000", af11.getHeader(Lo3HeaderVeld.A_NUMMER));
+        Assert.assertEquals("G", af11.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
+        Assert.assertEquals("0000", af11.getHeaderWaarde(Lo3HeaderVeld.GEMEENTE));
+        Assert.assertEquals("0000000000", af11.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
         Assert.assertEquals(av01.getANummer(), af11.getANummer());
 
         // Einde
@@ -100,20 +81,20 @@ public class Uc1003VerwijderenTest extends AbstractUc1003Test {
     @Test
     public void badFlowMeerderePersonenGevonden() {
         // Start
-        final Av01Bericht av01 = VerwijderenAfnIndTestUtil.maakAv01Bericht("580001", "1234567890");
+        final Av01Bericht av01 = VerwijderenAfnIndTestUtil.maakAv01Bericht("059901", "1234567890");
         startProcess(av01);
 
         // Zoek Persoon
         controleerBerichten(0, 0, 1);
-        final ZoekPersoonOpActueleGegevensVerzoekBericht zoekPersoonVerzoek = getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
-        signalSync(maakZoekPersoonAntwoordBericht(zoekPersoonVerzoek, 2));
+        final AdHocZoekPersoonVerzoekBericht adHocZoekPersoonVerzoekBericht = getBericht(AdHocZoekPersoonVerzoekBericht.class);
+        signalSync(maakAdHocZoekPersoonAntwoordBericht(adHocZoekPersoonVerzoekBericht, 2));
 
         // Af11
         controleerBerichten(0, 1, 0);
         final Af11Bericht af11 = getBericht(Af11Bericht.class);
-        Assert.assertEquals("U", af11.getHeader(Lo3HeaderVeld.FOUTREDEN));
-        Assert.assertEquals("0000", af11.getHeader(Lo3HeaderVeld.GEMEENTE));
-        Assert.assertEquals("0000000000", af11.getHeader(Lo3HeaderVeld.A_NUMMER));
+        Assert.assertEquals("U", af11.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
+        Assert.assertEquals("0000", af11.getHeaderWaarde(Lo3HeaderVeld.GEMEENTE));
+        Assert.assertEquals("0000000000", af11.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
         Assert.assertEquals(av01.getANummer(), af11.getANummer());
 
         // Einde
@@ -124,13 +105,13 @@ public class Uc1003VerwijderenTest extends AbstractUc1003Test {
     @Test
     public void badFlowReedsNietGeplaatst() {
         // Start
-        final Av01Bericht av01 = VerwijderenAfnIndTestUtil.maakAv01Bericht("580001", "1234567890");
+        final Av01Bericht av01 = VerwijderenAfnIndTestUtil.maakAv01Bericht("059901", "1234567890");
         startProcess(av01);
 
         // Zoek Persoon
         controleerBerichten(0, 0, 1);
-        final ZoekPersoonOpActueleGegevensVerzoekBericht zoekPersoonVerzoek = getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
-        signalSync(maakZoekPersoonAntwoordBericht(zoekPersoonVerzoek, 1));
+        final AdHocZoekPersoonVerzoekBericht adHocZoekPersoonVerzoekBericht = getBericht(AdHocZoekPersoonVerzoekBericht.class);
+        signalSync(maakAdHocZoekPersoonAntwoordBericht(adHocZoekPersoonVerzoekBericht, 1));
 
         // Plaatsen
         controleerBerichten(0, 0, 1);
@@ -140,10 +121,40 @@ public class Uc1003VerwijderenTest extends AbstractUc1003Test {
         // Af11
         controleerBerichten(0, 1, 0);
         final Af11Bericht af11 = getBericht(Af11Bericht.class);
-        Assert.assertEquals("I", af11.getHeader(Lo3HeaderVeld.FOUTREDEN));
-        Assert.assertEquals("0000", af11.getHeader(Lo3HeaderVeld.GEMEENTE));
-        Assert.assertEquals("1234567890", af11.getHeader(Lo3HeaderVeld.A_NUMMER));
+        Assert.assertEquals("I", af11.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
+        Assert.assertEquals("0000", af11.getHeaderWaarde(Lo3HeaderVeld.GEMEENTE));
+        Assert.assertEquals("1234567890", af11.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
         Assert.assertEquals(av01.getANummer(), af11.getANummer());
+
+        // Einde
+        controleerBerichten(0, 0, 0);
+        Assert.assertTrue(processEnded());
+    }
+
+
+    @Test
+    public void badFlowNietGeautoriseerd() {
+        // Start
+        final Av01Bericht av01 = VerwijderenAfnIndTestUtil.maakAv01Bericht("059901", "1234567890");
+        startProcess(av01);
+
+        // Zoek Persoon
+        controleerBerichten(0, 0, 1);
+        final AdHocZoekPersoonVerzoekBericht adHocZoekPersoonVerzoekBericht = getBericht(AdHocZoekPersoonVerzoekBericht.class);
+        signalSync(maakAdHocZoekPersoonAntwoordBericht(adHocZoekPersoonVerzoekBericht, 1));
+
+        // Plaatsen
+        controleerBerichten(0, 0, 1);
+        final VerwijderAfnemersindicatieVerzoekBericht verwijderVerzoekBericht = getBericht(VerwijderAfnemersindicatieVerzoekBericht.class);
+        signalSync(maakVerwerkAfnemersindicatieAntwoordBericht(verwijderVerzoekBericht, "X"));
+
+        // Af11
+        controleerBerichten(0, 1, 0);
+        final Af11Bericht af11 = getBericht(Af11Bericht.class);
+        Assert.assertEquals("X", af11.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
+
+        // Beheerders notificatie
+        signalHumanTask("end");
 
         // Einde
         controleerBerichten(0, 0, 0);

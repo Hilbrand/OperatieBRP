@@ -32,9 +32,9 @@ public class Uc812Test extends AbstractUc812Test {
     @Test
     public void happyFlow() throws Exception {
         final String aNummer = "1607306145";
-        final String doelGemeente = "0599";
+        final String doelPartijCode = "0599";
 
-        final String bulkSynchronisatievraag = doelGemeente + "," + aNummer + "\n";
+        final String bulkSynchronisatievraag = doelPartijCode + "," + aNummer + "\n";
 
         final Uc812Bericht uc812Bericht = new Uc812Bericht();
         uc812Bericht.setBulkSynchronisatievraag(bulkSynchronisatievraag);
@@ -71,9 +71,9 @@ public class Uc812Test extends AbstractUc812Test {
     @Test
     public void badFlow() throws Exception {
         final String aNummer = "1607306140";
-        final String doelGemeente = "0599";
+        final String doelPartijCode = "0599";
 
-        final String bulkSynchronisatievraag = doelGemeente + "," + aNummer + ",testtekst\n";
+        final String bulkSynchronisatievraag = doelPartijCode + "," + aNummer + ",testtekst\n";
 
         final Uc812Bericht uc812Bericht = new Uc812Bericht();
         uc812Bericht.setBulkSynchronisatievraag(bulkSynchronisatievraag);
@@ -95,56 +95,56 @@ public class Uc812Test extends AbstractUc812Test {
         final String aNummerNull = null;
         final String aNummerNietAlleenCijfers = "123test234";
         final String negatiefANummerOngeldig = "-123123124";
-        final String doelGemeente = "0599";
-        final String doelGemeenteOngeldigeLengte = "600";
-        final String doelGemeenteNonGba = "0699";
-        final String doelGemeenteNietBestaand = "0600";
+        final String doelPartijCode = "0599";
+        final String doelPartijCodeOngeldigeLengte = "600";
+        final String doelPartijCodeNonGba = "0699";
+        final String doelPartijCodeNietBestaand = "0600";
 
         final String bulkSynchronisatievraag =
-                doelGemeente
+                doelPartijCode
                         + ","
                         + aNummer
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummer2
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummerOngeldig
                         + "\n"
-                        + doelGemeenteNonGba
+                        + doelPartijCodeNonGba
                         + ","
                         + aNummer
                         + "\n"
-                        + doelGemeenteNonGba
+                        + doelPartijCodeNonGba
                         + ","
                         + aNummer2
                         + "\n"
-                        + doelGemeenteNietBestaand
+                        + doelPartijCodeNietBestaand
                         + ","
                         + aNummerOngeldig
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + negatiefANummerOngeldig
                         + "\n"
-                        + doelGemeenteOngeldigeLengte
+                        + doelPartijCodeOngeldigeLengte
                         + ","
                         + "\n"
-                        + doelGemeenteOngeldigeLengte
+                        + doelPartijCodeOngeldigeLengte
                         + ","
                         + aNummer
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummerOngeldigeLengte
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummerNull
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummerNietAlleenCijfers
                         + "\n";

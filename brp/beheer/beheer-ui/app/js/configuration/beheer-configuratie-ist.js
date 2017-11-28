@@ -4,7 +4,9 @@ var Autorisatietabel = {
 	resourceNaam: 'Autorisatietabel',
 	resourceUrl: 'autorisatietabel/:id',
 	loaderNaam: 'AutorisatietabelLoader',
-	kolommen: [{ name:'Autorisatietabel (TODO)', display:''}],
+	kolommen: [
+	    { name:'Autorisatietabel (TODO)', display:''}
+	],
 	listUri: '/autorisatietabel/list',
 	listTemplateUrl: 'views/generic/list.html',
     readonly: true

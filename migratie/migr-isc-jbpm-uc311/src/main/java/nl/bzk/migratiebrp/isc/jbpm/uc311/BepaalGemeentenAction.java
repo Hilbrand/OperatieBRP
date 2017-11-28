@@ -9,9 +9,11 @@ package nl.bzk.migratiebrp.isc.jbpm.uc311;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpAntwoordBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegister;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
 import nl.bzk.migratiebrp.bericht.model.sync.register.Stelsel;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -20,9 +22,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerblijfplaatsInhoud;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.NoSignal;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.register.client.GemeenteService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.register.client.PartijService;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.Token;
 import org.springframework.stereotype.Component;
@@ -35,43 +35,66 @@ import org.springframework.stereotype.Component;
 @Component("uc311BepaalGemeentenAction")
 public final class BepaalGemeentenAction implements SpringAction, NoSignal {
 
-    /** Child context variabele voor: doel gemeente. */
-    public static final String DOEL_GEMEENTE = "doelGemeente";
-    /** Child context variabele voor: wa01 bericht. */
+    /**
+     * Child context variabele voor: doel gemeente.
+     */
+    public static final String DOEL_GEMEENTE = "doelPartijCode";
+    /**
+     * Child context variabele voor: wa01 bericht.
+     */
     public static final String WA01_BERICHT = "wa01Bericht";
-    /** Child context variabele voor: wa01 herhaling counter. */
+    /**
+     * Child context variabele voor: wa01 herhaling counter.
+     */
     public static final String WA01_HERHALING = "wa01Herhaling";
-    /** Child context variabele voor: vospg antwoord bericht. */
-    public static final String VOSPG_BERICHT = "vospgBericht";
-    /** Child context variabele voor: vospg antwoord bericht type. */
-    public static final String VOSPG_BERICHT_TYPE = "vospgBerichtType";
-    /** Child context variabele voor: null bericht. */
+    /**
+     * Child context variabele voor: voisc antwoord bericht.
+     */
+    public static final String VOISC_BERICHT = "voiscBericht";
+    /**
+     * Child context variabele voor: voisc antwoord bericht type.
+     */
+    public static final String VOISC_BERICHT_TYPE = "voiscBerichtType";
+    /**
+     * Child context variabele voor: null bericht.
+     */
     public static final String NULL_BERICHT = "nullBericht";
 
-    /** Lock voor het token als de 'fork' wordt gedaan. */
+    /**
+     * Lock voor het token als de 'fork' wordt gedaan.
+     */
     public static final String LOCK = "uc311BepaalGemeentenAction";
-    /** Prefix voor de child tokens. */
+    /**
+     * Prefix voor de child tokens.
+     */
     public static final String TOKEN_PREFIX = "gemeente-";
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    @Inject
-    private BerichtenDao berichtenDao;
+    private final BerichtenDao berichtenDao;
+    private final PartijService partijRegisterService;
 
-    @Inject
-    private GemeenteService gemeenteRegisterService;
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     * @param partijRegisterService partij register service
+     */
+    public BepaalGemeentenAction(final BerichtenDao berichtenDao, final PartijService partijRegisterService) {
+        this.berichtenDao = berichtenDao;
+        this.partijRegisterService = partijRegisterService;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
         LOG.info("execute(parameters={})", parameters);
 
-        final GemeenteRegister gemeenteRegister = gemeenteRegisterService.geefRegister();
+        final PartijRegister partijRegister = partijRegisterService.geefRegister();
 
         final LeesUitBrpAntwoordBericht leesUitBrpAntwoordBericht;
         leesUitBrpAntwoordBericht = (LeesUitBrpAntwoordBericht) berichtenDao.leesBericht((Long) parameters.get("leesUitBrpAntwoordBericht"));
         final Lo3Persoonslijst persoonslijst = leesUitBrpAntwoordBericht.getLo3Persoonslijst();
 
-        final Set<String> gemeenten = bepaalGemeenten(gemeenteRegister, persoonslijst);
+        final Set<String> partijen = bepaalPartijen(partijRegister, persoonslijst);
 
         // Lock parent token
         final ExecutionContext executionContext = ExecutionContext.currentExecutionContext();
@@ -79,19 +102,19 @@ public final class BepaalGemeentenAction implements SpringAction, NoSignal {
         token.lock(LOCK);
 
         // Maak child tokens en schiet deze over de gemeente transition
-        for (final String gemeente : gemeenten) {
-            final Token childToken = new Token(token, TOKEN_PREFIX + gemeente);
+        for (final String partij : partijen) {
+            final Token childToken = new Token(token, TOKEN_PREFIX + partij);
             final ExecutionContext childContext = new ExecutionContext(childToken);
 
             // Create variabele on token-scope
-            childContext.getContextInstance().createVariable(DOEL_GEMEENTE, gemeente, childToken);
+            childContext.getContextInstance().createVariable(DOEL_GEMEENTE, partij, childToken);
             childContext.getContextInstance().createVariable(WA01_BERICHT, null, childToken);
             childContext.getContextInstance().createVariable(WA01_HERHALING, null, childToken);
             childContext.getContextInstance().createVariable("wa01HerhalingTimeout", null, childToken);
             childContext.getContextInstance().createVariable("wa01DueDate", null, childToken);
             childContext.getContextInstance().createVariable("wa01HerhalingMaxHerhalingen", null, childToken);
-            childContext.getContextInstance().createVariable(VOSPG_BERICHT, null, childToken);
-            childContext.getContextInstance().createVariable(VOSPG_BERICHT_TYPE, null, childToken);
+            childContext.getContextInstance().createVariable(VOISC_BERICHT, null, childToken);
+            childContext.getContextInstance().createVariable(VOISC_BERICHT_TYPE, null, childToken);
             childContext.getContextInstance().createVariable(NULL_BERICHT, null, childToken);
             childContext.leaveNode("gemeente");
         }
@@ -101,20 +124,21 @@ public final class BepaalGemeentenAction implements SpringAction, NoSignal {
         return null;
     }
 
-    private Set<String> bepaalGemeenten(final GemeenteRegister gemeenteRegister, final Lo3Persoonslijst persoonslijst) {
+    private Set<String> bepaalPartijen(final PartijRegister partijRegister, final Lo3Persoonslijst persoonslijst) {
         final Set<String> result = new TreeSet<>();
         final Lo3PersoonInhoud persoon = persoonslijst.getPersoonStapel().getLaatsteElement().getInhoud();
 
-        if (Stelsel.GBA == gemeenteRegister.zoekGemeenteOpGemeenteCode(persoon.getGeboorteGemeenteCode().getWaarde()).getStelsel()) {
-            result.add(persoon.getGeboorteGemeenteCode().getWaarde());
+        final Partij geboorteGemeente = partijRegister.zoekPartijOpGemeenteCode(persoon.getGeboorteGemeenteCode().getWaarde());
+        if (Stelsel.GBA == geboorteGemeente.getStelsel()) {
+            result.add(geboorteGemeente.getPartijCode());
         }
 
         for (final Lo3Categorie<Lo3VerblijfplaatsInhoud> verblijfplaats : persoonslijst.getVerblijfplaatsStapel()) {
-            if (!verblijfplaats.getHistorie().isOnjuist()
-                && Stelsel.GBA == gemeenteRegister.zoekGemeenteOpGemeenteCode(verblijfplaats.getInhoud().getGemeenteInschrijving().getWaarde())
-                                                  .getStelsel())
-            {
-                result.add(verblijfplaats.getInhoud().getGemeenteInschrijving().getWaarde());
+            if (!verblijfplaats.getHistorie().isOnjuist()) {
+                final Partij adresGemeente = partijRegister.zoekPartijOpGemeenteCode(verblijfplaats.getInhoud().getGemeenteInschrijving().getWaarde());
+                if (Stelsel.GBA == adresGemeente.getStelsel()) {
+                    result.add(adresGemeente.getPartijCode());
+                }
             }
         }
 

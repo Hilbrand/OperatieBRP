@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstGezagsVerhoudingGroepInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 
 /**
  * Deze mapper mapped de {@link BrpIstGezagsVerhoudingGroepInhoud} op Stapel en StapelVoorkomen uit het BRP operationele
@@ -21,16 +21,12 @@ public class IstGezagsverhoudingMapper extends AbstractIstMapper<BrpIstGezagsVer
 
     /**
      * Maakt een IstMapper object.
-     *
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param administratieveHandeling
-     *            de administratieve handeling voor de IST stapel
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param administratieveHandeling de administratieve handeling voor de IST stapel
      */
     public IstGezagsverhoudingMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final AdministratieveHandeling administratieveHandeling)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final AdministratieveHandeling administratieveHandeling) {
         super(dynamischeStamtabelRepository, administratieveHandeling);
     }
 

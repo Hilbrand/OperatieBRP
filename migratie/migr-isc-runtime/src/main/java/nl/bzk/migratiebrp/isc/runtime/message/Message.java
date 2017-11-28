@@ -24,28 +24,44 @@ import nl.bzk.migratiebrp.isc.runtime.jbpm.model.Correlatie;
  */
 public final class Message {
 
-    /** Bericht attribuut waarin de indicatie cache (Boolean) wordt bewaard. */
+    /**
+     * Bericht attribuut waarin de indicatie cache (Boolean) wordt bewaard.
+     */
     public static final String ATTRIBUTE_INDICATIE_CACHE = "iscIndicatieCache";
 
-    /** Bericht attribuut waarin het mig_berichten.id (Long) wordt bewaard. */
+    /**
+     * Bericht attribuut waarin het mig_berichten.id (Long) wordt bewaard.
+     */
     public static final String ATTRIBUTE_BERICHT_ID = "iscBerichtId";
 
-    /** Bericht attribuut waarin het mig_berichten.naam (String) wordt bewaard. */
+    /**
+     * Bericht attribuut waarin het mig_berichten.naam (String) wordt bewaard.
+     */
     public static final String ATTRIBUTE_BERICHT_TYPE = "iscBerichtType";
 
-    /** Bericht attribuut waarin de te starten (obv bericht) cyclus wordt bewaard. */
+    /**
+     * Bericht attribuut waarin de te starten (obv bericht) cyclus wordt bewaard.
+     */
     public static final String ATTRIBUTE_CYCLUS = "iscCyclus";
 
-    /** Bericht attribuut waarin het bericht (nl.bzk.isc.esb.message.Bericht) wordt bewaard. */
+    /**
+     * Bericht attribuut waarin het bericht (nl.bzk.isc.esb.message.Bericht) wordt bewaard.
+     */
     public static final String ATTRIBUTE_BERICHT = "iscBericht";
 
-    /** Bericht attribuut waarin de ProcessData wordt bewaard. */
+    /**
+     * Bericht attribuut waarin de ProcessData wordt bewaard.
+     */
     public static final String ATTRIBUTE_CORRELATIE = "iscCorrelatie";
 
-    /** Bericht attribuut waarin het process instance id wordt bewaard. */
+    /**
+     * Bericht attribuut waarin het process instance id wordt bewaard.
+     */
     public static final String ATTRIBUTE_PROCESS_INSTANCE_ID = "iscProcessInstanceId";
 
-    /** Bericht attribuut waarin het process instance id wordt bewaard. */
+    /**
+     * Bericht attribuut waarin het process instance id wordt bewaard.
+     */
     public static final String ATTRIBUTE_ADMINISTRATIEVE_HANDELING_ID = "administratieveHandelingId";
 
     /**
@@ -60,11 +76,8 @@ public final class Message {
 
     /**
      * Zet de header.
-     *
-     * @param key
-     *            key
-     * @param value
-     *            value
+     * @param key key
+     * @param value value
      */
     public void setHeader(final String key, final String value) {
         if (value == null) {
@@ -76,9 +89,7 @@ public final class Message {
 
     /**
      * Geef de waarde van header.
-     *
-     * @param key
-     *            key
+     * @param key key
      * @return header
      */
     public String getHeader(final String key) {
@@ -87,7 +98,6 @@ public final class Message {
 
     /**
      * Geef de headers.
-     *
      * @return headers
      */
     public Properties getHeaders() {
@@ -96,11 +106,8 @@ public final class Message {
 
     /**
      * Zet de attribute.
-     *
-     * @param key
-     *            key
-     * @param value
-     *            value
+     * @param key key
+     * @param value value
      */
     public void setAttribute(final String key, final Object value) {
         attributes.put(key, value);
@@ -108,9 +115,7 @@ public final class Message {
 
     /**
      * Geef de waarde van property.
-     *
-     * @param key
-     *            key
+     * @param key key
      * @return property
      */
     public Object getAttribute(final String key) {
@@ -119,7 +124,6 @@ public final class Message {
 
     /**
      * Geef de attributen.
-     *
      * @return attributen
      */
     public Map<String, Object> getAttributes() {
@@ -128,7 +132,6 @@ public final class Message {
 
     /**
      * Geef de waarde van content.
-     *
      * @return content
      */
     public String getContent() {
@@ -137,9 +140,7 @@ public final class Message {
 
     /**
      * Zet de waarde van content.
-     *
-     * @param content
-     *            content
+     * @param content content
      */
     public void setContent(final String content) {
         this.content = content;
@@ -153,7 +154,6 @@ public final class Message {
 
     /**
      * Haal het (door JMS doorgegeven) message-id op.
-     *
      * @return message-id
      */
     public String getMessageId() {
@@ -162,9 +162,7 @@ public final class Message {
 
     /**
      * Set het (door JMS door te geven) message-id.
-     *
-     * @param messageId
-     *            message-id
+     * @param messageId message-id
      */
     public void setMessageId(final String messageId) {
         setHeader(JMSConstants.BERICHT_REFERENTIE, messageId);
@@ -172,7 +170,6 @@ public final class Message {
 
     /**
      * Haal het (door JMS doorgegeven) correlatie-id op.
-     *
      * @return correlatie-id
      */
     public String getCorrelatieId() {
@@ -181,17 +178,31 @@ public final class Message {
 
     /**
      * Set het (door JMS door te geven) correlatie-id.
-     *
-     * @param correlatieId
-     *            correlatie-id
+     * @param correlatieId correlatie-id
      */
     public void setCorrelatieId(final String correlatieId) {
         setHeader(JMSConstants.CORRELATIE_REFERENTIE, correlatieId);
     }
 
     /**
+     * Haal de indicatie request-non-receipt-notification op.
+     * @return indicatie request-non-receipt-notification
+     */
+    public boolean isRequestNonReceiptNotification() {
+        return getHeader(JMSConstants.REQUEST_NON_RECEIPT_NOTIFICATION) != null;
+    }
+
+    /**
+     * Zet de indicatie request-non-receipt-notification .
+     * @param b indicatie request-non-receipt-notification
+     */
+    public void setRequestNonReceiptNotification(final boolean b) {
+        setHeader(JMSConstants.REQUEST_NON_RECEIPT_NOTIFICATION, b ? "true" : null);
+
+    }
+
+    /**
      * Haal de (door JMS doorgegeven) originator (verzendende partij) op.
-     *
      * @return originator
      */
     public String getOriginator() {
@@ -200,9 +211,7 @@ public final class Message {
 
     /**
      * Set de (door JMS door te geven) originator (verzendende partij).
-     *
-     * @param originator
-     *            originator (verzendende partij)
+     * @param originator originator (verzendende partij)
      */
     public void setOriginator(final String originator) {
         setHeader(JMSConstants.BERICHT_ORIGINATOR, originator);
@@ -210,7 +219,6 @@ public final class Message {
 
     /**
      * Haal het (door JMS doorgegeven) recipient (ontvangende partij) op.
-     *
      * @return recipient
      */
     public String getRecipient() {
@@ -219,9 +227,7 @@ public final class Message {
 
     /**
      * Set het (door JMS door te geven) recipient (ontvangende partij).
-     *
-     * @param recipient
-     *            recipient (ontvangende partij)
+     * @param recipient recipient (ontvangende partij)
      */
     public void setRecipient(final String recipient) {
         setHeader(JMSConstants.BERICHT_RECIPIENT, recipient);
@@ -229,7 +235,6 @@ public final class Message {
 
     /**
      * Haal het (door JMS doorgegeven) MsSequenceNumber op.
-     *
      * @return MsSequenceNumber
      */
     public Long getMsSequenceNumber() {
@@ -239,7 +244,6 @@ public final class Message {
 
     /**
      * Haal het (door JMS doorgegeven) MsSequenceNumber op.
-     *
      * @return MsSequenceNumber
      */
     public String getAdministratieveHandelingId() {
@@ -254,9 +258,7 @@ public final class Message {
 
     /**
      * Voeg alle gegeven attributen toe.
-     *
-     * @param attributesToSet
-     *            attributen
+     * @param attributesToSet attributen
      */
     public void setAllAttributes(final Map<String, Object> attributesToSet) {
         attributes.putAll(attributesToSet);
@@ -264,7 +266,6 @@ public final class Message {
 
     /**
      * Haal het bericht id op.
-     *
      * @return bericht id
      */
     public Long getBerichtId() {
@@ -273,9 +274,7 @@ public final class Message {
 
     /**
      * Zet het bericht id.
-     *
-     * @param berichtId
-     *            bericht id
+     * @param berichtId bericht id
      */
     public void setBerichtId(final Long berichtId) {
         setAttribute(ATTRIBUTE_BERICHT_ID, berichtId);
@@ -283,7 +282,6 @@ public final class Message {
 
     /**
      * Haal het geparsde bericht op.
-     *
      * @return bericht
      */
     public Bericht getBericht() {
@@ -292,9 +290,7 @@ public final class Message {
 
     /**
      * Zet het geparsde bericht.
-     *
-     * @param bericht
-     *            bericht
+     * @param bericht bericht
      */
     public void setBericht(final Bericht bericht) {
         setAttribute(ATTRIBUTE_BERICHT, bericht);
@@ -302,7 +298,6 @@ public final class Message {
 
     /**
      * Haal het bericht type op.
-     *
      * @return bericht type
      */
     public String getBerichtType() {
@@ -311,9 +306,7 @@ public final class Message {
 
     /**
      * Zet het bericht type.
-     *
-     * @param berichtType
-     *            bericht type
+     * @param berichtType bericht type
      */
     public void setBerichtType(final String berichtType) {
         setAttribute(ATTRIBUTE_BERICHT_TYPE, berichtType);
@@ -321,7 +314,6 @@ public final class Message {
 
     /**
      * Haal de gecorreleerde proces data op.
-     *
      * @return correlatie
      */
     public Correlatie getCorrelatie() {
@@ -330,10 +322,7 @@ public final class Message {
 
     /**
      * Zet de gecorreleerde proces data.
-     *
-     *
-     * @param correlatie
-     *            correlatie
+     * @param correlatie correlatie
      */
     public void setCorrelatie(final Correlatie correlatie) {
         setAttribute(ATTRIBUTE_CORRELATIE, correlatie);
@@ -341,7 +330,6 @@ public final class Message {
 
     /**
      * Haal de process instance id op.
-     *
      * @return process instance id
      */
     public Long getProcessInstanceId() {
@@ -350,10 +338,7 @@ public final class Message {
 
     /**
      * Zet de process instance id.
-     *
-     *
-     * @param processInstanceId
-     *            process instance id
+     * @param processInstanceId process instance id
      */
     public void setProcessInstanceId(final long processInstanceId) {
         setAttribute(ATTRIBUTE_PROCESS_INSTANCE_ID, processInstanceId);

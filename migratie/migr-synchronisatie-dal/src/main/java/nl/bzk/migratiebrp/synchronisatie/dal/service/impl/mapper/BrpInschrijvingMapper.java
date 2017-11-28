@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpInschrijvingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -25,16 +25,16 @@ public final class BrpInschrijvingMapper extends AbstractBrpMapper<PersoonInschr
     protected BrpInschrijvingInhoud mapInhoud(final PersoonInschrijvingHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         final BrpDatum datumInschrijving =
                 BrpMapperUtil.mapDatum(
-                    historie.getDatumInschrijving(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INSCHRIJVING_DATUM, true));
+                        historie.getDatumInschrijving(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INSCHRIJVING_DATUM, true));
         final BrpLong versienummer =
                 BrpMapperUtil.mapBrpLong(
-                    historie.getVersienummer(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INSCHRIJVING_VERSIENUMMER, true));
+                        historie.getVersienummer(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INSCHRIJVING_VERSIENUMMER, true));
         final BrpDatumTijd datumTijdStempel =
                 BrpMapperUtil.mapBrpDatumTijd(
-                    historie.getDatumtijdstempel(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INSCHRIJVING_DATUMTIJDSTEMPEL, true));
+                        historie.getDatumtijdstempel(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INSCHRIJVING_DATUMTIJDSTEMPEL, true));
         return new BrpInschrijvingInhoud(datumInschrijving, versienummer, datumTijdStempel);
     }
 }

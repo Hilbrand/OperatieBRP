@@ -6,70 +6,63 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import java.sql.Timestamp;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderlijkGezagHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonDeelnameEuVerkiezingenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeboorteHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponent;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNaamgebruikHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteitHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNummerverwijzingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonOverlijdenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonPersoonskaartHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonUitsluitingKiesrechtHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerblijfsrechtHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaam;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerkrijgingNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Naamgebruik;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
 import nl.bzk.migratiebrp.ggo.viewer.service.BrpStamtabelService;
+import nl.bzk.migratiebrp.ggo.viewer.util.PortInitializer;
 import nl.bzk.migratiebrp.ggo.viewer.util.ViewerDateUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderlijkGezagHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Naamgebruik;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonDeelnameEuVerkiezingenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeboorteHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponent;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNaamgebruikHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteitHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNummerverwijzingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonOverlijdenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonPersoonskaartHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonUitsluitingKiesrechtHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerblijfsrechtHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaam;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerkrijgingNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerliesNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Verblijfsrecht;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -79,62 +72,48 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.sql.Timestamp;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 /**
  * Test de GgoBrp3Builder klasse
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml" })
+@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml"}, initializers = {PortInitializer.class})
 public class GgoBrpMapperTest {
 
     @Inject
-    private GgoBrpGegevensgroepenBuilder builder;
-
+    private GgoBrpGegevensgroepenBuilder gegevensgroepenBuilder;
+    @Inject
+    private GgoBrpActieBuilder actieBuilder;
+    @Inject
+    private GgoBrpOnderzoekBuilder onderzoekBuilder;
+    @Inject
+    private GgoBrpValueConvert valueConvert;
     @Inject
     private BrpStamtabelService brpStamtabelService;
 
-    @Inject
     private GgoBrpIdentificatienummersMapper identificatienummersMapper;
-    @Inject
     private GgoBrpVoornaamMapper voornaamMapper;
-    @Inject
     private GgoBrpGeslachtsnaamcomponentMapper geslachtsnaamcomponentMapper;
-    @Inject
     private GgoBrpSamengesteldeNaamMapper samengesteldeNaamMapper;
-    @Inject
     private GgoBrpGeboorteMapper geboorteMapper;
-    @Inject
     private GgoBrpGeslachtsaanduidingMapper geslachtsaanduidingMapper;
-    @Inject
     private GgoBrpNaamgebruikMapper naamgebruikMapper;
-    @Inject
     private GgoBrpNummerverwijzingMapper nummerverwijzingMapper;
-
-    @Inject
     private GgoBrpNationaliteitMapper nationaliteitMapper;
-
-    @Inject
     private GgoBrpOverlijdenMapper overlijdenMapper;
-    @Inject
     private GgoBrpInschrijvingMapper inschrijvingMapper;
-    @Inject
     private GgoBrpPersoonskaartMapper persoonskaartMapper;
-    @Inject
-    private GgoBrpPersoonAfgeleidAdministratiefMapper persoonAfgeleidAdministratiefMapper;
-    @Inject
     private GgoBrpBijhoudingMapper bijhoudingMapper;
-    @Inject
     private GgoBrpAdresMapper adresMapper;
-    @Inject
     private GgoBrpMigratieMapper migratieMapper;
-
-    @Inject
     private GgoBrpVerblijfsrechtMapper verblijfsrechtMapper;
-    @Inject
     private GgoBrpReisdocumentMapper reisdocumentMapper;
-    @Inject
     private GgoBrpDeelnameEuVerkiezingenMapper deelnameEuVerkiezingenMapper;
-    @Inject
     private GgoBrpUitsluitingKiesrechtMapper uitsluitingKiesrechtMapper;
 
     private Persoon persoon;
@@ -144,9 +123,28 @@ public class GgoBrpMapperTest {
     @Before
     public void setUp() {
         persoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        partij = new Partij("Gemeente Onderijssel", (short) 13);
-        gemeente = new Gemeente((short) 11, "Onderijssel", (short) 12, partij);
+        partij = new Partij("Gemeente Onderijssel", "000013");
+        gemeente = new Gemeente((short) 11, "Onderijssel", "0012", partij);
 
+        identificatienummersMapper = new GgoBrpIdentificatienummersMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        voornaamMapper = new GgoBrpVoornaamMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        geslachtsnaamcomponentMapper = new GgoBrpGeslachtsnaamcomponentMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        samengesteldeNaamMapper = new GgoBrpSamengesteldeNaamMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        geboorteMapper = new GgoBrpGeboorteMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        geslachtsaanduidingMapper = new GgoBrpGeslachtsaanduidingMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        naamgebruikMapper = new GgoBrpNaamgebruikMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        nummerverwijzingMapper = new GgoBrpNummerverwijzingMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        nationaliteitMapper = new GgoBrpNationaliteitMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        overlijdenMapper = new GgoBrpOverlijdenMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        inschrijvingMapper = new GgoBrpInschrijvingMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        persoonskaartMapper = new GgoBrpPersoonskaartMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        bijhoudingMapper = new GgoBrpBijhoudingMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        adresMapper = new GgoBrpAdresMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        migratieMapper = new GgoBrpMigratieMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        verblijfsrechtMapper = new GgoBrpVerblijfsrechtMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        reisdocumentMapper = new GgoBrpReisdocumentMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        deelnameEuVerkiezingenMapper = new GgoBrpDeelnameEuVerkiezingenMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        uitsluitingKiesrechtMapper = new GgoBrpUitsluitingKiesrechtMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
     }
 
     @Test
@@ -174,9 +172,9 @@ public class GgoBrpMapperTest {
         assertContains(ggoInhoud, GgoBrpElementEnum.VOORVOEGSEL, voorvoegsel);
         assertContains(ggoInhoud, GgoBrpElementEnum.SCHEIDINGSTEKEN, scheidingsteken.toString());
         assertContains(ggoInhoud, GgoBrpElementEnum.GESLACHTSNAAMSTAM, geslachtsnaamstam);
-        assertContains(ggoInhoud, GgoBrpElementEnum.NAAMGEBRUIK, "N (Eigen, Partner)");
+        assertContains(ggoInhoud, GgoBrpElementEnum.NAAMGEBRUIK, "N (Eigen, partner)");
         assertContains(ggoInhoud, GgoBrpElementEnum.INDICATIE_AFGELEID, "Ja");
-        assertContains(ggoInhoud, GgoBrpElementEnum.PREDICAAT, "J (Jonkheer / Jonkvrouw)");
+        assertContains(ggoInhoud, GgoBrpElementEnum.PREDICAAT, "J (jonkheer / jonkvrouw)");
         assertContains(ggoInhoud, GgoBrpElementEnum.ADELLIJKE_TITEL, "B (baron / barones)");
     }
 
@@ -202,7 +200,7 @@ public class GgoBrpMapperTest {
     public void testAddGroepAdresHoudingFilled() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final FunctieAdres functieAdresCode = FunctieAdres.BRIEFADRES;
+        final SoortAdres functieAdresCode = SoortAdres.BRIEFADRES;
         final RedenWijzigingVerblijf redenWijzigingAdresCode = new RedenWijzigingVerblijf('Z', "Zomaar");
         final Aangever aangeverAdreshoudingCode = new Aangever('H', "Hij daar", "Ja hij");
         final Integer datumAanvangAdreshouding = 20010101;
@@ -225,7 +223,7 @@ public class GgoBrpMapperTest {
         final String buitenlandsAdresRegel5 = "regel5";
         final String buitenlandsAdresRegel6 = "regel6";
 
-        final LandOfGebied landOfGebied = new LandOfGebied((short) 85, "Hawaiistan");
+        final LandOfGebied landOfGebied = new LandOfGebied("0085", "Hawaiistan");
 
         final PersoonAdresHistorie inhoud = new PersoonAdresHistorie(new PersoonAdres(persoon), functieAdresCode, landOfGebied, redenWijzigingAdresCode);
         inhoud.setAangeverAdreshouding(aangeverAdreshoudingCode);
@@ -284,10 +282,10 @@ public class GgoBrpMapperTest {
     public void testAddGroepAdresHoudingEmpty() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final LandOfGebied landOfGebied = new LandOfGebied((short) 85, "Hawaiistan");
+        final LandOfGebied landOfGebied = new LandOfGebied("0085", "Hawaiistan");
 
         final PersoonAdresHistorie inhoud =
-                new PersoonAdresHistorie(new PersoonAdres(persoon), FunctieAdres.BRIEFADRES, landOfGebied, new RedenWijzigingVerblijf('W', "Wijziging"));
+                new PersoonAdresHistorie(new PersoonAdres(persoon), SoortAdres.BRIEFADRES, landOfGebied, new RedenWijzigingVerblijf('W', "Wijziging"));
 
         adresMapper.verwerkInhoud(voorkomen, inhoud, null);
 
@@ -317,35 +315,17 @@ public class GgoBrpMapperTest {
     }
 
     @Test
-    public void testAddGroepPersoonAfgeleidAdministratiefFilled() {
-        final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
-
-        final Boolean indicatieOnverwerkt = Boolean.TRUE;
-
-        final PersoonAfgeleidAdministratiefHistorie inhoud =
-                new PersoonAfgeleidAdministratiefHistorie((short) 1, persoon, new AdministratieveHandeling(
-                    partij,
-                    SoortAdministratieveHandeling.ADOPTIE_INGEZETENE), new Timestamp(12345), indicatieOnverwerkt);
-
-        persoonAfgeleidAdministratiefMapper.verwerkInhoud(voorkomen, inhoud, null);
-        final Map<String, String> ggoInhoud = voorkomen.getInhoud();
-
-        assertContains(ggoInhoud, GgoBrpElementEnum.INDICATIE_ONVERWERKT_BIJHOUDINGSVOORSTEL_NIET_INGEZETENE_AANWEZIG, "Ja");
-    }
-
-    @Test
     public void testAddGroepBijhoudingFilled() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
         final Bijhoudingsaard bijhoudingsaard = Bijhoudingsaard.NIET_INGEZETENE;
         final NadereBijhoudingsaard nadereBijhoudingsaard = NadereBijhoudingsaard.EMIGRATIE;
 
-        final PersoonBijhoudingHistorie inhoud = new PersoonBijhoudingHistorie(persoon, partij, bijhoudingsaard, nadereBijhoudingsaard, false);
+        final PersoonBijhoudingHistorie inhoud = new PersoonBijhoudingHistorie(persoon, partij, bijhoudingsaard, nadereBijhoudingsaard);
         bijhoudingMapper.verwerkInhoud(voorkomen, inhoud, null);
         final Map<String, String> ggoInhoud = voorkomen.getInhoud();
 
-        assertContains(ggoInhoud, GgoBrpElementEnum.BIJHOUDINGSPARTIJ, "0013 (Gemeente Onderijssel)");
-        assertContains(ggoInhoud, GgoBrpElementEnum.ONVERWERKT_DOC_AANWEZIG, "Nee");
+        assertContains(ggoInhoud, GgoBrpElementEnum.BIJHOUDINGSPARTIJ, "000013 (Gemeente Onderijssel)");
         assertContains(ggoInhoud, GgoBrpElementEnum.BIJHOUDINGSAARD, "N (Niet-ingezetene)");
         assertContains(ggoInhoud, GgoBrpElementEnum.NADERE_BIJHOUDINGSAARD, "E (Emigratie)");
     }
@@ -366,13 +346,13 @@ public class GgoBrpMapperTest {
 
         assertContains(ggoInhoud, GgoBrpElementEnum.INDICATIE_DEELNAME_EU_VERKIEZINGEN, "Nee");
         assertContains(
-            ggoInhoud,
-            GgoBrpElementEnum.DATUM_AANL_AANP_DEELNAME_EU_VERKIEZINGEN,
-            ViewerDateUtil.formatDatum(datumAanleidingAanpassingDeelnameEuVerkiezingen));
+                ggoInhoud,
+                GgoBrpElementEnum.DATUM_AANL_AANP_DEELNAME_EU_VERKIEZINGEN,
+                ViewerDateUtil.formatDatum(datumAanleidingAanpassingDeelnameEuVerkiezingen));
         assertContains(
-            ggoInhoud,
-            GgoBrpElementEnum.DATUM_VOORZIEN_EINDE_UITSLUITING_EU_VERKIEZINGEN,
-            ViewerDateUtil.formatDatum(datumVoorzienEindeUitsluitingEuVerkiezingen));
+                ggoInhoud,
+                GgoBrpElementEnum.DATUM_VOORZIEN_EINDE_UITSLUITING_EU_VERKIEZINGEN,
+                ViewerDateUtil.formatDatum(datumVoorzienEindeUitsluitingEuVerkiezingen));
     }
 
     @Test
@@ -396,7 +376,7 @@ public class GgoBrpMapperTest {
         final String woonplaatsnaam = "woonplaatsnaam";
         final String buitenlandsePlaatsGeboorte = "buitenlandse plaats";
         final String buitenlandseRegioGeboorte = "buitenlandse regio";
-        final LandOfGebied landOfGebied = new LandOfGebied((short) 6030, "Japal");
+        final LandOfGebied landOfGebied = new LandOfGebied("6030", "Japal");
         final String omschrijvingGeboortelocatie = "omschrijving locatie";
 
         final PersoonGeboorteHistorie inhoud = new PersoonGeboorteHistorie(persoon, geboortedatum, landOfGebied);
@@ -423,7 +403,7 @@ public class GgoBrpMapperTest {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
         final Integer geboortedatum = 19800101;
-        final LandOfGebied landOfGebied = new LandOfGebied((short) 6030, "Japal");
+        final LandOfGebied landOfGebied = new LandOfGebied("6030", "Japal");
 
         final PersoonGeboorteHistorie inhoud = new PersoonGeboorteHistorie(persoon, geboortedatum, landOfGebied);
 
@@ -500,8 +480,8 @@ public class GgoBrpMapperTest {
     public void testAddGroepIdentificatienummersFilled() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final Long administratienummer = (long) 1234356546;
-        final Integer burgerservicenummer = 124432534;
+        final String administratienummer = "1234356546";
+        final String burgerservicenummer = "124432534";
 
         final PersoonIDHistorie inhoud = new PersoonIDHistorie(persoon);
         inhoud.setAdministratienummer(administratienummer);
@@ -531,7 +511,7 @@ public class GgoBrpMapperTest {
     public void testAddGroepMigratieFilled() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final LandOfGebied landVanwaarIngeschreven = new LandOfGebied((short) 5005, "Nepan");
+        final LandOfGebied landVanwaarIngeschreven = new LandOfGebied("5005", "Nepan");
         final SoortMigratie soortMigratie = SoortMigratie.IMMIGRATIE;
         final RedenWijzigingVerblijf redenWijzigingAdresCode = new RedenWijzigingVerblijf('X', "Iks");
         final Aangever aangeverAdreshoudingCode = new Aangever('P', "Piet", "Een dik, klein mannetje van middelbare leeftijd, licht kalend");
@@ -604,9 +584,9 @@ public class GgoBrpMapperTest {
     public void testAddGroepNationaliteitFilled() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final Nationaliteit nationaliteitCode = new Nationaliteit("Martiaanse", (short) 14);
-        final RedenVerkrijgingNLNationaliteit redenVerkrijgingNederlandschapCode = new RedenVerkrijgingNLNationaliteit((short) 2, "zomaar");
-        final RedenVerliesNLNationaliteit redenVerliesNederlandschapCode = new RedenVerliesNLNationaliteit((short) 4, "tsja");
+        final Nationaliteit nationaliteitCode = new Nationaliteit("Martiaanse", "0014");
+        final RedenVerkrijgingNLNationaliteit redenVerkrijgingNederlandschapCode = new RedenVerkrijgingNLNationaliteit("002", "zomaar");
+        final RedenVerliesNLNationaliteit redenVerliesNederlandschapCode = new RedenVerliesNLNationaliteit("004", "tsja");
 
         final PersoonNationaliteit nationaliteit = new PersoonNationaliteit(persoon, nationaliteitCode);
         final PersoonNationaliteitHistorie inhoud = new PersoonNationaliteitHistorie(nationaliteit);
@@ -625,7 +605,7 @@ public class GgoBrpMapperTest {
     public void testAddGroepNationaliteitEmpty() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final PersoonNationaliteit nationaliteit = new PersoonNationaliteit(persoon, new Nationaliteit("Kazachstaanse", (short) 13));
+        final PersoonNationaliteit nationaliteit = new PersoonNationaliteit(persoon, new Nationaliteit("Kazachstaanse", "0013"));
         final PersoonNationaliteitHistorie inhoud = new PersoonNationaliteitHistorie(nationaliteit);
 
         nationaliteitMapper.verwerkInhoud(voorkomen, inhoud, null);
@@ -639,10 +619,10 @@ public class GgoBrpMapperTest {
     public void testAddGroepNummerverwijzingFilled() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final Long vorigeAdministratienummer = 32133243255L;
-        final Long volgendeAdministratienummer = 324325354344L;
-        final Integer vorigeBurgerservicenummer = 123456789;
-        final Integer volgendeBurgerservicenummer = 987654321;
+        final String vorigeAdministratienummer = "3213324325";
+        final String volgendeAdministratienummer = "3243253543";
+        final String vorigeBurgerservicenummer = "123456789";
+        final String volgendeBurgerservicenummer = "987654321";
 
         final PersoonNummerverwijzingHistorie inhoud = new PersoonNummerverwijzingHistorie(persoon);
         inhoud.setVorigeAdministratienummer(vorigeAdministratienummer);
@@ -682,7 +662,7 @@ public class GgoBrpMapperTest {
         final String woonplaatsnaam = "woonplaatsnaam2";
         final String buitenlandsePlaats = "ergens in het buitenland";
         final String buitenlandseRegio = "daaro";
-        final LandOfGebied landOfGebiedCode = new LandOfGebied((short) 12, "Dameenjeniestan");
+        final LandOfGebied landOfGebiedCode = new LandOfGebied("0012", "Dameenjeniestan");
         final String omschrijvingLocatie = "locatie";
 
         final PersoonOverlijdenHistorie inhoud = new PersoonOverlijdenHistorie(persoon, datum, landOfGebiedCode);
@@ -708,7 +688,7 @@ public class GgoBrpMapperTest {
     public void testAddGroepOverlijdenEmpty() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final LandOfGebied landOfGebiedCode = new LandOfGebied((short) 12, "Dameenjeniestan");
+        final LandOfGebied landOfGebiedCode = new LandOfGebied("0012", "Dameenjeniestan");
         final PersoonOverlijdenHistorie inhoud = new PersoonOverlijdenHistorie(persoon, 20201212, landOfGebiedCode);
 
         overlijdenMapper.verwerkInhoud(voorkomen, inhoud, null);
@@ -731,7 +711,7 @@ public class GgoBrpMapperTest {
         persoonskaartMapper.verwerkInhoud(voorkomen, inhoud, null);
         final Map<String, String> ggoInhoud = voorkomen.getInhoud();
 
-        assertContains(ggoInhoud, GgoBrpElementEnum.GEMEENTE_PK, "0013 (Gemeente Onderijssel)");
+        assertContains(ggoInhoud, GgoBrpElementEnum.GEMEENTE_PK, "000013 (Gemeente Onderijssel)");
         assertContains(ggoInhoud, GgoBrpElementEnum.INDICATIE_PK_VOLLEDIG_GECONVERTEERD, "Ja");
     }
 
@@ -865,7 +845,7 @@ public class GgoBrpMapperTest {
     public void testAddGroepVerblijfsrechtFilled() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final Verblijfsrecht verblijfsrechtCode = new Verblijfsrecht((short) 1, "Verblijfsrecht 1");
+        final Verblijfsrecht verblijfsrechtCode = new Verblijfsrecht("01", "Verblijfsrecht 1");
         final Integer aanvangVerblijfsrecht = 20122010;
         final Integer mededelingVerblijfsrecht = 20122010;
         final Integer voorzienEindeVerblijfsrecht = 20130101;
@@ -886,7 +866,7 @@ public class GgoBrpMapperTest {
     public void testAddGroepVerblijfsrechtEmpty() {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
-        final Verblijfsrecht verblijfsrechtCode = new Verblijfsrecht((short) 1, "Verblijfsrecht 1");
+        final Verblijfsrecht verblijfsrechtCode = new Verblijfsrecht("01", "Verblijfsrecht 1");
         final PersoonVerblijfsrechtHistorie inhoud = new PersoonVerblijfsrechtHistorie(persoon, verblijfsrechtCode, 20122010, 20122010);
 
         verblijfsrechtMapper.verwerkInhoud(voorkomen, inhoud, null);
@@ -917,11 +897,11 @@ public class GgoBrpMapperTest {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
 
         final BetrokkenheidOuderlijkGezagHistorie inhoud =
-                new BetrokkenheidOuderlijkGezagHistorie(new Betrokkenheid(
-                    SoortBetrokkenheid.OUDER,
-                    new Relatie(SoortRelatie.FAMILIERECHTELIJKE_BETREKKING)), false);
+                new BetrokkenheidOuderlijkGezagHistorie(
+                        new Betrokkenheid(SoortBetrokkenheid.OUDER, new Relatie(SoortRelatie.FAMILIERECHTELIJKE_BETREKKING)),
+                        false);
 
-        builder.addGroepOuderlijkGezag(voorkomen, inhoud, null);
+        gegevensgroepenBuilder.addGroepOuderlijkGezag(voorkomen, inhoud);
         final Map<String, String> ggoInhoud = voorkomen.getInhoud();
 
         assertContains(ggoInhoud, GgoBrpElementEnum.OUDER_HEEFT_GEZAG, "Nee");

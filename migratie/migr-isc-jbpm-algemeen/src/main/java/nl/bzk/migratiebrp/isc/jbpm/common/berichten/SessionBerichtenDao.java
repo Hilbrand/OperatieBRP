@@ -11,9 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.bericht.model.Bericht;
 import nl.bzk.migratiebrp.bericht.model.BerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
@@ -24,11 +22,12 @@ import nl.bzk.migratiebrp.bericht.model.brp.factory.BrpBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.isc.IscBericht;
 import nl.bzk.migratiebrp.bericht.model.isc.factory.IscBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3EindBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.notificatie.factory.NotificatieBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.model.VirtueelProces;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -59,23 +58,47 @@ public final class SessionBerichtenDao implements BerichtenDao {
     public static final String KANAAL_ISC = "ISC";
 
     /**
-     * Constante voor het kanaal VOSPG.
+     * Constante voor het kanaal VOISC.
      */
-    public static final String KANAAL_VOSPG = "VOSPG";
+    public static final String KANAAL_VOISC = "VOISC";
 
-    private static final Map<String, BerichtFactory> FACTORIES = new HashMap<String, BerichtFactory>() {
-        private static final long serialVersionUID = 1L;
+    /**
+     * Constante voor het kanaal NOTIFICATIE.
+     */
+    public static final String KANAAL_NOTIFICATIE = "NOTIFICATIE";
 
-        {
-            put(KANAAL_VOSPG, new Lo3BerichtFactory());
-            put(KANAAL_SYNC, SyncBerichtFactory.SINGLETON);
-            put(KANAAL_BRP, BrpBerichtFactory.SINGLETON);
-            put(KANAAL_ISC, IscBerichtFactory.SINGLETON);
-        }
-    };
+    private static final String CORRELATION_ID = "correlationId";
+    private static final String ID = "id";
+    private static final String KANAAL = "kanaal";
+    private static final String MESSAGE_ID = "messageId";
+    private static final String MS_SEQUENCE_NUMBER = "msSequenceNumber";
+    private static final String ONTVANGENDE_PARTIJ = "ontvangendePartij";
+    private static final String PROCESS_INSTANCE = "processInstance";
+    private static final String RICHTING = "richting";
+    private static final String VERZENDENDE_PARTIJ = "verzendendePartij";
+    private static final String VIRTUEEL_PROCES = "virtueelProces";
 
+    private static final Map<String, BerichtFactory> FACTORIES = new HashMap<>();
+
+    static {
+        FACTORIES.put(KANAAL_VOISC, new Lo3BerichtFactory());
+        FACTORIES.put(KANAAL_SYNC, SyncBerichtFactory.SINGLETON);
+        FACTORIES.put(KANAAL_BRP, BrpBerichtFactory.SINGLETON);
+        FACTORIES.put(KANAAL_ISC, IscBerichtFactory.SINGLETON);
+        FACTORIES.put(KANAAL_NOTIFICATIE, NotificatieBerichtFactory.SINGLETON);
+    }
+
+
+    private final SessionFactory sessionFactory;
+
+    /**
+     * Constructor.
+     * @param sessionFactory session factory
+     */
     @Inject
-    private SessionFactory sessionFactory;
+    public SessionBerichtenDao(final SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public Bericht leesBericht(final Long id) {
@@ -94,8 +117,8 @@ public final class SessionBerichtenDao implements BerichtenDao {
         bericht.setCorrelationId(dbBericht.getCorrelationId());
 
         if (bericht instanceof Lo3Bericht) {
-            ((Lo3Bericht) bericht).setBronGemeente(dbBericht.getVerzendendePartij());
-            ((Lo3Bericht) bericht).setDoelGemeente(dbBericht.getOntvangendePartij());
+            ((Lo3Bericht) bericht).setBronPartijCode(dbBericht.getVerzendendePartij());
+            ((Lo3Bericht) bericht).setDoelPartijCode(dbBericht.getOntvangendePartij());
         }
 
         return bericht;
@@ -114,13 +137,16 @@ public final class SessionBerichtenDao implements BerichtenDao {
             dbBericht.setMessageId(bericht.getMessageId());
             dbBericht.setCorrelationId(bericht.getCorrelationId());
             if (bericht instanceof Lo3Bericht) {
-                dbBericht.setVerzendendePartij(((Lo3Bericht) bericht).getBronGemeente());
-                dbBericht.setOntvangendePartij(((Lo3Bericht) bericht).getDoelGemeente());
+                dbBericht.setVerzendendePartij(((Lo3Bericht) bericht).getBronPartijCode());
+                dbBericht.setOntvangendePartij(((Lo3Bericht) bericht).getDoelPartijCode());
             }
             dbBericht.setBericht(bericht.format());
             dbBericht.setNaam(bericht.getBerichtType());
             dbBericht.setKanaal(bepaalKanaal(bericht));
             dbBericht.setTijdstip(new Date());
+            if (bericht instanceof Lo3Bericht) {
+                dbBericht.setRequestNonReceipt(bericht instanceof Lo3EindBericht);
+            }
 
             final nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht persistentBericht =
                     (nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht) sessionFactory.getCurrentSession().merge(dbBericht);
@@ -140,7 +166,7 @@ public final class SessionBerichtenDao implements BerichtenDao {
         if (bericht instanceof SyncBericht) {
             kanaal = KANAAL_SYNC;
         } else if (bericht instanceof Lo3Bericht) {
-            kanaal = KANAAL_VOSPG;
+            kanaal = KANAAL_VOISC;
         } else if (bericht instanceof BrpBericht) {
             kanaal = KANAAL_BRP;
         } else if (bericht instanceof IscBericht) {
@@ -176,15 +202,15 @@ public final class SessionBerichtenDao implements BerichtenDao {
 
     @Override
     public Long bewaar(
-        final String kanaal,
-        final Direction direction,
-        final String messageId,
-        final String correlatieId,
-        final String bericht,
-        final String originator,
-        final String recipient,
-        final Long msSequenceNumber)
-    {
+            final String kanaal,
+            final Direction direction,
+            final String messageId,
+            final String correlatieId,
+            final String bericht,
+            final String originator,
+            final String recipient,
+            final Long msSequenceNumber,
+            final Boolean requestNonReceipt) {
         final nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht dbBericht = new nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht();
 
         dbBericht.setKanaal(kanaal);
@@ -195,6 +221,7 @@ public final class SessionBerichtenDao implements BerichtenDao {
         dbBericht.setVerzendendePartij(originator);
         dbBericht.setOntvangendePartij(recipient);
         dbBericht.setMsSequenceNumber(msSequenceNumber);
+        dbBericht.setRequestNonReceipt(requestNonReceipt);
         dbBericht.setTijdstip(new Date());
 
         final nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht persistentBericht =
@@ -225,16 +252,15 @@ public final class SessionBerichtenDao implements BerichtenDao {
 
     @Override
     public nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht zoekVraagBericht(
-        final String correlatieId,
-        final String kanaal,
-        final String originator,
-        final String recipient)
-    {
+            final String correlatieId,
+            final String kanaal,
+            final String originator,
+            final String recipient) {
         final Criteria criteria = sessionFactory.getCurrentSession().createCriteria(nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht.class);
-        criteria.add(Restrictions.eq("messageId", correlatieId));
-        criteria.add(Restrictions.eq("kanaal", kanaal));
-        criteria.add(Restrictions.eq("verzendendePartij", recipient));
-        criteria.add(Restrictions.eq("ontvangendePartij", originator));
+        criteria.add(Restrictions.eq(MESSAGE_ID, correlatieId));
+        criteria.add(Restrictions.eq(KANAAL, kanaal));
+        criteria.add(Restrictions.eq(VERZENDENDE_PARTIJ, recipient));
+        criteria.add(Restrictions.eq(ONTVANGENDE_PARTIJ, originator));
         // Voeg een criteria toe waarbij het process instance id niet null mag zijn. De reden voor deze controle is dat
         // er tussen het Ap01-bericht (plaatsen afnemersindicatie) en het bijbehorende Ag01-bericht (leveringsbericht na
         // plaatsen) herhaalde Ap01's gestuurd kunnen zijn.
@@ -243,7 +269,7 @@ public final class SessionBerichtenDao implements BerichtenDao {
         // resulteren in een NPE in de bovenliggende ESB action en het is inhoudelijk ook niet correct; het Ag01 dient
         // namelijk gerelateerd te worden aan het laatste Ap01 bericht dat het proces heeft gestart (en waarop het dus
         // ook echt het antwoord is).
-        criteria.add(Restrictions.isNotNull("processInstance"));
+        criteria.add(Restrictions.isNotNull(PROCESS_INSTANCE));
 
         final List<?> list = criteria.list();
         if (list == null || list.isEmpty()) {
@@ -256,44 +282,42 @@ public final class SessionBerichtenDao implements BerichtenDao {
     @Override
     public List<nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht> zoekOpMsSequenceNumberBehalveId(final Long msSequenceNumber, final Long berichtId) {
         final Criteria criteria = sessionFactory.getCurrentSession().createCriteria(nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht.class);
-        criteria.add(Restrictions.ne("id", berichtId));
-        criteria.add(Restrictions.eq("msSequenceNumber", msSequenceNumber));
+        criteria.add(Restrictions.ne(ID, berichtId));
+        criteria.add(Restrictions.eq(MS_SEQUENCE_NUMBER, msSequenceNumber));
         return criteria.list();
     }
 
     @Override
     public int telBerichtenBehalveId(
-        final String messageId,
-        final String originator,
-        final String recipient,
-        final String kanaal,
-        final Direction direction,
-        final Long berichtId)
-    {
+            final String messageId,
+            final String originator,
+            final String recipient,
+            final String kanaal,
+            final Direction direction,
+            final Long berichtId) {
         final Criteria criteria = sessionFactory.getCurrentSession().createCriteria(nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht.class);
-        criteria.add(Restrictions.ne("id", berichtId));
-        criteria.add(Restrictions.eq("messageId", messageId));
-        criteria.add(Restrictions.eq("verzendendePartij", originator));
-        criteria.add(Restrictions.eq("ontvangendePartij", recipient));
-        criteria.add(Restrictions.eq("kanaal", kanaal));
-        criteria.add(Restrictions.eq("richting", direction.getCode()));
+        criteria.add(Restrictions.ne(ID, berichtId));
+        criteria.add(Restrictions.eq(MESSAGE_ID, messageId));
+        criteria.add(Restrictions.eq(VERZENDENDE_PARTIJ, originator));
+        criteria.add(Restrictions.eq(ONTVANGENDE_PARTIJ, recipient));
+        criteria.add(Restrictions.eq(KANAAL, kanaal));
+        criteria.add(Restrictions.eq(RICHTING, direction.getCode()));
 
         return criteria.list().size();
     }
 
     @Override
     public nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht zoekMeestRecenteAntwoord(
-        final String messageId,
-        final String originator,
-        final String recipient,
-        final String kanaal)
-    {
+            final String messageId,
+            final String originator,
+            final String recipient,
+            final String kanaal) {
         final Criteria criteria = sessionFactory.getCurrentSession().createCriteria(nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht.class);
-        criteria.add(Restrictions.eq("correlationId", messageId));
-        criteria.add(Restrictions.eq("verzendendePartij", recipient));
-        criteria.add(Restrictions.eq("ontvangendePartij", originator));
-        criteria.add(Restrictions.eq("kanaal", kanaal));
-        criteria.addOrder(Order.desc("id"));
+        criteria.add(Restrictions.eq(CORRELATION_ID, messageId));
+        criteria.add(Restrictions.eq(VERZENDENDE_PARTIJ, recipient));
+        criteria.add(Restrictions.eq(ONTVANGENDE_PARTIJ, originator));
+        criteria.add(Restrictions.eq(KANAAL, kanaal));
+        criteria.addOrder(Order.desc(ID));
         criteria.setMaxResults(1);
 
         final List<?> list = criteria.list();
@@ -318,7 +342,7 @@ public final class SessionBerichtenDao implements BerichtenDao {
     public void updateVirtueelProcesId(final Long berichtId, final Long virtueelProcesId) {
         final VirtueelProces virtueelProces = (VirtueelProces) sessionFactory.getCurrentSession().get(VirtueelProces.class, virtueelProcesId);
         if (virtueelProces == null) {
-            throw new IllegalArgumentException("Virtueel proces " + virtueelProcesId + " onbekend.");
+            throw new IllegalArgumentException(String.format("Virtueel proces %s onbekend.", virtueelProcesId));
         }
         getBericht(berichtId).setVirtueelProces(virtueelProces);
     }
@@ -327,16 +351,16 @@ public final class SessionBerichtenDao implements BerichtenDao {
     public void omzettenVirtueelProcesNaarActueelProces(final long virtueelProcesId, final long processInstanceId) {
         final VirtueelProces virtueelProces = (VirtueelProces) sessionFactory.getCurrentSession().get(VirtueelProces.class, virtueelProcesId);
         if (virtueelProces == null) {
-            throw new IllegalArgumentException("Virtueel proces " + virtueelProcesId + " onbekend.");
+            throw new IllegalArgumentException(String.format("Virtueel proces %s onbekend.", virtueelProcesId));
         }
 
         final ProcessInstance processInstance = (ProcessInstance) sessionFactory.getCurrentSession().get(ProcessInstance.class, processInstanceId);
         if (processInstance == null) {
-            throw new IllegalArgumentException("Proces instance " + virtueelProcesId + " onbekend.");
+            throw new IllegalArgumentException(String.format("Proces instance %s onbekend.", virtueelProcesId));
         }
 
         final Criteria criteria = sessionFactory.getCurrentSession().createCriteria(nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht.class);
-        criteria.add(Restrictions.eq("virtueelProces", virtueelProces));
+        criteria.add(Restrictions.eq(VIRTUEEL_PROCES, virtueelProces));
 
         for (final nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht bericht : (List<nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht>) criteria.list()) {
             bericht.setVirtueelProces(null);
@@ -347,9 +371,8 @@ public final class SessionBerichtenDao implements BerichtenDao {
 
     @Override
     public nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht getBericht(final Long berichtId) {
-        return (nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht) sessionFactory.getCurrentSession().get(
-            nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht.class,
-            berichtId);
+        return (nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht) sessionFactory.getCurrentSession()
+                .get(nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht.class, berichtId);
     }
 
     @Override

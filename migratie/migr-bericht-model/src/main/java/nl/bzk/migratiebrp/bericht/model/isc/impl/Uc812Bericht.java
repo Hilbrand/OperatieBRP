@@ -33,9 +33,7 @@ public final class Uc812Bericht extends AbstractIscBericht {
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param uc812Type
-     *            het uc812Type type
+     * @param uc812Type het uc812Type type
      */
     public Uc812Bericht(final Uc812Type uc812Type) {
         this.uc812Type = uc812Type;
@@ -52,7 +50,6 @@ public final class Uc812Bericht extends AbstractIscBericht {
 
     /**
      * Geeft de bulk synchronisatievraag.
-     *
      * @return De bulk synchronisatievraag.
      */
     public String getBulkSynchronisatievraag() {
@@ -61,9 +58,7 @@ public final class Uc812Bericht extends AbstractIscBericht {
 
     /**
      * Zet de bulk synchronisatievraag.
-     *
-     * @param bulkSynchronisatievraag
-     *            De te zetten bulk synchronisatievraag
+     * @param bulkSynchronisatievraag De te zetten bulk synchronisatievraag
      */
     public void setBulkSynchronisatievraag(final String bulkSynchronisatievraag) {
         uc812Type.setBulkSynchronisatievraag(bulkSynchronisatievraag);

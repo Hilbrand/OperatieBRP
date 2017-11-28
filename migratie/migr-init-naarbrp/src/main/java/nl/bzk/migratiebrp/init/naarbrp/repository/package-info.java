@@ -8,4 +8,3 @@
  * Repositories voor initiële vulling.
  */
 package nl.bzk.migratiebrp.init.naarbrp.repository;
-

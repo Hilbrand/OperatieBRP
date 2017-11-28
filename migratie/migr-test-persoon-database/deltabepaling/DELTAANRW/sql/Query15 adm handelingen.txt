@@ -1,2 +1,0 @@
-
-select kah.id, kah.srt, sad.naam from kern.admhnd kah, kern.srtadmhnd sad where sad.id = kah.srt;

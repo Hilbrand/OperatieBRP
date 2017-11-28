@@ -1,4 +1,4 @@
-<brp:bhg_afsRegistreerGeboorte xmlns:brp="http://www.bzk.nl/brp/brp0200" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+<brp:bhg_afsRegistreerGeboorte xmlns:brp="http://www.bzk.nl/brp/brp0200">
     <brp:stuurgegevens brp:communicatieID="${stuurgegevens.communicatieID}">
         <brp:zendendePartij>${stuurgegevens.zendendePartij}</brp:zendendePartij>
         <brp:zendendeSysteem>${stuurgegevens.zendendeSysteem}</brp:zendendeSysteem>
@@ -28,7 +28,7 @@
         <brp:bronnen>
             <!--1 or more repetitions:-->
             [#list geboorteInNederland.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -304,7 +304,7 @@
         <brp:bronnen>
             <!--1 or more repetitions:-->
             [#list geboorteInNederlandMetErkenning.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>

@@ -15,16 +15,13 @@ import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Controle dat bijhoudingspartij op aangeboden en gevonden persoonslijst gelijk is.
  */
-@Component(value = "plControleBijhoudingsPartijGelijkRni")
 public final class PlControleBijhoudingsPartijGelijkRni implements PlControle {
 
     private static final String BEGIN_MELDING_RNI = "(RNI=";
-    private static final Integer PARTIJ_CODE_RNI = Integer.valueOf(199901);
+    private static final String PARTIJ_CODE_RNI = "199901";
     private static final String MELDING_GELIJK_RNI = BEGIN_MELDING_RNI + PARTIJ_CODE_RNI + " => gelijk aan RNI)";
     private static final String MELDING_ONGELIJK_RNI = BEGIN_MELDING_RNI + PARTIJ_CODE_RNI + " => ongelijk aan RNI)";
 

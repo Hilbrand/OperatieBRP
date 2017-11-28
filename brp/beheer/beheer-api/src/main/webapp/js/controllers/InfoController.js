@@ -1,12 +1,11 @@
 angular.module('InfoController', [])
-.value('informatie', [])
-.controller('InfoController', ['$scope', 'informatie', '$timeout',
-    function ($scope, informatie, $timeout) {
+.controller('InfoController', ['$scope', '$timeout',
+    function ($scope, $timeout) {
 
-        $scope.informatie = informatie;
+        $scope.informatie = [];
 
         $scope.infosLeegMaken = function () {
-            informatie.length = 0;
+            $scope.informatie.length = 0;
         };
 
         $scope.informatieBeschikbaar = function() {
@@ -18,9 +17,8 @@ angular.module('InfoController', [])
         };
 
         $scope.$on('info', function (event, data) {
-            //console.log(data);
-            informatie.push(data);
-            if (informatie.length > 0) {
+            $scope.informatie.push(data);
+            if ($scope.informatie.length > 0) {
                 $timeout(function () {
                     $scope.infosLeegMaken();
                 }, 5000);

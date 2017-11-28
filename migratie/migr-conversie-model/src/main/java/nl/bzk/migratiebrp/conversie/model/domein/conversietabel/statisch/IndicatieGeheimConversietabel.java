@@ -10,7 +10,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieGeheimCodeEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGeheimCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Dit is een statische conversie (er wordt geen tabel gebruikt) tussen de LO3 en BRP indicatie geheim geconverteerd. Er
@@ -20,7 +20,7 @@ public final class IndicatieGeheimConversietabel implements Conversietabel<Lo3In
 
     @Override
     public BrpBoolean converteerNaarBrp(final Lo3IndicatieGeheimCode input) {
-        if (!Validatie.isElementGevuld(input)) {
+        if (!Lo3Validatie.isElementGevuld(input)) {
             return null;
         }
 
@@ -31,7 +31,7 @@ public final class IndicatieGeheimConversietabel implements Conversietabel<Lo3In
     public Lo3IndicatieGeheimCode converteerNaarLo3(final BrpBoolean input) {
         final Lo3IndicatieGeheimCode geheim =
                 new Lo3IndicatieGeheimCode(
-                    Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_VRIJE_DERDEN_EN_NIET_AAN_KERKEN.getCode());
+                        Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_VRIJE_DERDEN_EN_NIET_AAN_KERKEN.getCode());
 
         final Lo3IndicatieGeheimCode nietGeheim = new Lo3IndicatieGeheimCode(Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.getCode());
 
@@ -40,7 +40,7 @@ public final class IndicatieGeheimConversietabel implements Conversietabel<Lo3In
 
     @Override
     public boolean valideerLo3(final Lo3IndicatieGeheimCode input) {
-        return !Validatie.isElementGevuld(input) || Lo3IndicatieGeheimCodeEnum.getByCode(input.getIntegerWaarde()) != null;
+        return !Lo3Validatie.isElementGevuld(input) || Lo3IndicatieGeheimCodeEnum.getByCode(input.getIntegerWaarde()) != null;
     }
 
     @Override

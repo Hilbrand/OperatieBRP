@@ -1,1 +1,1 @@
-(ER_IS(RMAP(adressen, x, x.verantwoordingInhoud.partij), v, v = 852102) OF bijhouding.verantwoordingInhoud.partij = 852102 OF migratie.verantwoordingInhoud.partij = 852102)
+(ACTIE(Persoon.Bijhouding.ActieInhoud, [Actie.PartijCode]) E= "852102" OF ACTIE(Persoon.Adres.ActieInhoud, [Actie.PartijCode]) E= "852102" OF ACTIE(Persoon.Migratie.ActieInhoud, [Actie.PartijCode]) E= "852102" OF ACTIE(Persoon.Indicatie.OnverwerktDocumentAanwezig.ActieInhoud, [Actie.PartijCode]) E= "852102")

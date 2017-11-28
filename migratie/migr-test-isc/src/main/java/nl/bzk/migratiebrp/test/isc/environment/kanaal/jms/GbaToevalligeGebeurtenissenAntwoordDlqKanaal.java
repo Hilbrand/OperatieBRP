@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
+
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 

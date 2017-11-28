@@ -9,8 +9,8 @@ package nl.bzk.migratiebrp.ggo.viewer;
 import java.io.IOException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -40,11 +40,10 @@ public class ViewerFormAuthenticationFilter extends FormAuthenticationFilter {
      */
     @Override
     protected final boolean onLoginSuccess(
-        final AuthenticationToken token,
-        final Subject subject,
-        final ServletRequest request,
-        final ServletResponse response) throws IOException
-    {
+            final AuthenticationToken token,
+            final Subject subject,
+            final ServletRequest request,
+            final ServletResponse response) throws IOException {
         LOG.info("Login succesvol: " + token.getPrincipal());
         WebUtils.issueRedirect(request, response, "/", null, true);
         return false;
@@ -59,11 +58,10 @@ public class ViewerFormAuthenticationFilter extends FormAuthenticationFilter {
      */
     @Override
     protected final boolean onLoginFailure(
-        final AuthenticationToken token,
-        final AuthenticationException e,
-        final ServletRequest request,
-        final ServletResponse response)
-    {
+            final AuthenticationToken token,
+            final AuthenticationException e,
+            final ServletRequest request,
+            final ServletResponse response) {
         LOG.info("Login NIET succesvol: " + token.getPrincipal());
         return super.onLoginFailure(token, e, request, response);
     }

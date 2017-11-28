@@ -6,131 +6,122 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.overlijden;
 
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.services.objectsleutel.ObjectSleutelService;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.ActieRegistratieOverlijden;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.BuitenlandsePlaats;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingRegistreerOverlijdenMigVrz;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.ContainerAdministratieveHandelingBronnen;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.ContainerHandelingActiesGBAOverlijden;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.ContainerHandelingActiesGBAOverlijdenInNederland;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.DatumMetOnzekerheid;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.GemeenteCode;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.GroepPersoonOverlijdenGBABijhouding;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.HandelingGBAOverlijden;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.LandGebiedCode;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerOverlijdenBijhouding;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.GroepPersoonOverlijdenGBAMigVrz;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.HandelingGBAOverlijdenInNederland;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjectFactory;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjecttypeActieBron;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjecttypeBerichtBijhouding;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjecttypePersoon;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjecttypePersoonOverlijdenGBA;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.PartijCode;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.OverlijdenGroepType;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkToevalligeGebeurtenisVerzoekBericht;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.AbstractToevalligeGebeurtenisVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
-import org.apache.commons.lang.StringUtils;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjecttypePersoonGBAOverlijdenInNederlandMigVrz;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenis;
+import nl.bzk.migratiebrp.conversie.model.brp.toevalligegebeurtenis.BrpToevalligeGebeurtenisOverlijden;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.RegistreerOverlijdenBijhoudingVerwerker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.utils.AttribuutMaker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.utils.BerichtIdentificatieMaker;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.toevalligegebeurtenis.verwerker.utils.BerichtMaker;
 import org.springframework.stereotype.Component;
 
 /**
  * Verwerker voor toevallige gebeurtenis m.b.t. het overlijden (2A/G).
  */
-@Component(value = "overlijdenVerwerker")
-public final class OverlijdenVerwerker extends AbstractToevalligeGebeurtenisVerwerker {
+@Component
+public final class OverlijdenVerwerker implements RegistreerOverlijdenBijhoudingVerwerker {
 
-    private static final Logger LOG = LoggerFactory.getLogger();
+    private static final String OBJECT_TYPE_ADMINISTRATIEVE_HANDELING = "AdministratieveHandeling";
+    private static final String OBJECT_TYPE_PERSOON = "Persoon";
+    private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
 
-    @Override
-    protected ObjecttypeBerichtBijhouding maakBrpToevalligeGebeurtenisOpdracht(
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek,
-        final Persoon rootPersoon)
-    {
-        final MigratievoorzieningRegistreerOverlijdenBijhouding opdracht = new MigratievoorzieningRegistreerOverlijdenBijhouding();
+    private final BerichtMaker berichtMaker;
 
-        // Zet de bericht stuurgegevens op de opdracht.
-        LOG.debug("Zetten stuurgegevens opdracht.");
-        opdracht.setStuurgegevens(OBJECT_FACTORY.createObjecttypeBerichtStuurgegevens(maakBerichtStuurgegevens(verzoek)));
+    private final ObjectSleutelService objectSleutelService;
 
-        // Zet de bericht parameters op de opdracht.
-        LOG.debug("Zetten parameters opdracht.");
-        opdracht.setParameters(OBJECT_FACTORY.createObjecttypeBerichtParameters(maakBerichtParameters(rootPersoon)));
+    private final AttribuutMaker attribuutMaker;
 
-        // Zet de inhoud van de opdracht.
-        LOG.debug("Zetten inhoud opdracht.");
-        maakBrpOpdrachtInhoud(opdracht, verzoek, rootPersoon);
-
-        return opdracht;
+    /**
+     * Constructor.
+     * @param berichtMaker utility voor maken berichten
+     */
+    @Inject
+    public OverlijdenVerwerker(final BerichtMaker berichtMaker) {
+        this.berichtMaker = berichtMaker;
+        this.objectSleutelService = berichtMaker.getObjectSleutelService();
+        this.attribuutMaker = berichtMaker.getAttribuutMaker();
     }
 
-    private void maakBrpOpdrachtInhoud(
-        final MigratievoorzieningRegistreerOverlijdenBijhouding opdracht,
-        final VerwerkToevalligeGebeurtenisVerzoekBericht verzoek,
-        final Persoon rootPersoon)
-    {
-        final OverlijdenGroepType overlijdenPersoon = verzoek.getOverlijden().getOverlijden();
 
-        final HandelingGBAOverlijden handeling = new HandelingGBAOverlijden();
-        handeling.setCommunicatieID(COMMUNICATIE_TYPE_IDENTIFICATIE + getIdentificatieIdVolgnummerEnVerhoogMetEen());
+    @Override
+    public void maakBrpOpdrachtInhoud(
+            final BerichtIdentificatieMaker idMaker,
+            final BijhoudingRegistreerOverlijdenMigVrz opdracht,
+            final BrpToevalligeGebeurtenis verzoek,
+            final BrpPersoonslijst rootPersoon) {
+        final BrpToevalligeGebeurtenisOverlijden overlijdenPersoon = verzoek.getOverlijden();
 
-        handeling.setPartijCode(OBJECT_FACTORY.createObjecttypeAdministratieveHandelingPartijCode(maakHandelingRegisterGemeente(verzoek)));
-        final ContainerAdministratieveHandelingBronnen administratieveHandelingBronnen = maakAdministratieveHandelingBronnen(verzoek);
+        final HandelingGBAOverlijdenInNederland handeling = new HandelingGBAOverlijdenInNederland();
+        handeling.setCommunicatieID(idMaker.volgendIdentificatieId());
+
+        handeling.setPartijCode(OBJECT_FACTORY.createObjecttypeAdministratieveHandelingPartijCode(berichtMaker.maakHandelingRegisterGemeente(verzoek)));
+        final ContainerAdministratieveHandelingBronnen administratieveHandelingBronnen =
+                berichtMaker.maakAdministratieveHandelingBronnen(idMaker, verzoek);
         handeling.setBronnen(OBJECT_FACTORY.createObjecttypeAdministratieveHandelingBronnen(administratieveHandelingBronnen));
 
         final ActieRegistratieOverlijden actie = new ActieRegistratieOverlijden();
-        actie.setCommunicatieID(COMMUNICATIE_TYPE_IDENTIFICATIE + getIdentificatieIdVolgnummerEnVerhoogMetEen());
+        actie.setCommunicatieID(idMaker.volgendIdentificatieId());
         final ObjecttypeActieBron actieBron = new ObjecttypeActieBron();
-        actieBron.setCommunicatieID(COMMUNICATIE_TYPE_IDENTIFICATIE + getIdentificatieIdVolgnummerEnVerhoogMetEen());
+        actieBron.setCommunicatieID(idMaker.volgendIdentificatieId());
 
         // OVERLIJDEN vullen
-        final ObjecttypePersoon persoonObject = new ObjecttypePersoonOverlijdenGBA();
-        persoonObject.setCommunicatieID(COMMUNICATIE_TYPE_IDENTIFICATIE + getIdentificatieIdVolgnummerEnVerhoogMetEen());
+        final ObjecttypePersoon persoonObject = new ObjecttypePersoonGBAOverlijdenInNederlandMigVrz();
+        persoonObject.setCommunicatieID(idMaker.volgendIdentificatieId());
 
-        persoonObject.setObjectSleutel(String.valueOf(rootPersoon.getId()));
+        final String gemaskeerdeObjectSleutel =
+                objectSleutelService.maakPersoonObjectSleutel(
+                        rootPersoon.getPersoonId(),
+                        rootPersoon.getPersoonVersie()).maskeren();
+        persoonObject.setObjectSleutel(gemaskeerdeObjectSleutel);
         persoonObject.setObjecttype(OBJECT_TYPE_PERSOON);
-        persoonObject.getOverlijden().add(maakGroepPersoonOverlijdenGBABijhouding(overlijdenPersoon));
+        persoonObject.getOverlijden().add(maakGroepPersoonOverlijdenGBABijhouding(idMaker, overlijdenPersoon));
 
         // ACTIE vullen
-        vulActie(actie, verzoek.getGeldigheid().getDatumIngang().intValue(), actieBron, null, null, null);
+        berichtMaker.vulActie(idMaker, actie, null, actieBron, null, null, null, null);
         actie.setPersoon(OBJECT_FACTORY.createObjecttypeActiePersoon(persoonObject));
 
         // CONTAINER vullen
-        final ContainerHandelingActiesGBAOverlijden container = new ContainerHandelingActiesGBAOverlijden();
+        final ContainerHandelingActiesGBAOverlijdenInNederland container = new ContainerHandelingActiesGBAOverlijdenInNederland();
         container.setRegistratieOverlijden(actie);
 
         // HANDELING vullen
-        handeling.setPartijCode(OBJECT_FACTORY.createObjecttypeAdministratieveHandelingPartijCode(maakHandelingRegisterGemeente(verzoek)));
+        handeling.setPartijCode(OBJECT_FACTORY.createObjecttypeAdministratieveHandelingPartijCode(berichtMaker.maakHandelingRegisterGemeente(verzoek)));
         actieBron.setReferentieID(administratieveHandelingBronnen.getBron().iterator().next().getCommunicatieID());
-        handeling.setActies(OBJECT_FACTORY.createHandelingGBAOverlijdenActies(container));
+        handeling.setActies(OBJECT_FACTORY.createHandelingGBAOverlijdenInNederlandActies(container));
         handeling.setObjecttype(OBJECT_TYPE_ADMINISTRATIEVE_HANDELING);
 
         // UITGAAND BERICHT vullen
-        opdracht.setGBAOverlijden(OBJECT_FACTORY.createObjecttypeBerichtGBAOverlijden(handeling));
+        opdracht.setGBAOverlijdenInNederland(OBJECT_FACTORY.createObjecttypeBerichtGBAOverlijdenInNederland(handeling));
     }
 
-    private GroepPersoonOverlijdenGBABijhouding maakGroepPersoonOverlijdenGBABijhouding(final OverlijdenGroepType overlijdenPersoon) {
-        final GroepPersoonOverlijdenGBABijhouding groep = new GroepPersoonOverlijdenGBABijhouding();
+    private GroepPersoonOverlijdenGBAMigVrz maakGroepPersoonOverlijdenGBABijhouding(
+            final BerichtIdentificatieMaker idMaker,
+            final BrpToevalligeGebeurtenisOverlijden overlijdenPersoon) {
+        final GroepPersoonOverlijdenGBAMigVrz groep = new GroepPersoonOverlijdenGBAMigVrz();
 
-        final DatumMetOnzekerheid datumOverlijden = new DatumMetOnzekerheid();
-        datumOverlijden.setValue(String.valueOf(overlijdenPersoon.getDatum()));
+        final DatumMetOnzekerheid datumOverlijden = attribuutMaker.maakDatumMetOnzekerheid(overlijdenPersoon.getDatum());
         groep.setDatum(OBJECT_FACTORY.createGroepPersoonOverlijdenDatum(datumOverlijden));
-        groep.setCommunicatieID(COMMUNICATIE_TYPE_IDENTIFICATIE + getIdentificatieIdVolgnummerEnVerhoogMetEen());
+        groep.setCommunicatieID(idMaker.volgendIdentificatieId());
 
-        if (overlijdenPersoon.getPlaats().length() == LENGTE_GEMEENTE_CODE && StringUtils.isNumeric(overlijdenPersoon.getPlaats())) {
+        if (overlijdenPersoon.getGemeenteCode() != null) {
             final GemeenteCode gemeenteOverlijden = new GemeenteCode();
-            gemeenteOverlijden.setValue(getConverteerder().converteerLo3GemeenteCode(new Lo3GemeenteCode(overlijdenPersoon.getPlaats()))
-                .getFormattedStringCode());
+            gemeenteOverlijden.setValue(overlijdenPersoon.getGemeenteCode().getWaarde());
             groep.setGemeenteCode(OBJECT_FACTORY.createGroepPersoonOverlijdenGemeenteCode(gemeenteOverlijden));
-        } else {
-            final BuitenlandsePlaats buitenlandsePlaatsOverlijden = new BuitenlandsePlaats();
-            buitenlandsePlaatsOverlijden.setValue(overlijdenPersoon.getPlaats());
-            groep.setBuitenlandsePlaats(OBJECT_FACTORY.createGroepPersoonOverlijdenBuitenlandsePlaats(buitenlandsePlaatsOverlijden));
         }
-
-        final LandGebiedCode landGebiedOverlijden = new LandGebiedCode();
-        landGebiedOverlijden.setValue(String.valueOf(getConverteerder().converteerLo3LandCode(new Lo3LandCode(overlijdenPersoon.getLand())).getWaarde()));
-        groep.setLandGebiedCode(OBJECT_FACTORY.createGroepPersoonOverlijdenLandGebiedCode(landGebiedOverlijden));
 
         return groep;
 

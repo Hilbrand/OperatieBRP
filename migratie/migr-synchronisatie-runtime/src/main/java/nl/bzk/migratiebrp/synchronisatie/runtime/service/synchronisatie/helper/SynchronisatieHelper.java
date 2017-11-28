@@ -6,7 +6,6 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.helper;
 
-import java.util.Arrays;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpVerzoekBericht;
@@ -25,20 +24,12 @@ public final class SynchronisatieHelper {
 
     /**
      * Maak een synch antwoord.
-     * 
-     * @param verzoek
-     *            het verzoek waaraan het antwoord gecorreleerd moet zijn
-     * @param status
-     *            status
-     * @param kandidaten
-     *            kandidaten
+     * @param verzoek het verzoek waaraan het antwoord gecorreleerd moet zijn
+     * @param status status
+     * @param kandidaten kandidaten
      * @return antwoord
      */
-    public static SynchroniseerNaarBrpAntwoordBericht maakAntwoord(
-        final SynchroniseerNaarBrpVerzoekBericht verzoek,
-        final StatusType status,
-        final String... kandidaten)
-    {
+    public static SynchroniseerNaarBrpAntwoordBericht maakAntwoord(final SynchroniseerNaarBrpVerzoekBericht verzoek, final StatusType status) {
         SynchronisatieLogging.setResultaat(status);
 
         final SynchroniseerNaarBrpAntwoordBericht result = new SynchroniseerNaarBrpAntwoordBericht();
@@ -47,7 +38,6 @@ public final class SynchronisatieHelper {
 
         result.setLogging(Logging.getLogging().getRegels());
         result.setMelding(SynchronisatieLogging.getMelding());
-        result.setKandidaten(kandidaten == null || kandidaten.length == 0 ? null : Arrays.asList(kandidaten));
         result.setStatus(status);
 
         return result;

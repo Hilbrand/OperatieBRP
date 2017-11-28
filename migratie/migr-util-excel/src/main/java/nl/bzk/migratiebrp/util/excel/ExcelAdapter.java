@@ -17,14 +17,10 @@ public interface ExcelAdapter {
 
     /**
      * Lees een excel bestand in.
-     * 
-     * @param excelBestand
-     *            excel bestand
+     * @param excelBestand excel bestand
      * @return excel data
-     * @throws ExcelAdapterException
-     *             bij excel fouten
-     * @throws Lo3SyntaxException
-     *             bij verkeerde LO3 syntax
+     * @throws ExcelAdapterException bij excel fouten
+     * @throws Lo3SyntaxException bij verkeerde LO3 syntax
      */
     List<ExcelData> leesExcelBestand(InputStream excelBestand) throws ExcelAdapterException, Lo3SyntaxException;
 }

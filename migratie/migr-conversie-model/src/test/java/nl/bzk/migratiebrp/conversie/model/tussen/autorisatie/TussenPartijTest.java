@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.conversie.model.tussen.autorisatie;
 
 import java.util.Collections;
-
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpPartijInhoud;
@@ -16,21 +15,20 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.testutils.EqualsAndHashcodeTester;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
-
 import org.junit.Test;
 
 public class TussenPartijTest {
 
     @Test
     public void test() throws NoSuchMethodException, IllegalAccessException {
-        final TussenPartij subject = maak(19900101);
-        final TussenPartij equals = maak(19900101);
-        final TussenPartij different = maak(20000101);
+        final TussenPartij subject = maak("199001");
+        final TussenPartij equals = maak("199001");
+        final TussenPartij different = maak("200001");
 
         EqualsAndHashcodeTester.testEqualsHashcodeAndToString(subject, equals, different);
     }
 
-    public static TussenPartij maak(final int partijCode) {
+    public static TussenPartij maak(final String partijCode) {
         return new TussenPartij(null, "Partij " + partijCode, new BrpPartijCode(partijCode), maakStapel(1990010));
     }
 

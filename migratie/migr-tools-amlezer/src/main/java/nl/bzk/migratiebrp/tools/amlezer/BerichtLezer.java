@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.tools.amlezer;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.inject.Inject;
@@ -19,8 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
  * Berichten amlezer.
  */
 public final class BerichtLezer {
-
-    private static final String PREFIX_REMOVE_MAILBOX_FROM_LIST = "-";
 
     @Value("${afnemers:}")
     private String afnemers;
@@ -48,42 +45,14 @@ public final class BerichtLezer {
     private Set<Mailbox> bepaalMailboxen() {
         final Set<Mailbox> mailboxen = new TreeSet<>();
 
-        final String[] afnemersNummers = afnemers == null || "".equals(afnemers) ? new String[] {} : afnemers.split(",");
-        boolean initieelVullen = true;
-        for (final String mailboxNummer : afnemersNummers) {
-            if (!mailboxNummer.startsWith(PREFIX_REMOVE_MAILBOX_FROM_LIST)) {
-                initieelVullen = false;
-                break;
-            }
-        }
-
-        if (initieelVullen) {
-            mailboxen.addAll(mailboxRepository.getAfnemerMailboxes());
-        }
-
+        final String[] afnemersNummers = afnemers == null || "".equals(afnemers) ? new String[]{} : afnemers.split(",");
         for (final String afnemersNummer : afnemersNummers) {
-            if (afnemersNummer.startsWith(PREFIX_REMOVE_MAILBOX_FROM_LIST)) {
-                verwijderMailbox(mailboxen, Integer.valueOf(afnemersNummer.substring(1)));
-            } else {
-                final Mailbox mailbox = mailboxRepository.getMailboxByInstantiecode(Integer.parseInt(afnemersNummer));
-                if (mailbox != null) {
-                    mailboxen.add(mailbox);
-                }
+            final Mailbox mailbox = mailboxRepository.getMailboxByPartijcode(afnemersNummer);
+            if (mailbox != null) {
+                mailboxen.add(mailbox);
             }
         }
 
         return mailboxen;
-
     }
-
-    private void verwijderMailbox(final Set<Mailbox> mailboxen, final Integer instantieCode) {
-        final Iterator<Mailbox> mailboxIterator = mailboxen.iterator();
-        while (mailboxIterator.hasNext()) {
-            final Mailbox mailbox = mailboxIterator.next();
-            if (instantieCode.equals(mailbox.getInstantiecode())) {
-                mailboxIterator.remove();
-            }
-        }
-    }
-
 }

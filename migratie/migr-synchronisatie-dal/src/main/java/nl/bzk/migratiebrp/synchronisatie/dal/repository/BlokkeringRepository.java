@@ -6,37 +6,30 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.repository;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.Blokkering;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering;
 
 /**
  * CRUD functionaliteit voor Blokkering entiteiten.
- * 
  */
 public interface BlokkeringRepository {
 
     /**
      * Blokkeert een persoonslijst en voegt hiervoor een rij toe aan de mig_blokkering tabel.
-     * 
-     * @param blokkering
-     *            De aangemaakte blokkering die in de database moet worden opgeslagen.
+     * @param blokkering De aangemaakte blokkering die in de database moet worden opgeslagen.
      * @return De opgeslagen blokkering.
      */
     Blokkering blokkeerPersoonslijst(final Blokkering blokkering);
 
     /**
      * Vraagt de info van de blokkering op.
-     * 
-     * @param aNummer
-     *            Het aNummer waarvoor de info van de blokkering wordt opgevraagd.
+     * @param aNummer Het aNummer waarvoor de info van de blokkering wordt opgevraagd.
      * @return De blokkering die hoort bij het opgegeven aNummer.
      */
-    Blokkering statusBlokkering(final Long aNummer);
+    Blokkering statusBlokkering(final String aNummer);
 
     /**
      * Deblokkeert de persoonslijst.
-     * 
-     * @param teVerwijderenBlokkering
-     *            De te verwijderen blokkering.
+     * @param teVerwijderenBlokkering De te verwijderen blokkering.
      */
     void deblokkeerPersoonslijst(final Blokkering teVerwijderenBlokkering);
 }

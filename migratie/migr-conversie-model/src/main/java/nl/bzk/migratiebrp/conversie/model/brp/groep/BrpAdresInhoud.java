@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingBijHuisnummerCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
@@ -18,19 +19,17 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblijfCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortAdresCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de BRP groep Persoon/Adres
  *
  * Deze class is immutable en threadsafe.
- *
  */
 public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
@@ -91,57 +90,31 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een BrpAdresInhoud object.
-     *
-     * @param soortAdresCode
-     *            soort adres
-     * @param redenWijzigingAdresCode
-     *            reden wijziging adres
-     * @param aangeverAdreshoudingCode
-     *            aangever adreshouding
-     * @param datumAanvangAdreshouding
-     *            datum aanvang adreshouding
-     * @param identificatiecodeAdresseerbaarObject
-     *            addressseerbaar object
-     * @param identificatiecodeNummeraanduiding
-     *            identificatiecode nummeraanduiding
-     * @param gemeenteCode
-     *            gemeentecode
-     * @param naamOpenbareRuimte
-     *            naam openbare ruimte
-     * @param afgekorteNaamOpenbareRuimte
-     *            afgekorte naam openbare ruimte
-     * @param gemeentedeel
-     *            gemeentedeel
-     * @param huisnummer
-     *            huisnummer
-     * @param huisletter
-     *            huisletter
-     * @param huisnummertoevoeging
-     *            huisnummertoevoeging
-     * @param postcode
-     *            postcode
-     * @param woonplaatsnaam
-     *            plaats
-     * @param locatieTovAdres
-     *            aanduiding bij huisnummer
-     * @param locatieOmschrijving
-     *            locatie omschrijving
-     * @param buitenlandsAdresRegel1
-     *            buitenlands adres regel 1
-     * @param buitenlandsAdresRegel2
-     *            buitenlands adres regel 2
-     * @param buitenlandsAdresRegel3
-     *            buitenlands adres regel 3
-     * @param buitenlandsAdresRegel4
-     *            buitenlands adres regel 4
-     * @param buitenlandsAdresRegel5
-     *            buitenlands adres regel 5
-     * @param buitenlandsAdresRegel6
-     *            buitenlands adres regel 6
-     * @param landOfGebiedCode
-     *            land of gebied code
-     * @param indicatiePersoonAangetroffenOpAdres
-     *            indicatie persoon aangetroffen op adres
+     * @param soortAdresCode soort adres
+     * @param redenWijzigingAdresCode reden wijziging adres
+     * @param aangeverAdreshoudingCode aangever adreshouding
+     * @param datumAanvangAdreshouding datum aanvang adreshouding
+     * @param identificatiecodeAdresseerbaarObject addressseerbaar object
+     * @param identificatiecodeNummeraanduiding identificatiecode nummeraanduiding
+     * @param gemeenteCode gemeentecode
+     * @param naamOpenbareRuimte naam openbare ruimte
+     * @param afgekorteNaamOpenbareRuimte afgekorte naam openbare ruimte
+     * @param gemeentedeel gemeentedeel
+     * @param huisnummer huisnummer
+     * @param huisletter huisletter
+     * @param huisnummertoevoeging huisnummertoevoeging
+     * @param postcode postcode
+     * @param woonplaatsnaam plaats
+     * @param locatieTovAdres aanduiding bij huisnummer
+     * @param locatieOmschrijving locatie omschrijving
+     * @param buitenlandsAdresRegel1 buitenlands adres regel 1
+     * @param buitenlandsAdresRegel2 buitenlands adres regel 2
+     * @param buitenlandsAdresRegel3 buitenlands adres regel 3
+     * @param buitenlandsAdresRegel4 buitenlands adres regel 4
+     * @param buitenlandsAdresRegel5 buitenlands adres regel 5
+     * @param buitenlandsAdresRegel6 buitenlands adres regel 6
+     * @param landOfGebiedCode land of gebied code
+     * @param indicatiePersoonAangetroffenOpAdres indicatie persoon aangetroffen op adres
      */
     public BrpAdresInhoud(
         /* Meer dan 7 parameters is in constructors van immutable model klassen getolereerd. */
@@ -169,8 +142,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
         @Element(name = "buitenlandsAdresRegel5", required = false) final BrpString buitenlandsAdresRegel5,
         @Element(name = "buitenlandsAdresRegel6", required = false) final BrpString buitenlandsAdresRegel6,
         @Element(name = "landOfGebiedCode", required = false) final BrpLandOfGebiedCode landOfGebiedCode,
-        @Element(name = "indicatiePersoonAangetroffenOpAdres", required = false) final BrpBoolean indicatiePersoonAangetroffenOpAdres)
-    {
+        @Element(name = "indicatiePersoonAangetroffenOpAdres", required = false) final BrpBoolean indicatiePersoonAangetroffenOpAdres) {
         this.soortAdresCode = soortAdresCode;
         this.redenWijzigingAdresCode = redenWijzigingAdresCode;
         this.aangeverAdreshoudingCode = aangeverAdreshoudingCode;
@@ -226,14 +198,13 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
         indicatiePersoonAangetroffenOpAdres = builder.indicatiePersoonAangetroffenOpAdres;
     }
 
-    @Preconditie({SoortMeldingCode.PRE013, SoortMeldingCode.PRE014 })
+    @Preconditie({SoortMeldingCode.PRE013, SoortMeldingCode.PRE014})
     @Override
     public void valideer() {
         // PRE013
         if (BrpString.unwrap(buitenlandsAdresRegel4) != null
-            || BrpString.unwrap(buitenlandsAdresRegel5) != null
-            || BrpString.unwrap(buitenlandsAdresRegel6) != null)
-        {
+                || BrpString.unwrap(buitenlandsAdresRegel5) != null
+                || BrpString.unwrap(buitenlandsAdresRegel6) != null) {
             FoutmeldingUtil.gooiValidatieExceptie(SoortMeldingCode.PRE013, this);
         }
         // PRE014
@@ -254,257 +225,232 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(
-            redenWijzigingAdresCode,
-            aangeverAdreshoudingCode,
-            datumAanvangAdreshouding,
-            identificatiecodeAdresseerbaarObject,
-            identificatiecodeNummeraanduiding,
-            gemeenteCode,
-            naamOpenbareRuimte,
-            afgekorteNaamOpenbareRuimte,
-            gemeentedeel,
-            huisnummer,
-            huisletter,
-            huisnummertoevoeging,
-            postcode,
-            woonplaatsnaam,
-            locatieTovAdres,
-            locatieOmschrijving,
-            buitenlandsAdresRegel1,
-            buitenlandsAdresRegel2,
-            buitenlandsAdresRegel3,
-            buitenlandsAdresRegel4,
-            buitenlandsAdresRegel5,
-            buitenlandsAdresRegel6,
-            landOfGebiedCode);
+        return !BrpValidatie.isEenParameterGevuld(
+                redenWijzigingAdresCode,
+                aangeverAdreshoudingCode,
+                datumAanvangAdreshouding,
+                identificatiecodeAdresseerbaarObject,
+                identificatiecodeNummeraanduiding,
+                gemeenteCode,
+                naamOpenbareRuimte,
+                afgekorteNaamOpenbareRuimte,
+                gemeentedeel,
+                huisnummer,
+                huisletter,
+                huisnummertoevoeging,
+                postcode,
+                woonplaatsnaam,
+                locatieTovAdres,
+                locatieOmschrijving,
+                buitenlandsAdresRegel1,
+                buitenlandsAdresRegel2,
+                buitenlandsAdresRegel3,
+                buitenlandsAdresRegel4,
+                buitenlandsAdresRegel5,
+                buitenlandsAdresRegel6,
+                landOfGebiedCode);
     }
 
     /**
-     * Geef de waarde van soort adres code.
-     *
-     * @return soort adres code
+     * Geef de waarde van soort adres code van BrpAdresInhoud.
+     * @return de waarde van soort adres code van BrpAdresInhoud
      */
     public BrpSoortAdresCode getSoortAdresCode() {
         return soortAdresCode;
     }
 
     /**
-     * Geef de waarde van reden wijziging adres code.
-     *
-     * @return reden wijziging adres code
+     * Geef de waarde van reden wijziging adres code van BrpAdresInhoud.
+     * @return de waarde van reden wijziging adres code van BrpAdresInhoud
      */
     public BrpRedenWijzigingVerblijfCode getRedenWijzigingAdresCode() {
         return redenWijzigingAdresCode;
     }
 
     /**
-     * Geef de waarde van aangever adreshouding code.
-     *
-     * @return aangever adreshouding code
+     * Geef de waarde van aangever adreshouding code van BrpAdresInhoud.
+     * @return de waarde van aangever adreshouding code van BrpAdresInhoud
      */
     public BrpAangeverCode getAangeverAdreshoudingCode() {
         return aangeverAdreshoudingCode;
     }
 
     /**
-     * Geef de waarde van datum aanvang adreshouding.
-     *
-     * @return datum aanvang adreshouding
+     * Geef de waarde van datum aanvang adreshouding van BrpAdresInhoud.
+     * @return de waarde van datum aanvang adreshouding van BrpAdresInhoud
      */
     public BrpDatum getDatumAanvangAdreshouding() {
         return datumAanvangAdreshouding;
     }
 
     /**
-     * Geef de waarde van identificatiecode adresseerbaar object.
-     *
-     * @return identificatiecode adresseerbaar object
+     * Geef de waarde van identificatiecode adresseerbaar object van BrpAdresInhoud.
+     * @return de waarde van identificatiecode adresseerbaar object van BrpAdresInhoud
      */
     public BrpString getIdentificatiecodeAdresseerbaarObject() {
         return identificatiecodeAdresseerbaarObject;
     }
 
     /**
-     * Geef de waarde van identificatiecode nummeraanduiding.
-     *
-     * @return identificatiecode nummeraanduiding
+     * Geef de waarde van identificatiecode nummeraanduiding van BrpAdresInhoud.
+     * @return de waarde van identificatiecode nummeraanduiding van BrpAdresInhoud
      */
     public BrpString getIdentificatiecodeNummeraanduiding() {
         return identificatiecodeNummeraanduiding;
     }
 
     /**
-     * Geef de waarde van gemeente code.
-     *
-     * @return gemeente code
+     * Geef de waarde van gemeente code van BrpAdresInhoud.
+     * @return de waarde van gemeente code van BrpAdresInhoud
      */
     public BrpGemeenteCode getGemeenteCode() {
         return gemeenteCode;
     }
 
     /**
-     * Geef de waarde van naam openbare ruimte.
-     *
-     * @return naam openbare ruimte
+     * Geef de waarde van naam openbare ruimte van BrpAdresInhoud.
+     * @return de waarde van naam openbare ruimte van BrpAdresInhoud
      */
     public BrpString getNaamOpenbareRuimte() {
         return naamOpenbareRuimte;
     }
 
     /**
-     * Geef de waarde van afgekorte naam openbare ruimte.
-     *
-     * @return afgekorte naam openbare ruimte
+     * Geef de waarde van afgekorte naam openbare ruimte van BrpAdresInhoud.
+     * @return de waarde van afgekorte naam openbare ruimte van BrpAdresInhoud
      */
     public BrpString getAfgekorteNaamOpenbareRuimte() {
         return afgekorteNaamOpenbareRuimte;
     }
 
     /**
-     * Geef de waarde van gemeentedeel.
-     *
-     * @return gemeentedeel
+     * Geef de waarde van gemeentedeel van BrpAdresInhoud.
+     * @return de waarde van gemeentedeel van BrpAdresInhoud
      */
     public BrpString getGemeentedeel() {
         return gemeentedeel;
     }
 
     /**
-     * Geef de waarde van huisnummer.
-     *
-     * @return huisnummer
+     * Geef de waarde van huisnummer van BrpAdresInhoud.
+     * @return de waarde van huisnummer van BrpAdresInhoud
      */
     public BrpInteger getHuisnummer() {
         return huisnummer;
     }
 
     /**
-     * Geef de waarde van huisletter.
-     *
-     * @return huisletter
+     * Geef de waarde van huisletter van BrpAdresInhoud.
+     * @return de waarde van huisletter van BrpAdresInhoud
      */
     public BrpCharacter getHuisletter() {
         return huisletter;
     }
 
     /**
-     * Geef de waarde van huisnummertoevoeging.
-     *
-     * @return huisnummertoevoeging
+     * Geef de waarde van huisnummertoevoeging van BrpAdresInhoud.
+     * @return de waarde van huisnummertoevoeging van BrpAdresInhoud
      */
     public BrpString getHuisnummertoevoeging() {
         return huisnummertoevoeging;
     }
 
     /**
-     * Geef de waarde van postcode.
-     *
-     * @return postcode
+     * Geef de waarde van postcode van BrpAdresInhoud.
+     * @return de waarde van postcode van BrpAdresInhoud
      */
     public BrpString getPostcode() {
         return postcode;
     }
 
     /**
-     * Geef de waarde van woonplaatsnaam.
-     *
-     * @return woonplaatsnaam
+     * Geef de waarde van woonplaatsnaam van BrpAdresInhoud.
+     * @return de waarde van woonplaatsnaam van BrpAdresInhoud
      */
     public BrpString getWoonplaatsnaam() {
         return woonplaatsnaam;
     }
 
     /**
-     * Geef de waarde van locatie tov adres.
-     *
-     * @return locatie tov adres
+     * Geef de waarde van locatie tov adres van BrpAdresInhoud.
+     * @return de waarde van locatie tov adres van BrpAdresInhoud
      */
     public BrpAanduidingBijHuisnummerCode getLocatieTovAdres() {
         return locatieTovAdres;
     }
 
     /**
-     * Geef de waarde van locatie omschrijving.
-     *
-     * @return locatie omschrijving
+     * Geef de waarde van locatie omschrijving van BrpAdresInhoud.
+     * @return de waarde van locatie omschrijving van BrpAdresInhoud
      */
     public BrpString getLocatieOmschrijving() {
         return locatieOmschrijving;
     }
 
     /**
-     * Geef de waarde van buitenlands adres regel1.
-     *
-     * @return buitenlands adres regel1
+     * Geef de waarde van buitenlands adres regel1 van BrpAdresInhoud.
+     * @return de waarde van buitenlands adres regel1 van BrpAdresInhoud
      */
     public BrpString getBuitenlandsAdresRegel1() {
         return buitenlandsAdresRegel1;
     }
 
     /**
-     * Geef de waarde van buitenlands adres regel2.
-     *
-     * @return buitenlands adres regel2
+     * Geef de waarde van buitenlands adres regel2 van BrpAdresInhoud.
+     * @return de waarde van buitenlands adres regel2 van BrpAdresInhoud
      */
     public BrpString getBuitenlandsAdresRegel2() {
         return buitenlandsAdresRegel2;
     }
 
     /**
-     * Geef de waarde van buitenlands adres regel3.
-     *
-     * @return buitenlands adres regel3
+     * Geef de waarde van buitenlands adres regel3 van BrpAdresInhoud.
+     * @return de waarde van buitenlands adres regel3 van BrpAdresInhoud
      */
     public BrpString getBuitenlandsAdresRegel3() {
         return buitenlandsAdresRegel3;
     }
 
     /**
-     * Geef de waarde van buitenlands adres regel4.
-     *
-     * @return buitenlands adres regel4
+     * Geef de waarde van buitenlands adres regel4 van BrpAdresInhoud.
+     * @return de waarde van buitenlands adres regel4 van BrpAdresInhoud
      */
     public BrpString getBuitenlandsAdresRegel4() {
         return buitenlandsAdresRegel4;
     }
 
     /**
-     * Geef de waarde van buitenlands adres regel5.
-     *
-     * @return buitenlands adres regel5
+     * Geef de waarde van buitenlands adres regel5 van BrpAdresInhoud.
+     * @return de waarde van buitenlands adres regel5 van BrpAdresInhoud
      */
     public BrpString getBuitenlandsAdresRegel5() {
         return buitenlandsAdresRegel5;
     }
 
     /**
-     * Geef de waarde van buitenlands adres regel6.
-     *
-     * @return buitenlands adres regel6
+     * Geef de waarde van buitenlands adres regel6 van BrpAdresInhoud.
+     * @return de waarde van buitenlands adres regel6 van BrpAdresInhoud
      */
     public BrpString getBuitenlandsAdresRegel6() {
         return buitenlandsAdresRegel6;
     }
 
     /**
-     * Geef de waarde van land of gebied code.
-     *
-     * @return land of gebied code
+     * Geef de waarde van land of gebied code van BrpAdresInhoud.
+     * @return de waarde van land of gebied code van BrpAdresInhoud
      */
     public BrpLandOfGebiedCode getLandOfGebiedCode() {
         return landOfGebiedCode;
     }
 
     /**
-     * Geef de waarde van indicatie persoon aangetroffen op adres.
-     *
-     * @return indicatie persoon aangetroffen op adres
+     * Geef de waarde van indicatie persoon aangetroffen op adres van BrpAdresInhoud.
+     * @return de waarde van indicatie persoon aangetroffen op adres van BrpAdresInhoud
      */
     public BrpBoolean getIndicatiePersoonAangetroffenOpAdres() {
         return indicatiePersoonAangetroffenOpAdres;
@@ -520,96 +466,96 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpAdresInhoud castOther = (BrpAdresInhoud) other;
         return new EqualsBuilder().append(soortAdresCode, castOther.soortAdresCode)
-                                  .append(redenWijzigingAdresCode, castOther.redenWijzigingAdresCode)
-                                  .append(aangeverAdreshoudingCode, castOther.aangeverAdreshoudingCode)
-                                  .append(datumAanvangAdreshouding, castOther.datumAanvangAdreshouding)
-                                  .append(identificatiecodeAdresseerbaarObject, castOther.identificatiecodeAdresseerbaarObject)
-                                  .append(identificatiecodeNummeraanduiding, castOther.identificatiecodeNummeraanduiding)
-                                  .append(gemeenteCode, castOther.gemeenteCode)
-                                  .append(naamOpenbareRuimte, castOther.naamOpenbareRuimte)
-                                  .append(afgekorteNaamOpenbareRuimte, castOther.afgekorteNaamOpenbareRuimte)
-                                  .append(gemeentedeel, castOther.gemeentedeel)
-                                  .append(huisnummer, castOther.huisnummer)
-                                  .append(huisletter, castOther.huisletter)
-                                  .append(huisnummertoevoeging, castOther.huisnummertoevoeging)
-                                  .append(postcode, castOther.postcode)
-                                  .append(woonplaatsnaam, castOther.woonplaatsnaam)
-                                  .append(locatieTovAdres, castOther.locatieTovAdres)
-                                  .append(locatieOmschrijving, castOther.locatieOmschrijving)
-                                  .append(buitenlandsAdresRegel1, castOther.buitenlandsAdresRegel1)
-                                  .append(buitenlandsAdresRegel2, castOther.buitenlandsAdresRegel2)
-                                  .append(buitenlandsAdresRegel3, castOther.buitenlandsAdresRegel3)
-                                  .append(buitenlandsAdresRegel4, castOther.buitenlandsAdresRegel4)
-                                  .append(buitenlandsAdresRegel5, castOther.buitenlandsAdresRegel5)
-                                  .append(buitenlandsAdresRegel6, castOther.buitenlandsAdresRegel6)
-                                  .append(landOfGebiedCode, castOther.landOfGebiedCode)
-                                  .append(indicatiePersoonAangetroffenOpAdres, castOther.indicatiePersoonAangetroffenOpAdres)
-                                  .isEquals();
+                .append(redenWijzigingAdresCode, castOther.redenWijzigingAdresCode)
+                .append(aangeverAdreshoudingCode, castOther.aangeverAdreshoudingCode)
+                .append(datumAanvangAdreshouding, castOther.datumAanvangAdreshouding)
+                .append(identificatiecodeAdresseerbaarObject, castOther.identificatiecodeAdresseerbaarObject)
+                .append(identificatiecodeNummeraanduiding, castOther.identificatiecodeNummeraanduiding)
+                .append(gemeenteCode, castOther.gemeenteCode)
+                .append(naamOpenbareRuimte, castOther.naamOpenbareRuimte)
+                .append(afgekorteNaamOpenbareRuimte, castOther.afgekorteNaamOpenbareRuimte)
+                .append(gemeentedeel, castOther.gemeentedeel)
+                .append(huisnummer, castOther.huisnummer)
+                .append(huisletter, castOther.huisletter)
+                .append(huisnummertoevoeging, castOther.huisnummertoevoeging)
+                .append(postcode, castOther.postcode)
+                .append(woonplaatsnaam, castOther.woonplaatsnaam)
+                .append(locatieTovAdres, castOther.locatieTovAdres)
+                .append(locatieOmschrijving, castOther.locatieOmschrijving)
+                .append(buitenlandsAdresRegel1, castOther.buitenlandsAdresRegel1)
+                .append(buitenlandsAdresRegel2, castOther.buitenlandsAdresRegel2)
+                .append(buitenlandsAdresRegel3, castOther.buitenlandsAdresRegel3)
+                .append(buitenlandsAdresRegel4, castOther.buitenlandsAdresRegel4)
+                .append(buitenlandsAdresRegel5, castOther.buitenlandsAdresRegel5)
+                .append(buitenlandsAdresRegel6, castOther.buitenlandsAdresRegel6)
+                .append(landOfGebiedCode, castOther.landOfGebiedCode)
+                .append(indicatiePersoonAangetroffenOpAdres, castOther.indicatiePersoonAangetroffenOpAdres)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(soortAdresCode)
-                                    .append(redenWijzigingAdresCode)
-                                    .append(aangeverAdreshoudingCode)
-                                    .append(datumAanvangAdreshouding)
-                                    .append(identificatiecodeAdresseerbaarObject)
-                                    .append(identificatiecodeNummeraanduiding)
-                                    .append(gemeenteCode)
-                                    .append(naamOpenbareRuimte)
-                                    .append(afgekorteNaamOpenbareRuimte)
-                                    .append(gemeentedeel)
-                                    .append(huisnummer)
-                                    .append(huisletter)
-                                    .append(huisnummertoevoeging)
-                                    .append(postcode)
-                                    .append(woonplaatsnaam)
-                                    .append(locatieTovAdres)
-                                    .append(locatieOmschrijving)
-                                    .append(buitenlandsAdresRegel1)
-                                    .append(buitenlandsAdresRegel2)
-                                    .append(buitenlandsAdresRegel3)
-                                    .append(buitenlandsAdresRegel4)
-                                    .append(buitenlandsAdresRegel5)
-                                    .append(buitenlandsAdresRegel6)
-                                    .append(landOfGebiedCode)
-                                    .append(indicatiePersoonAangetroffenOpAdres)
-                                    .toHashCode();
+                .append(redenWijzigingAdresCode)
+                .append(aangeverAdreshoudingCode)
+                .append(datumAanvangAdreshouding)
+                .append(identificatiecodeAdresseerbaarObject)
+                .append(identificatiecodeNummeraanduiding)
+                .append(gemeenteCode)
+                .append(naamOpenbareRuimte)
+                .append(afgekorteNaamOpenbareRuimte)
+                .append(gemeentedeel)
+                .append(huisnummer)
+                .append(huisletter)
+                .append(huisnummertoevoeging)
+                .append(postcode)
+                .append(woonplaatsnaam)
+                .append(locatieTovAdres)
+                .append(locatieOmschrijving)
+                .append(buitenlandsAdresRegel1)
+                .append(buitenlandsAdresRegel2)
+                .append(buitenlandsAdresRegel3)
+                .append(buitenlandsAdresRegel4)
+                .append(buitenlandsAdresRegel5)
+                .append(buitenlandsAdresRegel6)
+                .append(landOfGebiedCode)
+                .append(indicatiePersoonAangetroffenOpAdres)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("soortAdresCode", soortAdresCode)
-                                                                          .append("redenWijzigingAdresCode", redenWijzigingAdresCode)
-                                                                          .append("aangeverAdreshoudingCode", aangeverAdreshoudingCode)
-                                                                          .append("datumAanvangAdreshouding", datumAanvangAdreshouding)
-                                                                          .append(
-                                                                              "identificatiecodeAdresseerbaarObject",
-                                                                              identificatiecodeAdresseerbaarObject)
-                                                                          .append("identificatiecodeNummeraanduiding", identificatiecodeNummeraanduiding)
-                                                                          .append("gemeenteCode", gemeenteCode)
-                                                                          .append("naamOpenbareRuimte", naamOpenbareRuimte)
-                                                                          .append("afgekorteNaamOpenbareRuimte", afgekorteNaamOpenbareRuimte)
-                                                                          .append("gemeentedeel", gemeentedeel)
-                                                                          .append("huisnummer", huisnummer)
-                                                                          .append("huisletter", huisletter)
-                                                                          .append("huisnummertoevoeging", huisnummertoevoeging)
-                                                                          .append("postcode", postcode)
-                                                                          .append("woonplaatsnaam", woonplaatsnaam)
-                                                                          .append("locatietovAdres", locatieTovAdres)
-                                                                          .append("locatieOmschrijving", locatieOmschrijving)
-                                                                          .append("buitenlandsAdresRegel1", buitenlandsAdresRegel1)
-                                                                          .append("buitenlandsAdresRegel2", buitenlandsAdresRegel2)
-                                                                          .append("buitenlandsAdresRegel3", buitenlandsAdresRegel3)
-                                                                          .append("buitenlandsAdresRegel4", buitenlandsAdresRegel4)
-                                                                          .append("buitenlandsAdresRegel5", buitenlandsAdresRegel5)
-                                                                          .append("buitenlandsAdresRegel6", buitenlandsAdresRegel6)
-                                                                          .append("landOfGebiedCode", landOfGebiedCode)
-                                                                          .append(
-                                                                              "indicatiePersoonAangetroffenOpAdres",
-                                                                              indicatiePersoonAangetroffenOpAdres)
-                                                                          .toString();
+                .append("soortAdresCode", soortAdresCode)
+                .append("redenWijzigingAdresCode", redenWijzigingAdresCode)
+                .append("aangeverAdreshoudingCode", aangeverAdreshoudingCode)
+                .append("datumAanvangAdreshouding", datumAanvangAdreshouding)
+                .append(
+                        "identificatiecodeAdresseerbaarObject",
+                        identificatiecodeAdresseerbaarObject)
+                .append("identificatiecodeNummeraanduiding", identificatiecodeNummeraanduiding)
+                .append("gemeenteCode", gemeenteCode)
+                .append("naamOpenbareRuimte", naamOpenbareRuimte)
+                .append("afgekorteNaamOpenbareRuimte", afgekorteNaamOpenbareRuimte)
+                .append("gemeentedeel", gemeentedeel)
+                .append("huisnummer", huisnummer)
+                .append("huisletter", huisletter)
+                .append("huisnummertoevoeging", huisnummertoevoeging)
+                .append("postcode", postcode)
+                .append("woonplaatsnaam", woonplaatsnaam)
+                .append("locatietovAdres", locatieTovAdres)
+                .append("locatieOmschrijving", locatieOmschrijving)
+                .append("buitenlandsAdresRegel1", buitenlandsAdresRegel1)
+                .append("buitenlandsAdresRegel2", buitenlandsAdresRegel2)
+                .append("buitenlandsAdresRegel3", buitenlandsAdresRegel3)
+                .append("buitenlandsAdresRegel4", buitenlandsAdresRegel4)
+                .append("buitenlandsAdresRegel5", buitenlandsAdresRegel5)
+                .append("buitenlandsAdresRegel6", buitenlandsAdresRegel6)
+                .append("landOfGebiedCode", landOfGebiedCode)
+                .append(
+                        "indicatiePersoonAangetroffenOpAdres",
+                        indicatiePersoonAangetroffenOpAdres)
+                .toString();
     }
 
     /**
@@ -644,9 +590,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Constructor met verplicht(e) veld(en).
-         *
-         * @param soortAdresCode
-         *            soort adres
+         * @param soortAdresCode soort adres
          */
         public Builder(final BrpSoortAdresCode soortAdresCode) {
             this.soortAdresCode = soortAdresCode;
@@ -654,9 +598,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet datum aanvang adreshouding.
-         *
-         * @param param
-         *            de datum aanvang adreshouding
+         * @param param de datum aanvang adreshouding
          * @return builder object
          */
         public Builder datumAanvangAdreshouding(final BrpDatum param) {
@@ -666,9 +608,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de reden wijziging adres.
-         *
-         * @param param
-         *            code
+         * @param param code
          * @return builder object
          */
         public Builder redenWijzigingAdresCode(final BrpRedenWijzigingVerblijfCode param) {
@@ -678,9 +618,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de aangever adreshouding.
-         *
-         * @param param
-         *            code
+         * @param param code
          * @return builder object
          */
         public Builder aangeverAdreshoudingCode(final BrpAangeverCode param) {
@@ -690,9 +628,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet het gemeentedeel.
-         *
-         * @param param
-         *            gemeentedeel
+         * @param param gemeentedeel
          * @return builder object
          */
         public Builder gemeentedeel(final BrpString param) {
@@ -702,9 +638,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de gemeente.
-         *
-         * @param param
-         *            code
+         * @param param code
          * @return builder object
          */
         public Builder gemeenteCode(final BrpGemeenteCode param) {
@@ -714,9 +648,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de identificatiecode voor adresseerbaarobject.
-         *
-         * @param param
-         *            identcode
+         * @param param identcode
          * @return builder object
          */
         public Builder identificatiecodeAdresseerbaarObject(final BrpString param) {
@@ -726,9 +658,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de identificatiecode voor nummeraanduiding.
-         *
-         * @param param
-         *            identcode
+         * @param param identcode
          * @return builder object
          */
         public Builder identificatiecodeNummeraanduiding(final BrpString param) {
@@ -738,9 +668,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de naam openbare ruimte.
-         *
-         * @param param
-         *            naam openbare ruimte
+         * @param param naam openbare ruimte
          * @return builder object
          */
         public Builder naamOpenbareRuimte(final BrpString param) {
@@ -750,9 +678,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de afgekorte naam openbare ruimte.
-         *
-         * @param param
-         *            afgekorte naam openbare ruimte
+         * @param param afgekorte naam openbare ruimte
          * @return builder object
          */
         public Builder afgekorteNaamOpenbareRuimte(final BrpString param) {
@@ -762,9 +688,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet het huisnummer.
-         *
-         * @param param
-         *            huisnummer
+         * @param param huisnummer
          * @return builder object
          */
         public Builder huisnummer(final BrpInteger param) {
@@ -774,9 +698,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * zet het huisletter.
-         *
-         * @param param
-         *            huisletter
+         * @param param huisletter
          * @return builder object
          */
         public Builder huisletter(final BrpCharacter param) {
@@ -786,9 +708,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet het huisnummertoevoeging.
-         *
-         * @param param
-         *            huisnummertoevoeging
+         * @param param huisnummertoevoeging
          * @return builder object
          */
         public Builder huisnummertoevoeging(final BrpString param) {
@@ -798,9 +718,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de postcode.
-         *
-         * @param param
-         *            postcode
+         * @param param postcode
          * @return builder object
          */
         public Builder postcode(final BrpString param) {
@@ -810,9 +728,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de woonplaatsnaam.
-         *
-         * @param param
-         *            woonplaatsnaam
+         * @param param woonplaatsnaam
          * @return builder object
          */
         public Builder woonplaatsnaam(final BrpString param) {
@@ -822,9 +738,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de locatie tov adres.
-         *
-         * @param param
-         *            code
+         * @param param code
          * @return builder object
          */
         public Builder locatieTovAdres(final BrpAanduidingBijHuisnummerCode param) {
@@ -834,9 +748,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de locatie omschrijving.
-         *
-         * @param param
-         *            locatie omschrijving
+         * @param param locatie omschrijving
          * @return builder object
          */
         public Builder locatieOmschrijving(final BrpString param) {
@@ -846,9 +758,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de buitenlands adres regel 1.
-         *
-         * @param param
-         *            regel
+         * @param param regel
          * @return builder object
          */
         public Builder buitenlandsAdresRegel1(final BrpString param) {
@@ -858,9 +768,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de buitenlands adres regel 2.
-         *
-         * @param param
-         *            regel
+         * @param param regel
          * @return builder object
          */
         public Builder buitenlandsAdresRegel2(final BrpString param) {
@@ -870,9 +778,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de buitenlands adres regel 3.
-         *
-         * @param param
-         *            regel
+         * @param param regel
          * @return builder object
          */
         public Builder buitenlandsAdresRegel3(final BrpString param) {
@@ -882,9 +788,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de buitenlands adres regel 4.
-         *
-         * @param param
-         *            regel
+         * @param param regel
          * @return builder object
          */
         public Builder buitenlandsAdresRegel4(final BrpString param) {
@@ -894,9 +798,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de buitenlands adres regel 5.
-         *
-         * @param param
-         *            regel
+         * @param param regel
          * @return builder object
          */
         public Builder buitenlandsAdresRegel5(final BrpString param) {
@@ -906,9 +808,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet de buitenlands adres regel 6.
-         *
-         * @param param
-         *            regel
+         * @param param regel
          * @return builder object
          */
         public Builder buitenlandsAdresRegel6(final BrpString param) {
@@ -918,9 +818,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * Zet land/gebied.
-         *
-         * @param param
-         *            code
+         * @param param code
          * @return builder object
          */
         public Builder landOfGebiedCode(final BrpLandOfGebiedCode param) {
@@ -930,9 +828,7 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
 
         /**
          * zet indicatie persoon aangetroffen op adres.
-         *
-         * @param param
-         *            waarde
+         * @param param waarde
          * @return builder object
          */
         public Builder indicatiePersoonAangetroffenOpAdres(final BrpBoolean param) {
@@ -941,7 +837,6 @@ public final class BrpAdresInhoud extends AbstractBrpGroepInhoud {
         }
 
         /**
-         *
          * @return een nieuwe geconstrueerde {@link BrpAdresInhoud}
          */
         public BrpAdresInhoud build() {

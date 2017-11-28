@@ -13,7 +13,7 @@
       <connector name="netty">
          <factory-class>org.hornetq.core.remoting.impl.netty.NettyConnectorFactory</factory-class>
          <param key="host"  value="localhost"/>
-         <param key="port"  value="5486"/>
+         <param key="port"  value="${test.hornetq.port}"/>
       </connector>
    </connectors>
 
@@ -21,7 +21,7 @@
       <acceptor name="netty">
          <factory-class>org.hornetq.core.remoting.impl.netty.NettyAcceptorFactory</factory-class>
          <param key="host"  value="localhost"/>
-         <param key="port"  value="5486"/>
+         <param key="port"  value="${test.hornetq.port}"/>
       </acceptor>
    </acceptors>
 

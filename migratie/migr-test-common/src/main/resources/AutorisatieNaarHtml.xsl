@@ -269,7 +269,7 @@
                         </td></tr>
                     </table>
 				</xsl:when>
-                <xsl:when test="local-name()='toegangLeveringsautorisatie'">
+                <xsl:when test="local-name()='toegangBijhoudingsautorisatieSoortAdministratieveHandeling'">
                         <tr><td><strong>Afleverpunt&#160;:&#160;&#160;</strong><xsl:value-of select="afleverpunt"/></td></tr>
                         <tr><td><strong>Geautoriseerde&#160;:&#160;&#160;</strong><xsl:value-of select="geautoriseerde"/></td></tr>
                         <tr><td><strong>Ondertekenaar&#160;:&#160;&#160;</strong><xsl:value-of select="ondertekenaar"/></td></tr>

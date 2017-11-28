@@ -15,8 +15,16 @@ import nl.bzk.migratiebrp.isc.opschoner.service.RuntimeService;
  */
 public final class RuntimeServiceImpl implements RuntimeService {
 
+    private final RuntimeDao runtimeDao;
+
+    /**
+     * Constructor.
+     * @param runtimeDao runtime dao
+     */
     @Inject
-    private RuntimeDao runtimeDao;
+    public RuntimeServiceImpl(final RuntimeDao runtimeDao) {
+        this.runtimeDao = runtimeDao;
+    }
 
     @Override
     public void lockRuntime(final String runtimeNaam) {

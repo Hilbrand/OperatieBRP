@@ -11,7 +11,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 
 /**
  * Format een Lo3 inschrijving.
- *
  */
 public final class Lo3InschrijvingFormatter implements Lo3CategorieFormatter<Lo3InschrijvingInhoud> {
 

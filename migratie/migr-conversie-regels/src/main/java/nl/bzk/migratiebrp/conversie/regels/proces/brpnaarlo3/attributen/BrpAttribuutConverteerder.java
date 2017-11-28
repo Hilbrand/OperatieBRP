@@ -8,9 +8,7 @@ package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
 import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.Definitie;
 import nl.bzk.migratiebrp.conversie.model.Definities;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
@@ -19,6 +17,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingBijHuisnumm
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
@@ -42,8 +41,8 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortAdresCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpVerblijfsrechtCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AangeverRedenWijzigingVerblijfPaar;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AdellijkeTitelPredikaatPaar;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.VoorvoegselScheidingstekenPaar;
@@ -70,7 +69,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGeheimCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatiePKVolledigGeconverteerdCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RNIDeelnemerCode;
@@ -81,26 +79,31 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Signalering;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortVerbintenis;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-
 import org.springframework.stereotype.Component;
 
 /**
  * Converteerder helpers (BRP -> LO3).
  */
 @Component
-@SuppressWarnings("checkstyle:designforextension")
+
 public class BrpAttribuutConverteerder {
 
-    private static final long VERSIENUMMER_LIMIET_LO3 = 10000L;
+    private static final long VERSIENUMMER_LIMIET_LO3 = 10_000L;
 
-    @Inject
     private ConversietabelFactory conversietabellen;
 
     /**
+     * Constructor.
+     * @param conversietabellen conversietabel factory
+     */
+    @Inject
+    public BrpAttribuutConverteerder(final ConversietabelFactory conversietabellen) {
+        this.conversietabellen = conversietabellen;
+    }
+
+    /**
      * Converteer een datum.
-     *
-     * @param value
-     *            brp waarde
+     * @param value brp waarde
      * @return lo3 waarde
      */
     public Lo3Datum converteerDatum(final BrpDatum value) {
@@ -109,9 +112,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een datum.
-     *
-     * @param value
-     *            brp waarde
+     * @param value brp waarde
      * @return lo3 waarde
      */
     public Lo3Datum converteerDatum(final BrpInteger value) {
@@ -125,9 +126,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een string.
-     *
-     * @param value
-     *            brp waarde
+     * @param value brp waarde
      * @return lo3 waarde
      */
     public Lo3String converteerString(final BrpString value) {
@@ -136,9 +135,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een character.
-     *
-     * @param value
-     *            brp waarde
+     * @param value brp waarde
      * @return lo3 waarde
      */
     public Lo3Character converteerCharacter(final BrpCharacter value) {
@@ -154,9 +151,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer versienummer.
-     *
-     * @param value
-     *            brp waarde van versienummer
+     * @param value brp waarde van versienummer
      * @return Lo3 waarde
      */
     public Lo3Integer converteerVersienummer(final BrpLong value) {
@@ -171,43 +166,37 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer burgerservicenummer.
-     *
-     * @param value
-     *            brp waarde van burgerservicenummer
+     * @param value brp waarde van burgerservicenummer
      * @return Lo3 waarde
      */
-    public Lo3Integer converteerBurgerservicenummer(final BrpInteger value) {
-        final NumberFormat burgerservicenummerFormat = new DecimalFormat("000000000");
-        Lo3Integer result = null;
+    public Lo3String converteerBurgerservicenummer(final BrpString value) {
+        Lo3String result = null;
         if (value != null) {
-            final Integer burgerservicenummer = BrpInteger.unwrap(value);
-            result = new Lo3Integer(burgerservicenummer != null ? burgerservicenummerFormat.format(burgerservicenummer) : null, value.getOnderzoek());
+            final String burgerservicenummer = BrpString.unwrap(value);
+            result = new Lo3String(burgerservicenummer, value.getOnderzoek());
         }
         return result;
     }
 
     /**
      * Converteer administratie nummer.
-     *
-     * @param value
-     *            brp waarde van administratie nummer
+     * @param value brp waarde van administratie nummer
      * @return Lo3 waarde
      */
-    public Lo3Long converteerAdministratieNummer(final BrpLong value) {
-        final NumberFormat administratieNummerFormat = new DecimalFormat("0000000000");
-        Lo3Long result = null;
+    public Lo3String converteerAdministratieNummer(final BrpString value) {
+        final Lo3String result;
         if (value != null) {
-            final Long administratieNummer = BrpLong.unwrap(value);
-            result = new Lo3Long(administratieNummer != null ? administratieNummerFormat.format(administratieNummer) : null, value.getOnderzoek());
+            final String administratieNummer = BrpString.unwrap(value);
+            result = new Lo3String(administratieNummer, value.getOnderzoek());
+        } else {
+            result = null;
         }
         return result;
     }
 
     /**
      * Converteer een datumtijd.
-     *
-     * @param value
-     *            brp waarde
+     * @param value brp waarde
      * @return lo3 waarde
      */
     public Lo3Datum converteerDatum(final BrpDatumTijd value) {
@@ -216,9 +205,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een gemeentecode.
-     *
-     * @param value
-     *            brp waarde
+     * @param value brp waarde
      * @return lo3 waarde
      */
     public Lo3GemeenteCode converteerGemeenteCode(final BrpGemeenteCode value) {
@@ -227,9 +214,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een gemeentecode.
-     *
-     * @param value
-     *            brp waarde
+     * @param value brp waarde
      * @return lo3 waarde
      */
     public Lo3GemeenteCode converteerGemeenteCode(final BrpPartijCode value) {
@@ -238,9 +223,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een land code.
-     *
-     * @param value
-     *            brp waarde
+     * @param value brp waarde
      * @return lo3 waarde
      */
     public Lo3LandCode converteerLandCode(final BrpLandOfGebiedCode value) {
@@ -249,9 +232,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een aanduiding naamgebruik code.
-     *
-     * @param naamgebruikCode
-     *            brp waarde
+     * @param naamgebruikCode brp waarde
      * @return lo3 waarde
      */
     public Lo3AanduidingNaamgebruikCode converteerAanduidingNaamgebruik(final BrpNaamgebruikCode naamgebruikCode) {
@@ -260,9 +241,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een geslachtsaanduiding.
-     *
-     * @param geslachtsaanduiding
-     *            brp waarde
+     * @param geslachtsaanduiding brp waarde
      * @return lo3 waarde
      */
     public Lo3Geslachtsaanduiding converteerGeslachtsaanduiding(final BrpGeslachtsaanduidingCode geslachtsaanduiding) {
@@ -271,75 +250,68 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een adelijke titel en predicaat code.
-     *
-     * @param adellijkeTitelCode
-     *            brp waarde voor adelijke titel
-     * @param predicaatCode
-     *            brp waarde voor predicaat
+     * @param adellijkeTitelCode brp waarde voor adelijke titel
+     * @param predicaatCode brp waarde voor predicaat
      * @return lo3 waarde
      */
-    @Requirement({Requirements.CEL0220, Requirements.CEL0220_BL01 })
-    @Definitie({Definities.DEF017, Definities.DEF018, Definities.DEF019, Definities.DEF020 })
+    @Requirement({Requirements.CEL0220, Requirements.CEL0220_BL01})
+    @Definitie({Definities.DEF017, Definities.DEF018, Definities.DEF019, Definities.DEF020})
     public Lo3AdellijkeTitelPredikaatCode converteerAdellijkeTitelPredikaatCode(
-        final BrpAdellijkeTitelCode adellijkeTitelCode,
-        final BrpPredicaatCode predicaatCode)
-    {
-        final Character adellijkeTitel = Validatie.isAttribuutGevuld(adellijkeTitelCode) ? adellijkeTitelCode.getWaarde().charAt(0) : null;
+            final BrpAdellijkeTitelCode adellijkeTitelCode,
+            final BrpPredicaatCode predicaatCode) {
+        final Character adellijkeTitel = BrpValidatie.isAttribuutGevuld(adellijkeTitelCode) ? adellijkeTitelCode.getWaarde().charAt(0) : null;
         final Lo3Onderzoek adelijkeTitelOnderzoek = adellijkeTitelCode == null ? null : adellijkeTitelCode.getOnderzoek();
-        final Character predicaat = Validatie.isAttribuutGevuld(predicaatCode) ? predicaatCode.getWaarde().charAt(0) : null;
+        final Character predicaat = BrpValidatie.isAttribuutGevuld(predicaatCode) ? predicaatCode.getWaarde().charAt(0) : null;
         final Lo3Onderzoek predicaatOnderzoek = predicaatCode == null ? null : predicaatCode.getOnderzoek();
         final BrpGeslachtsaanduidingCode geslachtsaanduiding = bepaalGeslachtsaanduiding(adellijkeTitelCode, predicaatCode);
         final AdellijkeTitelPredikaatPaar input =
                 bepaalAdellijkeTitelPredikaatPaar(
-                    adellijkeTitelCode,
-                    predicaatCode,
-                    adellijkeTitel,
-                    adelijkeTitelOnderzoek,
-                    predicaat,
-                    predicaatOnderzoek,
-                    geslachtsaanduiding);
+                        adellijkeTitelCode,
+                        predicaatCode,
+                        adellijkeTitel,
+                        adelijkeTitelOnderzoek,
+                        predicaat,
+                        predicaatOnderzoek,
+                        geslachtsaanduiding);
         return conversietabellen.createAdellijkeTitelPredikaatConversietabel().converteerNaarLo3(input);
 
     }
 
     private BrpGeslachtsaanduidingCode bepaalGeslachtsaanduiding(final BrpAdellijkeTitelCode adellijkeTitelCode, final BrpPredicaatCode predicaatCode) {
         BrpGeslachtsaanduidingCode result = BrpGeslachtsaanduidingCode.MAN;
-        if (adellijkeTitelCode != null && Validatie.isAttribuutGevuld(adellijkeTitelCode.getGeslachtsaanduiding())) {
+        if (adellijkeTitelCode != null && BrpValidatie.isAttribuutGevuld(adellijkeTitelCode.getGeslachtsaanduiding())) {
             result = adellijkeTitelCode.getGeslachtsaanduiding();
         }
-        if (predicaatCode != null && Validatie.isAttribuutGevuld(predicaatCode.getGeslachtsaanduiding())) {
+        if (predicaatCode != null && BrpValidatie.isAttribuutGevuld(predicaatCode.getGeslachtsaanduiding())) {
             result = predicaatCode.getGeslachtsaanduiding();
         }
         return result;
     }
 
     private AdellijkeTitelPredikaatPaar bepaalAdellijkeTitelPredikaatPaar(
-        final BrpAdellijkeTitelCode adellijkeTitelCode,
-        final BrpPredicaatCode predicaatCode,
-        final Character adellijkeTitel,
-        final Lo3Onderzoek adelijkeTitelOnderzoek,
-        final Character predicaat,
-        final Lo3Onderzoek predicaatOnderzoek,
-        final BrpGeslachtsaanduidingCode geslachtsaanduiding)
-    {
+            final BrpAdellijkeTitelCode adellijkeTitelCode,
+            final BrpPredicaatCode predicaatCode,
+            final Character adellijkeTitel,
+            final Lo3Onderzoek adelijkeTitelOnderzoek,
+            final Character predicaat,
+            final Lo3Onderzoek predicaatOnderzoek,
+            final BrpGeslachtsaanduidingCode geslachtsaanduiding) {
         final AdellijkeTitelPredikaatPaar result;
         if (predicaatCode == null && adellijkeTitelCode == null) {
             result = null;
         } else {
             result =
                     new AdellijkeTitelPredikaatPaar(
-                        BrpCharacter.wrap(adellijkeTitel, adelijkeTitelOnderzoek),
-                        BrpCharacter.wrap(predicaat, predicaatOnderzoek),
-                        geslachtsaanduiding);
+                            BrpCharacter.wrap(adellijkeTitel, adelijkeTitelOnderzoek),
+                            BrpCharacter.wrap(predicaat, predicaatOnderzoek),
+                            geslachtsaanduiding);
         }
         return result;
     }
 
     /**
      * Converteer een nationaliteit.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3NationaliteitCode converteerNationaliteit(final BrpNationaliteitCode waarde) {
@@ -348,9 +320,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een aanduiding uitgesloten kiesrecht.
-     *
-     * @param indicatieUitsluitingKiesrecht
-     *            brp waarde
+     * @param indicatieUitsluitingKiesrecht brp waarde
      * @return lo3 waarde
      */
     public Lo3AanduidingUitgeslotenKiesrecht converteerAanduidingUitgeslotenKiesrecht(final BrpBoolean indicatieUitsluitingKiesrecht) {
@@ -359,9 +329,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een aanduiding europees kiesrecht.
-     *
-     * @param deelnameEuropeseVerkiezingen
-     *            brp waarde
+     * @param deelnameEuropeseVerkiezingen brp waarde
      * @return lo3 waarde
      */
     public Lo3AanduidingEuropeesKiesrecht converteerAanduidingEuropeesKiesrecht(final BrpBoolean deelnameEuropeseVerkiezingen) {
@@ -370,9 +338,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een reden opschorting bijhouding.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3RedenOpschortingBijhoudingCode converteerRedenOpschortingBijhouding(final BrpNadereBijhoudingsaardCode waarde) {
@@ -381,9 +347,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een indicatie pk volledig geconverteeerd.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3IndicatiePKVolledigGeconverteerdCode converteerIndicatiePKVolledigGeconverteerd(final BrpBoolean waarde) {
@@ -392,9 +356,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een indicatie geheim.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3IndicatieGeheimCode converteerIndicatieGeheim(final BrpBoolean waarde) {
@@ -403,9 +365,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een datum tijd stempel.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3Datumtijdstempel converteerDatumtijdstempel(final BrpDatumTijd waarde) {
@@ -414,9 +374,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een functie adres.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3FunctieAdres converteerFunctieAdres(final BrpSoortAdresCode waarde) {
@@ -425,24 +383,20 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een huisnummer .
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3Huisnummer converteerHuisnummer(final BrpInteger waarde) {
         Lo3Huisnummer result = null;
         if (waarde != null) {
-            final String huisnummer = !Validatie.isAttribuutGevuld(waarde) ? null : "" + waarde.getWaarde();
+            final String huisnummer = !BrpValidatie.isAttribuutGevuld(waarde) ? null : "" + waarde.getWaarde();
             result = new Lo3Huisnummer(huisnummer, waarde.getOnderzoek());
         }
         return result;
     }
 
     /**
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3AanduidingHuisnummer converteerAanduidingHuisnummer(final BrpAanduidingBijHuisnummerCode waarde) {
@@ -451,9 +405,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een aanduiding verblijfstitel.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3AanduidingVerblijfstitelCode converteerAanduidingVerblijfsrecht(final BrpVerblijfsrechtCode waarde) {
@@ -462,9 +414,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een soort nederlands residocument.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3SoortNederlandsReisdocument converteerSoortNederlandsResidocument(final BrpSoortNederlandsReisdocumentCode waarde) {
@@ -473,9 +423,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een autoriteit van aangifte.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3AutoriteitVanAfgifteNederlandsReisdocument converteerAutoriteitVanAfgifte(final BrpReisdocumentAutoriteitVanAfgifteCode waarde) {
@@ -487,22 +435,17 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een aanduiding inhouding vermissing nederlands reisdocument.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3AanduidingInhoudingVermissingNederlandsReisdocument converteerAanduidingInhoudingNederlandsReisdocument(
-        final BrpAanduidingInhoudingOfVermissingReisdocumentCode waarde)
-    {
+            final BrpAanduidingInhoudingOfVermissingReisdocumentCode waarde) {
         return conversietabellen.createAanduidingInhoudingVermissingReisdocumentConversietabel().converteerNaarLo3(waarde);
     }
 
     /**
      * Converteer een signalering.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3Signalering converteerSignalering(final BrpBoolean waarde) {
@@ -511,17 +454,13 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een aangifte adres houding.
-     *
-     * @param redenWijzigingVerblijfCode
-     *            brp waarde, reden wijziging verblijf
-     * @param aangeverCode
-     *            brp waarde, aangever
+     * @param redenWijzigingVerblijfCode brp waarde, reden wijziging verblijf
+     * @param aangeverCode brp waarde, aangever
      * @return lo3 waarde
      */
     public Lo3AangifteAdreshouding converteerAangifteAdreshouding(
-        final BrpRedenWijzigingVerblijfCode redenWijzigingVerblijfCode,
-        final BrpAangeverCode aangeverCode)
-    {
+            final BrpRedenWijzigingVerblijfCode redenWijzigingVerblijfCode,
+            final BrpAangeverCode aangeverCode) {
         final AangeverRedenWijzigingVerblijfPaar input = new AangeverRedenWijzigingVerblijfPaar(aangeverCode, redenWijzigingVerblijfCode);
 
         return conversietabellen.createAangeverRedenWijzigingVerblijfConversietabel().converteerNaarLo3(input);
@@ -529,9 +468,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een reden verkrijging nederlanderschap.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3RedenNederlandschapCode converteerRedenNederlanderschap(final BrpRedenVerkrijgingNederlandschapCode waarde) {
@@ -540,9 +477,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer {@link BrpString} naar een {@link Lo3RedenNederlandschapCode}.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3RedenNederlandschapCode converteerRedenNederlanderschap(final BrpString waarde) {
@@ -554,9 +489,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een reden verlies nederlanderschap.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3RedenNederlandschapCode converteerRedenNederlanderschap(final BrpRedenVerliesNederlandschapCode waarde) {
@@ -565,9 +498,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een indicatie document.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3IndicatieDocument converteerIndicatieDocument(final BrpBoolean waarde) {
@@ -576,9 +507,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een reden ontbinding huwelijk.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3RedenOntbindingHuwelijkOfGpCode converteerRedenOntbindingHuwelijk(final BrpRedenEindeRelatieCode waarde) {
@@ -587,9 +516,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een indicatie onder curatele.
-     *
-     * @param waarde
-     *            brp waarde
+     * @param waarde brp waarde
      * @return lo3 waarde
      */
     public Lo3IndicatieCurateleregister converteerIndicatieCurateleRegister(final BrpBoolean waarde) {
@@ -598,9 +525,7 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een soort relatie code.
-     *
-     * @param soortRelatieCode
-     *            brp waarde
+     * @param soortRelatieCode brp waarde
      * @return lo3 waarde
      */
     public Lo3SoortVerbintenis converteerSoortVerbintenis(final BrpSoortRelatieCode soortRelatieCode) {
@@ -609,15 +534,12 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een voorvoegsel.
-     *
-     * @param voorvoegsel
-     *            voorvoegsel
-     * @param scheidingsteken
-     *            scheidingsteken
+     * @param voorvoegsel voorvoegsel
+     * @param scheidingsteken scheidingsteken
      * @return lo3 waarde
      */
-    @Requirement({Requirements.CEL0230, Requirements.CEL0230_BL02 })
-    @Definitie({Definities.DEF051, Definities.DEF052, Definities.DEF053 })
+    @Requirement({Requirements.CEL0230, Requirements.CEL0230_BL02})
+    @Definitie({Definities.DEF051, Definities.DEF052, Definities.DEF053})
     public Lo3String converteerVoorvoegsel(final BrpString voorvoegsel, final BrpCharacter scheidingsteken) {
         final VoorvoegselScheidingstekenPaar input = voorvoegsel == null ? null : new VoorvoegselScheidingstekenPaar(voorvoegsel, scheidingsteken);
         return conversietabellen.createVoorvoegselScheidingstekenConversietabel().converteerNaarLo3(input);
@@ -625,27 +547,20 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een BRP locatie naar een LO3 locatie.
-     *
-     * @param gemeenteCode
-     *            gemeenteCode
-     * @param buitenlandsePlaats
-     *            buitenlandse plaats
-     * @param buitenlandseRegio
-     *            buitenlandse regio
-     * @param landCode
-     *            land code
-     * @param omschrijvingLocatie
-     *            omschrijving locatie
+     * @param gemeenteCode gemeenteCode
+     * @param buitenlandsePlaats buitenlandse plaats
+     * @param buitenlandseRegio buitenlandse regio
+     * @param landCode land code
+     * @param omschrijvingLocatie omschrijving locatie
      * @return lo3 gemeente land combinatie
      */
-    @Definitie({Definities.DEF004, Definities.DEF005, Definities.DEF006 })
+    @Definitie({Definities.DEF004, Definities.DEF005, Definities.DEF006})
     public Lo3GemeenteLand converteerLocatie(
-        final BrpGemeenteCode gemeenteCode,
-        final BrpString buitenlandsePlaats,
-        final BrpString buitenlandseRegio,
-        final BrpLandOfGebiedCode landCode,
-        final BrpString omschrijvingLocatie)
-    {
+            final BrpGemeenteCode gemeenteCode,
+            final BrpString buitenlandsePlaats,
+            final BrpString buitenlandseRegio,
+            final BrpLandOfGebiedCode landCode,
+            final BrpString omschrijvingLocatie) {
         final Lo3GemeenteCode gemeente;
 
         // DEF004
@@ -653,7 +568,6 @@ public class BrpAttribuutConverteerder {
             gemeente = converteerGemeenteCode(gemeenteCode);
         } else if (buitenlandsePlaats != null) {
             if (buitenlandseRegio != null) {
-                // TODO: nakijken wat we moeten doen met samenvoegingen, welk onderzoek?
                 gemeente = new Lo3GemeenteCode(buitenlandsePlaats.getWaarde() + ", " + buitenlandseRegio.getWaarde(), buitenlandsePlaats.getOnderzoek());
             } else {
                 gemeente = new Lo3GemeenteCode(buitenlandsePlaats.getWaarde(), buitenlandsePlaats.getOnderzoek());
@@ -670,13 +584,29 @@ public class BrpAttribuutConverteerder {
 
     /**
      * Converteer een RNI Deelnemer partijcode.
-     *
-     * @param waarde
-     *            brp partijcode
+     * @param waarde brp partijcode
      * @return lo3 RNI Deelnemer waarde
      */
     public Lo3RNIDeelnemerCode converteerRNIDeelnemer(final BrpPartijCode waarde) {
         return conversietabellen.createRNIDeelnemerConversietabel().converteerNaarLo3(waarde);
+    }
+
+    /**
+     * Valideert een RNI Deelnemer partijcode.
+     * @param waarde brp partijcode
+     * @return lo3 RNI Deelnemer waarde
+     */
+    public boolean valideerRNIDeelnemerTegenBrp(final BrpPartijCode waarde) {
+        return conversietabellen.createRNIDeelnemerConversietabel().valideerBrp(waarde);
+    }
+
+    /**
+     * Converteert een {@link BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer} naar een {@link Lo3NationaliteitCode}.
+     * @param autoriteitVanAfgifte de autoriteit van afgifte buitenlands persoonsnummer
+     * @return een LO3 nationaliteit code
+     */
+    public Lo3NationaliteitCode converteerNationaliteit(final BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer autoriteitVanAfgifte) {
+        return conversietabellen.createAutoriteitVanAfgifteBuitenlandsPersoonsnummertabel().converteerNaarLo3(autoriteitVanAfgifte);
     }
 
     /**
@@ -688,11 +618,8 @@ public class BrpAttribuutConverteerder {
 
         /**
          * Constructor.
-         *
-         * @param gemeenteCode
-         *            gemeente
-         * @param landCode
-         *            land
+         * @param gemeenteCode gemeente
+         * @param landCode land
          */
         Lo3GemeenteLand(final Lo3GemeenteCode gemeenteCode, final Lo3LandCode landCode) {
             this.gemeenteCode = gemeenteCode;
@@ -701,7 +628,6 @@ public class BrpAttribuutConverteerder {
 
         /**
          * Geef de waarde van gemeente code.
-         *
          * @return the gemeenteCode
          */
         public Lo3GemeenteCode getGemeenteCode() {
@@ -710,7 +636,6 @@ public class BrpAttribuutConverteerder {
 
         /**
          * Geef de waarde van land code.
-         *
          * @return the landCode
          */
         public Lo3LandCode getLandCode() {

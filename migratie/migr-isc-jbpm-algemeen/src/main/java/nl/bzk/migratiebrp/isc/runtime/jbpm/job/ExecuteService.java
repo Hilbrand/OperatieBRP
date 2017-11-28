@@ -13,17 +13,13 @@ public interface ExecuteService {
 
     /**
      * Timer uitvoeren.
-     * 
-     * @param timerId
-     *            timer id
+     * @param timerId timer id
      */
     void executeTimer(long timerId);
 
     /**
      * Job uitvoeren.
-     * 
-     * @param jobId
-     *            job id
+     * @param jobId job id
      */
     void executeJob(long jobId);
 }

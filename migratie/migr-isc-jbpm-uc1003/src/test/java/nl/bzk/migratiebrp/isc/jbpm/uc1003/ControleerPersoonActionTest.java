@@ -8,194 +8,132 @@ package nl.bzk.migratiebrp.isc.jbpm.uc1003;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ap01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Av01Bericht;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.ZoekPersoonResultaatType;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonAntwoordBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.AdHocZoekAntwoordFoutReden;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.AdHocZoekPersoonAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.plaatsen.PlaatsenAfnIndTestUtil;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.verwijderen.VerwijderenAfnIndTestUtil;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ControleerPersoonActionTest {
 
     private static final String TRANSITIE = "3d. Controle persoon mislukt (beeindigen)";
-    private static final String ZOEK_PERSOON_ANTWOORD = "zoekPersoonAntwoord";
+    private static final String ZOEK_PERSOON_ANTWOORD = "adHocZoekPersoonAntwoord";
     private static final String INPUT = "input";
     private static final String A_NUMMER_PERSOON_1 = "1234567890";
-    private static final String BIJHOUDINGS_GEMEENTE = "0518";
+    private static final String BSN_GEVONDEN_PERSOON = "123456789";
     private static final String AFNEMER = "518010";
-    private ControleerPersoonAction subject;
-    private BerichtenDao berichtenDao;
+    private static final String GEVONDEN_PERSOON_ALS_HA01 = "00000000Ha01A000000000003801031011001012345678900120009123456789";
 
-    @Before
-    public void setup() {
-        subject = new ControleerPersoonAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private ControleerPersoonAction subject = new ControleerPersoonAction(berichtenDao);
 
     @Test
     public void testGeenPersoonGevonden() {
-        final ZoekPersoonAntwoordBericht zoekPersoonAntwoord = new ZoekPersoonAntwoordBericht();
-        zoekPersoonAntwoord.setStatus(StatusType.OK);
-        zoekPersoonAntwoord.setResultaat(ZoekPersoonResultaatType.GEEN);
+        final AdHocZoekPersoonAntwoordBericht adHocZoekPersoonAntwoordBericht = new AdHocZoekPersoonAntwoordBericht();
+        adHocZoekPersoonAntwoordBericht.setFoutreden(AdHocZoekAntwoordFoutReden.G);
 
         final Map<String, Object> parameters = new HashMap<>();
         final Ap01Bericht ap01Bericht = PlaatsenAfnIndTestUtil.maakAp01Bericht(AFNEMER);
         parameters.put(INPUT, berichtenDao.bewaarBericht(ap01Bericht));
-        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(zoekPersoonAntwoord));
+        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(adHocZoekPersoonAntwoordBericht));
 
         final Map<String, Object> result = subject.execute(parameters);
         Assert.assertEquals(TRANSITIE, result.get(SpringActionHandler.TRANSITION_RESULT));
         Assert.assertEquals(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_G, result.get(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY));
 
-        Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.PERSOONID_KEY));
+        Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.PERSOON_BSN));
         Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.AF0X_ANUMMER_KEY));
     }
 
     @Test
     public void testMeerderePersonenGevonden() {
-        final ZoekPersoonAntwoordBericht zoekPersoonAntwoord = new ZoekPersoonAntwoordBericht();
-        zoekPersoonAntwoord.setStatus(StatusType.OK);
-        zoekPersoonAntwoord.setResultaat(ZoekPersoonResultaatType.MEERDERE);
+        final AdHocZoekPersoonAntwoordBericht adHocZoekPersoonAntwoordBericht = new AdHocZoekPersoonAntwoordBericht();
+        adHocZoekPersoonAntwoordBericht.setFoutreden(AdHocZoekAntwoordFoutReden.U);
 
         final Map<String, Object> parameters = new HashMap<>();
         final Ap01Bericht ap01Bericht = PlaatsenAfnIndTestUtil.maakAp01Bericht(AFNEMER);
         parameters.put(INPUT, berichtenDao.bewaarBericht(ap01Bericht));
-        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(zoekPersoonAntwoord));
+        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(adHocZoekPersoonAntwoordBericht));
 
         final Map<String, Object> result = subject.execute(parameters);
         Assert.assertEquals(TRANSITIE, result.get(SpringActionHandler.TRANSITION_RESULT));
         Assert.assertEquals(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_U, result.get(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY));
 
-        Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.PERSOONID_KEY));
+        Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.PERSOON_BSN));
         Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.AF0X_ANUMMER_KEY));
     }
 
     @Test
     public void testEenPersoonGevonden() {
-        final ZoekPersoonAntwoordBericht zoekPersoonAntwoord = new ZoekPersoonAntwoordBericht();
-        zoekPersoonAntwoord.setStatus(StatusType.OK);
-        zoekPersoonAntwoord.setResultaat(ZoekPersoonResultaatType.GEVONDEN);
-        zoekPersoonAntwoord.setAnummer(A_NUMMER_PERSOON_1);
-        zoekPersoonAntwoord.setPersoonId(1);
-        zoekPersoonAntwoord.setGemeente(BIJHOUDINGS_GEMEENTE);
+        final AdHocZoekPersoonAntwoordBericht adHocZoekPersoonAntwoordBericht = new AdHocZoekPersoonAntwoordBericht();
+        adHocZoekPersoonAntwoordBericht.setInhoud(GEVONDEN_PERSOON_ALS_HA01);
 
         final Map<String, Object> parameters = new HashMap<>();
-        final Ap01Bericht ap01Bericht = PlaatsenAfnIndTestUtil.maakAp01Bericht(AFNEMER);
+        final Ap01Bericht ap01Bericht = PlaatsenAfnIndTestUtil.maakAp01Bericht(AFNEMER, Long.valueOf(A_NUMMER_PERSOON_1));
         parameters.put(INPUT, berichtenDao.bewaarBericht(ap01Bericht));
-        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(zoekPersoonAntwoord));
+        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(adHocZoekPersoonAntwoordBericht));
 
         final Map<String, Object> result = subject.execute(parameters);
-        Assert.assertEquals(null, result.get(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY));
-        Assert.assertEquals(Integer.valueOf(1), result.get(AfnemersIndicatieJbpmConstants.PERSOONID_KEY));
-        Assert.assertEquals(A_NUMMER_PERSOON_1, result.get(AfnemersIndicatieJbpmConstants.AF0X_ANUMMER_KEY));
-    }
-
-    @Test
-    public void testEenPersoonGevondenVerhuisd() {
-        final ZoekPersoonAntwoordBericht zoekPersoonAntwoord = new ZoekPersoonAntwoordBericht();
-        zoekPersoonAntwoord.setStatus(StatusType.OK);
-        zoekPersoonAntwoord.setResultaat(ZoekPersoonResultaatType.GEVONDEN);
-        zoekPersoonAntwoord.setAnummer(A_NUMMER_PERSOON_1);
-        zoekPersoonAntwoord.setPersoonId(1);
-        zoekPersoonAntwoord.setGemeente("0123");
-
-        final Map<String, Object> parameters = new HashMap<>();
-        final Ap01Bericht ap01Bericht = PlaatsenAfnIndTestUtil.maakAp01Bericht(AFNEMER);
-        parameters.put(INPUT, berichtenDao.bewaarBericht(ap01Bericht));
-        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(zoekPersoonAntwoord));
-
-        final Map<String, Object> result = subject.execute(parameters);
-        // Verhuizen zou geen invloed moeten hebben op het plaatsen.
         Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY));
+        Assert.assertEquals(BSN_GEVONDEN_PERSOON, result.get(AfnemersIndicatieJbpmConstants.PERSOON_BSN));
         Assert.assertEquals(A_NUMMER_PERSOON_1, result.get(AfnemersIndicatieJbpmConstants.AF0X_ANUMMER_KEY));
     }
 
     @Test
     public void testGeenPersoonGevondenVerwijderen() {
-        final ZoekPersoonAntwoordBericht zoekPersoonAntwoord = new ZoekPersoonAntwoordBericht();
-        zoekPersoonAntwoord.setStatus(StatusType.OK);
-        zoekPersoonAntwoord.setResultaat(ZoekPersoonResultaatType.GEEN);
+        final AdHocZoekPersoonAntwoordBericht adHocZoekPersoonAntwoordBericht = new AdHocZoekPersoonAntwoordBericht();
+        adHocZoekPersoonAntwoordBericht.setFoutreden(AdHocZoekAntwoordFoutReden.G);
 
         final Map<String, Object> parameters = new HashMap<>();
         final Av01Bericht av01Bericht = VerwijderenAfnIndTestUtil.maakAv01Bericht(AFNEMER);
         parameters.put(INPUT, berichtenDao.bewaarBericht(av01Bericht));
-        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(zoekPersoonAntwoord));
+        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(adHocZoekPersoonAntwoordBericht));
 
         final Map<String, Object> result = subject.execute(parameters);
         Assert.assertEquals(TRANSITIE, result.get(SpringActionHandler.TRANSITION_RESULT));
         Assert.assertEquals(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_G, result.get(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY));
 
-        Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.PERSOONID_KEY));
+        Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.PERSOON_BSN));
         Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.AF0X_ANUMMER_KEY));
     }
 
     @Test
     public void testMeerderePersonenGevondenVerwijderen() {
-        final ZoekPersoonAntwoordBericht zoekPersoonAntwoord = new ZoekPersoonAntwoordBericht();
-        zoekPersoonAntwoord.setStatus(StatusType.OK);
-        zoekPersoonAntwoord.setResultaat(ZoekPersoonResultaatType.MEERDERE);
+        final AdHocZoekPersoonAntwoordBericht adHocZoekPersoonAntwoordBericht = new AdHocZoekPersoonAntwoordBericht();
+        adHocZoekPersoonAntwoordBericht.setFoutreden(AdHocZoekAntwoordFoutReden.U);
 
         final Map<String, Object> parameters = new HashMap<>();
         final Av01Bericht av01Bericht = VerwijderenAfnIndTestUtil.maakAv01Bericht(AFNEMER);
         parameters.put(INPUT, berichtenDao.bewaarBericht(av01Bericht));
-        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(zoekPersoonAntwoord));
+        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(adHocZoekPersoonAntwoordBericht));
 
         final Map<String, Object> result = subject.execute(parameters);
         Assert.assertEquals(TRANSITIE, result.get(SpringActionHandler.TRANSITION_RESULT));
         Assert.assertEquals(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_U, result.get(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY));
 
-        Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.PERSOONID_KEY));
+        Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.PERSOON_BSN));
         Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.AF0X_ANUMMER_KEY));
     }
 
     @Test
     public void testEenPersoonGevondenVerwijderen() {
-        final ZoekPersoonAntwoordBericht zoekPersoonAntwoord = new ZoekPersoonAntwoordBericht();
-        zoekPersoonAntwoord.setStatus(StatusType.OK);
-        zoekPersoonAntwoord.setResultaat(ZoekPersoonResultaatType.GEVONDEN);
-        zoekPersoonAntwoord.setAnummer(A_NUMMER_PERSOON_1);
-        zoekPersoonAntwoord.setPersoonId(1);
-        zoekPersoonAntwoord.setGemeente(BIJHOUDINGS_GEMEENTE);
+        final AdHocZoekPersoonAntwoordBericht adHocZoekPersoonAntwoordBericht = new AdHocZoekPersoonAntwoordBericht();
+        adHocZoekPersoonAntwoordBericht.setInhoud(GEVONDEN_PERSOON_ALS_HA01);
 
         final Map<String, Object> parameters = new HashMap<>();
-        final Av01Bericht av01Bericht = VerwijderenAfnIndTestUtil.maakAv01Bericht(AFNEMER);
+        final Av01Bericht av01Bericht = VerwijderenAfnIndTestUtil.maakAv01Bericht(AFNEMER, A_NUMMER_PERSOON_1);
         parameters.put(INPUT, berichtenDao.bewaarBericht(av01Bericht));
-        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(zoekPersoonAntwoord));
+        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(adHocZoekPersoonAntwoordBericht));
 
         final Map<String, Object> result = subject.execute(parameters);
         Assert.assertEquals(null, result.get(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY));
-        Assert.assertEquals(Integer.valueOf(1), result.get(AfnemersIndicatieJbpmConstants.PERSOONID_KEY));
-        Assert.assertEquals(A_NUMMER_PERSOON_1, result.get(AfnemersIndicatieJbpmConstants.AF0X_ANUMMER_KEY));
-    }
-
-    @Test
-    public void testEenPersoonGevondenVerhuisdVerwijderen() {
-        // Verhuizen zou geen invloed moeten hebben op het plaatsen.
-        final ZoekPersoonAntwoordBericht zoekPersoonAntwoord = new ZoekPersoonAntwoordBericht();
-        zoekPersoonAntwoord.setStatus(StatusType.OK);
-        zoekPersoonAntwoord.setResultaat(ZoekPersoonResultaatType.GEVONDEN);
-        zoekPersoonAntwoord.setAnummer(A_NUMMER_PERSOON_1);
-        zoekPersoonAntwoord.setPersoonId(1);
-        zoekPersoonAntwoord.setGemeente("0123");
-
-        final Map<String, Object> parameters = new HashMap<>();
-        final Av01Bericht av01Bericht = VerwijderenAfnIndTestUtil.maakAv01Bericht(AFNEMER);
-        parameters.put(INPUT, berichtenDao.bewaarBericht(av01Bericht));
-        parameters.put(ZOEK_PERSOON_ANTWOORD, berichtenDao.bewaarBericht(zoekPersoonAntwoord));
-
-        final Map<String, Object> result = subject.execute(parameters);
-        Assert.assertNull(result.get(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY));
+        Assert.assertEquals(BSN_GEVONDEN_PERSOON, result.get(AfnemersIndicatieJbpmConstants.PERSOON_BSN));
         Assert.assertEquals(A_NUMMER_PERSOON_1, result.get(AfnemersIndicatieJbpmConstants.AF0X_ANUMMER_KEY));
     }
 }

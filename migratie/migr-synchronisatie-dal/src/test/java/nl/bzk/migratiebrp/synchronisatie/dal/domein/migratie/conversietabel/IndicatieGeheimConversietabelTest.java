@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.IndicatieGeheimConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieGeheimCodeEnum;
+
 import org.junit.Test;
 
 public class IndicatieGeheimConversietabelTest {
@@ -26,19 +27,20 @@ public class IndicatieGeheimConversietabelTest {
         assertEquals(falseBrpBoolean, tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement()));
         assertEquals(trueBrpBoolean, tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_AAN_KERKEN.asElement()));
         assertEquals(
-            trueBrpBoolean,
-            tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_AAN_KERKEN_EN_NIET_AAN_VRIJE_DERDEN.asElement()));
+                trueBrpBoolean,
+                tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_AAN_KERKEN_EN_NIET_AAN_VRIJE_DERDEN.asElement()));
         assertEquals(trueBrpBoolean, tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_AAN_VRIJE_DERDEN.asElement()));
         assertEquals(trueBrpBoolean, tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT.asElement()));
         assertEquals(
-            trueBrpBoolean,
-            tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_KERKEN.asElement()));
+                trueBrpBoolean,
+                tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_KERKEN.asElement()));
         assertEquals(
-            trueBrpBoolean,
-            tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_VRIJE_DERDEN.asElement()));
+                trueBrpBoolean,
+                tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_VRIJE_DERDEN.asElement()));
         assertEquals(
-            trueBrpBoolean,
-            tabel.converteerNaarBrp(Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_VRIJE_DERDEN_EN_NIET_AAN_KERKEN.asElement()));
+                trueBrpBoolean,
+                tabel.converteerNaarBrp(
+                        Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_VRIJE_DERDEN_EN_NIET_AAN_KERKEN.asElement()));
     }
 
     @Test
@@ -47,8 +49,8 @@ public class IndicatieGeheimConversietabelTest {
         assertEquals(Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement(), tabel.converteerNaarLo3(null));
         assertEquals(Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement(), tabel.converteerNaarLo3(new BrpBoolean(false, null)));
         assertEquals(
-            Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_VRIJE_DERDEN_EN_NIET_AAN_KERKEN.asElement(),
-            tabel.converteerNaarLo3(new BrpBoolean(true, null)));
+                Lo3IndicatieGeheimCodeEnum.NIET_TER_UITVOERING_VAN_VOORSCHRIFT_EN_NIET_AAN_VRIJE_DERDEN_EN_NIET_AAN_KERKEN.asElement(),
+                tabel.converteerNaarLo3(new BrpBoolean(true, null)));
     }
 
 }

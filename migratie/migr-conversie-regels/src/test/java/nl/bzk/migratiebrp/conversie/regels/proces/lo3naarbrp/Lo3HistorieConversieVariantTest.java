@@ -44,15 +44,15 @@ public class Lo3HistorieConversieVariantTest {
         final BrpDatum aanvangGeldigheid2 = new BrpDatum(0, null);
         final List<BrpGroep<T>> brpGroepen = new ArrayList<>();
 
-        BrpDatumTijd uniekeDatum = Lo3HistorieConversieVariant.updateDatumTijdRegistratie(aanvangGeldigheid, TS_REG, brpGroepen);
+        BrpDatumTijd uniekeDatum = AbstractLo3HistorieConversieVariant.updateDatumTijdRegistratie(aanvangGeldigheid, TS_REG, brpGroepen);
 
         Assert.assertEquals(TS_REG, uniekeDatum);
 
         brpGroepen.add((BrpGroep<T>) maakBrpGroep(aanvangGeldigheid, TS_REG));
-        uniekeDatum = Lo3HistorieConversieVariant.updateDatumTijdRegistratie(aanvangGeldigheid, TS_REG, brpGroepen);
+        uniekeDatum = AbstractLo3HistorieConversieVariant.updateDatumTijdRegistratie(aanvangGeldigheid, TS_REG, brpGroepen);
         Assert.assertEquals(EXPECTED_TS_REG, uniekeDatum);
 
-        uniekeDatum = Lo3HistorieConversieVariant.updateDatumTijdRegistratie(aanvangGeldigheid2, TS_REG, brpGroepen);
+        uniekeDatum = AbstractLo3HistorieConversieVariant.updateDatumTijdRegistratie(aanvangGeldigheid2, TS_REG, brpGroepen);
         Assert.assertEquals(TS_REG, uniekeDatum);
     }
 
@@ -60,12 +60,13 @@ public class Lo3HistorieConversieVariantTest {
     public <T extends BrpGroepInhoud> void testDatumTijdRegistratieBepalenFormeleHistorie() {
         final TussenGroep<T> lo3Groep = maakMigratieGroep();
         final List<BrpGroep<T>> brpGroepen = new ArrayList<>();
-        BrpDatumTijd uniekeDatum = Lo3HistorieConversieVariant.bepaalDatumTijdRegistratie(lo3Groep, brpGroepen);
+        final Lo3Datum ingangsdatumGeldigheid = lo3Groep.getHistorie().getIngangsdatumGeldigheid();
+        BrpDatumTijd uniekeDatum = AbstractLo3HistorieConversieVariant.bepaalDatumTijdRegistratie(ingangsdatumGeldigheid, brpGroepen);
 
         Assert.assertEquals(TS_REG, uniekeDatum);
 
         brpGroepen.add((BrpGroep<T>) maakBrpGroep(null, TS_REG));
-        uniekeDatum = Lo3HistorieConversieVariant.bepaalDatumTijdRegistratie(lo3Groep, brpGroepen);
+        uniekeDatum = AbstractLo3HistorieConversieVariant.bepaalDatumTijdRegistratie(ingangsdatumGeldigheid, brpGroepen);
         Assert.assertEquals(EXPECTED_TS_REG, uniekeDatum);
     }
 
@@ -80,14 +81,14 @@ public class Lo3HistorieConversieVariantTest {
         final List<BrpActieBron> documentStapels = new ArrayList<>();
         final BrpActie actie =
                 new BrpActie(
-                    1L,
-                    BrpSoortActieCode.CONVERSIE_GBA,
-                    BrpPartijCode.MIGRATIEVOORZIENING,
+                        1L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        BrpPartijCode.MIGRATIEVOORZIENING,
                         datumTijdRegistratie,
-                    null,
-                    documentStapels,
-                    0,
-                    CAT01_HERKOMST);
+                        null,
+                        documentStapels,
+                        0,
+                        CAT01_HERKOMST);
 
         return new BrpGroep<>((T) BRP_INHOUD, historie, actie, null, null);
     }

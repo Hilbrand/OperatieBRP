@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.tussen.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpAfnemersindicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
@@ -13,7 +14,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Migratie representatie voor een afnemersindicatie (BRP inhoud, LO3 historie).
@@ -28,32 +28,27 @@ public final class TussenAfnemersindicatie {
 
     /**
      * Maak een nieuw BrpAfnemersindicatie object.
-     * 
-     * @param partijCode
-     *            de partijCode van de partij (afnemer)
-     * @param afnemersindicatieStapel
-     *            de afnemersindicatie stapel
+     * @param partijCode de partijCode van de partij (afnemer)
+     * @param afnemersindicatieStapel de afnemersindicatie stapel
      */
-    public TussenAfnemersindicatie(@Element(name = "partijCode", required = false) final BrpPartijCode partijCode, @Element(
-            name = "afnemersindicatieStapel", required = false) final TussenStapel<BrpAfnemersindicatieInhoud> afnemersindicatieStapel)
-    {
+    public TussenAfnemersindicatie(
+            @Element(name = "partijCode", required = false) final BrpPartijCode partijCode,
+            @Element(name = "afnemersindicatieStapel", required = false) final TussenStapel<BrpAfnemersindicatieInhoud> afnemersindicatieStapel) {
         this.partijCode = partijCode;
         this.afnemersindicatieStapel = afnemersindicatieStapel;
     }
 
     /**
-     * Geef de waarde van partij code.
-     *
-     * @return partij code
+     * Geef de waarde van partij code van TussenAfnemersindicatie.
+     * @return de waarde van partij code van TussenAfnemersindicatie
      */
     public BrpPartijCode getPartijCode() {
         return partijCode;
     }
 
     /**
-     * Geef de waarde van afnemersindicatie stapel.
-     *
-     * @return afnemersindicatie stapel
+     * Geef de waarde van afnemersindicatie stapel van TussenAfnemersindicatie.
+     * @return de waarde van afnemersindicatie stapel van TussenAfnemersindicatie
      */
     public TussenStapel<BrpAfnemersindicatieInhoud> getAfnemersindicatieStapel() {
         return afnemersindicatieStapel;
@@ -68,9 +63,7 @@ public final class TussenAfnemersindicatie {
             return false;
         }
         final TussenAfnemersindicatie castOther = (TussenAfnemersindicatie) other;
-        return new EqualsBuilder().append(partijCode, castOther.partijCode)
-                                  .append(afnemersindicatieStapel, castOther.afnemersindicatieStapel)
-                                  .isEquals();
+        return new EqualsBuilder().append(partijCode, castOther.partijCode).append(afnemersindicatieStapel, castOther.afnemersindicatieStapel).isEquals();
     }
 
     @Override
@@ -81,8 +74,8 @@ public final class TussenAfnemersindicatie {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("partijCode", partijCode)
-                                                                          .append("afnemersindicatieStapel", afnemersindicatieStapel)
-                                                                          .toString();
+                .append("afnemersindicatieStapel", afnemersindicatieStapel)
+                .toString();
     }
 
 }

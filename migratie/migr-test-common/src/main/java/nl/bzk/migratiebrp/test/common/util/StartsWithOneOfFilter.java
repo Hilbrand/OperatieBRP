@@ -15,9 +15,7 @@ public final class StartsWithOneOfFilter extends CompositeFilter {
 
     /**
      * Constructor.
-     * 
-     * @param filenames
-     *            lijst van filenamen waarmee een geaccepteerde filename moet beginnen
+     * @param filenames lijst van filenamen waarmee een geaccepteerde filename moet beginnen
      */
     public StartsWithOneOfFilter(final String... filenames) {
         super(Type.OR, createFilenameFilters(filenames));

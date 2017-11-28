@@ -6,6 +6,9 @@
 
 package nl.bzk.migratiebrp.conversie.model.tussen;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
@@ -15,7 +18,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBehandeldAlsNederlanderIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBehandeldAlsNederlanderIndicatieInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoudTest;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoudTestUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDeelnameEuVerkiezingenInhoud;
@@ -49,7 +52,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnderCurateleIndicatieInh
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoudTest;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoudTestUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpReisdocumentInhoud;
@@ -57,30 +60,28 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpReisdocumentInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoudTest;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoudTestUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpStaatloosIndicatieInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpStaatloosIndicatieInhoudTest;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpStaatloosIndicatieInhoudTestUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpUitsluitingKiesrechtInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpUitsluitingKiesrechtInhoudTest;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpUitsluitingKiesrechtInhoudTestUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVastgesteldNietNederlanderIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVastgesteldNietNederlanderIndicatieInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerblijfsrechtInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerblijfsrechtInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerificatieInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerificatieInhoudTest;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerificatieInhoudTestUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerstrekkingsbeperkingIndicatieInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerstrekkingsbeperkingIndicatieInhoudTest;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerstrekkingsbeperkingIndicatieInhoudTestUtil;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
  */
 public class TussenPersoonslijstBuilderTest extends TussenTestUtil {
 
-    TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
+    private TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
 
     @Test
     public void test() {
@@ -93,16 +94,24 @@ public class TussenPersoonslijstBuilderTest extends TussenTestUtil {
         List<TussenStapel<BrpIstHuwelijkOfGpGroepInhoud>> istHuwelijkGpList = new ArrayList<>();
 
         builder.adresStapel((TussenStapel<BrpAdresInhoud>) createTussenStapel(BrpAdresInhoudTest.createInhoud(), her));
-        builder.behandeldAlsNederlanderIndicatieStapel((TussenStapel<BrpBehandeldAlsNederlanderIndicatieInhoud>) createTussenStapel(BrpBehandeldAlsNederlanderIndicatieInhoudTest.createInhoud(), her));
-        builder.bijhoudingStapel((TussenStapel<BrpBijhoudingInhoud>) createTussenStapel(BrpBijhoudingInhoudTest.createInhoud(), her));
-        builder.bijzondereVerblijfsrechtelijkePositieIndicatieStapel((TussenStapel<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud>) createTussenStapel(BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoudTest.createInhoud(), her));
-        builder.deelnameEuVerkiezingen((TussenStapel<BrpDeelnameEuVerkiezingenInhoud>) createTussenStapel(BrpDeelnameEuVerkiezingenInhoudTest.createInhoud(), her));
-        builder.derdeHeeftGezagIndicatieStapel((TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud>) createTussenStapel(BrpDerdeHeeftGezagIndicatieInhoudTest.createInhoud(), her));
+        builder.behandeldAlsNederlanderIndicatieStapel(
+                (TussenStapel<BrpBehandeldAlsNederlanderIndicatieInhoud>) createTussenStapel(BrpBehandeldAlsNederlanderIndicatieInhoudTest.createInhoud(),
+                        her));
+        builder.bijhoudingStapel((TussenStapel<BrpBijhoudingInhoud>) createTussenStapel(BrpBijhoudingInhoudTestUtil.createInhoud(), her));
+        builder.bijzondereVerblijfsrechtelijkePositieIndicatieStapel((TussenStapel<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud>) createTussenStapel(
+                BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoudTest.createInhoud(), her));
+        builder.deelnameEuVerkiezingen(
+                (TussenStapel<BrpDeelnameEuVerkiezingenInhoud>) createTussenStapel(BrpDeelnameEuVerkiezingenInhoudTest.createInhoud(), her));
+        builder.derdeHeeftGezagIndicatieStapel(
+                (TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud>) createTussenStapel(BrpDerdeHeeftGezagIndicatieInhoudTest.createInhoud(), her));
         builder.geboorteStapel((TussenStapel<BrpGeboorteInhoud>) createTussenStapel(BrpGeboorteInhoudTest.getBrpGeboorteInhoud(), her));
-        builder.geslachtsaanduidingStapel((TussenStapel<BrpGeslachtsaanduidingInhoud>) createTussenStapel(BrpGeslachtsaanduidingInhoudTest.createInhoud(), her));
-        builder.identificatienummerStapel((TussenStapel<BrpIdentificatienummersInhoud>) createTussenStapel(BrpIdentificatienummersInhoudTest.createInhoud(), her));
+        builder.geslachtsaanduidingStapel(
+                (TussenStapel<BrpGeslachtsaanduidingInhoud>) createTussenStapel(BrpGeslachtsaanduidingInhoudTest.createInhoud(), her));
+        builder.identificatienummerStapel(
+                (TussenStapel<BrpIdentificatienummersInhoud>) createTussenStapel(BrpIdentificatienummersInhoudTest.createInhoud(), her));
         builder.inschrijvingStapel((TussenStapel<BrpInschrijvingInhoud>) createTussenStapel(BrpInschrijvingInhoudTest.createInhoud(), her));
-        builder.istGezagsverhouding((TussenStapel<BrpIstGezagsVerhoudingGroepInhoud>) createTussenStapel(BrpIstGezagsVerhoudingGroepInhoudTest.createInhoud(), her));
+        builder.istGezagsverhouding(
+                (TussenStapel<BrpIstGezagsVerhoudingGroepInhoud>) createTussenStapel(BrpIstGezagsVerhoudingGroepInhoudTest.createInhoud(), her));
         builder.istHuwelijkOfGpStapel((TussenStapel<BrpIstHuwelijkOfGpGroepInhoud>) createTussenStapel(BrpIstHuwelijkOfGpGroepInhoudTest.createInhoud(), her));
         istHuwelijkGpList.add((TussenStapel<BrpIstHuwelijkOfGpGroepInhoud>) createTussenStapel(BrpIstHuwelijkOfGpGroepInhoudTest.createInhoud(), her));
         builder.istKindStapel((TussenStapel<BrpIstRelatieGroepInhoud>) createTussenStapel(BrpIstRelatieGroepInhoudTest.createInhoud(), her));
@@ -114,23 +123,29 @@ public class TussenPersoonslijstBuilderTest extends TussenTestUtil {
         builder.nationaliteitStapel((TussenStapel<BrpNationaliteitInhoud>) createTussenStapel(BrpNationaliteitInhoudTest.createInhoud(), her));
         nationaliteitList.add((TussenStapel<BrpNationaliteitInhoud>) createTussenStapel(BrpNationaliteitInhoudTest.createInhoud(), her));
         builder.nummerverwijzingStapel((TussenStapel<BrpNummerverwijzingInhoud>) createTussenStapel(BrpNummerverwijzingInhoudTest.createInhoud(), her));
-        builder.onderCurateleIndicatieStapel((TussenStapel<BrpOnderCurateleIndicatieInhoud>) createTussenStapel(BrpOnderCurateleIndicatieInhoudTest.createInhoud(), her));
+        builder.onderCurateleIndicatieStapel(
+                (TussenStapel<BrpOnderCurateleIndicatieInhoud>) createTussenStapel(BrpOnderCurateleIndicatieInhoudTest.createInhoud(), her));
         builder.overlijdenStapel((TussenStapel<BrpOverlijdenInhoud>) createTussenStapel(BrpOverlijdenInhoudTest.createInhoud(), her));
         builder.reisdocumentStapel((TussenStapel<BrpReisdocumentInhoud>) createTussenStapel(BrpReisdocumentInhoudTest.createInhoud(), her));
         reisDocumentList.add((TussenStapel<BrpReisdocumentInhoud>) createTussenStapel(BrpReisdocumentInhoudTest.createInhoud(), her));
-        builder.relatie(TussenRelatieTest.createTussenRelatie(BrpSoortRelatieCode.HUWELIJK, BrpSoortBetrokkenheidCode.PARTNER));
-        tussenRelatieList.add(TussenRelatieTest.createTussenRelatie(BrpSoortRelatieCode.HUWELIJK, BrpSoortBetrokkenheidCode.PARTNER));
+        builder.relatie(TussenRelatieTestUtil.createTussenRelatie(BrpSoortRelatieCode.HUWELIJK, BrpSoortBetrokkenheidCode.PARTNER));
+        tussenRelatieList.add(TussenRelatieTestUtil.createTussenRelatie(BrpSoortRelatieCode.HUWELIJK, BrpSoortBetrokkenheidCode.PARTNER));
         builder.samengesteldeNaamStapel((TussenStapel<BrpSamengesteldeNaamInhoud>) createTussenStapel(BrpSamengesteldeNaamInhoudTest.createInhoud(), her));
-        builder.persoonAfgeleidAdministratiefStapel((TussenStapel<BrpPersoonAfgeleidAdministratiefInhoud>) createTussenStapel(BrpPersoonAfgeleidAdministratiefInhoudTest.createInhoud(), her));
+        builder.persoonAfgeleidAdministratiefStapel(
+                (TussenStapel<BrpPersoonAfgeleidAdministratiefInhoud>) createTussenStapel(BrpPersoonAfgeleidAdministratiefInhoudTestUtil.createInhoud(), her));
         builder.persoonskaartStapel((TussenStapel<BrpPersoonskaartInhoud>) createTussenStapel(BrpPersoonskaartInhoudTest.createInhoud(), her));
-        builder.signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel((TussenStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud>) createTussenStapel(BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoudTest.createInhoud(), her));
-        builder.staatloosIndicatieStapel((TussenStapel<BrpStaatloosIndicatieInhoud>) createTussenStapel(BrpStaatloosIndicatieInhoudTest.createInhoud(), her));
-        builder.uitsluitingKiesrecht((TussenStapel<BrpUitsluitingKiesrechtInhoud>) createTussenStapel(BrpUitsluitingKiesrechtInhoudTest.createInhoud(), her));
-        builder.vastgesteldNietNederlanderIndicatieStapel((TussenStapel<BrpVastgesteldNietNederlanderIndicatieInhoud>) createTussenStapel(BrpVastgesteldNietNederlanderIndicatieInhoudTest.createInhoud(false), her));
+        builder.signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel(
+                (TussenStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud>) createTussenStapel(
+                        BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoudTestUtil.createInhoud(), her));
+        builder.staatloosIndicatieStapel((TussenStapel<BrpStaatloosIndicatieInhoud>) createTussenStapel(BrpStaatloosIndicatieInhoudTestUtil.createInhoud(), her));
+        builder.uitsluitingKiesrecht((TussenStapel<BrpUitsluitingKiesrechtInhoud>) createTussenStapel(BrpUitsluitingKiesrechtInhoudTestUtil.createInhoud(), her));
+        builder.vastgesteldNietNederlanderIndicatieStapel((TussenStapel<BrpVastgesteldNietNederlanderIndicatieInhoud>) createTussenStapel(
+                BrpVastgesteldNietNederlanderIndicatieInhoudTest.createInhoud(false), her));
         builder.verblijfsrechtStapel((TussenStapel<BrpVerblijfsrechtInhoud>) createTussenStapel(BrpVerblijfsrechtInhoudTest.createInhoud(), her));
-        builder.verificatieStapel((TussenStapel<BrpVerificatieInhoud>) createTussenStapel(BrpVerificatieInhoudTest.createInhoud(), her));
-        verificatieList.add((TussenStapel<BrpVerificatieInhoud>) createTussenStapel(BrpVerificatieInhoudTest.createInhoud(), her));
-        builder.verstrekkingsbeperkingIndicatieStapel((TussenStapel<BrpVerstrekkingsbeperkingIndicatieInhoud>) createTussenStapel(BrpVerstrekkingsbeperkingIndicatieInhoudTest.createInhoud(), her));
+        builder.verificatieStapel((TussenStapel<BrpVerificatieInhoud>) createTussenStapel(BrpVerificatieInhoudTestUtil.createInhoud(), her));
+        verificatieList.add((TussenStapel<BrpVerificatieInhoud>) createTussenStapel(BrpVerificatieInhoudTestUtil.createInhoud(), her));
+        builder.verstrekkingsbeperkingIndicatieStapel(
+                (TussenStapel<BrpVerstrekkingsbeperkingIndicatieInhoud>) createTussenStapel(BrpVerstrekkingsbeperkingIndicatieInhoudTestUtil.createInhoud(), her));
         TussenPersoonslijst tp_1 = builder.build();
         assertNotNull(tp_1);
         builder = new TussenPersoonslijstBuilder(tp_1);

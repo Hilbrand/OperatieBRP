@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.isc.opschoner.service.impl;
 
 import nl.bzk.migratiebrp.isc.opschoner.dao.RuntimeDao;
-import nl.bzk.migratiebrp.isc.opschoner.service.RuntimeService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -24,7 +23,7 @@ public class RuntimeServiceImplTest {
     private RuntimeDao lockDao;
 
     @InjectMocks
-    private final RuntimeService subject = new RuntimeServiceImpl();
+    private RuntimeServiceImpl subject;
 
     @Test
     public void testLockenRuntime() {

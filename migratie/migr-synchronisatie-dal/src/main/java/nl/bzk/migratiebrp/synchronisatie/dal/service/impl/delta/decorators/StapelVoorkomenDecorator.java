@@ -6,10 +6,9 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.decorators;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
 import nl.bzk.migratiebrp.conversie.model.validatie.ValidationUtils;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -23,9 +22,7 @@ public final class StapelVoorkomenDecorator extends AbstractDecorator {
 
     /**
      * Maakt een StapelVoorkomenDecorator object.
-     *
-     * @param voorkomen
-     *            het object waaraan functionaliteit moet worden toegevoegd
+     * @param voorkomen het object waaraan functionaliteit moet worden toegevoegd
      */
     private StapelVoorkomenDecorator(final StapelVoorkomen voorkomen) {
         ValidationUtils.controleerOpNullWaarden("voorkomen mag niet null zijn", voorkomen);
@@ -33,8 +30,7 @@ public final class StapelVoorkomenDecorator extends AbstractDecorator {
     }
 
     /**
-     * @param voorkomen
-     *            het te decoreren StapelVoorkomen object
+     * @param voorkomen het te decoreren StapelVoorkomen object
      * @return een StapelVoorkomenRelateerDecorator object
      */
     public static StapelVoorkomenDecorator decorate(final StapelVoorkomen voorkomen) {
@@ -67,7 +63,6 @@ public final class StapelVoorkomenDecorator extends AbstractDecorator {
 
     /**
      * Geef de waarde van volgnummer.
-     *
      * @return het volgnummer van dit voorkomen
      */
     public int getVolgnummer() {
@@ -76,7 +71,6 @@ public final class StapelVoorkomenDecorator extends AbstractDecorator {
 
     /**
      * Geef de waarde van voorkomen.
-     *
      * @return het onderliggende voorkomen
      */
     public StapelVoorkomen getVoorkomen() {
@@ -96,9 +90,7 @@ public final class StapelVoorkomenDecorator extends AbstractDecorator {
 
     /**
      * Werk alle gegevens velden van dit voorkomen bij zodat ze dezelfe waarden bevatten als het gegeven voorkomen.
-     *
-     * @param bronVoorkomenDecorator
-     *            Het voorkomen met de nieuwe gegevens
+     * @param bronVoorkomenDecorator Het voorkomen met de nieuwe gegevens
      */
     public void werkGegevensBij(final StapelVoorkomenDecorator bronVoorkomenDecorator) {
         final StapelVoorkomen bronVoorkomen = bronVoorkomenDecorator.getVoorkomen();
@@ -163,96 +155,92 @@ public final class StapelVoorkomenDecorator extends AbstractDecorator {
     }
 
     /**
+     * @param anderVoorkomen het andere voorkomen
+     * @param ookOverigeGegevensControleren true als het ook de LO3 groepen 81, 82, 83, 84, 86 en 88 moet controleren.
      * @return true als dit voorkomen inhoudelijk gelijk is aan het gegeven voorkomen
-     *
-     * @param anderVoorkomen
-     *            het andere voorkomen
-     * @param ookOverigeGegevensControleren
-     *            true als het ook de LO3 groepen 81, 82, 83, 84, 86 en 88 moet controleren.
      */
     public boolean isInhoudelijkGelijkAan(final StapelVoorkomenDecorator anderVoorkomen, final boolean ookOverigeGegevensControleren) {
         final StapelVoorkomen ander = anderVoorkomen.getVoorkomen();
 
-        final Short gemeenteGeboorte = getGemeenteWaarde(voorkomen.getGemeenteGeboorte());
-        final Short andereGemeenteGeboorte = getGemeenteWaarde(ander.getGemeenteGeboorte());
-        final Short gemeenteAanvang = getGemeenteWaarde(voorkomen.getGemeenteAanvang());
-        final Short andereGemeenteAanvang = getGemeenteWaarde(ander.getGemeenteAanvang());
-        final Short gemeenteEinde = getGemeenteWaarde(voorkomen.getGemeenteEinde());
-        final Short andereGemeenteEinde = getGemeenteWaarde(ander.getGemeenteEinde());
+        final String gemeenteGeboorte = getGemeenteWaarde(voorkomen.getGemeenteGeboorte());
+        final String andereGemeenteGeboorte = getGemeenteWaarde(ander.getGemeenteGeboorte());
+        final String gemeenteAanvang = getGemeenteWaarde(voorkomen.getGemeenteAanvang());
+        final String andereGemeenteAanvang = getGemeenteWaarde(ander.getGemeenteAanvang());
+        final String gemeenteEinde = getGemeenteWaarde(voorkomen.getGemeenteEinde());
+        final String andereGemeenteEinde = getGemeenteWaarde(ander.getGemeenteEinde());
 
-        final Short landOfGebiedGeboorte = getLandOfGebiedWaarde(voorkomen.getLandOfGebiedGeboorte());
-        final Short andereLandOfGebiedGeboorte = getLandOfGebiedWaarde(ander.getLandOfGebiedGeboorte());
-        final Short landOfGebiedAanvang = getLandOfGebiedWaarde(voorkomen.getLandOfGebiedAanvang());
-        final Short andereLandOfGebiedAanvang = getLandOfGebiedWaarde(ander.getLandOfGebiedAanvang());
-        final Short landOfGebiedEinde = getLandOfGebiedWaarde(voorkomen.getLandOfGebiedEinde());
-        final Short andereLandOfGebiedEinde = getLandOfGebiedWaarde(ander.getLandOfGebiedEinde());
+        final String landOfGebiedGeboorte = getLandOfGebiedWaarde(voorkomen.getLandOfGebiedGeboorte());
+        final String andereLandOfGebiedGeboorte = getLandOfGebiedWaarde(ander.getLandOfGebiedGeboorte());
+        final String landOfGebiedAanvang = getLandOfGebiedWaarde(voorkomen.getLandOfGebiedAanvang());
+        final String andereLandOfGebiedAanvang = getLandOfGebiedWaarde(ander.getLandOfGebiedAanvang());
+        final String landOfGebiedEinde = getLandOfGebiedWaarde(voorkomen.getLandOfGebiedEinde());
+        final String andereLandOfGebiedEinde = getLandOfGebiedWaarde(ander.getLandOfGebiedEinde());
         final Character redenBeeindigingRelatie = getRedenEindeWaarde(voorkomen.getRedenBeeindigingRelatie());
         final Character andereRedenBeeindigingRelatie = getRedenEindeWaarde(ander.getRedenBeeindigingRelatie());
 
         EqualsBuilder equalsBuilder =
                 new EqualsBuilder().append(voorkomen.getRubriek8510IngangsdatumGeldigheid(), ander.getRubriek8510IngangsdatumGeldigheid())
-                                   .append(
-                                       voorkomen.getRubriek6210DatumIngangFamilierechtelijkeBetrekking(),
-                                       ander.getRubriek6210DatumIngangFamilierechtelijkeBetrekking())
-                                   .append(voorkomen.getAnummer(), ander.getAnummer())
-                                   .append(voorkomen.getBsn(), ander.getBsn())
-                                   .append(voorkomen.getVoornamen(), ander.getVoornamen())
-                                   .append(voorkomen.getPredicaat(), ander.getPredicaat())
-                                   .append(voorkomen.getAdellijkeTitel(), ander.getAdellijkeTitel())
-                                   .append(
-                                       voorkomen.getGeslachtsaanduidingBijAdellijkeTitelOfPredikaat(),
-                                       ander.getGeslachtsaanduidingBijAdellijkeTitelOfPredikaat())
-                                   .append(voorkomen.getVoorvoegsel(), ander.getVoorvoegsel())
-                                   .append(voorkomen.getScheidingsteken(), ander.getScheidingsteken())
-                                   .append(voorkomen.getGeslachtsnaamstam(), ander.getGeslachtsnaamstam())
-                                   .append(voorkomen.getDatumGeboorte(), ander.getDatumGeboorte())
-                                   .append(gemeenteGeboorte, andereGemeenteGeboorte)
-                                   .append(voorkomen.getBuitenlandsePlaatsGeboorte(), ander.getBuitenlandsePlaatsGeboorte())
-                                   .append(voorkomen.getOmschrijvingLocatieGeboorte(), ander.getOmschrijvingLocatieGeboorte())
-                                   .append(landOfGebiedGeboorte, andereLandOfGebiedGeboorte)
-                                   .append(voorkomen.getGeslachtsaanduiding(), ander.getGeslachtsaanduiding())
-                                   .append(voorkomen.getDatumAanvang(), ander.getDatumAanvang())
-                                   .append(gemeenteAanvang, andereGemeenteAanvang)
-                                   .append(voorkomen.getBuitenlandsePlaatsAanvang(), ander.getBuitenlandsePlaatsAanvang())
-                                   .append(voorkomen.getOmschrijvingLocatieAanvang(), ander.getOmschrijvingLocatieAanvang())
-                                   .append(landOfGebiedAanvang, andereLandOfGebiedAanvang)
-                                   .append(redenBeeindigingRelatie, andereRedenBeeindigingRelatie)
-                                   .append(voorkomen.getDatumEinde(), ander.getDatumEinde())
-                                   .append(gemeenteEinde, andereGemeenteEinde)
-                                   .append(voorkomen.getBuitenlandsePlaatsEinde(), ander.getBuitenlandsePlaatsEinde())
-                                   .append(voorkomen.getOmschrijvingLocatieEinde(), ander.getOmschrijvingLocatieEinde())
-                                   .append(landOfGebiedEinde, andereLandOfGebiedEinde)
-                                   .append(voorkomen.getSoortRelatie(), ander.getSoortRelatie())
-                                   .append(voorkomen.getIndicatieOuder1HeeftGezag(), ander.getIndicatieOuder1HeeftGezag())
-                                   .append(voorkomen.getIndicatieOuder2HeeftGezag(), ander.getIndicatieOuder2HeeftGezag())
-                                   .append(voorkomen.getIndicatieDerdeHeeftGezag(), ander.getIndicatieDerdeHeeftGezag())
-                                   .append(voorkomen.getIndicatieOnderCuratele(), ander.getIndicatieOnderCuratele());
+                        .append(
+                                voorkomen.getRubriek6210DatumIngangFamilierechtelijkeBetrekking(),
+                                ander.getRubriek6210DatumIngangFamilierechtelijkeBetrekking())
+                        .append(voorkomen.getAnummer(), ander.getAnummer())
+                        .append(voorkomen.getBsn(), ander.getBsn())
+                        .append(voorkomen.getVoornamen(), ander.getVoornamen())
+                        .append(voorkomen.getPredicaat(), ander.getPredicaat())
+                        .append(voorkomen.getAdellijkeTitel(), ander.getAdellijkeTitel())
+                        .append(
+                                voorkomen.getGeslachtsaanduidingBijAdellijkeTitelOfPredikaat(),
+                                ander.getGeslachtsaanduidingBijAdellijkeTitelOfPredikaat())
+                        .append(voorkomen.getVoorvoegsel(), ander.getVoorvoegsel())
+                        .append(voorkomen.getScheidingsteken(), ander.getScheidingsteken())
+                        .append(voorkomen.getGeslachtsnaamstam(), ander.getGeslachtsnaamstam())
+                        .append(voorkomen.getDatumGeboorte(), ander.getDatumGeboorte())
+                        .append(gemeenteGeboorte, andereGemeenteGeboorte)
+                        .append(voorkomen.getBuitenlandsePlaatsGeboorte(), ander.getBuitenlandsePlaatsGeboorte())
+                        .append(voorkomen.getOmschrijvingLocatieGeboorte(), ander.getOmschrijvingLocatieGeboorte())
+                        .append(landOfGebiedGeboorte, andereLandOfGebiedGeboorte)
+                        .append(voorkomen.getGeslachtsaanduiding(), ander.getGeslachtsaanduiding())
+                        .append(voorkomen.getDatumAanvang(), ander.getDatumAanvang())
+                        .append(gemeenteAanvang, andereGemeenteAanvang)
+                        .append(voorkomen.getBuitenlandsePlaatsAanvang(), ander.getBuitenlandsePlaatsAanvang())
+                        .append(voorkomen.getOmschrijvingLocatieAanvang(), ander.getOmschrijvingLocatieAanvang())
+                        .append(landOfGebiedAanvang, andereLandOfGebiedAanvang)
+                        .append(redenBeeindigingRelatie, andereRedenBeeindigingRelatie)
+                        .append(voorkomen.getDatumEinde(), ander.getDatumEinde())
+                        .append(gemeenteEinde, andereGemeenteEinde)
+                        .append(voorkomen.getBuitenlandsePlaatsEinde(), ander.getBuitenlandsePlaatsEinde())
+                        .append(voorkomen.getOmschrijvingLocatieEinde(), ander.getOmschrijvingLocatieEinde())
+                        .append(landOfGebiedEinde, andereLandOfGebiedEinde)
+                        .append(voorkomen.getSoortRelatie(), ander.getSoortRelatie())
+                        .append(voorkomen.getIndicatieOuder1HeeftGezag(), ander.getIndicatieOuder1HeeftGezag())
+                        .append(voorkomen.getIndicatieOuder2HeeftGezag(), ander.getIndicatieOuder2HeeftGezag())
+                        .append(voorkomen.getIndicatieDerdeHeeftGezag(), ander.getIndicatieDerdeHeeftGezag())
+                        .append(voorkomen.getIndicatieOnderCuratele(), ander.getIndicatieOnderCuratele());
 
         if (ookOverigeGegevensControleren) {
-            final Integer partij = getPartijWaarde(voorkomen.getPartij());
-            final Integer anderePartij = getPartijWaarde(ander.getPartij());
+            final String partij = getPartijWaarde(voorkomen.getPartij());
+            final String anderePartij = getPartijWaarde(ander.getPartij());
 
             final String soortDocument = getSoortDocumentWaarde(voorkomen.getSoortDocument());
             final String andereSoortDocument = getSoortDocumentWaarde(ander.getSoortDocument());
 
             equalsBuilder =
                     equalsBuilder.append(voorkomen.getAktenummer(), ander.getAktenummer())
-                                 .append(partij, anderePartij)
-                                 .append(soortDocument, andereSoortDocument)
-                                 .append(voorkomen.getRubriek8220DatumDocument(), ander.getRubriek8220DatumDocument())
-                                 .append(voorkomen.getDocumentOmschrijving(), ander.getDocumentOmschrijving())
-                                 .append(voorkomen.getRubriek8310AanduidingGegevensInOnderzoek(), ander.getRubriek8310AanduidingGegevensInOnderzoek())
-                                 .append(voorkomen.getRubriek8320DatumIngangOnderzoek(), ander.getRubriek8320DatumIngangOnderzoek())
-                                 .append(voorkomen.getRubriek8330DatumEindeOnderzoek(), ander.getRubriek8330DatumEindeOnderzoek())
-                                 .append(voorkomen.getRubriek8410OnjuistOfStrijdigOpenbareOrde(), ander.getRubriek8410OnjuistOfStrijdigOpenbareOrde())
-                                 .append(voorkomen.getRubriek8610DatumVanOpneming(), ander.getRubriek8610DatumVanOpneming());
+                            .append(partij, anderePartij)
+                            .append(soortDocument, andereSoortDocument)
+                            .append(voorkomen.getRubriek8220DatumDocument(), ander.getRubriek8220DatumDocument())
+                            .append(voorkomen.getDocumentOmschrijving(), ander.getDocumentOmschrijving())
+                            .append(voorkomen.getRubriek8310AanduidingGegevensInOnderzoek(), ander.getRubriek8310AanduidingGegevensInOnderzoek())
+                            .append(voorkomen.getRubriek8320DatumIngangOnderzoek(), ander.getRubriek8320DatumIngangOnderzoek())
+                            .append(voorkomen.getRubriek8330DatumEindeOnderzoek(), ander.getRubriek8330DatumEindeOnderzoek())
+                            .append(voorkomen.getRubriek8410OnjuistOfStrijdigOpenbareOrde(), ander.getRubriek8410OnjuistOfStrijdigOpenbareOrde())
+                            .append(voorkomen.getRubriek8610DatumVanOpneming(), ander.getRubriek8610DatumVanOpneming());
         }
         return equalsBuilder.isEquals();
     }
 
     /**
      * Geef de waarde van administratieve handeling.
-     *
      * @return de administratieve handeling voor dit voorkomen.
      */
     public AdministratieveHandeling getAdministratieveHandeling() {
@@ -261,9 +249,7 @@ public final class StapelVoorkomenDecorator extends AbstractDecorator {
 
     /**
      * Zet de gegeven administratieve handeling voor dit voorkomen.
-     *
-     * @param administratieveHandeling
-     *            de administratieve handeling
+     * @param administratieveHandeling de administratieve handeling
      */
     public void setAdministratieveHandeling(final AdministratieveHandeling administratieveHandeling) {
         voorkomen.setAdministratieveHandeling(administratieveHandeling);

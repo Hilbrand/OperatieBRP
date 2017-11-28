@@ -6,8 +6,28 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AutoriteitAfgifteBuitenlandsPersoonsnummer;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Rubriek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerkrijgingNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortPartij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNationaliteitCode;
@@ -20,35 +40,16 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortDocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpVerblijfsrechtCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.FoutmeldingUtil;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerkrijgingNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerliesNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPartij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Verblijfsrecht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.Lo3Rubriek;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 /* Class Fan-Out complexity is hier hoog maar deze class is niet onnodig complex */
+
 /**
  * Een adapter voor het bevragen van stamtabellen voor het mappen van het migratie model op de entiteiten uit het
  * operationele model van de BRP.
- *
  */
 final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
 
@@ -57,11 +58,9 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
 
     /**
      * Maakt een DynamischeStamtabelRepositoryAdapter object.
-     *
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt.
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt.
      */
-    public DynamischeStamtabelRepositoryAdapter(final DynamischeStamtabelRepository dynamischeStamtabelRepository) {
+    DynamischeStamtabelRepositoryAdapter(final DynamischeStamtabelRepository dynamischeStamtabelRepository) {
         this.dynamischeStamtabelRepository = dynamischeStamtabelRepository;
     }
 
@@ -70,7 +69,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public RedenVerliesNLNationaliteit findRedenVerliesNLNationaliteitByCode(final BrpRedenVerliesNederlandschapCode redenVerliesNederlandschapCode) {
-        if (!Validatie.isAttribuutGevuld(redenVerliesNederlandschapCode)) {
+        if (!BrpValidatie.isAttribuutGevuld(redenVerliesNederlandschapCode)) {
             return null;
         }
         return dynamischeStamtabelRepository.getRedenVerliesNLNationaliteitByCode(redenVerliesNederlandschapCode.getWaarde());
@@ -81,9 +80,8 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public RedenVerkrijgingNLNationaliteit findRedenVerkrijgingNLNationaliteitByCode(
-        final BrpRedenVerkrijgingNederlandschapCode redenVerkrijgingNederlandschapCode)
-    {
-        if (!Validatie.isAttribuutGevuld(redenVerkrijgingNederlandschapCode)) {
+            final BrpRedenVerkrijgingNederlandschapCode redenVerkrijgingNederlandschapCode) {
+        if (!BrpValidatie.isAttribuutGevuld(redenVerkrijgingNederlandschapCode)) {
             return null;
         }
         return dynamischeStamtabelRepository.getRedenVerkrijgingNLNationaliteitByCode(redenVerkrijgingNederlandschapCode.getWaarde());
@@ -102,7 +100,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public Gemeente findGemeenteByCode(final BrpGemeenteCode gemeenteCode, final SoortMeldingCode soortMeldingCode) {
-        if (!Validatie.isAttribuutGevuld(gemeenteCode)) {
+        if (!BrpValidatie.isAttribuutGevuld(gemeenteCode)) {
             return null;
         }
         try {
@@ -110,9 +108,9 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
         } catch (final InvalidDataAccessApiUsageException idae) {
             LOG.error("Validatie Exceptie gemeente code", idae);
             throw FoutmeldingUtil.getValidatieExceptie(
-                String.format("De gemeentecode '%s' komt niet voor in de gemeentetabel.", gemeenteCode.getWaarde()),
-                soortMeldingCode,
-                idae);
+                    String.format("De gemeentecode '%s' komt niet voor in de gemeentetabel.", gemeenteCode.getWaarde()),
+                    soortMeldingCode,
+                    idae);
         }
     }
 
@@ -122,7 +120,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
     @Override
     public Partij findPartijByCode(final BrpPartijCode partijCode) {
         Partij result = null;
-        if (Validatie.isAttribuutGevuld(partijCode)) {
+        if (BrpValidatie.isAttribuutGevuld(partijCode)) {
             result = dynamischeStamtabelRepository.getPartijByCode(partijCode.getWaarde());
         }
         return result;
@@ -141,7 +139,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public LandOfGebied findLandOfGebiedByCode(final BrpLandOfGebiedCode landOfGebiedCode, final SoortMeldingCode soortMeldingCode) {
-        if (!Validatie.isAttribuutGevuld(landOfGebiedCode)) {
+        if (!BrpValidatie.isAttribuutGevuld(landOfGebiedCode)) {
             return null;
         }
         try {
@@ -149,9 +147,9 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
         } catch (final InvalidDataAccessApiUsageException idae) {
             LOG.error("Validatie Exceptie landcode code", idae);
             throw FoutmeldingUtil.getValidatieExceptie(
-                String.format("De landcode '%s' komt niet voor in de landtabel.", landOfGebiedCode.getWaarde()),
-                soortMeldingCode,
-                idae);
+                    String.format("De landcode '%s' komt niet voor in de landtabel.", landOfGebiedCode.getWaarde()),
+                    soortMeldingCode,
+                    idae);
         }
     }
 
@@ -160,7 +158,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public Verblijfsrecht findVerblijfsrechtByCode(final BrpVerblijfsrechtCode verblijfsrechtCode) {
-        if (!Validatie.isAttribuutGevuld(verblijfsrechtCode)) {
+        if (!BrpValidatie.isAttribuutGevuld(verblijfsrechtCode)) {
             return null;
         }
         return dynamischeStamtabelRepository.getVerblijfsrechtByCode(verblijfsrechtCode.getWaarde());
@@ -171,7 +169,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public Aangever findAangeverByCode(final BrpAangeverCode aangeverCode) {
-        if (!Validatie.isAttribuutGevuld(aangeverCode)) {
+        if (!BrpValidatie.isAttribuutGevuld(aangeverCode)) {
             return null;
         }
         return dynamischeStamtabelRepository.getAangeverByCode(aangeverCode.getWaarde());
@@ -182,7 +180,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public RedenWijzigingVerblijf findRedenWijzigingVerblijfByCode(final BrpRedenWijzigingVerblijfCode redenWijzigingVerblijfCode) {
-        if (!Validatie.isAttribuutGevuld(redenWijzigingVerblijfCode)) {
+        if (!BrpValidatie.isAttribuutGevuld(redenWijzigingVerblijfCode)) {
             return null;
         }
         return dynamischeStamtabelRepository.getRedenWijzigingVerblijf(redenWijzigingVerblijfCode.getWaarde());
@@ -193,7 +191,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public Nationaliteit findNationaliteitByCode(final BrpNationaliteitCode brpNationaliteitCode) {
-        if (!Validatie.isAttribuutGevuld(brpNationaliteitCode)) {
+        if (!BrpValidatie.isAttribuutGevuld(brpNationaliteitCode)) {
             return null;
         }
         return dynamischeStamtabelRepository.getNationaliteitByNationaliteitcode(brpNationaliteitCode.getWaarde());
@@ -204,9 +202,8 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public AanduidingInhoudingOfVermissingReisdocument findAanduidingInhoudingOfVermissingReisdocumentByCode(
-        final BrpAanduidingInhoudingOfVermissingReisdocumentCode brpAanduidingInhoudingOfVermissingReisdocumentCode)
-    {
-        if (!Validatie.isAttribuutGevuld(brpAanduidingInhoudingOfVermissingReisdocumentCode)) {
+            final BrpAanduidingInhoudingOfVermissingReisdocumentCode brpAanduidingInhoudingOfVermissingReisdocumentCode) {
+        if (!BrpValidatie.isAttribuutGevuld(brpAanduidingInhoudingOfVermissingReisdocumentCode)) {
             return null;
         }
         final Character code = brpAanduidingInhoudingOfVermissingReisdocumentCode.getWaarde();
@@ -218,7 +215,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public SoortNederlandsReisdocument findSoortNederlandsReisdocumentByCode(final BrpSoortNederlandsReisdocumentCode brpSoortNederlandsReisdocumentCode) {
-        if (!Validatie.isAttribuutGevuld(brpSoortNederlandsReisdocumentCode)) {
+        if (!BrpValidatie.isAttribuutGevuld(brpSoortNederlandsReisdocumentCode)) {
             return null;
         }
         return dynamischeStamtabelRepository.getSoortNederlandsReisdocumentByCode(brpSoortNederlandsReisdocumentCode.getWaarde());
@@ -229,7 +226,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public SoortDocument findSoortDocumentByCode(final BrpSoortDocumentCode soortDocumentCode) {
-        if (!Validatie.isAttribuutGevuld(soortDocumentCode)) {
+        if (!BrpValidatie.isAttribuutGevuld(soortDocumentCode)) {
             return null;
         }
         return dynamischeStamtabelRepository.getSoortDocumentByNaam(soortDocumentCode.getWaarde());
@@ -240,7 +237,7 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
      */
     @Override
     public RedenBeeindigingRelatie findRedenBeeindigingRelatieByCode(final BrpRedenEindeRelatieCode redenEinde) {
-        if (!Validatie.isAttribuutGevuld(redenEinde)) {
+        if (!BrpValidatie.isAttribuutGevuld(redenEinde)) {
             return null;
         }
         return dynamischeStamtabelRepository.getRedenBeeindigingRelatieByCode(redenEinde.getWaarde());
@@ -260,5 +257,15 @@ final class DynamischeStamtabelRepositoryAdapter implements StamtabelMapping {
             return null;
         }
         return dynamischeStamtabelRepository.getSoortPartijByNaam(soortPartijCode.getSoortPartij());
+    }
+
+    @Override
+    public AutoriteitAfgifteBuitenlandsPersoonsnummer findAutoriteitVanAfgifteBuitenlandsPersoonsnummer(
+            final BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer autoriteitVanAfgifteBuitenlandsPersoonsnummer) {
+        if (autoriteitVanAfgifteBuitenlandsPersoonsnummer == null) {
+            return null;
+        }
+        return dynamischeStamtabelRepository.getAutorisatieVanAfgifteBuitenlandsPersoonsnummer(autoriteitVanAfgifteBuitenlandsPersoonsnummer.getWaarde());
+
     }
 }

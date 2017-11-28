@@ -7,9 +7,8 @@
 /**
  * Service-laag van de DAL.
  * Verantwoordelijkheden van deze laag:
- *  - Afschermen van entities voor de buitenwereld. Parameters en return types zijn dus altijd van een type dat
- *  resideert in een migratie-model package.
- * 
+ * - Afschermen van entities voor de buitenwereld. Parameters en return types zijn dus altijd van een type dat
+ * resideert in een migratie-model package.
  * @since 1.0
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.service;

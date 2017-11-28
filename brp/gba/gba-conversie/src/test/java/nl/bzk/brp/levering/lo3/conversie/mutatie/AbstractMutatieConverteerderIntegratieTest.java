@@ -6,243 +6,576 @@
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import javax.inject.Inject;
-import nl.bzk.brp.levering.dataaccess.AbstractIntegratieTest;
-import nl.bzk.brp.levering.lo3.conversie.ConversieCache;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
-import nl.bzk.brp.model.HistorieSet;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.FunctieAdres;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Geslachtsaanduiding;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Naamgebruik;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Partij;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortActie;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortAdministratieveHandeling;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonAdresHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonAdresHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
-import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
-import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
-import org.junit.Assert;
-import org.junit.Before;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
-import support.PersoonHisVolledigUtil;
+import java.time.ZonedDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.util.common.DatumUtil;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.leveringmodel.Actie;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.TestVerantwoording;
+import nl.bzk.brp.levering.lo3.conversie.AbstractConversieIntegratieTest;
 
-@ContextConfiguration(locations = "classpath:config/mutatieconverteerder-test-context.xml", inheritLocations = false)
-public abstract class AbstractMutatieConverteerderIntegratieTest extends AbstractIntegratieTest {
+public abstract class AbstractMutatieConverteerderIntegratieTest extends AbstractConversieIntegratieTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger();
+    protected Actie actie;
 
-    @Inject
-    protected MutatieConverteerder subject;
-    //
-    // @Inject
-    // protected TestVerConvRepository verConvRepository;
-    // @Inject
-    // protected TestLo3AanduidingOuderRepository lo3AanduidingOuderRepository;
+    protected AdministratieveHandeling basisAdministratieveHandeling;
 
-    protected Partij partij = PersoonHisVolledigUtil.maakPartij();
+    protected AtomicInteger idTeller = new AtomicInteger(10000);
 
-    protected PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-
-    protected ActieModel actieGeboorte =
-            PersoonHisVolledigUtil.maakActie(1L, SoortAdministratieveHandeling.GEBOORTE_IN_NEDERLAND, SoortActie.REGISTRATIE_GEBOORTE, 19200101, partij);
-
-    protected void voegGeboorteToe(final PersoonHisVolledigImplBuilder builder, final ActieModel actieGeboorte) {
-        // Geboorte
-        final PersoonAdresHisVolledigImpl adres =
-                new PersoonAdresHisVolledigImplBuilder().nieuwStandaardRecord(actieGeboorte)
-                                                        .aangeverAdreshouding("I")
-                                                        .datumAanvangAdreshouding(actieGeboorte.getDatumAanvangGeldigheid())
-                                                        .gemeente((short) 518)
-                                                        .gemeentedeel("deel vd gemeente")
-                                                        .huisletter("A")
-                                                        .huisnummer(10)
-                                                        .huisnummertoevoeging("B")
-                                                        .landGebied((short) 6030)
-                                                        .naamOpenbareRuimte("naam")
-                                                        .postcode("2245HJ")
-                                                        .redenWijziging("P")
-                                                        .soort(FunctieAdres.WOONADRES)
-                                                        .woonplaatsnaam("Rotterdam")
-                                                        .eindeRecord(1001)
-                                                        .build();
-        ReflectionTestUtils.setField(adres, "iD", 34544);
-        builder.voegPersoonAdresToe(adres);
-
-        builder.nieuwGeboorteRecord(actieGeboorte)
-               .datumGeboorte(actieGeboorte.getDatumAanvangGeldigheid())
-               .gemeenteGeboorte((short) 518)
-               .landGebiedGeboorte((short) 6030)
-               .eindeRecord(1002);
-        builder.nieuwGeslachtsaanduidingRecord(actieGeboorte).geslachtsaanduiding(Geslachtsaanduiding.MAN).eindeRecord(1003);
-        builder.nieuwIdentificatienummersRecord(actieGeboorte).administratienummer(1234567890L).burgerservicenummer(123456789).eindeRecord(1004);
-        builder.nieuwInschrijvingRecord(actieGeboorte)
-               .datumInschrijving(actieGeboorte.getDatumAanvangGeldigheid())
-               .versienummer(1L)
-               .datumtijdstempel(new Date(123))
-               .eindeRecord(1005);
-        builder.nieuwNaamgebruikRecord(actieGeboorte).indicatieNaamgebruikAfgeleid(true).naamgebruik(Naamgebruik.EIGEN).eindeRecord(1006);
-        builder.nieuwAfgeleidAdministratiefRecord(actieGeboorte)
-               .indicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig(false)
-               .tijdstipLaatsteWijziging(actieGeboorte.getTijdstipRegistratie())
-               .tijdstipLaatsteWijzigingGBASystematiek(actieGeboorte.getTijdstipRegistratie())
-               .eindeRecord(1007);
-        builder.nieuwSamengesteldeNaamRecord(actieGeboorte)
-               .geslachtsnaamstam("geslachtsnaam")
-               .voorvoegsel("de")
-               .voornamen("Voornaam1 Voornaam2")
-               .scheidingsteken(" ")
-               .eindeRecord(1008);
-        builder.nieuwBijhoudingRecord(actieGeboorte).bijhoudingspartij(51801).eindeRecord(1009);
+    public AbstractMutatieConverteerderIntegratieTest() {
+        maakBasisAdministratieveHandeling();
     }
 
-    @Before
-    public void setup() {
-        voegGeboorteToe(builder, actieGeboorte);
-        // verConvRepository.reset();
-        // lo3AanduidingOuderRepository.reset();
+    protected void maakBasisAdministratieveHandeling() {
+        final MetaObject ah = TestVerantwoording
+                .maakAdministratieveHandeling(-21L, "000034", ZonedDateTime.of(1920, 1, 3, 0, 0, 0, 0, DatumUtil.BRP_ZONE_ID),
+                        SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL)
+                .metObject(TestVerantwoording
+                        .maakActieBuilder(-21L, SoortActie.BEEINDIGING_VOORNAAM, ZonedDateTime.of(1920, 1, 2, 0, 0, 0, 0, DatumUtil.BRP_ZONE_ID), "000001", null)
+                ).build();
+        basisAdministratieveHandeling = AdministratieveHandeling.converter().converteer(ah);
+        actie = basisAdministratieveHandeling.getActies().iterator().next();
     }
 
-    protected List<Lo3CategorieWaarde> uitvoeren(final PersoonHisVolledig persoon, final ActieModel actie) {
-        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, actie.getAdministratieveHandeling(), new ConversieCache());
-
-        LOGGER.info("Resultaat ({}):", resultaat.size());
-        for (final Lo3CategorieWaarde categorie : resultaat) {
-            LOGGER.info(" - {}", categorie);
-        }
-
-        return resultaat;
+    AdministratieveHandeling getBijhoudingsAdministratieveHandeling() {
+        return getBijhoudingsAdministratieveHandeling(1940, 1, 2);
     }
 
-    protected List<Lo3CategorieWaarde> uitvoeren(final ActieModel... acties) {
-        Assert.assertTrue("Geen actie meegegeven bij uitvoeren", acties.length > 0);
-        final PersoonHisVolledigImpl persoon = builder.build();
-        final List<ActieModel> alleActies = new ArrayList<>(Arrays.asList(acties));
-        alleActies.add(actieGeboorte);
-        PersoonHisVolledigUtil.maakVerantwoording(persoon, alleActies.toArray(new ActieModel[] {}));
-
-        return uitvoeren(persoon, acties[0]);
+    AdministratieveHandeling getBijhoudingsAdministratieveHandeling(final int jaar, final int maand, final int dag) {
+        final ZonedDateTime tsReg = ZonedDateTime.of(jaar, maand, dag, 0, 0, 0, 0,
+                DatumUtil.BRP_ZONE_ID);
+        final MetaObject ah = TestVerantwoording
+                .maakAdministratieveHandeling(idTeller.getAndIncrement(), "000034", tsReg, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL)
+                .metObject(TestVerantwoording.maakActieBuilder(idTeller.getAndIncrement(), SoortActie.CONVERSIE_GBA, tsReg, "000001", 0)
+                ).build();
+        return AdministratieveHandeling.converter().converteer(ah);
     }
 
-    protected void assertElementen(
-        final List<Lo3CategorieWaarde> resultaat,
-        final Lo3CategorieEnum categorie,
-        final boolean volledig,
-        final Object... elementen)
-    {
-        Assert.assertTrue(elementen.length % 2 == 0);
-        boolean found = false;
-        for (final Lo3CategorieWaarde categorieWaarde : resultaat) {
-            if (categorie == categorieWaarde.getCategorie()) {
-                found = true;
 
-                for (int elementIndex = 0; elementIndex < elementen.length; elementIndex = elementIndex + 2) {
-                    final Lo3ElementEnum element = (Lo3ElementEnum) elementen[elementIndex];
-                    final String elementWaarde = (String) elementen[elementIndex + 1];
-
-                    Assert.assertTrue(
-                        "Element "
-                                      + element.getElementNummer(true)
-                                      + " ("
-                                      + element.getLabel()
-                                      + ") komt niet voor in categorie "
-                                      + categorie
-                                      + " ("
-                                      + categorie.getLabel()
-                                      + ").",
-                        categorieWaarde.getElementen().containsKey(element));
-
-                    Assert.assertEquals(
-                        "Element "
-                                        + element.getElementNummer(true)
-                                        + " ("
-                                        + element.getLabel()
-                                        + ") in categorie "
-                                        + categorie
-                                        + " ("
-                                        + categorie.getLabel()
-                                        + ") heeft niet de verwachte waarde.",
-                        elementWaarde,
-                        categorieWaarde.getElement(element));
-                }
-
-                if (volledig) {
-                    Assert.assertEquals("Ander aantal elementen dan verwacht in categorie.", elementen.length / 2, categorieWaarde.getElementen().size());
-                }
-            }
-        }
-        Assert.assertTrue("Categorie " + categorie + " niet gevonden in resultaat", found);
+    protected MetaObject maakBasisPersoon(final int persoonId) {
+        return maakBasisPersoonBuilder(persoonId).build();
     }
 
-    protected void debugHistorieSet(final Object builder, final String historieGetMethodeNaam) {
-        final Object hisVolledigImpl = ReflectionTestUtils.getField(builder, "hisVolledigImpl");
-        final HistorieSet<?> historieSet = (HistorieSet<?>) ReflectionTestUtils.invokeGetterMethod(hisVolledigImpl, historieGetMethodeNaam);
-        debugHistorieSet(historieSet);
+    MetaObject.Builder maakBasisPersoonBuilder(final int persoonId) {
+        MetaObject.Builder basispersoon = MetaObject.maakBuilder();
+
+        basispersoon.metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId())).metId(persoonId);
+        voegGeboorteToe(basispersoon, actie, 19200101, "0518", "6030");
+        voegIdentificatieNummersToe(basispersoon, actie, 19200101, "1234567890", "123456789");
+        voegSamengesteldeNaamToe(basispersoon, actie, 19200101, "Voornaam1 Voornaam2", "de", " ", "geslachtsnaam");
+        voegAfgeleidAdministratiefToe(basispersoon);
+        voegInschrijvingToe(basispersoon);
+        voegIndentiteitToe(basispersoon, "I");
+        voegBijhoudingToe(basispersoon);
+        voegNaamgebruikToe(basispersoon);
+        voegGeslachtsaanduidingToe(basispersoon, actie, 19200101, "M");
+        basispersoon.eindeObject();
+
+        MetaObject.Builder basisadres =
+                basispersoon.metObject().metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_ADRES.getId())).metId(34544);
+        voegAdresIdentiteitToe(basisadres);
+        voegAdresStandaardToe(basisadres);
+        basispersoon.eindeObject();
+        return basispersoon;
     }
 
-    protected void debugHistorieSet(final HistorieSet<?> historieSet) {
-        LOGGER.info("Historie ({})", historieSet.getAantal());
-        for (final Object historieRecord : historieSet) {
-            LOGGER.info(" -  {}", objectToString(historieRecord));
-        }
+    private void voegAdresIdentiteitToe(final MetaObject.Builder moBuilder) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_ADRES_IDENTITEIT.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .eindeRecord()
+                .eindeGroep();
     }
 
-    protected String objectToString(final Object historieRecord) {
-        if (historieRecord == null) {
-            return "null";
-        }
-
-        Class<?> clazz = historieRecord.getClass();
-        final StringBuilder result = new StringBuilder();
-        result.append(clazz.getSimpleName()).append('[');
-
-        boolean first = true;
-        do {
-            for (final Field field : clazz.getDeclaredFields()) {
-                if (field.getName().startsWith("ajc$tjp_") || field.getName().startsWith("JiBX_")) {
-                    continue;
-                }
-
-                field.setAccessible(true);
-                Object value;
-                try {
-                    value = field.get(historieRecord);
-
-                    if (first) {
-                        first = false;
-                    } else {
-                        result.append(", ");
-                    }
-                    result.append(field.getName()).append('=').append(value);
-
-                } catch (final ReflectiveOperationException e) {
-                    LOGGER.warn("Fout bij ophalen veld waarde", e);
-                }
-            }
-
-        } while ((clazz = clazz.getSuperclass()) != null);
-        result.append(']');
-
-        return result.toString();
+    private void voegAdresStandaardToe(final MetaObject.Builder moBuilder) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_ADRES_STANDAARD.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metDatumAanvangGeldigheid(19200101)
+                .metActieInhoud(actie)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_AANGEVERADRESHOUDINGCODE.getId()), "I")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_DATUMAANVANGADRESHOUDING.getId()), 19200101)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTECODE.getId()), "0518")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_GEMEENTEDEEL.getId()), "deel vd gemeente")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISLETTER.getId()), "A")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMER.getId()), 10)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_HUISNUMMERTOEVOEGING.getId()), "B")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_INDICATIEPERSOONAANGETROFFENOPADRES.getId()), false)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_LANDGEBIEDCODE.getId()), "6030")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_NAAMOPENBARERUIMTE.getId()), "naam")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_POSTCODE.getId()), "2245HJ")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_REDENWIJZIGINGCODE.getId()), "P")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_SOORTCODE.getId()), "W")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_ADRES_WOONPLAATSNAAM.getId()), "Rotterdam")
+                .eindeRecord()
+                .eindeGroep();
     }
 
-    protected void debugResultaat(final List<Lo3CategorieWaarde> resultaat) {
-        LOGGER.info("Categorieen ({})", resultaat.size());
-        for (final Lo3CategorieWaarde categorie : resultaat) {
-            LOGGER.info(" - {}", categorie);
-        }
+    private void voegGeboorteToe(
+            final MetaObject.Builder moBuilder,
+            final Actie geboorteActie,
+            final int datum,
+            final String gemeenteCode,
+            final String landgebied) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_GEBOORTE.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(geboorteActie)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_DATUM.getId()), datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_GEMEENTECODE.getId()), gemeenteCode)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_LANDGEBIEDCODE.getId()), landgebied)
+                .eindeRecord()
+                .eindeGroep();
     }
 
+    void voegGerelateerdeOuderGeboorteToe(
+            final MetaObject.Builder moBuilder,
+            final Actie geboorteActie,
+            final int datum,
+            final String gemeenteCode,
+            final String landgebied) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEOUDER_PERSOON_GEBOORTE.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(geboorteActie)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_GEBOORTE_DATUM.getId()), datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_GEBOORTE_GEMEENTECODE.getId()), gemeenteCode)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_GEBOORTE_LANDGEBIEDCODE.getId()), landgebied)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    void voegGerelateerdeKindGeboorteToe(
+            final MetaObject.Builder moBuilder,
+            final Actie geboorteActie,
+            final int datum,
+            final String gemeenteCode,
+            final String landgebied) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEKIND_PERSOON_GEBOORTE.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(geboorteActie)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_GEBOORTE_DATUM.getId()), datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_GEBOORTE_GEMEENTECODE.getId()), gemeenteCode)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_GEBOORTE_LANDGEBIEDCODE.getId()), landgebied)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    protected void voegGerelateerdeHuwelijkspartnerGeboorteToe(
+            final MetaObject.Builder moBuilder,
+            final Actie geboorteActie,
+            final int datum,
+            final String gemeenteCode,
+            final String landgebied) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GEBOORTE.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(geboorteActie)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GEBOORTE_DATUM.getId()), datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GEBOORTE_GEMEENTECODE.getId()), gemeenteCode)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GEBOORTE_LANDGEBIEDCODE.getId()), landgebied)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    protected void voegGerelateerdeGeregistreerdePartnerGeboorteToe(
+            final MetaObject.Builder moBuilder,
+            final Actie geboorteActie,
+            final int datum,
+            final String gemeenteCode,
+            final String landgebied) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GEBOORTE.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(geboorteActie)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GEBOORTE_DATUM.getId()), datum)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GEBOORTE_GEMEENTECODE.getId()),
+                        gemeenteCode)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GEBOORTE_LANDGEBIEDCODE.getId()),
+                        landgebied)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    void voegIdentificatieNummersToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieIdentificatienummers,
+            final int datum,
+            final String anr,
+            final String bsn) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_IDENTIFICATIENUMMERS.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieIdentificatienummers)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER.getId()), anr)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER.getId()), bsn)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    void voegGerelateerdeOuderIdentificatieNummersToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieIdentificatienummers,
+            final int datum,
+            final String anr,
+            final String bsn) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEOUDER_PERSOON_IDENTIFICATIENUMMERS.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieIdentificatienummers)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER.getId()), anr)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER.getId()), bsn)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    void voegGerelateerdeKindIdentificatieNummersToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieIdentificatienummers,
+            final int datum,
+            final String anr,
+            final String bsn) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEKIND_PERSOON_IDENTIFICATIENUMMERS.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieIdentificatienummers)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER.getId()), anr)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER.getId()), bsn)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    protected void voegGerelateerdeHuwelijkspartnerIdentificatieNummersToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieIdentificatienummers,
+            final int datum,
+            final String anr,
+            final String bsn) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_IDENTIFICATIENUMMERS.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieIdentificatienummers)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER.getId()),
+                        anr)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER.getId()),
+                        bsn)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    protected void voegGerelateerdeGeregistreerdePartnerIdentificatieNummersToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieIdentificatienummers,
+            final int datum,
+            final String anr,
+            final String bsn) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_IDENTIFICATIENUMMERS.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieIdentificatienummers)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER.getId()),
+                        anr)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER.getId()),
+                        bsn)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    private void voegSamengesteldeNaamToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieSamengesteldeNaam,
+            final int datum,
+            final String voornaam,
+            final String voorvoegsel,
+            final String scheidingsteken,
+            final String geslachtsnaamstam) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_SAMENGESTELDENAAM.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieSamengesteldeNaam)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SAMENGESTELDENAAM_GESLACHTSNAAMSTAM.getId()), geslachtsnaamstam)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN.getId()), scheidingsteken)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SAMENGESTELDENAAM_VOORNAMEN.getId()), voornaam)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SAMENGESTELDENAAM_VOORVOEGSEL.getId()), voorvoegsel)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    void voegGerelateerdeOuderSamengesteldeNaamToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieSamengesteldeNaam,
+            final int datum,
+            final String voornaam,
+            final String voorvoegsel,
+            final String scheidingsteken,
+            final String geslachtsnaamstam) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieSamengesteldeNaam)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_GESLACHTSNAAMSTAM.getId()),
+                        geslachtsnaamstam)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN.getId()),
+                        scheidingsteken)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_VOORNAMEN.getId()), voornaam)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_VOORVOEGSEL.getId()), voorvoegsel)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    void voegGerelateerdeKindSamengesteldeNaamToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieSamengesteldeNaam,
+            final int datum,
+            final String voornaam,
+            final String voorvoegsel,
+            final String scheidingsteken,
+            final String geslachtsnaamstam) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieSamengesteldeNaam)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_GESLACHTSNAAMSTAM.getId()),
+                        geslachtsnaamstam)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN.getId()),
+                        scheidingsteken)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_VOORNAMEN.getId()), voornaam)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_VOORVOEGSEL.getId()), voorvoegsel)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    protected void voegGerelateerdeHuwelijkspartnerSamengesteldeNaamToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieSamengesteldeNaam,
+            final int datum,
+            final String voornaam,
+            final String voorvoegsel,
+            final String scheidingsteken,
+            final String geslachtsnaamstam) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieSamengesteldeNaam)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_GESLACHTSNAAMSTAM.getId()),
+                        geslachtsnaamstam)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN.getId()),
+                        scheidingsteken)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_VOORNAMEN.getId()),
+                        voornaam)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_VOORVOEGSEL.getId()),
+                        voorvoegsel)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    protected void voegGerelateerdeGeregistreerdePartnerSamengesteldeNaamToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieSamengesteldeNaam,
+            final int datum,
+            final String voornaam,
+            final String voorvoegsel,
+            final String scheidingsteken,
+            final String geslachtsnaamstam) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieSamengesteldeNaam)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM_GESLACHTSNAAMSTAM.getId()),
+                        geslachtsnaamstam)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN.getId()),
+                        scheidingsteken)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM_VOORNAMEN.getId()),
+                        voornaam)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM_VOORVOEGSEL.getId()),
+                        voorvoegsel)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    private void voegAfgeleidAdministratiefToe(final MetaObject.Builder moBuilder) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_AFGELEIDADMINISTRATIEF.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actie)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.PERSOON_AFGELEIDADMINISTRATIEF_TIJDSTIPLAATSTEWIJZIGING.getId()),
+                        actie.getTijdstipRegistratie())
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.PERSOON_AFGELEIDADMINISTRATIEF_TIJDSTIPLAATSTEWIJZIGINGGBASYSTEMATIEK.getId()),
+                        actie.getTijdstipRegistratie())
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    private void voegInschrijvingToe(final MetaObject.Builder moBuilder) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_INSCHRIJVING.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actie)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_INSCHRIJVING_DATUM.getId()), 19200101)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.PERSOON_INSCHRIJVING_DATUMTIJDSTEMPEL.getId()),
+                        ZonedDateTime.of(1920, 1, 1, 0, 0, 0, 0, DatumUtil.BRP_ZONE_ID))
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_INSCHRIJVING_VERSIENUMMER.getId()), 1)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    private void voegIndentiteitToe(final MetaObject.Builder moBuilder, final String identiteit) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_IDENTITEIT.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SOORTCODE.getId()), identiteit)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    void voegGerelateerdeOuderIndentiteitToe(final MetaObject.Builder moBuilder, final String identiteit) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEOUDER_PERSOON_IDENTITEIT.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_SOORTCODE.getId()), identiteit)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    private void voegBijhoudingToe(final MetaObject.Builder moBuilder) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_BIJHOUDING.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actie)
+                .metDatumAanvangGeldigheid(19200101)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_BIJHOUDING_PARTIJCODE.getId()), "051801")
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    private void voegNaamgebruikToe(final MetaObject.Builder moBuilder) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_NAAMGEBRUIK.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actie)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_NAAMGEBRUIK_CODE.getId()), "E")
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_NAAMGEBRUIK_INDICATIEAFGELEID.getId()), true)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    private void voegGeslachtsaanduidingToe(final MetaObject.Builder moBuilder, final Actie actieNaamgeslacht, final int datum, final String code) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_GESLACHTSAANDUIDING.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieNaamgeslacht)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GESLACHTSAANDUIDING_CODE.getId()), code)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    void voegGerelateerdeOuderGeslachtsaanduidingToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieNaamgeslacht,
+            final int datum,
+            final String code) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEOUDER_PERSOON_GESLACHTSAANDUIDING.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieNaamgeslacht)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEOUDER_PERSOON_GESLACHTSAANDUIDING_CODE.getId()), code)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    protected void voegGerelateerdeHuwelijkspartnerGeslachtsaanduidingToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieNaamgeslacht,
+            final int datum,
+            final String code) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GESLACHTSAANDUIDING.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieNaamgeslacht)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE.getId()), code)
+                .eindeRecord()
+                .eindeGroep();
+    }
+
+    protected void voegGerelateerdeGeregistreerdePartnerGeslachtsaanduidingToe(
+            final MetaObject.Builder moBuilder,
+            final Actie actieNaamgeslacht,
+            final int datum,
+            final String code) {
+        moBuilder.metGroep()
+                .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GESLACHTSAANDUIDING.getId()))
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(actieNaamgeslacht)
+                .metDatumAanvangGeldigheid(datum)
+                .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE.getId()), code)
+                .eindeRecord()
+                .eindeGroep();
+    }
 }

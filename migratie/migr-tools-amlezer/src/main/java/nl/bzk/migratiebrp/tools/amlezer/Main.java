@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.tools.amlezer;
 
-import nl.bzk.migratiebrp.util.common.Version;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.Version;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -25,9 +25,7 @@ public final class Main {
 
     /**
      * Laad de application context en start de BerichtLezer bean.
-     *
-     * @param args
-     *            command line argumenten (ongebruikt)
+     * @param args command line argumenten (ongebruikt)
      */
     public static void main(final String[] args) {
         // Startup ApplicationContext

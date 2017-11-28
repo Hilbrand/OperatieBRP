@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><lo3Persoonslijst>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<lo3Persoonslijst>
    <overlijdenStapel>
       <lo3Categorie>
          <inhoud class="nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OverlijdenInhoud">
@@ -43,7 +44,7 @@
                <waarde>2737479410</waarde>
             </aNummer>
             <burgerservicenummer>
-               <waarde>889207689</waarde>
+               <waarde>772605129</waarde>
             </burgerservicenummer>
             <voornamen>
                <waarde>Jamie</waarde>
@@ -64,7 +65,7 @@
                <waarde>V</waarde>
             </geslachtsaanduiding>
             <aanduidingNaamgebruikCode>
-               <waarde>V</waarde>
+               <waarde>E</waarde>
             </aanduidingNaamgebruikCode>
          </inhoud>
          <historie>
@@ -162,12 +163,8 @@
             </indicatiePKVolledigGeconverteerdCode>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <documentatie>
             <id>9417</id>

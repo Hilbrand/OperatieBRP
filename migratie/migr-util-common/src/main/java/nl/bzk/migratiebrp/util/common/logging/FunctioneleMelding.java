@@ -9,10 +9,7 @@ package nl.bzk.migratiebrp.util.common.logging;
 /**
  * Functionele meldingen.
  */
-public enum FunctioneleMelding {
-
-    /** Dummy. */
-    DUMMY("", ""),
+public enum FunctioneleMelding implements nl.bzk.algemeenbrp.util.common.logging.FunctioneleMelding {
 
     //
     // Logmeldingen VOISC.
@@ -21,7 +18,7 @@ public enum FunctioneleMelding {
     /**
      * Melding starten VOISC.
      */
-    VOISC_STARTEN_APPLICATIE("VOISC001", "Starten applicatie."),
+    VOISC_STARTEN_APPLICATIE("VOISC001", FunctioneleMeldingConstanten.STARTEN_APPLICATIE.getMelding()),
 
     /**
      * Melding ongeldige parameters bij opstarten VOISC.
@@ -46,7 +43,7 @@ public enum FunctioneleMelding {
     /**
      * Melding starten VOISC voltooid.
      */
-    VOISC_APPLICATIE_CORRECT_GESTART("VOISC006", "Applicatie correct gestart."),
+    VOISC_APPLICATIE_CORRECT_GESTART("VOISC006", FunctioneleMeldingConstanten.APPLICATIE_CORRECT_GESTART.getMelding()),
 
     /**
      * Melding testen connectie tussen VOISC en mailbox.
@@ -95,12 +92,12 @@ public enum FunctioneleMelding {
     /**
      * Melding starten ISC.
      */
-    ISC_STARTEN_APPLICATIE("ISC001", "Starten applicatie."),
+    ISC_STARTEN_APPLICATIE("ISC001", FunctioneleMeldingConstanten.STARTEN_APPLICATIE.getMelding()),
 
     /**
      * Melding starten ISC voltooid.
      */
-    ISC_APPLICATIE_CORRECT_GESTART("ISC002", "Applicatie correct gestart."),
+    ISC_APPLICATIE_CORRECT_GESTART("ISC002", FunctioneleMeldingConstanten.APPLICATIE_CORRECT_GESTART.getMelding()),
 
     /**
      * Melding opschoner uitgevoerd.
@@ -142,6 +139,11 @@ public enum FunctioneleMelding {
      */
     ISC_JOB_VERWERKT("ISC121", "Job verwerkt"),
 
+    /**
+     * Melding ISC gestopt.
+     */
+    ISC_APPLICATIE_GESTOPT("ISC122", "Applicatie gestopt."),
+
     //
     // Logmeldingen ROUTERING.
     //
@@ -149,12 +151,12 @@ public enum FunctioneleMelding {
     /**
      * Melding starten ROUTERING.
      */
-    ROUTERING_STARTEN_APPLICATIE("ROUTE001", "Starten applicatie."),
+    ROUTERING_STARTEN_APPLICATIE("ROUTE001", FunctioneleMeldingConstanten.STARTEN_APPLICATIE.getMelding()),
 
     /**
      * Melding starten ROUTERING voltooid.
      */
-    ROUTERING_APPLICATIE_CORRECT_GESTART("ROUTE002", "Applicatie correct gestart."),
+    ROUTERING_APPLICATIE_CORRECT_GESTART("ROUTE002", FunctioneleMeldingConstanten.APPLICATIE_CORRECT_GESTART.getMelding()),
 
     /**
      * Melding ROUTERING gestopt.
@@ -168,12 +170,12 @@ public enum FunctioneleMelding {
     /**
      * Melding starten SYNC.
      */
-    SYNC_STARTEN_APPLICATIE("SYNC001", "Starten applicatie."),
+    SYNC_STARTEN_APPLICATIE("SYNC001", FunctioneleMeldingConstanten.STARTEN_APPLICATIE.getMelding()),
 
     /**
      * Melding starten SYNC voltooid.
      */
-    SYNC_APPLICATIE_GESTART("SYNC002", "Applicatie correct gestart."),
+    SYNC_APPLICATIE_GESTART("SYNC002", FunctioneleMeldingConstanten.APPLICATIE_CORRECT_GESTART.getMelding()),
 
     /**
      * Melding SYNC verzoek verwerkt.
@@ -183,7 +185,7 @@ public enum FunctioneleMelding {
     /**
      * Melding verzoek verwerkt.
      */
-    SYNC_GEMEENTEREGISTER_VERWERKT("SYNC101", "Gemeenteregister verzoek verwerkt"),
+    SYNC_PARTIJREGISTER_VERWERKT("SYNC101", "Partijregister verzoek verwerkt"),
 
     /**
      * Melding verzoek verwerkt.
@@ -208,18 +210,24 @@ public enum FunctioneleMelding {
     /**
      * Melding notificaitie verwerkt.
      */
-    SYNC_LEVERING_VERWERKT("SYNC202", "Levering notificatie verwerkt");
+    SYNC_LEVERING_VERWERKT("SYNC202", "Levering notificatie verwerkt"),
+
+    //
+    // Logmeldingen NOTIFICATIE.
+    //
+
+    /**
+     * Melding notificatie bericht verwerkt.
+     */
+    ISC_NOTIFICATIE_VERWERKT("NOTIFICATIE100", "NOTIFICATIE bericht verwerkt");
 
     private final String code;
     private final String omschrijving;
 
     /**
      * Constructor.
-     *
-     * @param code
-     *            code
-     * @param omschrijving
-     *            omschrijving
+     * @param code code
+     * @param omschrijving omschrijving
      */
     FunctioneleMelding(final String code, final String omschrijving) {
         this.code = code;
@@ -228,18 +236,18 @@ public enum FunctioneleMelding {
 
     /**
      * Geeft de code van de functionele melding terug.
-     *
      * @return De code van de functionele melding.
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
      * Geeft de omschrijving van de functionele melding terug.
-     *
      * @return De omschrijving van de functionele melding.
      */
+    @Override
     public String getOmschrijving() {
         return omschrijving;
     }

@@ -6,32 +6,43 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonUitsluitingKiesrechtHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonUitsluitingKiesrechtHistorie;
-import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
  */
-@Component
 public class GgoBrpUitsluitingKiesrechtMapper extends AbstractGgoBrpMapper<PersoonUitsluitingKiesrechtHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpUitsluitingKiesrechtMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+                                            final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(
-        final GgoBrpVoorkomen voorkomen,
-        final PersoonUitsluitingKiesrechtHistorie brpInhoud,
-        final GgoBrpGroepEnum brpGroepEnum)
-    {
+            final GgoBrpVoorkomen voorkomen,
+            final PersoonUitsluitingKiesrechtHistorie brpInhoud,
+            final GgoBrpGroepEnum brpGroepEnum) {
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.INDICATIE_UITSLUITING_KIESRECHT,
-            brpInhoud.getIndicatieUitsluitingKiesrecht());
+                voorkomen,
+                GgoBrpElementEnum.INDICATIE_UITSLUITING_KIESRECHT,
+                brpInhoud.getIndicatieUitsluitingKiesrecht());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.DATUM_EINDE_UITSLUITING_KIESRECHT,
-            brpInhoud.getDatumVoorzienEindeUitsluitingKiesrecht());
+                voorkomen,
+                GgoBrpElementEnum.DATUM_EINDE_UITSLUITING_KIESRECHT,
+                brpInhoud.getDatumVoorzienEindeUitsluitingKiesrecht());
     }
 }

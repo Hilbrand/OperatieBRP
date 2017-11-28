@@ -15,7 +15,7 @@ public class RegressieTest extends Lo3NaarBrpConversieTestConfiguratie {
 
     @Override
     public boolean useMemoryDS() {
-         return false;
+        return false;
 //         return true;
     }
 

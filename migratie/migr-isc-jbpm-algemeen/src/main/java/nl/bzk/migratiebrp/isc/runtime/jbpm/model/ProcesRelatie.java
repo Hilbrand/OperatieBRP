@@ -13,7 +13,7 @@ import org.jbpm.graph.exe.ProcessInstance;
 /**
  * Relatie tussen twee processen.
  */
-@SuppressWarnings("checkstyle:designforextension")
+
 public class ProcesRelatie implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -21,7 +21,6 @@ public class ProcesRelatie implements Serializable {
 
     /**
      * Geeft het ID.
-     *
      * @return het ID
      */
     public ProcesRelatiePK getId() {
@@ -30,9 +29,7 @@ public class ProcesRelatie implements Serializable {
 
     /**
      * Zet het ID.
-     *
-     * @param id
-     *            Het te zetten ID.
+     * @param id Het te zetten ID.
      */
     public void setId(final ProcesRelatiePK id) {
         this.id = id;
@@ -40,7 +37,6 @@ public class ProcesRelatie implements Serializable {
 
     /**
      * Geef process instance 1 (uit id).
-     *
      * @return process instance 1 (uit id).
      */
     public ProcessInstance getProcessInstanceEen() {
@@ -49,9 +45,7 @@ public class ProcesRelatie implements Serializable {
 
     /**
      * Zet process instance 1 (in id).
-     *
-     * @param processInstanceEen
-     *            process instance
+     * @param processInstanceEen process instance
      */
     public void setProcessInstanceEen(final ProcessInstance processInstanceEen) {
         id.setProcessInstanceEen(processInstanceEen);
@@ -59,7 +53,6 @@ public class ProcesRelatie implements Serializable {
 
     /**
      * Geef process instance 2 (uit id).
-     *
      * @return process instance 2 (uit id).
      */
     public ProcessInstance getProcessInstanceTwee() {
@@ -68,9 +61,7 @@ public class ProcesRelatie implements Serializable {
 
     /**
      * Zet process instance 2 (in id).
-     *
-     * @param processInstanceTwee
-     *            process instance
+     * @param processInstanceTwee process instance
      */
     public void setProcessInstanceTwee(final ProcessInstance processInstanceTwee) {
         id.setProcessInstanceTwee(processInstanceTwee);

@@ -13,9 +13,7 @@ public final class ExtractorFactory {
 
     /**
      * Geef een extractor.
-     *
-     * @param type
-     *            type
+     * @param type type
      * @return extractor, null als type onbekend is
      */
     public Extractor getExtractor(final String type) {
@@ -37,11 +35,17 @@ public final class ExtractorFactory {
             case "test":
                 resultaat = new ExtractorTest();
                 break;
-            case "vospg":
-                resultaat = new ExtractorVospg();
+            case "voisc":
+                resultaat = new ExtractorVoisc();
                 break;
             case "xpath":
                 resultaat = new ExtractorXpath();
+                break;
+            case "excel":
+                resultaat = new ExtractorExcel();
+                break;
+            case "excelinhoud":
+                resultaat = new ExtractorExcelInhoud();
                 break;
             default:
                 resultaat = null;

@@ -20,9 +20,9 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.AddressingFeature;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.bzm.impl.util.BzmSoapUtil;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 import org.apache.cxf.binding.soap.interceptor.SoapPreProtocolOutInterceptor;
 import org.apache.cxf.endpoint.Client;
@@ -50,9 +50,7 @@ public class DispatchClient implements InitializingBean {
 
     /**
      * Zet de waarde van wsdl.
-     *
-     * @param wsdl
-     *            wsdl
+     * @param wsdl wsdl
      */
     public final void setWsdl(final String wsdl) {
         this.wsdl = wsdl;
@@ -60,9 +58,7 @@ public class DispatchClient implements InitializingBean {
 
     /**
      * Zet de waarde van service namespace.
-     *
-     * @param serviceNamespace
-     *            service namespace
+     * @param serviceNamespace service namespace
      */
     public final void setServiceNamespace(final String serviceNamespace) {
         this.serviceNamespace = serviceNamespace;
@@ -70,9 +66,7 @@ public class DispatchClient implements InitializingBean {
 
     /**
      * Zet de waarde van service name.
-     *
-     * @param serviceName
-     *            service name
+     * @param serviceName service name
      */
     public final void setServiceName(final String serviceName) {
         this.serviceName = serviceName;
@@ -80,9 +74,7 @@ public class DispatchClient implements InitializingBean {
 
     /**
      * Zet de waarde van port namespace.
-     *
-     * @param portNamespace
-     *            port namespace
+     * @param portNamespace port namespace
      */
     public final void setPortNamespace(final String portNamespace) {
         this.portNamespace = portNamespace;
@@ -90,9 +82,7 @@ public class DispatchClient implements InitializingBean {
 
     /**
      * Zet de waarde van port name.
-     *
-     * @param portName
-     *            port name
+     * @param portName port name
      */
     public final void setPortName(final String portName) {
         this.portName = portName;
@@ -108,16 +98,12 @@ public class DispatchClient implements InitializingBean {
 
     /**
      * Stuurt het meegegeven SOAP request naar de BRP Bijhouding Service.
-     *
-     * @param request
-     *            SOAPMessage
-     * @param oinTransporteur
-     *            OIN van de transporteur
-     * @param oinOndertekenaar
-     *            OIN van de ondertekenaar
+     * @param request SOAPMessage
+     * @param oinTransporteur OIN van de transporteur
+     * @param oinOndertekenaar OIN van de ondertekenaar
      * @return response SOAPMessage
      */
-    @SuppressWarnings("checkstyle:designforextension")
+    
     // Non final omdat de testen anders niet kunnen werken.
     public SOAPMessage doInvokeService(final SOAPMessage request, final String oinTransporteur, final String oinOndertekenaar) {
         SOAPMessage response = null;
@@ -132,21 +118,21 @@ public class DispatchClient implements InitializingBean {
     /**
      * Maakt een Dispatch<SOAPMessage> object aan indien deze nog niet bestaat en geeft deze terug. Configureert ook
      * WS-Addressing en WS-Security.
-     *
      * @return dispatch
      */
     private Dispatch<SOAPMessage> getDispatch(final String oinTransporteur, final String oinOndertekenaar) {
         if (dispatch == null) {
             final Service service = Service.create(wsdlUrl, serviceQName);
             dispatch = service.createDispatch(portQName, SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(true));
-            final Map<String, List<String>> httpRequestHeaders = new HashMap<>();
-            httpRequestHeaders.put("oin-transporteur", Arrays.asList(oinTransporteur));
-            httpRequestHeaders.put("oin-ondertekenaar", Arrays.asList(oinOndertekenaar));
-            dispatch.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, httpRequestHeaders);
 
             // TODO: Spring gebruiken om client/interceptors te configureren, zie cxf-config.xml
             configureGlobalInterceptor(dispatch);
         }
+
+        final Map<String, List<String>> httpRequestHeaders = new HashMap<>();
+        httpRequestHeaders.put("oin-transporteur", Arrays.asList(oinTransporteur));
+        httpRequestHeaders.put("oin-ondertekenaar", Arrays.asList(oinOndertekenaar));
+        dispatch.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, httpRequestHeaders);
 
         return dispatch;
     }
@@ -154,9 +140,7 @@ public class DispatchClient implements InitializingBean {
     /**
      * Voegt globale interceptors toe aan de dispatcher. Interceptors welke niet per request veranderen. Gebruikt het
      * CXF framework.
-     *
-     * @param soapMessageDispatch
-     *            Dispatch<SOAPMessage>
+     * @param soapMessageDispatch Dispatch<SOAPMessage>
      */
     private void configureGlobalInterceptor(final Dispatch<SOAPMessage> soapMessageDispatch) {
         final Client client = ((org.apache.cxf.jaxws.DispatchImpl<SOAPMessage>) soapMessageDispatch).getClient();

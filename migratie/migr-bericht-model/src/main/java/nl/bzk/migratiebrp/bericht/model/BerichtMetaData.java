@@ -24,7 +24,6 @@ public final class BerichtMetaData {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public Long getId() {
@@ -33,9 +32,7 @@ public final class BerichtMetaData {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public void setId(final Long id) {
         this.id = id;
@@ -43,7 +40,6 @@ public final class BerichtMetaData {
 
     /**
      * Geef de waarde van tijdstip.
-     *
      * @return tijdstip
      */
     public Timestamp getTijdstip() {
@@ -52,9 +48,7 @@ public final class BerichtMetaData {
 
     /**
      * Zet de waarde van tijdstip.
-     *
-     * @param tijdstip
-     *            tijdstip
+     * @param tijdstip tijdstip
      */
     public void setTijdstip(final Timestamp tijdstip) {
         this.tijdstip = Kopieer.timestamp(tijdstip);
@@ -62,7 +56,6 @@ public final class BerichtMetaData {
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public String getKanaal() {
@@ -71,9 +64,7 @@ public final class BerichtMetaData {
 
     /**
      * Zet de waarde van kanaal.
-     *
-     * @param kanaal
-     *            kanaal
+     * @param kanaal kanaal
      */
     public void setKanaal(final String kanaal) {
         this.kanaal = kanaal;
@@ -81,7 +72,6 @@ public final class BerichtMetaData {
 
     /**
      * Geef de waarde van richting.
-     *
      * @return richting
      */
     public String getRichting() {
@@ -90,9 +80,7 @@ public final class BerichtMetaData {
 
     /**
      * Zet de waarde van richting.
-     *
-     * @param richting
-     *            richting
+     * @param richting richting
      */
     public void setRichting(final String richting) {
         this.richting = richting;
@@ -100,7 +88,6 @@ public final class BerichtMetaData {
 
     /**
      * Geef de waarde van message id.
-     *
      * @return message id
      */
     public String getMessageId() {
@@ -109,9 +96,7 @@ public final class BerichtMetaData {
 
     /**
      * Zet de waarde van message id.
-     *
-     * @param messageId
-     *            message id
+     * @param messageId message id
      */
     public void setMessageId(final String messageId) {
         this.messageId = messageId;
@@ -119,7 +104,6 @@ public final class BerichtMetaData {
 
     /**
      * Geef de waarde van correlation id.
-     *
      * @return correlation id
      */
     public String getCorrelationId() {
@@ -128,9 +112,7 @@ public final class BerichtMetaData {
 
     /**
      * Zet de waarde van correlation id.
-     *
-     * @param correlationId
-     *            correlation id
+     * @param correlationId correlation id
      */
     public void setCorrelationId(final String correlationId) {
         this.correlationId = correlationId;
@@ -138,7 +120,6 @@ public final class BerichtMetaData {
 
     /**
      * Geef de waarde van bericht type.
-     *
      * @return bericht type
      */
     public String getBerichtType() {
@@ -147,9 +128,7 @@ public final class BerichtMetaData {
 
     /**
      * Zet de waarde van bericht type.
-     *
-     * @param berichtType
-     *            bericht type
+     * @param berichtType bericht type
      */
     public void setBerichtType(final String berichtType) {
         this.berichtType = berichtType;

@@ -8,9 +8,8 @@ package nl.bzk.migratiebrp.test.levering.mutatiebericht;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import nl.bzk.migratiebrp.test.common.util.CompositeFilter;
-import nl.bzk.migratiebrp.test.common.util.CompositeFilter.Type;
 import nl.bzk.migratiebrp.test.common.util.Filters.DirectoryFilters;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 
 public class RegressieTest extends LeveringMutatieberichtTestConfiguratie {
 
@@ -26,14 +25,16 @@ public class RegressieTest extends LeveringMutatieberichtTestConfiguratie {
 
     @Override
     public FilenameFilter getThemaFilter() {
-        return DirectoryFilters.notEndsWith("NOK", "NO TEST");
+        return DirectoryFilters.notEndsWith("NO TEST");
     }
 
     @Override
     public FilenameFilter getCasusFilter() {
-        final FilenameFilter startsWith = DirectoryFilters.startsWith("");
-        final FilenameFilter notEndsWith = DirectoryFilters.notEndsWith("NOK", "NO TEST");
+        return DirectoryFilters.notEndsWith("NO TEST");
+    }
 
-        return new CompositeFilter(Type.AND, startsWith, notEndsWith);
+    @Override
+    public TestSkipper getTestSkipper() {
+        return TestSkipper.regressie();
     }
 }

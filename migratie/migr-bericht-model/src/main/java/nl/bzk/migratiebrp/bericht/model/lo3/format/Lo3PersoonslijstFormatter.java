@@ -54,9 +54,7 @@ public final class Lo3PersoonslijstFormatter {
 
     /**
      * Format een lo3 persoonslijst.
-     *
-     * @param persoonslijst
-     *            lo3 persoonslijst
+     * @param persoonslijst lo3 persoonslijst
      * @return categoriewaarde lijst
      */
     public List<Lo3CategorieWaarde> format(final Lo3Persoonslijst persoonslijst) {
@@ -76,7 +74,12 @@ public final class Lo3PersoonslijstFormatter {
         format(formatter, VERBLIJFPLAATS, Lo3CategorieEnum.CATEGORIE_08, Lo3CategorieEnum.CATEGORIE_58, persoonslijst.getVerblijfplaatsStapel());
         format(formatter, KIND_FORMAT, Lo3CategorieEnum.CATEGORIE_09, Lo3CategorieEnum.CATEGORIE_59, persoonslijst.getKindStapels());
         format(formatter, VERBLIJFSTITEL_FORMAT, Lo3CategorieEnum.CATEGORIE_10, Lo3CategorieEnum.CATEGORIE_60, persoonslijst.getVerblijfstitelStapel());
-        format(formatter, GEZAGSVERHOUDING_FORMAT, Lo3CategorieEnum.CATEGORIE_11, Lo3CategorieEnum.CATEGORIE_61, persoonslijst.getGezagsverhoudingStapel());
+        format(
+                formatter,
+                GEZAGSVERHOUDING_FORMAT,
+                Lo3CategorieEnum.CATEGORIE_11,
+                Lo3CategorieEnum.CATEGORIE_61,
+                persoonslijst.getGezagsverhoudingStapel());
         format(formatter, REISDOCUMENT_FORMAT, Lo3CategorieEnum.CATEGORIE_12, null, persoonslijst.getReisdocumentStapels());
         format(formatter, KIESRECHT_FORMAT, Lo3CategorieEnum.CATEGORIE_13, null, persoonslijst.getKiesrechtStapel());
 
@@ -85,9 +88,7 @@ public final class Lo3PersoonslijstFormatter {
 
     /**
      * Format een verwijzing.
-     *
-     * @param verwijzing
-     *            verwijzing
+     * @param verwijzing verwijzing
      * @return categoriewaarde lijst
      */
     public List<Lo3CategorieWaarde> formatVerwijzing(final Lo3Categorie<Lo3VerwijzingInhoud> verwijzing) {
@@ -104,12 +105,11 @@ public final class Lo3PersoonslijstFormatter {
     }
 
     private static <T extends Lo3CategorieInhoud> void format(
-        final Lo3Formatter formatter,
-        final Lo3CategorieFormatter<T> lo3Formatter,
-        final Lo3CategorieEnum actueleCategorie,
-        final Lo3CategorieEnum historischeCategorie,
-        final List<Lo3Stapel<T>> stapels)
-    {
+            final Lo3Formatter formatter,
+            final Lo3CategorieFormatter<T> lo3Formatter,
+            final Lo3CategorieEnum actueleCategorie,
+            final Lo3CategorieEnum historischeCategorie,
+            final List<Lo3Stapel<T>> stapels) {
         if (stapels != null) {
             for (final Lo3Stapel<T> stapel : stapels) {
                 format(formatter, lo3Formatter, actueleCategorie, historischeCategorie, stapel);
@@ -118,21 +118,20 @@ public final class Lo3PersoonslijstFormatter {
     }
 
     private static <T extends Lo3CategorieInhoud> void format(
-        final Lo3Formatter formatter,
-        final Lo3CategorieFormatter<T> lo3Formatter,
-        final Lo3CategorieEnum actueleCategorie,
-        final Lo3CategorieEnum historischeCategorie,
-        final Lo3Stapel<T> stapel)
-    {
+            final Lo3Formatter formatter,
+            final Lo3CategorieFormatter<T> lo3Formatter,
+            final Lo3CategorieEnum actueleCategorie,
+            final Lo3CategorieEnum historischeCategorie,
+            final Lo3Stapel<T> stapel) {
         if (stapel != null) {
             for (int i = 0; i < stapel.size(); i++) {
                 final Lo3Categorie<T> categorie = stapel.get(stapel.size() - 1 - i);
 
                 // Start categorie
                 formatter.categorie(
-                    i == 0 ? actueleCategorie : historischeCategorie,
-                    getStapel(categorie.getLo3Herkomst()),
-                    getVoorkomen(categorie.getLo3Herkomst()));
+                        i == 0 ? actueleCategorie : historischeCategorie,
+                        getStapel(categorie.getLo3Herkomst()),
+                        getVoorkomen(categorie.getLo3Herkomst()));
                 // Format inhoud
                 lo3Formatter.format(categorie.getInhoud(), formatter);
                 // Format onderzoek
@@ -163,11 +162,8 @@ public final class Lo3PersoonslijstFormatter {
 
     /**
      * Format documentatie (groepen 81, 82 en 88).
-     *
-     * @param documentatie
-     *            documentatie
-     * @param formatter
-     *            formatter
+     * @param documentatie documentatie
+     * @param formatter formatter
      */
     public static void formatDocumentatie(final Lo3Documentatie documentatie, final Lo3Formatter formatter) {
         if (documentatie != null) {
@@ -183,14 +179,11 @@ public final class Lo3PersoonslijstFormatter {
 
     /**
      * Format historie (groepen 84, 85 en 86).
-     *
-     * @param historie
-     *            historie
-     * @param formatter
-     *            formatter
+     * @param historie historie
+     * @param formatter formatter
      */
     public static void formatHistorie(final Lo3Historie historie, final Lo3Formatter formatter) {
-        if (historie != null && !historie.isNullHistorie()) {
+        if (historie != null) {
             formatter.element(Lo3ElementEnum.ELEMENT_8410, Lo3Format.format(historie.getIndicatieOnjuist()));
             formatter.element(Lo3ElementEnum.ELEMENT_8510, Lo3Format.format(historie.getIngangsdatumGeldigheid()));
             formatter.element(Lo3ElementEnum.ELEMENT_8610, Lo3Format.format(historie.getDatumVanOpneming()));
@@ -199,11 +192,8 @@ public final class Lo3PersoonslijstFormatter {
 
     /**
      * Format onderzoek (groep 83).
-     *
-     * @param onderzoek
-     *            onderzoek
-     * @param formatter
-     *            formatter
+     * @param onderzoek onderzoek
+     * @param formatter formatter
      */
     public static void formatOnderzoek(final Lo3Onderzoek onderzoek, final Lo3Formatter formatter) {
         if (onderzoek != null) {

@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstException;
@@ -34,6 +34,7 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.Lo3PersoonslijstOpschoner;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.LandConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.NationaliteitConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.RedenVerkrijgingNLNationaliteitConversietabel;
@@ -60,10 +61,10 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     private static final Lo3Herkomst LO3_HERKOMST_S1_V0 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 1, 0);
     private static final Lo3Herkomst LO3_HERKOMST_S1_V1 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 1, 1);
 
-    @Inject
-    private Lo3NationaliteitPrecondities precondities;
-    @Inject
-    private Lo3PersoonslijstOpschoner opschoner;
+
+    private Lo3NationaliteitPrecondities precondities = new Lo3NationaliteitPrecondities(new ConversietabelFactoryImpl());
+
+    private final Lo3PersoonslijstOpschoner opschoner = new Lo3PersoonslijstOpschoner();
 
     private Lo3NationaliteitInhoud.Builder nederlandsBuilder() {
         final Lo3NationaliteitInhoud.Builder builder = new Lo3NationaliteitInhoud.Builder();
@@ -113,7 +114,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testHappyBuitenland() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -124,7 +125,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testHappyVerkrijging() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(verkrijgingBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(verkrijgingBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -135,16 +136,16 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testHappyVerlies() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        verliesBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0),
-                    Lo3StapelHelper.lo3Cat(
-                        verkrijgingBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
-                        Lo3StapelHelper.lo3His(19990101),
-                        LO3_HERKOMST_S0_V1));
+                        Lo3StapelHelper.lo3Cat(
+                                verliesBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0),
+                        Lo3StapelHelper.lo3Cat(
+                                verkrijgingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
+                                Lo3StapelHelper.lo3His(19990101),
+                                LO3_HERKOMST_S0_V1));
 
         precondities.controleerStapel(stapel);
 
@@ -155,7 +156,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testHappyBijzonder() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(bijzonderBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(bijzonderBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -177,12 +178,12 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
         // Stapel met 2 voorkomens de oudste heeft de nieuwste opneming datum
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        verkrijgingBuilder().build(),
-                        Lo3StapelHelper.lo3Akt(1),
-                        Lo3StapelHelper.lo3His(null, 20000101, 20131205),
-                        LO3_HERKOMST_S0_V1),
-                    Lo3StapelHelper.lo3Cat(inhoud, Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(null, 20010101, 20121205), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                verkrijgingBuilder().build(),
+                                Lo3StapelHelper.lo3Akt(1),
+                                Lo3StapelHelper.lo3His(null, 20000101, 20131205),
+                                LO3_HERKOMST_S0_V1),
+                        Lo3StapelHelper.lo3Cat(inhoud, Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(null, 20010101, 20121205), LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -195,12 +196,12 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr101() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapelBeeindigingOk =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V1),
-                    Lo3StapelHelper.lo3Cat(
-                        new Lo3NationaliteitInhoud.Builder().build(),
-                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20010101, DOC),
-                        Lo3StapelHelper.lo3His(20010101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V1),
+                        Lo3StapelHelper.lo3Cat(
+                                new Lo3NationaliteitInhoud.Builder().build(),
+                                Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20010101, DOC),
+                                Lo3StapelHelper.lo3His(20010101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapelBeeindigingOk);
 
@@ -208,11 +209,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapelNok =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        new Lo3NationaliteitInhoud.Builder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                new Lo3NationaliteitInhoud.Builder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapelNok);
 
@@ -226,12 +227,12 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3NationaliteitInhoud> enkeleNationaliteit =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V1),
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20010101, DOC),
-                        Lo3StapelHelper.lo3His(20010101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V1),
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20010101, DOC),
+                                Lo3StapelHelper.lo3His(20010101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(enkeleNationaliteit);
 
@@ -242,16 +243,16 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3NationaliteitInhoud> meedereNationaliteit =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V1),
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20010101, DOC),
-                        Lo3StapelHelper.lo3His(20010101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V1),
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20010101, DOC),
+                                Lo3StapelHelper.lo3His(20010101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(meedereNationaliteit);
 
@@ -263,17 +264,17 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testPre052VerkrijgingOnjuist() {
         final Lo3Categorie<Lo3NationaliteitInhoud> cat54 =
                 Lo3StapelHelper.lo3Cat(
-                    verkrijgingBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 19990101, "Doc1"),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1));
+                        verkrijgingBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 19990101, "Doc1"),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1));
 
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04 =
                 Lo3StapelHelper.lo3Cat(
-                    verliesBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_S0_V0);
+                        verliesBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_S0_V0);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel = Lo3StapelHelper.lo3Stapel(cat54, cat04);
 
@@ -287,22 +288,22 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr104() {
         Lo3Categorie<Lo3NationaliteitInhoud> onjuist1 =
                 Lo3StapelHelper.lo3Cat(
-                    buitenlandsBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_S0_V2);
+                        buitenlandsBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_S0_V2);
         final Lo3Categorie<Lo3NationaliteitInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    buitenlandsBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 19990101, DOC),
-                    Lo3StapelHelper.lo3His("O", 19990101, 20000101),
-                    LO3_HERKOMST_S0_V1);
+                        buitenlandsBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 19990101, DOC),
+                        Lo3StapelHelper.lo3His("O", 19990101, 20000101),
+                        LO3_HERKOMST_S0_V1);
         final Lo3Categorie<Lo3NationaliteitInhoud> juist3 =
                 Lo3StapelHelper.lo3Cat(
-                    buitenlandsBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(3L, GEM_CODE, 19990101, DOC),
-                    Lo3StapelHelper.lo3His(null, 19990101, 20000101),
-                    LO3_HERKOMST_S0_V0);
+                        buitenlandsBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(3L, GEM_CODE, 19990101, DOC),
+                        Lo3StapelHelper.lo3His(null, 19990101, 20000101),
+                        LO3_HERKOMST_S0_V0);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapelOk = Lo3StapelHelper.lo3Stapel(onjuist1, onjuist2, juist3);
 
@@ -311,10 +312,10 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
 
         onjuist1 =
                 Lo3StapelHelper.lo3Cat(
-                    buitenlandsBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_S0_V0);
+                        buitenlandsBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_S0_V0);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapelNok = Lo3StapelHelper.lo3Stapel(onjuist1, onjuist2);
 
@@ -372,11 +373,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr110() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        DOCUMENTATIE,
-                        Lo3StapelHelper.lo3His(null, 20000101, 20000100),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                DOCUMENTATIE,
+                                Lo3StapelHelper.lo3His(null, 20000101, 20000100),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -388,11 +389,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr112() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 0, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 0, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel2);
 
@@ -400,11 +401,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -422,7 +423,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr222() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(null, null, 20000101), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(null, null, 20000101), LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -433,7 +434,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr223() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(null, 20000101, null), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(buitenlandsBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(null, 20000101, null), LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -459,11 +460,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr228() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        DOCUMENTATIE,
-                        Lo3StapelHelper.lo3His("O", 20000101, 20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                DOCUMENTATIE,
+                                Lo3StapelHelper.lo3His("O", 20000101, 20000101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -480,11 +481,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40121() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -495,11 +496,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40124() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        DOCUMENTATIE,
-                        Lo3StapelHelper.lo3His(null, 20040141, 20010101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                DOCUMENTATIE,
+                                Lo3StapelHelper.lo3His(null, 20040141, 20010101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -510,11 +511,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40125() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        DOCUMENTATIE,
-                        Lo3StapelHelper.lo3His(null, 20010101, 20040141),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                DOCUMENTATIE,
+                                Lo3StapelHelper.lo3His(null, 20010101, 20040141),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -525,11 +526,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testContr4064() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        buitenlandsBuilder().build(),
-                        Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                buitenlandsBuilder().build(),
+                                Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -578,16 +579,16 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        builder.build(),
-                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000101, DOC),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0),
-                    Lo3StapelHelper.lo3Cat(
-                        verkrijgingBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
-                        Lo3StapelHelper.lo3His(19990101),
-                        LO3_HERKOMST_S0_V1));
+                        Lo3StapelHelper.lo3Cat(
+                                builder.build(),
+                                Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000101, DOC),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0),
+                        Lo3StapelHelper.lo3Cat(
+                                verkrijgingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
+                                Lo3StapelHelper.lo3His(19990101),
+                                LO3_HERKOMST_S0_V1));
 
         precondities.controleerStapel(stapel);
 
@@ -614,11 +615,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testBijzonderSituatiePersoonGeprivilegieerdHoofdletters() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        verkrijgingBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "PROBAS1234"),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                verkrijgingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "PROBAS1234"),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
         precondities.controleerStapel(stapel);
 
         assertAantalInfos(1);
@@ -630,11 +631,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testBijzonderSituatiePersoonGeprivilegieerdKleineletters() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        verkrijgingBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "probas1234"),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                verkrijgingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "probas1234"),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
         precondities.controleerStapel(stapel);
 
         assertAantalInfos(1);
@@ -646,11 +647,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testBijzonderSituatiePersoonGeprivilegieerdMixedletters() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        verkrijgingBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "ProBas1234"),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                verkrijgingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "ProBas1234"),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
         precondities.controleerStapel(stapel);
 
         assertAantalInfos(1);
@@ -662,11 +663,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testBijzonderSituatiePersoonNietGeprivilegieerd() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        verkrijgingBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "1234Probas"),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                verkrijgingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "1234Probas"),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
         precondities.controleerStapel(stapel);
         assertAantalInfos(0);
     }
@@ -676,11 +677,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testBijzonderSituatieDocumentBeschrijvingNull() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        verkrijgingBuilder().build(),
-                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, null),
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                verkrijgingBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, null),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
         precondities.controleerStapel(stapel);
         assertAantalInfos(0);
     }
@@ -690,16 +691,16 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Herkomst herkomst = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    null,
-                    Lo3StapelHelper.lo3His(20120101),
-                    LO3_HERKOMST_S0_V0);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        null,
+                        Lo3StapelHelper.lo3His(20120101),
+                        LO3_HERKOMST_S0_V0);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat54 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null),
-                    null,
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    herkomst);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null, null),
+                        null,
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        herkomst);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel = Lo3StapelHelper.lo3Stapel(cat54, cat04);
         precondities.controleerStapel(stapel);
 
@@ -721,16 +722,16 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Herkomst herkomst = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    null,
-                    Lo3StapelHelper.lo3His(20120101),
-                    LO3_HERKOMST_S0_V0);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        null,
+                        Lo3StapelHelper.lo3His(20120101),
+                        LO3_HERKOMST_S0_V0);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat54 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null),
-                    null,
-                    Lo3StapelHelper.lo3His(19990101),
-                    herkomst);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null, null),
+                        null,
+                        Lo3StapelHelper.lo3His(19990101),
+                        herkomst);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel = Lo3StapelHelper.lo3Stapel(cat54, cat04);
         precondities.controleerStapel(stapel);
 
@@ -744,22 +745,22 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPreconditie082Happy() {
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel1 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat54Stapel1 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1));
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1));
 
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel2 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat54Stapel2 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1));
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1));
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat54Stapel1, cat04Stapel1);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 = Lo3StapelHelper.lo3Stapel(cat54Stapel2, cat04Stapel2);
@@ -774,24 +775,24 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPreconditie082LegeRijen() {
         final Lo3Categorie<Lo3NationaliteitInhoud> stapel1Voorkomen0 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
         final Lo3Categorie<Lo3NationaliteitInhoud> stapel1Voorkomen1 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
         final Lo3Categorie<Lo3NationaliteitInhoud> stapel1Voorkomen2 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
 
         final Lo3Categorie<Lo3NationaliteitInhoud> stapel2Voorkomen0 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
         final Lo3Categorie<Lo3NationaliteitInhoud> stapel2Voorkomen1 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 0));
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 0));
         final Lo3Categorie<Lo3NationaliteitInhoud> stapel2Voorkomen2 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
         final Lo3Categorie<Lo3NationaliteitInhoud> stapel2Voorkomen3 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE2), null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(stapel1Voorkomen2, stapel1Voorkomen1, stapel1Voorkomen0);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 =
@@ -809,16 +810,16 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Herkomst herkomst = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His(20120101),
-                    LO3_HERKOMST_S0_V0);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His(20120101),
+                        LO3_HERKOMST_S0_V0);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat54 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(19990101),
-                    herkomst);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(19990101),
+                        herkomst);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat54, cat04);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 = Lo3StapelHelper.lo3Stapel(cat54, cat04);
@@ -837,32 +838,32 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Herkomst herkomst0001 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat0400 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His(20120101),
-                    herkomst0000);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His(20120101),
+                        herkomst0000);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat5400 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    herkomst0001);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        herkomst0001);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat5400, cat0400);
 
         final Lo3Herkomst herkomst0100 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 1, 0);
         final Lo3Herkomst herkomst0101 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 1, 1);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat0401 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His(20120101),
-                    herkomst0100);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His(20120101),
+                        herkomst0100);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat5401 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    herkomst0101);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        herkomst0101);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 = Lo3StapelHelper.lo3Stapel(cat5401, cat0401);
 
         final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels = new ArrayList<>();
@@ -881,32 +882,32 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Herkomst herkomst0001 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat0400 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 20120101, 20120101),
-                    herkomst0000);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 20120101, 20120101),
+                        herkomst0000);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat5400 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    herkomst0001);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        herkomst0001);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat5400, cat0400);
 
         final Lo3Herkomst herkomst0100 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 1, 0);
         final Lo3Herkomst herkomst0101 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 1, 1);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat0401 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 20120101, 20120101),
-                    herkomst0100);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 20120101, 20120101),
+                        herkomst0100);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat5401 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    herkomst0101);
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        herkomst0101);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 = Lo3StapelHelper.lo3Stapel(cat5401, cat0401);
 
         final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels = new ArrayList<>();
@@ -923,15 +924,15 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPreconditie082HappyLeeg() {
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel1 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null), Lo3CategorieEnum.CATEGORIE_04);
 
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel2 = Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(), Lo3CategorieEnum.CATEGORIE_04);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat54Stapel2 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1));
+                        new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NAT_CODE), null, null, null, null),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_54, 0, 1));
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat04Stapel1);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 = Lo3StapelHelper.lo3Stapel(cat54Stapel2, cat04Stapel2);
@@ -982,7 +983,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testStaatloos() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(staatloosBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(staatloosBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -993,7 +994,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie098GroepNietAanwezig() {
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(verkrijgingBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(verkrijgingBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
         precondities.controleerStapel(stapel);
         assertAantalErrors(0);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 0);
@@ -1005,7 +1006,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
                 Lo3StapelHelper.lo3Documentatie(1L, "0518", "1-X" + String.format("%04d", 1), null, null, null, null, "omschrijvingVerdrag");
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(verkrijgingBuilder().build(), lo3Doc, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(verkrijgingBuilder().build(), lo3Doc, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
         precondities.controleerStapel(stapel);
         assertAantalErrors(1);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 1);
@@ -1016,7 +1017,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Documentatie lo3Doc = Lo3StapelHelper.lo3Documentatie(1L, "0518", "1-X" + String.format("%04d", 1), null, null, null, "0000", null);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(verkrijgingBuilder().build(), lo3Doc, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(verkrijgingBuilder().build(), lo3Doc, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_S0_V0));
         precondities.controleerStapel(stapel);
         assertAantalErrors(0);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 0);
@@ -1027,12 +1028,12 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Onderzoek lo3Onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10110), null, null);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(
-                        verkrijgingBuilder().build(),
-                        DOCUMENTATIE,
-                        lo3Onderzoek,
-                        Lo3StapelHelper.lo3His(20000101),
-                        LO3_HERKOMST_S0_V0));
+                        Lo3StapelHelper.lo3Cat(
+                                verkrijgingBuilder().build(),
+                                DOCUMENTATIE,
+                                lo3Onderzoek,
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_S0_V0));
 
         precondities.controleerStapel(stapel);
 
@@ -1045,11 +1046,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie103() {
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel1 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null),
-                    Lo3CategorieEnum.CATEGORIE_04);
+                        new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null, null),
+                        Lo3CategorieEnum.CATEGORIE_04);
 
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel2 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP), Lo3CategorieEnum.CATEGORIE_04);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP, null), Lo3CategorieEnum.CATEGORIE_04);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat04Stapel1);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 = Lo3StapelHelper.lo3Stapel(cat04Stapel2);
@@ -1066,13 +1067,13 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie103TreedNietOpDubbeleNLStapel() {
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel1 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null),
-                    Lo3CategorieEnum.CATEGORIE_04);
+                        new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null, null),
+                        Lo3CategorieEnum.CATEGORIE_04);
 
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel2 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null),
-                    Lo3CategorieEnum.CATEGORIE_04);
+                        new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null, null),
+                        Lo3CategorieEnum.CATEGORIE_04);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat04Stapel1);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 = Lo3StapelHelper.lo3Stapel(cat04Stapel2);
@@ -1089,11 +1090,11 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie103TreedNietOpAllesOpEenStapel() {
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel1 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null),
-                    LO3_HERKOMST_S0_V0);
+                        new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null, null),
+                        LO3_HERKOMST_S0_V0);
 
         final Lo3Categorie<Lo3NationaliteitInhoud> cat54Stapel1 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP), LO3_HERKOMST_S0_V1);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP, null), LO3_HERKOMST_S0_V1);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat54Stapel1, cat04Stapel1);
         final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels = new ArrayList<>();
@@ -1107,10 +1108,10 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     @Preconditie(SoortMeldingCode.PRE103)
     public void testPreconditie103TreedNietOpDubbeleBijzonderNLStapel() {
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel1 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP), LO3_HERKOMST_S0_V0);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP, null), LO3_HERKOMST_S0_V0);
 
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel2 =
-                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP), LO3_HERKOMST_S1_V0);
+                Lo3StapelHelper.lo3Cat(new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP, null), LO3_HERKOMST_S1_V0);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat04Stapel1);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 = Lo3StapelHelper.lo3Stapel(cat04Stapel2);
@@ -1127,19 +1128,19 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie103OnjuisteBijzonderNL() {
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel1 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null),
-                    LO3_HERKOMST_S0_V0);
+                        new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null, null),
+                        LO3_HERKOMST_S0_V0);
 
         final Lo3Categorie<Lo3NationaliteitInhoud> cat04Stapel2 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null),
-                    LO3_HERKOMST_S1_V0);
+                        new Lo3NationaliteitInhoud(Lo3NationaliteitCode.NATIONALITEIT_CODE_NEDERLANDSE, null, null, null, null),
+                        LO3_HERKOMST_S1_V0);
         final Lo3Categorie<Lo3NationaliteitInhoud> cat54Stapel2 =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_S1_V1);
+                        new Lo3NationaliteitInhoud(null, null, null, AANDUIDING_BIJZONDER_NEDERLANDSCHAP, null),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_S1_V1);
 
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel1 = Lo3StapelHelper.lo3Stapel(cat04Stapel1);
         final Lo3Stapel<Lo3NationaliteitInhoud> stapel2 = Lo3StapelHelper.lo3Stapel(cat54Stapel2, cat04Stapel2);
@@ -1298,7 +1299,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     }
 
     @Test
-    @Preconditie({SoortMeldingCode.PRE109, SoortMeldingCode.PRE110 })
+    @Preconditie({SoortMeldingCode.PRE109, SoortMeldingCode.PRE110})
     public void testPreconditie109() {
         final Lo3NationaliteitInhoud.Builder builder1 = new Lo3NationaliteitInhoud.Builder();
         builder1.nationaliteitCode(new Lo3NationaliteitCode("1234"));
@@ -1320,7 +1321,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     }
 
     @Test
-    @Preconditie({SoortMeldingCode.PRE109, SoortMeldingCode.PRE110 })
+    @Preconditie({SoortMeldingCode.PRE109, SoortMeldingCode.PRE110})
     public void testPreconditie110BijzonderNederlanderschapJuist() {
         final Lo3NationaliteitInhoud.Builder builder1 = new Lo3NationaliteitInhoud.Builder();
         builder1.nationaliteitCode(new Lo3NationaliteitCode("1234"));
@@ -1342,7 +1343,7 @@ public class Lo3NationaliteitPreconditiesTest extends AbstractPreconditieTest {
     }
 
     @Test
-    @Preconditie({SoortMeldingCode.PRE109, SoortMeldingCode.PRE110 })
+    @Preconditie({SoortMeldingCode.PRE109, SoortMeldingCode.PRE110})
     public void testPreconditie110BijzonderNederlanderschapOnjuist() {
         final Lo3NationaliteitInhoud.Builder builder1 = new Lo3NationaliteitInhoud.Builder();
         builder1.nationaliteitCode(new Lo3NationaliteitCode("1234"));

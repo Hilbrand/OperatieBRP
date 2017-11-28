@@ -20,8 +20,8 @@ import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AnummerWijzigingNotificatieType;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -29,13 +29,12 @@ import org.junit.Test;
 
 public class AnummerWijzigingNotificatieTest {
 
-    private static final Long OUD_A_NUMMER = Long.valueOf("1234567890");
-    private static final Long NIEUW_A_NUMMER = Long.valueOf("6474673563");
+    private static final String OUD_A_NUMMER = "1234567890";
+    private static final String NIEUW_A_NUMMER = "6474673563";
     private static final BigInteger DATUM_INGANG = new BigInteger("20150101");
     private static final GerelateerdeInformatie GERELATEERDE_INFORMATIE = new GerelateerdeInformatie(null, null, Arrays.asList(
-        NIEUW_A_NUMMER.toString(),
-        OUD_A_NUMMER.toString()));
-    private static final String BRON_GEMEENTE = "0600";
+            NIEUW_A_NUMMER, OUD_A_NUMMER));
+    private static final String BRON_GEMEENTE = "060001";
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
@@ -56,9 +55,9 @@ public class AnummerWijzigingNotificatieTest {
     @Test
     public void testFormat() throws BerichtInhoudException {
         final AnummerWijzigingNotificatieType anummerWijzigingNotificatieType = new AnummerWijzigingNotificatieType();
-        anummerWijzigingNotificatieType.setOudANummer(OUD_A_NUMMER.toString());
-        anummerWijzigingNotificatieType.setNieuwANummer(NIEUW_A_NUMMER.toString());
-        anummerWijzigingNotificatieType.setBronGemeente(BRON_GEMEENTE);
+        anummerWijzigingNotificatieType.setOudANummer(OUD_A_NUMMER);
+        anummerWijzigingNotificatieType.setNieuwANummer(NIEUW_A_NUMMER);
+        anummerWijzigingNotificatieType.setBronPartijCode(BRON_GEMEENTE);
         anummerWijzigingNotificatieType.setDatumIngangGeldigheid(DATUM_INGANG);
 
         final AnummerWijzigingNotificatie anummerWijzigingNotificatie = new AnummerWijzigingNotificatie(anummerWijzigingNotificatieType);
@@ -70,17 +69,17 @@ public class AnummerWijzigingNotificatieTest {
         assertEquals("AnummerWijzigingNotificatie", format.getBerichtType());
         assertEquals(OUD_A_NUMMER, format.getOudAnummer());
         assertEquals(NIEUW_A_NUMMER, format.getNieuwAnummer());
-        assertEquals(BRON_GEMEENTE, format.getBronGemeente());
+        assertEquals(BRON_GEMEENTE, format.getBronPartijCode());
         assertEquals(DATUM_INGANG, BigInteger.valueOf(format.getDatumIngangGeldigheid()));
     }
 
     @Test
     public void testEquals() {
         final AnummerWijzigingNotificatieType anummerWijzigingNotificatieType = new AnummerWijzigingNotificatieType();
-        anummerWijzigingNotificatieType.setOudANummer(OUD_A_NUMMER.toString());
-        anummerWijzigingNotificatieType.setNieuwANummer(NIEUW_A_NUMMER.toString());
+        anummerWijzigingNotificatieType.setOudANummer(OUD_A_NUMMER);
+        anummerWijzigingNotificatieType.setNieuwANummer(NIEUW_A_NUMMER);
         anummerWijzigingNotificatieType.setDatumIngangGeldigheid(DATUM_INGANG);
-        anummerWijzigingNotificatieType.setBronGemeente(BRON_GEMEENTE);
+        anummerWijzigingNotificatieType.setBronPartijCode(BRON_GEMEENTE);
         final AnummerWijzigingNotificatie anummerWijzigingNotificatieOrigineel = new AnummerWijzigingNotificatie(anummerWijzigingNotificatieType);
         anummerWijzigingNotificatieOrigineel.setMessageId(MessageIdGenerator.generateId());
 
@@ -104,12 +103,12 @@ public class AnummerWijzigingNotificatieTest {
         final AnummerWijzigingNotificatie anummerWijzigingNotificatie = new AnummerWijzigingNotificatie();
         anummerWijzigingNotificatie.setOudAnummer(OUD_A_NUMMER);
         anummerWijzigingNotificatie.setNieuwAnummer(NIEUW_A_NUMMER);
-        anummerWijzigingNotificatie.setBronGemeente(BRON_GEMEENTE);
+        anummerWijzigingNotificatie.setBronPartijCode(BRON_GEMEENTE);
         anummerWijzigingNotificatie.setDatumIngangGeldigheid(DATUM_INGANG.intValue());
 
         assertEquals(OUD_A_NUMMER, anummerWijzigingNotificatie.getOudAnummer());
         assertEquals(NIEUW_A_NUMMER, anummerWijzigingNotificatie.getNieuwAnummer());
-        assertEquals(BRON_GEMEENTE, anummerWijzigingNotificatie.getBronGemeente());
+        assertEquals(BRON_GEMEENTE, anummerWijzigingNotificatie.getBronPartijCode());
         assertEquals(DATUM_INGANG, BigInteger.valueOf(anummerWijzigingNotificatie.getDatumIngangGeldigheid()));
         assertEquals(GERELATEERDE_INFORMATIE.getaNummers().get(0), anummerWijzigingNotificatie.getGerelateerdeInformatie().getaNummers().get(0));
         assertEquals(GERELATEERDE_INFORMATIE.getaNummers().get(1), anummerWijzigingNotificatie.getGerelateerdeInformatie().getaNummers().get(1));

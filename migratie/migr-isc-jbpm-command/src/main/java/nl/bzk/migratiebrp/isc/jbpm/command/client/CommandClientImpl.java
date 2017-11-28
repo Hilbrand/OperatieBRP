@@ -13,11 +13,11 @@ import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.command.Command;
 import nl.bzk.migratiebrp.isc.jbpm.command.exception.CommandException;
-import nl.bzk.migratiebrp.isc.jbpm.command.executor.CommandService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.isc.jbpm.command.executor.CommandServiceImpl;
 
 /**
  * Service voor het versturen van een commando naar een remote Jbpm node.
@@ -30,9 +30,7 @@ public final class CommandClientImpl implements CommandClient {
 
     /**
      * Zet de server connectie.
-     * 
-     * @param serverConnection
-     *            de te zetten server connectie.
+     * @param serverConnection de te zetten server connectie.
      */
     public void setServerConnection(final MBeanServerConnection serverConnection) {
         this.serverConnection = serverConnection;
@@ -44,23 +42,19 @@ public final class CommandClientImpl implements CommandClient {
 
         try {
             // Invoke de operatie via JMX.
-            final ObjectName objectNameCommandExecutor = new ObjectName(CommandService.JMX_NAME);
+            final ObjectName objectNameCommandExecutor = new ObjectName(CommandServiceImpl.JMX_NAME);
 
-            @SuppressWarnings("unchecked")
-            final T result =
-                    (T) serverConnection.invoke(
-                        objectNameCommandExecutor,
-                        "executeCommand",
-                        new Object[] {command },
-                        new String[] {Command.class.getName() });
-            return result;
+            return (T) serverConnection.invoke(
+                    objectNameCommandExecutor,
+                    "executeCommand",
+                    new Object[]{command},
+                    new String[]{Command.class.getName()});
 
         } catch (final
-            ReflectionException
-            | MalformedObjectNameException
-            | InstanceNotFoundException
-            | MBeanException e)
-        {
+        ReflectionException
+                | MalformedObjectNameException
+                | InstanceNotFoundException
+                | MBeanException e) {
             throw new CommandException("Onverwachte fout bij versturen commando.", e);
         } catch (final IOException e) {
             throw new CommandException("JMX connectie fout bij versturen commando.", e);

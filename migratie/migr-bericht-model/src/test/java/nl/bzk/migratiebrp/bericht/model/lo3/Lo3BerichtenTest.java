@@ -6,12 +6,17 @@
 
 package nl.bzk.migratiebrp.bericht.model.lo3;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.Hq01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ib01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.If01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.If21Bericht;
@@ -24,41 +29,39 @@ import nl.bzk.migratiebrp.bericht.model.lo3.impl.NullBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf02Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf03Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.Tb01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Tf01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Tf11Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
-import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Builder;
-import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
-import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
-import nl.bzk.migratiebrp.conversie.model.lo3.Lo3PersoonslijstBuilder;
-import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
-import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OuderInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerwijzingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieGeheimCodeEnum;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingNaamgebruikCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
-import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
-import nl.bzk.migratiebrp.conversie.model.testutils.VerplichteStapel;
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class Lo3BerichtenTest extends AbstractLo3BerichtTest {
+public class Lo3BerichtenTest extends AbstractLo3BerichtTestBasis {
 
-    private static final String LO3_PL_STRING =
-            "00700011640110010817238743501200092995889450210004Mart0240005Vries03100081990010103200040599033000460300410001M6110001E8110004059981200071 A9102851000819900101861000819900102021720110010192829389501200099911223340210006Jannie0240004Smit03100081969010103200041901033000460300410001M6210008199001018110004059981200071 A9102851000819900101861000819900102031750110010172625463201200093827261340210008Mitchell0240005Vries03100081970010103200041900033000460300410001M6210008199001018110004059981200071 A910285100081990010186100081990010207058681000819900101701000108010004000180200171990010112000000008106091000405990920008199001011010001W102000405991030008199001011110001.7210001G851000819900101861000819900102";
+
+    private static final String
+            LO3_PL_STRING =
+            "00700011640110010817238743501200092995889450210004Mart0240005Vries03100081990010103200040599033000460300410001M6110001E8110004059981200071 "
+                    +
+                    "A9102851000819900101861000819900102021720110010192829389501200099911223340210006Jannie0240004Smit03100081969010103200041901033000460300410001M6210008199001018110004059981200071 A9102851000819900101861000819900102031750110010172625463201200093827261340210008Mitchell0240005Vries03100081970010103200041900033000460300410001M6210008199001018110004059981200071 A910285100081990010186100081990010207058681000819900101701000108010004000180200171990010112000000008106091000405990920008199001011010001W102000405991030008199001011110001.7210001G851000819900101861000819900102";
+
+    private static Lo3Persoonslijst maakLo3Persoonslijst() throws BerichtSyntaxException {
+        return new Lo3PersoonslijstParser().parse(Lo3BerichtenTest.maakLo3Categorieen());
+    }
+
+    private static List<Lo3CategorieWaarde> maakLo3Categorieen() throws BerichtSyntaxException {
+        return Lo3Inhoud.parseInhoud(LO3_PL_STRING);
+    }
 
     @Test
     public void testIb01Bericht() throws ClassNotFoundException, BerichtInhoudException, IOException, BerichtSyntaxException {
@@ -103,30 +106,31 @@ public class Lo3BerichtenTest extends AbstractLo3BerichtTest {
 
     @Test
     public void testIv01Bericht() throws ClassNotFoundException, BerichtInhoudException, IOException {
-        final Lo3VerwijzingInhoud inhoud = new Lo3VerwijzingInhoud(Lo3Long.wrap(2349326344L), // aNummer
-            new Lo3Integer(546589734), // burgerservicenummer
-            new Lo3String("Jaap"), // voornamen
-            null, // adellijkeTitelPredikaatCode
-            null, // voorvoegselGeslachtsnaam
-            new Lo3String("Appelenberg"), // geslachtsnaam
-            new Lo3Datum(19540307), // geboortedatum
-            new Lo3GemeenteCode("0518"), // geboorteGemeenteCode
-            new Lo3LandCode(Lo3LandCode.CODE_NEDERLAND), // geboorteLandCode
-            new Lo3GemeenteCode("0518"), // gemeenteInschrijving
-            new Lo3Datum(19540309), // datumInschrijving
-            // straatnaam
-            // naamOpenbareRuimte
-            // huisnummer
-            // huisletter
-            // huisnummertoevoeging
-            // aanduidingHuisnummer
-            // postcode
-            // woonplaatsnaam
-            // identificatiecodeVerblijfplaats
-            // identificatiecodeNummeraanduiding
-            // locatieBeschrijving
-            Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement() // indicatieGeheimCode
-                );
+        final Lo3VerwijzingInhoud inhoud = new Lo3VerwijzingInhoud(
+                Lo3Long.wrap(2349326344L), // aNummer
+                new Lo3Integer(546589734), // burgerservicenummer
+                new Lo3String("Jaap"), // voornamen
+                null, // adellijkeTitelPredikaatCode
+                null, // voorvoegselGeslachtsnaam
+                new Lo3String("Appelenberg"), // geslachtsnaam
+                new Lo3Datum(19540307), // geboortedatum
+                new Lo3GemeenteCode("0518"), // geboorteGemeenteCode
+                new Lo3LandCode(Lo3LandCode.CODE_NEDERLAND), // geboorteLandCode
+                new Lo3GemeenteCode("0518"), // gemeenteInschrijving
+                new Lo3Datum(19540309), // datumInschrijving
+                // straatnaam
+                // naamOpenbareRuimte
+                // huisnummer
+                // huisletter
+                // huisnummertoevoeging
+                // aanduidingHuisnummer
+                // postcode
+                // woonplaatsnaam
+                // identificatiecodeVerblijfplaats
+                // identificatiecodeNummeraanduiding
+                // locatieBeschrijving
+                Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement() // indicatieGeheimCode
+        );
 
         final Iv01Bericht bericht = new Iv01Bericht();
         bericht.setMessageId(MessageIdGenerator.generateId());
@@ -257,77 +261,29 @@ public class Lo3BerichtenTest extends AbstractLo3BerichtTest {
     }
 
     @Test
-    @Ignore
-    public void testTb01Bericht() throws ClassNotFoundException, BerichtInhoudException, IOException {
-        final Tb01Bericht bericht = new Tb01Bericht();
-        bericht.setMessageId(MessageIdGenerator.generateId());
-        bericht.setBronGemeente("1234");
-        bericht.setDoelGemeente("5678");
-
-        final Lo3Persoonslijst geboorte = Lo3BerichtenTest.maakGeboorte(Lo3BerichtenTest.maakLo3PersoonInhoudTb01());
-        bericht.setLo3Persoonslijst(geboorte);
-        testFormatAndParseBericht(bericht);
+    public void testHq01BerichtZonderRubriek() throws BerichtSyntaxException, BerichtInhoudException {
+        Hq01Bericht bericht = new Hq01Bericht();
+        bericht.parse(
+                "00000000Hq01000000191011860110010123456789001200091234567890210016VoornamenPersoon0220002PS0230007van "
+                        + "der0240013Geslachtsnaam03100081980010103200040599033000460300410001V20100101987654321202001098765432106110001E");
+        assertThat(bericht.getHeaderWaarden(Lo3HeaderVeld.GEVRAAGDE_RUBRIEKEN), is(empty()));
     }
 
-    private static Lo3Persoonslijst maakLo3Persoonslijst() throws BerichtSyntaxException {
-        return new Lo3PersoonslijstParser().parse(Lo3BerichtenTest.maakLo3Categorieen());
+    @Test
+    public void testHq01BerichtMetEnkeleRubriek() throws BerichtSyntaxException, BerichtInhoudException {
+        Hq01Bericht bericht = new Hq01Bericht();
+        bericht.parse(
+                "00000000Hq01000101011000191011860110010123456789001200091234567890210016VoornamenPersoon0220002PS0230007van "
+                        + "der0240013Geslachtsnaam03100081980010103200040599033000460300410001V20100101987654321202001098765432106110001E");
+        assertThat(bericht.getHeaderWaarden(Lo3HeaderVeld.GEVRAAGDE_RUBRIEKEN), contains("010110"));
     }
 
-    private static List<Lo3CategorieWaarde> maakLo3Categorieen() throws BerichtSyntaxException {
-        return Lo3Inhoud.parseInhoud(LO3_PL_STRING);
-    }
-
-    private static Lo3Persoonslijst maakGeboorte(final Lo3PersoonInhoud lo3PersoonInhoud) {
-        // final Lo3Categorie<Lo3NationaliteitInhoud> lo3Nationaliteit =
-        // Lo3Builder.createLo3Nationaliteit(NATIONALITEIT_CODE, REDEN_VERKRIJGEN_NEDERLANDSCHAP_CODE, null,
-        // null, null, DATE, DATE2);
-        // final Lo3Stapel<Lo3NationaliteitInhoud> lo3NationaliteitStapel =
-        // new Lo3Stapel<Lo3NationaliteitInhoud>(Arrays.asList(lo3Nationaliteit));
-        final Lo3Historie historie = Lo3Builder.createLo3Historie(null, 20121101, 20121103);
-        final Lo3Categorie<Lo3PersoonInhoud> persoon1 =
-                new Lo3Categorie<>(lo3PersoonInhoud, null, null, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0));
-        final Lo3Stapel<Lo3PersoonInhoud> lo3PersoonStapel =
-        // new Lo3Stapel<Lo3PersoonInhoud>(Arrays.asList(lo3Persoon1, lo3Persoon2));
-                new Lo3Stapel<>(Arrays.asList(persoon1));
-        // final Lo3Stapel<Lo3InschrijvingInhoud> lo3InschrijvingStapel =
-        // new Lo3Stapel<Lo3InschrijvingInhoud>(Arrays.asList(new Lo3Categorie<Lo3InschrijvingInhoud>(
-        // new Lo3InschrijvingInhoud(null, null, null, new Lo3Datum(GEBOORTEDATUM), null, null, 1,
-        // new Lo3Datumtijdstempel(20070401000000000L), null), null, Lo3Historie.NULL_HISTORIE,
-        // Collections.<Lo3Herkomst>emptySet())));
-        final Lo3Stapel<Lo3OuderInhoud> ouder1 = VerplichteStapel.createOuder1Stapel();
-        final Lo3Stapel<Lo3OuderInhoud> ouder2 = VerplichteStapel.createOuder2Stapel();
-        // final Lo3Stapel<Lo3VerblijfplaatsInhoud> verblijfplaats = VerplichteStapel.createVerblijfplaatsStapel();
-        return new Lo3PersoonslijstBuilder().persoonStapel(lo3PersoonStapel).ouder1Stapel(ouder1).ouder2Stapel(ouder2).build();
-    }
-
-    private static Lo3PersoonInhoud maakLo3PersoonInhoudTb01() {
-        final Lo3Long aNummer = null;// Lo3Long.wrap(2349326344L);
-        final Lo3Integer burgerservicenummer = null;// new Lo3Integer(123456789);
-        final Lo3String voornamen = new Lo3String("Billy");
-        final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode = null;
-        final Lo3String voorvoegselGeslachtsnaam = null;
-        final Lo3String geslachtsnaam = new Lo3String("Barendsen");
-        final Lo3Datum geboortedatum = new Lo3Datum(20121024);
-        final Lo3GemeenteCode geboorteGemeenteCode = new Lo3GemeenteCode("0518");
-        final Lo3LandCode geboorteLandCode = new Lo3LandCode("6030");
-        final Lo3Geslachtsaanduiding geslachtsaanduiding = new Lo3Geslachtsaanduiding("M");
-        final Lo3Long vorigANummer = null;
-        final Lo3Long volgendANummer = null;
-        final Lo3AanduidingNaamgebruikCode aanduidingNaamgebruikCode = null;// new Lo3AanduidingNaamgebruikCode("E");
-
-        return new Lo3PersoonInhoud(
-            aNummer,
-            burgerservicenummer,
-            voornamen,
-            adellijkeTitelPredikaatCode,
-            voorvoegselGeslachtsnaam,
-            geslachtsnaam,
-            geboortedatum,
-            geboorteGemeenteCode,
-            geboorteLandCode,
-            geslachtsaanduiding,
-            vorigANummer,
-            volgendANummer,
-            aanduidingNaamgebruikCode);
+    @Test
+    public void testHq01BerichtMetMeerdereRubrieken() throws BerichtSyntaxException, BerichtInhoudException {
+        Hq01Bericht bericht = new Hq01Bericht();
+        bericht.parse(
+                "00000000Hq01000201011001012000191011860110010123456789001200091234567890210016VoornamenPersoon0220002PS0230007van "
+                        + "der0240013Geslachtsnaam03100081980010103200040599033000460300410001V20100101987654321202001098765432106110001E");
+        assertThat(bericht.getHeaderWaarden(Lo3HeaderVeld.GEVRAAGDE_RUBRIEKEN), contains("010110", "010120"));
     }
 }

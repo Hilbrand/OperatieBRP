@@ -6,10 +6,10 @@
 
 package nl.bzk.migratiebrp.test.dal;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Attribute;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
 
 /**
  * Abstract class voor de resultaten van het testen van de conversie.
@@ -41,16 +41,12 @@ public abstract class AbstractConversieTestResultaat extends TestResultaat imple
 
     /**
      * Constructor.
-     *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
+     * @param thema thema
+     * @param naam naam
      */
     protected AbstractConversieTestResultaat(
-        @Attribute(name = "thema", required = false) final String thema,
-        @Attribute(name = "naam", required = false) final String naam)
-    {
+            @Attribute(name = "thema", required = false) final String thema,
+            @Attribute(name = "naam", required = false) final String naam) {
         super(thema, naam);
     }
 

@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -28,9 +28,7 @@ public final class CheckPing implements Check {
 
     /**
      * Constructor.
-     *
-     * @param host
-     *            host
+     * @param host host
      */
 
     public CheckPing(final String host) {

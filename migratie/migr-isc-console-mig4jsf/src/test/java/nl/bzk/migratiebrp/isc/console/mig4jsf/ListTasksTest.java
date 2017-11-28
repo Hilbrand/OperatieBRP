@@ -38,7 +38,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Query.class, FacesContext.class, InitialContext.class, ConfigurationLocator.class, Configuration.class, Subject.class })
+@PrepareForTest({Query.class, FacesContext.class, InitialContext.class, ConfigurationLocator.class, Configuration.class, Subject.class})
 public class ListTasksTest extends AbstractTagTest {
 
     private Properties oudeSystemProperties;
@@ -60,11 +60,11 @@ public class ListTasksTest extends AbstractTagTest {
         addTagAttribute("target", null);
 
         setupDatabase(
-            "/sql/mig-drop.sql",
-            "/sql/jbpm-drop.sql",
-            "/sql/jbpm-create.sql",
-            "/sql/mig-create.sql",
-            "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-jbpm_taskinstance.sql");
+                "/sql/mig-drop.sql",
+                "/sql/jbpm-drop.sql",
+                "/sql/jbpm-create.sql",
+                "/sql/mig-create.sql",
+                "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-jbpm_taskinstance.sql");
 
         final String SQL_ENDED = "select id_, class_, version_, actorid_, start_, end_ from jbpm_taskinstance ti";
         final List<TaskInstance> gevondenTaken = getTaskInstance(jbpmContext, SQL_ENDED);
@@ -126,12 +126,9 @@ public class ListTasksTest extends AbstractTagTest {
 
         /**
          * Map een resultset naar een task instance.
-         *
-         * @param rs
-         *            result set
+         * @param rs result set
          * @return task instance
-         * @throws SQLException
-         *             bij sql fouten
+         * @throws SQLException bij sql fouten
          */
         @SuppressWarnings("deprecation")
         public TaskInstance map(final ResultSet rs) throws SQLException {

@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,12 +29,19 @@ public class PartijVoorwaardeRegelTest {
     @Inject
     private PartijVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test of vertaalWaardeVanRubriek method, of class PartijVoorwaardeRegel.
      */
     @Test
     public void testVertaalWaardeVanRubriek() throws GbaVoorwaardeOnvertaalbaarExceptie {
-        testVoorwaarde("08.09.10 GA1 0626", "bijhouding.bijhoudingspartij = 62601");
+        testUtil.testVoorwaarde("07.69.10 GA1 0626", "Persoon.Persoonskaart.PartijCode E= \"062601\"");
     }
 
     /**
@@ -41,7 +49,7 @@ public class PartijVoorwaardeRegelTest {
      */
     @Test
     public void testVolgorde() {
-        assertEquals(500, instance.volgorde());
+        assertEquals(100, instance.volgorde());
     }
 
     /**
@@ -49,16 +57,11 @@ public class PartijVoorwaardeRegelTest {
      */
     @Test
     public void testFilterTrue() {
-        assertTrue(instance.filter("08.09.10 GA1 0626"));
+        assertTrue(instance.filter("07.69.10 GA1 0626"));
     }
 
     @Test
     public void testFilterFalse() {
         assertFalse(instance.filter("01.04.10 GD1 19940101"));
-    }
-
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
     }
 }

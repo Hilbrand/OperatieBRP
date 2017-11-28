@@ -133,8 +133,6 @@
             <arg value="run"/>
             <arg value="-d"/>
             <arg value="-p"/>
-            <arg value="8980:8080"/>
-            <arg value="-p"/>
             <arg value="${MUTATIELEVERING_JMX_PORT}:${MUTATIELEVERING_JMX_PORT}"/>
             <arg value="--name"/>
             <arg value="mutatielevering"/>

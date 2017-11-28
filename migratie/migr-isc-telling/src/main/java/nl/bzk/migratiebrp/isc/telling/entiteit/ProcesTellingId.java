@@ -15,7 +15,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Id klasse voor de proces tellingen database tabel.
- * 
  */
 public final class ProcesTellingId implements Serializable {
 
@@ -32,20 +31,15 @@ public final class ProcesTellingId implements Serializable {
      * Default constructor.
      */
     public ProcesTellingId() {
-
+        // leeg voor code
     }
 
     /**
      * Convenient constructor.
-     * 
-     * @param datum
-     *            De datum
-     * @param procesnaam
-     *            De procesnaam
-     * @param berichtType
-     *            Het berichtType
-     * @param kanaal
-     *            Het kanaal
+     * @param datum De datum
+     * @param procesnaam De procesnaam
+     * @param berichtType Het berichtType
+     * @param kanaal Het kanaal
      */
     public ProcesTellingId(final Timestamp datum, final String procesnaam, final String berichtType, final String kanaal) {
         this.datum = Kopieer.timestamp(datum);
@@ -56,7 +50,6 @@ public final class ProcesTellingId implements Serializable {
 
     /**
      * Geef de waarde van procesnaam.
-     *
      * @return procesnaam
      */
     public String getProcesnaam() {
@@ -65,7 +58,6 @@ public final class ProcesTellingId implements Serializable {
 
     /**
      * Geef de waarde van datum.
-     *
      * @return datum
      */
     public Timestamp getDatum() {
@@ -74,7 +66,6 @@ public final class ProcesTellingId implements Serializable {
 
     /**
      * Geef de waarde van bericht type.
-     *
      * @return bericht type
      */
     public String getBerichtType() {
@@ -83,7 +74,6 @@ public final class ProcesTellingId implements Serializable {
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public String getKanaal() {
@@ -105,9 +95,9 @@ public final class ProcesTellingId implements Serializable {
         }
         final ProcesTellingId castOther = (ProcesTellingId) other;
         return new EqualsBuilder().append(getDatum(), castOther.getDatum())
-                                  .append(getProcesnaam(), castOther.getProcesnaam())
-                                  .append(getBerichtType(), castOther.getBerichtType())
-                                  .append(getKanaal(), castOther.getKanaal())
-                                  .isEquals();
+                .append(getProcesnaam(), castOther.getProcesnaam())
+                .append(getBerichtType(), castOther.getBerichtType())
+                .append(getKanaal(), castOther.getKanaal())
+                .isEquals();
     }
 }

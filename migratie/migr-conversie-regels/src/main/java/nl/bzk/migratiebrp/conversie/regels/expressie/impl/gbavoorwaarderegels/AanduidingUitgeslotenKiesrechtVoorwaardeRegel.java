@@ -9,6 +9,10 @@ package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingUitgeslotenKiesrecht;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.RubriekWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,28 +20,31 @@ import org.springframework.stereotype.Component;
  * gebruikt.
  */
 @Component
-public final class AanduidingUitgeslotenKiesrechtVoorwaardeRegel extends AbstractIndicatieVoorwaardeRegel {
+public final class AanduidingUitgeslotenKiesrechtVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
 
-    /**
-     * Rubriek voor deze indicatie.
-     */
-    public static final String RUBRIEK = "13.38.10";
+    private static final String REGEX_PATROON = "^13\\.38\\.10.*";
+    private static final int VOLGORDE = 500;
 
-    @Inject
-    private ConversietabelFactory conversieTabelFactory;
+    private final IndicatieVoorwaardeRegelUtil indicatieVoorwaardeRegelUtil;
 
     /**
      * Maakt nieuwe voorwaarderegel aan.
+     * @param conversieTabelFactory conversie tabel factory
+     * @param gbaRubriekNaarBrpTypeVertaler rubriekvertaler
      */
-    public AanduidingUitgeslotenKiesrechtVoorwaardeRegel() {
-        super(RUBRIEK);
+    @Inject
+    public AanduidingUitgeslotenKiesrechtVoorwaardeRegel(
+            final ConversietabelFactory conversieTabelFactory,
+            final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler) {
+        super(VOLGORDE, REGEX_PATROON);
+        indicatieVoorwaardeRegelUtil = new IndicatieVoorwaardeRegelUtil(gbaRubriekNaarBrpTypeVertaler, waarde ->
+                conversieTabelFactory.createAanduidingUitgeslotenKiesrechtConversietabel()
+                        .converteerNaarBrp(new Lo3AanduidingUitgeslotenKiesrecht(waarde.replaceAll("\"", ""), null))
+                        .getWaarde());
     }
 
     @Override
-    protected Boolean vertaalIndicatieVanWaarde(final String ruweWaarde) {
-        final String zonderAanhalingstekens = ruweWaarde.replaceAll("\"", "");
-        return conversieTabelFactory.createAanduidingUitgeslotenKiesrechtConversietabel()
-                                    .converteerNaarBrp(new Lo3AanduidingUitgeslotenKiesrecht(zonderAanhalingstekens, null))
-                                    .getWaarde();
+    public Expressie getBrpExpressie(final RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
+        return indicatieVoorwaardeRegelUtil.getBrpExpressie(voorwaardeRegel);
     }
 }

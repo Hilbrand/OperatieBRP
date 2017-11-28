@@ -40,13 +40,13 @@ public final class ProtocolleringRepositoryImpl implements ProtocolleringReposit
     }
 
     @Override
-    public List<Protocollering> findProtocolleringVoorANummer(final Long aNummer) {
+    public List<Protocollering> findProtocolleringVoorANummer(final String aNummer) {
         try {
             return em.createQuery(
-                         "select p from Protocollering p where p.administratienummer = :administratienummer ",
-                         Protocollering.class)
-                     .setParameter("administratienummer", aNummer)
-                     .getResultList();
+                    "select p from Protocollering p where p.administratienummer = :administratienummer ",
+                    Protocollering.class)
+                    .setParameter("administratienummer", aNummer)
+                    .getResultList();
         } catch (final NoResultException nre) {
             return null;
         }

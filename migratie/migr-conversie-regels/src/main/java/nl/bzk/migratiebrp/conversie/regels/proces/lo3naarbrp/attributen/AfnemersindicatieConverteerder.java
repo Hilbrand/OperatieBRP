@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpAfnemersindicatieInhoud;
@@ -16,24 +17,20 @@ import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3AfnemersindicatieIn
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenAfnemersindicatie;
-import org.springframework.stereotype.Component;
 
 /**
  * Inhoudelijke conversie van afnemersindicaties.
  */
-@Component
 public final class AfnemersindicatieConverteerder {
 
     /**
      * Converteer.
-     *
-     * @param afnemersindicatieStapels
-     *            LO3 afnemersindicatie stapel
+     * @param afnemersindicatieStapels LO3 afnemersindicatie stapel
      * @return Migratie afnemersindicatie stapel
      */
     public List<TussenAfnemersindicatie> converteer(final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersindicatieStapels) {
         if (afnemersindicatieStapels == null) {
-            return null;
+            return Collections.emptyList();
         }
         final List<TussenAfnemersindicatie> result = new ArrayList<>();
         for (final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatieStapel : afnemersindicatieStapels) {
@@ -43,13 +40,12 @@ public final class AfnemersindicatieConverteerder {
     }
 
     private TussenAfnemersindicatie converteerStapel(final Lo3Stapel<Lo3AfnemersindicatieInhoud> stapel) {
-        final Integer afnemersIndicatie = getAfnemersindicatie(stapel);
+        final String afnemersIndicatie = getAfnemersindicatie(stapel);
         final BrpPartijCode partijCode = afnemersIndicatie == null ? null : new BrpPartijCode(afnemersIndicatie);
         final List<TussenGroep<BrpAfnemersindicatieInhoud>> groepen = new ArrayList<>();
 
         for (final Lo3Categorie<Lo3AfnemersindicatieInhoud> categorie : stapel) {
             // Datum onbekend lijkt problemen te geven bij de protocollering van een leveringsbericht.
-            // final BrpDatum datumAanvang = ? null : BrpDatum.ONBEKEND;
             final BrpAfnemersindicatieInhoud inhoud = new BrpAfnemersindicatieInhoud(null, null, categorie.getInhoud().isLeeg());
 
             groepen.add(new TussenGroep<>(inhoud, categorie.getHistorie(), categorie.getDocumentatie(), categorie.getLo3Herkomst()));
@@ -58,9 +54,9 @@ public final class AfnemersindicatieConverteerder {
         return new TussenAfnemersindicatie(partijCode, new TussenStapel<>(groepen));
     }
 
-    private Integer getAfnemersindicatie(final Lo3Stapel<Lo3AfnemersindicatieInhoud> stapel) {
+    private String getAfnemersindicatie(final Lo3Stapel<Lo3AfnemersindicatieInhoud> stapel) {
         for (final Lo3Categorie<Lo3AfnemersindicatieInhoud> categorie : stapel) {
-            final Integer afnemersIndicatie = categorie.getInhoud().getAfnemersindicatie();
+            final String afnemersIndicatie = categorie.getInhoud().getAfnemersindicatie();
             if (afnemersIndicatie != null) {
                 return afnemersIndicatie;
             }

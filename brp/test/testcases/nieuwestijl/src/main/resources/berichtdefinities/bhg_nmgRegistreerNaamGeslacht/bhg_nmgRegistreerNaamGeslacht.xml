@@ -28,7 +28,7 @@
       <brp:bronnen>
          <!--1 or more repetitions:-->
          [#list wijzigingGeslachtsnaam.bronnen as bron]
-         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
             <!--Optional:-->
             <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -151,7 +151,7 @@
       <brp:bronnen>
          <!--1 or more repetitions:-->
          [#list wijzigingVoornaam.bronnen as bron]
-         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
             <!--Optional:-->
             <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -209,7 +209,7 @@
       <brp:bronnen>
          <!--1 or more repetitions:-->
          [#list wijzigingGeslachtsaanduiding.bronnen as bron]
-         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
             <!--Optional:-->
             <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -271,7 +271,7 @@
       <brp:bronnen>
          <!--1 or more repetitions:-->
          [#list wijzigingNaamgebruik.bronnen as bron]
-         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
             <!--Optional:-->
             <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -337,7 +337,7 @@
       <brp:bronnen>
          <!--1 or more repetitions:-->
          [#list correctieNaamgebruik.bronnen as bron]
-         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+         <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
             <!--Optional:-->
             <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>

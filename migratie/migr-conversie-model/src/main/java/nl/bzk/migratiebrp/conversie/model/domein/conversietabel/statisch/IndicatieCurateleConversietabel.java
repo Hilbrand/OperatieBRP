@@ -10,7 +10,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieCurateleregisterEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieCurateleregister;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Dit is een statische conversie (er wordt geen tabel gebruikt) tussen de LO3 en BRP code.
@@ -20,21 +20,21 @@ public final class IndicatieCurateleConversietabel implements Conversietabel<Lo3
     @Override
     public BrpBoolean converteerNaarBrp(final Lo3IndicatieCurateleregister input) {
         return Lo3IndicatieCurateleregisterEnum.CURATOR_AANGESTELD.getCode().equals(input == null ? null : input.getIntegerWaarde()) ? new BrpBoolean(
-            true,
-            input.getOnderzoek()) : null;
+                true,
+                input.getOnderzoek()) : null;
 
     }
 
     @Override
     public Lo3IndicatieCurateleregister converteerNaarLo3(final BrpBoolean input) {
         return BrpBoolean.isTrue(input) ? new Lo3IndicatieCurateleregister(
-            "" + Lo3IndicatieCurateleregisterEnum.CURATOR_AANGESTELD.getCode(),
-            input.getOnderzoek()) : null;
+                "" + Lo3IndicatieCurateleregisterEnum.CURATOR_AANGESTELD.getCode(),
+                input.getOnderzoek()) : null;
     }
 
     @Override
     public boolean valideerLo3(final Lo3IndicatieCurateleregister input) {
-        return !Validatie.isElementGevuld(input) || Lo3IndicatieCurateleregisterEnum.getByCode(input.getIntegerWaarde()) != null;
+        return !Lo3Validatie.isElementGevuld(input) || Lo3IndicatieCurateleregisterEnum.getByCode(input.getIntegerWaarde()) != null;
     }
 
     @Override

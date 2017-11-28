@@ -7,11 +7,13 @@
 package nl.bzk.migratiebrp.tools.mailbox;
 
 import java.util.Calendar;
-import nl.bzk.migratiebrp.util.common.Version;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import nl.bzk.algemeenbrp.util.common.Version;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.spring.PropertiesPropertySource;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Main voor mailbox server.
@@ -19,25 +21,42 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public final class MailboxMain {
 
     private static final Logger LOG = LoggerFactory.getLogger();
+    private final PropertySource<?> configuration;
+    private GenericXmlApplicationContext context;
 
-    private static ConfigurableApplicationContext context;
-
-    private MailboxMain() {
-        // Niet instantieerbaar.
+    /**
+     * Constructor.
+     * @param configuration configuratie
+     */
+    public MailboxMain(final PropertySource<?> configuration) {
+        this.configuration = configuration;
+        if (this.configuration == null) {
+            throw new IllegalArgumentException("Configuratie verplicht");
+        }
     }
 
     /**
      * Start de applicatie.
-     *
-     * @param argv
-     *            argumenten (ongebruikt)
+     * @param args argumenten (ongebruikt)
      */
-    public static void main(final String[] argv) {
+    public static void main(final String[] args) {
+        new MailboxMain(new PropertiesPropertySource("configuratie", new ClassPathResource("/tools-mailbox.properties"))).start();
+    }
+
+    /**
+     * Start de applicatie.
+     */
+    public void start() {
         final Version version = Version.readVersion("nl.bzk.migratiebrp.tools", "migr-tools-mailbox");
 
         LOG.debug("Starten applicatie ({}) ...\nComponenten:\n{}", version.toString(), version.toDetailsString());
 
-        context = new ClassPathXmlApplicationContext("tools-mailbox.xml");
+        context = new GenericXmlApplicationContext();
+        context.load("classpath:tools-mailbox.xml");
+        context.getEnvironment().getPropertySources().addLast(configuration);
+        context.refresh();
+
+        // Try to shutdown neatly even if stop() is not called
         context.registerShutdownHook();
 
         LOG.info("Applicatie ({}) gestart om {}", version.toString(), Calendar.getInstance().getTime());
@@ -46,7 +65,7 @@ public final class MailboxMain {
     /**
      * Stop de applicatie.
      */
-    public static void stop() {
+    public void stop() {
         context.close();
     }
 }

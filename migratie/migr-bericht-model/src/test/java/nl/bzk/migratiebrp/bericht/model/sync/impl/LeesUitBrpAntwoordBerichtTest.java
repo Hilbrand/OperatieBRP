@@ -9,6 +9,8 @@ package nl.bzk.migratiebrp.bericht.model.sync.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
@@ -28,18 +30,15 @@ import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3PersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -204,29 +203,29 @@ public class LeesUitBrpAntwoordBerichtTest {
 
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         // @formatter:off
-        builder.persoonStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Persoon(1234L,
-            null,
-            "Jan",
-            null,
-            null,
-            "Jansen",
-            19700101,
-            "0518",
-            "6030",
-            "M",
-            null,
-            null,
+        builder.persoonStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Persoon("1234",
+                null,
+                "Jan",
+                null,
+                null,
+                "Jansen",
+                19700101,
+                "0518",
+                "6030",
+                "M",
+                null,
+                null,
                 "E"),
                 Lo3StapelHelper.lo3Akt(1),
                 Lo3StapelHelper.lo3His(19700101),
                 new Lo3Herkomst(Lo3CategorieEnum.PERSOON, 0, 0))));
 
         builder.verblijfplaatsStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Verblijfplaats("0600",
-            1970101,
-            1970101,
-            "Straat",
-            15,
-            "9876AA",
+                1970101,
+                1970101,
+                "Straat",
+                15,
+                "9876AA",
                 "I"),
                 null,
                 Lo3StapelHelper.lo3His(19700101),
@@ -247,17 +246,17 @@ public class LeesUitBrpAntwoordBerichtTest {
         final BrpHistorie historie = new BrpHistorie(new BrpDatum(20121106, null), null, BrpDatumTijd.fromDatum(20121106, null), null, null);
         final BrpActie actieInhoud =
                 new BrpActie(
-                    1234L,
-                    BrpSoortActieCode.CONVERSIE_GBA,
-                    new BrpPartijCode(603001),
-                    BrpDatumTijd.fromDatum(20121106, null),
-                    null,
-                    null,
-                    1,
-                    null);
+                        1234L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        new BrpPartijCode("603001"),
+                        BrpDatumTijd.fromDatum(20121106, null),
+                        null,
+                        null,
+                        1,
+                        null);
 
         final List<BrpGroep<BrpIdentificatienummersInhoud>> identificatieGroepLijst = new ArrayList<>();
-        final BrpIdentificatienummersInhoud inhoud = new BrpIdentificatienummersInhoud(new BrpLong(123456789L), new BrpInteger(987654321));
+        final BrpIdentificatienummersInhoud inhoud = new BrpIdentificatienummersInhoud(new BrpString("123456789"), new BrpString("987654321"));
         final BrpGroep<BrpIdentificatienummersInhoud> identificatieGroep = new BrpGroep<>(inhoud, historie, actieInhoud, null, null);
         identificatieGroepLijst.add(identificatieGroep);
         final BrpStapel<BrpIdentificatienummersInhoud> identificatienummersStapel = new BrpStapel<>(identificatieGroepLijst);

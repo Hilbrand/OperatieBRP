@@ -11,7 +11,7 @@ import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNummerverwijzingInhoud;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.BrpStapelHelper;
@@ -22,7 +22,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -33,20 +32,20 @@ public class PlZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummerTest 
     @Mock
     private PlService plService;
 
-    @InjectMocks
-    private PlZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummer subject;
+    private PlZoekerOpActueelAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummer subject;
 
     @Before
     public void setupLogging() {
         SynchronisatieLogging.init();
+        subject = new PlZoekerOpActueelAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummer(plService);
     }
 
     @Test
     public void testGevonden() {
-        final BrpPersoonslijst brpPersoonslijst = maakPl(1111, 2222, 3333);
-        final BrpPersoonslijst dbPersoonslijst = maakPl(1111, 2222);
+        final BrpPersoonslijst brpPersoonslijst = maakPl("1111", "2222", "3333");
+        final BrpPersoonslijst dbPersoonslijst = maakPl("1111", "2222");
 
-        Mockito.when(plService.zoekNietFoutievePersoonslijstOpActueelAnummer(2222L)).thenReturn(dbPersoonslijst);
+        Mockito.when(plService.zoekNietFoutievePersoonslijstOpActueelAnummer("2222")).thenReturn(dbPersoonslijst);
 
         final VerwerkingsContext context = new VerwerkingsContext(null, null, null, brpPersoonslijst);
 
@@ -55,7 +54,7 @@ public class PlZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummerTest 
         Assert.assertEquals(1, resultaat.size());
         Assert.assertSame(dbPersoonslijst, resultaat.get(0));
 
-        Mockito.verify(plService).zoekNietFoutievePersoonslijstOpActueelAnummer(2222L);
+        Mockito.verify(plService).zoekNietFoutievePersoonslijstOpActueelAnummer("2222");
         Mockito.verifyNoMoreInteractions(plService);
 
         // Uit cache
@@ -69,9 +68,9 @@ public class PlZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummerTest 
 
     @Test
     public void testNietGevonden() {
-        final BrpPersoonslijst brpPersoonslijst = maakPl(1111, 2222, 3333);
+        final BrpPersoonslijst brpPersoonslijst = maakPl("1111", "2222", "3333");
 
-        Mockito.when(plService.zoekNietFoutievePersoonslijstOpActueelAnummer(2222L)).thenReturn(null);
+        Mockito.when(plService.zoekNietFoutievePersoonslijstOpActueelAnummer("2222")).thenReturn(null);
 
         final VerwerkingsContext context = new VerwerkingsContext(null, null, null, brpPersoonslijst);
 
@@ -79,7 +78,7 @@ public class PlZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummerTest 
         Assert.assertNotNull(resultaat);
         Assert.assertEquals(0, resultaat.size());
 
-        Mockito.verify(plService).zoekNietFoutievePersoonslijstOpActueelAnummer(2222L);
+        Mockito.verify(plService).zoekNietFoutievePersoonslijstOpActueelAnummer("2222");
         Mockito.verifyNoMoreInteractions(plService);
 
         // Uit cache
@@ -92,7 +91,7 @@ public class PlZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummerTest 
 
     @Test
     public void testGeenVorigAnummer() {
-        final BrpPersoonslijst brpPersoonslijst = maakPl(1111);
+        final BrpPersoonslijst brpPersoonslijst = maakPl("1111");
 
         final VerwerkingsContext context = new VerwerkingsContext(null, null, null, brpPersoonslijst);
 
@@ -110,12 +109,12 @@ public class PlZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummerTest 
         Mockito.verifyNoMoreInteractions(plService);
     }
 
-    private BrpPersoonslijst maakPl(final int anummer, final int... vorigAnummers) {
+    private BrpPersoonslijst maakPl(final String anummer, final String... vorigAnummers) {
         final BrpPersoonslijstBuilder builder = new BrpPersoonslijstBuilder();
 
         builder.identificatienummersStapel(BrpStapelHelper.stapel(BrpStapelHelper.groep(new BrpIdentificatienummersInhoud(
-            new BrpLong((long) anummer),
-            null), BrpStapelHelper.his(20000131), BrpStapelHelper.act(1, 20000131))));
+                new BrpString(anummer),
+                null), BrpStapelHelper.his(20000131), BrpStapelHelper.act(1, 20000131))));
 
         if (vorigAnummers != null && vorigAnummers.length > 0) {
             final List<BrpGroep<BrpNummerverwijzingInhoud>> groepen = new ArrayList<>();
@@ -124,9 +123,9 @@ public class PlZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelVorigAnummerTest 
                 final Integer datumAanvang = 20000131 - i;
                 final Integer datumEinde = i == 0 ? null : 20000132 - i;
                 groepen.add(BrpStapelHelper.groep(
-                    BrpStapelHelper.nummerverwijzing((long) vorigAnummers[i], null, null, null),
-                    BrpStapelHelper.his(datumAanvang, datumEinde, datumAanvang, datumEinde),
-                    BrpStapelHelper.act(1, datumAanvang)));
+                        BrpStapelHelper.nummerverwijzing(vorigAnummers[i], null, null, null),
+                        BrpStapelHelper.his(datumAanvang, datumEinde, datumAanvang, datumEinde),
+                        BrpStapelHelper.act(1, datumAanvang)));
             }
 
             builder.nummerverwijzingStapel(BrpStapelHelper.stapel(groepen.toArray(new BrpGroep[groepen.size()])));

@@ -7,9 +7,9 @@
 package nl.bzk.migratiebrp.isc.jbpm.common.configuratie;
 
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.model.Configuratie;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.jbpm.calendar.Duration;
@@ -23,8 +23,16 @@ public final class SessionConfiguratieDao implements ConfiguratieDao {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    @Inject
     private SessionFactory sessionFactory;
+
+    /**
+     * Default constructor.
+     * @param sessionFactory De meegegevens session factory
+     */
+    @Inject
+    public SessionConfiguratieDao(final SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public String getConfiguratie(final String naam) {

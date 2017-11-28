@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -39,7 +39,6 @@ import org.junit.Test;
 
 /**
  * Test het contract van VerblijfsrechtConverteerder.
- * 
  */
 public class VerblijfsrechtConverteerderTest extends AbstractConversieTest {
 
@@ -55,52 +54,63 @@ public class VerblijfsrechtConverteerderTest extends AbstractConversieTest {
     private Lo3Persoonslijst maakLo3Persoonslijst() {
         final List<Lo3Categorie<Lo3PersoonInhoud>> persoonCategorieen = new ArrayList<>();
 
-        persoonCategorieen.add(Lo3Builder.createLo3Persoon(
-            1234567890L,
-            987654321,
-            "Piet Jan",
-            "PS",
-            "van",
-            "HorenZeggen",
-            VerplichteStapel.GEBOORTE_DATUM,
-            "0000",
-            "6030",
-            "M",
-            null,
-            null,
-            "E",
-            null,
-            VerplichteStapel.GEBOORTE_DATUM,
-            VerplichteStapel.GEBOORTE_DATUM + 1,
-            0));
+        persoonCategorieen.add(
+                Lo3Builder.createLo3Persoon(
+                        "1234567890",
+                        "987654321",
+                        "Piet Jan",
+                        "PS",
+                        "van",
+                        "HorenZeggen",
+                        VerplichteStapel.GEBOORTE_DATUM,
+                        "0000",
+                        "6030",
+                        "M",
+                        null,
+                        null,
+                        "E",
+                        null,
+                        VerplichteStapel.GEBOORTE_DATUM,
+                        VerplichteStapel.GEBOORTE_DATUM + 1,
+                        0));
 
         final Lo3Stapel<Lo3PersoonInhoud> persoonStapel = new Lo3Stapel<>(persoonCategorieen);
 
         final List<Lo3Categorie<Lo3VerblijfstitelInhoud>> verblijfstitelCategorieen = new ArrayList<>();
-        verblijfstitelCategorieen.add(new Lo3Categorie<>(new Lo3VerblijfstitelInhoud(new Lo3AanduidingVerblijfstitelCode("12"), null, new Lo3Datum(
-            20000101)), null, new Lo3Historie(null, new Lo3Datum(20000101), new Lo3Datum(20000102)), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_10, 0, 0)));
+        verblijfstitelCategorieen.add(
+                new Lo3Categorie<>(
+                        new Lo3VerblijfstitelInhoud(new Lo3AanduidingVerblijfstitelCode("12"), null, new Lo3Datum(20000101)),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20000101), new Lo3Datum(20000102)),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_10, 0, 0)));
         final Lo3Stapel<Lo3InschrijvingInhoud> lo3InschrijvingStapel =
-                new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3InschrijvingInhoud(
-                    null,
-                    null,
-                    null,
-                    new Lo3Datum(19800101),
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Lo3Integer(1),
-                    new Lo3Datumtijdstempel(20070401000000000L),
-                    null), null, Lo3Historie.NULL_HISTORIE, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0))));
+                new Lo3Stapel<>(
+                        Collections.singletonList(
+                                new Lo3Categorie<>(
+                                        new Lo3InschrijvingInhoud(
+                                                null,
+                                                null,
+                                                null,
+                                                new Lo3Datum(19800101),
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                new Lo3Integer(1),
+                                                new Lo3Datumtijdstempel(20070401000000000L),
+                                                null),
+                                        null,
+                                        new Lo3Historie(null, null, null),
+                                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0))));
         final Lo3Stapel<Lo3OuderInhoud> ouder1 = VerplichteStapel.createOuder1Stapel();
         final Lo3Stapel<Lo3OuderInhoud> ouder2 = VerplichteStapel.createOuder2Stapel();
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> verblijfplaats = VerplichteStapel.createVerblijfplaatsStapel();
         return new Lo3PersoonslijstBuilder().persoonStapel(persoonStapel)
-                                            .ouder1Stapel(ouder1)
-                                            .ouder2Stapel(ouder2)
-                                            .verblijfplaatsStapel(verblijfplaats)
-                                            .verblijfstitelStapel(new Lo3Stapel<>(verblijfstitelCategorieen))
-                                            .inschrijvingStapel(lo3InschrijvingStapel)
-                                            .build();
+                .ouder1Stapel(ouder1)
+                .ouder2Stapel(ouder2)
+                .verblijfplaatsStapel(verblijfplaats)
+                .verblijfstitelStapel(new Lo3Stapel<>(verblijfstitelCategorieen))
+                .inschrijvingStapel(lo3InschrijvingStapel)
+                .build();
     }
 }

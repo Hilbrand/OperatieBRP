@@ -37,15 +37,14 @@ public abstract class AbstractVerblijfplaatsTest extends AbstractComponentTest {
 
     // Groep 09
     protected static final Lo3GemeenteCode LO3_GEMEENTE_CODE = new Lo3GemeenteCode("1904");
-    protected static final BrpGemeenteCode BRP_GEMEENTE_CODE = new BrpGemeenteCode((short) 1904);
-    protected static final Lo3Datum LO3_DATUM_INSCHRIJVING = new Lo3Datum(20000101);
-    protected static final BrpDatum BRP_DATUM_INSCHRIJVING = new BrpDatum(20000101, null);
+    protected static final BrpGemeenteCode BRP_GEMEENTE_CODE = new BrpGemeenteCode("1904");
+    protected static final Lo3Datum LO3_DATUM_INSCHRIJVING = new Lo3Datum(2000_01_01);
     // Groep 10
     protected static final Lo3FunctieAdres LO3_FUNCTIE_ADRES_B = Lo3FunctieAdresEnum.BRIEFADRES.asElement();
     protected static final BrpSoortAdresCode BRP_SOORT_ADRES_CODE_B = BrpSoortAdresCode.B;
     protected static final Lo3String GEMEENTE_DEEL = Lo3String.wrap("linkerkant");
-    protected static final Lo3Datum LO3_DATUM_AANVANG_ADRESHOUDING = new Lo3Datum(20000102);
-    protected static final BrpDatum BRP_DATUM_AANVANG_ADRESHOUDING = new BrpDatum(20000102, null);
+    protected static final Lo3Datum LO3_DATUM_AANVANG_ADRESHOUDING = new Lo3Datum(2000_01_02);
+    protected static final BrpDatum BRP_DATUM_AANVANG_ADRESHOUDING = new BrpDatum(2000_01_02, null);
     // Groep 11
     protected static final Lo3String STRAATNAAM_PUNT = Lo3String.wrap(".");
     protected static final Lo3String STRAATNAAM = Lo3String.wrap("straat");
@@ -56,26 +55,24 @@ public abstract class AbstractVerblijfplaatsTest extends AbstractComponentTest {
     protected static final Lo3String HUISNUMMER_TOEVOEGING = Lo3String.wrap("-z");
     protected static final Lo3AanduidingHuisnummer LO3_AANDUIDING_HUISNUMMER = Lo3AanduidingHuisnummerEnum.BY.asElement();
     protected static final BrpAanduidingBijHuisnummerCode BRP_AANDUIDING_HUISNUMMER = new BrpAanduidingBijHuisnummerCode(
-        BrpAanduidingBijHuisnummerCode.CODE_BY);
+            BrpAanduidingBijHuisnummerCode.CODE_BY);
     protected static final Lo3String POSTCODE = Lo3String.wrap("1233WE");
     protected static final Lo3String WOONPLAATSNAAM = Lo3String.wrap("Appingedam");
-    protected static final Lo3String IDENTCODE_ADRESSEERBAAR_OBJECT = Lo3String.wrap("234982349832WER");
-    protected static final Lo3String IDENTCODE_NUMMERAANDUIDING = Lo3String.wrap("00230234939342w");
+    protected static final Lo3String IDENTCODE_ADRESSEERBAAR_OBJECT = Lo3String.wrap("2349_82_349832WER");
+    protected static final Lo3String IDENTCODE_NUMMERAANDUIDING = Lo3String.wrap("0023_02_34939342w");
     // Groep 12
     protected static final Lo3String LOCATIE_OMSCHRIJVING = Lo3String.wrap("locatie omschrijving");
     // Groep 13
     protected static final Lo3LandCode LO3_LAND_CODE_EMIGRATIE = new Lo3LandCode("1234");
-    protected static final BrpLandOfGebiedCode BRP_LAND_OF_GEBIED_CODE_EMIGRATIE = new BrpLandOfGebiedCode((short) 1234);
-    protected static final Lo3Datum LO3_DATUM_VERTREK_UIT_NL = new Lo3Datum(20000103);
-    protected static final BrpDatum BRP_DATUM_VERTREK_UIT_NL = new BrpDatum(20000103, null);
+    protected static final BrpLandOfGebiedCode BRP_LAND_OF_GEBIED_CODE_EMIGRATIE = new BrpLandOfGebiedCode("1234");
+    protected static final Lo3Datum LO3_DATUM_VERTREK_UIT_NL = new Lo3Datum(2000_01_03);
     protected static final Lo3String ADRES_BUITENLAND_1 = Lo3String.wrap("adres buitenland 1");
     protected static final Lo3String ADRES_BUITENLAND_2 = Lo3String.wrap("adres buitenland 2");
     protected static final Lo3String ADRES_BUITENLAND_3 = Lo3String.wrap("adres buitenland 3");
     // Groep 14
     protected static final Lo3LandCode LO3_LAND_CODE_IMMIGRATIE = new Lo3LandCode("4321");
-    protected static final BrpLandOfGebiedCode BRP_LAND_OF_GEBIED_CODE_IMMIGRATIE = new BrpLandOfGebiedCode((short) 4321);
-    protected static final Lo3Datum LO3_DATUM_VESTIGING_IN_NL = new Lo3Datum(20000104);
-    protected static final BrpDatum BRP_DATUM_VESTIGING_IN_NL = new BrpDatum(20000104, null);
+    protected static final BrpLandOfGebiedCode BRP_LAND_OF_GEBIED_CODE_IMMIGRATIE = new BrpLandOfGebiedCode("4321");
+    protected static final Lo3Datum LO3_DATUM_VESTIGING_IN_NL = new Lo3Datum(2000_01_04);
     // Groep 72
     protected static final Lo3AangifteAdreshouding LO3_AANGIFTE_ADRESHOUDING_INGESCHREVENE =
             Lo3AangifteAdreshoudingEnum.INGESCHREVENE.asElement();
@@ -85,8 +82,5 @@ public abstract class AbstractVerblijfplaatsTest extends AbstractComponentTest {
     // Groep 75
     protected static final Lo3IndicatieDocument LO3_INDICATIE_DOCUMENT = Lo3IndicatieDocumentEnum.INDICATIE.asElement();
 
-    protected static final BrpLandOfGebiedCode BRP_LAND_OF_GEBIED_CODE_NL = new BrpLandOfGebiedCode(Short.parseShort("6030"));
-
-    protected static final int DATUM_AANVANG_GELDIGHEID = 19940101;
-
+    protected static final BrpLandOfGebiedCode BRP_LAND_OF_GEBIED_CODE_NL = new BrpLandOfGebiedCode("6030");
 }

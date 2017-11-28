@@ -14,14 +14,11 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaat
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
-
 import org.junit.Test;
 
 /**
@@ -30,11 +27,10 @@ import org.junit.Test;
 public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPreconditieTest {
 
     private static final String GEM_CODE = "1904";
-    private static final Lo3Long PERSOON_ANUMMER = new Lo3Long(1234567890L);
+    private static final Lo3String PERSOON_ANUMMER = new Lo3String("1234567890");
 
     /**
      * Geef de waarde van herkomst.
-     *
      * @return herkomst
      */
     abstract Lo3Herkomst getHerkomst();
@@ -43,15 +39,14 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
 
     /**
      * Geef de waarde van precondities.
-     *
      * @return precondities
      */
     abstract Lo3OuderPrecondities getPrecondities();
 
     Lo3OuderInhoud.Builder builder() {
         final Lo3OuderInhoud.Builder builder = new Lo3OuderInhoud.Builder();
-        builder.anummer(Lo3Long.wrap(1069532945L));
-        builder.burgerservicenummer(Lo3Integer.wrap(179543489));
+        builder.anummer(Lo3String.wrap("1069532945"));
+        builder.burgerservicenummer(Lo3String.wrap("179543489"));
 
         builder.voornamen(Lo3String.wrap("Jaap"));
         builder.adellijkeTitelPredikaatCode(new Lo3AdellijkeTitelPredikaatCode("P"));
@@ -77,10 +72,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
         builder.familierechtelijkeBetrekking(new Lo3Datum(20010101));
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    getHerkomst()));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        getHerkomst()));
 
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
 
@@ -97,10 +92,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
         builder.familierechtelijkeBetrekking(new Lo3Datum(20010101));
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, null, 20120101),
-                    getHerkomst()));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, null, 20120101),
+                        getHerkomst()));
 
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
 
@@ -118,10 +113,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
         builder.familierechtelijkeBetrekking(new Lo3Datum(20010101));
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Doc(1L, "0518", 20120101, "inhoud"),
-                    Lo3StapelHelper.lo3His(null, null, 20120101),
-                    getHerkomst()));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Doc(1L, "0518", 20120101, "inhoud"),
+                        Lo3StapelHelper.lo3His(null, null, 20120101),
+                        getHerkomst()));
 
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalErrors(1);
@@ -135,10 +130,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
         final Lo3OuderInhoud.Builder builder = new Lo3OuderInhoud.Builder();
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    getHerkomst()));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        getHerkomst()));
 
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
 
@@ -152,10 +147,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
         final Lo3OuderInhoud.Builder builder = new Lo3OuderInhoud.Builder();
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, null, 20120101),
-                    getHerkomst()));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, null, 20120101),
+                        getHerkomst()));
 
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalErrors(1);
@@ -169,10 +164,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
         final Lo3OuderInhoud.Builder builder = new Lo3OuderInhoud.Builder();
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Doc(1L, "0518", 20120101, "inhoud"),
-                    Lo3StapelHelper.lo3His(null, null, 20120101),
-                    getHerkomst()));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Doc(1L, "0518", 20120101, "inhoud"),
+                        Lo3StapelHelper.lo3His(null, null, 20120101),
+                        getHerkomst()));
 
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalErrors(1);
@@ -185,10 +180,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
     public void testBijzondereSituatieZwakkeAdoptieGeenDocumentatieAanwezig() {
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, null),
-                    Lo3StapelHelper.lo3His(20120101),
-                    getHerkomst()));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, null),
+                        Lo3StapelHelper.lo3His(20120101),
+                        getHerkomst()));
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalInfos(0);
         assertSoortMeldingCode(SoortMeldingCode.BIJZ_CONV_LB021, 0);
@@ -199,10 +194,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
     public void testBijzondereSituatieZwakkeAdoptie() {
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "akte (zwak) Haags adoptieverdrag"),
-                    Lo3StapelHelper.lo3His(20120101),
-                    getHerkomst()));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "akte (zwak) Haags adoptieverdrag"),
+                        Lo3StapelHelper.lo3His(20120101),
+                        getHerkomst()));
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalInfos(1);
         assertSoortMeldingCode(SoortMeldingCode.BIJZ_CONV_LB021, 1);
@@ -213,10 +208,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
     public void testBijzondereSituatieZwakkeAdoptie2() {
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "akte (zwak) Wet conflictenrecht adoptie"),
-                    Lo3StapelHelper.lo3His(20120101),
-                    getHerkomst()));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "akte (zwak) Wet conflictenrecht adoptie"),
+                        Lo3StapelHelper.lo3His(20120101),
+                        getHerkomst()));
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalInfos(1);
         assertSoortMeldingCode(SoortMeldingCode.BIJZ_CONV_LB021, 1);
@@ -227,10 +222,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
     public void testBijzondereSituatieGeenZwakkeAdoptie() {
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "Omschrijving van document"),
-                    Lo3StapelHelper.lo3His(20120101),
-                    getHerkomst()));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "Omschrijving van document"),
+                        Lo3StapelHelper.lo3His(20120101),
+                        getHerkomst()));
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalInfos(0);
         assertSoortMeldingCode(SoortMeldingCode.BIJZ_CONV_LB021, 0);
@@ -241,10 +236,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
     public void testBijzondereSituatieGeenZwakkeAdoptieAkte() {
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20120101),
-                    getHerkomst()));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20120101),
+                        getHerkomst()));
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalInfos(0);
         assertSoortMeldingCode(SoortMeldingCode.BIJZ_CONV_LB021, 0);
@@ -255,10 +250,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
     public void testBijzondereSituatieZwakkeAdoptieHoofdLetters() {
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "AKTE (ZWAK) WET CONFLICTENRECHT ADOPTIE"),
-                    Lo3StapelHelper.lo3His(20120101),
-                    getHerkomst()));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "AKTE (ZWAK) WET CONFLICTENRECHT ADOPTIE"),
+                        Lo3StapelHelper.lo3His(20120101),
+                        getHerkomst()));
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalInfos(1);
         assertSoortMeldingCode(SoortMeldingCode.BIJZ_CONV_LB021, 1);
@@ -269,10 +264,10 @@ public abstract class AbstractLo3OuderPreconditiesTest extends AbstractPrecondit
     public void testBijzondereSituatieZwakkeAdoptieKleineLetters() {
         final Lo3Stapel<Lo3OuderInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "akte (zwak) wet conflictenrecht adoptie"),
-                    Lo3StapelHelper.lo3His(20120101),
-                    getHerkomst()));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, null, null, GEM_CODE, 20120101, "akte (zwak) wet conflictenrecht adoptie"),
+                        Lo3StapelHelper.lo3His(20120101),
+                        getHerkomst()));
         getPrecondities().controleerStapel(stapel, PERSOON_ANUMMER);
         assertAantalInfos(1);
         assertSoortMeldingCode(SoortMeldingCode.BIJZ_CONV_LB021, 1);

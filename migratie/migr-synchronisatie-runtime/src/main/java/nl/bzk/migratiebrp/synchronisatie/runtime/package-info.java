@@ -5,7 +5,7 @@
  */
 
 /**
- * Standalone runtime voor vospg.
+ * Standalone runtime voor voisc.
  */
 package nl.bzk.migratiebrp.synchronisatie.runtime;
 

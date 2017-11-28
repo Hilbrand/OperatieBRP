@@ -19,8 +19,8 @@ import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.BlokkeringInfoAntwoordType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;

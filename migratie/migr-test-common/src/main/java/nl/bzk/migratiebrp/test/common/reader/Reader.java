@@ -19,37 +19,27 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3Lg01BerichtWaarde;
 public interface Reader {
     /**
      * Lees de inhoud van een bestand.
-     * 
-     * @param file
-     *            bestand
+     * @param file bestand
      * @return inhoud
-     * @throws IOException
-     *             bij lees fouten
+     * @throws IOException bij lees fouten
      */
     String readFile(File file) throws IOException;
 
     /**
      * Leest de inhoud van een bestand en geeft een lijst met
      * {@link nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3Lg01BerichtWaarde}.
-     * 
-     * @param file
-     *            bestand
+     * @param file bestand
      * @return een lijst met lijsten van {@link nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3Lg01BerichtWaarde}
-     * @throws IOException
-     *             bij leesfouten
-     * @throws Lo3SyntaxException
-     *             exception wordt gegooid als er geen geldige Lo3 syntax wordt herkend
+     * @throws IOException bij leesfouten
+     * @throws Lo3SyntaxException exception wordt gegooid als er geen geldige Lo3 syntax wordt herkend
      */
     List<Lo3Lg01BerichtWaarde> readFileAsLo3CategorieWaarde(final File file) throws IOException, Lo3SyntaxException;
 
     /**
      * Leest de inhoud van een bestand in en retourneert een lijst met daarin een map van header/value.
-     * 
-     * @param file
-     *            bestand
+     * @param file bestand
      * @return een lijst met header/value maps
-     * @throws IOException
-     *             bij leesfouten
+     * @throws IOException bij leesfouten
      */
     List<Map<String, Object>> readFileAsSqlOutput(final File file) throws IOException;
 

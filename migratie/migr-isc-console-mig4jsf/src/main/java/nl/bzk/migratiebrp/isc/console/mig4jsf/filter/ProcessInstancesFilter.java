@@ -10,7 +10,9 @@ import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.util.Calendar;
 import java.util.Date;
+
 import nl.bzk.migratiebrp.util.common.Kopieer;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -33,9 +35,11 @@ public final class ProcessInstancesFilter implements Filter, Serializable {
     private static final String COLUMN_START = "start";
     private static final String COLUMN_END = "end";
     private static final String COLUMN_SUSPENDED = "isSuspended";
+    private static final String SQL_RESTRICTION_GERELATEERDE_INFORMATIE =
+            "{alias}.id_ in (select process_instance_id from mig_proces_gerelateerd " + "where soort_gegeven = ? and gegeven = ?)";
 
-    private static final String SQL_RESTRICTION_GERELATEERDE_INFORMATIE = "{alias}.id_ in (select process_instance_id from mig_proces_gerelateerd "
-                                                                          + "where soort_gegeven = ? and gegeven = ?)";
+    private static final String SQL_RESTRICTION_PROCESS_DEFINITION =
+            "{alias}.processdefinition_ in (select pd.id_ from jbpm_processdefinition pd where pd.name_ = ?)";
 
     private final String key;
     private final Date startDate;
@@ -45,41 +49,36 @@ public final class ProcessInstancesFilter implements Filter, Serializable {
     private final String anummer;
     private final String partij;
     private final String ahId;
+    private final String processInstanceId;
+    private final String processDefinition;
     private final Boolean root;
 
     /**
      * Constructor.
-     *
-     * @param key
-     *            key
-     * @param startDate
-     *            start datum
-     * @param running
-     *            indicatie running
-     * @param suspended
-     *            indicatie suspended
-     * @param ended
-     *            indicatie ended
-     * @param anummer
-     *            a-nummer
-     * @param partij
-     *            partij
-     * @param ahId
-     *            administratieve handeling id
-     * @param root
-     *            indicatie alleen root processen
+     * @param key key
+     * @param startDate start datum
+     * @param running indicatie running
+     * @param suspended indicatie suspended
+     * @param ended indicatie ended
+     * @param anummer a-nummer
+     * @param partij partij
+     * @param ahId administratieve handeling id
+     * @param processInstanceId process instance id
+     * @param processDefinition process definition
+     * @param root indicatie alleen root processen
      */
     public ProcessInstancesFilter(
-        final String key,
-        final Date startDate,
-        final Boolean running,
-        final Boolean suspended,
-        final Boolean ended,
-        final String anummer,
-        final String partij,
-        final String ahId,
-        final Boolean root)
-    {
+            final String key,
+            final Date startDate,
+            final Boolean running,
+            final Boolean suspended,
+            final Boolean ended,
+            final String anummer,
+            final String partij,
+            final String ahId,
+            final String processInstanceId,
+            final String processDefinition,
+            final Boolean root) {
         this.key = key;
         this.startDate = Kopieer.utilDate(startDate);
         this.running = running;
@@ -88,6 +87,8 @@ public final class ProcessInstancesFilter implements Filter, Serializable {
         this.anummer = anummer;
         this.partij = partij;
         this.ahId = ahId;
+        this.processInstanceId = processInstanceId;
+        this.processDefinition = processDefinition;
         this.root = root;
     }
 
@@ -99,29 +100,34 @@ public final class ProcessInstancesFilter implements Filter, Serializable {
 
         applyStartDateCriteria(criteria);
         applyStateCritria(criteria);
+        applyProcessInstanceIdCriteria(criteria);
+        applyProcessDefinitionCriteria(criteria);
 
         if (anummer != null && !"".equals(anummer)) {
             // Add anummer criterion
-            criteria.add(Restrictions.sqlRestriction(
-                SQL_RESTRICTION_GERELATEERDE_INFORMATIE,
-                new Object[] {"ANR", anummer, },
-                new Type[] {StringType.INSTANCE, StringType.INSTANCE, }));
+            criteria.add(
+                    Restrictions.sqlRestriction(
+                            SQL_RESTRICTION_GERELATEERDE_INFORMATIE,
+                            new Object[]{"ANR", anummer,},
+                            new Type[]{StringType.INSTANCE, StringType.INSTANCE,}));
         }
 
         if (partij != null && !"".equals(partij)) {
             // Add partij criterion
-            criteria.add(Restrictions.sqlRestriction(
-                SQL_RESTRICTION_GERELATEERDE_INFORMATIE,
-                new Object[] {"PTY", partij, },
-                new Type[] {StringType.INSTANCE, StringType.INSTANCE, }));
+            criteria.add(
+                    Restrictions.sqlRestriction(
+                            SQL_RESTRICTION_GERELATEERDE_INFORMATIE,
+                            new Object[]{"PTY", partij,},
+                            new Type[]{StringType.INSTANCE, StringType.INSTANCE,}));
         }
 
         if (ahId != null && !"".equals(ahId)) {
             // Add administratieve handeling criterion
-            criteria.add(Restrictions.sqlRestriction(
-                SQL_RESTRICTION_GERELATEERDE_INFORMATIE,
-                new Object[] {"ADH", ahId, },
-                new Type[] {StringType.INSTANCE, StringType.INSTANCE, }));
+            criteria.add(
+                    Restrictions.sqlRestriction(
+                            SQL_RESTRICTION_GERELATEERDE_INFORMATIE,
+                            new Object[]{"ADH", ahId,},
+                            new Type[]{StringType.INSTANCE, StringType.INSTANCE,}));
         }
 
         if (Boolean.TRUE.equals(root)) {
@@ -147,6 +153,22 @@ public final class ProcessInstancesFilter implements Filter, Serializable {
             toDate.set(Calendar.MILLISECOND, EINDE_VAN_DE_DAG_MILLISECOND);
 
             criteria.add(Restrictions.between(COLUMN_START, fromDate.getTime(), toDate.getTime()));
+        }
+    }
+
+    private void applyProcessDefinitionCriteria(final Criteria criteria) {
+
+        if (processDefinition != null && !"".equals(processDefinition)) {
+            // Add processdefinition criterion
+            criteria.add(
+                    Restrictions.sqlRestriction(SQL_RESTRICTION_PROCESS_DEFINITION, new Object[]{processDefinition,}, new Type[]{StringType.INSTANCE,}));
+        }
+
+    }
+
+    private void applyProcessInstanceIdCriteria(final Criteria criteria) {
+        if (processInstanceId != null && !"".equals(processInstanceId)) {
+            criteria.add(Restrictions.idEq(Long.valueOf(processInstanceId)));
         }
     }
 
@@ -191,22 +213,26 @@ public final class ProcessInstancesFilter implements Filter, Serializable {
     @Override
     public String toString() {
         return "ProcessInstancesFilter [key="
-               + key
-               + ", startDate="
-               + startDate
-               + ", running="
-               + running
-               + ", suspended="
-               + suspended
-               + ", ended="
-               + ended
-               + ", anummer="
-               + anummer
-               + ", partij="
-               + partij
-               + ", ahId="
-               + ahId
-               + "]";
+                + key
+                + ", startDate="
+                + startDate
+                + ", running="
+                + running
+                + ", suspended="
+                + suspended
+                + ", ended="
+                + ended
+                + ", anummer="
+                + anummer
+                + ", partij="
+                + partij
+                + ", ahId="
+                + ahId
+                + ", processInstanceId="
+                + processInstanceId
+                + ", processDefinition="
+                + processDefinition
+                + "]";
     }
 
 }

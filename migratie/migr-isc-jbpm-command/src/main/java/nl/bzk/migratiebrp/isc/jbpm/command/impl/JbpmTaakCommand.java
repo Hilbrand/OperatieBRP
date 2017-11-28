@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.command.impl;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import nl.bzk.migratiebrp.isc.jbpm.command.Command;
@@ -23,7 +24,7 @@ public final class JbpmTaakCommand implements Command<Void> {
 
     private final Set<String> taakVariabelenVerwijderd;
 
-    private final Map<String, Object> taakVariabelenGewijzigd;
+    private final Map<String, Serializable> taakVariabelenGewijzigd;
 
     private final String commentaar;
 
@@ -31,25 +32,14 @@ public final class JbpmTaakCommand implements Command<Void> {
 
     /**
      * Default constructor.
-     *
-     * @param taakId
-     *            Het taak Id van het foutafhandelingsproces.
-     * @param taakVariabelenVerwijderd
-     *            De map met verwijderde taak variabelen.
-     * @param taakVariabelenGewijzigd
-     *            De map met gewijzigde taak variabelen.
-     * @param commentaar
-     *            Het ingevoerde commentaar.
-     * @param transitieNaam
-     *            De gekozen transitie voor de taak.
+     * @param taakId Het taak Id van het foutafhandelingsproces.
+     * @param taakVariabelenVerwijderd De map met verwijderde taak variabelen.
+     * @param taakVariabelenGewijzigd De map met gewijzigde taak variabelen.
+     * @param commentaar Het ingevoerde commentaar.
+     * @param transitieNaam De gekozen transitie voor de taak.
      */
-    public JbpmTaakCommand(
-        final Long taakId,
-        final Set<String> taakVariabelenVerwijderd,
-        final Map<String, Object> taakVariabelenGewijzigd,
-        final String commentaar,
-        final String transitieNaam)
-    {
+    public JbpmTaakCommand(final Long taakId, final Set<String> taakVariabelenVerwijderd, final Map<String, Serializable> taakVariabelenGewijzigd,
+                           final String commentaar, final String transitieNaam) {
         this.taakId = taakId;
         this.taakVariabelenVerwijderd = taakVariabelenVerwijderd;
         this.taakVariabelenGewijzigd = taakVariabelenGewijzigd;
@@ -81,9 +71,7 @@ public final class JbpmTaakCommand implements Command<Void> {
 
     /**
      * Past de variabelen aan voor de meegegeven taak.
-     *
-     * @param taskInstance
-     *            De taak waarvan de variabelen worden aangepast.
+     * @param taskInstance De taak waarvan de variabelen worden aangepast.
      */
     private void pasTaakVariabelenAan(final TaskInstance taskInstance) {
         if (taakVariabelenVerwijderd != null) {
@@ -93,7 +81,7 @@ public final class JbpmTaakCommand implements Command<Void> {
         }
 
         if (taakVariabelenGewijzigd != null) {
-            for (final Map.Entry<String, Object> variabele : taakVariabelenGewijzigd.entrySet()) {
+            for (final Map.Entry<String, Serializable> variabele : taakVariabelenGewijzigd.entrySet()) {
                 taskInstance.setVariable(variabele.getKey(), variabele.getValue());
             }
         }

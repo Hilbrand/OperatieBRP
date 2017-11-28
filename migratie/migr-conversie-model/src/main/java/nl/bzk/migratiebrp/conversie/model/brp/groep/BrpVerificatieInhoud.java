@@ -6,20 +6,20 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Root;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
 
 /**
  * Deze class representeert de inhoud van de BRP objecttype Persoon Verificatie.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 @Root(strict = false)
@@ -33,19 +33,14 @@ public final class BrpVerificatieInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maak een BrpVerificatieInhoud object.
-     * 
-     * @param partij
-     *            de verifierende partij
-     * @param soort
-     *            de soort verificatie
-     * @param datum
-     *            de datum van de verificatie
+     * @param partij de verifierende partij
+     * @param soort de soort verificatie
+     * @param datum de datum van de verificatie
      */
     public BrpVerificatieInhoud(
-        @Element(name = "partij", required = true) final BrpPartijCode partij,
-        @Element(name = "soort", required = true) final BrpString soort,
-        @Element(name = "datum", required = true) final BrpDatum datum)
-    {
+            @Element(name = "partij", required = true) final BrpPartijCode partij,
+            @Element(name = "soort", required = true) final BrpString soort,
+            @Element(name = "datum", required = true) final BrpDatum datum) {
         this.partij = partij;
         this.soort = soort;
         this.datum = datum;
@@ -53,36 +48,33 @@ public final class BrpVerificatieInhoud extends AbstractBrpGroepInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(partij, soort, datum);
+        return !BrpValidatie.isEenParameterGevuld(partij, soort, datum);
     }
 
     /**
-     * Geef de waarde van partij.
-     *
-     * @return de verifierende partij
+     * Geef de waarde van partij van BrpVerificatieInhoud.
+     * @return de waarde van partij van BrpVerificatieInhoud
      */
     public BrpPartijCode getPartij() {
         return partij;
     }
 
     /**
-     * Geef de waarde van soort.
-     *
-     * @return de soort verificatie
+     * Geef de waarde van soort van BrpVerificatieInhoud.
+     * @return de waarde van soort van BrpVerificatieInhoud
      */
     public BrpString getSoort() {
         return soort;
     }
 
     /**
-     * Geef de waarde van datum.
-     *
-     * @return de datum van de verificatie
+     * Geef de waarde van datum van BrpVerificatieInhoud.
+     * @return de waarde van datum van BrpVerificatieInhoud
      */
     public BrpDatum getDatum() {
         return datum;
@@ -108,8 +100,8 @@ public final class BrpVerificatieInhoud extends AbstractBrpGroepInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("partij", partij)
-                                                                          .append("soort", soort)
-                                                                          .append("datum", datum)
-                                                                          .toString();
+                .append("soort", soort)
+                .append("datum", datum)
+                .toString();
     }
 }

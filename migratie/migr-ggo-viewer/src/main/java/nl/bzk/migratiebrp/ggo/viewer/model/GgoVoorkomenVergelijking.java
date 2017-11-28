@@ -32,15 +32,11 @@ public class GgoVoorkomenVergelijking {
 
     /**
      * Constructor.
-     * 
-     * @param voorkomenMatch
-     *            de StapelMatch waarop deze StapelVergelijking zich zal baseren.
-     * @param aNummer
-     *            Het anummer van de PL.
-     * @param type
-     *            Het type van de stapelmatch.
+     * @param voorkomenMatch de StapelMatch waarop deze StapelVergelijking zich zal baseren.
+     * @param aNummer Het anummer van de PL.
+     * @param type Het type van de stapelmatch.
      */
-    public GgoVoorkomenVergelijking(final VoorkomenMatch voorkomenMatch, final Long aNummer, final String type) {
+    public GgoVoorkomenVergelijking(final VoorkomenMatch voorkomenMatch, final String aNummer, final String type) {
         if (voorkomenMatch.getOldVoorkomen() != null) {
             createHerkomstClassName(aNummer, voorkomenMatch.getCategorie(), voorkomenMatch.getOldVoorkomen(), oudeHerkomsten);
         }
@@ -53,7 +49,7 @@ public class GgoVoorkomenVergelijking {
 
         // Alle elementen in de inhoud
         if (voorkomenMatch.getDifference() != null) {
-            final StringBuffer joinedElements = new StringBuffer();
+            final StringBuilder joinedElements = new StringBuilder();
 
             createDiffElements(voorkomenMatch, joinedElements);
             inhoud = joinedElements.toString();
@@ -62,7 +58,7 @@ public class GgoVoorkomenVergelijking {
         }
     }
 
-    private void createDiffElements(final VoorkomenMatch voorkomenMatch, final StringBuffer joinedElements) {
+    private void createDiffElements(final VoorkomenMatch voorkomenMatch, final StringBuilder joinedElements) {
         final Set<Integer> elementen = new HashSet<>();
         if (voorkomenMatch.getDifference().getGegevensSet(voorkomenMatch.getCategorie(), 0, 0) != null) {
             elementen.addAll(voorkomenMatch.getDifference().getGegevensSet(voorkomenMatch.getCategorie(), 0, 0).getElements());
@@ -76,8 +72,9 @@ public class GgoVoorkomenVergelijking {
                 joinedElements.append(", ");
             }
             final String elementStr = intElementToString(element, ELEMENT_SIZE);
-            joinedElements.append(elementStr.substring(0, 2)).append(PUNT);
-            joinedElements.append(elementStr.substring(2, ELEMENT_SIZE));
+            final int elementSplitIndex = 2;
+            joinedElements.append(elementStr.substring(0, elementSplitIndex)).append(PUNT);
+            joinedElements.append(elementStr.substring(elementSplitIndex, ELEMENT_SIZE));
         }
     }
 
@@ -91,11 +88,10 @@ public class GgoVoorkomenVergelijking {
     }
 
     private void createHerkomstClassName(
-        final Long aNummer,
-        final Integer categorieNr,
-        final GegevensSet voorkomen,
-        final List<String> herkomsten)
-    {
+            final String aNummer,
+            final Integer categorieNr,
+            final GegevensSet voorkomen,
+            final List<String> herkomsten) {
         // maak categorieNr historisch indien nodig
         final int catNr = VerwerkerUtil.maakCatNrHistorisch(categorieNr, voorkomen.getVolgNr());
         final String className =
@@ -115,7 +111,6 @@ public class GgoVoorkomenVergelijking {
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return the inhoud
      */
     public final String getInhoud() {
@@ -124,7 +119,6 @@ public class GgoVoorkomenVergelijking {
 
     /**
      * Geef de waarde van oude herkomsten.
-     *
      * @return the oudeHerkomsten
      */
     public final List<String> getOudeHerkomsten() {
@@ -133,7 +127,6 @@ public class GgoVoorkomenVergelijking {
 
     /**
      * Geef de waarde van nieuwe herkomsten.
-     *
      * @return the nieuweHerkomsten
      */
     public final List<String> getNieuweHerkomsten() {
@@ -142,7 +135,6 @@ public class GgoVoorkomenVergelijking {
 
     /**
      * Geef de waarde van type.
-     *
      * @return the type
      */
     public final String getType() {
@@ -151,7 +143,6 @@ public class GgoVoorkomenVergelijking {
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return the categorie
      */
     public final String getCategorie() {

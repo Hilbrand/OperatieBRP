@@ -6,11 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerblijfsrechtHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpVerblijfsrechtCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerblijfsrechtInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerblijfsrechtHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -25,13 +25,13 @@ public final class BrpVerblijfsrechtMapper extends AbstractBrpMapper<PersoonVerb
         final BrpVerblijfsrechtCode verblijfsrechtCode;
         verblijfsrechtCode =
                 BrpMapperUtil.mapBrpVerblijfsrechtCode(
-                    historie.getVerblijfsrecht(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_VERBLIJFSRECHT_AANDUIDINGCODE, true));
+                        historie.getVerblijfsrecht(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_VERBLIJFSRECHT_AANDUIDINGCODE, true));
         final BrpDatum datumMededelingVerblijfsrecht;
         datumMededelingVerblijfsrecht =
                 BrpMapperUtil.mapDatum(
-                    historie.getDatumMededelingVerblijfsrecht(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_VERBLIJFSRECHT_DATUMMEDEDELING, true));
+                        historie.getDatumMededelingVerblijfsrecht(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_VERBLIJFSRECHT_DATUMMEDEDELING, true));
         final BrpDatum datumVoorzienEindeVerblijfsrecht;
         datumVoorzienEindeVerblijfsrecht =
                 BrpMapperUtil.mapDatum(

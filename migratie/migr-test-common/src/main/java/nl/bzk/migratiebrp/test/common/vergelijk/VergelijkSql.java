@@ -26,27 +26,22 @@ public final class VergelijkSql {
      * <LI>Alle lijsten veranderen in lijsten met strings, zodat de map een komma-gescheiden regel wordt (makkelijker
      * voor 1 op 1 vergelijken).</LI>
      * </UL>
-     * 
-     * @param verschillenLog
-     *            log waar de verschillen in bijgehouden worden
-     * @param actualSqlResults
-     *            SQL Results uit de huidige run
-     * @param expectedSqlResults
-     *            SQL Results die verwacht worden
+     * @param verschillenLog log waar de verschillen in bijgehouden worden
+     * @param actualSqlResults SQL Results uit de huidige run
+     * @param expectedSqlResults SQL Results die verwacht worden
      * @return true als de huidige resultaten overeenkomen met de verwachte resultaten
      */
     public static boolean vergelijkSqlResultaten(
-        final StringBuilder verschillenLog,
-        final List<Map<String, Object>> actualSqlResults,
-        final List<Map<String, Object>> expectedSqlResults)
-    {
+            final StringBuilder verschillenLog,
+            final List<Map<String, Object>> actualSqlResults,
+            final List<Map<String, Object>> expectedSqlResults) {
         // Eerst aantal rijen in de lijsten vergelijken
         if (actualSqlResults.size() != expectedSqlResults.size()) {
             verschillenLog.append("Aantal verkregen rijen(")
-                          .append(actualSqlResults.size())
-                          .append(") ongelijk aan aantal verwachte rijen (")
-                          .append(expectedSqlResults.size())
-                          .append(")\n");
+                    .append(actualSqlResults.size())
+                    .append(") ongelijk aan aantal verwachte rijen (")
+                    .append(expectedSqlResults.size())
+                    .append(")\n");
         } else {
             // Aantal rijen is gelijk, nu de map naar strings omzetten en vergelijken.
             final List<String> actualRows = convertMapToString(actualSqlResults);
@@ -69,18 +64,13 @@ public final class VergelijkSql {
     }
 
     private static void crosscheckRows(final List<String> actual, final List<String> expected, final StringBuilder verschillenLog) {
+        actual.stream()
+                .filter(entry -> !expected.contains(entry))
+                .forEach(entry -> verschillenLog.append("Actuele rij   (").append(entry).append(") komt niet voor in het verwachte resultaat").append(EOF));
 
-        for (final String entry : actual) {
-            if (!expected.contains(entry)) {
-                verschillenLog.append("Actuele rij (").append(entry).append(") komt niet voor in het verwachte resultaat").append(EOF);
-            }
-        }
-
-        for (final String entry : expected) {
-            if (!actual.contains(entry)) {
-                verschillenLog.append("Verwachte rij (").append(entry).append(") komt niet voor in het actuele resultaat").append(EOF);
-            }
-        }
+        expected.stream()
+                .filter(entry -> !actual.contains(entry))
+                .forEach(entry -> verschillenLog.append("Verwachte rij (").append(entry).append(") komt niet voor in het actuele resultaat").append(EOF));
     }
 
 }

@@ -6,9 +6,8 @@
 
 /**
  * Levert de classes die de verschillende processtappen uitvoerd voor de conversie van LO3 naar BRP.
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.regels.proces
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp;
 

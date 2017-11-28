@@ -6,11 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikGeslachtsnaamstam;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
@@ -18,13 +20,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de BRP groep Naamgebruik.
  *
  * Deze class is immutable en threadsafe.
- *
  */
 public final class BrpNaamgebruikInhoud extends AbstractBrpGroepInhoud {
 
@@ -43,27 +43,18 @@ public final class BrpNaamgebruikInhoud extends AbstractBrpGroepInhoud {
     @Element(name = "scheidingsteken", required = false)
     private final BrpCharacter scheidingsteken;
     @Element(name = "geslachtsnaamstam", required = false)
-    private final BrpString geslachtsnaamstam;
+    private final BrpNaamgebruikGeslachtsnaamstam geslachtsnaamstam;
 
     /**
      * Maakt een BrpNaamgebruikInhoud object.
-     *
-     * @param naamgebruikCode
-     *            wijze gebruik geslachtsnaam
-     * @param indicatieAfgeleid
-     *            indicatie afgeleid
-     * @param predicaatCode
-     *            predicaat
-     * @param adellijkeTitelCode
-     *            adellijke titel
-     * @param voornamen
-     *            voornamen
-     * @param voorvoegsel
-     *            voorvoegsel
-     * @param scheidingsteken
-     *            scheidingsteken
-     * @param geslachtsnaamstam
-     *            geslachtsnaamstam
+     * @param naamgebruikCode wijze gebruik geslachtsnaam
+     * @param indicatieAfgeleid indicatie afgeleid
+     * @param predicaatCode predicaat
+     * @param adellijkeTitelCode adellijke titel
+     * @param voornamen voornamen
+     * @param voorvoegsel voorvoegsel
+     * @param scheidingsteken scheidingsteken
+     * @param geslachtsnaamstam geslachtsnaamstam
      */
     public BrpNaamgebruikInhoud(
         /* Meer dan 7 parameters is in constructors van immutable model klassen getolereerd. */
@@ -74,8 +65,7 @@ public final class BrpNaamgebruikInhoud extends AbstractBrpGroepInhoud {
         @Element(name = "voornamen", required = false) final BrpString voornamen,
         @Element(name = "voorvoegsel", required = false) final BrpString voorvoegsel,
         @Element(name = "scheidingsteken", required = false) final BrpCharacter scheidingsteken,
-        @Element(name = "geslachtsnaamstam", required = false) final BrpString geslachtsnaamstam)
-    {
+        @Element(name = "geslachtsnaamstam", required = false) final BrpNaamgebruikGeslachtsnaamstam geslachtsnaamstam) {
         this.naamgebruikCode = naamgebruikCode;
         this.indicatieAfgeleid = indicatieAfgeleid;
         this.predicaatCode = predicaatCode;
@@ -86,6 +76,17 @@ public final class BrpNaamgebruikInhoud extends AbstractBrpGroepInhoud {
         this.geslachtsnaamstam = geslachtsnaamstam;
     }
 
+    private BrpNaamgebruikInhoud(final BrpNaamgebruikInhoud.Builder builder) {
+        naamgebruikCode = builder.naamgebruikCode;
+        indicatieAfgeleid = builder.indicatieAfgeleid;
+        predicaatCode = builder.predicaatCode;
+        adellijkeTitelCode = builder.adellijkeTitelCode;
+        voornamen = builder.voornamen;
+        voorvoegsel = builder.voorvoegsel;
+        scheidingsteken = builder.scheidingsteken;
+        geslachtsnaamstam = builder.geslachtsnaamstam;
+    }
+
     @Override
     @Preconditie(SoortMeldingCode.PRE022)
     public void valideer() {
@@ -93,9 +94,8 @@ public final class BrpNaamgebruikInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van naamgebruik code.
-     *
-     * @return the naamgebruikCode, of null
+     * Geef de waarde van naamgebruik code van BrpNaamgebruikInhoud.
+     * @return de waarde van naamgebruik code van BrpNaamgebruikInhoud
      */
 
     public BrpNaamgebruikCode getNaamgebruikCode() {
@@ -103,72 +103,65 @@ public final class BrpNaamgebruikInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van indicatie afgeleid.
-     *
-     * @return the indicatieAfgeleid
+     * Geef de waarde van indicatie afgeleid van BrpNaamgebruikInhoud.
+     * @return de waarde van indicatie afgeleid van BrpNaamgebruikInhoud
      */
     public BrpBoolean getIndicatieAfgeleid() {
         return indicatieAfgeleid;
     }
 
     /**
-     * Geef de waarde van predicaat code.
-     *
-     * @return the predikaatCode
+     * Geef de waarde van predicaat code van BrpNaamgebruikInhoud.
+     * @return de waarde van predicaat code van BrpNaamgebruikInhoud
      */
     public BrpPredicaatCode getPredicaatCode() {
         return predicaatCode;
     }
 
     /**
-     * Geef de waarde van adellijke titel code.
-     *
-     * @return the adellijkeTitelCode
+     * Geef de waarde van adellijke titel code van BrpNaamgebruikInhoud.
+     * @return de waarde van adellijke titel code van BrpNaamgebruikInhoud
      */
     public BrpAdellijkeTitelCode getAdellijkeTitelCode() {
         return adellijkeTitelCode;
     }
 
     /**
-     * Geef de waarde van voornamen.
-     *
-     * @return the voornamen
+     * Geef de waarde van voornamen van BrpNaamgebruikInhoud.
+     * @return de waarde van voornamen van BrpNaamgebruikInhoud
      */
     public BrpString getVoornamen() {
         return voornamen;
     }
 
     /**
-     * Geef de waarde van voorvoegsel.
-     *
-     * @return the voorvoegsel
+     * Geef de waarde van voorvoegsel van BrpNaamgebruikInhoud.
+     * @return de waarde van voorvoegsel van BrpNaamgebruikInhoud
      */
     public BrpString getVoorvoegsel() {
         return voorvoegsel;
     }
 
     /**
-     * Geef de waarde van scheidingsteken.
-     *
-     * @return the scheidingsteken
+     * Geef de waarde van scheidingsteken van BrpNaamgebruikInhoud.
+     * @return de waarde van scheidingsteken van BrpNaamgebruikInhoud
      */
     public BrpCharacter getScheidingsteken() {
         return scheidingsteken;
     }
 
     /**
-     * Geef de waarde van geslachtsnaamstam.
-     *
-     * @return the geslachtsnaamstam
+     * Geef de waarde van geslachtsnaamstam van BrpNaamgebruikInhoud.
+     * @return de waarde van geslachtsnaamstam van BrpNaamgebruikInhoud
      */
-    public BrpString getGeslachtsnaamstam() {
+    public BrpNaamgebruikGeslachtsnaamstam getGeslachtsnaamstam() {
         return geslachtsnaamstam;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -185,37 +178,127 @@ public final class BrpNaamgebruikInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpNaamgebruikInhoud castOther = (BrpNaamgebruikInhoud) other;
         return new EqualsBuilder().append(naamgebruikCode, castOther.naamgebruikCode)
-                                  .append(indicatieAfgeleid, castOther.indicatieAfgeleid)
-                                  .append(predicaatCode, castOther.predicaatCode)
-                                  .append(voornamen, castOther.voornamen)
-                                  .append(voorvoegsel, castOther.voorvoegsel)
-                                  .append(scheidingsteken, castOther.scheidingsteken)
-                                  .append(geslachtsnaamstam, castOther.geslachtsnaamstam)
-                                  .isEquals();
+                .append(indicatieAfgeleid, castOther.indicatieAfgeleid)
+                .append(predicaatCode, castOther.predicaatCode)
+                .append(voornamen, castOther.voornamen)
+                .append(voorvoegsel, castOther.voorvoegsel)
+                .append(scheidingsteken, castOther.scheidingsteken)
+                .append(geslachtsnaamstam, castOther.geslachtsnaamstam)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(naamgebruikCode)
-                                    .append(indicatieAfgeleid)
-                                    .append(predicaatCode)
-                                    .append(voornamen)
-                                    .append(voorvoegsel)
-                                    .append(scheidingsteken)
-                                    .append(geslachtsnaamstam)
-                                    .toHashCode();
+                .append(indicatieAfgeleid)
+                .append(predicaatCode)
+                .append(voornamen)
+                .append(voorvoegsel)
+                .append(scheidingsteken)
+                .append(geslachtsnaamstam)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("naamgebruikCode", naamgebruikCode)
-                                                                          .append("indicatieAfgeleid", indicatieAfgeleid)
-                                                                          .append("predicaatCode", predicaatCode)
-                                                                          .append("voornamen", voornamen)
-                                                                          .append("voorvoegsel", voorvoegsel)
-                                                                          .append("scheidingsteken", scheidingsteken)
-                                                                          .append("geslachtsnaam", geslachtsnaamstam)
-                                                                          .toString();
+                .append("indicatieAfgeleid", indicatieAfgeleid)
+                .append("predicaatCode", predicaatCode)
+                .append("voornamen", voornamen)
+                .append("voorvoegsel", voorvoegsel)
+                .append("scheidingsteken", scheidingsteken)
+                .append("geslachtsnaam", geslachtsnaamstam)
+                .toString();
     }
 
+    /**
+     * Builder voor een {@link BrpNaamgebruikInhoud}.
+     */
+    public static final class Builder {
+        private final BrpNaamgebruikCode naamgebruikCode;
+        private final BrpBoolean indicatieAfgeleid;
+        private final BrpNaamgebruikGeslachtsnaamstam geslachtsnaamstam;
+        private BrpPredicaatCode predicaatCode;
+        private BrpAdellijkeTitelCode adellijkeTitelCode;
+        private BrpString voornamen;
+        private BrpString voorvoegsel;
+        private BrpCharacter scheidingsteken;
+
+        /**
+         * Constructor voor de builder met verplichte velden voor deze inhoud.
+         * @param naamgebruikCode de naamgebruik code
+         * @param indicatieAfgeleid indicatie of het naamgebruik is afgeleid
+         * @param geslachtsnaamstam de geslachtsnaam
+         */
+        public Builder(final BrpNaamgebruikCode naamgebruikCode, final BrpBoolean indicatieAfgeleid, final BrpNaamgebruikGeslachtsnaamstam geslachtsnaamstam) {
+            this.naamgebruikCode = naamgebruikCode;
+            this.indicatieAfgeleid = indicatieAfgeleid;
+            this.geslachtsnaamstam = geslachtsnaamstam;
+        }
+
+        /**
+         * Zet de predicaat code.
+         * @param param een {@link BrpPredicaatCode}
+         * @return deze builder instantie
+         */
+        public Builder predicaatCode(final BrpPredicaatCode param) {
+            predicaatCode = param;
+            return this;
+        }
+
+        /**
+         * Zet de adellijke titel code.
+         * @param param een {@link BrpAdellijkeTitelCode}
+         * @return deze builder instantie
+         */
+        public Builder adellijkeTitelCode(final BrpAdellijkeTitelCode param) {
+            adellijkeTitelCode = param;
+            return this;
+        }
+
+        /**
+         * Zet de voornamen.
+         * @param param een {@link BrpString}
+         * @return deze builder instantie
+         */
+        public Builder voornamen(final BrpString param) {
+            voornamen = param;
+            return this;
+        }
+
+        /**
+         * Zet het voorvoegsel.
+         * @param param een {@link BrpString}
+         * @return deze builder instantie
+         */
+        public Builder voorvoegsel(final BrpString param) {
+            voorvoegsel = param;
+            return this;
+        }
+
+        /**
+         * Zet het scheidingsteken.
+         * @param param een {@link BrpCharacter}
+         * @return deze builder instantie
+         */
+        public Builder scheidingsteken(final BrpCharacter param) {
+            scheidingsteken = param;
+            return this;
+        }
+
+        /**
+         * Bouwt een instantie van {@link BrpNaamgebruikInhoud} op basis van deze builder. Als de verplichte velden niet
+         * gevuld zijn, dan wordt er null terug gegeven.
+         * @return een gevulde {@link BrpNaamgebruikInhoud}
+         */
+        public BrpNaamgebruikInhoud build() {
+            final boolean isIndicatieAfgeleidGevuld = indicatieAfgeleid != null && indicatieAfgeleid.isInhoudelijkGevuld();
+            final boolean isGeslachtsnaamGevuld = geslachtsnaamstam != null && geslachtsnaamstam.isInhoudelijkGevuld();
+            final boolean isNaamgebruikGevuld = naamgebruikCode != null && naamgebruikCode.isInhoudelijkGevuld();
+            if (isIndicatieAfgeleidGevuld && isGeslachtsnaamGevuld && isNaamgebruikGevuld) {
+                return new BrpNaamgebruikInhoud(this);
+            }
+            return null;
+        }
+    }
 }

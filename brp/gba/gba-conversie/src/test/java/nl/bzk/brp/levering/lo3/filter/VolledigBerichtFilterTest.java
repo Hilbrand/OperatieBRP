@@ -33,7 +33,7 @@ public class VolledigBerichtFilterTest {
 
         final List<String> rubrieken = Arrays.asList("01.02.20", "01.02.30", "03.02.10");
 
-        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, categorieen, rubrieken);
+        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, null, categorieen, rubrieken);
         Assert.assertEquals(1, gefilterd.size());
         final Lo3CategorieWaarde filt01 = gefilterd.get(0);
         Assert.assertEquals(1, filt01.getElementen().size());
@@ -41,9 +41,38 @@ public class VolledigBerichtFilterTest {
     }
 
     @Test
+    public void testKindMetHuwelijk() {
+        final Lo3CategorieWaarde cat01 = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_01, 0, 0);
+        cat01.addElement(Lo3ElementEnum.ELEMENT_0210, "waarde010210");
+        cat01.addElement(Lo3ElementEnum.ELEMENT_0220, WAARDE_010220);
+
+        final Lo3CategorieWaarde cat02 = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_02, 0, 0);
+        cat01.addElement(Lo3ElementEnum.ELEMENT_0210, "waarde020210");
+
+        final Lo3CategorieWaarde cat09 = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_09, 0, 0);
+        cat09.addElement(Lo3ElementEnum.ELEMENT_0210, "waarde090210");
+        cat09.addElement(Lo3ElementEnum.ELEMENT_0230, "waarde090230");
+        cat09.addElement(Lo3ElementEnum.ELEMENT_0310, "waarde090310");
+        cat09.addElement(Lo3ElementEnum.ELEMENT_0320, "waarde090320");
+        cat09.addElement(Lo3ElementEnum.ELEMENT_0330, "waarde090330");
+
+        final List<Lo3CategorieWaarde> categorieen = Arrays.asList(cat01, cat02, cat09);
+
+        final List<String> rubrieken = Arrays.asList("01.02.20", "01.02.30", "03.02.10", "09.02.10", "09.02.30", "09.03.10", "09.03.20", "09.03.30");
+
+        final List<Lo3CategorieWaarde> gefilterd = subject.filter(null, null, null, null, categorieen, rubrieken);
+        Assert.assertEquals(2, gefilterd.size());
+        final Lo3CategorieWaarde filt01 = gefilterd.get(0);
+        Assert.assertEquals(1, filt01.getElementen().size());
+        Assert.assertEquals(WAARDE_010220, filt01.getElement(Lo3ElementEnum.ELEMENT_0220));
+        final Lo3CategorieWaarde filt02 = gefilterd.get(1);
+        Assert.assertEquals(5, filt02.getElementen().size());
+    }
+
+    @Test
     public void testEmpty() {
-        Assert.assertEquals(0, subject.filter(null, null, null, null, null).size());
-        Assert.assertEquals(0, subject.filter(null, null, null, null, Collections.<String>emptyList()).size());
+        Assert.assertEquals(0, subject.filter(null, null, null, null, null, null).size());
+        Assert.assertEquals(0, subject.filter(null, null, null, null, null, Collections.<String>emptyList()).size());
     }
 
 }

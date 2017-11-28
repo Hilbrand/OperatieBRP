@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 /**
  * Voor het afhandelen van fouten die tijdens het parsen van een persoonslijst kunnen optreden.
- * 
  */
 public class ParseException extends RuntimeException {
 
@@ -16,11 +15,8 @@ public class ParseException extends RuntimeException {
 
     /**
      * Maakt een nieuwe ParseException aan die aangeeft dat er iets fout ging tijdens het parsen.
-     * 
-     * @param message
-     *            De omschrijving van de fout
-     * @param cause
-     *            De onderliggende oorzaak
+     * @param message De omschrijving van de fout
+     * @param cause De onderliggende oorzaak
      */
     public ParseException(final String message, final Exception cause) {
         super(message, cause);
@@ -29,9 +25,7 @@ public class ParseException extends RuntimeException {
 
     /**
      * Maakt een nieuwe ParseException aan die aangeeft dat er iets fout ging tijdens het parsen.
-     * 
-     * @param message
-     *            De omschrijving van de fout
+     * @param message De omschrijving van de fout
      */
     public ParseException(final String message) {
         super(message);

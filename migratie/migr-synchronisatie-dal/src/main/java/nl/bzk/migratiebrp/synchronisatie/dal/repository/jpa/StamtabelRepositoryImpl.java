@@ -11,12 +11,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Verblijfsrecht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Voorvoegsel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenBeeindigingNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenOpnameNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenOpnameNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Voorvoegsel;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.StamtabelRepository;
 import org.hibernate.annotations.QueryHints;
 import org.springframework.stereotype.Repository;
@@ -34,42 +35,57 @@ public class StamtabelRepositoryImpl implements StamtabelRepository {
 
     @Override
     public final Collection<Gemeente> findAllGemeentes() {
-        return em.createQuery("from Gemeente", Gemeente.class)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
-                 .getResultList();
+        return em.createQuery(
+                "from Gemeente g join fetch g.partij p left join fetch p.partijRolSet left join fetch p.hisPartijen left join fetch p"
+                        + ".partijBijhoudingHistorieSet",
+                Gemeente.class).setHint(QueryHints.CACHEABLE, Boolean.TRUE).setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE).getResultList();
     }
 
     @Override
-    public final Collection<Short> findAllGemeenteCodes() {
-        return em.createQuery("select code from Gemeente", Short.class)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
-                 .getResultList();
+    public final Collection<Partij> findAllPartijen() {
+        return em.createQuery("select distinct p from Partij p left join fetch p.partijRolSet left join fetch p.gemeenteSet", Partij.class)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .getResultList();
     }
 
     @Override
-    public final Collection<Short> findAllLandOfGebiedCodes() {
-        return em.createQuery("select code from LandOfGebied", Short.class)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
-                 .getResultList();
+    public final Partij findPartijByCode(final String partijCode) {
+        return em.createQuery("from Partij p left join fetch p.partijRolSet where p.code = :code", Partij.class)
+                .setParameter("code", partijCode)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .getSingleResult();
     }
 
     @Override
-    public final Collection<Short> findAllNationaliteitCodes() {
-        return em.createQuery("select code from Nationaliteit", Short.class)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
-                 .getResultList();
+    public final Collection<String> findAllGemeenteCodes() {
+        return em.createQuery("select code from Gemeente", String.class)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
+                .getResultList();
+    }
+
+    @Override
+    public final Collection<String> findAllLandOfGebiedCodes() {
+        return em.createQuery("select code from LandOfGebied", String.class)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
+                .getResultList();
+    }
+
+    @Override
+    public final Collection<String> findAllNationaliteitCodes() {
+        return em.createQuery("select code from Nationaliteit", String.class)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
+                .getResultList();
     }
 
     @Override
     public final Collection<String> findAllPlaatsnamen() {
         return em.createQuery("select naam from Plaats", String.class)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
-                 .getResultList();
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
+                .getResultList();
     }
 
     @Override
@@ -79,42 +95,51 @@ public class StamtabelRepositoryImpl implements StamtabelRepository {
 
     @Override
     public final List<Verblijfsrecht> findAllVerblijfsrecht() {
-        return em.createQuery("FROM Verblijfsrecht", Verblijfsrecht.class)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
-                 .getResultList();
+        return em.createQuery("from Verblijfsrecht", Verblijfsrecht.class)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
+                .getResultList();
     }
 
     @Override
     public final List<RedenOpnameNationaliteit> findAllRedenOpnameNationaliteit() {
-        return em.createQuery("FROM RedenOpnameNationaliteit", RedenOpnameNationaliteit.class)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
-                 .getResultList();
+        return em.createQuery("from RedenOpnameNationaliteit r left join fetch r.redenVerkrijgingNLNationaliteit", RedenOpnameNationaliteit.class)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
+                .getResultList();
     }
 
     @Override
     public final List<RedenBeeindigingNationaliteit> findAllRedenBeeindigingNationaliteit() {
-        return em.createQuery("FROM RedenBeeindigingNationaliteit", RedenBeeindigingNationaliteit.class)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
-                 .getResultList();
+        return em.createQuery("from RedenBeeindigingNationaliteit r left join fetch r.redenVerliesNLNationaliteit", RedenBeeindigingNationaliteit.class)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
+                .getResultList();
     }
 
     @Override
     public final List<Voorvoegsel> findAllVoorvoegsels() {
-        return em.createQuery("FROM Voorvoegsel", Voorvoegsel.class)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
-                 .getResultList();
+        return em.createQuery("from Voorvoegsel", Voorvoegsel.class)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
+                .getResultList();
     }
 
     @Override
     public final SoortDocument findSoortDocumentConversie(final String naam) {
-        return em.createQuery("FROM SoortDocument WHERE naam = :naam", SoortDocument.class)
-                 .setParameter("naam", naam)
-                 .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
-                 .setFlushMode(FlushModeType.COMMIT)
-                 .getSingleResult();
+        return em.createQuery("from SoortDocument WHERE naam = :naam", SoortDocument.class)
+                .setParameter("naam", naam)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setFlushMode(FlushModeType.COMMIT)
+                .getSingleResult();
+    }
+
+
+    @Override
+    public final Collection<String> findAllAutorisatiesVanAfgifteBuitenlandsPersoonsnummer() {
+        return em.createQuery("select nationaliteit.code from AutoriteitAfgifteBuitenlandsPersoonsnummer", String.class)
+                .setHint(QueryHints.CACHEABLE, Boolean.TRUE)
+                .setHint(QueryHints.FETCH_SIZE, STAMGEGEVEN_LIJST_FETCH_SIZE)
+                .getResultList();
     }
 }

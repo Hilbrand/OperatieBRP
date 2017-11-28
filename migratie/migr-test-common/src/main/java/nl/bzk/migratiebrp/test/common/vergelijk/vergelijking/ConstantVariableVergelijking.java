@@ -16,11 +16,8 @@ public final class ConstantVariableVergelijking implements Vergelijking {
 
     /**
      * Constructor.
-     * 
-     * @param name
-     *            naam
-     * @param regex
-     *            reguliere expressie
+     * @param name naam
+     * @param regex reguliere expressie
      */
     public ConstantVariableVergelijking(final String name, final String regex) {
         this.name = name;

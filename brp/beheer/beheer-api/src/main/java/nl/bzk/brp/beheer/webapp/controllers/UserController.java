@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.controllers;
@@ -23,12 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = ControllerConstants.USER_URI)
 public final class UserController {
 
-    //@Autowired
-    //private UserDetailsService userService;
-
     /**
      * Geef de user details van de ingelogde gebruiker.
-     *
      * @return user details
      */
     @RequestMapping(value = "/authenticated", method = RequestMethod.GET)

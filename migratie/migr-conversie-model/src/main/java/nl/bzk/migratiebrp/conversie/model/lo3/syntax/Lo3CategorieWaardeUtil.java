@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.conversie.model.lo3.syntax;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
@@ -26,9 +27,7 @@ public final class Lo3CategorieWaardeUtil {
 
     /**
      * Deep-copy van Lo3CategorieWaarde lijst.
-     * 
-     * @param categorieen
-     *            categorieen
+     * @param categorieen categorieen
      * @return categorieen copy
      */
     public static List<Lo3CategorieWaarde> deepCopy(final List<Lo3CategorieWaarde> categorieen) {
@@ -42,12 +41,10 @@ public final class Lo3CategorieWaardeUtil {
 
     /**
      * Deep-copy van Lo3CategorieWaarde.
-     * 
-     * @param categorie
-     *            categorie
+     * @param categorie categorie
      * @return categorie
      */
-    public static Lo3CategorieWaarde deepCopy(final Lo3CategorieWaarde categorie) {
+    private static Lo3CategorieWaarde deepCopy(final Lo3CategorieWaarde categorie) {
         final Lo3CategorieWaarde result = new Lo3CategorieWaarde(categorie.getCategorie(), categorie.getStapel(), categorie.getVoorkomen());
 
         result.getElementen().putAll(categorie.getElementen());
@@ -62,11 +59,8 @@ public final class Lo3CategorieWaardeUtil {
     /**
      * Geef een lijst van lo3categoriewaarde lijsten voor de gegeven categorie. Een lo3cateogirewaarde lijst bevat dan
      * alle lo3cateogirewaarden voor 1 voorkomen van 'categorie'.
-     * 
-     * @param categorieWaarden
-     *            totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
-     * @param categorie
-     *            categorie
+     * @param categorieWaarden totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
+     * @param categorie categorie
      * @return lijst van lo3cateogirewaarde lijsten
      */
     public static List<List<Lo3CategorieWaarde>> getCategorieen(final List<Lo3CategorieWaarde> categorieWaarden, final Lo3CategorieEnum categorie) {
@@ -78,14 +72,14 @@ public final class Lo3CategorieWaardeUtil {
         if (categorieWaarden != null) {
             for (final Lo3CategorieWaarde categorieWaarde : categorieWaarden) {
                 if (categorieWaarde.getCategorie().equals(actueleCategorie)
-                    || categorieWaarde.getCategorie().equals(historischeCategorie)
-                    && result.isEmpty())
-                {
+                        || categorieWaarde.getCategorie().equals(historischeCategorie)
+                        && result.isEmpty()) {
                     latest = new ArrayList<>();
                     result.add(latest);
                 }
 
-                if (categorieWaarde.getCategorie().equals(actueleCategorie) || categorieWaarde.getCategorie().equals(historischeCategorie)) {
+                if (latest != null && (categorieWaarde.getCategorie().equals(actueleCategorie) || categorieWaarde.getCategorie()
+                        .equals(historischeCategorie))) {
                     latest.add(categorieWaarde);
                 }
             }
@@ -96,24 +90,19 @@ public final class Lo3CategorieWaardeUtil {
 
     /**
      * Geef het stapel voorkomen van een categorie in een lo3categoriewaarde lijst.
-     * 
-     * @param categorieWaarden
-     *            totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            gewenste stapel voorkomen
+     * @param categorieWaarden totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
+     * @param categorie categorie
+     * @param stapel gewenste stapel voorkomen
      * @return lisjt van lo3categoriewaarde die de gevraagde stapel voorkomen representeren; of null als niet gevonden
      */
-    public static List<Lo3CategorieWaarde> getStapelVoorkomen(
-        final List<Lo3CategorieWaarde> categorieWaarden,
-        final Lo3CategorieEnum categorie,
-        final int stapel)
-    {
+    private static List<Lo3CategorieWaarde> getStapelVoorkomen(
+            final List<Lo3CategorieWaarde> categorieWaarden,
+            final Lo3CategorieEnum categorie,
+            final int stapel) {
         final List<List<Lo3CategorieWaarde>> stapels = Lo3CategorieWaardeUtil.getCategorieen(categorieWaarden, categorie);
 
         if (stapels.size() < stapel + 1) {
-            return null;
+            return Collections.emptyList();
         }
 
         return stapels.get(stapel);
@@ -123,23 +112,17 @@ public final class Lo3CategorieWaardeUtil {
     /**
      * Geef het gevraagde categorie voorkomen uit het stapel voorkomen van een categorie in een lo3categoriewaarde
      * lijst.
-     * 
-     * @param categorieWaarden
-     *            totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            stapel voorkomen
-     * @param voorkomen
-     *            categorie voorkomen
+     * @param categorieWaarden totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
+     * @param categorie categorie
+     * @param stapel stapel voorkomen
+     * @param voorkomen categorie voorkomen
      * @return lo3categoriewaarde die het gevraagde voorkomen representeerd; of null als niet gevonden
      */
     public static Lo3CategorieWaarde getCategorieVoorkomen(
-        final List<Lo3CategorieWaarde> categorieWaarden,
-        final Lo3CategorieEnum categorie,
-        final int stapel,
-        final int voorkomen)
-    {
+            final List<Lo3CategorieWaarde> categorieWaarden,
+            final Lo3CategorieEnum categorie,
+            final int stapel,
+            final int voorkomen) {
 
         final List<Lo3CategorieWaarde> categorieen = Lo3CategorieWaardeUtil.getStapelVoorkomen(categorieWaarden, categorie, stapel);
 
@@ -153,26 +136,19 @@ public final class Lo3CategorieWaardeUtil {
     /**
      * Geef de gevraagde element waarde uit een categorie voorkomen uit het stapel voorkomen van een categorie in een
      * lo3categoriewaarde lijst.
-     * 
-     * @param categorieWaarden
-     *            totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            stapel voorkomen
-     * @param voorkomen
-     *            categorie voorkomen
-     * @param element
-     *            element
+     * @param categorieWaarden totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
+     * @param categorie categorie
+     * @param stapel stapel voorkomen
+     * @param voorkomen categorie voorkomen
+     * @param element element
      * @return de gevraagde element waarde; of null als niet gevonden
      */
     public static String getElementWaarde(
-        final List<Lo3CategorieWaarde> categorieWaarden,
-        final Lo3CategorieEnum categorie,
-        final int stapel,
-        final int voorkomen,
-        final Lo3ElementEnum element)
-    {
+            final List<Lo3CategorieWaarde> categorieWaarden,
+            final Lo3CategorieEnum categorie,
+            final int stapel,
+            final int voorkomen,
+            final Lo3ElementEnum element) {
         final Lo3CategorieWaarde categorieWaarde = Lo3CategorieWaardeUtil.getCategorieVoorkomen(categorieWaarden, categorie, stapel, voorkomen);
 
         if (categorieWaarde == null) {
@@ -186,8 +162,7 @@ public final class Lo3CategorieWaardeUtil {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private static int bepaalEindIndexVanStapel(final List<Lo3CategorieWaarde> categorieWaarden, final Lo3CategorieEnum actueleCategorie, final int stapel)
-    {
+    private static int bepaalEindIndexVanStapel(final List<Lo3CategorieWaarde> categorieWaarden, final Lo3CategorieEnum actueleCategorie, final int stapel) {
 
         final Lo3CategorieEnum historischeCategorie = Lo3CategorieEnum.bepaalHistorischeCategorie(actueleCategorie);
 
@@ -206,8 +181,7 @@ public final class Lo3CategorieWaardeUtil {
             }
 
             if ((dezeCategorieWaarde.getCategorie().equals(actueleCategorie) || dezeCategorieWaarde.getCategorie().equals(historischeCategorie))
-                && dezeStapel == stapel)
-            {
+                    && dezeStapel == stapel) {
                 laatsteIndexInDezeStapel = index;
             }
 
@@ -219,28 +193,20 @@ public final class Lo3CategorieWaardeUtil {
     /**
      * Zet de element waarde in een categorie voorkomen in een stapel voorkomen van een categorie in een
      * lo3categoriewaarde lijst.
-     * 
-     * @param categorieWaarden
-     *            totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            stapel voorkomen
-     * @param voorkomen
-     *            categorie voorkomen
-     * @param element
-     *            element
-     * @param waarde
-     *            te zetten waarde
+     * @param categorieWaarden totale lisjt van lo3categoriewaarde (alle categorieen door elkaar)
+     * @param categorie categorie
+     * @param stapel stapel voorkomen
+     * @param voorkomen categorie voorkomen
+     * @param element element
+     * @param waarde te zetten waarde
      */
     public static void setElementWaarde(
-        final List<Lo3CategorieWaarde> categorieWaarden,
-        final Lo3CategorieEnum categorie,
-        final int stapel,
-        final int voorkomen,
-        final Lo3ElementEnum element,
-        final String waarde)
-    {
+            final List<Lo3CategorieWaarde> categorieWaarden,
+            final Lo3CategorieEnum categorie,
+            final int stapel,
+            final int voorkomen,
+            final Lo3ElementEnum element,
+            final String waarde) {
 
         final Lo3CategorieEnum actueleCategorie = Lo3CategorieEnum.bepaalActueleCategorie(categorie);
         final Lo3CategorieEnum historischeCategorie = Lo3CategorieEnum.bepaalHistorischeCategorie(actueleCategorie);
@@ -257,16 +223,18 @@ public final class Lo3CategorieWaardeUtil {
         // 'Genoeg' categorieen 'aanmaken'
         while (Lo3CategorieWaardeUtil.getStapelVoorkomen(categorieWaarden, categorie, stapel).size() < voorkomen + 1) {
             categorieWaarden.add(Lo3CategorieWaardeUtil.bepaalEindIndexVanStapel(categorieWaarden, categorie, stapel) + 1, new Lo3CategorieWaarde(
-                historischeCategorie,
-                -1,
-                -1));
+                    historischeCategorie,
+                    -1,
+                    -1));
         }
 
         // Bepaal categorie
         final Lo3CategorieWaarde categorieWaarde = Lo3CategorieWaardeUtil.getCategorieVoorkomen(categorieWaarden, actueleCategorie, stapel, voorkomen);
 
         // Zet waarde
-        categorieWaarde.addElement(element, waarde);
+        if (categorieWaarde != null) {
+            categorieWaarde.addElement(element, waarde);
+        }
     }
 
 }

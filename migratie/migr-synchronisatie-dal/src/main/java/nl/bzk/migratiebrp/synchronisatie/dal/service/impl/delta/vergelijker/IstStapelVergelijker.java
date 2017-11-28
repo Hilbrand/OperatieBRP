@@ -10,11 +10,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaVergelijkerResultaat;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat;
@@ -32,21 +33,13 @@ public final class IstStapelVergelijker implements DeltaVergelijker {
 
     /**
      * Vergelijkt 2 IST-stapels ({@link Stapel}) met elkaar.
-     * 
-     * @param context
-     *            de context voor deltabepaling
-     *
-     * @param bestaandeStapel
-     *            de bestaande IST-Stapel
-     * @param nieuweStapel
-     *            de nieuwe IST-stapel
+     * @param context de context voor deltabepaling
+     * @param bestaandeStapel de bestaande IST-Stapel
+     * @param nieuweStapel de nieuwe IST-stapel
      * @return een {@link VergelijkerResultaat} met daarin de gevonden verschillen tussen de 2 IST-stapels
      */
-    public VergelijkerResultaat vergelijk(
-        final DeltaBepalingContext context,
-        final DeltaRootEntiteit bestaandeStapel,
-        final DeltaRootEntiteit nieuweStapel)
-    {
+    @Override
+    public VergelijkerResultaat vergelijk(final DeltaBepalingContext context, final RootEntiteit bestaandeStapel, final RootEntiteit nieuweStapel) {
         final StapelDecorator bestaandeStapelDecorator = StapelDecorator.decorate((Stapel) bestaandeStapel);
         final StapelDecorator nieuweStapelDecorator = StapelDecorator.decorate((Stapel) nieuweStapel);
         final VergelijkerResultaat result = new DeltaVergelijkerResultaat();
@@ -60,30 +53,34 @@ public final class IstStapelVergelijker implements DeltaVergelijker {
         }
 
         SynchronisatieLogging.addMelding(
-            String.format(
-                "IST Stapel (%s) vergelijking: Voorlopige conclusie: Is bijhouding actueel: %b",
-                ((Stapel) bestaandeStapel).getCategorie(),
-                isActueel));
+                String.format(
+                        "IST Stapel (%s) vergelijking: Voorlopige conclusie: Is bijhouding actueel: %b",
+                        ((Stapel) bestaandeStapel).getCategorie(),
+                        isActueel));
         return result;
     }
 
+    @Override
+    public VergelijkerResultaat vergelijkEntiteiten(final RootEntiteit eigenaar, final Entiteit bestaandeEntiteit, final Entiteit nieuweEntiteit) {
+        return new DeltaVergelijkerResultaat();
+    }
+
     private void vergelijkStapelVolgnummering(
-        final VergelijkerResultaat result,
-        final StapelDecorator bestaandeStapel,
-        final StapelDecorator nieuweStapel)
-    {
+            final VergelijkerResultaat result,
+            final StapelDecorator bestaandeStapel,
+            final StapelDecorator nieuweStapel) {
         // Controleren of de volgnummers gelijk zijn en anders deze als verschil opnemen
         final int oudStapelNummer = bestaandeStapel.getStapelNummer();
         final int nieuwStapelNummer = nieuweStapel.getStapelNummer();
         if (oudStapelNummer != nieuwStapelNummer) {
             result.voegToeOfVervangVerschil(
-                new Verschil(
-                    new IstSleutel(bestaandeStapel.getStapel(), Stapel.VOLGNUMMER, true),
-                    bestaandeStapel,
-                    nieuweStapel,
-                    VerschilType.ELEMENT_AANGEPAST,
-                    null,
-                    null));
+                    new Verschil(
+                            new IstSleutel(bestaandeStapel.getStapel(), Stapel.VELD_VOLGNUMMER, true),
+                            bestaandeStapel,
+                            nieuweStapel,
+                            VerschilType.ELEMENT_AANGEPAST,
+                            null,
+                            null));
         }
     }
 
@@ -134,17 +131,16 @@ public final class IstStapelVergelijker implements DeltaVergelijker {
     }
 
     private Sleutel maakIstSleutelVoorRelatie(final StapelDecorator bestaandeStapel, final Relatie relatie) {
-        final Sleutel istSleutel = new IstSleutel(bestaandeStapel.getStapel(), Stapel.RELATIES, true);
+        final Sleutel istSleutel = new IstSleutel(bestaandeStapel.getStapel(), Stapel.VELD_RELATIES, true);
         istSleutel.addSleuteldeel(Relatie.DATUM_AANVANG, relatie.getDatumAanvang());
         istSleutel.addSleuteldeel(Relatie.RELATIE_SOORT, relatie.getSoortRelatie());
         return istSleutel;
     }
 
     private boolean vergelijkStapelVoorkomens(
-        final VergelijkerResultaat result,
-        final StapelDecorator bestaandeStapel,
-        final StapelDecorator nieuweStapel)
-    {
+            final VergelijkerResultaat result,
+            final StapelDecorator bestaandeStapel,
+            final StapelDecorator nieuweStapel) {
         boolean isActueel = true;
         final Set<StapelVoorkomenDecorator> bestaandeVoorkomens = bestaandeStapel.getVoorkomens();
         final Set<StapelVoorkomenDecorator> nieuweVoorkomens = nieuweStapel.getVoorkomens();
@@ -170,13 +166,13 @@ public final class IstStapelVergelijker implements DeltaVergelijker {
                 isActueel = false;
             } else {
                 result.voegToeOfVervangVerschil(
-                    new Verschil(
-                        new IstSleutel(actueelVoorkomen.getVoorkomen(), Stapel.STAPEL_VOORKOMENS, false),
-                        null,
-                        actueelVoorkomen,
-                        VerschilType.RIJ_TOEGEVOEGD,
-                        null,
-                        null));
+                        new Verschil(
+                                new IstSleutel(actueelVoorkomen.getVoorkomen(), Stapel.STAPEL_VOORKOMENS, false),
+                                null,
+                                actueelVoorkomen,
+                                VerschilType.RIJ_TOEGEVOEGD,
+                                null,
+                                null));
             }
         } else {
             // Meer wijzigingen dan nu mogelijk voor sync. Alles verwijderen en nieuw toevoegen en dat wordt een resync.
@@ -189,9 +185,9 @@ public final class IstStapelVergelijker implements DeltaVergelijker {
 
     private void toevoegenVerwijderenElementen(final VergelijkerResultaat result, final StapelDecorator oudeStapel, final StapelDecorator nieuweStapel) {
         result.voegToeOfVervangVerschil(
-            new Verschil(new IstSleutel(oudeStapel.getStapel(), true), oudeStapel, null, VerschilType.ELEMENT_VERWIJDERD, null, null));
+                new Verschil(new IstSleutel(oudeStapel.getStapel(), true), oudeStapel, null, VerschilType.ELEMENT_VERWIJDERD, null, null));
         // Sleutel is oude stapel omdat het anders mis gaat als de stapel ook verplaatst is.
         result.voegToeOfVervangVerschil(
-            new Verschil(new IstSleutel(oudeStapel.getStapel(), false), null, nieuweStapel, VerschilType.ELEMENT_NIEUW, null, null));
+                new Verschil(new IstSleutel(oudeStapel.getStapel(), false), null, nieuweStapel, VerschilType.ELEMENT_NIEUW, null, null));
     }
 }

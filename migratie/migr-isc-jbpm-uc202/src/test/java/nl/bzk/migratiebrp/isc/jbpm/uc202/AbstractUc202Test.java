@@ -17,6 +17,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3PersoonslijstFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lg01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.SynchroniseerNaarBrpAntwoordType.Kandidaat;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.DeblokkeringAntwoordBericht;
@@ -46,30 +47,39 @@ public abstract class AbstractUc202Test extends AbstractUcTest {
     /* *** LG01 *************************************************************************************** */
 
     protected Lg01Bericht maakLg01(
-        final Long aNummerKop,
-        final Long aNummerInhoud,
-        final Long vorigANummerKop,
-        final Long vorigANummerInhoud,
-        final String gemeenteKop,
-        final String gemeenteInhoud)
-    {
+            final String aNummerKop,
+            final String aNummerInhoud,
+            final String vorigANummerKop,
+            final String vorigANummerInhoud,
+            final String bronPartijCode,
+            final String gemeenteInhoud) {
+        return maakLg01(aNummerKop, aNummerInhoud, vorigANummerKop, vorigANummerInhoud, null, bronPartijCode, gemeenteInhoud);
+    }
+
+    protected Lg01Bericht maakLg01(
+            final String aNummerKop,
+            final String aNummerInhoud,
+            final String vorigANummerKop,
+            final String vorigANummerInhoud,
+            final String burgerServicenummer,
+            final String bronPartijCode,
+            final String gemeenteInhoud) {
 
         final Lg01Bericht lg01 = new Lg01Bericht();
         lg01.setMessageId(generateMessageId());
-        lg01.setHeader(Lo3HeaderVeld.A_NUMMER, aNummerKop == null ? null : aNummerKop.toString());
-        lg01.setHeader(Lo3HeaderVeld.OUD_A_NUMMER, vorigANummerKop == null ? null : vorigANummerKop.toString());
-        lg01.setLo3Persoonslijst(maakPersoonslijst(aNummerInhoud, vorigANummerInhoud, gemeenteInhoud));
-        lg01.setBronGemeente(gemeenteKop);
-        lg01.setDoelGemeente("3000200");
+        lg01.setHeader(Lo3HeaderVeld.A_NUMMER, aNummerKop);
+        lg01.setHeader(Lo3HeaderVeld.OUD_A_NUMMER, vorigANummerKop);
+        lg01.setLo3Persoonslijst(maakPersoonslijst(aNummerInhoud, vorigANummerInhoud, burgerServicenummer, gemeenteInhoud));
+        lg01.setBronPartijCode(bronPartijCode);
+        lg01.setDoelPartijCode("199902");
 
         final String formattedLg01 = lg01.format();
 
         try {
             lg01.parse(formattedLg01);
         } catch (
-            BerichtSyntaxException
-            | BerichtInhoudException e)
-        {
+                BerichtSyntaxException
+                        | BerichtInhoudException e) {
             e.printStackTrace();
             return null;
         }
@@ -77,37 +87,43 @@ public abstract class AbstractUc202Test extends AbstractUcTest {
         return lg01;
     }
 
-    protected Lo3Persoonslijst maakPersoonslijst(final Long aNummerInhoud, final Long vorigANummerInhoud, final String gemeenteInhoud) {
+    protected Lo3Persoonslijst maakPersoonslijst(final String aNummerInhoud, final String vorigANummerInhoud, final String gemeenteInhoud) {
+
+        return maakPersoonslijst(aNummerInhoud, "313131313", vorigANummerInhoud, gemeenteInhoud);
+    }
+
+    protected Lo3Persoonslijst maakPersoonslijst(final String aNummerInhoud, final String vorigANummerInhoud, final String burgerServicenummer,
+                                                 final String gemeenteInhoud) {
 
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         // @formatter:off
         builder.persoonStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Persoon(aNummerInhoud,
-                                                                                                          null,
-                                                                                                          "Jan",
-                                                                                                          null,
-                                                                                                          null,
-                                                                                                          "Jansen",
-                                                                                                          19700101,
-                                                                                                          "0518",
-                                                                                                          "6030",
-                                                                                                          "M",
-                                                                                                          vorigANummerInhoud,
-                                                                                                          null,
-                                                                                                          "E"),
-                                                                               Lo3StapelHelper.lo3Akt(1),
-                                                                               Lo3StapelHelper.lo3His(19700101),
-                                                                               new Lo3Herkomst(Lo3CategorieEnum.PERSOON, 0, 0))));
+                burgerServicenummer,
+                "Jan",
+                null,
+                null,
+                "Jansen",
+                19700101,
+                "0518",
+                "6030",
+                "M",
+                vorigANummerInhoud,
+                null,
+                "E"),
+                Lo3StapelHelper.lo3Akt(1),
+                Lo3StapelHelper.lo3His(19700101),
+                new Lo3Herkomst(Lo3CategorieEnum.PERSOON, 0, 0))));
 
         builder.verblijfplaatsStapel(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Verblijfplaats(gemeenteInhoud,
-                                                                                                                        1970101,
-                                                                                                                        1970101,
-                                                                                                                        "Straat",
-                                                                                                                        15,
-                                                                                                                        "9876AA",
-                                                                                                                        "I"),
-                                                                                      null,
-                                                                                      Lo3StapelHelper.lo3His(19700101),
-                                                                                      new Lo3Herkomst(Lo3CategorieEnum.VERBLIJFPLAATS, 0, 0))));
+                1970101,
+                1970101,
+                "Straat",
+                15,
+                "9876AA",
+                "I"),
+                null,
+                Lo3StapelHelper.lo3His(19700101),
+                new Lo3Herkomst(Lo3CategorieEnum.VERBLIJFPLAATS, 0, 0))));
         // @formatter:on
 
         return builder.build();
@@ -116,29 +132,33 @@ public abstract class AbstractUc202Test extends AbstractUcTest {
     /* *** SYNC NAAR BRP******************************************************************************************** */
 
     protected SynchroniseerNaarBrpAntwoordBericht maakSynchroniseerNaarBrpAntwoordBericht(
-        final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek,
-        final StatusType status,
-        final List<String> persoonslijsten)
-    {
+            final SynchroniseerNaarBrpVerzoekBericht synchroniseerNaarBrpVerzoek,
+            final StatusType status,
+            final List<Kandidaat> kandidaten) {
         final SynchroniseerNaarBrpAntwoordBericht result = new SynchroniseerNaarBrpAntwoordBericht();
         result.setStatus(status);
         result.setMessageId(generateMessageId());
         result.setCorrelationId(synchroniseerNaarBrpVerzoek.getMessageId());
-        result.setKandidaten(persoonslijsten);
+        result.setKandidaten(kandidaten);
 
         return result;
     }
 
-    protected List<String> maakPersoonslijsten(final Long... aNummers) {
+    protected List<Kandidaat> maakKandidaten(final String... aNummers) {
         if (aNummers == null || aNummers.length == 0) {
             return null;
         }
 
-        final List<String> result = new ArrayList<>();
+        final List<Kandidaat> result = new ArrayList<>();
 
-        for (final Long aNummer : aNummers) {
+        for (final String aNummer : aNummers) {
             final Lo3Persoonslijst pl = maakPersoonslijst(aNummer, null, "0599");
-            result.add(plToString(pl));
+            final Kandidaat kandidaat = new Kandidaat();
+            kandidaat.setPersoonId(Integer.valueOf(aNummer));
+            kandidaat.setVersie(1);
+            kandidaat.setLo3PersoonslijstAlsTeletexString(plToString(pl));
+
+            result.add(kandidaat);
         }
 
         return result;
@@ -151,11 +171,10 @@ public abstract class AbstractUc202Test extends AbstractUcTest {
     /* *** BLOKKERING INFO ***************************************************************************************** */
 
     protected BlokkeringInfoAntwoordBericht maakBlokkeringInfoAntwoordBericht(
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek,
-        final PersoonsaanduidingType persoonsaanduiding,
-        final String processId,
-        final String gemeenteNaar)
-    {
+            final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek,
+            final PersoonsaanduidingType persoonsaanduiding,
+            final String processId,
+            final String gemeenteNaar) {
         final BlokkeringInfoAntwoordBericht result = new BlokkeringInfoAntwoordBericht();
         result.setStatus(StatusType.OK);
         result.setPersoonsaanduiding(persoonsaanduiding);

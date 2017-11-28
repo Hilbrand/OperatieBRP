@@ -6,7 +6,6 @@
 
 /**
  * Package voor de Excel adapter.
- * TODO: klassen in deze package zijn een duplicaat van migr-sync-test
  */
 package nl.bzk.migratiebrp.util.excel;
 

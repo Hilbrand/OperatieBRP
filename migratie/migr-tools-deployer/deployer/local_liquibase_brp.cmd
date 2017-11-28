@@ -1,1 +1,0 @@
-mvn -U -f brp-db-liquibase.pom.xml install -Pinstall -Ddeploy.propfile=componentsetting/brp/brp-db-liquibase.properties -Ddburl=jdbc:postgresql://localhost/BRP -Ddbusername=postgres -Ddbpassword=postgres

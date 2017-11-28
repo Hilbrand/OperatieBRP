@@ -6,20 +6,19 @@
 
 package nl.bzk.brp.levering.lo3.mapper;
 
-import java.util.Date;
-import nl.bzk.brp.gba.dataaccess.VerConvRepository;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.predikaatview.kern.PersoonHisVolledigView;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class PersoonAfgeleidAdministratiefMapperTest {
+import nl.bzk.brp.gba.dataaccess.VerConvRepository;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
+import nl.bzk.brp.levering.lo3.support.MetaObjectUtil;
+
+public class PersoonAfgeleidAdministratiefMapperTest extends AbstractMapperTestBasis {
 
     private final PersoonAfgeleidAdministratiefMapper mapper = new PersoonAfgeleidAdministratiefMapper();
 
@@ -31,23 +30,16 @@ public class PersoonAfgeleidAdministratiefMapperTest {
 
     @Test
     public void testSucces() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(maak(builder).build(), null);
-        final BrpStapel<BrpPersoonAfgeleidAdministratiefInhoud> brpInhoud =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+        final MetaObject.Builder builder = MetaObjectUtil.maakIngeschrevene(MetaObjectUtil::voegPersoonAfgeleidAdministratiefGroepToe);
+        final BrpStapel<BrpPersoonAfgeleidAdministratiefInhoud> brpInhoud = doMapping(mapper, builder);
 
         Assert.assertNotNull(brpInhoud);
         Assert.assertTrue(brpInhoud.size() == 1);
-        Assert.assertEquals(Boolean.TRUE, brpInhoud.get(0).getInhoud().getIndicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig().getWaarde());
     }
 
     @Test
     public void testLeeg() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final BrpStapel<BrpPersoonAfgeleidAdministratiefInhoud> brpInhoud =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
-
+        final BrpStapel<BrpPersoonAfgeleidAdministratiefInhoud> brpInhoud = doMapping(mapper, MetaObjectUtil.maakIngeschrevene());
         Assert.assertNull(brpInhoud);
     }
 
@@ -56,25 +48,10 @@ public class PersoonAfgeleidAdministratiefMapperTest {
      */
     @Test
     public void testGeenWaarde() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        builder.nieuwAfgeleidAdministratiefRecord(MapperTestUtil.maakActieModel(20131212000000L)).eindeRecord();
-
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final BrpStapel<BrpPersoonAfgeleidAdministratiefInhoud> brpInhoud =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+        final MetaObject.Builder builder = MetaObjectUtil.maakIngeschrevene(b -> MetaObjectUtil.voegPersoonAfgeleidAdministratiefGroepToe(b, null));
+        final BrpStapel<BrpPersoonAfgeleidAdministratiefInhoud> brpInhoud = doMapping(mapper, builder);
 
         Assert.assertNotNull(brpInhoud);
         Assert.assertTrue(brpInhoud.size() == 1);
-        Assert.assertNull(brpInhoud.get(0).getInhoud().getIndicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig());
-    }
-
-    public static PersoonHisVolledigImplBuilder maak(final PersoonHisVolledigImplBuilder builder) {
-        // @formatter:off
-        return builder.nieuwAfgeleidAdministratiefRecord(MapperTestUtil.maakActieModel(20131212000000L))
-                .indicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig(true)
-                .tijdstipLaatsteWijziging(new Date(123L))
-                .tijdstipLaatsteWijzigingGBASystematiek(new Date(234L))
-                .eindeRecord();
-        // @formatter:on
     }
 }

@@ -9,7 +9,6 @@ package nl.bzk.migratiebrp.bericht.model.isc.xml;
 import java.io.InputStream;
 import nl.bzk.migratiebrp.bericht.model.xml.AbstractXml;
 import nl.bzk.migratiebrp.bericht.model.xml.SimpleLSInput;
-import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
 /**
@@ -27,13 +26,10 @@ public final class IscXml extends AbstractXml {
 
     @Override
     protected LSResourceResolver maakResolver() {
-        return new LSResourceResolver() {
-            @Override
-            public LSInput resolveResource(final String type, final String namespaceURI, final String publicId, final String systemId, final String baseURI)
-            {
-                final InputStream resourceAsStream = getClass().getResourceAsStream("/xsd/isc/" + systemId);
-                return new SimpleLSInput(publicId, systemId, resourceAsStream);
-            }
+        return (type, namespaceURI, publicId, systemId, baseURI) -> {
+            final InputStream resourceAsStream = getClass().getResourceAsStream("/xsd/isc/" + systemId);
+            return new SimpleLSInput(publicId, systemId, resourceAsStream);
         };
     }
+
 }

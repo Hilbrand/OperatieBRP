@@ -22,16 +22,20 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpAttribuutConverteerder.Lo3GemeenteLand;
-import org.springframework.stereotype.Component;
 
 /**
  * IST Kind converteerder.
  */
-@Component
-public final class BrpIstKindConverteerder extends BrpIstAbstractConverteerder<BrpIstRelatieGroepInhoud> {
+public final class BrpIstKindConverteerder extends BrpIstAbstractConverteerder {
+    /**
+     * Constructor.
+     * @param attribuutConverteerder attribuut converteerder
+     */
+    public BrpIstKindConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+        super(attribuutConverteerder);
+    }
 
-    @Override
-    public Lo3Stapel<Lo3KindInhoud> converteer(final BrpStapel<BrpIstRelatieGroepInhoud> brpStapel) {
+    private Lo3Stapel<Lo3KindInhoud> converteerKind(final BrpStapel<BrpIstRelatieGroepInhoud> brpStapel) {
         if (brpStapel == null) {
             return null;
         }
@@ -42,16 +46,16 @@ public final class BrpIstKindConverteerder extends BrpIstAbstractConverteerder<B
 
             final Lo3KindInhoud.Builder builder = new Lo3KindInhoud.Builder();
             // 1-op-1 conversie
-            builder.aNummer(getConverteerder().converteerAdministratieNummer(inhoud.getAnummer()));
-            builder.burgerservicenummer(getConverteerder().converteerBurgerservicenummer(inhoud.getBsn()));
-            builder.geslachtsnaam(getConverteerder().converteerString(inhoud.getGeslachtsnaamstam()));
-            builder.voornamen(getConverteerder().converteerString(inhoud.getVoornamen()));
+            builder.aNummer(getAttribuutConverteerder().converteerAdministratieNummer(inhoud.getAnummer()));
+            builder.burgerservicenummer(getAttribuutConverteerder().converteerBurgerservicenummer(inhoud.getBsn()));
+            builder.geslachtsnaam(getAttribuutConverteerder().converteerString(inhoud.getGeslachtsnaamstam()));
+            builder.voornamen(getAttribuutConverteerder().converteerString(inhoud.getVoornamen()));
 
             // Conversie mbhv converteerder
-            builder.voorvoegselGeslachtsnaam(getConverteerder().converteerVoorvoegsel(inhoud.getVoorvoegsel(), inhoud.getScheidingsteken()));
+            builder.voorvoegselGeslachtsnaam(getAttribuutConverteerder().converteerVoorvoegsel(inhoud.getVoorvoegsel(), inhoud.getScheidingsteken()));
 
             // Conversie van datums
-            builder.geboortedatum(getConverteerder().converteerDatum(inhoud.getDatumGeboorte()));
+            builder.geboortedatum(getAttribuutConverteerder().converteerDatum(inhoud.getDatumGeboorte()));
 
             // Conversie specifiek
             vulAdellijkeTitelPredikaat(builder, inhoud);
@@ -61,11 +65,11 @@ public final class BrpIstKindConverteerder extends BrpIstAbstractConverteerder<B
 
             final Lo3Categorie<Lo3KindInhoud> voorkomen =
                     new Lo3Categorie<>(
-                        builder.build(),
-                        maakDocumentatie(standaardGegevens),
-                        maakOnderzoek(standaardGegevens),
-                        maakHistorie(standaardGegevens),
-                        maakHerkomst(standaardGegevens));
+                            builder.build(),
+                            maakDocumentatie(standaardGegevens),
+                            maakOnderzoek(standaardGegevens),
+                            maakHistorie(standaardGegevens),
+                            maakHerkomst(standaardGegevens));
 
             final Lo3Categorie<Lo3KindInhoud> voorkomenMetOnderzoek = toevoegenOnderzoekAanElementen(voorkomen);
             voorkomens.add(voorkomenMetOnderzoek);
@@ -83,26 +87,24 @@ public final class BrpIstKindConverteerder extends BrpIstAbstractConverteerder<B
     }
 
     private void vulAdellijkeTitelPredikaat(final Lo3KindInhoud.Builder builder, final BrpIstRelatieGroepInhoud inhoud) {
-        builder.adellijkeTitelPredikaatCode(getConverteerder().converteerAdellijkeTitelPredikaatCode(
-            inhoud.getAdellijkeTitelCode(),
-            inhoud.getPredicaatCode()));
+        builder.adellijkeTitelPredikaatCode(getAttribuutConverteerder().converteerAdellijkeTitelPredikaatCode(
+                inhoud.getAdellijkeTitelCode(),
+                inhoud.getPredicaatCode()));
     }
 
     /**
      * Geeft de lijst van stapels terug met {@link Lo3KindInhoud}.
-     * 
-     * @param brpStapels
-     *            brp IST stapels voor kind(eren)
+     * @param brpStapels brp IST stapels voor kind(eren)
      * @return een gevuld lijst van stapels of null als er geen voorkomens zijn.
      */
-    public List<Lo3Stapel<Lo3KindInhoud>> converteer(final List<BrpStapel<BrpIstRelatieGroepInhoud>> brpStapels) {
+    public List<Lo3Stapel<Lo3KindInhoud>> converteerKindStapels(final List<BrpStapel<BrpIstRelatieGroepInhoud>> brpStapels) {
         if (brpStapels == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         final List<Lo3Stapel<Lo3KindInhoud>> stapels = new ArrayList<>();
         for (final BrpStapel<BrpIstRelatieGroepInhoud> brpStapel : brpStapels) {
-            final Lo3Stapel<Lo3KindInhoud> lo3Stapel = converteer(brpStapel);
+            final Lo3Stapel<Lo3KindInhoud> lo3Stapel = converteerKind(brpStapel);
             stapels.add(lo3Stapel);
         }
         return stapels;

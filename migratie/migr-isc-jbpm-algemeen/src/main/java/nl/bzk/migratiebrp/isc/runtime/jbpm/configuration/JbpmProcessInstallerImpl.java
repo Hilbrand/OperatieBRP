@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.isc.runtime.jbpm.configuration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -18,16 +19,14 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.apache.commons.io.IOUtils;
 import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.file.def.FileDefinition;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.jpdl.xml.JpdlXmlReader;
-import org.jbpm.jpdl.xml.Problem;
-import org.jbpm.jpdl.xml.ProblemListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.InputSource;
@@ -48,9 +47,7 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
 
     /**
      * Constructor.
-     *
-     * @param procesDefinitionLocations
-     *            process definition locaties
+     * @param procesDefinitionLocations process definition locaties
      */
     protected JbpmProcessInstallerImpl(final String... procesDefinitionLocations) {
         this.procesDefinitionLocations = procesDefinitionLocations;
@@ -64,7 +61,6 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
         }
     }
 
-    @SuppressWarnings("checkstyle:illegalcatch")
     private void deployProcessDefinition(final JbpmConfiguration jbpmConfiguration, final String processDefinitionLocation) {
         final JbpmContext jbpmContext = jbpmConfiguration.createJbpmContext();
 
@@ -75,12 +71,7 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
 
             // Parse process definition
             final JpdlXmlReader jpdlReader =
-                    new JpdlXmlReader(new InputSource(new StringReader(processData.getProcessDefinitionXml())), new ProblemListener() {
-                        @Override
-                        public void addProblem(final Problem problem) {
-                            LOG.error(problem.toString());
-                        }
-                    });
+                    new JpdlXmlReader(new InputSource(new StringReader(processData.getProcessDefinitionXml())), problem -> LOG.error(problem.toString()));
             final ProcessDefinition processDefinition = jpdlReader.readProcessDefinition();
 
             // Check if process definition should be deployed
@@ -133,12 +124,8 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
         }
     }
 
-    private boolean isDeLaatsteProcessDefinitionGedeployed(
-        final String processDefinitionLocation,
-        final JbpmContext jbpmContext,
-        final ProcessData processData,
-        final ProcessDefinition processDefinition)
-    {
+    private boolean isDeLaatsteProcessDefinitionGedeployed(final String processDefinitionLocation, final JbpmContext jbpmContext, final ProcessData processData,
+                                                           final ProcessDefinition processDefinition) {
         final ProcessDefinition latestDeployedProcessDefinition = jbpmContext.getGraphSession().findLatestProcessDefinition(processDefinition.getName());
         if (latestDeployedProcessDefinition != null && latestDeployedProcessDefinition.getFileDefinition() != null) {
             final byte[] deployedHash = latestDeployedProcessDefinition.getFileDefinition().getBytes(PROCESSDEFINITION_MD5);
@@ -151,24 +138,6 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
         }
 
         return false;
-    }
-
-    private static String readAsString(final String resource) throws IOException {
-        final InputStream is = JbpmProcessInstaller.class.getResourceAsStream(resource);
-        if (is == null) {
-            return null;
-        } else {
-            return IOUtils.toString(is);
-        }
-    }
-
-    private static byte[] readAsBytes(final String resource) throws IOException {
-        final InputStream is = JbpmProcessInstaller.class.getResourceAsStream(resource);
-        if (is == null) {
-            return null;
-        } else {
-            return IOUtils.toByteArray(is);
-        }
     }
 
     /**
@@ -187,11 +156,8 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
 
         /**
          * Constructor.
-         *
-         * @param location
-         *            locatie
-         * @throws IOException
-         *             bij lees fouten
+         * @param location locatie
+         * @throws IOException bij lees fouten
          */
         public ProcessData(final String location) throws IOException {
             processDefinitionXml = readAsString(location + PROCESSDEFINITION_XML);
@@ -213,7 +179,7 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
 
             final MessageDigest digester;
             try {
-                digester = MessageDigest.getInstance("MD5");
+                digester = MessageDigest.getInstance("SHA-256");
             } catch (final NoSuchAlgorithmException e) {
                 // Will not happen
                 throw new IOException(e);
@@ -222,7 +188,7 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
             digester.update(processImage);
             digester.update(gpdXml);
             if (formsXml != null) {
-                digester.update(formsXml.getBytes());
+                digester.update(readAsBytes(formsXml));
             }
             for (final byte[] form : forms.values()) {
                 digester.update(form);
@@ -231,9 +197,26 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
             hash = digester.digest();
         }
 
+        private static String readAsString(final String resource) throws IOException {
+            final InputStream is = JbpmProcessInstaller.class.getResourceAsStream(resource);
+            if (is == null) {
+                return null;
+            } else {
+                return IOUtils.toString(is, Charset.defaultCharset());
+            }
+        }
+
+        private static byte[] readAsBytes(final String resource) throws IOException {
+            final InputStream is = JbpmProcessInstaller.class.getResourceAsStream(resource);
+            if (is == null) {
+                return new byte[]{};
+            } else {
+                return IOUtils.toByteArray(is);
+            }
+        }
+
         /**
          * Geef de waarde van process definition xml.
-         *
          * @return process definition xml
          */
         public String getProcessDefinitionXml() {
@@ -242,7 +225,6 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
 
         /**
          * Geef de waarde van process image.
-         *
          * @return process image
          */
         public byte[] getProcessImage() {
@@ -251,7 +233,6 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
 
         /**
          * Geef de waarde van gpd xml.
-         *
          * @return gpd xml
          */
         public byte[] getGpdXml() {
@@ -260,7 +241,6 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
 
         /**
          * Geef de waarde van forms xml.
-         *
          * @return forms.xml (null if non-existent)
          */
         public byte[] getFormsXml() {
@@ -269,7 +249,6 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
 
         /**
          * Geef de waarde van hash.
-         *
          * @return hash
          */
         public byte[] getHash() {
@@ -278,7 +257,6 @@ public final class JbpmProcessInstallerImpl implements JbpmProcessInstaller {
 
         /**
          * Geef de waarde van forms.
-         *
          * @return forms
          */
         public SortedMap<String, byte[]> getForms() {

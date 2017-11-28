@@ -55,7 +55,6 @@ public final class Lo3CategorieWaardeFormatter implements Lo3Formatter {
 
     /**
      * Geef de categorie waarde lijst.
-     *
      * @return categorie waarde lijst
      */
     public List<Lo3CategorieWaarde> getList() {

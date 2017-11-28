@@ -19,20 +19,12 @@ import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf03Bericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakPfActionTest {
-    private MaakPfAction subject;
-    private BerichtenDao berichtenDao;
 
-    @Before
-    public void setup() {
-        subject = new MaakPfAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakPfAction subject = new MaakPfAction(berichtenDao);
 
     @Test
     public void testPf01() {
@@ -42,11 +34,10 @@ public class MaakPfActionTest {
         variabelen.put(FoutafhandelingConstants.BERICHT_LO3, berichtenDao.bewaarBericht(lo3Bericht));
 
         final Map<String, Object> result = subject.execute(variabelen);
-        Assert.assertEquals(2, result.size());
+        Assert.assertEquals(1, result.size());
         final Pf01Bericht pfBericht = (Pf01Bericht) berichtenDao.leesBericht((Long) result.get(FoutafhandelingConstants.BERICHT_PF));
         Assert.assertNotNull(pfBericht);
         Assert.assertEquals(lo3Bericht.getMessageId(), pfBericht.getCorrelationId());
-        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_VB01));
     }
 
     @Test
@@ -57,11 +48,10 @@ public class MaakPfActionTest {
         variabelen.put(FoutafhandelingConstants.BERICHT_LO3, berichtenDao.bewaarBericht(lo3Bericht));
 
         final Map<String, Object> result = subject.execute(variabelen);
-        Assert.assertEquals(2, result.size());
+        Assert.assertEquals(1, result.size());
         final Pf02Bericht pfBericht = (Pf02Bericht) berichtenDao.leesBericht((Long) result.get(FoutafhandelingConstants.BERICHT_PF));
         Assert.assertNotNull(pfBericht);
         Assert.assertEquals(lo3Bericht.getMessageId(), pfBericht.getCorrelationId());
-        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_VB01));
     }
 
     @Test
@@ -72,11 +62,10 @@ public class MaakPfActionTest {
         variabelen.put(FoutafhandelingConstants.BERICHT_LO3, berichtenDao.bewaarBericht(lo3Bericht));
 
         final Map<String, Object> result = subject.execute(variabelen);
-        Assert.assertEquals(2, result.size());
+        Assert.assertEquals(1, result.size());
         final Pf03Bericht pfBericht = (Pf03Bericht) berichtenDao.leesBericht((Long) result.get(FoutafhandelingConstants.BERICHT_PF));
         Assert.assertNotNull(pfBericht);
         Assert.assertEquals(lo3Bericht.getMessageId(), pfBericht.getCorrelationId());
-        Assert.assertEquals(Boolean.TRUE, result.get(FoutafhandelingConstants.INDICATIE_VB01));
     }
 
     @Test
@@ -87,10 +76,9 @@ public class MaakPfActionTest {
         variabelen.put(FoutafhandelingConstants.BERICHT_LO3, berichtenDao.bewaarBericht(lo3Bericht));
 
         final Map<String, Object> result = subject.execute(variabelen);
-        Assert.assertEquals(2, result.size());
+        Assert.assertEquals(1, result.size());
         final Pf03Bericht pf03Bericht = (Pf03Bericht) berichtenDao.leesBericht((Long) result.get(FoutafhandelingConstants.BERICHT_PF));
         Assert.assertNotNull(pf03Bericht);
         Assert.assertEquals(lo3Bericht.getMessageId(), pf03Bericht.getCorrelationId());
-        Assert.assertEquals(Boolean.TRUE, result.get(FoutafhandelingConstants.INDICATIE_VB01));
     }
 }

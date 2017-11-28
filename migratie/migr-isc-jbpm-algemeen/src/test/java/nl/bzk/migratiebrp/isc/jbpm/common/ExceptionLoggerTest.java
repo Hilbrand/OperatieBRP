@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.common;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jbpm.JbpmException;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;

@@ -7,11 +7,11 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;
 
 import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAttribuutMetOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikGeslachtsnaamstam;
 
 /**
  * Interface voor een Mapper om op algemene wijze een onderzoek op gegevens te vertalen naar BRP entiteiten.
@@ -19,21 +19,24 @@ import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
 public interface OnderzoekMapper {
     /**
      * Geeft de onderzoeken terug die gemapped zijn door
-     * {@link #mapOnderzoek(DeltaEntiteit, BrpAttribuutMetOnderzoek, Element)}.
-     *
+     * {@link #mapOnderzoek(Entiteit, BrpAttribuutMetOnderzoek, Element)}.
      * @return De set onderzoeken.
      */
     Set<Onderzoek> getOnderzoekSet();
 
     /**
      * Voeg dit gegeven toe aan de lijst van onderzoeken, als het gegeven in onderzoek staat.
-     *
-     * @param deltaEntiteit
-     *            de BRP database entiteit die het gegeven in onderzoek bevat.
-     * @param attribuut
-     *            het gegeven wat in onderzoek staat.
-     * @param soortGegeven
-     *            het soort gegeven waar dit onderzoek voor geldt
+     * @param deltaEntiteit de BRP database entiteit die het gegeven in onderzoek bevat.
+     * @param attribuut het gegeven wat in onderzoek staat.
+     * @param soortGegeven het soort gegeven waar dit onderzoek voor geldt
      */
-    void mapOnderzoek(DeltaEntiteit deltaEntiteit, BrpAttribuutMetOnderzoek attribuut, Element soortGegeven);
+    void mapOnderzoek(Entiteit deltaEntiteit, BrpAttribuutMetOnderzoek attribuut, Element soortGegeven);
+
+    /**
+     * Voeg dit gegeven toe aan de lijst van onderzoeken. Deze methode kan overweg met meerdere onderzoeken aan hetzelfde gegeven.
+     * @param deltaEntiteit de BRP database entiteit die het gegeven in onderzoek bevat.
+     * @param attribuut een {@link BrpNaamgebruikGeslachtsnaamstam}.
+     * @param soortGegeven het soort gegeven waar dit onderzoek voor geldt
+     */
+    void mapOnderzoeken(Entiteit deltaEntiteit, BrpNaamgebruikGeslachtsnaamstam attribuut, Element soortGegeven);
 }

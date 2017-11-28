@@ -6,27 +6,19 @@
 
 package nl.bzk.migratiebrp.isc.runtime.service;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.MessageId;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao.Direction;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.SessionBerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.dao.VirtueelProcesDao;
-import nl.bzk.migratiebrp.isc.jbpm.common.verzender.VerzendendeInstantieDao;
-import nl.bzk.migratiebrp.isc.runtime.jbpm.JbpmService;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht;
-import nl.bzk.migratiebrp.isc.runtime.message.Acties;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 /**
  * Verwerk leveringsbericht.
@@ -34,23 +26,19 @@ import org.springframework.jms.core.MessageCreator;
 public final class VerwerkLeveringsberichtAction implements Action {
 
     private static final Logger LOG = LoggerFactory.getLogger();
+    private static final String CENTRALE_VOORZIENING_PARTIJ_CODE = "199902";
 
     @Autowired
     private BerichtenDao berichtenDao;
-    @Autowired
-    private VerzendendeInstantieDao verzenderDao;
+
     @Autowired
     private VirtueelProcesDao virtueelProcesDao;
-    @Autowired
-    private JbpmService jbpmService;
 
     private JmsTemplate jmsTemplate;
 
     /**
      * Zet het JMS Template.
-     *
-     * @param jmsTemplate
-     *            het te zetten JMS Template
+     * @param jmsTemplate het te zetten JMS Template
      */
     @Required
     public void setJmsTemplate(final JmsTemplate jmsTemplate) {
@@ -68,47 +56,31 @@ public final class VerwerkLeveringsberichtAction implements Action {
 
         final Long leveringsBerichtId = message.getBerichtId();
         berichtenDao.updateNaam(leveringsBerichtId, "Levering");
-        final String recipient = message.getRecipient();
-        final Long originator = recipient == null ? null : verzenderDao.bepaalVerzendendeInstantie(Long.parseLong(recipient));
-        final String iscReferentienummer = message.getHeader("referentienummer");
+        final String iscReferentienummer = message.getHeader(JMSConstants.CORRELATIE_REFERENTIE);
 
-        if (originator == null) {
-            LOG.info("[Bericht: {}]: kan geen verzendende partij bepalen", message.getBerichtId());
-            final Long processInstanceId =
-                    jbpmService.startFoutmeldingProces(
-                        message.getBericht(),
-                        message.getBerichtId(),
-                        message.getRecipient(),
-                        message.getOriginator(),
-                        "esb.levering.geenVerzender",
-                        "Kon geen verzendende partij bepalen voor recipient '" + recipient + "'.",
-                        true,
-                        true);
-            berichtenDao.updateActie(leveringsBerichtId, Acties.ACTIE_FOUTAFHANDELING_GESTART);
-            berichtenDao.updateProcessInstance(leveringsBerichtId, processInstanceId);
-            return false;
-        }
-
-        // Sla het bericht als VOSPG bericht op.
+        // Sla het bericht als VOISC bericht op.
         final String leveringsBericht = message.getContent();
-        final Long vospgBerichtId = berichtenDao.bewaar("VOSPG", Direction.UITGAAND, null, null, leveringsBericht, originator.toString(), recipient, null);
-        LOG.info("[Bericht: {}]: vospgBerichtId: {}", message.getBerichtId(), vospgBerichtId);
+        final Long voiscBerichtId =
+                berichtenDao.bewaar("VOISC", Direction.UITGAAND, null, null, leveringsBericht, CENTRALE_VOORZIENING_PARTIJ_CODE, message.getRecipient(), null,
+                        true);
+        LOG.info("[Bericht: {}]: voiscBerichtId: {}", message.getBerichtId(), voiscBerichtId);
 
         LOG.info("[Bericht: {}]: referentienummer: {}", message.getBerichtId(), iscReferentienummer);
         if (iscReferentienummer != null) {
             // Ag01 als antwoord op een eerder ontvangen Ap01
-            berichtenDao.updateCorrelatieId(vospgBerichtId, iscReferentienummer);
+            berichtenDao.updateCorrelatieId(voiscBerichtId, iscReferentienummer);
             final Bericht vraagBericht =
-                    berichtenDao.zoekVraagBericht(iscReferentienummer, SessionBerichtenDao.KANAAL_VOSPG, originator.toString(), recipient);
+                    berichtenDao
+                            .zoekVraagBericht(iscReferentienummer, SessionBerichtenDao.KANAAL_VOISC, CENTRALE_VOORZIENING_PARTIJ_CODE, message.getRecipient());
 
             if (vraagBericht != null) {
                 LOG.info(
-                    "[Bericht: {}]: bericht gekoppeld via referentienummer: id={}, processInstanceId={}",
-                    message.getBerichtId(),
-                    vraagBericht.getId(),
-                    vraagBericht.getProcessInstance().getId());
+                        "[Bericht: {}]: bericht gekoppeld via referentienummer: id={}, processInstanceId={}",
+                        message.getBerichtId(),
+                        vraagBericht.getId(),
+                        vraagBericht.getProcessInstance().getId());
                 berichtenDao.updateProcessInstance(leveringsBerichtId, vraagBericht.getProcessInstance().getId());
-                berichtenDao.updateProcessInstance(vospgBerichtId, vraagBericht.getProcessInstance().getId());
+                berichtenDao.updateProcessInstance(voiscBerichtId, vraagBericht.getProcessInstance().getId());
             }
 
         } else {
@@ -126,26 +98,23 @@ public final class VerwerkLeveringsberichtAction implements Action {
             }
 
             // Koppel het virtuele proces
-            berichtenDao.updateVirtueelProcesId(vospgBerichtId, virtueelProcesId);
+            berichtenDao.updateVirtueelProcesId(voiscBerichtId, virtueelProcesId);
         }
 
         // Bepaal het message id
-        final String vospgBerichtMessageId = MessageId.bepaalMessageId(vospgBerichtId);
-        berichtenDao.updateMessageId(vospgBerichtId, vospgBerichtMessageId);
+        final String voiscBerichtMessageId = MessageId.bepaalMessageId(voiscBerichtId);
+        berichtenDao.updateMessageId(voiscBerichtId, voiscBerichtMessageId);
 
         LOG.info("[Bericht: {}]: versturen bericht naar LO3", message.getBerichtId());
-        jmsTemplate.send(new MessageCreator() {
-            @Override
-            public javax.jms.Message createMessage(final Session session) throws JMSException {
-                final javax.jms.Message result = session.createTextMessage(leveringsBericht);
-                result.setStringProperty(JMSConstants.BERICHT_REFERENTIE, vospgBerichtMessageId);
-                if (iscReferentienummer != null) {
-                    result.setStringProperty(JMSConstants.CORRELATIE_REFERENTIE, iscReferentienummer);
-                }
-                result.setStringProperty(JMSConstants.BERICHT_ORIGINATOR, originator.toString());
-                result.setStringProperty(JMSConstants.BERICHT_RECIPIENT, recipient);
-                return result;
+        jmsTemplate.send(session -> {
+            final javax.jms.Message result = session.createTextMessage(leveringsBericht);
+            result.setStringProperty(JMSConstants.BERICHT_REFERENTIE, voiscBerichtMessageId);
+            if (iscReferentienummer != null) {
+                result.setStringProperty(JMSConstants.CORRELATIE_REFERENTIE, iscReferentienummer);
             }
+            result.setStringProperty(JMSConstants.BERICHT_ORIGINATOR, CENTRALE_VOORZIENING_PARTIJ_CODE);
+            result.setStringProperty(JMSConstants.BERICHT_RECIPIENT, message.getRecipient());
+            return result;
         });
 
         LOG.info("[Bericht: {}]: gereed", message.getBerichtId());

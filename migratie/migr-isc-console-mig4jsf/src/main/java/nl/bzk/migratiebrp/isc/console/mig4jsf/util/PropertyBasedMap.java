@@ -19,9 +19,7 @@ public final class PropertyBasedMap extends HashMap<String, String> {
 
     /**
      * Default constructor.
-     * 
-     * @param propertyResource
-     *            Resource voor de properties.
+     * @param propertyResource Resource voor de properties.
      */
     public PropertyBasedMap(final String propertyResource) {
         final Properties content = new Properties();

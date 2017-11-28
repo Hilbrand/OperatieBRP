@@ -6,20 +6,12 @@
 
 package nl.bzk.migratiebrp.bericht.model.sync.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.AfnemersindicatieAntwoordRecordType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
-import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
-import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
-import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
-import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,15 +22,15 @@ public class AfnemersindicatiesAntwoordBerichtTest {
 
     @Test
     public void testAfnemersindicatiesBericht() throws BerichtInhoudException {
-
-        final Set<LogRegel> logregels = new HashSet<>();
-        logregels.add(new LogRegel(Lo3StapelHelper.lo3Her(1, 0, 1), LogSeverity.ERROR, SoortMeldingCode.AFN001, Lo3ElementEnum.ELEMENT_0110));
-
         final AfnemersindicatiesAntwoordBericht bericht = new AfnemersindicatiesAntwoordBericht();
         bericht.setMessageId(MessageIdGenerator.generateId());
-        bericht.setStatus(StatusType.FOUT);
-        bericht.setFoutmelding(FOUTMELDING);
-        bericht.setLogging(logregels);
+
+        AfnemersindicatieAntwoordRecordType record = new AfnemersindicatieAntwoordRecordType();
+        record.setStapelNummer(1);
+        record.setStatus(StatusType.FOUT);
+        record.setFoutmelding(FOUTMELDING);
+
+        bericht.getAfnemersindicaties().add(record);
 
         final String xml = bericht.format();
 
@@ -47,12 +39,10 @@ public class AfnemersindicatiesAntwoordBerichtTest {
         Assert.assertEquals(AfnemersindicatiesAntwoordBericht.class, parsed.getClass());
         parsed.setMessageId(bericht.getMessageId());
         Assert.assertEquals(bericht, parsed);
-        Assert.assertEquals(StatusType.FOUT, bericht.getStatus());
-        Assert.assertEquals(FOUTMELDING, bericht.getFoutmelding());
-        Assert.assertNotNull(bericht.getLogging());
-        Assert.assertEquals(1, bericht.getLogging().size());
-        Assert.assertEquals(LogSeverity.ERROR, bericht.getLogging().get(0).getSeverity());
-        Assert.assertEquals(SoortMeldingCode.AFN001, bericht.getLogging().get(0).getSoortMeldingCode());
-        Assert.assertEquals(Lo3ElementEnum.ELEMENT_0110, bericht.getLogging().get(0).getLo3ElementNummer());
+        Assert.assertNotNull(bericht.getAfnemersindicaties());
+        Assert.assertEquals(1, bericht.getAfnemersindicaties().size());
+        Assert.assertEquals(1, bericht.getAfnemersindicaties().get(0).getStapelNummer());
+        Assert.assertEquals(StatusType.FOUT, bericht.getAfnemersindicaties().get(0).getStatus());
+        Assert.assertEquals(FOUTMELDING, bericht.getAfnemersindicaties().get(0).getFoutmelding());
     }
 }

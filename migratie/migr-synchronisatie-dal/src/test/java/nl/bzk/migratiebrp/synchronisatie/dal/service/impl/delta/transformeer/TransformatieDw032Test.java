@@ -6,27 +6,27 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TransformatieDw032Test extends AbstractTransformatieTest {
 
@@ -84,43 +84,36 @@ public class TransformatieDw032Test extends AbstractTransformatieTest {
     private VerschilGroep maakVerschilGroep() {
         final BRPActie actie =
                 new BRPActie(
-                    SoortActie.CONVERSIE_GBA,
-                    getAdministratieveHandeling(),
-                    getAdministratieveHandeling().getPartij(),
-                    getAdministratieveHandeling().getDatumTijdRegistratie());
+                        SoortActie.CONVERSIE_GBA,
+                        getAdministratieveHandeling(),
+                        getAdministratieveHandeling().getPartij(),
+                        getAdministratieveHandeling().getDatumTijdRegistratie());
         final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
         final PersoonBijhoudingHistorie persoonBijhoudingHistorie =
                 new PersoonBijhoudingHistorie(
-                    persoon,
-                    getAdministratieveHandeling().getPartij(),
-                    Bijhoudingsaard.INGEZETENE,
-                    NadereBijhoudingsaard.ACTUEEL,
-                    false);
+                        persoon,
+                        getAdministratieveHandeling().getPartij(),
+                        Bijhoudingsaard.INGEZETENE,
+                        NadereBijhoudingsaard.ACTUEEL);
 
         final Verschil actieVervalVerschil =
                 new Verschil(maakEntiteitSleutel("actieAanpassingGeldigheid"), null, actie, persoonBijhoudingHistorie, persoonBijhoudingHistorie);
         final Verschil datumTijdVervalVerschil =
                 new Verschil(
-                    maakEntiteitSleutel("datumEindeGeldigheid"),
-                    null,
- 20000102,
-                    persoonBijhoudingHistorie,
-                    persoonBijhoudingHistorie);
-        final Verschil bijhoudingsaardIdVerschil =
-                new Verschil(
-                    maakEntiteitSleutel("bijhoudingsaardId"),
- (short) 1, (short) 3,
-                    persoonBijhoudingHistorie,
-                    persoonBijhoudingHistorie);
+                        maakEntiteitSleutel("datumEindeGeldigheid"),
+                        null,
+                        20000102,
+                        persoonBijhoudingHistorie,
+                        persoonBijhoudingHistorie);
         final Verschil nadereBijhoudingsaardId =
                 new Verschil(
-                    maakEntiteitSleutel("nadereBijhoudingsaardId"),
- (short) 1, (short) 3,
-                    persoonBijhoudingHistorie,
-                    persoonBijhoudingHistorie);
+                        maakEntiteitSleutel("nadereBijhoudingsaardId"),
+                        (short) 1, (short) 3,
+                        persoonBijhoudingHistorie,
+                        persoonBijhoudingHistorie);
 
         final VerschilGroep verschilGroep = VerschilGroep.maakVerschilGroepMetHistorie(persoonBijhoudingHistorie);
-        verschilGroep.addVerschillen(Arrays.asList(actieVervalVerschil, datumTijdVervalVerschil, bijhoudingsaardIdVerschil, nadereBijhoudingsaardId));
+        verschilGroep.addVerschillen(Arrays.asList(actieVervalVerschil, datumTijdVervalVerschil, nadereBijhoudingsaardId));
         return verschilGroep;
 
     }
@@ -128,7 +121,7 @@ public class TransformatieDw032Test extends AbstractTransformatieTest {
     private EntiteitSleutel maakEntiteitSleutel(final String veld) {
         final EntiteitSleutel persoonSleutel = new EntiteitSleutel(Persoon.class, "persoonBijhoudingHistorieSet", null);
         final EntiteitSleutel result = new EntiteitSleutel(PersoonBijhoudingHistorie.class, veld, persoonSleutel);
-        result.addSleuteldeel("dataanvgel", Integer.valueOf(19980622));
+        result.addSleuteldeel("dataanvgel", 19980622);
         result.addSleuteldeel("tsreg", maakTimestamp("2011-03-16 02"));
         return result;
     }

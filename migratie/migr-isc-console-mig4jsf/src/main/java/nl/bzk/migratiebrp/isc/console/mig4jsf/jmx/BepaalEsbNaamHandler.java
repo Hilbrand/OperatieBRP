@@ -24,11 +24,11 @@ import org.jboss.gravel.common.annotation.TldTag;
  */
 @TldTag(name = "bepaalEsbNaam", description = "Bepaal de ESB naam",
         attributes = {@TldAttribute(name = "target", description = "An EL expression into which the filter should be stored.",
-                              required = true, deferredType = String.class),
-                      @TldAttribute(name = "server", description = "An EL expression referring to the jmx server", required = true,
-                              deferredType = JmxServer.class),
-                      @TldAttribute(name = "prefix", description = "An EL expression containing the prefix", required = true,
-                              deferredType = String.class) })
+                required = true, deferredType = String.class),
+                @TldAttribute(name = "server", description = "An EL expression referring to the jmx server", required = true,
+                        deferredType = JmxServer.class),
+                @TldAttribute(name = "prefix", description = "An EL expression containing the prefix", required = true,
+                        deferredType = String.class)})
 public final class BepaalEsbNaamHandler extends TagHandler {
 
     private final TagAttribute targetTagAttribute;
@@ -37,9 +37,7 @@ public final class BepaalEsbNaamHandler extends TagHandler {
 
     /**
      * Constructor waarbij de tag configuratie meegegeven kan worden.
-     * 
-     * @param config
-     *            Tag configuratie waarin o.a. migratie tags staan.
+     * @param config Tag configuratie waarin o.a. migratie tags staan.
      */
     public BepaalEsbNaamHandler(final TagConfig config) {
         super(config);
@@ -60,9 +58,9 @@ public final class BepaalEsbNaamHandler extends TagHandler {
 
     private ActionListener getListener(final FaceletContext ctx) {
         return new BepaalEsbNaamActionListener(getValueExpression(targetTagAttribute, ctx, Object.class), getValueExpression(
-            serverTagAttribute,
-            ctx,
-            JmxServer.class), getValueExpression(prefixTagAttribute, ctx, String.class));
+                serverTagAttribute,
+                ctx,
+                JmxServer.class), getValueExpression(prefixTagAttribute, ctx, String.class));
     }
 
     private ValueExpression getValueExpression(final TagAttribute tagAttribute, final FaceletContext context, final Class<?> clazz) {

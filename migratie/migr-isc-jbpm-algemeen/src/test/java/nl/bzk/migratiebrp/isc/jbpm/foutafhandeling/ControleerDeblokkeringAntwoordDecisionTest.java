@@ -13,21 +13,12 @@ import nl.bzk.migratiebrp.bericht.model.sync.impl.DeblokkeringAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ControleerDeblokkeringAntwoordDecisionTest {
 
-    private ControleerDeblokkeringAntwoordDecision subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new ControleerDeblokkeringAntwoordDecision();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao  = new InMemoryBerichtenDao();
+    private ControleerDeblokkeringAntwoordDecision subject  = new ControleerDeblokkeringAntwoordDecision(berichtenDao);
 
     @Test
     public void testOk() {

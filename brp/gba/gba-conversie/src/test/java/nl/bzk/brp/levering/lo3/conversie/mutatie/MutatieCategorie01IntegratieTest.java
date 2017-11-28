@@ -6,236 +6,454 @@
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
+import static nl.bzk.brp.levering.lo3.support.TestHelper.assertElementen;
+
+import java.util.HashSet;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.AdellijkeTitelCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Geslachtsaanduiding;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Naamgebruik;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortActie;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortAdministratieveHandeling;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonVerstrekkingsbeperkingHisVolledigImplBuilder;
+import java.util.Set;
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
+import nl.bzk.brp.levering.lo3.builder.MetaObjectAdder;
+import nl.bzk.brp.levering.lo3.conversie.ConversieCache;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import org.junit.Assert;
 import org.junit.Test;
-import support.PersoonHisVolledigUtil;
 
 /**
  * Persoon.
  */
 public class MutatieCategorie01IntegratieTest extends AbstractMutatieConverteerderIntegratieTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger();
+
+    @Inject
+    private MutatieConverteerder subject;
+
     @Test
     public void testGeenWijzigingen() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        LOG.info("testGeenWijzigingen");
+        final MetaObject persoonMetaObject = maakBasisPersoon(5001);
 
-        final PersoonVerstrekkingsbeperkingHisVolledigImplBuilder beperkingBuilder =
-                new PersoonVerstrekkingsbeperkingHisVolledigImplBuilder(partij, null, null);
-        builder.voegPersoonVerstrekkingsbeperkingToe(beperkingBuilder.build());
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
+        final Persoonslijst persoon = new Persoonslijst(persoonMetaObject, 0L);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
+
         Assert.assertEquals(0, resultaat.size());
     }
 
     @Test
     public void testGroep01Identificatienummers() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
-        builder.nieuwIdentificatienummersRecord(actie).administratienummer(1234567890L).burgerservicenummer(123123123).eindeRecord();
+        LOG.info("testGroep01Identificatienummers");
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
+
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_IDENTIFICATIENUMMERS.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                        .metGroep()
+                        .metGroepElement(groepElement)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metDatumAanvangGeldigheid(19400101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER.getId()), "1234567890")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER.getId()), "123123123")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(groepElement)
+                        .getRecords()
+                        .iterator()
+                        .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_01,
-            true,
-            Lo3ElementEnum.ELEMENT_0120,
-            "123123123",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19400101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_01,
+                true,
+                Lo3ElementEnum.ELEMENT_0120,
+                "123123123",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19400101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_51,
-            true,
-            Lo3ElementEnum.ELEMENT_0120,
-            "123456789",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19200101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19200102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_51,
+                true,
+                Lo3ElementEnum.ELEMENT_0120,
+                "123456789",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19200101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19200102");
         Assert.assertEquals(2, resultaat.size());
     }
 
     @Test
     public void testGroep02Naam() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
-        builder.nieuwSamengesteldeNaamRecord(actie)
-               .voornamen("Voornaam3")
-               .adellijkeTitel(new AdellijkeTitelCodeAttribuut("P"))
-               .voorvoegsel("het")
-               .scheidingsteken(" ")
-               .geslachtsnaamstam("achternaam")
-               .eindeRecord();
+        LOG.info("testGroep02Naam");
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
+
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_SAMENGESTELDENAAM.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                        .metGroep()
+                        .metGroepElement(groepElement)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metDatumAanvangGeldigheid(19400101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SAMENGESTELDENAAM_VOORNAMEN.getId()), "Voornaam3")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SAMENGESTELDENAAM_ADELLIJKETITELCODE.getId()), "P")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SAMENGESTELDENAAM_VOORVOEGSEL.getId()), "het")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN.getId()), " ")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_SAMENGESTELDENAAM_GESLACHTSNAAMSTAM.getId()), "achternaam")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(groepElement)
+                        .getRecords()
+                        .iterator()
+                        .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_01,
-            true,
-            Lo3ElementEnum.ELEMENT_0210,
-            "Voornaam3",
-            Lo3ElementEnum.ELEMENT_0220,
-            "P",
-            Lo3ElementEnum.ELEMENT_0230,
-            "het",
-            Lo3ElementEnum.ELEMENT_0240,
-            "achternaam",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19400101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_01,
+                true,
+                Lo3ElementEnum.ELEMENT_0210,
+                "Voornaam3",
+                Lo3ElementEnum.ELEMENT_0220,
+                "P",
+                Lo3ElementEnum.ELEMENT_0230,
+                "het",
+                Lo3ElementEnum.ELEMENT_0240,
+                "achternaam",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19400101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_51,
-            true,
-            Lo3ElementEnum.ELEMENT_0210,
-            "Voornaam1 Voornaam2",
-            Lo3ElementEnum.ELEMENT_0220,
-            "",
-            Lo3ElementEnum.ELEMENT_0230,
-            "de",
-            Lo3ElementEnum.ELEMENT_0240,
-            "geslachtsnaam",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19200101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19200102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_51,
+                true,
+                Lo3ElementEnum.ELEMENT_0210,
+                "Voornaam1 Voornaam2",
+                Lo3ElementEnum.ELEMENT_0220,
+                "",
+                Lo3ElementEnum.ELEMENT_0230,
+                "de",
+                Lo3ElementEnum.ELEMENT_0240,
+                "geslachtsnaam",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19200101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19200102");
         Assert.assertEquals(2, resultaat.size());
     }
 
     @Test
     public void testGroep03Geboorte() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
-        builder.nieuwGeboorteRecord(actie).datumGeboorte(19330202).gemeenteGeboorte((short) 222).landGebiedGeboorte((short) 6030).eindeRecord();
+        LOG.info("testGroep03Geboorte");
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        assertElementen(resultaat, Lo3CategorieEnum.CATEGORIE_01, true, Lo3ElementEnum.ELEMENT_0310, "19330202", Lo3ElementEnum.ELEMENT_0320, "0222",
-        // Lo3ElementEnum.ELEMENT_8510,
-        // "19400101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
-        assertElementen(resultaat, Lo3CategorieEnum.CATEGORIE_51, true, Lo3ElementEnum.ELEMENT_0310, "19200101", Lo3ElementEnum.ELEMENT_0320, "0518",
-        // Lo3ElementEnum.ELEMENT_8510,
-        // "19200101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19200102");
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_GEBOORTE.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                        .metGroep()
+                        .metGroepElement(groepElement)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_DATUM.getId()), 19330202)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_GEMEENTECODE.getId()), "0222")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_LANDGEBIEDCODE.getId()), "6030")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(groepElement)
+                        .getRecords()
+                        .iterator()
+                        .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
+
+        assertElementen(
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_01,
+                true,
+                Lo3ElementEnum.ELEMENT_0310,
+                "19330202",
+                Lo3ElementEnum.ELEMENT_0320,
+                "0222",
+                // Lo3ElementEnum.ELEMENT_8510,
+                // "19400101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
+        assertElementen(
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_51,
+                true,
+                Lo3ElementEnum.ELEMENT_0310,
+                "19200101",
+                Lo3ElementEnum.ELEMENT_0320,
+                "0518",
+                // Lo3ElementEnum.ELEMENT_8510,
+                // "19200101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19200102");
 
         Assert.assertEquals(2, resultaat.size());
     }
 
     @Test
     public void testGroep03GeboorteBuiteland() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
-        builder.nieuwGeboorteRecord(actie).datumGeboorte(19200101).landGebiedGeboorte((short) 5010).buitenlandsePlaatsGeboorte("Brussel").eindeRecord();
+        LOG.info("testGroep03GeboorteBuiteland");
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        assertElementen(resultaat, Lo3CategorieEnum.CATEGORIE_01, true, Lo3ElementEnum.ELEMENT_0320, "Brussel", Lo3ElementEnum.ELEMENT_0330, "5010",
-        // Lo3ElementEnum.ELEMENT_8510,
-        // "19400101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
-        assertElementen(resultaat, Lo3CategorieEnum.CATEGORIE_51, true, Lo3ElementEnum.ELEMENT_0320, "0518", Lo3ElementEnum.ELEMENT_0330, "6030",
-        // Lo3ElementEnum.ELEMENT_8510,
-        // "19200101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19200102");
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_GEBOORTE.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                        .metGroep()
+                        .metGroepElement(groepElement)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_DATUM.getId()), 19200101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_BUITENLANDSEPLAATS.getId()), "Brussel")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_LANDGEBIEDCODE.getId()), "5010")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(groepElement)
+                        .getRecords()
+                        .iterator()
+                        .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
+
+        assertElementen(
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_01,
+                true,
+                Lo3ElementEnum.ELEMENT_0320,
+                "Brussel",
+                Lo3ElementEnum.ELEMENT_0330,
+                "5010",
+                // Lo3ElementEnum.ELEMENT_8510,
+                // "19400101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
+        assertElementen(
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_51,
+                true,
+                Lo3ElementEnum.ELEMENT_0320,
+                "0518",
+                Lo3ElementEnum.ELEMENT_0330,
+                "6030",
+                // Lo3ElementEnum.ELEMENT_8510,
+                // "19200101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19200102");
 
         Assert.assertEquals(2, resultaat.size());
     }
 
     @Test
     public void testGroep04Geslacht() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
-        builder.nieuwGeslachtsaanduidingRecord(actie).geslachtsaanduiding(Geslachtsaanduiding.VROUW).eindeRecord();
+        LOG.info("testGroep04Geslacht");
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
+
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_GESLACHTSAANDUIDING.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                        .metGroep()
+                        .metGroepElement(groepElement)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metDatumAanvangGeldigheid(19400101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_GESLACHTSAANDUIDING_CODE.getId()), "V")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(groepElement)
+                        .getRecords()
+                        .iterator()
+                        .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_01,
-            true,
-            Lo3ElementEnum.ELEMENT_0410,
-            "V",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19400101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_01,
+                true,
+                Lo3ElementEnum.ELEMENT_0410,
+                "V",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19400101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_51,
-            true,
-            Lo3ElementEnum.ELEMENT_0410,
-            "M",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19200101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19200102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_51,
+                true,
+                Lo3ElementEnum.ELEMENT_0410,
+                "M",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19200101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19200102");
         Assert.assertEquals(2, resultaat.size());
     }
 
     @Test
     public void testGroep20ANummerVerwijzingen() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
-        builder.nieuwNummerverwijzingRecord(actie).vorigeAdministratienummer(1234512345L).volgendeAdministratienummer(1234123412L).eindeRecord();
+        LOG.info("testGroep20ANummerVerwijzingen");
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
+
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_NUMMERVERWIJZING.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                        .metGroep()
+                        .metGroepElement(groepElement)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metDatumAanvangGeldigheid(19400101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_NUMMERVERWIJZING_VORIGEADMINISTRATIENUMMER.getId()), "1234512345")
+                        .metAttribuut(
+                                ElementHelper.getAttribuutElement(Element.PERSOON_NUMMERVERWIJZING_VOLGENDEADMINISTRATIENUMMER.getId()),
+                                "1234123412")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(groepElement)
+                        .getRecords()
+                        .iterator()
+                        .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_01,
-            true,
-            Lo3ElementEnum.ELEMENT_2010,
-            "1234512345",
-            Lo3ElementEnum.ELEMENT_2020,
-            "1234123412",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19400101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_01,
+                true,
+                Lo3ElementEnum.ELEMENT_2010,
+                "1234512345",
+                Lo3ElementEnum.ELEMENT_2020,
+                "1234123412",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19400101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_51,
-            true,
-            Lo3ElementEnum.ELEMENT_2010,
-            "",
-            Lo3ElementEnum.ELEMENT_2020,
-            "",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19200101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19200102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_51,
+                true,
+                Lo3ElementEnum.ELEMENT_2010,
+                "",
+                Lo3ElementEnum.ELEMENT_2020,
+                "",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19200101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19200102");
         Assert.assertEquals(2, resultaat.size());
     }
 
     @Test
     public void testGroep20BsnVerwijzingen() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
-        builder.nieuwNummerverwijzingRecord(actie).volgendeBurgerservicenummer(123412341).vorigeBurgerservicenummer(123451234).eindeRecord();
+        LOG.info("testGroep20BsnVerwijzingen");
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
+
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_NUMMERVERWIJZING.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                        .metGroep()
+                        .metGroepElement(groepElement)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metDatumAanvangGeldigheid(19400101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_NUMMERVERWIJZING_VORIGEBURGERSERVICENUMMER.getId()), "123451234")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_NUMMERVERWIJZING_VOLGENDEBURGERSERVICENUMMER.getId()), "123412341")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(groepElement)
+                        .getRecords()
+                        .iterator()
+                        .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
+
         assertElementen(resultaat, Lo3CategorieEnum.CATEGORIE_01, true, Lo3ElementEnum.ELEMENT_8510, "19400101", Lo3ElementEnum.ELEMENT_8610, "19400102");
         assertElementen(resultaat, Lo3CategorieEnum.CATEGORIE_51, true, Lo3ElementEnum.ELEMENT_8510, "19200101", Lo3ElementEnum.ELEMENT_8610, "19200102");
         Assert.assertEquals(2, resultaat.size());
@@ -243,103 +461,289 @@ public class MutatieCategorie01IntegratieTest extends AbstractMutatieConverteerd
 
     @Test
     public void testGroep61Naamgebruik() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
-        builder.nieuwNaamgebruikRecord(actie).naamgebruik(Naamgebruik.PARTNER).eindeRecord();
+        LOG.info("testGroep61Naamgebruik");
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        assertElementen(resultaat, Lo3CategorieEnum.CATEGORIE_01, true, Lo3ElementEnum.ELEMENT_6110, "P",
-        // Lo3ElementEnum.ELEMENT_8510,
-        // "19400101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
-        assertElementen(resultaat, Lo3CategorieEnum.CATEGORIE_51, true, Lo3ElementEnum.ELEMENT_6110, "E",
-        // Lo3ElementEnum.ELEMENT_8510,
-        // "19200101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19200102");
+        final GroepElement groepElement = ElementHelper.getGroepElement(Element.PERSOON_NAAMGEBRUIK.getId());
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                        .metGroep()
+                        .metGroepElement(groepElement)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_NAAMGEBRUIK_CODE.getId()), "P")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(groepElement)
+                        .getRecords()
+                        .iterator()
+                        .next();
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(), 0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
+
+        assertElementen(
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_01,
+                true,
+                Lo3ElementEnum.ELEMENT_6110,
+                "P",
+                // Lo3ElementEnum.ELEMENT_8510,
+                // "19400101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
+        assertElementen(
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_51,
+                true,
+                Lo3ElementEnum.ELEMENT_6110,
+                "E",
+                // Lo3ElementEnum.ELEMENT_8510,
+                // "19200101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19200102");
         Assert.assertEquals(2, resultaat.size());
     }
 
     @Test
     public void testAlleInhoudelijkeGroepen() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
-        builder.nieuwIdentificatienummersRecord(actie).administratienummer(1234567890L).burgerservicenummer(123123123).eindeRecord();
-        builder.nieuwSamengesteldeNaamRecord(actie)
-               .voornamen("Voornaam3")
-               .adellijkeTitel(new AdellijkeTitelCodeAttribuut("P"))
-               .voorvoegsel("het")
-               .scheidingsteken(" ")
-               .geslachtsnaamstam("achternaam")
-               .eindeRecord();
-        builder.nieuwGeboorteRecord(actie).datumGeboorte(19200101).landGebiedGeboorte((short) 5010).buitenlandsePlaatsGeboorte("Brussel").eindeRecord();
-        builder.nieuwGeslachtsaanduidingRecord(actie).geslachtsaanduiding(Geslachtsaanduiding.VROUW).eindeRecord();
-        builder.nieuwNummerverwijzingRecord(actie).vorigeAdministratienummer(1234512345L).volgendeAdministratienummer(1234123412L).eindeRecord();
-        builder.nieuwNaamgebruikRecord(actie).naamgebruik(Naamgebruik.PARTNER).eindeRecord();
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        LOG.info("testAlleInhoudelijkeGroepen");
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
+
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
+
+        final GroepElement groepElementIdentificatie = ElementHelper.getGroepElement(Element.PERSOON_IDENTIFICATIENUMMERS.getId());
+        final MetaRecord mutatieRecordIdentificatie = MetaObject.maakBuilder()
+                .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                .metGroep()
+                .metGroepElement(groepElementIdentificatie)
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                .metDatumAanvangGeldigheid(19400101)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER.getId()),
+                        "1234567890")
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER.getId()),
+                        "123123123")
+                .eindeRecord()
+                .eindeGroep()
+                .build()
+                .getGroep(groepElementIdentificatie)
+                .getRecords()
+                .iterator()
+                .next();
+        persoonAdder.voegPersoonMutatieToe(mutatieRecordIdentificatie);
+
+        final GroepElement groepElementSamengesteldeNaam = ElementHelper.getGroepElement(Element.PERSOON_SAMENGESTELDENAAM.getId());
+        final MetaRecord mutatieRecordSamengesteldeNaam = MetaObject.maakBuilder()
+                .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                .metGroep()
+                .metGroepElement(groepElementSamengesteldeNaam)
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                .metDatumAanvangGeldigheid(19400101)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_SAMENGESTELDENAAM_VOORNAMEN.getId()),
+                        "Voornaam3")
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_SAMENGESTELDENAAM_ADELLIJKETITELCODE.getId()),
+                        "P")
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_SAMENGESTELDENAAM_VOORVOEGSEL.getId()),
+                        "het")
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN.getId()),
+                        " ")
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_SAMENGESTELDENAAM_GESLACHTSNAAMSTAM.getId()),
+                        "achternaam")
+                .eindeRecord()
+                .eindeGroep()
+                .build()
+                .getGroep(groepElementSamengesteldeNaam)
+                .getRecords()
+                .iterator()
+                .next();
+        persoonAdder.voegPersoonMutatieToe(mutatieRecordSamengesteldeNaam);
+
+        final GroepElement groepElementGeboorte = ElementHelper.getGroepElement(Element.PERSOON_GEBOORTE.getId());
+        final MetaRecord mutatieRecordGeboorte = MetaObject.maakBuilder()
+                .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                .metGroep()
+                .metGroepElement(groepElementGeboorte)
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_DATUM.getId()),
+                        19200101)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_BUITENLANDSEPLAATS.getId()),
+                        "Brussel")
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.PERSOON_GEBOORTE_LANDGEBIEDCODE.getId()),
+                        "5010")
+                .eindeRecord()
+                .eindeGroep()
+                .build()
+                .getGroep(groepElementGeboorte)
+                .getRecords()
+                .iterator()
+                .next();
+        persoonAdder.voegPersoonMutatieToe(mutatieRecordGeboorte);
+
+        final GroepElement groepElementGeslachtsaanduiding = ElementHelper.getGroepElement(Element.PERSOON_GESLACHTSAANDUIDING.getId());
+        final MetaRecord mutatieRecordGeslachtsaanduiding = MetaObject.maakBuilder()
+                .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                .metGroep()
+                .metGroepElement(groepElementGeslachtsaanduiding)
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                .metDatumAanvangGeldigheid(19400101)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_GESLACHTSAANDUIDING_CODE.getId()),
+                        "V")
+                .eindeRecord()
+                .eindeGroep()
+                .build()
+                .getGroep(groepElementGeslachtsaanduiding)
+                .getRecords()
+                .iterator()
+                .next();
+        persoonAdder.voegPersoonMutatieToe(mutatieRecordGeslachtsaanduiding);
+
+        final GroepElement groepElementNummerwijziging = ElementHelper.getGroepElement(Element.PERSOON_NUMMERVERWIJZING.getId());
+        final MetaRecord mutatieRecordNummerwijziging = MetaObject.maakBuilder()
+                .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                .metGroep()
+                .metGroepElement(groepElementNummerwijziging)
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                .metDatumAanvangGeldigheid(19400101)
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_NUMMERVERWIJZING_VORIGEADMINISTRATIENUMMER.getId()),
+                        "1234512345")
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(
+                                Element.PERSOON_NUMMERVERWIJZING_VOLGENDEADMINISTRATIENUMMER.getId()),
+                        "1234123412")
+                .eindeRecord()
+                .eindeGroep()
+                .build()
+                .getGroep(groepElementNummerwijziging)
+                .getRecords()
+                .iterator()
+                .next();
+        persoonAdder.voegPersoonMutatieToe(mutatieRecordNummerwijziging);
+
+        final GroepElement groepElementNaamgebruik = ElementHelper.getGroepElement(Element.PERSOON_NAAMGEBRUIK.getId());
+        final MetaRecord mutatieRecordNaamgebruik = MetaObject.maakBuilder()
+                .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId()))
+                .metGroep()
+                .metGroepElement(groepElementNaamgebruik)
+                .metRecord()
+                .metId(idTeller.getAndIncrement())
+                .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                .metAttribuut(
+                        ElementHelper.getAttribuutElement(Element.PERSOON_NAAMGEBRUIK_CODE.getId()),
+                        "P")
+                .eindeRecord()
+                .eindeGroep()
+                .build()
+                .getGroep(groepElementNaamgebruik)
+                .getRecords()
+                .iterator()
+                .next();
+        persoonAdder.voegPersoonMutatieToe(mutatieRecordNaamgebruik);
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.build(), 0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_01,
-            true,
-            Lo3ElementEnum.ELEMENT_0120,
-            "123123123",
-            Lo3ElementEnum.ELEMENT_0210,
-            "Voornaam3",
-            Lo3ElementEnum.ELEMENT_0220,
-            "PS",
-            Lo3ElementEnum.ELEMENT_0230,
-            "het",
-            Lo3ElementEnum.ELEMENT_0240,
-            "achternaam",
-            Lo3ElementEnum.ELEMENT_0320,
-            "Brussel",
-            Lo3ElementEnum.ELEMENT_0330,
-            "5010",
-            Lo3ElementEnum.ELEMENT_0410,
-            "V",
-            Lo3ElementEnum.ELEMENT_2010,
-            "1234512345",
-            Lo3ElementEnum.ELEMENT_2020,
-            "1234123412",
-            Lo3ElementEnum.ELEMENT_6110,
-            "P",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19400101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_01,
+                true,
+                Lo3ElementEnum.ELEMENT_0120,
+                "123123123",
+                Lo3ElementEnum.ELEMENT_0210,
+                "Voornaam3",
+                Lo3ElementEnum.ELEMENT_0220,
+                "PS",
+                Lo3ElementEnum.ELEMENT_0230,
+                "het",
+                Lo3ElementEnum.ELEMENT_0240,
+                "achternaam",
+                Lo3ElementEnum.ELEMENT_0320,
+                "Brussel",
+                Lo3ElementEnum.ELEMENT_0330,
+                "5010",
+                Lo3ElementEnum.ELEMENT_0410,
+                "V",
+                Lo3ElementEnum.ELEMENT_2010,
+                "1234512345",
+                Lo3ElementEnum.ELEMENT_2020,
+                "1234123412",
+                Lo3ElementEnum.ELEMENT_6110,
+                "P",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19400101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_51,
-            true,
-            Lo3ElementEnum.ELEMENT_0120,
-            "123456789",
-            Lo3ElementEnum.ELEMENT_0210,
-            "Voornaam1 Voornaam2",
-            Lo3ElementEnum.ELEMENT_0220,
-            "",
-            Lo3ElementEnum.ELEMENT_0230,
-            "de",
-            Lo3ElementEnum.ELEMENT_0240,
-            "geslachtsnaam",
-            Lo3ElementEnum.ELEMENT_0320,
-            "0518",
-            Lo3ElementEnum.ELEMENT_0330,
-            "6030",
-            Lo3ElementEnum.ELEMENT_0410,
-            "M",
-            Lo3ElementEnum.ELEMENT_2010,
-            "",
-            Lo3ElementEnum.ELEMENT_2020,
-            "",
-            Lo3ElementEnum.ELEMENT_6110,
-            "E",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19200101",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19200102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_51,
+                true,
+                Lo3ElementEnum.ELEMENT_0120,
+                "123456789",
+                Lo3ElementEnum.ELEMENT_0210,
+                "Voornaam1 Voornaam2",
+                Lo3ElementEnum.ELEMENT_0220,
+                "",
+                Lo3ElementEnum.ELEMENT_0230,
+                "de",
+                Lo3ElementEnum.ELEMENT_0240,
+                "geslachtsnaam",
+                Lo3ElementEnum.ELEMENT_0320,
+                "0518",
+                Lo3ElementEnum.ELEMENT_0330,
+                "6030",
+                Lo3ElementEnum.ELEMENT_0410,
+                "M",
+                Lo3ElementEnum.ELEMENT_2010,
+                "",
+                Lo3ElementEnum.ELEMENT_2020,
+                "",
+                Lo3ElementEnum.ELEMENT_6110,
+                "E",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19200101",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19200102");
         Assert.assertEquals(2, resultaat.size());
     }
 }

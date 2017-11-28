@@ -8,17 +8,11 @@ package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.conv.LO3RNIDeelnemerAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.NaamEnumeratiewaardeAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.PartijCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieRNIDeelnemer;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Partij;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPartij;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPartijAttribuut;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RNIDeelnemer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import org.junit.Assert;
 import org.junit.Test;
-import support.ReflectionUtils;
 
 /**
  * Test voor {@link SoortRegisterSoortDocumentConversietabel}.
@@ -26,17 +20,16 @@ import support.ReflectionUtils;
 public class RNIDeelnemerConversietabelTest {
 
     @Test
-    public void test() throws ReflectiveOperationException {
-        final List<ConversieRNIDeelnemer> list = new ArrayList<>();
-        list.add(maakConversietabelRegel((short) 12, 5664445));
+    public void test() {
+        final List<RNIDeelnemer> list = new ArrayList<>();
+        list.add(maakConversietabelRegel("0012", "566444"));
 
         final RNIDeelnemerConversietabel subject = new RNIDeelnemerConversietabel(list);
 
-        Assert.assertEquals("0012", subject.converteerNaarLo3(new BrpPartijCode(5664445)).getWaarde());
+        Assert.assertEquals("0012", subject.converteerNaarLo3(new BrpPartijCode("566444")).getWaarde());
     }
 
-    private ConversieRNIDeelnemer maakConversietabelRegel(final Short lo3, final Integer brp) throws ReflectiveOperationException {
-        return ReflectionUtils.instantiate(ConversieRNIDeelnemer.class, new LO3RNIDeelnemerAttribuut(lo3), new Partij(new NaamEnumeratiewaardeAttribuut(
-            "partij" + brp), new SoortPartijAttribuut(SoortPartij.GEMEENTE), new PartijCodeAttribuut(brp), null, null, null, null, null, null));
+    private RNIDeelnemer maakConversietabelRegel(final String lo3, final String partijCode) {
+        return new RNIDeelnemer(lo3, new Partij("Naam", partijCode));
     }
 }

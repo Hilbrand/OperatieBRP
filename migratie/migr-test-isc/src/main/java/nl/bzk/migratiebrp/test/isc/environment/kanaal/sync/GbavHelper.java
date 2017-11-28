@@ -19,11 +19,8 @@ public final class GbavHelper {
 
     /**
      * Registreer cyclus activiteit obv referentie persoon bericht.
-     *
-     * @param berichtReferentie
-     *            gbav persoon bericht
-     * @param cyclusActiviteitId
-     *            cyclus activiteit id
+     * @param berichtReferentie gbav persoon bericht
+     * @param cyclusActiviteitId cyclus activiteit id
      */
     public void registeerCyclusActiviteitIdObvReferentiePersoon(final String berichtReferentie, final Integer cyclusActiviteitId) {
         cyclusActiviteiten.put(berichtReferentie, cyclusActiviteitId);
@@ -31,9 +28,7 @@ public final class GbavHelper {
 
     /**
      * Ophalen cyclus activiteit obv referentie persoon bericht.
-     *
-     * @param berichtReferentie
-     *            gba persoon bericht
+     * @param berichtReferentie gba persoon bericht
      * @return cyclus activiteit id
      */
     public Integer getCyclusActiviteitIdObvReferentiePersoon(final String berichtReferentie) {
@@ -50,11 +45,8 @@ public final class GbavHelper {
 
     /**
      * Registreer pl id obv referentie persoon bericht.
-     *
-     * @param berichtReferentie
-     *            gbav persoon bericht
-     * @param plId
-     *            pl id
+     * @param berichtReferentie gbav persoon bericht
+     * @param plId pl id
      */
     public void registeerPlIdObvReferentiePersoon(final String berichtReferentie, final Integer plId) {
         plIds.put(berichtReferentie, plId);
@@ -62,9 +54,7 @@ public final class GbavHelper {
 
     /**
      * Ophalen pl id obv referentie persoon bericht.
-     *
-     * @param berichtReferentie
-     *            gbav persoon bericht referentie
+     * @param berichtReferentie gbav persoon bericht referentie
      * @return pl id
      */
     public Integer getPlIdObvReferentiePersoon(final String berichtReferentie) {

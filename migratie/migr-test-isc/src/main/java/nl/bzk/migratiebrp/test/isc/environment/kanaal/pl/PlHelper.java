@@ -8,12 +8,17 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.pl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.util.xml.exception.XmlException;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
-import nl.bzk.migratiebrp.conversie.model.serialize.PersoonslijstEncoder;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.conversie.model.serialize.MigratieXml;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 
@@ -23,19 +28,16 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 public final class PlHelper {
 
     @Inject
-    private BrpDalService brpDalService;
+    private BrpPersoonslijstService persoonslijstService;
 
-    private final Map<String, Long> checkMap = new HashMap<>();
+    private final Map<String, String> checkMap = new HashMap<>();
 
     /**
      * Registreer een administratie nummer om later te checken.
-     *
-     * @param berichtReferentie
-     *            bericht referentie
-     * @param administratieNummer
-     *            administratie nummer
+     * @param berichtReferentie bericht referentie
+     * @param administratieNummer administratie nummer
      */
-    public void checkPl(final String berichtReferentie, final long administratieNummer) {
+    public void checkPl(final String berichtReferentie, final String administratieNummer) {
         checkMap.put(berichtReferentie, administratieNummer);
     }
 
@@ -48,23 +50,22 @@ public final class PlHelper {
 
     /**
      * Lees de PL voor het opgeslagen administratienummer (via bericht correlatie).
-     *
-     * @param bericht
-     *            bericht
+     * @param bericht bericht
      * @return resultaat bericht (met gelezen pl)
-     * @throws KanaalException
-     *             bij fouten
+     * @throws KanaalException bij fouten
      */
     public Bericht checkPlResult(final Bericht bericht) throws KanaalException {
         if (!checkMap.containsKey(bericht.getCorrelatieReferentie())) {
             throw new KanaalException("check_pl_result resultaat verwachting niet gecorreleerd aan check_pl bericht");
         }
 
-        final long administratieNummer = checkMap.get(bericht.getCorrelatieReferentie());
-        String result;
+        final String administratieNummer = checkMap.get(bericht.getCorrelatieReferentie());
+        final String result;
         try {
             result = readPl(administratieNummer);
-        } catch (final IOException e) {
+        } catch (final
+        IOException
+                | XmlException e) {
             throw new KanaalException("Kon persoon niet lezen", e);
         }
 
@@ -74,11 +75,13 @@ public final class PlHelper {
         return ontvangenBericht;
     }
 
-    private String readPl(final long administratieNummer) throws IOException {
-        final BrpPersoonslijst brpPersoonslijst = brpDalService.bevraagPersoonslijst(administratieNummer);
+    private String readPl(final String administratieNummer) throws IOException, XmlException {
+        final BrpPersoonslijst brpPersoonslijst = persoonslijstService.bevraagPersoonslijst(administratieNummer);
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            PersoonslijstEncoder.encodePersoonslijst(brpPersoonslijst, baos);
+            try (Writer writer = new OutputStreamWriter(baos)) {
+                MigratieXml.encode(brpPersoonslijst, writer);
+            }
             return baos.toString();
         }
     }

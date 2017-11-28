@@ -1,14 +1,13 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.List;
-
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieSoortNLReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNlReisdocument;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch.AbstractSoortNlReisdocumentConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
@@ -21,28 +20,26 @@ public final class SoortNlReisdocumentConversietabel extends AbstractSoortNlReis
 
     /**
      * Maakt een SoortNlReisdocumentConversietabel object.
-     *
      * @param list de lijst met waarden uit de conversietabel.
      */
-    public SoortNlReisdocumentConversietabel(final List<ConversieSoortNLReisdocument> list) {
+    public SoortNlReisdocumentConversietabel(final List<SoortNlReisdocument> list) {
         super(new Converter().converteer(list));
     }
 
     /**
-     * Converteer de lijst van {@link ConversieSoortNLReisdocument} naar een conversie map van de LO3 waarde
+     * Converteer de lijst van {@link SoortNlReisdocument} naar een conversie map van de LO3 waarde
      * {@link Lo3SoortNederlandsReisdocument} en de BRP waarde {@link BrpSoortNederlandsReisdocumentCode}.
      */
-    private static final class Converter extends
-            AbstractLijstConverter<ConversieSoortNLReisdocument, Lo3SoortNederlandsReisdocument, BrpSoortNederlandsReisdocumentCode>
-    {
+    private static final class Converter
+            extends AbstractLijstConverter<SoortNlReisdocument, Lo3SoortNederlandsReisdocument, BrpSoortNederlandsReisdocumentCode> {
         @Override
-        protected Lo3SoortNederlandsReisdocument maakLo3Waarde(final ConversieSoortNLReisdocument soortNlReisdocument) {
-            return new Lo3SoortNederlandsReisdocument(soortNlReisdocument.getRubriek3511NederlandsReisdocument().getWaarde());
+        protected Lo3SoortNederlandsReisdocument maakLo3Waarde(final SoortNlReisdocument soortNlReisdocument) {
+            return new Lo3SoortNederlandsReisdocument(soortNlReisdocument.getLo3NederlandsReisdocument());
         }
 
         @Override
-        protected BrpSoortNederlandsReisdocumentCode maakBrpWaarde(final ConversieSoortNLReisdocument soortNlReisdocument) {
-            return new BrpSoortNederlandsReisdocumentCode(soortNlReisdocument.getSoortNederlandsReisdocument().getCode().getWaarde());
+        protected BrpSoortNederlandsReisdocumentCode maakBrpWaarde(final SoortNlReisdocument soortNlReisdocument) {
+            return new BrpSoortNederlandsReisdocumentCode(soortNlReisdocument.getSoortNederlandsReisdocument().getCode());
         }
     }
 }

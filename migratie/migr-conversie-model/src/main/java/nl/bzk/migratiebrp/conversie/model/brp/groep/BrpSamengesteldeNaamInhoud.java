@@ -6,25 +6,24 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de BRP samengestelde naam inhoud.
  *
  * Deze class is immutable en threadsafe.
- *
  */
 public final class BrpSamengesteldeNaamInhoud extends AbstractBrpGroepInhoud {
     @Element(name = "predicaatCode", required = false)
@@ -46,23 +45,14 @@ public final class BrpSamengesteldeNaamInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maak een BrpSamengesteldeNaamInhoud object.
-     *
-     * @param predicaatCode
-     *            predicaat
-     * @param voornamen
-     *            voornamen
-     * @param voorvoegsel
-     *            voorvoegsel
-     * @param scheidingsteken
-     *            scheidingteken
-     * @param adellijkeTitelCode
-     *            adellijke titel
-     * @param geslachtsnaamstam
-     *            geslachtsnaamstam
-     * @param indicatieNamenreeks
-     *            indicatie namenreeks
-     * @param indicatieAfgeleid
-     *            indicatie afgeleid
+     * @param predicaatCode predicaat
+     * @param voornamen voornamen
+     * @param voorvoegsel voorvoegsel
+     * @param scheidingsteken scheidingteken
+     * @param adellijkeTitelCode adellijke titel
+     * @param geslachtsnaamstam geslachtsnaamstam
+     * @param indicatieNamenreeks indicatie namenreeks
+     * @param indicatieAfgeleid indicatie afgeleid
      */
     public BrpSamengesteldeNaamInhoud(
         /* Meer dan 7 parameters is in constructors van immutable model klassen getolereerd. */
@@ -73,8 +63,7 @@ public final class BrpSamengesteldeNaamInhoud extends AbstractBrpGroepInhoud {
         @Element(name = "adellijkeTitelCode", required = false) final BrpAdellijkeTitelCode adellijkeTitelCode,
         @Element(name = "geslachtsnaamstam", required = false) final BrpString geslachtsnaamstam,
         @Element(name = "indicatieNamenreeks", required = true) final BrpBoolean indicatieNamenreeks,
-        @Element(name = "indicatieAfgeleid", required = true) final BrpBoolean indicatieAfgeleid)
-    {
+        @Element(name = "indicatieAfgeleid", required = true) final BrpBoolean indicatieAfgeleid) {
         this.predicaatCode = predicaatCode;
         this.voornamen = voornamen;
         this.voorvoegsel = voorvoegsel;
@@ -93,81 +82,73 @@ public final class BrpSamengesteldeNaamInhoud extends AbstractBrpGroepInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(predicaatCode, voornamen, voorvoegsel, adellijkeTitelCode, geslachtsnaamstam);
+        return !BrpValidatie.isEenParameterGevuld(predicaatCode, voornamen, voorvoegsel, adellijkeTitelCode, geslachtsnaamstam);
     }
 
     /**
-     * Geef de waarde van predicaat code.
-     *
-     * @return the predicaatCode
+     * Geef de waarde van predicaat code van BrpSamengesteldeNaamInhoud.
+     * @return de waarde van predicaat code van BrpSamengesteldeNaamInhoud
      */
     public BrpPredicaatCode getPredicaatCode() {
         return predicaatCode;
     }
 
     /**
-     * Geef de waarde van voornamen.
-     *
-     * @return the voornamen
+     * Geef de waarde van voornamen van BrpSamengesteldeNaamInhoud.
+     * @return de waarde van voornamen van BrpSamengesteldeNaamInhoud
      */
     public BrpString getVoornamen() {
         return voornamen;
     }
 
     /**
-     * Geef de waarde van voorvoegsel.
-     *
-     * @return the voorvoegsel
+     * Geef de waarde van voorvoegsel van BrpSamengesteldeNaamInhoud.
+     * @return de waarde van voorvoegsel van BrpSamengesteldeNaamInhoud
      */
     public BrpString getVoorvoegsel() {
         return voorvoegsel;
     }
 
     /**
-     * Geef de waarde van scheidingsteken.
-     *
-     * @return the scheidingsteken
+     * Geef de waarde van scheidingsteken van BrpSamengesteldeNaamInhoud.
+     * @return de waarde van scheidingsteken van BrpSamengesteldeNaamInhoud
      */
     public BrpCharacter getScheidingsteken() {
         return scheidingsteken;
     }
 
     /**
-     * Geef de waarde van adellijke titel code.
-     *
-     * @return the adellijkeTitelCode
+     * Geef de waarde van adellijke titel code van BrpSamengesteldeNaamInhoud.
+     * @return de waarde van adellijke titel code van BrpSamengesteldeNaamInhoud
      */
     public BrpAdellijkeTitelCode getAdellijkeTitelCode() {
         return adellijkeTitelCode;
     }
 
     /**
-     * Geef de waarde van geslachtsnaamstam.
-     *
-     * @return the geslachtsnaamstam
+     * Geef de waarde van geslachtsnaamstam van BrpSamengesteldeNaamInhoud.
+     * @return de waarde van geslachtsnaamstam van BrpSamengesteldeNaamInhoud
      */
     public BrpString getGeslachtsnaamstam() {
         return geslachtsnaamstam;
     }
 
     /**
-     * Geef de waarde van indicatie namenreeks.
-     *
-     * @return the indicatieNamenreeks
+     * Geef de waarde van indicatie namenreeks van BrpSamengesteldeNaamInhoud.
+     * @return de waarde van indicatie namenreeks van BrpSamengesteldeNaamInhoud
      */
     public BrpBoolean getIndicatieNamenreeks() {
         return indicatieNamenreeks;
     }
 
     /**
-     * Geef de waarde van indicatie afgeleid.
-     *
-     * @return the indicatieAfgeleid
+     * Geef de waarde van indicatie afgeleid van BrpSamengesteldeNaamInhoud.
+     * @return de waarde van indicatie afgeleid van BrpSamengesteldeNaamInhoud
      */
     public BrpBoolean getIndicatieAfgeleid() {
         return indicatieAfgeleid;
@@ -183,40 +164,40 @@ public final class BrpSamengesteldeNaamInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpSamengesteldeNaamInhoud castOther = (BrpSamengesteldeNaamInhoud) other;
         return new EqualsBuilder().append(predicaatCode, castOther.predicaatCode)
-                                  .append(voornamen, castOther.voornamen)
-                                  .append(voorvoegsel, castOther.voorvoegsel)
-                                  .append(scheidingsteken, castOther.scheidingsteken)
-                                  .append(adellijkeTitelCode, castOther.adellijkeTitelCode)
-                                  .append(geslachtsnaamstam, castOther.geslachtsnaamstam)
-                                  .append(indicatieNamenreeks, castOther.indicatieNamenreeks)
-                                  .append(indicatieAfgeleid, castOther.indicatieAfgeleid)
-                                  .isEquals();
+                .append(voornamen, castOther.voornamen)
+                .append(voorvoegsel, castOther.voorvoegsel)
+                .append(scheidingsteken, castOther.scheidingsteken)
+                .append(adellijkeTitelCode, castOther.adellijkeTitelCode)
+                .append(geslachtsnaamstam, castOther.geslachtsnaamstam)
+                .append(indicatieNamenreeks, castOther.indicatieNamenreeks)
+                .append(indicatieAfgeleid, castOther.indicatieAfgeleid)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(predicaatCode)
-                                    .append(voornamen)
-                                    .append(voorvoegsel)
-                                    .append(scheidingsteken)
-                                    .append(adellijkeTitelCode)
-                                    .append(geslachtsnaamstam)
-                                    .append(indicatieNamenreeks)
-                                    .append(indicatieAfgeleid)
-                                    .toHashCode();
+                .append(voornamen)
+                .append(voorvoegsel)
+                .append(scheidingsteken)
+                .append(adellijkeTitelCode)
+                .append(geslachtsnaamstam)
+                .append(indicatieNamenreeks)
+                .append(indicatieAfgeleid)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("predicaatCode", predicaatCode)
-                                                                          .append("voornamen", voornamen)
-                                                                          .append("voorvoegsel", voorvoegsel)
-                                                                          .append("scheidingsteken", scheidingsteken)
-                                                                          .append("adellijkeTitelCode", adellijkeTitelCode)
-                                                                          .append("geslachtsnaamstam", geslachtsnaamstam)
-                                                                          .append("indicatieNamenreeks", indicatieNamenreeks)
-                                                                          .append("indicatieAfgeleid", indicatieAfgeleid)
-                                                                          .toString();
+                .append("voornamen", voornamen)
+                .append("voorvoegsel", voorvoegsel)
+                .append("scheidingsteken", scheidingsteken)
+                .append("adellijkeTitelCode", adellijkeTitelCode)
+                .append("geslachtsnaamstam", geslachtsnaamstam)
+                .append("indicatieNamenreeks", indicatieNamenreeks)
+                .append("indicatieAfgeleid", indicatieAfgeleid)
+                .toString();
     }
 
 }

@@ -1,1 +1,0 @@
-select id, anr, bsn, versienr from kern.pers where anr = '3634928929';

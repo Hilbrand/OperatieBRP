@@ -9,24 +9,27 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.ssh;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.isc.bericht.TestBericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
-import nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Abstract Sch based kanaal.
  */
-public abstract class AbstractSchKanaal extends AbstractKanaal implements InitializingBean, Kanaal {
+public abstract class AbstractSchKanaal extends AbstractKanaal implements InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger();
     private static final com.jcraft.jsch.Logger JSCH_LOG = new JschLogger(LOG);
@@ -37,12 +40,20 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
     private String host;
     private String username;
     private String password;
+    private boolean dockerEnabled;
+
+    /**
+     * Docker enabled.
+     * @param runningDocker dockerEnabled
+     */
+    @Value("${docker.enabled:false}")
+    public final void setDockerEnabled(final boolean runningDocker) {
+        this.dockerEnabled = runningDocker;
+    }
 
     /**
      * Zet de waarde van naam.
-     *
-     * @param naam
-     *            naam
+     * @param naam naam
      */
     public final void setNaam(final String naam) {
         this.naam = naam;
@@ -50,9 +61,7 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
 
     /**
      * Zet de waarde van host.
-     *
-     * @param host
-     *            host
+     * @param host host
      */
     public final void setHost(final String host) {
         this.host = host;
@@ -60,9 +69,7 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
 
     /**
      * Zet de waarde van username.
-     *
-     * @param username
-     *            username
+     * @param username username
      */
     public final void setUsername(final String username) {
         this.username = username;
@@ -70,9 +77,7 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
 
     /**
      * Zet de waarde van password.
-     *
-     * @param password
-     *            password
+     * @param password password
      */
     public final void setPassword(final String password) {
         this.password = password;
@@ -87,7 +92,7 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
      */
     @Override
@@ -97,7 +102,9 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
 
     @Override
     public final void verwerkUitgaand(final TestCasusContext testCasus, final Bericht bericht) throws KanaalException {
-        executeInSession(bericht);
+        if (!dockerEnabled) {
+            executeInSession(bericht);
+        }
     }
 
     private void executeInSession(final Bericht bericht) throws KanaalException {
@@ -122,9 +129,8 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
             doInSession(session, bericht);
 
         } catch (final
-            IOException
-            | JSchException e)
-        {
+        IOException
+                | JSchException e) {
             LOG.info("Error encountered during session", e);
             throw new KanaalException("Kon SSH niet uitvoeren", e);
         } finally {
@@ -138,16 +144,18 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
 
     @Override
     public final List<Bericht> naTestcase(final TestCasusContext testcasus) {
-        final File naTestCaseFile = new File(testcasus.getInputDirectory(), "9999-uit-sch.naTestCase");
+        if (!dockerEnabled) {
+            final File naTestCaseFile = new File(testcasus.getInputDirectory(), "9999-uit-sch.naTestCase");
 
-        if (naTestCaseFile.exists() && naTestCaseFile.isFile() && naTestCaseFile.canRead()) {
-            final TestBericht testBericht = new TestBericht(naTestCaseFile, testcasus.getOutputDirectory());
-            final Bericht bericht = new Bericht(testBericht);
-            bericht.setInhoud(testBericht.getInhoud());
-            try {
-                executeInSession(bericht);
-            } catch (final KanaalException e) {
-                LOG.error("Fout opgetreden bij naTestCase Sch-Kanaal:\n" + ExceptionUtils.getStackTrace(e));
+            if (naTestCaseFile.exists() && naTestCaseFile.isFile() && naTestCaseFile.canRead()) {
+                final TestBericht testBericht = new TestBericht(naTestCaseFile, testcasus.getOutputDirectory());
+                final Bericht bericht = new Bericht(testBericht);
+                bericht.setInhoud(testBericht.getInhoud());
+                try {
+                    executeInSession(bericht);
+                } catch (final KanaalException e) {
+                    LOG.error("Fout opgetreden bij naTestCase Sch-Kanaal:\n" + ExceptionUtils.getStackTrace(e));
+                }
             }
         }
 
@@ -156,17 +164,11 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
 
     /**
      * Execute in the JSch session.
-     *
-     * @param session
-     *            JSch session
-     * @param bericht
-     *            bericht
-     * @throws IOException
-     *             on IO exceptions
-     * @throws JSchException
-     *             on Jsc exceptions
-     * @throws KanaalException
-     *             on other exceptions
+     * @param session JSch session
+     * @param bericht bericht
+     * @throws IOException on IO exceptions
+     * @throws JSchException on Jsc exceptions
+     * @throws KanaalException on other exceptions
      */
     protected abstract void doInSession(final Session session, final Bericht bericht) throws IOException, JSchException, KanaalException;
 
@@ -179,9 +181,7 @@ public abstract class AbstractSchKanaal extends AbstractKanaal implements Initia
 
         /**
          * Constructor.
-         *
-         * @param log
-         *            migratie logger
+         * @param log migratie logger
          */
         public JschLogger(final Logger log) {
             this.log = log;

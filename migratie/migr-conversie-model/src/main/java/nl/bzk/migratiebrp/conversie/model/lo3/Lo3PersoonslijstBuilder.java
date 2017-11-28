@@ -23,7 +23,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerblijfstitelInhoud;
 
 /**
  * Deze class helpt bij het maken van een Lo3Persoonslijst. Argumenten kunnen via method-chaining worden toegevoegd.
- * 
  */
 public final class Lo3PersoonslijstBuilder {
 
@@ -41,15 +40,16 @@ public final class Lo3PersoonslijstBuilder {
     private final List<Lo3Stapel<Lo3ReisdocumentInhoud>> reisdocumentStapels = new ArrayList<>();
     private Lo3Stapel<Lo3KiesrechtInhoud> kiesrechtStapel;
 
-    /** Maak een lege builder. */
+    /**
+     * Maak een lege builder.
+     */
     public Lo3PersoonslijstBuilder() {
+        //lege builder
     }
 
     /**
      * Maak een initieel gevulde builder.
-     * 
-     * @param persoonslijst
-     *            initiele inhoud
+     * @param persoonslijst initiele inhoud
      */
     public Lo3PersoonslijstBuilder(final Lo3Persoonslijst persoonslijst) {
         persoonStapel = persoonslijst.getPersoonStapel();
@@ -69,9 +69,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de persoon stapel.
-     * 
-     * @param param
-     *            de persoon stapel
+     * @param param de persoon stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder persoonStapel(final Lo3Stapel<Lo3PersoonInhoud> param) {
@@ -81,9 +79,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de ouder1 stapels.
-     * 
-     * @param param
-     *            de ouder1 stapel
+     * @param param de ouder1 stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder ouder1Stapel(final Lo3Stapel<Lo3OuderInhoud> param) {
@@ -93,9 +89,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de ouder2 stapels.
-     * 
-     * @param param
-     *            de ouder2 stapel
+     * @param param de ouder2 stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder ouder2Stapel(final Lo3Stapel<Lo3OuderInhoud> param) {
@@ -105,11 +99,8 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de lijst met nationaliteit stapels.
-     * 
-     * @param param
-     *            de nationaliteit stapels, mag null zijn
+     * @param param de nationaliteit stapels, mag null zijn
      * @return het Lo3PersoonslijstBuilder object
-     * 
      */
     public Lo3PersoonslijstBuilder nationaliteitStapels(final List<Lo3Stapel<Lo3NationaliteitInhoud>> param) {
         nationaliteitStapels.clear();
@@ -125,9 +116,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Voegt een nationaliteit stapel toe.
-     * 
-     * @param param
-     *            de nationaliteit stapel
+     * @param param de nationaliteit stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder nationaliteitStapel(final Lo3Stapel<Lo3NationaliteitInhoud> param) {
@@ -139,11 +128,8 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Ze de lijst met huwelijk of gp stapels.
-     * 
-     * @param param
-     *            de huwelijk of gp stapels, mag null zijn
+     * @param param de huwelijk of gp stapels, mag null zijn
      * @return het Lo3PersoonslijstBuilder object
-     * 
      */
     public Lo3PersoonslijstBuilder huwelijkOfGpStapels(final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> param) {
         huwelijkOfGpStapels.clear();
@@ -159,9 +145,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Voegt een huwelijk of gp stapel toe.
-     * 
-     * @param param
-     *            de huwelijk of gp stapel
+     * @param param de huwelijk of gp stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder huwelijkOfGpStapel(final Lo3Stapel<Lo3HuwelijkOfGpInhoud> param) {
@@ -173,9 +157,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de overlijden stapel.
-     * 
-     * @param param
-     *            de overlijden stapel
+     * @param param de overlijden stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder overlijdenStapel(final Lo3Stapel<Lo3OverlijdenInhoud> param) {
@@ -185,9 +167,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de inschrijving stapel.
-     * 
-     * @param param
-     *            de inschrijving stapel
+     * @param param de inschrijving stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder inschrijvingStapel(final Lo3Stapel<Lo3InschrijvingInhoud> param) {
@@ -197,9 +177,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de verblijfplaats stapel.
-     * 
-     * @param param
-     *            de verblijfplaats stapel
+     * @param param de verblijfplaats stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder verblijfplaatsStapel(final Lo3Stapel<Lo3VerblijfplaatsInhoud> param) {
@@ -209,11 +187,8 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de lijst met kind stapels.
-     * 
-     * @param param
-     *            de kind stapels, mag null zijn
+     * @param param de kind stapels, mag null zijn
      * @return het Lo3PersoonslijstBuilder object
-     * 
      */
     public Lo3PersoonslijstBuilder kindStapels(final List<Lo3Stapel<Lo3KindInhoud>> param) {
         kindStapels.clear();
@@ -229,9 +204,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Voegt een kind stapel toe.
-     * 
-     * @param param
-     *            de kind stapel
+     * @param param de kind stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder kindStapel(final Lo3Stapel<Lo3KindInhoud> param) {
@@ -243,9 +216,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de verblijfstitel stapel.
-     * 
-     * @param param
-     *            de verblijfstitel stapel
+     * @param param de verblijfstitel stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder verblijfstitelStapel(final Lo3Stapel<Lo3VerblijfstitelInhoud> param) {
@@ -255,9 +226,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de gezagsverhouding stapel.
-     * 
-     * @param param
-     *            de gezagsverhouding stapel
+     * @param param de gezagsverhouding stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder gezagsverhoudingStapel(final Lo3Stapel<Lo3GezagsverhoudingInhoud> param) {
@@ -267,11 +236,8 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de lijst met reisdocument stapels.
-     * 
-     * @param param
-     *            de lijst met reisdocument stapel, mag null zijn
+     * @param param de lijst met reisdocument stapel, mag null zijn
      * @return het Lo3PersoonslijstBuilder object
-     * 
      */
     public Lo3PersoonslijstBuilder reisdocumentStapels(final List<Lo3Stapel<Lo3ReisdocumentInhoud>> param) {
         reisdocumentStapels.clear();
@@ -287,11 +253,8 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Voegt een reisdocument stapel toe.
-     * 
-     * @param param
-     *            de reisdocument stapel, mag null zijn
+     * @param param de reisdocument stapel, mag null zijn
      * @return het Lo3PersoonslijstBuilder object
-     * 
      */
     public Lo3PersoonslijstBuilder reisdocumentStapel(final Lo3Stapel<Lo3ReisdocumentInhoud> param) {
         if (param != null) {
@@ -302,9 +265,7 @@ public final class Lo3PersoonslijstBuilder {
 
     /**
      * Zet de kiesrecht stapel.
-     * 
-     * @param param
-     *            de kiesrecht stapel
+     * @param param de kiesrecht stapel
      * @return het Lo3PersoonslijstBuilder object
      */
     public Lo3PersoonslijstBuilder kiesrechtStapel(final Lo3Stapel<Lo3KiesrechtInhoud> param) {
@@ -317,19 +278,19 @@ public final class Lo3PersoonslijstBuilder {
      */
     public Lo3Persoonslijst build() {
         return new Lo3Persoonslijst(
-            persoonStapel,
-            ouder1Stapel,
-            ouder2Stapel,
-            nationaliteitStapels,
-            huwelijkOfGpStapels,
-            overlijdenStapel,
-            inschrijvingStapel,
-            verblijfplaatsStapel,
-            kindStapels,
-            verblijfstitelStapel,
-            gezagsverhoudingStapel,
-            reisdocumentStapels,
-            kiesrechtStapel);
+                persoonStapel,
+                ouder1Stapel,
+                ouder2Stapel,
+                nationaliteitStapels,
+                huwelijkOfGpStapels,
+                overlijdenStapel,
+                inschrijvingStapel,
+                verblijfplaatsStapel,
+                kindStapels,
+                verblijfstitelStapel,
+                gezagsverhoudingStapel,
+                reisdocumentStapels,
+                kiesrechtStapel);
     }
 
 }

@@ -7,13 +7,11 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.DienstAttenderingHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstAttenderingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.DienstAttenderingHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.AbstractBrpMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,9 +22,7 @@ public final class BrpDienstAttenderingMapper extends AbstractBrpMapper<DienstAt
 
     /**
      * Map een database entiteit partij naar een BRP conversie model object.
-     *
-     * @param dienstAttenderingHistorieSet
-     *            database entiteit
+     * @param dienstAttenderingHistorieSet database entiteit
      * @return conversie model object
      */
     public BrpStapel<BrpDienstAttenderingInhoud> mapDienstAttendering(final Set<DienstAttenderingHistorie> dienstAttenderingHistorieSet) {

@@ -6,14 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstbundelGroepAttribuutInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert het BRP objecttype DienstbundelGroepAttribuut.
@@ -29,17 +28,13 @@ public final class BrpDienstbundelGroepAttribuut {
 
     /**
      * Maak een nieuw DienstbundelGroepAttribuut object.
-     *
-     * @param attribuutId
-     *            het attribuutId
-     *
-     * @param dienstbundelGroepAttribuutStapel
-     *            de dienstbundelgroepattribuut stapels
+     * @param attribuutId het attribuutId
+     * @param dienstbundelGroepAttribuutStapel de dienstbundelgroepattribuut stapels
      */
     public BrpDienstbundelGroepAttribuut(
-        @Element(name = "attr", required = false) final Integer attribuutId,
-        @Element(name = "dienstbundelGroepAttribuutStapel", required = false) final BrpStapel<BrpDienstbundelGroepAttribuutInhoud> dienstbundelGroepAttribuutStapel)
-    {
+            @Element(name = "attr", required = false) final Integer attribuutId,
+            @Element(name = "dienstbundelGroepAttribuutStapel",
+                    required = false) final BrpStapel<BrpDienstbundelGroepAttribuutInhoud> dienstbundelGroepAttribuutStapel) {
         super();
         this.attribuutId = attribuutId;
         this.dienstbundelGroepAttribuutStapel = dienstbundelGroepAttribuutStapel;
@@ -47,7 +42,6 @@ public final class BrpDienstbundelGroepAttribuut {
 
     /**
      * Geef de waarde van attribuutId.
-     *
      * @return attribuutId
      */
     public Integer getAttribuutId() {
@@ -56,7 +50,6 @@ public final class BrpDienstbundelGroepAttribuut {
 
     /**
      * Geef de waarde van de stapel van dienstBundelGroepAttributen.
-     *
      * @return de stapel van dienstBundelGroepAttributen
      */
     public BrpStapel<BrpDienstbundelGroepAttribuutInhoud> getDienstbundelGroepAttribuutStapel() {
@@ -73,8 +66,8 @@ public final class BrpDienstbundelGroepAttribuut {
         }
         final BrpDienstbundelGroepAttribuut castOther = (BrpDienstbundelGroepAttribuut) other;
         return new EqualsBuilder().append(attribuutId, castOther.attribuutId)
-                                  .append(dienstbundelGroepAttribuutStapel, castOther.dienstbundelGroepAttribuutStapel)
-                                  .isEquals();
+                .append(dienstbundelGroepAttribuutStapel, castOther.dienstbundelGroepAttribuutStapel)
+                .isEquals();
     }
 
     @Override
@@ -85,8 +78,8 @@ public final class BrpDienstbundelGroepAttribuut {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("attribuutId", attribuutId)
-                                                                          .append("dienstBundelGroepAttribuutStapel", dienstbundelGroepAttribuutStapel)
-                                                                          .toString();
+                .append("dienstBundelGroepAttribuutStapel", dienstbundelGroepAttribuutStapel)
+                .toString();
     }
 
 }

@@ -8,12 +8,16 @@ package nl.bzk.migratiebrp.tools.amlezer;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.voisc.database.entities.Mailbox;
-import nl.bzk.migratiebrp.voisc.spd.MailboxClient;
-import nl.bzk.migratiebrp.voisc.spd.constants.SpdConstants;
+import nl.bzk.migratiebrp.voisc.mailbox.client.Connection;
+import nl.bzk.migratiebrp.voisc.mailbox.client.MailboxClient;
+import nl.bzk.migratiebrp.voisc.spd.SpdConstants;
+import nl.bzk.migratiebrp.voisc.mailbox.client.exception.ConnectionException;
 import nl.bzk.migratiebrp.voisc.spd.exception.SpdProtocolException;
 import nl.bzk.migratiebrp.voisc.spd.exception.VoaException;
 
@@ -33,11 +37,8 @@ public final class MailboxVerwerker {
 
     /**
      * Verwerk de berichten voor de gegeven mailbox door de gegeven bericht callback aan te roepen.
-     * 
-     * @param mailbox
-     *            mailbox
-     * @param berichtCallback
-     *            bericht callback
+     * @param mailbox mailbox
+     * @param berichtCallback bericht callback
      */
     public void verwerkBerichten(final Mailbox mailbox, final BerichtCallback berichtCallback) {
         // Verwerk mailbox
@@ -46,43 +47,46 @@ public final class MailboxVerwerker {
         }
 
         // SSL verbinding opbouwen
-        mailboxServerProxy.connect();
+        try (final Connection mailboxConnection = mailboxServerProxy.connect()) {
 
-        try {
-            // Inloggen op de Mailbox
-            mailboxServerProxy.logOn(mailbox);
-
-            // Ontvangen berichten
-            final List<Integer> seqNummers = new ArrayList<>();
-            final int nextSequenceNr =
-                    mailboxServerProxy.listMessages(0, seqNummers, mailbox.getLimitNumber(), STATUS_NEW_AND_LISTED, SpdConstants.PRIORITY);
-
-            if (!seqNummers.isEmpty()) {
-                berichtCallback.start();
-
-                verwerkBerichten(mailbox, berichtCallback, seqNummers, nextSequenceNr);
-
-                berichtCallback.end();
-            }
-
-        } catch (final
-            VoaException
-            | BerichtCallbackException e)
-        {
-            LOG.error(
-                "Fout bij ontvangen berichten voor mailbox {} (instantie {})",
-                new Object[] {mailbox.getMailboxnr(), mailbox.getInstantiecode(), },
-                e);
-        } finally {
-            // Logout
             try {
-                mailboxServerProxy.logOff();
-            } catch (final SpdProtocolException e) {
+                // Inloggen op de Mailbox
+                mailboxServerProxy.logOn(mailboxConnection, mailbox);
+
+                // Ontvangen berichten
+                final List<Integer> seqNummers = new ArrayList<>();
+                final int nextSequenceNr =
+                        mailboxServerProxy.listMessages(
+                                mailboxConnection,
+                                0,
+                                seqNummers,
+                                mailbox.getLimitNumber(),
+                                STATUS_NEW_AND_LISTED,
+                                SpdConstants.Priority.defaultValue());
+
+                if (!seqNummers.isEmpty()) {
+                    berichtCallback.start();
+
+                    verwerkBerichten(mailboxConnection, mailbox, berichtCallback, seqNummers, nextSequenceNr);
+
+                    berichtCallback.end();
+                }
+
+            } catch (final
+            VoaException
+                    | BerichtCallbackException e) {
                 LOG.error(
-                    "Fout bij afmelden voor mailbox {} (instantie {})",
-                    new Object[] {mailbox.getMailboxnr(), mailbox.getInstantiecode(), },
-                    e);
+                        "Fout bij ontvangen berichten voor mailbox {} (partijcode {})",
+                        new Object[]{mailbox.getMailboxnr(), mailbox.getPartijcode(),},
+                        e);
+            } finally {
+                mailboxServerProxy.logOff(mailboxConnection);
             }
+        } catch (final VoaException e) {
+            LOG.error("Fout bij afmelden voor mailbox {} (partijcode {})", new Object[]{mailbox.getMailboxnr(), mailbox.getPartijcode(),}, e);
+        } catch (final ConnectionException e) {
+            LOG.error("Fout bij connectie voor mailbox {} (partijcode {})", new Object[]{mailbox.getMailboxnr(), mailbox.getPartijcode(),}, e);
+            ;
         }
     }
 
@@ -96,26 +100,27 @@ public final class MailboxVerwerker {
      * @throws SpdProtocolException
      */
     private void verwerkBerichten(
-        final Mailbox mailbox,
-        final BerichtCallback berichtCallback,
-        final List<Integer> seqNummers,
-        final int nextSequenceNr) throws BerichtCallbackException, SpdProtocolException
-    {
+            final Connection mailboxConnection,
+            final Mailbox mailbox,
+            final BerichtCallback berichtCallback,
+            final List<Integer> seqNummers,
+            final int nextSequenceNr) throws BerichtCallbackException, VoaException {
 
         for (final Integer seqNr : seqNummers) {
-            berichtCallback.onBericht(mailboxServerProxy.getMessage(seqNr));
+            berichtCallback.onBericht(mailboxServerProxy.getMessage(mailboxConnection, seqNr));
         }
 
         seqNummers.clear();
         if (nextSequenceNr > 0) {
             final int nextNextsequenceNr =
                     mailboxServerProxy.listMessages(
-                        nextSequenceNr,
-                        seqNummers,
-                        mailbox.getLimitNumber(),
-                        STATUS_NEW_AND_LISTED,
-                        SpdConstants.PRIORITY);
-            verwerkBerichten(mailbox, berichtCallback, seqNummers, nextNextsequenceNr);
+                            mailboxConnection,
+                            nextSequenceNr,
+                            seqNummers,
+                            mailbox.getLimitNumber(),
+                            STATUS_NEW_AND_LISTED,
+                            SpdConstants.Priority.defaultValue());
+            verwerkBerichten(mailboxConnection, mailbox, berichtCallback, seqNummers, nextNextsequenceNr);
         }
     }
 }

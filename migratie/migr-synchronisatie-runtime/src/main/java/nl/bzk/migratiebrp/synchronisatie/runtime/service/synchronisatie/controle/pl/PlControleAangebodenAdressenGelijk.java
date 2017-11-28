@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl;
 
 import java.util.Map;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
@@ -16,47 +15,35 @@ import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControleAdresHelper.AdresData;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Controle dat de aangeboden persoonslijst in de BRP een adres en een historie van adressen heeft dat gelijk is aan het
  * adres en de historie van adressen op de gevonden persoonslijst.
  */
-@Component(value = "plControleAangebodenAdressenGelijk")
 public final class PlControleAangebodenAdressenGelijk implements PlControle {
 
     @Override
     public boolean controleer(final VerwerkingsContext context, final BrpPersoonslijst dbPersoonslijst) {
         final BrpPersoonslijst brpPersoonslijst = context.getBrpPersoonslijst();
         final ControleLogging logging = new ControleLogging(ControleMelding.PL_CONTROLE_AANGEBODEN_ADRESSEN_GELIJK);
-        logging.addMelding("Controleer actueel adres");
 
-        final BrpAdresInhoud dbAdresInhoud = getHuidigAdres(dbPersoonslijst);
-        final BrpAdresInhoud brpAdresInhoud = getHuidigAdres(brpPersoonslijst);
+        logging.addMelding("Controleer actueel en historische adressen");
 
-        final AdresData dbAdres = dbAdresInhoud != null ? new PlControleAdresHelper.AdresData(dbAdresInhoud, false) : null;
-        final AdresData brpAdres = brpAdresInhoud != null ? new PlControleAdresHelper.AdresData(brpAdresInhoud, false) : null;
-
-        logging.logAangebodenWaarden(brpAdres);
-        logging.logGevondenWaarden(dbAdres);
-
-        if (dbAdres == null || !dbAdres.equals(brpAdres)) {
-            logging.logResultaat(false);
-            return false;
-        }
-
-        logging.addMelding("Resultaat: true, ga door met controle op historie van adressen");
-
-        // Aangeboden waarden (exclusief actueel)
+        // Aangeboden waarden (inclusief actueel)
         final Map<AdresData, Long> brpAdressen = PlControleAdresHelper.getAdresHistorie(brpPersoonslijst);
+        if (brpPersoonslijst.getAdresStapel() != null) {
+            PlControleAdresHelper.voegAdresToeAanMap(brpAdressen, new AdresData(getHuidigAdres(brpPersoonslijst), true));
+        }
         logging.logAangebodenWaarden(brpAdressen);
 
-        // Gevonden waarden (exclusief actueel)
+        // Gevonden waarden (inclusief actueel)
         final Map<AdresData, Long> dbAdressen = PlControleAdresHelper.getAdresHistorie(dbPersoonslijst);
+        if (dbPersoonslijst.getAdresStapel() != null) {
+            PlControleAdresHelper.voegAdresToeAanMap(dbAdressen, new AdresData(getHuidigAdres(dbPersoonslijst), true));
+        }
         logging.logGevondenWaarden(dbAdressen);
 
         // Resultaat
-        final boolean result = PlControleAdresHelper.volledigSetBevatSubset(dbAdressen, brpAdressen);
+        final boolean result = PlControleAdresHelper.volledigSetGelijkAanSubset(brpAdressen, dbAdressen);
         logging.logResultaat(result);
 
         return result;
@@ -72,5 +59,4 @@ public final class PlControleAangebodenAdressenGelijk implements PlControle {
 
         return stapel.getActueel().getInhoud();
     }
-
 }

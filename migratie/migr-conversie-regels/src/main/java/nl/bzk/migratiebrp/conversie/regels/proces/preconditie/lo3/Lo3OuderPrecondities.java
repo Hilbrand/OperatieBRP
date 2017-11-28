@@ -7,40 +7,41 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OuderInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.groep.Lo3GroepUtil;
-import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Preconditie controles voor categorie 02/03: Ouder 1/2.
- * 
+ *
  * Maakt gebruik van de {@link nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging#log Logging.log} methode.
  */
-@Component
 public final class Lo3OuderPrecondities extends AbstractLo3Precondities {
 
     /**
-     * Controleer precondities op stapel niveau.
-     * 
-     * @param stapel
-     *            stapel
-     * @param persoonAnummer
-     *            anummer van de persoon zelf (01.01.10)
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
      */
-    public void controleerStapel(final Lo3Stapel<Lo3OuderInhoud> stapel, final Lo3Long persoonAnummer) {
+    public Lo3OuderPrecondities(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
+
+    /**
+     * Controleer precondities op stapel niveau.
+     * @param stapel stapel
+     * @param persoonAnummer anummer van de persoon zelf (01.01.10)
+     */
+    public void controleerStapel(final Lo3Stapel<Lo3OuderInhoud> stapel, final Lo3String persoonAnummer) {
         if (stapel == null || stapel.isEmpty()) {
             return;
         }
@@ -83,21 +84,21 @@ public final class Lo3OuderPrecondities extends AbstractLo3Precondities {
 
         } else {
             controleerGroep02Naam(
-                inhoud.getVoornamen(),
-                inhoud.getAdellijkeTitelPredikaatCode(),
-                inhoud.getVoorvoegselGeslachtsnaam(),
-                inhoud.getGeslachtsnaam(),
-                herkomst,
-                false);
+                    inhoud.getVoornamen(),
+                    inhoud.getAdellijkeTitelPredikaatCode(),
+                    inhoud.getVoorvoegselGeslachtsnaam(),
+                    inhoud.getGeslachtsnaam(),
+                    herkomst,
+                    false);
 
             // Groep 01: Identificatienummers
             if (groep1Aanwezig) {
                 controleerGroep01Identificatienummers(
-                    inhoud.getaNummer(),
-                    inhoud.getBurgerservicenummer(),
-                    historie.getIngangsdatumGeldigheid(),
-                    herkomst,
-                    false);
+                        inhoud.getaNummer(),
+                        inhoud.getBurgerservicenummer(),
+                        historie.getIngangsdatumGeldigheid(),
+                        herkomst,
+                        false);
             }
 
             // Groep 03: Geboorte
@@ -107,7 +108,7 @@ public final class Lo3OuderPrecondities extends AbstractLo3Precondities {
 
             // Groep 04: Geslachtsaanduiding
             if (groep4Aanwezig) {
-                controleerGroep4Geslachtsaanduiding(inhoud.getGeslachtsaanduiding(), herkomst);
+                controleerGroep04Geslachtsaanduiding(inhoud.getGeslachtsaanduiding(), herkomst);
             }
 
             // Groep 62: Familierechtelijke betrekking
@@ -171,15 +172,6 @@ public final class Lo3OuderPrecondities extends AbstractLo3Precondities {
         }
     }
 
-    private void controleerGroep62FamilierechtelijkeBetrekking(final Lo3Datum familierechtelijkeBetrekking, final Lo3Herkomst herkomst) {
-        controleerAanwezig(
-            familierechtelijkeBetrekking,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.STRUC_VERPLICHT, Lo3ElementEnum.ELEMENT_6210));
-        controleerDatum(
-            familierechtelijkeBetrekking,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.STRUC_DATUM, Lo3ElementEnum.ELEMENT_6210));
-    }
-
     /* ************************************************************************************************************ */
     /* ************************************************************************************************************ */
     /* ************************************************************************************************************ */
@@ -190,25 +182,28 @@ public final class Lo3OuderPrecondities extends AbstractLo3Precondities {
      * Indicatie ouder 1 of 2.
      */
     protected enum Ouder {
-        /** Ouder 1. */
+        /**
+         * Ouder 1.
+         */
         OUDER_1("02: Ouder 1"),
-        /** Ouder 2. */
+
+        /**
+         * Ouder 2.
+         */
         OUDER_2("03: Ouder 2");
-        private final String ouder;
+        private final String waarde;
 
         /**
          * Ouder.
-         * 
-         * @param ouder
-         *            omschrijving
+         * @param ouder omschrijving
          */
         Ouder(final String ouder) {
-            this.ouder = ouder;
+            this.waarde = ouder;
         }
 
         @Override
         public String toString() {
-            return ouder;
+            return waarde;
         }
     }
 }

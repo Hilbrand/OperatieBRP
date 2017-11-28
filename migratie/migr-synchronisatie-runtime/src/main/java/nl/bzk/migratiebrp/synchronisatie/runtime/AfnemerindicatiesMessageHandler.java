@@ -8,23 +8,24 @@ package nl.bzk.migratiebrp.synchronisatie.runtime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.gba.domain.afnemerindicatie.AfnemerindicatieOnderhoudAntwoord;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AfnemersindicatieFoutcodeType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkAfnemersindicatieAntwoordBericht;
-import nl.bzk.migratiebrp.synchronisatie.runtime.bericht.brp.AfnemerindicatieOnderhoudAntwoord;
 import nl.bzk.migratiebrp.synchronisatie.runtime.exception.ServiceException;
 import nl.bzk.migratiebrp.synchronisatie.runtime.util.MessageId;
 import nl.bzk.migratiebrp.util.common.logging.FunctioneleMelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.MDC;
-import nl.bzk.migratiebrp.util.common.logging.MDC.MDCCloser;
-import nl.bzk.migratiebrp.util.common.logging.MDCVeld;
 
 /**
  * Message handler voor BRP afnemerindicatie antwoorden. Deze worden 'vertaald' en doorgestuurd naar ISC.
@@ -32,38 +33,43 @@ import nl.bzk.migratiebrp.util.common.logging.MDCVeld;
 public final class AfnemerindicatiesMessageHandler extends AbstractMessageHandler implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger();
-    private static final Logger VERKEER_LOG = LoggerFactory.getBerichtVerkeerLogger();
+    private static final Logger LOGGER = LoggerFactory.getBerichtVerkeerLogger();
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
+    /**
+     * Constructor.
+     * @param destination destination (queue sync antwoord)
+     * @param connectionFactory queue connection factory
+     */
+    @Inject
+    public AfnemerindicatiesMessageHandler(@Named("queueSyncAntwoord") final Destination destination,
+                                           @Named("queueConnectionFactory") final ConnectionFactory connectionFactory) {
+        super(destination, connectionFactory);
+    }
+
     @Override
     public void onMessage(final Message message) {
-        try (MDCCloser verwerkingCloser = MDC.startVerwerking()) {
-            VERKEER_LOG.info("Start verwerken binnenkomend bericht ...");
+        try {
+            LOGGER.info("Start verwerken binnenkomend bericht ...");
             final String correlatieReferentie = message.getStringProperty(JMSConstants.CORRELATIE_REFERENTIE);
 
-            try (MDCCloser correlatieCloser = MDC.put(MDCVeld.SYNC_CORRELATIE_REFERENTIE, correlatieReferentie)) {
-                VERKEER_LOG.info("Lees bericht inhoud ...");
-                final String berichtInhoud = bepaalBerichtInhoud(message);
+            LOGGER.info("Lees bericht inhoud ...");
+            final String berichtInhoud = bepaalBerichtInhoud(message);
 
-                VERKEER_LOG.info("Parse bericht inhoud ...");
-                final AfnemerindicatieOnderhoudAntwoord antwoord = JSON_MAPPER.readValue(berichtInhoud, AfnemerindicatieOnderhoudAntwoord.class);
+            LOGGER.info("Parse bericht inhoud ...");
+            final AfnemerindicatieOnderhoudAntwoord antwoord = JSON_MAPPER.readValue(berichtInhoud, AfnemerindicatieOnderhoudAntwoord.class);
 
-                VERKEER_LOG.info("Verwerk bericht inhoud ...");
-                final SyncBericht resultaat = verwerkAntwoord(antwoord, correlatieReferentie);
+            LOGGER.info("Verwerk bericht inhoud ...");
+            final SyncBericht resultaat = verwerkAntwoord(antwoord, correlatieReferentie);
 
-                VERKEER_LOG.info("Versturen antwoord");
-                stuurAntwoord(resultaat);
-                VERKEER_LOG.info("Gereed (antwoord verstuurd)");
-            }
+            LOGGER.info("Versturen antwoord");
+            stuurAntwoord(resultaat);
+            LOGGER.info("Gereed (antwoord verstuurd)");
             LOG.info(FunctioneleMelding.SYNC_AFNEMERSINDICATIE_VERWERKT);
-        } catch (final
-            JMSException
-            | IOException
-            | BerichtLeesException e)
-        {
+        } catch (final JMSException | IOException | BerichtLeesException e) {
             LOG.error("Er is een fout opgetreden bij het lezen van een binnenkomend bericht.", e);
-            VERKEER_LOG.info("Exceptie", e);
+            LOGGER.info("Exceptie", e);
             throw new ServiceException(e);
         }
     }

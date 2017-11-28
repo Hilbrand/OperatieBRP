@@ -6,10 +6,10 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
 import nl.bzk.migratiebrp.conversie.model.validatie.Periode;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de LO3 waarde datum (jjjjmmdd); er wordt geen inhoudelijke controle uitgevoerd of een datum
@@ -21,18 +21,16 @@ import org.simpleframework.xml.Element;
 @Requirement(Requirements.CAP002)
 public final class Lo3Datum extends AbstractLo3Element implements Comparable<Lo3Datum> {
 
-    /**
-     * Leeg Lo3Datum object.
-     */
-    public static final Lo3Datum NULL_DATUM = new Lo3Datum(0);
-
+    private static final int NIEUW_JAAR_VOOR_NIEUWE_DATUM = 99_990_000;
+    private static final int NIEUWE_MAAND_VOOR_NIEUWE_DATUM = 9900;
+    private static final int NIEUWE_DAG_VOOR_NIEUWE_DATUM = 99;
+    private static final int HONDERD = 100;
+    private static final int TIEN_DUIZEND = 10_000;
     private static final long serialVersionUID = 1L;
 
     /**
      * Maakt een Lo3Datum object; er wordt geen inhoudelijke controle uitgevoerd of een datum daadwerkelijk geldig is.
-     *
-     * @param waarde
-     *            de datum als integer in de vorm van jjjjmmdd.
+     * @param waarde de datum als integer in de vorm van jjjjmmdd.
      */
     public Lo3Datum(final Integer waarde) {
         this(String.format("%08d", waarde), null);
@@ -41,56 +39,59 @@ public final class Lo3Datum extends AbstractLo3Element implements Comparable<Lo3
     /**
      * Maakt een Lo3Datum object met onderzoek; er wordt geen inhoudelijke controle uitgevoerd of een datum
      * daadwerkelijk geldig is.
-     *
-     * @param waarde
-     *            de datum als String in de vorm van jjjjmmdd.
-     * @param onderzoek
-     *            het onderzoek waar deze datum onder valt. Mag NULL zijn.
+     * @param waarde de datum als String in de vorm van jjjjmmdd.
+     * @param onderzoek het onderzoek waar deze datum onder valt. Mag NULL zijn.
      */
     public Lo3Datum(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde") final String waarde,
+            @Element(name = "onderzoek") final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Maak een periode adhv Lo3Datum object.
-     *
-     * @param beginDatum
-     *            De begin datum. Als deze null is wordt Long.MIN_VALUE ingevuld.
-     * @param eindDatum
-     *            De eind datum. Als deze null is wordt Long.MAX_VALUE ingevuld.
+     * @param beginDatum De begin datum. Als deze null is wordt Long.MIN_VALUE ingevuld.
+     * @param eindDatum De eind datum. Als deze null is wordt Long.MAX_VALUE ingevuld.
      * @return de nieuwe Periode
      */
-    public static Periode createPeriode(final Lo3Datum beginDatum, final Lo3Datum eindDatum) {
+    static Periode createPeriode(final Lo3Datum beginDatum, final Lo3Datum eindDatum) {
         return new Periode(
-            !Validatie.isElementGevuld(beginDatum) ? null : beginDatum.getIntegerWaarde().longValue(),
-            !Validatie.isElementGevuld(eindDatum) ? null : eindDatum.getIntegerWaarde().longValue());
+                !Lo3Validatie.isElementGevuld(beginDatum) ? null : beginDatum.getLongWaarde(),
+                !Lo3Validatie.isElementGevuld(eindDatum) ? null : eindDatum.getLongWaarde());
     }
 
     /**
      * Is een gedeelte van deze datum onbekend? Een gedeelte (jaar, maand of dag) van een datum is onbekend als er 0000
      * (jaar) of 00 (maand of dag) als waarde is ingevuld.
      *
-     * Bijvoorbeeld:
-     * <ul>
-     * <li>19000101 -> false</li>
-     * <li>19000100 -> true</li>
-     * <li>19000001 -> true</li>
-     * <li>00000101 -> true</li>
-     * <li>00000100 -> true</li>
-     * <li>00000001 -> true</li>
-     * <li>19000000 -> true</li>
-     * <li>00000000 -> true</li>
-     * </ul>
+     * Bijvoorbeeld: {@literal
      *
+     * <ul>
+     *
+     * <li>19000101 -> false</li>
+     *
+     * <li>19000100 -> true</li>
+     *
+     * <li>19000001 -> true</li>
+     *
+     * <li>00000101 -> true</li>
+     *
+     * <li>00000100 -> true</li>
+     *
+     * <li>00000001 -> true</li>
+     *
+     * <li>19000000 -> true</li>
+     *
+     * <li>00000000 -> true</li>
+     *
+     * </ul>
+     * }
      * @return true als een gedeelte van de datum onbekend is, anders false
      */
     public boolean isOnbekend() {
         final int datum = convertWaardeNaarDatum(getWaarde());
-        /* 10000 en 100 zijn hier selectors voor jaar, maand en dag */
-        return datum == 0 || datum / 10000 == 0 || datum % 10000 / 100 == 0 || datum % 100 == 0;
+        /* TIEN_DUIZEND(10000) en HONDERD(100) zijn hier selectors voor jaar, maand en dag */
+        return datum == 0 || datum / TIEN_DUIZEND == 0 || datum % TIEN_DUIZEND / HONDERD == 0 || datum % HONDERD == 0;
     }
 
     private int convertWaardeNaarDatum(final String waarde) {
@@ -103,37 +104,35 @@ public final class Lo3Datum extends AbstractLo3Element implements Comparable<Lo3
     /**
      * Als de datum (gedeeltelijk) onbekend is, maak een nieuwe gemaximaliseerde datum, waarbij alle onbekende gedeelten
      * zijn vervangen door 99.
-     *
      * @return De gemaximaleseerde datum, of de oorspronkelijke Lo3Datum als die niet (gedeeltelijk) onbekend is.
-     * @throws java.lang.NullPointerException
-     *             als de inhoudelijk waarde niet gevuld is
+     * @throws java.lang.NullPointerException als de inhoudelijk waarde niet gevuld is
      */
-    public Lo3Datum maximaliseerOnbekendeDatum() {
+    public int maximaliseerOnbekendeDatum() {
         if (isOnbekend()) {
             int nieuweDatum = convertWaardeNaarDatum(getWaarde());
 
-            /* 10000 en 100 zijn hier selectors voor jaar, maand en dag */
-            if (nieuweDatum % 100 == 0) {
-                nieuweDatum += 99;
+            /* TIEN_DUIZEND(10000) en HONDERD(100) zijn hier selectors voor jaar, maand en dag */
+            if (nieuweDatum % HONDERD == 0) {
+                nieuweDatum += NIEUWE_DAG_VOOR_NIEUWE_DATUM;
             }
 
-            if (nieuweDatum % 10000 / 100 == 0) {
-                nieuweDatum += 9900;
+            if (nieuweDatum % TIEN_DUIZEND / HONDERD == 0) {
+                nieuweDatum += NIEUWE_MAAND_VOOR_NIEUWE_DATUM;
             }
 
-            if (nieuweDatum / 10000 == 0) {
-                nieuweDatum += 99990000;
+            if (nieuweDatum / TIEN_DUIZEND == 0) {
+                nieuweDatum += NIEUW_JAAR_VOOR_NIEUWE_DATUM;
             }
 
-            return new Lo3Datum(String.valueOf(nieuweDatum), getOnderzoek());
+            return nieuweDatum;
         } else {
-            return this;
+            return convertWaardeNaarDatum(getWaarde());
         }
     }
 
     @Override
     public int compareTo(final Lo3Datum andereDatum) {
-        if (!Validatie.isElementGevuld(andereDatum)) {
+        if (!Lo3Validatie.isElementGevuld(andereDatum)) {
             throw new NullPointerException("Andere datum is null");
         }
         final Integer eigenDatumWaarde = convertWaardeNaarDatum(getWaarde());
@@ -141,9 +140,12 @@ public final class Lo3Datum extends AbstractLo3Element implements Comparable<Lo3
         return eigenDatumWaarde - andereDatumWaarde;
     }
 
+    private long getLongWaarde() {
+        return super.getWaarde() == null ? null : Long.valueOf(super.getWaarde());
+    }
+
     /**
      * Geef de waarde van integer waarde.
-     *
      * @return integer waarde
      */
     public Integer getIntegerWaarde() {

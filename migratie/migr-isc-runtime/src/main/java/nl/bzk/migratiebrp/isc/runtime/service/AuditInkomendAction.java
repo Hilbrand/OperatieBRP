@@ -6,11 +6,11 @@
 
 package nl.bzk.migratiebrp.isc.runtime.service;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao.Direction;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -38,13 +38,12 @@ public final class AuditInkomendAction implements Action {
         final String recipient = message.getRecipient();
         final Long msSeqNumber = message.getMsSequenceNumber();
         final String contents = message.getContent();
-        LOG.info("Verwerk binnenkomend bericht: msgId={}, corrId={}, originator={}, recipient={}, msSeqNr={}", new Object[] {messageId,
-                                                                                                                             correlatieId,
-                                                                                                                             originator,
-                                                                                                                             recipient,
-                                                                                                                             msSeqNumber, });
+        LOG.info(
+                "Verwerk binnenkomend bericht: msgId={}, corrId={}, originator={}, recipient={}, msSeqNr={}",
+                messageId, correlatieId, originator, recipient, msSeqNumber);
 
-        final Long berichtId = berichtenDao.bewaar(kanaal, Direction.INKOMEND, messageId, correlatieId, contents, originator, recipient, msSeqNumber);
+        final Long berichtId =
+                berichtenDao.bewaar(kanaal, Direction.INKOMEND, messageId, correlatieId, contents, originator, recipient, msSeqNumber, null);
         LOG.info("Binnenkomend bericht opgeslagen onder id: {}", berichtId);
         message.setBerichtId(berichtId);
 

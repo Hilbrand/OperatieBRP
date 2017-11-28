@@ -23,7 +23,19 @@ public final class Bericht {
     private String verzendendePartij;
     private String ontvangendePartij;
 
+    private Integer moederActiviteitType;
+    private Integer activiteitType;
+    private Integer activiteitSubtype;
+    private String activiteitDatum;
+    private Integer activiteitToestand;
+
     private String msSequenceNumber;
+    private Boolean requestNonReceiptNotification;
+
+    private String oinOndertekenaar;
+    private String oinTransporteur;
+
+    private boolean magFalen;
 
     /**
      * Constructor (testbericht = null).
@@ -34,9 +46,7 @@ public final class Bericht {
 
     /**
      * Constructor.
-     *
-     * @param testBericht
-     *            test bericht
+     * @param testBericht test bericht
      */
     public Bericht(final TestBericht testBericht) {
         this.testBericht = testBericht;
@@ -44,7 +54,6 @@ public final class Bericht {
 
     /**
      * Geef de waarde van test bericht.
-     *
      * @return test bericht
      */
     public TestBericht getTestBericht() {
@@ -53,7 +62,6 @@ public final class Bericht {
 
     /**
      * Geef de waarde van bericht referentie.
-     *
      * @return bericht referentie
      */
     public String getBerichtReferentie() {
@@ -62,9 +70,7 @@ public final class Bericht {
 
     /**
      * Zet de waarde van bericht referentie.
-     *
-     * @param berichtReferentie
-     *            bericht referentie
+     * @param berichtReferentie bericht referentie
      */
     public void setBerichtReferentie(final String berichtReferentie) {
         this.berichtReferentie = berichtReferentie;
@@ -72,7 +78,6 @@ public final class Bericht {
 
     /**
      * Geef de waarde van correlatie referentie.
-     *
      * @return correlatie referentie
      */
     public String getCorrelatieReferentie() {
@@ -81,9 +86,7 @@ public final class Bericht {
 
     /**
      * Zet de waarde van correlatie referentie.
-     *
-     * @param correlatieReferentie
-     *            correlatie referentie
+     * @param correlatieReferentie correlatie referentie
      */
     public void setCorrelatieReferentie(final String correlatieReferentie) {
         this.correlatieReferentie = correlatieReferentie;
@@ -91,7 +94,6 @@ public final class Bericht {
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return inhoud
      */
     public String getInhoud() {
@@ -100,9 +102,7 @@ public final class Bericht {
 
     /**
      * Zet de waarde van inhoud.
-     *
-     * @param inhoud
-     *            inhoud
+     * @param inhoud inhoud
      */
     public void setInhoud(final String inhoud) {
         this.inhoud = inhoud;
@@ -110,7 +110,6 @@ public final class Bericht {
 
     /**
      * Geef de waarde van verzendende partij.
-     *
      * @return verzendende partij
      */
     public String getVerzendendePartij() {
@@ -119,9 +118,7 @@ public final class Bericht {
 
     /**
      * Zet de waarde van verzendende partij.
-     *
-     * @param verzendendePartij
-     *            verzendende partij
+     * @param verzendendePartij verzendende partij
      */
     public void setVerzendendePartij(final String verzendendePartij) {
         this.verzendendePartij = verzendendePartij;
@@ -129,7 +126,6 @@ public final class Bericht {
 
     /**
      * Geef de waarde van ontvangende partij.
-     *
      * @return ontvangende partij
      */
     public String getOntvangendePartij() {
@@ -138,17 +134,70 @@ public final class Bericht {
 
     /**
      * Zet de waarde van ontvangende partij.
-     *
-     * @param ontvangendePartij
-     *            ontvangende partij
+     * @param ontvangendePartij ontvangende partij
      */
     public void setOntvangendePartij(final String ontvangendePartij) {
         this.ontvangendePartij = ontvangendePartij;
     }
 
+    public Integer getMoederActiviteitType() {
+        return moederActiviteitType;
+    }
+
+    public void setMoederActiviteitType(Integer moederActiviteitType) {
+        this.moederActiviteitType = moederActiviteitType;
+    }
+
+    public Integer getActiviteitType() {
+        return activiteitType;
+    }
+
+    public void setActiviteitType(Integer activiteitType) {
+        this.activiteitType = activiteitType;
+    }
+
+    public Integer getActiviteitSubtype() {
+        return activiteitSubtype;
+    }
+
+    public void setActiviteitSubtype(Integer activiteitSubtype) {
+        this.activiteitSubtype = activiteitSubtype;
+    }
+
+    /**
+     * Geef de waarde van activiteit datum.
+     * @return datum
+     */
+    public String getActiviteitDatum() {
+        return activiteitDatum;
+    }
+
+    /**
+     * Zet de waarde van activiteit datum.
+     * @param activiteitDatum datum
+     */
+    public void setActiviteitDatum(final String activiteitDatum) {
+        this.activiteitDatum = activiteitDatum;
+    }
+
+    /**
+     * Geef activiteit toestand.
+     * @return toestand
+     */
+    public Integer getActiviteitToestand() {
+        return activiteitToestand;
+    }
+
+    /**
+     * Zet activiteit toestand.
+     * @param activiteitToestand toestand
+     */
+    public void setActiviteitToestand(final Integer activiteitToestand) {
+        this.activiteitToestand = activiteitToestand;
+    }
+
     /**
      * Geef de waarde van ms sequence number.
-     *
      * @return ms sequence number
      */
     public String getMsSequenceNumber() {
@@ -157,29 +206,95 @@ public final class Bericht {
 
     /**
      * Zet de waarde van ms sequence number.
-     *
-     * @param msSequenceNumber
-     *            ms sequence number
+     * @param msSequenceNumber ms sequence number
      */
     public void setMsSequenceNumber(final String msSequenceNumber) {
         this.msSequenceNumber = msSequenceNumber;
     }
 
+    /**
+     * Geef de waarde van request non receipt notification.
+     * @return request non receipt notification
+     */
+    public Boolean getRequestNonReceiptNotification() {
+        return requestNonReceiptNotification;
+    }
+
+    /**
+     * Zet de waarde van request non receipt notification.
+     * @param requestNonReceiptNotification request non receipt notification
+     */
+    public void setRequestNonReceiptNotification(final Boolean requestNonReceiptNotification) {
+        this.requestNonReceiptNotification = requestNonReceiptNotification;
+    }
+
+    /**
+     * Geef waarde van ondertekenaar.
+     * @return oin
+     */
+    public String getOinOndertekenaar() {
+        return oinOndertekenaar;
+    }
+
+    /**
+     * Zet waarde van ondertekenaar.
+     * @param oinOndertekenaar oin
+     */
+    public void setOinOndertekenaar(String oinOndertekenaar) {
+        this.oinOndertekenaar = oinOndertekenaar;
+    }
+
+    /**
+     * Geef waarde van transporteur.
+     * @return oin
+     */
+    public String getOinTransporteur() {
+        return oinTransporteur;
+    }
+
+    /**
+     * Zet waarde van transporteur.
+     * @param oinTransporteur oin
+     */
+    public void setOinTransporteur(String oinTransporteur) {
+        this.oinTransporteur = oinTransporteur;
+    }
+
+    /**
+     * mag falen. Geeft aan of de stap mag falen.
+     * @return indicatie of stap mag falen
+     */
+    public boolean isMagFalen() {
+        return magFalen;
+    }
+
+    /**
+     * Zet indicatie of stap mag falen.
+     * @param magFalen indicatie of stap mag falen
+     */
+    public void setMagFalen(final boolean magFalen) {
+        this.magFalen = magFalen;
+    }
+
     @Override
     public String toString() {
-        return "Bericht [berichtReferentie="
-               + berichtReferentie
-               + ", correlatieReferentie="
-               + correlatieReferentie
-               + ", verzendendePartij="
-               + verzendendePartij
-               + ", ontvangendePartij="
-               + ontvangendePartij
-               + ", inhoud="
-               + inhoud
-               + ", msSequenceNumber="
-               + msSequenceNumber
-               + "]";
+        return "Bericht [testBericht="
+                + testBericht
+                + ", berichtReferentie="
+                + berichtReferentie
+                + ", correlatieReferentie="
+                + correlatieReferentie
+                + ", inhoud="
+                + inhoud
+                + ", verzendendePartij="
+                + verzendendePartij
+                + ", ontvangendePartij="
+                + ontvangendePartij
+                + ", msSequenceNumber="
+                + msSequenceNumber
+                + ", requestNonReceiptNotification="
+                + requestNonReceiptNotification
+                + "]";
     }
 
 }

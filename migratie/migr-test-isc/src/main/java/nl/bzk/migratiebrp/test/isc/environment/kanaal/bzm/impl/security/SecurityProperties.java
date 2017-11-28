@@ -19,11 +19,8 @@ public class SecurityProperties {
 
     /**
      * Constructor voor {@link SecurityProperties} waarmee de in/out properties doorgegeven worden.
-     * 
-     * @param propertiesOut
-     *            properties voor output
-     * @param propertiesIn
-     *            properties voor input
+     * @param propertiesOut properties voor output
+     * @param propertiesIn properties voor input
      */
     public SecurityProperties(final Properties propertiesOut, final Properties propertiesIn) {
         setPropertiesOut(propertiesOut);
@@ -32,9 +29,7 @@ public class SecurityProperties {
 
     /**
      * Vult de propertiesOut aan met de alias en geeft alle properties terug.
-     * 
-     * @param alias
-     *            String
+     * @param alias String
      * @return the propertiesOut
      */
     public static Properties getPropertiesOut(final String alias) {
@@ -44,7 +39,6 @@ public class SecurityProperties {
 
     /**
      * Geef de waarde van properties in.
-     *
      * @return the propertiesIn
      */
     public static Properties getPropertiesIn() {
@@ -53,7 +47,6 @@ public class SecurityProperties {
 
     /**
      * Geeft het private keystore password terug.
-     * 
      * @return keystore password String
      */
     public static String getPrivateKeystorePassword() {
@@ -62,9 +55,7 @@ public class SecurityProperties {
 
     /**
      * Zet de waarde van properties out.
-     *
-     * @param propertiesOut
-     *            properties out
+     * @param propertiesOut properties out
      */
     private static void setPropertiesOut(final Properties propertiesOut) {
         SecurityProperties.propertiesOut = propertiesOut;
@@ -72,9 +63,7 @@ public class SecurityProperties {
 
     /**
      * Zet de waarde van properties in.
-     *
-     * @param propertiesIn
-     *            properties in
+     * @param propertiesIn properties in
      */
     private static void setPropertiesIn(final Properties propertiesIn) {
         SecurityProperties.propertiesIn = propertiesIn;

@@ -9,10 +9,8 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.autoris
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.inject.Inject;
-
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -23,10 +21,8 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenDienstbundel;
 import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenLeveringsautorisatie;
-import nl.bzk.migratiebrp.conversie.model.tussen.autorisatie.TussenPartij;
 import nl.bzk.migratiebrp.conversie.regels.AbstractComponentTest;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,10 +68,9 @@ public class AutorisatieConverteerderTest extends AbstractComponentTest {
 
             Assert.assertNotNull(tussenLeveringsautorisatie);
             Assert.assertNotNull(tussenLeveringsautorisatie.getLeveringsautorisatieStapel());
-            Assert.assertEquals(inhoud.getAfnemersindicatie().toString(), tussenLeveringsautorisatie.getLeveringsautorisatieStapel()
-                                                                                                    .get(0)
-                                                                                                    .getInhoud()
-                                                                                                    .getNaam());
+            Assert.assertEquals(
+                    inhoud.getAfnemersindicatie().toString(),
+                    tussenLeveringsautorisatie.getLeveringsautorisatieStapel().get(0).getInhoud().getNaam());
         }
     }
 
@@ -92,38 +87,17 @@ public class AutorisatieConverteerderTest extends AbstractComponentTest {
             Assert.assertNotNull(tussenLeveringsautorisatie);
             Assert.assertNotNull(tussenLeveringsautorisatie.getLeveringsautorisatieStapel());
             if (index > 0) {
-                Assert.assertEquals(inhoud.getAfnemersindicatie().toString() + "(1)", tussenLeveringsautorisatie.getLeveringsautorisatieStapel()
-                                                                                                                .get(0)
-                                                                                                                .getInhoud()
-                                                                                                                .getNaam());
+                Assert.assertEquals(
+                        inhoud.getAfnemersindicatie().toString()
+                                + "(1)",
+                        tussenLeveringsautorisatie.getLeveringsautorisatieStapel().get(0).getInhoud().getNaam());
             } else {
-                Assert.assertEquals(inhoud.getAfnemersindicatie().toString(), tussenLeveringsautorisatie.getLeveringsautorisatieStapel()
-                                                                                                        .get(0)
-                                                                                                        .getInhoud()
-                                                                                                        .getNaam());
+                Assert.assertEquals(
+                        inhoud.getAfnemersindicatie().toString(),
+                        tussenLeveringsautorisatie.getLeveringsautorisatieStapel().get(0).getInhoud().getNaam());
             }
             index++;
         }
-    }
-
-    @Test
-    public void testConverteerPartijSoortPartijCodeDERDE() {
-        final Lo3AutorisatieInhoud inhoud = maakAutorisatieInhoud();
-        final TussenPartij tussenPartij = converteerder.converteerPartij(maakAutorisatie(inhoud));
-
-        Assert.assertNotNull(tussenPartij);
-        Assert.assertEquals(inhoud.getAfnemernaam(), tussenPartij.getNaam());
-        Assert.assertEquals(inhoud.getAfnemersindicatie(), tussenPartij.getPartijCode().getWaarde());
-    }
-
-    public void testConverteerPartijSoortPartijCodeGEMEENTE() {
-        final Lo3AutorisatieInhoud inhoud = maakAutorisatieInhoud();
-        inhoud.setAfnemersindicatie(1001);
-        final TussenPartij tussenPartij = converteerder.converteerPartij(maakAutorisatie(inhoud));
-
-        Assert.assertNotNull(tussenPartij);
-        Assert.assertEquals(inhoud.getAfnemernaam(), tussenPartij.getNaam());
-        Assert.assertEquals(inhoud.getAfnemersindicatie(), tussenPartij.getPartijCode().getWaarde());
     }
 
     private Lo3AutorisatieInhoud maakAutorisatieInhoud() {

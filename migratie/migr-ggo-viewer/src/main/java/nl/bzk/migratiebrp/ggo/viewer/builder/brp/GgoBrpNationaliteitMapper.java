@@ -6,57 +6,63 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteitHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteitHistorie;
 
-import org.springframework.stereotype.Component;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 /**
  * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
  */
-@Component
 public class GgoBrpNationaliteitMapper extends AbstractGgoBrpMapper<PersoonNationaliteitHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpNationaliteitMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+                                     final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(final GgoBrpVoorkomen voorkomen, final PersoonNationaliteitHistorie brpInhoud, final GgoBrpGroepEnum brpGroepEnum) {
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.NATIONALITEIT,
-            brpInhoud.getPersoonNationaliteit().getNationaliteit());
+                voorkomen,
+                GgoBrpElementEnum.NATIONALITEIT,
+                brpInhoud.getPersoonNationaliteit().getNationaliteit());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.REDEN_VERKRIJGING_NEDERLANDSCHAP,
-            brpInhoud.getRedenVerkrijgingNLNationaliteit());
+                voorkomen,
+                GgoBrpElementEnum.REDEN_VERKRIJGING_NEDERLANDSCHAP,
+                brpInhoud.getRedenVerkrijgingNLNationaliteit());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.REDEN_VERLIES_NEDERLANDSCHAP,
-            brpInhoud.getRedenVerliesNLNationaliteit());
+                voorkomen,
+                GgoBrpElementEnum.REDEN_VERLIES_NEDERLANDSCHAP,
+                brpInhoud.getRedenVerliesNLNationaliteit());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.DATUM_MIGRATIE_EINDE_BIJHOUDING,
-            brpInhoud.getMigratieDatumEindeBijhouding());
+                voorkomen,
+                GgoBrpElementEnum.DATUM_MIGRATIE_EINDE_BIJHOUDING,
+                brpInhoud.getMigratieDatumEindeBijhouding());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.REDEN_OPNAME_NATIONALITEIT_MIGRATIE,
-            brpInhoud.getMigratieRedenOpnameNationaliteit());
+                voorkomen,
+                GgoBrpElementEnum.REDEN_OPNAME_NATIONALITEIT_MIGRATIE,
+                brpInhoud.getMigratieRedenOpnameNationaliteit());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.REDEN_BEEINDIGEN_NATIONALITEIT_MIGRATIE,
-            brpInhoud.getMigratieRedenBeeindigenNationaliteit());
+                voorkomen,
+                GgoBrpElementEnum.REDEN_BEEINDIGEN_NATIONALITEIT_MIGRATIE,
+                brpInhoud.getMigratieRedenBeeindigenNationaliteit());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.INDICATIE_BIJHOUDING_BEEINDIGD,
-            brpInhoud.getIndicatieBijhoudingBeeindigd());
+                voorkomen,
+                GgoBrpElementEnum.INDICATIE_BIJHOUDING_BEEINDIGD,
+                brpInhoud.getIndicatieBijhoudingBeeindigd());
     }
 
     @Override

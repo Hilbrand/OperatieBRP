@@ -21,16 +21,16 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementatieklasse voor de Bericht Repository.
  */
 @Repository
-public final class BerichtRepositoryImpl extends AbstractJpaRepository implements BerichtRepository {
+public final class BerichtRepositoryImpl implements BerichtRepository {
 
+    private static final Integer MAX_BATCH_SIZE = 1000;
     private static final String TELLING_TRANSACTION_MANAGER = "tellingTransactionManager";
     private static final String PARAMETER_DATUM_TOT = "datumTot";
-    // private static final String PARAMETER_PROCES_INSTANTIE_LIJST = "teVerwijderenProcesInstantiesLijst";
     private static final String PARAMETER_TE_UPDATE_IDS = "teUpdatenIds";
     private static final String SELECT_DEEL_DATUM = "SELECT b FROM Bericht b WHERE b.kanaal is not null AND " + "b.tijdstip < (:datumTot) ";
     private static final String COUNT_QUERY_BERICHTEN = "SELECT count(*) FROM Bericht b WHERE "
-                                                        + "b.kanaal is not null AND b.tijdstip < (:datumTot) AND (b.indicatieGeteld = false OR "
-                                                        + "b.indicatieGeteld is null)";
+            + "b.kanaal is not null AND b.tijdstip < (:datumTot) AND (b.indicatieGeteld = false OR "
+            + "b.indicatieGeteld is null)";
 
     @PersistenceContext(name = "tellingEntityManagerFactory", unitName = "TellingEntities")
     private EntityManager em;
@@ -74,7 +74,7 @@ public final class BerichtRepositoryImpl extends AbstractJpaRepository implement
     @Override
     @Transactional(value = TELLING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRES_NEW)
     public boolean updateIndicatieGeteldBerichten(final List<Long> teUpdatenIds) {
-        if (teUpdatenIds != null && teUpdatenIds.size() > 0) {
+        if (teUpdatenIds != null && !teUpdatenIds.isEmpty()) {
             int beginIndex = 0;
             final int maxIndex = teUpdatenIds.size();
             int aantalGeupdate = 0;

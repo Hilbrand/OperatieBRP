@@ -14,35 +14,41 @@ import java.util.Map;
  */
 public enum LogSeverity implements Comparable<LogSeverity> {
 
-    /** Info. */
+    /**
+     * Info.
+     */
     INFO(100),
-    /** Warning. */
+    /**
+     * Warning.
+     */
     WARNING(200),
-    /** Suppressed. */
+    /**
+     * Suppressed.
+     */
     SUPPRESSED(250),
-    /** Error. */
+    /**
+     * Error.
+     */
     ERROR(300),
-    /** Kritiek. */
+    /**
+     * Kritiek.
+     */
     CRITICAL(400);
 
-    private static final Map<Integer, LogSeverity> CODE_MAP = new HashMap<Integer, LogSeverity>() {
-        private static final long serialVersionUID = 1L;
+    private static final Map<Integer, LogSeverity> CODE_MAP = new HashMap<>();
 
-        {
-            final LogSeverity[] values = LogSeverity.values();
-            for (final LogSeverity value : values) {
-                put(value.getSeverity(), value);
-            }
+    static {
+        final LogSeverity[] values = LogSeverity.values();
+        for (final LogSeverity value : values) {
+            CODE_MAP.put(value.getSeverity(), value);
         }
-    };
+    }
 
     private final int severity;
 
     /**
      * Constructor.
-     * 
-     * @param severity
-     *            severity
+     * @param severity severity
      */
     LogSeverity(final int severity) {
         this.severity = severity;
@@ -50,7 +56,6 @@ public enum LogSeverity implements Comparable<LogSeverity> {
 
     /**
      * Geef de waarde van severity.
-     *
      * @return severity
      */
     public int getSeverity() {
@@ -65,9 +70,7 @@ public enum LogSeverity implements Comparable<LogSeverity> {
 
     /**
      * Geef de enumeratie waarde voor de gegeven severity.
-     * 
-     * @param severity
-     *            severity
+     * @param severity severity
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static LogSeverity valueOfSeverity(final Integer severity) {

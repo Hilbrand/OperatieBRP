@@ -24,11 +24,8 @@ public final class VoorkomenMatcher {
 
     /**
      * Matcht de voorkomens op basis van hun {@link Lo3Herkomst}.
-     * 
-     * @param stapelMatch
-     *            De match van stapels waarbij deze uniek zijn gematched
-     * @param <T>
-     *            moet een implementatie zijn van {@link Lo3CategorieInhoud}
+     * @param stapelMatch De match van stapels waarbij deze uniek zijn gematched
+     * @param <T> moet een implementatie zijn van {@link Lo3CategorieInhoud}
      * @return een lijst van {@link nl.bzk.migratiebrp.init.logging.model.VoorkomenMatch} objecten
      */
     public static <T extends Lo3CategorieInhoud> List<VoorkomenMatch<T>> matchVoorkomens(final StapelMatch<T> stapelMatch) {
@@ -45,10 +42,9 @@ public final class VoorkomenMatcher {
     }
 
     private static <T extends Lo3CategorieInhoud> void matchVoorkomens(
-        final List<Lo3Categorie<T>> voorkomens,
-        final List<VoorkomenMatch<T>> matching,
-        final boolean isLo3Voorkomen)
-    {
+            final List<Lo3Categorie<T>> voorkomens,
+            final List<VoorkomenMatch<T>> matching,
+            final boolean isLo3Voorkomen) {
         for (int index = 0; index < voorkomens.size(); index++) {
             final Lo3Categorie<T> voorkomen = voorkomens.get(index);
 

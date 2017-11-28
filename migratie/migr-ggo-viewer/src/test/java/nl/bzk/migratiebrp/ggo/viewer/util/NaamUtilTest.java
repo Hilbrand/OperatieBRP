@@ -68,19 +68,19 @@ public class NaamUtilTest {
 
         final Lo3PersoonInhoud inhoud =
                 new Lo3PersoonInhoud(
-                    null,
-                    null,
-                    Lo3String.wrap(voornamen),
-                    null,
-                    Lo3String.wrap(voorvoegsel),
-                    Lo3String.wrap(geslachtsnaam),
-                    null,
-                    null,
-                    Lo3LandCode.NEDERLAND,
-                    Lo3GeslachtsaanduidingEnum.MAN.asElement(),
-                    null,
-                    null,
-                    Lo3AanduidingNaamgebruikCodeEnum.EIGEN_GESLACHTSNAAM.asElement());
+                        null,
+                        null,
+                        Lo3String.wrap(voornamen),
+                        null,
+                        Lo3String.wrap(voorvoegsel),
+                        Lo3String.wrap(geslachtsnaam),
+                        null,
+                        null,
+                        Lo3LandCode.NEDERLAND,
+                        Lo3GeslachtsaanduidingEnum.MAN.asElement(),
+                        null,
+                        null,
+                        Lo3AanduidingNaamgebruikCodeEnum.EIGEN_GESLACHTSNAAM.asElement());
         final Lo3Historie historie = new Lo3Historie(null, new Lo3Datum(20121212), new Lo3Datum(20121212));
         final Lo3Documentatie documentatie = new Lo3Documentatie(0, null, null, null, null, null, null, null);
 

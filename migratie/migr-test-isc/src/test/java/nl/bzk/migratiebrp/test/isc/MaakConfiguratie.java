@@ -15,8 +15,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,8 +26,8 @@ public class MaakConfiguratie {
 
     // Kopie uit TestBericht
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile(
-        "([0-9]*)-([0-9]*)?(IN|UIT)([0-9]*)?-([A-Za-z_]*)(-.*)?(\\..*)?",
-        Pattern.CASE_INSENSITIVE);
+            "([0-9]*)-([0-9]*)?(IN|UIT)([0-9]*)?-([A-Za-z_]*)(-.*)?(\\..*)?",
+            Pattern.CASE_INSENSITIVE);
 
     @Test
     public void run() {

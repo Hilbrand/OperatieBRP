@@ -14,21 +14,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AntwoordFormaatType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpVerzoekBericht;
 import nl.bzk.migratiebrp.init.naarlo3.repository.ANummerVerwerker;
 import nl.bzk.migratiebrp.init.naarlo3.repository.BrpRepository;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.util.common.logging.InitieleVullingVeld;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.ProducerCallback;
 import org.springframework.stereotype.Service;
 
 /**
@@ -39,21 +37,26 @@ import org.springframework.stereotype.Service;
 public final class VulNaarLo3QueueServiceImpl implements VulNaarLo3QueueService {
 
     private static final Logger LOG = LoggerFactory.getLogger();
-
     private static final int VERSTUUR_LOG_INTERVAL = 1000;
-
     private static final int QUEUE_SEND_THREAD_POOL_SIZE = 8;
-
     private static final int QUEUE_BATCH_SIZE = 100;
 
-    @Inject
-    private BrpRepository brpRepository;
+    private final BrpRepository brpRepository;
+    private final Destination destination;
+    private final JmsTemplate jmsTemplate;
 
+    /**
+     * Constructor voor de implementatie van {@link VulNaarLo3QueueService}
+     * @param brpRepository BRP repository
+     * @param jmsTemplate JMS Template
+     * @param destination een {@link Destination}
+     */
     @Inject
-    private JmsTemplate jmsTemplate;
-
-    @Inject
-    private Destination destination;
+    public VulNaarLo3QueueServiceImpl(final BrpRepository brpRepository, final JmsTemplate jmsTemplate, final Destination destination) {
+        this.brpRepository = brpRepository;
+        this.jmsTemplate = jmsTemplate;
+        this.destination = destination;
+    }
 
     /**
      * {@inheritDoc}
@@ -64,48 +67,26 @@ public final class VulNaarLo3QueueServiceImpl implements VulNaarLo3QueueService 
 
         final ThreadPoolExecutor executor =
                 new ThreadPoolExecutor(
-                    QUEUE_SEND_THREAD_POOL_SIZE,
-                    QUEUE_SEND_THREAD_POOL_SIZE,
-                    0L,
-                    TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>(4 * QUEUE_SEND_THREAD_POOL_SIZE),
-                    new ThreadPoolExecutor.CallerRunsPolicy());
+                        QUEUE_SEND_THREAD_POOL_SIZE,
+                        QUEUE_SEND_THREAD_POOL_SIZE,
+                        0L,
+                        TimeUnit.MILLISECONDS,
+                        new LinkedBlockingQueue<>(4 * QUEUE_SEND_THREAD_POOL_SIZE),
+                        new ThreadPoolExecutor.CallerRunsPolicy());
 
         final VerzendANummerVerwerker verwerker = new VerzendANummerVerwerker(executor);
         brpRepository.verwerkANummersVanIngeschrevenPersonen(verwerker, QUEUE_BATCH_SIZE);
 
         executor.shutdown();
         try {
-            executor.awaitTermination(2, TimeUnit.HOURS);
+            final int aantalUrenTimeout = 2;
+            executor.awaitTermination(aantalUrenTimeout, TimeUnit.HOURS);
         } catch (final InterruptedException e) {
             LOG.warn("InterruptedException tijdens wachten op het klaar zijn van de queue vuller");
+            Thread.currentThread().interrupt();
         }
         LOG.info("Klaar met versturen van A-Nummers.");
         LOG.info("Totaal verwerkte A-Nummers: {}", verwerker.getVerwerkTeller());
-    }
-
-    private void verstuurBericht(final List<LeesUitBrpVerzoekBericht> berichten) {
-        try {
-            Herhaal.herhaalOperatie(new Runnable() {
-                @Override
-                public void run() {
-                    jmsTemplate.execute(destination, new ProducerCallback<Object>() {
-                        @Override
-                        public Object doInJms(final Session session, final MessageProducer producer) throws JMSException {
-                            for (final LeesUitBrpVerzoekBericht bericht : berichten) {
-                                final Message message = session.createTextMessage(bericht.format());
-                                message.setStringProperty(JMSConstants.BERICHT_REFERENTIE, String.valueOf(bericht.getANummer()));
-                                producer.send(message);
-                            }
-                            session.commit();
-                            return null;
-                        }
-                    });
-                }
-            });
-        } catch (final HerhaalException e) {
-            LOG.error("Kon berichten niet verzenden.", e);
-        }
     }
 
     /**
@@ -119,29 +100,24 @@ public final class VulNaarLo3QueueServiceImpl implements VulNaarLo3QueueService 
 
         /**
          * Constructor.
-         *
-         * @param executor
-         *            executor
+         * @param executor executor
          */
-        public VerzendANummerVerwerker(final ThreadPoolExecutor executor) {
+        VerzendANummerVerwerker(final ThreadPoolExecutor executor) {
             this.executor = executor;
         }
 
         /**
          * Voeg een A-nummer toe aan de huidige batch.
-         *
-         * @param aNummer
-         *            het A-nummer
+         * @param aNummer het A-nummer
          */
         @Override
-        public void addANummer(final long aNummer) {
+        public void addANummer(final String aNummer) {
             aNummers.add(new LeesUitBrpVerzoekBericht(aNummer, AntwoordFormaatType.LO_3_XML));
         }
 
         /**
          * Verstuur de huidige batch. Het versturen gebeurt a-synchroon door de verwerking uit te laten voeren in een
          * ExecutorService in de omringende class.
-         *
          * @return niets
          */
         @Override
@@ -149,28 +125,46 @@ public final class VulNaarLo3QueueServiceImpl implements VulNaarLo3QueueService 
             final List<LeesUitBrpVerzoekBericht> teVersturenANummers = aNummers;
             aNummers = new ArrayList<>(QUEUE_BATCH_SIZE);
 
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    verstuurBericht(teVersturenANummers);
+            executor.submit(() -> {
+                verstuurBericht(teVersturenANummers);
 
-                    final int verwerktCount = verwerkTeller.addAndGet(teVersturenANummers.size());
-                    if (verwerktCount >= VERSTUUR_LOG_INTERVAL) {
-                        LOG.info("Verwerkte A-Nummers: {}", verwerktTotaal.addAndGet(VERSTUUR_LOG_INTERVAL));
-                        verwerkTeller.addAndGet(-VERSTUUR_LOG_INTERVAL);
-                    }
+                final int verwerktCount = verwerkTeller.addAndGet(teVersturenANummers.size());
+                if (verwerktCount >= VERSTUUR_LOG_INTERVAL) {
+                    LOG.info("Verwerkte A-Nummers: {}", verwerktTotaal.addAndGet(VERSTUUR_LOG_INTERVAL));
+                    verwerkTeller.addAndGet(-VERSTUUR_LOG_INTERVAL);
                 }
             });
 
             return null;
         }
 
+        private void verstuurBericht(final List<LeesUitBrpVerzoekBericht> berichten) {
+            try {
+                Herhaal.herhaalOperatie((Runnable) () -> jmsTemplate.execute(destination, (session, producer) -> {
+                    for (final LeesUitBrpVerzoekBericht bericht : berichten) {
+                        MDCProcessor.startVerwerking()
+                                .metVeld(InitieleVullingVeld.MDC_ADMINISTRATIE_NUMMER, bericht.getANummer())
+                                .run(() -> {
+                                    final Message message = session.createTextMessage(bericht.format());
+                                    MDCProcessor.registreerVerwerkingsCode(message);
+                                    message.setStringProperty(JMSConstants.BERICHT_REFERENTIE, String.valueOf(bericht.getANummer()));
+                                    producer.send(message);
+                                    LOG.info("Bericht naar LO3 verzonden");
+                                });
+                    }
+                    session.commit();
+                    return null;
+                }));
+            } catch (final HerhaalException e) {
+                LOG.error("Kon berichten niet verzenden.", e);
+            }
+        }
+
         /**
          * Geef de waarde van verwerk teller.
-         *
          * @return verwerk teller
          */
-        public int getVerwerkTeller() {
+        int getVerwerkTeller() {
             return verwerkTeller.intValue() + verwerktTotaal.intValue();
         }
     }

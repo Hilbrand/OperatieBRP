@@ -8,6 +8,7 @@ package nl.bzk.migratiebrp.init.naarlo3.repository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +28,7 @@ public class BrpRepositoryTest {
         private int teller;
 
         @Override
-        public void addANummer(final long aNummer) {
+        public void addANummer(final String aNummer) {
             teller += 1;
         }
 
@@ -35,6 +36,11 @@ public class BrpRepositoryTest {
         public Void call() throws Exception {
             berichtenTeller += teller;
             teller = 0;
+
+            if(berichtenTeller % 4 == 0) {
+                throw new IOException("Vage fout");
+            }
+
             return null;
         }
     };

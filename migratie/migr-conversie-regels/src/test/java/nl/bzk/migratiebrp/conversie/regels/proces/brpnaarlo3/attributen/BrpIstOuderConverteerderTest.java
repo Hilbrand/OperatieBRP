@@ -7,10 +7,10 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen;
 
 import static nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper.lo3Ouder;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
@@ -19,7 +19,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
@@ -30,6 +29,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OuderInhoud;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
@@ -46,39 +46,24 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
     private Lo3Herkomst expectedHerkomst;
     private Lo3OuderInhoud expectedInhoud;
 
-    @Inject
     private BrpIstOuderConverteerder subject;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.AbstractBrpIstConverteerderTest#getTestSubject()
-     */
-    @Override
-    protected BrpIstOuderConverteerder getTestSubject() {
-        return subject;
+    @Test
+    public void testNullStapel() {
+        Assert.assertNull(subject.converteerOuder(null));
     }
 
     @Before
     public void setUp() {
+        subject = new BrpIstOuderConverteerder(attribuutConverteerder);
         expectedAkte = maakDocumentatie(true);
         expectedHistorie = maakHistorie();
         expectedHerkomst = maakHerkomst(Lo3CategorieEnum.CATEGORIE_02);
         expectedInhoud =
-                lo3Ouder(
-                    ANUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    null,
-                    VOORVOEGSEL,
-                    GESLACHTSNAAMSTAM,
-                    DATUM_GEBOORTE,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    GESLACHT_MAN,
-                    DATUM_GEBOORTE);
+                lo3Ouder(ANUMMER, BSN, VOORNAMEN, null, VOORVOEGSEL, GESLACHTSNAAMSTAM, DATUM_GEBOORTE, GEMEENTE_CODE, LAND_CODE, GESLACHT_MAN,
+                        DATUM_GEBOORTE);
 
+        maakMockitoWhenStepsVoorPersoonsgegevens();
     }
 
     @Test
@@ -87,7 +72,7 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
         final BrpIstRelatieGroepInhoud inhoud = maakIstOuderGroepInhoud().build();
 
         groepen.add(maakGroep(inhoud));
-        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteerOuder(new BrpStapel<>(groepen));
 
         controleerStapel(lo3Stapel, expectedInhoud, expectedAkte, null, expectedHistorie, expectedHerkomst);
     }
@@ -113,15 +98,15 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
     private BrpIstRelatieGroepInhoud.Builder maakIstOuderGroepInhoud(final BrpIstStandaardGroepInhoud standaardGegevens) {
 
         final BrpIstRelatieGroepInhoud.Builder builder = new BrpIstRelatieGroepInhoud.Builder(standaardGegevens);
-        builder.anummer(new BrpLong(ANUMMER));
-        builder.bsn(new BrpInteger(BSN));
+        builder.anummer(new BrpString(ANUMMER));
+        builder.bsn(new BrpString(BSN));
         builder.voornamen(new BrpString(VOORNAMEN));
         builder.voorvoegsel(new BrpString(VOORVOEGSEL));
         builder.scheidingsteken(new BrpCharacter(SCHEIDINGSTEKEN));
         builder.geslachtsnaamstam(new BrpString(GESLACHTSNAAMSTAM));
         builder.datumGeboorte(new BrpInteger(DATUM_GEBOORTE));
-        builder.gemeenteCodeGeboorte(new BrpGemeenteCode(BRP_GEMEENTE_CODE));
-        builder.landOfGebiedGeboorte(new BrpLandOfGebiedCode(BRP_LAND_OF_GEBIED_CODE_NL));
+        builder.gemeenteCodeGeboorte(new BrpGemeenteCode(GEMEENTE_CODE));
+        builder.landOfGebiedGeboorte(new BrpLandOfGebiedCode(LAND_CODE));
         builder.geslachtsaanduidingCode(BrpGeslachtsaanduidingCode.MAN);
         builder.rubriek6210DatumIngangFamilierechtelijkeBetrekking(new BrpInteger(DATUM_GEBOORTE));
 
@@ -139,21 +124,13 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
         builder.adellijkeTitel(adellijkeTitel);
         groepen.add(maakGroep(builder.build()));
 
-        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        when(attribuutConverteerder.converteerAdellijkeTitelPredikaatCode(adellijkeTitel, null))
+                .thenReturn(new Lo3AdellijkeTitelPredikaatCode(LO3_ADELLIJKE_TITEL_MAN));
+        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteerOuder(new BrpStapel<>(groepen));
 
         expectedInhoud =
-                lo3Ouder(
-                    ANUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    LO3_ADELLIJKE_TITEL_MAN,
-                    VOORVOEGSEL,
-                    GESLACHTSNAAMSTAM,
-                    DATUM_GEBOORTE,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    GESLACHT_MAN,
-                    DATUM_GEBOORTE);
+                lo3Ouder(ANUMMER, BSN, VOORNAMEN, LO3_ADELLIJKE_TITEL_MAN, VOORVOEGSEL, GESLACHTSNAAMSTAM, DATUM_GEBOORTE, GEMEENTE_CODE, LAND_CODE,
+                        GESLACHT_MAN, DATUM_GEBOORTE);
         controleerStapel(lo3Stapel, expectedInhoud, expectedAkte, null, expectedHistorie, expectedHerkomst);
     }
 
@@ -169,21 +146,13 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
         builder.geslachtsaanduidingCode(geslachtsaanduiding);
         groepen.add(maakGroep(builder.build()));
 
-        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        when(attribuutConverteerder.converteerAdellijkeTitelPredikaatCode(adellijkeTitel, null))
+                .thenReturn(new Lo3AdellijkeTitelPredikaatCode(LO3_ADELLIJKE_TITEL_VROUW));
+        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteerOuder(new BrpStapel<>(groepen));
 
         expectedInhoud =
-                lo3Ouder(
-                    ANUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    LO3_ADELLIJKE_TITEL_VROUW,
-                    VOORVOEGSEL,
-                    GESLACHTSNAAMSTAM,
-                    DATUM_GEBOORTE,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    GESLACHT_VROUW,
-                    DATUM_GEBOORTE);
+                lo3Ouder(ANUMMER, BSN, VOORNAMEN, LO3_ADELLIJKE_TITEL_VROUW, VOORVOEGSEL, GESLACHTSNAAMSTAM, DATUM_GEBOORTE, GEMEENTE_CODE, LAND_CODE,
+                        GESLACHT_VROUW, DATUM_GEBOORTE);
 
         controleerStapel(lo3Stapel, expectedInhoud, expectedAkte, null, expectedHistorie, expectedHerkomst);
     }
@@ -199,21 +168,13 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
         builder.predicaat(predicaatCode);
         groepen.add(maakGroep(builder.build()));
 
-        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        when(attribuutConverteerder.converteerAdellijkeTitelPredikaatCode(null, predicaatCode))
+                .thenReturn(new Lo3AdellijkeTitelPredikaatCode(LO3_PREDIKAAT_MAN));
+        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteerOuder(new BrpStapel<>(groepen));
 
         expectedInhoud =
-                lo3Ouder(
-                    ANUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    LO3_PREDIKAAT_MAN,
-                    VOORVOEGSEL,
-                    GESLACHTSNAAMSTAM,
-                    DATUM_GEBOORTE,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    GESLACHT_MAN,
-                    DATUM_GEBOORTE);
+                lo3Ouder(ANUMMER, BSN, VOORNAMEN, LO3_PREDIKAAT_MAN, VOORVOEGSEL, GESLACHTSNAAMSTAM, DATUM_GEBOORTE, GEMEENTE_CODE, LAND_CODE,
+                        GESLACHT_MAN, DATUM_GEBOORTE);
 
         controleerStapel(lo3Stapel, expectedInhoud, expectedAkte, null, expectedHistorie, expectedHerkomst);
     }
@@ -230,21 +191,13 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
         builder.geslachtsaanduidingCode(geslachtsaanduidingCode);
         groepen.add(maakGroep(builder.build()));
 
-        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        when(attribuutConverteerder.converteerAdellijkeTitelPredikaatCode(null, predicaatCode))
+                .thenReturn(new Lo3AdellijkeTitelPredikaatCode(LO3_PREDIKAAT_VROUW));
+        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteerOuder(new BrpStapel<>(groepen));
 
         expectedInhoud =
-                lo3Ouder(
-                    ANUMMER,
-                    BSN,
-                    VOORNAMEN,
-                    LO3_PREDIKAAT_VROUW,
-                    VOORVOEGSEL,
-                    GESLACHTSNAAMSTAM,
-                    DATUM_GEBOORTE,
-                    LO3_GEMEENTE_CODE,
-                    LO3_LAND_CODE,
-                    GESLACHT_VROUW,
-                    DATUM_GEBOORTE);
+                lo3Ouder(ANUMMER, BSN, VOORNAMEN, LO3_PREDIKAAT_VROUW, VOORVOEGSEL, GESLACHTSNAAMSTAM, DATUM_GEBOORTE, GEMEENTE_CODE, LAND_CODE,
+                        GESLACHT_VROUW, DATUM_GEBOORTE);
 
         controleerStapel(lo3Stapel, expectedInhoud, expectedAkte, null, expectedHistorie, expectedHerkomst);
     }
@@ -257,10 +210,10 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
         builder.rubriek6210DatumIngangFamilierechtelijkeBetrekking(null);
         groepen.add(maakGroep(builder.build()));
 
-        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteerOuder(new BrpStapel<>(groepen));
 
         expectedInhoud =
-                lo3Ouder(ANUMMER, BSN, VOORNAMEN, null, VOORVOEGSEL, GESLACHTSNAAMSTAM, null, LO3_GEMEENTE_CODE, LO3_LAND_CODE, GESLACHT_MAN, null);
+                lo3Ouder(ANUMMER, BSN, VOORNAMEN, null, VOORVOEGSEL, GESLACHTSNAAMSTAM, null, GEMEENTE_CODE, LAND_CODE, GESLACHT_MAN, null);
 
         controleerStapel(lo3Stapel, expectedInhoud, expectedAkte, null, expectedHistorie, expectedHerkomst);
     }
@@ -280,14 +233,14 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
         final BrpIstRelatieGroepInhoud.Builder builder = maakIstOuderGroepInhoud(standaardBuilder.build());
         final Lo3Onderzoek expectedOnderzoek =
                 Lo3Onderzoek.build(
-                    new Lo3Integer("0" + gegevensInOnderzoek, null),
-                    new Lo3Datum(datumIngangOnderzoek),
-                    new Lo3Datum(datumEindeOnderzoek),
-                    expectedHerkomst);
+                        new Lo3Integer("0" + gegevensInOnderzoek, null),
+                        new Lo3Datum(datumIngangOnderzoek),
+                        new Lo3Datum(datumEindeOnderzoek),
+                        expectedHerkomst);
 
         groepen.add(maakGroep(builder.build()));
 
-        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteerOuder(new BrpStapel<>(groepen));
 
         controleerStapel(lo3Stapel, expectedInhoud, expectedAkte, expectedOnderzoek, expectedHistorie, expectedHerkomst);
     }
@@ -306,7 +259,7 @@ public class BrpIstOuderConverteerderTest extends AbstractBrpIstConverteerderTes
         groepen.add(maakGroep(builderHistorisch.build()));
 
         final Lo3Herkomst herkomstHistorisch = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_52, 0, 1);
-        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteer(new BrpStapel<>(groepen));
+        final Lo3Stapel<Lo3OuderInhoud> lo3Stapel = subject.converteerOuder(new BrpStapel<>(groepen));
 
         Assert.assertNotNull("Stapel is null", lo3Stapel);
         Assert.assertFalse("Stapel is leeg", lo3Stapel.isEmpty());

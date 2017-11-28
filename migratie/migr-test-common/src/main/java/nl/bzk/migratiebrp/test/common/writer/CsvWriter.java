@@ -29,7 +29,7 @@ public final class CsvWriter implements Writer {
         try (final CSVWriter writer = openWriter(file)) {
             final List<String[]> csvContent = new ArrayList<>();
             for (final String content : contents) {
-                csvContent.add(new String[] {content });
+                csvContent.add(new String[]{content});
             }
             writer.writeAll(csvContent);
         }

@@ -6,19 +6,19 @@
 
 package nl.bzk.migratiebrp.test.isc.environment.check;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpAntwoordBericht;
 import nl.bzk.migratiebrp.conversie.model.Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
-import nl.bzk.migratiebrp.conversie.model.brp.util.BrpVergelijker;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.bericht.TestBericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.exception.TestException;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * Persoonslijst check.
@@ -48,14 +48,14 @@ public final class PersoonslijstCheck implements Check {
         } else if (verwachtePersoonslijst instanceof BrpPersoonslijst) {
             LOGGER.info("Vergelijk BrpPersoonlijsten");
             if (ontvangenPersoonslijst instanceof BrpPersoonslijst) {
+                ((BrpPersoonslijst) verwachtePersoonslijst).sorteer();
+                ((BrpPersoonslijst) ontvangenPersoonslijst).sorteer();
+
                 final StringBuilder log = new StringBuilder();
+                final StringBuilder verschillenLog = new StringBuilder();
                 result =
-                        BrpVergelijker.vergelijkPersoonslijsten(
-                            log,
-                            (BrpPersoonslijst) verwachtePersoonslijst,
-                            (BrpPersoonslijst) ontvangenPersoonslijst,
-                            true,
-                            true);
+                        VergelijkXml.vergelijkXmlNegeerActieId((BrpPersoonslijst) verwachtePersoonslijst, (BrpPersoonslijst) ontvangenPersoonslijst, false,
+                                verschillenLog);
                 LOGGER.info("Log brp: {}", log);
             } else {
                 LOGGER.info("Ontvangen persoonlijst niet van type BrpPersoonslijst");
@@ -72,6 +72,13 @@ public final class PersoonslijstCheck implements Check {
      * Factory implementatie voor de persoonslijst extractor op basis van de configuratie.
      */
     private static final class PersoonslijstExtractorFactory {
+
+        /**
+         * Geef extractor.
+         * @param config config
+         * @return extractor
+         * @throws TestException bij fouten
+         */
         public PersoonslijstExtractor getPersoonlijstExtractor(final String config) throws TestException {
             final PersoonslijstExtractor resultaat;
             switch (config.toLowerCase()) {
@@ -96,6 +103,12 @@ public final class PersoonslijstCheck implements Check {
      * Interface voor de persoonslijst extractor.
      */
     private interface PersoonslijstExtractor {
+
+        /**
+         * Extract persoonslijst.
+         * @param bericht bericht
+         * @return persoonlijst
+         */
         Persoonslijst extractPersoonslijst(String bericht);
     }
 

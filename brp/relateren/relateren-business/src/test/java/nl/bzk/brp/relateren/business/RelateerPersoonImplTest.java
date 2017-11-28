@@ -6,19 +6,28 @@
 
 package nl.bzk.brp.relateren.business;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Testen van RelateerPersoonImpl
  */
+@RunWith(MockitoJUnitRunner.class)
 public class RelateerPersoonImplTest {
 
+//    @Mock
+//    private PersoonHisVolledigRepository persoonHisVolledigRepository;
+
+    @InjectMocks
     private RelateerPersoon relateerder = new RelateerPersoonImpl();
 
     @Test
     public void testRelateerPersoon(){
-        assertFalse(relateerder.relateerOpBasisVanID(1L));
+//        when(persoonHisVolledigRepository.leesGenormalizeerdModel(anyInt())).thenReturn(mock(PersoonHisVolledig.class));
+        assertFalse(relateerder.relateerOpBasisVanID(1));
     }
 }

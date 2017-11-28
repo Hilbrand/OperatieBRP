@@ -16,7 +16,6 @@ import nl.bzk.migratiebrp.util.common.Kopieer;
 
 /**
  * Persistent klasse voor de processen extractie database tabel.
- * 
  */
 @Entity
 @Table(name = "jbpm_processInstance")
@@ -53,7 +52,6 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public final Long getId() {
@@ -62,9 +60,7 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public final void setId(final Long id) {
         this.id = id;
@@ -72,7 +68,6 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Geef de waarde van version.
-     *
      * @return version
      */
     public final Integer getVersion() {
@@ -81,7 +76,6 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Geef de waarde van key.
-     *
      * @return key
      */
     public final String getKey() {
@@ -90,7 +84,6 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Geef de waarde van start.
-     *
      * @return start
      */
     public final Timestamp getStart() {
@@ -99,7 +92,6 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Geef de waarde van end.
-     *
      * @return end
      */
     public final Timestamp getEnd() {
@@ -108,7 +100,6 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Geef de waarde van issuspended.
-     *
      * @return issuspended
      */
     public final Boolean getIssuspended() {
@@ -117,7 +108,6 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Geef de waarde van processdefinition.
-     *
      * @return processdefinition
      */
     public final Long getProcessdefinition() {
@@ -126,7 +116,6 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Geef de waarde van roottoken.
-     *
      * @return roottoken
      */
     public final Long getRoottoken() {
@@ -135,7 +124,6 @@ public class ProcesInstantie implements Serializable {
 
     /**
      * Geef de waarde van superprocesstoken.
-     *
      * @return superprocesstoken
      */
     public final Long getSuperprocesstoken() {

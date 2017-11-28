@@ -9,8 +9,8 @@ package nl.bzk.migratiebrp.tools.mailbox.impl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Factory klasse voor in memory mailbox.
@@ -24,7 +24,7 @@ public final class MemoryMailboxFactory implements MailboxFactory {
 
     @Override
     public Mailbox getMailbox(final String mailboxnr) {
-        LOG.info("Starting MEMORY mailbox factory");
+        LOG.debug("MEMORY mailbox factory: getting mailbox");
         synchronized (MAILBOXEN) {
             if (!MAILBOXEN.containsKey(mailboxnr)) {
                 MAILBOXEN.put(mailboxnr, new MemoryMailbox(this, mailboxnr));

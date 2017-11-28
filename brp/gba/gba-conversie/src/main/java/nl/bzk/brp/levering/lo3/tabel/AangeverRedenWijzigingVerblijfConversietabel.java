@@ -1,14 +1,13 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.List;
-
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieAangifteAdreshouding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AangifteAdreshouding;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblijfCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AangeverRedenWijzigingVerblijfPaar;
@@ -23,35 +22,32 @@ public final class AangeverRedenWijzigingVerblijfConversietabel extends Abstract
 
     /**
      * Maakt een AangeverRedenWijzigingVerblijfConversietabel object.
-     *
      * @param list de lijst met waarden uit de conversietabel.
      */
-    public AangeverRedenWijzigingVerblijfConversietabel(final List<ConversieAangifteAdreshouding> list) {
+    public AangeverRedenWijzigingVerblijfConversietabel(final List<AangifteAdreshouding> list) {
         super(new Converter().converteer(list));
     }
 
     /**
-     * Converteer de lijst van {@link ConversieAangifteAdreshouding} naar een conversie map van de LO3 waarde
+     * Converteer de lijst van {@link AangifteAdreshouding} naar een conversie map van de LO3 waarde
      * {@link Lo3AangifteAdreshouding} en de BRP waarde {@link AangeverRedenWijzigingVerblijfPaar}.
      */
-    private static final class Converter extends
-            AbstractLijstConverter<ConversieAangifteAdreshouding, Lo3AangifteAdreshouding, AangeverRedenWijzigingVerblijfPaar>
-    {
+    private static final class Converter
+            extends AbstractLijstConverter<AangifteAdreshouding, Lo3AangifteAdreshouding, AangeverRedenWijzigingVerblijfPaar> {
         @Override
-        protected Lo3AangifteAdreshouding maakLo3Waarde(final ConversieAangifteAdreshouding aangifteAdreshouding) {
-            return new Lo3AangifteAdreshouding(String.valueOf(aangifteAdreshouding.getRubriek7210OmschrijvingVanDeAangifteAdreshouding()));
+        protected Lo3AangifteAdreshouding maakLo3Waarde(final AangifteAdreshouding aangifteAdreshouding) {
+            return new Lo3AangifteAdreshouding(Character.toString(aangifteAdreshouding.getLo3OmschrijvingAangifteAdreshouding()));
         }
 
         @Override
-        protected AangeverRedenWijzigingVerblijfPaar maakBrpWaarde(final ConversieAangifteAdreshouding aangifteAdreshouding) {
+        protected AangeverRedenWijzigingVerblijfPaar maakBrpWaarde(final AangifteAdreshouding aangifteAdreshouding) {
             BrpRedenWijzigingVerblijfCode brpRedenWijzigingVerblijfCode = null;
             if (aangifteAdreshouding.getRedenWijzigingVerblijf() != null) {
-                brpRedenWijzigingVerblijfCode =
-                        new BrpRedenWijzigingVerblijfCode(aangifteAdreshouding.getRedenWijzigingVerblijf().getCode().getWaarde().charAt(0));
+                brpRedenWijzigingVerblijfCode = new BrpRedenWijzigingVerblijfCode(aangifteAdreshouding.getRedenWijzigingVerblijf().getCode());
             }
             BrpAangeverCode brpAangeverCode = null;
             if (aangifteAdreshouding.getAangever() != null) {
-                brpAangeverCode = new BrpAangeverCode(aangifteAdreshouding.getAangever().getCode().getWaarde().charAt(0));
+                brpAangeverCode = new BrpAangeverCode(aangifteAdreshouding.getAangever().getCode());
             }
 
             return new AangeverRedenWijzigingVerblijfPaar(brpAangeverCode, brpRedenWijzigingVerblijfCode);

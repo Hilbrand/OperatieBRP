@@ -6,7 +6,6 @@
 
 /**
  * Deze package bestaat uit utility classes die generiek zijn voor het migratie project.
- *
  * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.model.validatie;

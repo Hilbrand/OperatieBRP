@@ -12,24 +12,24 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractDeltaEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.ActieBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Document;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ActieBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Document;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.GegevenInOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.GegevenInOnderzoekHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Rechtsgrond;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.GegevenInOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Rechtsgrond;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.util.PersistenceUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
@@ -40,49 +40,36 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util.SleutelUtil
 
 /**
  * Abstract implementatie voor de {@link DeltaVerschilVerwerker} implementaties van deltabepaling. Deze class bevat de
- * logica om d.m.v. reflectie de gevonden verschillen in een bestaand entiteit (bv
- * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon} te verwerken.
- * 
+ * logica om d.m.v. reflectie de gevonden verschillen in een bestaand entiteit (bv {@link Persoon}) te verwerken.
  */
-public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVerwerker {
+abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVerwerker {
     private final DeltaRootEntiteitModus modus;
 
     /**
      * Maakt een verschil verwerker en zet de modus waar deze verwerker in werkt.
-     *
-     * @param modus
-     *            een {@link DeltaRootEntiteitModus} waarmee aangegeven wordt voor welke
-     *            {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit} deze verwerker
-     *            werkt.
+     * @param modus een {@link DeltaRootEntiteitModus} waarmee aangegeven wordt voor welke {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit} deze
+     * verwerker werkt.
      */
-    protected AbstractDeltaVerschilVerwerker(final DeltaRootEntiteitModus modus) {
+    AbstractDeltaVerschilVerwerker(final DeltaRootEntiteitModus modus) {
         this.modus = modus;
     }
 
     /**
      * Verwerkt de wijzigingen op een bestaand deltaEntiteit.
-     *
-     * @param verschillen
-     *            de verschillen die verwerkt moeten worden
-     * @param deltaEntiteit
-     *            de deltaEntiteit waar de verschillen (mogelijk) in verwerkt worden
-     * @param eigenaar
-     *            de eigenaar van de deltaEntiteit, mag null zijn
-     * @param eigenaarSleutel
-     *            sleutel van de eigenaar, mag null zijn.
-     * @param administratieveHandeling
-     *            de administratieve handeling die gekoppel moet worden aan de wijziging
-     * @throws ReflectiveOperationException
-     *             als er iets fout gaat tijden de reflectie operaties.
+     * @param verschillen de verschillen die verwerkt moeten worden
+     * @param deltaEntiteit de deltaEntiteit waar de verschillen (mogelijk) in verwerkt worden
+     * @param eigenaar de eigenaar van de deltaEntiteit, mag null zijn
+     * @param eigenaarSleutel sleutel van de eigenaar, mag null zijn.
+     * @param administratieveHandeling de administratieve handeling die gekoppel moet worden aan de wijziging
+     * @throws ReflectiveOperationException als er iets fout gaat tijden de reflectie operaties.
      */
-    protected final void verwerkWijzigingen(
-        final VergelijkerResultaat verschillen,
-        final DeltaEntiteit deltaEntiteit,
-        final DeltaEntiteit eigenaar,
-        final EntiteitSleutel eigenaarSleutel,
-        final AdministratieveHandeling administratieveHandeling) throws ReflectiveOperationException
-    {
-        final DeltaEntiteit deltaEntiteitPojo = PersistenceUtil.getPojoFromObject(deltaEntiteit);
+    final void verwerkWijzigingen(
+            final VergelijkerResultaat verschillen,
+            final Entiteit deltaEntiteit,
+            final Entiteit eigenaar,
+            final EntiteitSleutel eigenaarSleutel,
+            final AdministratieveHandeling administratieveHandeling) throws ReflectiveOperationException {
+        final Entiteit deltaEntiteitPojo = Entiteit.convertToPojo(deltaEntiteit);
 
         for (final Field veld : DeltaUtil.getDeclaredEntityFields(deltaEntiteitPojo.getClass())) {
             veld.setAccessible(true);
@@ -98,38 +85,17 @@ public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVer
             } else if (DeltaUtil.isEntiteitVerzamelingVeld(veld)) {
                 // verwerk collections
                 // noinspection unchecked
-                final Collection<DeltaEntiteit> dbObjectVeldWaarde = (Collection<DeltaEntiteit>) veld.get(deltaEntiteitPojo);
+                final Collection<Entiteit> dbObjectVeldWaarde = (Collection<Entiteit>) veld.get(deltaEntiteitPojo);
                 verwerkCollection(verschillen, veld, dbObjectVeldWaarde, deltaEntiteitPojo, eigenaarSleutel, administratieveHandeling);
             }
         }
     }
 
-    /**
-     * Controleert of de verwerker een verwerker is voor een gerelateerd persoon (
-     * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon#ONBEKEND}.
-     * 
-     * @param entiteit
-     *            entiteit waar mee gecontroleerd wordt of het een verwerker is voor een gerelateerd persoon entiteit
-     * @return true als de verwerker een verwerk is voor een gerelateerd persoon
-     */
-    private boolean isEntiteitGerelateerdPersoon(final Object entiteit) {
-        final boolean result;
-        switch (modus) {
-            case PERSOON:
-                result = (entiteit instanceof Persoon) && SoortPersoon.ONBEKEND.equals(((Persoon) entiteit).getSoortPersoon());
-                break;
-            default:
-                result = false;
-        }
-        return result;
-    }
-
     private void verwerkWaardeVeld(
-        final Field veld,
-        final VergelijkerResultaat verschillen,
-        final DeltaEntiteit deltaEntiteit,
-        final EntiteitSleutel eigenaarSleutel) throws ReflectiveOperationException
-    {
+            final Field veld,
+            final VergelijkerResultaat verschillen,
+            final Entiteit deltaEntiteit,
+            final EntiteitSleutel eigenaarSleutel) throws ReflectiveOperationException {
         final EntiteitSleutel sleutel = SleutelUtil.maakSleutel(deltaEntiteit, eigenaarSleutel, veld);
 
         if (BRPActie.class.isAssignableFrom(deltaEntiteit.getClass())) {
@@ -150,12 +116,11 @@ public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVer
     }
 
     private void verwerkWijzigingenEntiteitVeld(
-        final Field veld,
-        final VergelijkerResultaat vergelijkerResultaat,
-        final DeltaEntiteit deltaEntiteit,
-        final EntiteitSleutel eigenaarSleutel,
-        final AdministratieveHandeling administratieveHandeling) throws ReflectiveOperationException
-    {
+            final Field veld,
+            final VergelijkerResultaat vergelijkerResultaat,
+            final Entiteit deltaEntiteit,
+            final EntiteitSleutel eigenaarSleutel,
+            final AdministratieveHandeling administratieveHandeling) throws ReflectiveOperationException {
         final boolean entiteitHeeftWijzigingen = heeftEntiteitWijzigingen(vergelijkerResultaat, deltaEntiteit);
 
         if (DeltaUtil.isVeldAdministratieveHandelingVeld(veld)) {
@@ -166,7 +131,7 @@ public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVer
                 final Verschil verschil = vergelijkerResultaat.zoekVerschil(sleutel);
                 veld.set(deltaEntiteit, verschil.getNieuweWaarde());
             } else {
-                final DeltaEntiteit deltaEntiteitWaarde = (DeltaEntiteit) veld.get(deltaEntiteit);
+                final Entiteit deltaEntiteitWaarde = (Entiteit) veld.get(deltaEntiteit);
                 if (deltaEntiteitWaarde != null) {
                     verwerkWijzigingen(vergelijkerResultaat, deltaEntiteitWaarde, deltaEntiteit, sleutel, administratieveHandeling);
                 }
@@ -175,13 +140,12 @@ public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVer
     }
 
     private void verwerkAdministratieveHandelingVeld(
-        final Field veld,
-        final Object entiteit,
-        final AdministratieveHandeling administratieveHandeling,
-        final boolean entiteitHeeftWijzigingen) throws IllegalAccessException
-    {
-        if (!isEntiteitGerelateerdPersoon(entiteit)) {
-            final AdministratieveHandeling oudeAdminHandeling = PersistenceUtil.getPojoFromObject((AdministratieveHandeling) veld.get(entiteit));
+            final Field veld,
+            final Object entiteit,
+            final AdministratieveHandeling administratieveHandeling,
+            final boolean entiteitHeeftWijzigingen) throws IllegalAccessException {
+        if (!(entiteit instanceof Persoon)) {
+            final AdministratieveHandeling oudeAdminHandeling = Entiteit.convertToPojo((AdministratieveHandeling) veld.get(entiteit));
             if (entiteitHeeftWijzigingen && !oudeAdminHandeling.equals(administratieveHandeling)) {
                 veld.set(entiteit, administratieveHandeling);
             }
@@ -189,19 +153,21 @@ public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVer
     }
 
     private void verwerkCollection(
-        final VergelijkerResultaat vergelijkerResultaat,
-        final Field veld,
-        final Collection<DeltaEntiteit> deltaEntiteitCollectie,
-        final DeltaEntiteit deltaEntiteit,
-        final EntiteitSleutel eigenaarSleutel,
-        final AdministratieveHandeling administratieveHandeling) throws ReflectiveOperationException
-    {
+            final VergelijkerResultaat vergelijkerResultaat,
+            final Field veld,
+            final Collection<Entiteit> deltaEntiteitCollectie,
+            final Entiteit deltaEntiteit,
+            final EntiteitSleutel eigenaarSleutel,
+            final AdministratieveHandeling administratieveHandeling) throws ReflectiveOperationException {
         // Verwerken van verschillen in dezelfde rij.
-        for (final DeltaEntiteit rij : deltaEntiteitCollectie) {
+        for (final Entiteit rij : deltaEntiteitCollectie) {
             if (!DeltaUtil.isMRij(rij)) {
                 final EntiteitSleutel sleutel = SleutelUtil.maakRijSleutel(deltaEntiteit, eigenaarSleutel, rij, veld.getName());
-                if (rij instanceof PersoonReisdocument) {
-                    sleutel.addSleuteldeel(PersoonReisdocument.TECHNISCH_ID, rij.getId());
+                if (rij instanceof PersoonReisdocument && !((PersoonReisdocument) rij).bevatAlleenMrijen()) {
+                    final PersoonReisdocument reisdocument = (PersoonReisdocument) rij;
+                    final PersoonReisdocumentHistorie reisdocumentHistorie =
+                            FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(reisdocument.getPersoonReisdocumentHistorieSet());
+                    sleutel.vulSleutelAanVoorReisdocument((Long) rij.getId(), reisdocument, reisdocumentHistorie);
                 }
                 verwerkWijzigingen(vergelijkerResultaat, rij, deltaEntiteit, sleutel, administratieveHandeling);
             }
@@ -213,13 +179,13 @@ public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVer
             final EntiteitSleutel sleutel = (EntiteitSleutel) verschil.getSleutel();
             if (rijSleutel.equalsIgnoreOntbrekendeDelen(sleutel)) {
                 if (VerschilType.RIJ_TOEGEVOEGD.equals(verschil.getVerschilType())) {
-                    final DeltaEntiteit rij = (DeltaEntiteit) verschil.getNieuweWaarde();
-                    final DeltaEntiteit nieuweRijPojo = PersistenceUtil.getPojoFromObject(rij);
+                    final Entiteit rij = (Entiteit) verschil.getNieuweWaarde();
+                    final Entiteit nieuweRijPojo = Entiteit.convertToPojo(rij);
                     verwerkNieuweRijWijzigingen(vergelijkerResultaat, nieuweRijPojo, deltaEntiteit, sleutel);
                     kopieerOnderzoekNaarNieuweRij(vergelijkerResultaat, nieuweRijPojo, sleutel);
                     voegRijToeAanLijst(deltaEntiteit, rij, administratieveHandeling);
                 } else {
-                    final DeltaEntiteit oudeWaarde = (DeltaEntiteit) verschil.getOudeWaarde();
+                    final Entiteit oudeWaarde = (Entiteit) verschil.getOudeWaarde();
                     deltaEntiteitCollectie.remove(oudeWaarde);
                 }
             }
@@ -227,67 +193,59 @@ public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVer
     }
 
     private void verwerkNieuweRijWijzigingen(
-        final VergelijkerResultaat verschillen,
-        final DeltaEntiteit nieuweRijEntiteit,
-        final DeltaEntiteit eigenaar,
-        final EntiteitSleutel rijToegevoegdSleutel) throws ReflectiveOperationException
-    {
-        if (nieuweRijEntiteit instanceof FormeleHistorie) {
-            final EntiteitSleutel rijInhoudSleutel = AbstractTransformatie.maakRijInhoudSleutel(rijToegevoegdSleutel, (FormeleHistorie) nieuweRijEntiteit);
-            for (final Field veld : DeltaUtil.getDeclaredEntityFields(nieuweRijEntiteit.getClass())) {
-                veld.setAccessible(true);
-                if (!DeltaUtil.isSkipableVeld(veld, nieuweRijEntiteit, eigenaar, getSkippableEntiteiten())
-                    && (DeltaUtil.isWaardeVeld(veld) || DeltaUtil.isDynamischeStamtabelVeld(veld) || DeltaUtil.isEntiteitReferentieVeld(eigenaar, veld)))
-                {
-                    final EntiteitSleutel sleutel = new EntiteitSleutel(rijInhoudSleutel, veld.getName());
-                    final Verschil verschil = verschillen.zoekVerschil(sleutel, VerschilType.NIEUWE_RIJ_ELEMENT_AANGEPAST);
-                    if (verschil != null) {
-                        veld.set(nieuweRijEntiteit, verschil.getNieuweWaarde());
-                    }
+            final VergelijkerResultaat verschillen,
+            final Entiteit nieuweRijEntiteit,
+            final Entiteit eigenaar,
+            final EntiteitSleutel rijToegevoegdSleutel) throws ReflectiveOperationException {
+        final EntiteitSleutel rijInhoudSleutel = AbstractTransformatie.maakRijInhoudSleutel(rijToegevoegdSleutel, nieuweRijEntiteit);
+        for (final Field veld : DeltaUtil.getDeclaredEntityFields(nieuweRijEntiteit.getClass())) {
+            veld.setAccessible(true);
+            if (!DeltaUtil.isSkipableVeld(veld, nieuweRijEntiteit, eigenaar, getSkippableEntiteiten())
+                    && (DeltaUtil.isWaardeVeld(veld) || DeltaUtil.isDynamischeStamtabelVeld(veld) || DeltaUtil.isEntiteitReferentieVeld(eigenaar, veld))) {
+                final EntiteitSleutel sleutel = new EntiteitSleutel(rijInhoudSleutel, veld.getName());
+                final Verschil verschil = verschillen.zoekVerschil(sleutel, VerschilType.NIEUWE_RIJ_ELEMENT_AANGEPAST);
+                if (verschil != null) {
+                    veld.set(nieuweRijEntiteit, verschil.getNieuweWaarde());
                 }
             }
         }
     }
 
     private void kopieerOnderzoekNaarNieuweRij(
-        final VergelijkerResultaat verschillen,
-        final DeltaEntiteit nieuweRijEntiteit,
-        final EntiteitSleutel rijToegevoegdSleutel)
-    {
-        if (nieuweRijEntiteit instanceof FormeleHistorie) {
-            final EntiteitSleutel rijInhoudSleutel = AbstractTransformatie.maakRijInhoudSleutel(rijToegevoegdSleutel, (FormeleHistorie) nieuweRijEntiteit);
-            final EntiteitSleutel gegevenInOnderzoekSleutel = new EntiteitSleutel(rijInhoudSleutel, AbstractDeltaEntiteit.GEGEVEN_IN_ONDERZOEK);
-            final Verschil verschil = verschillen.zoekVerschil(gegevenInOnderzoekSleutel, VerschilType.KOPIEER_ONDERZOEK_NAAR_NIEUWE_RIJ);
-            if (verschil != null) {
-                final Map<Element, GegevenInOnderzoek> gegevensInOnderzoek = verschil.getBestaandeHistorieRij().getGegevenInOnderzoekPerElementMap();
-                for (final GegevenInOnderzoek gegevenInOnderzoek : gegevensInOnderzoek.values()) {
-                    final Onderzoek onderzoek = gegevenInOnderzoek.getOnderzoek();
-                    final GegevenInOnderzoek kopieGegevenInOnderzoek = new GegevenInOnderzoek(onderzoek, gegevenInOnderzoek.getSoortGegeven());
-                    kopieGegevenInOnderzoek.setObjectOfVoorkomen(nieuweRijEntiteit);
-                    onderzoek.addGegevenInOnderzoek(kopieGegevenInOnderzoek);
-                }
+            final VergelijkerResultaat verschillen,
+            final Entiteit nieuweRijEntiteit,
+            final EntiteitSleutel rijToegevoegdSleutel) {
+        final EntiteitSleutel rijInhoudSleutel = AbstractTransformatie.maakRijInhoudSleutel(rijToegevoegdSleutel, nieuweRijEntiteit);
+        final EntiteitSleutel gegevenInOnderzoekSleutel = new EntiteitSleutel(rijInhoudSleutel, AbstractEntiteit.GEGEVEN_IN_ONDERZOEK);
+        final Verschil verschil = verschillen.zoekVerschil(gegevenInOnderzoekSleutel, VerschilType.KOPIEER_ONDERZOEK_NAAR_NIEUWE_RIJ);
+        if (verschil != null) {
+            final Map<Element, GegevenInOnderzoek> gegevensInOnderzoek = verschil.getBestaandeHistorieRij().getGegevenInOnderzoekPerElementMap();
+            for (final GegevenInOnderzoek gegevenInOnderzoek : gegevensInOnderzoek.values()) {
+                final Onderzoek onderzoek = gegevenInOnderzoek.getOnderzoek();
+                final GegevenInOnderzoek kopieGegevenInOnderzoek = new GegevenInOnderzoek(onderzoek, gegevenInOnderzoek.getSoortGegeven());
+                final GegevenInOnderzoekHistorie gegevenInOnderzoekHistorie =
+                        new GegevenInOnderzoekHistorie(kopieGegevenInOnderzoek, onderzoek.getOnderzoekHistorieSet().iterator().next().getActieInhoud());
+                kopieGegevenInOnderzoek.addGegevenInOnderzoekHistorie(gegevenInOnderzoekHistorie);
+                kopieGegevenInOnderzoek.setEntiteitOfVoorkomen(nieuweRijEntiteit);
+                onderzoek.addGegevenInOnderzoek(kopieGegevenInOnderzoek);
             }
         }
     }
 
     /**
      * Zet de nieuwe administratieve handeling op alle acties van collectie.
-     *
-     * @param entiteitCollectie
-     *            De collectie
-     * @param administratieveHandeling
-     *            De nieuwe administratieve handeling
+     * @param entiteitCollectie De collectie
+     * @param administratieveHandeling De nieuwe administratieve handeling
      */
     private void updateActiesVanCollectie(final Collection<?> entiteitCollectie, final AdministratieveHandeling administratieveHandeling)
-        throws IllegalAccessException
-    {
+            throws IllegalAccessException {
         for (final Object rij : entiteitCollectie) {
             updateActieVanRij(rij, administratieveHandeling);
         }
     }
 
     private void updateActieVanRij(final Object rij, final AdministratieveHandeling administratieveHandeling) throws IllegalAccessException {
-        final Object entiteitPojo = PersistenceUtil.getPojoFromObject(rij);
+        final Object entiteitPojo = Entiteit.convertToPojo(rij);
         final Class<?> entiteitClass = entiteitPojo.getClass();
 
         if (PersoonAfgeleidAdministratiefHistorie.class.isAssignableFrom(entiteitClass)) {
@@ -316,54 +274,31 @@ public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVer
     }
 
     private void voegRijToeAanLijst(final Object eigenaar, final Object rij, final AdministratieveHandeling administratieveHandeling)
-        throws ReflectiveOperationException
-    {
+            throws ReflectiveOperationException {
         if (rij instanceof ActieBron && eigenaar instanceof BRPActie) {
             voegActieBronToeAanBRPActie((BRPActie) eigenaar, (ActieBron) rij, administratieveHandeling);
         } else {
-            if (rij instanceof DocumentHistorie) {
-                final Document document = (Document) eigenaar;
-                final BRPActie actie = document.getBRPActieSet().iterator().next();
-                ((DocumentHistorie) rij).setActieInhoud(actie);
-            }
-
             updateActieVanRij(rij, administratieveHandeling);
             voegNormaleRijToeAanLijst(eigenaar, rij);
         }
     }
 
     // Deep copy
-    private void voegActieBronToeAanBRPActie(final BRPActie eigenaar, final ActieBron rij, final AdministratieveHandeling administratieveHandeling)
-        throws ReflectiveOperationException
-    {
+    private void voegActieBronToeAanBRPActie(final BRPActie eigenaar, final ActieBron rij, final AdministratieveHandeling administratieveHandeling) {
         final ActieBron kopieActieBron = new ActieBron(eigenaar);
 
         final Document document = rij.getDocument();
         if (document != null) {
-            final Document kopieDocument = new Document(document.getSoortDocument());
+            final Document kopieDocument = new Document(document.getSoortDocument(), document.getPartij());
             kopieDocument.setAktenummer(document.getAktenummer());
-            kopieDocument.setIdentificatie(document.getIdentificatie());
             kopieDocument.setOmschrijving(document.getOmschrijving());
             kopieDocument.setPartij(document.getPartij());
-
-            for (final DocumentHistorie documentHistorie : document.getDocumentHistorieSet()) {
-                final DocumentHistorie kopieDocumentHistorie = new DocumentHistorie(kopieDocument, kopieDocument.getPartij());
-                kopieDocumentHistorie.setActieInhoud(eigenaar);
-                kopieDocumentHistorie.setAktenummer(documentHistorie.getAktenummer());
-                kopieDocumentHistorie.setDatumTijdRegistratie(documentHistorie.getDatumTijdRegistratie());
-                kopieDocumentHistorie.setDatumTijdVerval(documentHistorie.getDatumTijdVerval());
-                kopieDocumentHistorie.setIdentificatie(documentHistorie.getIdentificatie());
-                kopieDocumentHistorie.setNadereAanduidingVerval(documentHistorie.getNadereAanduidingVerval());
-                kopieDocumentHistorie.setOmschrijving(documentHistorie.getOmschrijving());
-
-                kopieDocument.addDocumentHistorie(kopieDocumentHistorie);
-            }
             kopieActieBron.setDocument(kopieDocument);
         }
 
         final Rechtsgrond rechtsgrond = rij.getRechtsgrond();
         if (rechtsgrond != null) {
-            final Rechtsgrond kopieRechtsgrond = new Rechtsgrond(rechtsgrond.getCode(), rechtsgrond.getSoortRechtsgrond(), rechtsgrond.getOmschrijving());
+            final Rechtsgrond kopieRechtsgrond = new Rechtsgrond(rechtsgrond.getCode(), rechtsgrond.getOmschrijving());
             kopieRechtsgrond.setDatumAanvangGeldigheid(rechtsgrond.getDatumAanvangGeldigheid());
             kopieRechtsgrond.setDatumEindeGeldigheid(rechtsgrond.getDatumEindeGeldigheid());
 
@@ -405,8 +340,6 @@ public abstract class AbstractDeltaVerschilVerwerker implements DeltaVerschilVer
             historieGroepKlasse = sleutel.getEigenaarSleutel().getEigenaarSleutel().getEntiteit();
         } else if (Document.class.equals(sleutel.getEntiteit())) {
             historieGroepKlasse = sleutel.getEigenaarSleutel().getEigenaarSleutel().getEigenaarSleutel().getEntiteit();
-        } else if (DocumentHistorie.class.equals(sleutel.getEntiteit())) {
-            historieGroepKlasse = sleutel.getEigenaarSleutel().getEigenaarSleutel().getEigenaarSleutel().getEigenaarSleutel().getEntiteit();
         } else {
             historieGroepKlasse = sleutel.getEntiteit();
         }

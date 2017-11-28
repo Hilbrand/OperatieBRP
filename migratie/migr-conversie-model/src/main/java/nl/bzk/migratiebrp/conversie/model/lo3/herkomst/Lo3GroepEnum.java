@@ -163,6 +163,10 @@ public enum Lo3GroepEnum {
      */
     GROEP72,
     /**
+     * Buitenlands persoonsnummer.
+     */
+    GROEP73,
+    /**
      * Documentindicatie.
      */
     GROEP75,
@@ -201,7 +205,11 @@ public enum Lo3GroepEnum {
     /**
      * RNI-deelnemer.
      */
-    GROEP88;
+    GROEP88,
+    /**
+     * Autorisatietabel.
+     */
+    GROEP95;
 
     private static final String GROEP_PREFIX = "GROEP";
 
@@ -213,25 +221,10 @@ public enum Lo3GroepEnum {
 
     /**
      * Geef de waarde van groep as int.
-     *
      * @return Het groepnummmer als een int.
      */
     public int getGroepAsInt() {
         final int startCodeIndex = GROEP_PREFIX.length();
         return Integer.parseInt(name().substring(startCodeIndex));
-    }
-
-    /**
-     * @param groep
-     *            de groep nummer
-     * @return de corresponderende LO3 groep
-     */
-    public static Lo3GroepEnum getLo3Groep(final String groep) {
-        try {
-            return Lo3GroepEnum.valueOf(GROEP_PREFIX + groep);
-        } catch (final IllegalArgumentException iae) {
-            // Waarde niet gevonden in de enumeratie
-            return null;
-        }
     }
 }

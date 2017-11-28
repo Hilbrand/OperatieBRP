@@ -17,9 +17,9 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
  */
 public class TussenTestUtil {
 
-    public static TussenStapel<? extends BrpGroepInhoud> createTussenStapel(final BrpGroepInhoud inh,final Lo3Herkomst her){
-        Lo3Historie his = new Lo3Historie(null,new Lo3Datum(20010101),new Lo3Datum(20010101));
-        TussenGroep<BrpGroepInhoud> tussenGroep = new TussenGroep<>(inh, his,null,her);
+    public static TussenStapel<? extends BrpGroepInhoud> createTussenStapel(final BrpGroepInhoud inh, final Lo3Herkomst her) {
+        Lo3Historie his = new Lo3Historie(null, new Lo3Datum(20010101), new Lo3Datum(20010101));
+        TussenGroep<BrpGroepInhoud> tussenGroep = new TussenGroep<>(inh, his, null, her);
         List<TussenGroep<BrpGroepInhoud>> groepen = new ArrayList<>();
         groepen.add(tussenGroep);
         return new TussenStapel<>(groepen);

@@ -41,14 +41,13 @@ angular.module("json-toon", [])
     };
 }])
 
-.directive("jsonToon", ['$window', '$location', 'RecursionHelper', '$sce', function ($window, $location, RecursionHelper, $sce) {
-        //console.log("json display directive");
+.directive("jsonToon", ['$window', '$location', 'RecursionHelper', '$sce', 'context', function ($window, $location, RecursionHelper, $sce, context) {
         var templateString =
         '<div ng-repeat="sleutel in sleutels(gegevens)" ng-init="waarde = gegevens[sleutel]"> ' +
         '    <div ng-if="isObject(waarde)">' +
         '        <div class="panel panel-default jtsmall">' +
         '            <div class="panel-heading jtsmall">' +
-        '                <a class="jtsmall collasped" data-toggle="collapse" data-target="{{\'#objectWeergave\' + waarde.$indexObject}}" aria-expanded="false" aria-controls="{{\'#objectWeergave\' + waarde.$indexObject}}">{{sleutel}}</a>'+
+        '                <a class="jtsmall collapsed" data-toggle="collapse" data-target="{{\'#objectWeergave\' + waarde.$indexObject}}" aria-expanded="false" aria-controls="{{\'#objectWeergave\' + waarde.$indexObject}}">{{sleutel}}</a>'+
         '            </div>' +
         '            <div class="collapse" id="{{\'objectWeergave\' + waarde.$indexObject}}">' +
         '                <div class="panel-body">' +
@@ -70,26 +69,29 @@ angular.module("json-toon", [])
         '    <div ng-if="isTabel(waarde)">' +
         '        <div class="panel panel-default jtsmall">' +
         '            <div class="panel-heading jtsmall">' +
-        '                <a class="jtsmall collasped" ng-if="waarde.$type === \'tabel\'" data-toggle="collapse" data-target="{{\'#objectWeergave\' + waarde.$indexObject}}" aria-expanded="false" aria-controls="{{\'#objectWeergave\' + waarde.$indexObject}}">{{sleutel}}</a>'+
+        '                <a class="jtsmall collapsed" ng-if="waarde.$type === \'tabel\'" data-toggle="collapse" data-target="{{\'#objectWeergave\' + waarde.$indexObject}}" aria-expanded="false" aria-controls="{{\'#objectWeergave\' + waarde.$indexObject}}">{{sleutel}}</a>'+
         '                <label ng-if="waarde.$type === \'tabelGroep\'">{{sleutel}}</label>' +
         '            </div>' +
         '        </div>' +
         '        <div class="{{waarde.$type === \'tabel\' ? \'collapse\' : \'\'}}" id="{{\'objectWeergave\' + waarde.$indexObject}}">' +
         '            <div class="panel-body">' +
-        '                <table class="table table-bordered table-striped table-condensed">' +   
+        '                <table class="table table-bordered table-striped table-condensed">' +
         '                    <thead>' +
         '                        <tr>' +
         '                            <th ng-repeat="titel in waarde.kolomtitels track by $index" ng-if="toonSleutel(titel)"><span>{{titel}}</span></th>' +
         '                            <th ng-if="waarde.kolomtitels.indexOf(\'$detail\') > -1"></th>' +
         '                        </tr>' +
         '                    </thead>' +
-        '                    <tbody>' + 
+        '                    <tbody>' +
         '                        <tr class="{{record.$css}}" ng-repeat-start="record in waarde.data track by $index">' +
         '                            <td ng-repeat="titel in waarde.kolomtitels track by $index" ng-if="toonSleutel(titel)">' +
-        '                                <span ng-switch="record[titel].$type">' + 
+        '                                <span ng-switch="record[titel].$type">' +
         '                                    <span ng-switch-when="cssLink">' +
         '                                        <a ng-click="markeerClass(record[titel].link)">{{record[titel].linkTekst}}</a>' +
         '                                    </span>' +
+        '				                     <span ng-switch-when="link">' +
+        '               				         <a href="{{linkWaardeBuitenDetail(record[titel].link, record[titel].linkId)}}">{{record[titel].linkTekst}}</a>' +
+        '   				                 </span>' +
         '                                    <span ng-switch-default>' +
         '                                        {{toonVeldwaarde(record[titel])}}' +
         '                                    </span>' +
@@ -101,7 +103,7 @@ angular.module("json-toon", [])
         '                            <td colspan="100%"><span><json-toon gegevens="record.$detail"></span></json-toon></td>' +
         '                        </tr>' +
         '                    </tbody>' +
-        '                </table>' + 
+        '                </table>' +
         '            </div>' +
         '        </div>' +
         '    </div>' +
@@ -144,7 +146,7 @@ angular.module("json-toon", [])
         '        <div ng-if="toonSleutel(sleutel)">' +
         '            <div class="row"> ' +
         '                <div class="col-xs-12 col-sm-3 col-md-2"><label>{{sleutel}}</label></div> ' +
-        '                <span ng-switch="waarde.$type">' + 
+        '                <span ng-switch="waarde.$type">' +
         '                    <span ng-switch-when="cssLink">' +
         '                        <div class="col-xs-12 col-sm-9 col-md-10"><a ng-click="markeerClass(waarde.link)">{{waarde.linkTekst}}</a></div>' +
         '                    </span>' +
@@ -168,8 +170,7 @@ angular.module("json-toon", [])
             template: templateString,
             compile: function(element) {
 
-                return RecursionHelper.compile(element, function (scope, element, attrs) {
-                    var niets = "";
+                return RecursionHelper.compile(element, function (scope) {
                     scope.sleutels = function(obj) {
                         if (obj instanceof Object) {
                             return Object.keys(obj);
@@ -189,7 +190,7 @@ angular.module("json-toon", [])
                     scope.isArray = function(obj) {
                         return ((obj instanceof Array) && (obj.length === 0 || !scope.isGroep(obj[0])));
                     };
-                    
+
                     scope.isGroepArray = function(obj) {
                         return ((obj instanceof Array) && obj.length > 0 && scope.isGroep(obj[0]));
                     };
@@ -199,7 +200,7 @@ angular.module("json-toon", [])
                     };
 
                     scope.toonSleutel = function(sleutel) {
-                        return sleutel.indexOf('$') == -1;
+                        return sleutel.indexOf('$') === -1;
                     };
 
                     scope.toonVeldwaarde = function(waarde) {
@@ -211,21 +212,35 @@ angular.module("json-toon", [])
                     };
 
                     scope.isLinkVeld = function(waarde) {
-                        return (waarde instanceof Object && !(waarde instanceof Array) && waarde.$type === 'cssLink');
+                        return (waarde instanceof Object && !(waarde instanceof Array) && (waarde.$type === 'cssLink' || waarde.$type === 'link'));
                     };
 
-                    scope.klapAllesIn = function() {
+                    scope.verzamelInteklappenElementen = function() {
+                        var resultaat = [];
                         // collapse in verwijderen om alles in te klappen
                         var inElementen = angular.element(".in");
                         angular.forEach(inElementen, function(element) {
-                            console.log(element);
                             var angElement = angular.element(element);
-                            angElement.removeClass("in");
+                            var child = angElement.parent().children()[0].children[0].children[0];
+                            if (resultaat.indexOf(child) === -1) {
+                                resultaat.push(child);
+                            }
+                        });
+                        return resultaat;
+                    };
+
+                    scope.klapAllesIn = function() {
+                        angular.forEach(scope.verzamelInteklappenElementen(), function(element) {
+                            var childElement = angular.element(element);
+                            childElement.trigger("click");
                         });
                     };
 
                     scope.markeerClass = function(cssClass) {
-                        scope.klapAllesIn();
+                        // Reeds uitgeklapte elementen
+                        var uitgeklapteElementen = scope.verzamelInteklappenElementen();
+                        // Nieuw uit te klappen elementen
+                        var aanTeKlikkenElementen = [];
 
                         // verwijder eerdere markeringen
                         var oudeElementen = angular.element(".brp-markeer-on");
@@ -234,21 +249,48 @@ angular.module("json-toon", [])
                             angElement.removeClass("brp-markeer-on");
                         });
 
-                        // plaats nieuwe markeringen
-                        if (cssClass && cssClass !== "") { 
+                        // plaats nieuwe markeringen en verzamel uit te klappen elementen
+                        if (cssClass && cssClass !== "") {
                             var zoekClass = '.' + cssClass;
                             var elementen = angular.element(zoekClass);
                             angular.forEach(elementen, function(element) {
                                 var angElement = angular.element(element);
                                 angElement.addClass("brp-markeer-on");
-                                angElement.parent().parent().parent().parent().addClass("in");
+                                var parent = angElement.parent().parent().parent().parent();
+                                var child = parent.parent().children()[0].children[0].children[0];
+                                if (aanTeKlikkenElementen.indexOf(child) === -1) {
+                                    aanTeKlikkenElementen.push(child);
+                                }
                             });
                         }
+
+                        // Onterecht uigeklapte elementen weer inklappen
+                        angular.forEach(uitgeklapteElementen.filter(function(el) {
+                            return aanTeKlikkenElementen.indexOf(el) === -1;
+                        }), function(element) {
+                            var childElement = angular.element(element);
+                            childElement.trigger("click");
+                        });
+
+                        // Nog ingeklapte elementen uit klappen
+                        angular.forEach(aanTeKlikkenElementen.filter(function(el) {
+                            return uitgeklapteElementen.indexOf(el) === -1;
+                        }), function(element) {
+                            var childElement = angular.element(element);
+                            childElement.trigger("click");
+                        });
                         $window.scrollTo(0,0);
                     };
 
                     scope.linkWaarde = function(idWaarde) {
                         return $window.location.pathname + '#' + $location.path() + '/' + idWaarde;
+                    };
+
+                    scope.linkWaardeBuitenDetail = function(link, linkId) {
+                    	if(context.vorig[linkId] === undefined) {
+                	    context.vorig[linkId]=$location.path() + '/' + context.params.id;
+	                }
+                    	return $window.location.pathname + '#/' + link + '?refid=' + linkId;
                     };
                 });
             }

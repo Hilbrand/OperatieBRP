@@ -14,9 +14,7 @@ public final class TestNokException extends TestException {
 
     /**
      * Constructor.
-     *
-     * @param message
-     *            melding
+     * @param message melding
      */
     public TestNokException(final String message) {
         super(message);
@@ -24,11 +22,8 @@ public final class TestNokException extends TestException {
 
     /**
      * Constructor.
-     *
-     * @param message
-     *            melding
-     * @param cause
-     *            oorzaak
+     * @param message melding
+     * @param cause oorzaak
      */
     public TestNokException(final String message, final Throwable cause) {
         super(message, cause);

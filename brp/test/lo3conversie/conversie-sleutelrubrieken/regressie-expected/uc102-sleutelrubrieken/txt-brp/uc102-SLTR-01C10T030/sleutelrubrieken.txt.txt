@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [samengestelde_naam.adellijke_titel]) OF GEWIJZIGD(oud, nieuw, [samengestelde_naam.predicaat])
+GEWIJZIGD(oud, nieuw, [Persoon.SamengesteldeNaam.AdellijkeTitelCode]) OF GEWIJZIGD(oud, nieuw, [Persoon.SamengesteldeNaam.PredicaatCode])

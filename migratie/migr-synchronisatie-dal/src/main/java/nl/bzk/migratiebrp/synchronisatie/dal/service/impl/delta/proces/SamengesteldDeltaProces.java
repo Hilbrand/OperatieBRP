@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.proces;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 
 /**
@@ -22,9 +21,7 @@ public final class SamengesteldDeltaProces implements DeltaProces {
 
     /**
      * Maakt een nieuw SamengesteldDeltaProces object.
-     *
-     * @param deltaProcessen
-     *            de processen die moeten worden toegevoegd aan dit samengestelde delta proces
+     * @param deltaProcessen de processen die moeten worden toegevoegd aan dit samengestelde delta proces
      */
     private SamengesteldDeltaProces(final List<DeltaProces> deltaProcessen) {
         this.deltaProcessen = new ArrayList<>(deltaProcessen);
@@ -32,12 +29,12 @@ public final class SamengesteldDeltaProces implements DeltaProces {
 
     /**
      * Maakt een SamengesteldDeltaProces object die alle soorten delta processen bevat.
-     *
      * @return een samengesteld delta process met daarin alle soorten processen
      */
     public static SamengesteldDeltaProces newInstanceMetAlleProcessen() {
         final List<DeltaProces> deltaProcessen = new ArrayList<>();
-        // Onderzoekproces moet altijd als eerst gedaan worden ivm mogelijk herkoppelen van onderzoek aan een andere (historisch) entiteit.
+        // Onderzoekproces moet altijd als eerst gedaan worden ivm mogelijk herkoppelen van onderzoek aan een andere
+        // (historisch) entiteit.
         deltaProcessen.add(new OnderzoekDeltaProces());
         deltaProcessen.add(new DeltaRootEntiteitenProces());
         deltaProcessen.add(new ActieConsolidatieProces());
@@ -56,8 +53,14 @@ public final class SamengesteldDeltaProces implements DeltaProces {
 
     @Override
     public void verwerkVerschillen(final DeltaBepalingContext context) {
-        for (final DeltaProces deltaProces : deltaProcessen) {
-            deltaProces.verwerkVerschillen(context);
+        if (context.heeftPersoonWijzigingen()) {
+            for (final DeltaProces deltaProces : deltaProcessen) {
+                deltaProces.verwerkVerschillen(context);
+            }
+        } else {
+            new OnderzoekDeltaProces().verwerkVerschillen(context);
+            new LoggingDeltaProces().verwerkVerschillen(context);
+            new AfgeleidAdministratiefDeltaProces().verwerkVerschillen(context);
         }
     }
 }

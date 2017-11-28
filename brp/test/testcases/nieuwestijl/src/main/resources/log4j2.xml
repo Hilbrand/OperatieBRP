@@ -5,6 +5,8 @@
             <PatternLayout pattern="%d{HH:mm:ss} %-5level %logger{1.} - %msg%n"/>
         </Console>
 
+        <LoggingProcessorAppender name="LoggingProcessor" />
+
         <RollingFile name="Systeem" fileName="target/logs/brp-systeem.log"
                      filePattern="target/logs/brp-systeem-%d{MM-dd-yyyy}.log.gz">
             <MarkerFilter marker="FUNCTIONELE_LOG" onMatch="DENY" onMismatch="ACCEPT"/>
@@ -19,6 +21,7 @@
         <Root level="INFO">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="Systeem"/>
+            <AppenderRef ref="LoggingProcessor"/>
         </Root>
         <logger name="nl.bzk.brp" level="DEBUG"/>
         <logger name="org.hibernate" level="INFO"/>

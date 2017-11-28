@@ -7,10 +7,11 @@
 package nl.bzk.migratiebrp.conversie.model.brp;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoudTest;
-
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoudTestUtil;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoudTest;
 import org.junit.Test;
 
 public class BrpGroepTest {
@@ -22,12 +23,17 @@ public class BrpGroepTest {
 
     @Test(expected = NullPointerException.class)
     public void testConstructorHistoryNull() {
-        new BrpGroep<>(BrpDocumentInhoudTest.createInhoud(), null, null, null, null);
+        new BrpGroep<>(BrpOverlijdenInhoudTest.createInhoud(), null, null, null, null);
+    }
+
+    @Test
+    public void testConstructorHistoryNullDocumentOK() {
+        assertNotNull(new BrpGroep<>(BrpDocumentInhoudTestUtil.createInhoud(), null, null, null, null));
     }
 
     @Test
     public void testEquals() {
-        BrpGroep groep1 = new BrpGroep<>(BrpDocumentInhoudTest.createInhoud(), BrpHistorieTest.createdefaultInhoud(), null, null, null);
+        BrpGroep groep1 = new BrpGroep<>(BrpDocumentInhoudTestUtil.createInhoud(), BrpHistorieTest.createdefaultInhoud(), null, null, null);
         assertTrue(groep1.equals(returnZelfde(groep1)));
         assertFalse(groep1.equals(returnZelfde(groep1).getHistorie()));
     }

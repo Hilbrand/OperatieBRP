@@ -6,14 +6,14 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
-
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
@@ -23,15 +23,14 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de LO3 categorieen onderzoek.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
-public final class Lo3Onderzoek {
+public final class Lo3Onderzoek implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private static final int TWEE_CIJFERS = 100;
 
@@ -42,9 +41,7 @@ public final class Lo3Onderzoek {
      * onderzoek gezet kan worden.
      */
     private static final Set<Lo3GroepEnum> ALGEMENE_GROEPEN =
-            new HashSet<>(
-                Arrays.asList(
-                    Lo3GroepEnum.GROEP01,
+            EnumSet.of(Lo3GroepEnum.GROEP01,
                     Lo3GroepEnum.GROEP02,
                     Lo3GroepEnum.GROEP03,
                     Lo3GroepEnum.GROEP04,
@@ -69,16 +66,17 @@ public final class Lo3Onderzoek {
                     Lo3GroepEnum.GROEP63,
                     Lo3GroepEnum.GROEP64,
                     Lo3GroepEnum.GROEP65,
-                    Lo3GroepEnum.GROEP85));
+                    Lo3GroepEnum.GROEP73,
+                    Lo3GroepEnum.GROEP85);
 
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_8310)
-    @Element(name = "aanduidingGegevensInOnderzoek", required = false)
+    @Element(name = "aanduidingGegevensInOnderzoek")
     private final Lo3Integer aanduidingGegevensInOnderzoek;
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_8320)
-    @Element(name = "datumIngangOnderzoek", required = false)
+    @Element(name = "datumIngangOnderzoek")
     private final Lo3Datum datumIngangOnderzoek;
     @Lo3Elementnummer(Lo3ElementEnum.ELEMENT_8330)
-    @Element(name = "datumEindeOnderzoek", required = false)
+    @Element(name = "datumEindeOnderzoek")
     private final Lo3Datum datumEindeOnderzoek;
     // Herkomst wordt alleen gebruikt tbv Bijzondere situatie LB039.
     private final Lo3Herkomst lo3Herkomst;
@@ -92,62 +90,45 @@ public final class Lo3Onderzoek {
 
     /**
      * Maakt een Lo3Onderzoek object.
-     * 
-     * @param gegevensInOnderzoek
-     *            83.10 aanduiding gegevens in onderzoek
-     * @param datumIngang
-     *            83.20 datum ingang onderzoek
-     * @param datumEinde
-     *            83.10 datum einde onderzoek
+     * @param gegevensInOnderzoek 83.10 aanduiding gegevens in onderzoek
+     * @param datumIngang 83.20 datum ingang onderzoek
+     * @param datumEinde 83.10 datum einde onderzoek
      */
     public Lo3Onderzoek(
-        @Element(name = "aanduidingGegevensInOnderzoek", required = false) final Lo3Integer gegevensInOnderzoek,
-        @Element(name = "datumIngangOnderzoek", required = false) final Lo3Datum datumIngang,
-        @Element(name = "datumEindeOnderzoek", required = false) final Lo3Datum datumEinde)
-    {
+            @Element(name = "aanduidingGegevensInOnderzoek") final Lo3Integer gegevensInOnderzoek,
+            @Element(name = "datumIngangOnderzoek") final Lo3Datum datumIngang,
+            @Element(name = "datumEindeOnderzoek") final Lo3Datum datumEinde) {
         this(gegevensInOnderzoek, datumIngang, datumEinde, null);
     }
 
     /**
      * Maakt een Lo3Onderzoek object.
-     * 
-     * @param gegevensInOnderzoek
-     *            83.10 aanduiding gegevens in onderzoek
-     * @param datumIngang
-     *            83.20 datum ingang onderzoek
-     * @param datumEinde
-     *            83.10 datum einde onderzoek
-     * @param herkomst
-     *            herkomst van dit onderzoek
+     * @param gegevensInOnderzoek 83.10 aanduiding gegevens in onderzoek
+     * @param datumIngang 83.20 datum ingang onderzoek
+     * @param datumEinde 83.10 datum einde onderzoek
+     * @param herkomst herkomst van dit onderzoek
      */
     public Lo3Onderzoek(final Lo3Integer gegevensInOnderzoek, final Lo3Datum datumIngang, final Lo3Datum datumEinde, final Lo3Herkomst herkomst) {
-        this.aanduidingGegevensInOnderzoek = gegevensInOnderzoek;
-        this.datumIngangOnderzoek = datumIngang;
-        this.datumEindeOnderzoek = datumEinde;
-        this.lo3Herkomst = herkomst;
+        aanduidingGegevensInOnderzoek = gegevensInOnderzoek;
+        datumIngangOnderzoek = datumIngang;
+        datumEindeOnderzoek = datumEinde;
+        lo3Herkomst = herkomst;
     }
 
     /**
      * Maak een Lo3Onderzoek, indien nodig.
-     * 
-     * @param aanduidingGegevensInOnderzoek
-     *            83.10 aanduiding gegevens in onderzoek
-     * @param datumIngangOnderzoek
-     *            83.20 datum ingang onderzoek
-     * @param datumEindeOnderzoek
-     *            83.10 datum einde onderzoek
-     * @param lo3Herkomst
-     *            herkomst van dit onderzoek
-     * 
+     * @param aanduidingGegevensInOnderzoek 83.10 aanduiding gegevens in onderzoek
+     * @param datumIngangOnderzoek 83.20 datum ingang onderzoek
+     * @param datumEindeOnderzoek 83.10 datum einde onderzoek
+     * @param lo3Herkomst herkomst van dit onderzoek
      * @return een nieuwe Lo3Onderzoek, null als alle velden leeg zijn
      */
     public static Lo3Onderzoek build(
-        final Lo3Integer aanduidingGegevensInOnderzoek,
-        final Lo3Datum datumIngangOnderzoek,
-        final Lo3Datum datumEindeOnderzoek,
-        final Lo3Herkomst lo3Herkomst)
-    {
-        if (Validatie.isEenParameterGevuld(aanduidingGegevensInOnderzoek, datumIngangOnderzoek, datumEindeOnderzoek)) {
+            final Lo3Integer aanduidingGegevensInOnderzoek,
+            final Lo3Datum datumIngangOnderzoek,
+            final Lo3Datum datumEindeOnderzoek,
+            final Lo3Herkomst lo3Herkomst) {
+        if (Lo3Validatie.isEenParameterGevuld(aanduidingGegevensInOnderzoek, datumIngangOnderzoek, datumEindeOnderzoek)) {
             return new Lo3Onderzoek(aanduidingGegevensInOnderzoek, datumIngangOnderzoek, datumEindeOnderzoek, lo3Herkomst);
         } else {
             return null;
@@ -155,11 +136,9 @@ public final class Lo3Onderzoek {
     }
 
     /**
-     * Bepaal welk onderzoek uit een verzameling met onderzoeken met meest relevant is. Het resultaat is altijd één van
+     * Bepaal welk onderzoek uit een verzameling met onderzoeken het meest relevant is. Het resultaat is altijd één van
      * de onderzoeken in de invoer. Er vindt geen aanpassing plaats aan de GegevensInOnderzoek waarde van het resultaat.
-     *
-     * @param onderzoeken
-     *            de verzameling onderzoeken.
+     * @param onderzoeken de verzameling onderzoeken.
      * @return het meest relevante onderzoek uit de verzameling.
      */
     public static Lo3Onderzoek bepaalRelevantOnderzoek(final Collection<Lo3Onderzoek> onderzoeken) {
@@ -174,27 +153,16 @@ public final class Lo3Onderzoek {
         Lo3Onderzoek resultaat = null;
 
         for (final Lo3Onderzoek onderzoek : nietNullOnderzoeken) {
-            if (bevatLopendOnderzoek && Validatie.isElementGevuld(onderzoek.getDatumEindeOnderzoek())) {
-                // Als er een lopend onderzoek is dan worden afgesloten onderzoeken niet meegenomen
-                continue;
-            }
-
-            if (resultaat == null) {
-                resultaat = onderzoek;
-                continue;
-            }
-            if (bevatLopendOnderzoek) {
-                if (onderzoek.getDatumIngangOnderzoek().maximaliseerOnbekendeDatum().getIntegerWaarde() > resultaat.getDatumIngangOnderzoek()
-                                                                                                                   .getIntegerWaarde())
-                {
+            if (!bevatLopendOnderzoek || !Lo3Validatie.isElementGevuld(onderzoek.getDatumEindeOnderzoek())) {
+                if (resultaat == null) {
                     resultaat = onderzoek;
-                }
-            } else {
-                // Er zijn geen lopende onderzoeken, dus datum einde is altijd gevuld
-                if (onderzoek.getDatumEindeOnderzoek().maximaliseerOnbekendeDatum().getIntegerWaarde() > resultaat.getDatumEindeOnderzoek()
-                                                                                                                  .getIntegerWaarde())
-                {
-                    resultaat = onderzoek;
+                } else if (bevatLopendOnderzoek) {
+                    resultaat = onderzoek.getDatumIngangOnderzoek().maximaliseerOnbekendeDatum() > resultaat.getDatumIngangOnderzoek()
+                            .getIntegerWaarde() ? onderzoek : resultaat;
+                } else {
+                    // Er zijn geen lopende onderzoeken, dus datum einde is altijd gevuld
+                    resultaat = onderzoek.getDatumEindeOnderzoek().maximaliseerOnbekendeDatum() > resultaat.getDatumEindeOnderzoek()
+                            .getIntegerWaarde() ? onderzoek : resultaat;
                 }
             }
         }
@@ -218,12 +186,8 @@ public final class Lo3Onderzoek {
      * Consolideer verschillende onderzoeken tot 1 onderzoek. De GegevensInOnderzoek aanduidingen worden samengevoegd
      * tot 1 aanduiding in het resultaat. Voor het bepalen van de begin- end einddatum van het resultaat wordt gebruik
      * gemaakt van <code>bepaalRelevantOnderzoek()</code>.
-     *
-     * @param onderzoeken
-     *            de verzameling onderzoeken.
-     * @param categorie
-     *            de categorie code die voor het resultaat wordt gebruikt. Wordt genegeerd als er maar 1 onderzoek in de
-     *            verzameling onderzoeken zit.
+     * @param onderzoeken de verzameling onderzoeken.
+     * @param categorie de categorie code die voor het resultaat wordt gebruikt. Wordt genegeerd als er maar 1 onderzoek in de verzameling onderzoeken zit.
      * @return het meest relevante onderzoek uit de verzameling.
      */
     public static Lo3Onderzoek consolideerOnderzoeken(final Collection<Lo3Onderzoek> onderzoeken, final Lo3CategorieEnum categorie) {
@@ -231,8 +195,7 @@ public final class Lo3Onderzoek {
             return null;
         }
 
-        Lo3Onderzoek resultaat = null;
-
+        final Lo3Onderzoek resultaat;
         if (onderzoeken.size() == 1) {
             resultaat = onderzoeken.iterator().next();
         } else {
@@ -278,9 +241,9 @@ public final class Lo3Onderzoek {
 
             resultaat =
                     new Lo3Onderzoek(
-                        new Lo3Integer(elementCode, null),
-                        onderzoekMetadata.getDatumIngangOnderzoek(),
-                        onderzoekMetadata.getDatumEindeOnderzoek());
+                            new Lo3Integer(elementCode, null),
+                            onderzoekMetadata.getDatumIngangOnderzoek(),
+                            onderzoekMetadata.getDatumEindeOnderzoek());
         }
         return resultaat;
     }
@@ -303,7 +266,6 @@ public final class Lo3Onderzoek {
 
     /**
      * Geef de waarde van aanduiding gegevens in onderzoek.
-     *
      * @return aanduiding gegevens in onderzoek
      */
     public Lo3Integer getAanduidingGegevensInOnderzoek() {
@@ -312,7 +274,6 @@ public final class Lo3Onderzoek {
 
     /**
      * Geef de waarde van aanduiding gegevens in onderzoek code.
-     *
      * @return aanduiding gegevens in onderzoek in code vorm zoals opgeslagen in de LO3 PL.
      */
     public String getAanduidingGegevensInOnderzoekCode() {
@@ -324,7 +285,6 @@ public final class Lo3Onderzoek {
 
     /**
      * Geef de waarde van datum ingang onderzoek.
-     *
      * @return datum ingang onderzoek
      */
     public Lo3Datum getDatumIngangOnderzoek() {
@@ -333,7 +293,6 @@ public final class Lo3Onderzoek {
 
     /**
      * Geef de waarde van datum einde onderzoek.
-     *
      * @return datum einde onderzoek
      */
     public Lo3Datum getDatumEindeOnderzoek() {
@@ -342,7 +301,6 @@ public final class Lo3Onderzoek {
 
     /**
      * Geef de waarde van lo3 herkomst.
-     *
      * @return de LO3 herkomst waar dit onderzoek toe behoord.
      */
     public Lo3Herkomst getLo3Herkomst() {
@@ -351,19 +309,14 @@ public final class Lo3Onderzoek {
 
     /**
      * Bepaal of dit onderzoek betrekking heeft op het gegeven element in de gegeven categorie.
-     *
-     * @param element
-     *            Het element
-     * @param categorie
-     *            De categorie
+     * @param element Het element
+     * @param categorie De categorie
      * @return Heeft het onderzoek betrekking op het gegeven element in de gegeven categorie.
      */
     public boolean omvatElementInCategorie(final Lo3ElementEnum element, final Lo3CategorieEnum categorie) {
         final boolean resultaat;
 
-        if (aanduidingGegevensInOnderzoek == null || !aanduidingGegevensInOnderzoek.isInhoudelijkGevuld()) {
-            resultaat = false;
-        } else if (magAnummerNietInOnderzoek(element, categorie)) {
+        if (aanduidingGegevensInOnderzoek == null || !aanduidingGegevensInOnderzoek.isInhoudelijkGevuld() || magAnummerNietInOnderzoek(element, categorie)) {
             resultaat = false;
         } else {
             final int onderzoekCategorie = getOnderzoekCategorienummer();
@@ -389,21 +342,20 @@ public final class Lo3Onderzoek {
 
     private boolean categorieKomtOvereen(final Lo3CategorieEnum categorie, final int onderzoekCategorie) {
         return onderzoekCategorie == categorie.getCategorieAsInt()
-               || onderzoekCategorie == Lo3CategorieEnum.bepaalActueleCategorie(categorie).getCategorieAsInt();
+                || onderzoekCategorie == Lo3CategorieEnum.bepaalActueleCategorie(categorie).getCategorieAsInt();
     }
 
     private boolean magAnummerNietInOnderzoek(final Lo3ElementEnum element, final Lo3CategorieEnum categorie) {
         final boolean persoonOfVerwijsCat =
                 categorie.equals(Lo3CategorieEnum.CATEGORIE_01)
-                                            || categorie.equals(Lo3CategorieEnum.CATEGORIE_51)
-                                            || categorie.equals(Lo3CategorieEnum.CATEGORIE_21)
-                                            || categorie.equals(Lo3CategorieEnum.CATEGORIE_71);
+                        || categorie.equals(Lo3CategorieEnum.CATEGORIE_51)
+                        || categorie.equals(Lo3CategorieEnum.CATEGORIE_21)
+                        || categorie.equals(Lo3CategorieEnum.CATEGORIE_71);
         return element.equals(Lo3ElementEnum.ANUMMER) && persoonOfVerwijsCat;
     }
 
     /**
      * Geef het elementnummer van de Aanduiding Gegevens In Onderzoek.
-     *
      * @return het elementnummer van de Aanduiding Gegevens In Onderzoek.
      */
     public int getOnderzoekElementnummer() {
@@ -412,7 +364,6 @@ public final class Lo3Onderzoek {
 
     /**
      * Geef het groepnummer van de Aanduiding Gegevens In Onderzoek.
-     *
      * @return het groepnummer van de Aanduiding Gegevens In Onderzoek.
      */
     public int getOnderzoekGroepnummer() {
@@ -421,7 +372,6 @@ public final class Lo3Onderzoek {
 
     /**
      * Geef het categorienummer van de Aanduiding Gegevens In Onderzoek.
-     *
      * @return het categorienummer van de Aanduiding Gegevens In Onderzoek.
      */
     public int getOnderzoekCategorienummer() {
@@ -438,9 +388,9 @@ public final class Lo3Onderzoek {
         }
         final Lo3Onderzoek castOther = (Lo3Onderzoek) other;
         return new EqualsBuilder().append(aanduidingGegevensInOnderzoek, castOther.aanduidingGegevensInOnderzoek)
-                                  .append(datumIngangOnderzoek, castOther.datumIngangOnderzoek)
-                                  .append(datumEindeOnderzoek, castOther.datumEindeOnderzoek)
-                                  .isEquals();
+                .append(datumIngangOnderzoek, castOther.datumIngangOnderzoek)
+                .append(datumEindeOnderzoek, castOther.datumEindeOnderzoek)
+                .isEquals();
     }
 
     @Override
@@ -451,8 +401,8 @@ public final class Lo3Onderzoek {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("aanduidingGegevensInOnderzoek", aanduidingGegevensInOnderzoek)
-                                                                          .append("datumIngangOnderzoek", datumIngangOnderzoek)
-                                                                          .append("datumEindeOnderzoek", datumEindeOnderzoek)
-                                                                          .toString();
+                .append("datumIngangOnderzoek", datumIngangOnderzoek)
+                .append("datumEindeOnderzoek", datumEindeOnderzoek)
+                .toString();
     }
 }

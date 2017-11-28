@@ -6,24 +6,22 @@
 
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch;
 
-import java.text.DecimalFormat;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNationaliteitCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Abstract nationaliteit conversie tabel.
  */
 public abstract class AbstractNationaliteitConversietabel implements Conversietabel<Lo3NationaliteitCode, BrpNationaliteitCode> {
 
-    private static final String NATIONALITEIT_CODE_FORMAT = "0000";
-
     @Override
     public final BrpNationaliteitCode converteerNaarBrp(final Lo3NationaliteitCode input) {
         final BrpNationaliteitCode result;
-        if (nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie.isElementGevuld(input)) {
-            result = new BrpNationaliteitCode(Short.parseShort(input.getWaarde()), input.getOnderzoek());
+        if (Lo3Validatie.isElementGevuld(input)) {
+            result = new BrpNationaliteitCode(input.getWaarde(), input.getOnderzoek());
         } else {
             if (input != null && input.getOnderzoek() != null) {
                 result = new BrpNationaliteitCode(null, input.getOnderzoek());
@@ -37,8 +35,8 @@ public abstract class AbstractNationaliteitConversietabel implements Conversieta
     @Override
     public final Lo3NationaliteitCode converteerNaarLo3(final BrpNationaliteitCode input) {
         final Lo3NationaliteitCode result;
-        if (Validatie.isAttribuutGevuld(input)) {
-            result = new Lo3NationaliteitCode(new DecimalFormat(NATIONALITEIT_CODE_FORMAT).format(input.getWaarde()), input.getOnderzoek());
+        if (BrpValidatie.isAttribuutGevuld(input)) {
+            result = new Lo3NationaliteitCode(input.getWaarde(), input.getOnderzoek());
         } else {
             if (input != null && input.getOnderzoek() != null) {
                 result = new Lo3NationaliteitCode(null, input.getOnderzoek());

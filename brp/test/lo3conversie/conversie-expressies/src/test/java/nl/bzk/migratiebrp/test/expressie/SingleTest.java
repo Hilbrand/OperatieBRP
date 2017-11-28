@@ -8,9 +8,8 @@ package nl.bzk.migratiebrp.test.expressie;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import nl.bzk.migratiebrp.test.common.util.BaseFilter;
-import nl.bzk.migratiebrp.test.common.util.EqualsFilter;
 import nl.bzk.migratiebrp.test.common.util.FilterType;
+import nl.bzk.migratiebrp.test.common.util.StartsWithFilter;
 
 public class SingleTest extends ConversieTestConfiguratie {
 
@@ -20,18 +19,17 @@ public class SingleTest extends ConversieTestConfiguratie {
     }
 
     @Override
+    public File getInputFolder() {
+        return new File("./regressie");
+    }
+
+    @Override
     public FilenameFilter getThemaFilter() {
-        // return new BaseFilter(FilterType.DIRECTORY);
-        return new EqualsFilter("bouw", FilterType.DIRECTORY);
+        return new StartsWithFilter("", FilterType.DIRECTORY);
     }
 
     @Override
     public FilenameFilter getCasusFilter() {
-        return new BaseFilter(FilterType.DIRECTORY);
-    }
-
-    @Override
-    public File getInputFolder() {
-        return new File("./test");
+        return new StartsWithFilter("", FilterType.DIRECTORY);
     }
 }

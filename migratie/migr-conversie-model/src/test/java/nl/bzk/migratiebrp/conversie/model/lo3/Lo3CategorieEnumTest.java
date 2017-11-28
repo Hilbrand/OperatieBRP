@@ -13,7 +13,6 @@ import static org.junit.Assert.fail;
 
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-
 import org.junit.Test;
 
 public class Lo3CategorieEnumTest {

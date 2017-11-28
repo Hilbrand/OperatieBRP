@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -23,16 +22,26 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGezagMinderjar
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import org.springframework.stereotype.Component;
 
 /**
  * IST Gezagsverhouding converteerder.
  */
-@Component
-public final class BrpIstGezagsverhoudingConverteerder extends BrpIstAbstractConverteerder<BrpIstGezagsVerhoudingGroepInhoud> {
+public final class BrpIstGezagsverhoudingConverteerder extends BrpIstAbstractConverteerder {
 
-    @Override
-    public Lo3Stapel<Lo3GezagsverhoudingInhoud> converteer(final BrpStapel<BrpIstGezagsVerhoudingGroepInhoud> brpStapel) {
+    /**
+     * Constructor.
+     * @param attribuutConverteerder attribuut converteerder
+     */
+    public BrpIstGezagsverhoudingConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+        super(attribuutConverteerder);
+    }
+
+    /**
+     * Converteert de IST Gezagsverhouding naar LO3.
+     * @param brpStapel de {@link BrpStapel} met een {@link BrpIstGezagsVerhoudingGroepInhoud}
+     * @return een {@link Lo3Stapel} met een {@link Lo3GezagsverhoudingInhoud}
+     */
+    public Lo3Stapel<Lo3GezagsverhoudingInhoud> converteerGezagsverhouding(final BrpStapel<BrpIstGezagsVerhoudingGroepInhoud> brpStapel) {
         if (brpStapel == null) {
             return null;
         }
@@ -43,29 +52,28 @@ public final class BrpIstGezagsverhoudingConverteerder extends BrpIstAbstractCon
             final Lo3GezagsverhoudingInhoud.Builder builder = new Lo3GezagsverhoudingInhoud.Builder();
 
             // Conversie mbhv converteerder
-            builder.indicatieCurateleregister(getConverteerder().converteerIndicatieCurateleRegister(inhoud.getIndicatieOnderCuratele()));
+            builder.indicatieCurateleregister(getAttribuutConverteerder().converteerIndicatieCurateleRegister(inhoud.getIndicatieOnderCuratele()));
 
             // Conversie specifiek
             vulIndicatieGezagMinderjarige(builder, inhoud);
             final BrpIstStandaardGroepInhoud standaardGegevens = inhoud.getStandaardGegevens();
             final Lo3Categorie<Lo3GezagsverhoudingInhoud> voorkomen =
                     new Lo3Categorie<>(
-                        builder.build(),
-                        maakDocumentatie(standaardGegevens),
-                        maakOnderzoek(standaardGegevens),
-                        maakHistorie(standaardGegevens),
-                        maakHerkomst(standaardGegevens));
+                            builder.build(),
+                            maakDocumentatie(standaardGegevens),
+                            maakOnderzoek(standaardGegevens),
+                            maakHistorie(standaardGegevens),
+                            maakHerkomst(standaardGegevens));
             final Lo3Categorie<Lo3GezagsverhoudingInhoud> voorkomenMetOnderzoek = toevoegenOnderzoekAanElementen(voorkomen);
             voorkomens.add(voorkomenMetOnderzoek);
         }
 
-        Collections.sort(voorkomens, LO3_HERKOMST_COMPARATOR);
+        voorkomens.sort(LO3_HERKOMST_COMPARATOR);
 
         return new Lo3Stapel<>(voorkomens);
     }
 
     private void vulIndicatieGezagMinderjarige(final Lo3GezagsverhoudingInhoud.Builder builder, final BrpIstGezagsVerhoudingGroepInhoud inhoud) {
-
         // mogelijke waarden: 1, 2, D, 1D, 2D, 12
         final boolean ouder1Gezag = Boolean.TRUE.equals(BrpBoolean.unwrap(inhoud.getIndicatieOuder1HeeftGezag()));
         final boolean ouder2Gezag = Boolean.TRUE.equals(BrpBoolean.unwrap(inhoud.getIndicatieOuder2HeeftGezag()));
@@ -84,16 +92,25 @@ public final class BrpIstGezagsverhoudingConverteerder extends BrpIstAbstractCon
                 code.append("D");
             }
 
-            final List<Lo3Onderzoek> onderzoeken = new ArrayList<>();
-            if (inhoud.getIndicatieOuder1HeeftGezag() != null && inhoud.getIndicatieOuder1HeeftGezag().getOnderzoek() != null) {
-                onderzoeken.add(inhoud.getIndicatieOuder1HeeftGezag().getOnderzoek());
-            } else if (inhoud.getIndicatieOuder2HeeftGezag() != null && inhoud.getIndicatieOuder2HeeftGezag().getOnderzoek() != null) {
-                onderzoeken.add(inhoud.getIndicatieOuder2HeeftGezag().getOnderzoek());
-            } else if (inhoud.getIndicatieDerdeHeeftGezag() != null && inhoud.getIndicatieDerdeHeeftGezag().getOnderzoek() != null) {
-                onderzoeken.add(inhoud.getIndicatieDerdeHeeftGezag().getOnderzoek());
-            }
+            final List<Lo3Onderzoek> onderzoeken = verzamelOnderzoeken(inhoud);
             builder.indicatieGezagMinderjarige(new Lo3IndicatieGezagMinderjarige(code.toString(), Lo3Onderzoek.bepaalRelevantOnderzoek(onderzoeken)));
         }
+    }
+
+    private List<Lo3Onderzoek> verzamelOnderzoeken(final BrpIstGezagsVerhoudingGroepInhoud inhoud) {
+        final List<Lo3Onderzoek> onderzoeken = new ArrayList<>();
+        if (bevatOnderzoek(inhoud.getIndicatieOuder1HeeftGezag())) {
+            onderzoeken.add(inhoud.getIndicatieOuder1HeeftGezag().getOnderzoek());
+        } else if (bevatOnderzoek(inhoud.getIndicatieOuder2HeeftGezag())) {
+            onderzoeken.add(inhoud.getIndicatieOuder2HeeftGezag().getOnderzoek());
+        } else if (bevatOnderzoek(inhoud.getIndicatieDerdeHeeftGezag())) {
+            onderzoeken.add(inhoud.getIndicatieDerdeHeeftGezag().getOnderzoek());
+        }
+        return onderzoeken;
+    }
+
+    private boolean bevatOnderzoek(final BrpBoolean brpBoolean) {
+        return brpBoolean != null && brpBoolean.getOnderzoek() != null;
     }
 
     private Lo3Categorie<Lo3GezagsverhoudingInhoud> toevoegenOnderzoekAanElementen(final Lo3Categorie<Lo3GezagsverhoudingInhoud> voorkomen) {

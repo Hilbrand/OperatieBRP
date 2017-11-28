@@ -26,9 +26,7 @@ public final class BerichtComparator implements Comparator<Bericht>, Serializabl
 
     /**
      * Constructor.
-     *
-     * @param ascending
-     *            indicatie sortering aflopend
+     * @param ascending indicatie sortering aflopend
      */
     public BerichtComparator(final boolean ascending) {
         if (ascending) {
@@ -44,7 +42,7 @@ public final class BerichtComparator implements Comparator<Bericht>, Serializabl
         int result = ascending * o1.getTijdstip().compareTo(o2.getTijdstip());
 
         if (result == 0) {
-            result = o1.getId().compareTo(o2.getId());
+            result = ascending * o1.getId().compareTo(o2.getId());
         }
 
         return result;

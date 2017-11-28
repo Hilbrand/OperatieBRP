@@ -6,29 +6,24 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.ConversieMapEntry;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch.AbstractPartijConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
 
 /**
  * Conversietabel voor LO3 naar BRP codering en vice versa.
  */
 public final class PartijConversietabel extends AbstractPartijConversietabel {
 
-    private static final DecimalFormat GEMEENTE_CODE_FORMAT = new DecimalFormat("0000");
-
     /**
      * Maakt een PartijConversietabel object.
-     * 
-     * @param gemeenten
-     *            de lijst met brp gemeenten
+     * @param gemeenten de lijst met brp gemeenten
      */
     public PartijConversietabel(final Collection<Gemeente> gemeenten) {
         super(PartijConversietabel.converteerGemeenten(gemeenten));
@@ -38,8 +33,8 @@ public final class PartijConversietabel extends AbstractPartijConversietabel {
         final List<Map.Entry<Lo3GemeenteCode, BrpPartijCode>> result = new ArrayList<>();
 
         for (final Gemeente gemeente : gemeenten) {
-            result.add(new ConversieMapEntry<>(new Lo3GemeenteCode(GEMEENTE_CODE_FORMAT.format(gemeente.getCode())), new BrpPartijCode(
-                gemeente.getPartij().getCode())));
+            result.add(new ConversieMapEntry<>(new Lo3GemeenteCode(gemeente.getCode()), new BrpPartijCode(
+                    gemeente.getPartij().getCode())));
         }
 
         result.add(new ConversieMapEntry<>(Lo3GemeenteCode.RNI, BrpPartijCode.MINISTER));

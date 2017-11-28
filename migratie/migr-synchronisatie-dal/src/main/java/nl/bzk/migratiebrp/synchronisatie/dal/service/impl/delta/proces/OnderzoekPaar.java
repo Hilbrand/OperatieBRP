@@ -7,11 +7,12 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.proces;
 
 import java.util.Iterator;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratiefGegeven;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.GegevenInOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratiefGegeven;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.GegevenInOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.OnderzoekHistorie;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 
 /**
@@ -24,11 +25,8 @@ final class OnderzoekPaar {
 
     /**
      * Constructor waarbij zowel bestaand als nieuw onderzoek aan meegegeven worden. Nieuw onderzoek mag null zijn.
-     *
-     * @param bestaandOnderzoek
-     *            bestaand onderzoek
-     * @param nieuwOnderzoek
-     *            nieuw onderzoek
+     * @param bestaandOnderzoek bestaand onderzoek
+     * @param nieuwOnderzoek nieuw onderzoek
      */
     OnderzoekPaar(final Onderzoek bestaandOnderzoek, final Onderzoek nieuwOnderzoek) {
         this.bestaandOnderzoek = bestaandOnderzoek;
@@ -37,7 +35,13 @@ final class OnderzoekPaar {
             status = OnderzoekDeltaStatus.NIEUW;
         } else {
             if (nieuwOnderzoek != null) {
-                if (bestaandOnderzoek.isInhoudelijkGelijk(nieuwOnderzoek)) {
+                final OnderzoekHistorie
+                        bestaandeHistorie =
+                        FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandOnderzoek.getOnderzoekHistorieSet());
+                final OnderzoekHistorie
+                        nieuwHistorie =
+                        FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(nieuwOnderzoek.getOnderzoekHistorieSet());
+                if (bestaandeHistorie.isInhoudelijkGelijk(nieuwHistorie)) {
                     status = OnderzoekDeltaStatus.ONGEWIJZIGD;
                 } else {
                     status = OnderzoekDeltaStatus.GEWIJZIGD;
@@ -71,18 +75,17 @@ final class OnderzoekPaar {
 
     /**
      * Bepaalt of het onderzoek een
-     * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling#GBA_BIJHOUDING_ACTUEEL}
+     * {@link nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling#GBA_BIJHOUDING_ACTUEEL}
      * of een
-     * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling#GBA_BIJHOUDING_OVERIG}
+     * {@link nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling#GBA_BIJHOUDING_OVERIG}
      * is. Het kan alleen
-     * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling#GBA_BIJHOUDING_ACTUEEL}
+     * {@link nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling#GBA_BIJHOUDING_ACTUEEL}
      * worden als het voorkomen in BRP dat in onderzoek staat een actueel historisch voorkomen is of een A-laag
      * voorkomen en geen onderdeel uit maakt van {@link AdministratiefGegeven}. De bepaling of de bijhouding actueel is,
      * vindt plaats op het nieuwe onderzoek. Als er geen nieuw onderzoek is (bv onderzoek is verwijderd), dan wordt er
      * naar het bestaande onderzoek gekeken.
      *
      * Indien het Onderzoek voortkomt uit een historisch Lo3 voorkomen betreft de bijhouding ok niet actueel
-     * 
      * @return true als bijhouding actueel is.
      */
     public boolean isBijhoudingActueel() {
@@ -93,12 +96,12 @@ final class OnderzoekPaar {
         final Iterator<GegevenInOnderzoek> gegevenInOnderzoekIterator = onderzoek.getGegevenInOnderzoekSet().iterator();
         while (isActueel && gegevenInOnderzoekIterator.hasNext()) {
             final GegevenInOnderzoek gegevenInOnderzoek = gegevenInOnderzoekIterator.next();
-            final DeltaEntiteit entiteit = gegevenInOnderzoek.getObjectOfVoorkomen();
+            final Entiteit entiteit = gegevenInOnderzoek.getEntiteitOfVoorkomen();
 
             if (entiteit instanceof AdministratiefGegeven) {
                 isActueel = false;
                 melding = "onderzoek is op administratieve BRP gegevens";
-            } else if (entiteit instanceof FormeleHistorie && !((FormeleHistorie) entiteit).isActueel()) {
+            } else if (entiteit instanceof FormeleHistorieZonderVerantwoording && !((FormeleHistorieZonderVerantwoording) entiteit).isActueel()) {
                 isActueel = false;
                 melding = "onderzoek is op niet actuele BRP gegevens";
             } else if (onderzoek.isVoortgekomenUitNietActueelVoorkomen()) {

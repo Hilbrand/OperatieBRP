@@ -6,12 +6,13 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
-import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortElement;
 import org.junit.Assert;
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortElement;
+import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
+import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 
 /**
  * Sinds de verbouwing naar het Entity-model controleert deze test of de Dbobjects van het Entity-model zijn
@@ -77,7 +78,7 @@ public class GgoBrpGroepAndMethodsTest {
         nietWeergegeven |=
                 Element.PERSOON_AFGELEIDADMINISTRATIEF_SORTEERVOLGORDE.equals(element)
                         || Element.PERSOON_AFGELEIDADMINISTRATIEF_TIJDSTIPLAATSTEWIJZIGING.equals(element);
-        nietWeergegeven |= Element.PERSOON_VERIFICATIE_GEVERIFIEERDE.equals(element);
+        nietWeergegeven |= Element.PERSOON_VERIFICATIE_PERSOON.equals(element);
         return nietWeergegeven;
     }
 
@@ -91,7 +92,6 @@ public class GgoBrpGroepAndMethodsTest {
         boolean relevant = naam.startsWith("His_Pers") || "Doc".equals(naam);
         // Relevante specifieke tabelnamen
         relevant |= "ActieBron".equals(naam) || "AdministratieveHandeling".equals(naam);
-        relevant |= "His_Doc".equals(naam) || "MultirealiteitRegel".equals(naam) || "His_MultirealiteitRegel".equals(naam);
         relevant |= "His_HuwelijkGeregistreerdPar".equals(naam) || "His_OuderOuderlijkGezag".equals(naam);
         relevant |= "His_OuderOuderschap".equals(naam) || "His_RelatieAfgeleidAdministr".equals(naam);
         // Tabellen waarvan we ook actuele gegevens gebruiken

@@ -15,8 +15,28 @@
     <bean id="routeringJmx" class= "nl.bzk.migratiebrp.routering.runtime.JmxImpl" />
 
     <bean id="routeringMBeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
-		<!-- Use only PlatformMBeamServer -->
+        <!-- Use only PlatformMBeamServer -->
         <property name="agentId" value=""/>
+    </bean>
+
+    <bean id="routeringServerConnectorSsl" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
+        <property name="serviceUrl" value="service:jmx:simple://0.0.0.0:${routering.jmx.serialize.port:3481}"/>
+        <property name="environmentMap">
+            <map>
+                <entry key="jmx.remote.authenticator">
+                    <bean class="nl.bzk.algemeenbrp.util.jmx.authenticator.PropertiesAuthenticator">
+                        <constructor-arg>
+                            <props>
+                                <prop key="admin">admin</prop>
+                            </props>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="jmx.remote.accesscontroller">
+                    <bean class="nl.bzk.algemeenbrp.util.jmx.access.AllAccessController"/>
+                </entry>
+            </map>
+        </property>
     </bean>
 
     <bean id="routeringMBeanExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
@@ -31,11 +51,11 @@
         <property name="attributeSource" ref="routeringJmsAttributeSource"/>
     </bean>
     <bean id="routeringNamingStrategy" class="nl.bzk.migratiebrp.util.common.jmx.DynamicDomainNamingStrategy">
-    	<property name="delegate">
-    		<bean class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
-		        <property name="attributeSource" ref="routeringJmsAttributeSource"/>
-    		</bean>
-    	</property>
+        <property name="delegate">
+            <bean class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
+                <property name="attributeSource" ref="routeringJmsAttributeSource"/>
+            </bean>
+        </property>
         <property name="domain" value="nl.bzk.migratiebrp.routering"/>
     </bean>
 

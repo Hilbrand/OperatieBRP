@@ -11,7 +11,6 @@
  * 72.10: AangeverRedenWijzigingVerblijfVoorwaarderegel
  * 87.10: IndicatiePKConversieVoorwaarderegel
  * 81.20: SoortRegisterSoortDocumentVoorwaardeRegel
- *
  */
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 

@@ -6,63 +6,53 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc301;
 
-import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.If01Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ii01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpAntwoordBericht;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3InschrijvingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3RedenOpschortingBijhoudingCodeEnum;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
-import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
  * Maak een if01 bericht omdat de persoonslijst is opgeschort.
  */
 @Component("uc301MaakIf01BerichtGMOAction")
-public final class MaakIf01BerichtGMOAction implements SpringAction {
+public final class MaakIf01BerichtGMOAction extends AbstractMaakIf01BerichtAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger();
+    private final BerichtenDao berichtenDao;
 
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakIf01BerichtGMOAction(final BerichtenDao berichtenDao) {
+        super(berichtenDao);
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
-    public Map<String, Object> execute(final Map<String, Object> parameters) {
-        LOG.info("execute(parameters={})", parameters);
-
-        final Ii01Bericht ii01Bericht = (Ii01Bericht) berichtenDao.leesBericht((Long) parameters.get("input"));
+    protected void aanvullenIf01(final Map<String, Object> parameters, final If01Bericht if01Bericht) {
         final LeesUitBrpAntwoordBericht leesUitBrpAntwoordBericht;
-        leesUitBrpAntwoordBericht =
-                (LeesUitBrpAntwoordBericht) berichtenDao.leesBericht((Long) parameters.get("leesUitBrpAntwoordBericht"));
+        leesUitBrpAntwoordBericht = (LeesUitBrpAntwoordBericht) berichtenDao.leesBericht((Long) parameters.get("leesUitBrpAntwoordBericht"));
 
         final Lo3InschrijvingInhoud inschrijvingInhoud =
                 leesUitBrpAntwoordBericht.getLo3Persoonslijst().getInschrijvingStapel().getLaatsteElement().getInhoud();
 
         final Lo3RedenOpschortingBijhoudingCodeEnum redenOpschorting;
-        redenOpschorting =
-                Lo3RedenOpschortingBijhoudingCodeEnum.getByCode(inschrijvingInhoud.getRedenOpschortingBijhoudingCode().getWaarde());
-
-        final If01Bericht if01Bericht = new If01Bericht();
-        if01Bericht.setCorrelationId(ii01Bericht.getMessageId());
+        redenOpschorting = Lo3RedenOpschortingBijhoudingCodeEnum.getByCode(inschrijvingInhoud.getRedenOpschortingBijhoudingCode().getWaarde());
 
         switch (redenOpschorting) {
             case OVERLIJDEN:
                 if01Bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "O");
-                if01Bericht.setHeader(
-                    Lo3HeaderVeld.A_NUMMER,
-                    Long.toString(leesUitBrpAntwoordBericht.getLo3Persoonslijst().getActueelAdministratienummer()));
+                if01Bericht.setHeader(Lo3HeaderVeld.A_NUMMER, leesUitBrpAntwoordBericht.getLo3Persoonslijst().getActueelAdministratienummer());
                 break;
             case EMIGRATIE:
                 if01Bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "E");
-                if01Bericht.setHeader(
-                    Lo3HeaderVeld.A_NUMMER,
-                    Long.toString(leesUitBrpAntwoordBericht.getLo3Persoonslijst().getActueelAdministratienummer()));
+                if01Bericht.setHeader(Lo3HeaderVeld.A_NUMMER, leesUitBrpAntwoordBericht.getLo3Persoonslijst().getActueelAdministratienummer());
                 break;
             case FOUT:
             case RNI:
@@ -70,24 +60,11 @@ public final class MaakIf01BerichtGMOAction implements SpringAction {
                 break;
             case MINISTERIEEL_BESLUIT:
                 if01Bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "M");
-                if01Bericht.setHeader(
-                    Lo3HeaderVeld.A_NUMMER,
-                    Long.toString(leesUitBrpAntwoordBericht.getLo3Persoonslijst().getActueelAdministratienummer()));
+                if01Bericht.setHeader(Lo3HeaderVeld.A_NUMMER, leesUitBrpAntwoordBericht.getLo3Persoonslijst().getActueelAdministratienummer());
                 break;
             default:
                 // geen actie
                 break;
         }
-
-        // If01 inhoud
-        if01Bericht.setCategorieen(ii01Bericht.getCategorieen());
-
-        // Zet de adressering.
-        if01Bericht.setBronGemeente(ii01Bericht.getDoelGemeente());
-        if01Bericht.setDoelGemeente(ii01Bericht.getBronGemeente());
-
-        final Map<String, Object> result = new HashMap<>();
-        result.put("if01Bericht", berichtenDao.bewaarBericht(if01Bericht));
-        return result;
     }
 }

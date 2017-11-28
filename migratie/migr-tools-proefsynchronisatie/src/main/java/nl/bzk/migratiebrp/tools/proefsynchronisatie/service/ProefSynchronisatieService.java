@@ -15,17 +15,13 @@ public interface ProefSynchronisatieService {
 
     /**
      * Vult de proefsynchronisatiebericht tabel met de te verwerken berichten.
-     *
-     * @param config
-     *            De configuratie.
+     * @param config De configuratie.
      */
     void laadInitProefSynchronisatieBerichtenTabel(Properties config);
 
     /**
      * Verstuurt de te verwerken berichten via JMS zodat deze worden verwerkt door ISC.
-     *
-     * @param config
-     *            De configuratie.
+     * @param config De configuratie.
      */
     void voerProefSynchronisatieUit(Properties config);
 

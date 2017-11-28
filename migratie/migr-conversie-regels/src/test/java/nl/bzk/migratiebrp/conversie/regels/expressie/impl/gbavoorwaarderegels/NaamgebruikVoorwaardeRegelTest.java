@@ -6,11 +6,8 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,17 +20,18 @@ public class NaamgebruikVoorwaardeRegelTest {
     @Inject
     private NaamgebruikVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test of getBrpExpressie method, of class LandVoorwaardeRegel.
      */
     @Test
     public void testGetBrpExpressie() throws Exception {
-        testVoorwaarde("01.61.10 GA1 \"E\"", "naamgebruik.naamgebruik = \"E\"");
-    }
-
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        Assert.assertTrue(instance.filter(gbaVoorwaarde));
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
+        testUtil.testVoorwaarde("01.61.10 GA1 \"E\"", "Persoon.Naamgebruik.Code E= \"E\"");
     }
 }

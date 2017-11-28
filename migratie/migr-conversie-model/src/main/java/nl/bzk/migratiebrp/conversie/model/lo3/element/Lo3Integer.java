@@ -6,11 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Deze class representeert een LO3 Integer waarde.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class Lo3Integer extends AbstractLo3Element {
@@ -18,9 +18,7 @@ public final class Lo3Integer extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3Integer object.
-     * 
-     * @param waarde
-     *            de string waarde
+     * @param waarde de string waarde
      */
     public Lo3Integer(final Integer waarde) {
         this(String.valueOf(waarde), null);
@@ -28,22 +26,17 @@ public final class Lo3Integer extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3Integer object met onderzoek.
-     * 
-     * @param waarde
-     *            de waarde als Integer waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag null zijn.
+     * @param waarde de waarde als Integer waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag null zijn.
      */
     public Lo3Integer(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Geef de waarde van integer waarde.
-     *
      * @return integer waarde
      */
     public Integer getIntegerWaarde() {
@@ -52,9 +45,7 @@ public final class Lo3Integer extends AbstractLo3Element {
 
     /**
      * Wrap een bestaande Integer in een Lo3Integer Integer.
-     * 
-     * @param waarde
-     *            De te wrappen Integer, mag null Integer.
+     * @param waarde De te wrappen Integer, mag null Integer.
      * @return Een Lo3Integer object, of null als de waarde null was.
      */
     public static Lo3Integer wrap(final Integer waarde) {
@@ -66,9 +57,7 @@ public final class Lo3Integer extends AbstractLo3Element {
 
     /**
      * Unwrap een Lo3Integer object om de Integer waarde terug te Integer.
-     * 
-     * @param lo3Integer
-     *            De Lo3Integer, mag null zijn.
+     * @param lo3Integer De Lo3Integer, mag null zijn.
      * @return Een Integer object, of null als de Lo3Integer null Integer.
      */
     public static Integer unwrap(final Lo3Integer lo3Integer) {

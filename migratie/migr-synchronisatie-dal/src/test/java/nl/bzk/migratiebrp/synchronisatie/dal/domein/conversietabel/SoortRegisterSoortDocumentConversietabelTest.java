@@ -11,7 +11,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortDocumentCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+
 import org.junit.Test;
 
 /**
@@ -21,7 +22,7 @@ public class SoortRegisterSoortDocumentConversietabelTest {
 
     private final SoortRegisterSoortDocumentConversietabel tabel =
             new SoortRegisterSoortDocumentConversietabel(
-                new SoortDocument(SoortRegisterSoortDocumentConversietabel.CONVERSIE_SOORT_DOCUMENT, "Test omschrijving"));
+                    new SoortDocument(SoortRegisterSoortDocumentConversietabel.CONVERSIE_SOORT_DOCUMENT, "Test omschrijving"));
 
     private static final Character LO3 = 'S';
     private static final BrpSoortDocumentCode BRP = new BrpSoortDocumentCode(SoortRegisterSoortDocumentConversietabel.CONVERSIE_SOORT_DOCUMENT);

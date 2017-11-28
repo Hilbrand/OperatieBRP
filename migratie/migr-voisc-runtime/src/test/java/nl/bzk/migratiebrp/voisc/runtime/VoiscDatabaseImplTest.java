@@ -110,12 +110,12 @@ public class VoiscDatabaseImplTest {
     }
 
     @Test
-    public void testGetMailboxByInstantiecode() {
+    public void testGetMailboxByPartijcode() {
         // Execute
-        subject.getMailboxByInstantiecode(518);
+        subject.getMailboxByPartijcode("051801");
 
         // Verify
-        Mockito.verify(mailboxRepository, Mockito.times(1)).getMailboxByInstantiecode(518);
+        Mockito.verify(mailboxRepository, Mockito.times(1)).getMailboxByPartijcode("051801");
         Mockito.verifyNoMoreInteractions(berichtRepository, mailboxRepository);
 
     }

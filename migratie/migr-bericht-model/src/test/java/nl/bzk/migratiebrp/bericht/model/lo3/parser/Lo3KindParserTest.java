@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -36,15 +36,15 @@ public class Lo3KindParserTest extends AbstractParserTest {
 
         final Lo3KindInhoud kindInhoud =
                 new Lo3KindInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110, onderzoek),
-                    maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek));
+                        maakLo3String(WAARDE_ELEMENT_0110, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0120, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek));
 
         final Lo3Categorie<Lo3KindInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(kindInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_09, 0, 0));
@@ -162,7 +162,7 @@ public class Lo3KindParserTest extends AbstractParserTest {
     @Test
     public void testKindParserGeenWaarden() {
         final Lo3KindParser parser = new Lo3KindParser();
-        final Lo3Stapel<Lo3KindInhoud> parsedInhoud = parser.parse(new ArrayList<Lo3CategorieWaarde>());
+        final Lo3Stapel<Lo3KindInhoud> parsedInhoud = parser.parse(new ArrayList<>());
         Assert.assertNull(parsedInhoud);
     }
 

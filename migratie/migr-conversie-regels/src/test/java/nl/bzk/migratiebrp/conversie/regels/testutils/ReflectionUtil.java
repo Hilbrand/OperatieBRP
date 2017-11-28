@@ -23,11 +23,10 @@ public final class ReflectionUtil {
             field.setAccessible(true);
             return field.get(object);
         } catch (final
-            NoSuchFieldException
-            | SecurityException
-            | IllegalArgumentException
-            | IllegalAccessException e)
-        {
+        NoSuchFieldException
+                | SecurityException
+                | IllegalArgumentException
+                | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
     }

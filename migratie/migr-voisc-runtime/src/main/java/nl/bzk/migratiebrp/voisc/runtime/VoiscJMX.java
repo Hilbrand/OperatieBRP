@@ -12,11 +12,6 @@ package nl.bzk.migratiebrp.voisc.runtime;
 public interface VoiscJMX {
 
     /**
-     * Object name to bind JMX object to.
-     */
-    String OBJECT_NAME = "nl.bzk.migratiebrp.voisc:name=VOISC";
-
-    /**
      * Trigger verzenden van berichten naar ISC.
      */
     void berichtenVerzendenNaarIsc();
@@ -40,4 +35,26 @@ public interface VoiscJMX {
      * VOISC afsluiten.
      */
     void afsluiten();
+
+    /**
+     * @return mailbox configuratie.
+     */
+    String toonMailboxConfiguratie();
+
+    /**
+     * Voisc JMX constants
+     */
+    enum Constants {
+        OBJECT_NAME("nl.bzk.migratiebrp.voisc:name=VOISC");
+
+        private final String value;
+
+        Constants(final String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 }

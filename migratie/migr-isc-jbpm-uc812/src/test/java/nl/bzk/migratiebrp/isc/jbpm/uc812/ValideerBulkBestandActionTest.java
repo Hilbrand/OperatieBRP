@@ -6,25 +6,28 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc812;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import nl.bzk.migratiebrp.bericht.model.isc.impl.Uc812Bericht;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Gemeente;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegisterImpl;
-import nl.bzk.migratiebrp.isc.jbpm.common.TestGemeenteService;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegisterImpl;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Rol;
+import nl.bzk.migratiebrp.isc.jbpm.common.TestPartijService;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler;
-import nl.bzk.migratiebrp.register.client.GemeenteService;
+import nl.bzk.migratiebrp.register.client.PartijService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Test de happy flow.
@@ -41,23 +44,21 @@ public class ValideerBulkBestandActionTest {
 
     @Before
     public void setup() {
-        service = new ValideerBulkBestandAction();
         berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(service, "berichtenDao", berichtenDao);
 
-        final List<Gemeente> gemeenten = new ArrayList<>();
-        gemeenten.add(new Gemeente("0599", "580599", null));
-        gemeenten.add(new Gemeente("0699", "580699", intToDate(20090101)));
-        gemeenten.add(new Gemeente("0717", "580717", null));
+        final List<Partij> partijen = new ArrayList<>();
+        partijen.add(new Partij("059901", "0599", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("069901", "0699", intToDate(), Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("071701", "0717", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
 
-        final GemeenteService gemeenteService = new TestGemeenteService(new GemeenteRegisterImpl(gemeenten));
+        final PartijService partijService = new TestPartijService(new PartijRegisterImpl(partijen));
 
-        ReflectionTestUtils.setField(service, "gemeenteService", gemeenteService);
+        service = new ValideerBulkBestandAction(berichtenDao, partijService);
     }
 
-    private static Date intToDate(final int date) {
+    private static Date intToDate() {
         try {
-            return new SimpleDateFormat("yyyyMMdd").parse(Integer.toString(date));
+            return new SimpleDateFormat("yyyyMMdd").parse(Integer.toString(20090101));
         } catch (final ParseException e) {
             throw new IllegalArgumentException(e);
         }
@@ -67,9 +68,9 @@ public class ValideerBulkBestandActionTest {
     public void happyFlow() throws Exception {
 
         final String aNummer = "1607306145";
-        final String doelGemeente = "0599";
+        final String doelPartijCode = "0599";
 
-        final String bulkSynchronisatievraag = doelGemeente + "," + aNummer + "\n";
+        final String bulkSynchronisatievraag = doelPartijCode + "," + aNummer + "\n";
 
         final Uc812Bericht uc812Bericht = new Uc812Bericht();
         uc812Bericht.setBulkSynchronisatievraag(bulkSynchronisatievraag);
@@ -85,9 +86,9 @@ public class ValideerBulkBestandActionTest {
     public void badFlow() throws Exception {
 
         final String aNummer = "160730615";
-        final String doelGemeente = "0599";
+        final String doelPartijCode = "0599";
 
-        final String bulkSynchronisatievraag = doelGemeente + "," + aNummer + "\n";
+        final String bulkSynchronisatievraag = doelPartijCode + "," + aNummer + "\n";
 
         final Uc812Bericht uc812Bericht = new Uc812Bericht();
         uc812Bericht.setBulkSynchronisatievraag(bulkSynchronisatievraag);
@@ -97,9 +98,10 @@ public class ValideerBulkBestandActionTest {
         parameters.put(PARAMETER_INPUT, uc812BerichtId);
 
         final Map<String, Object> result = service.execute(parameters);
-        Assert.assertNotNull(result.get(PARAMETER_FOUTAFHANDELINGMELDING));
+        assertNotNull(result);
+        assertNotNull(result.get(PARAMETER_FOUTAFHANDELINGMELDING));
         Assert.assertEquals(1, ((String) result.get(PARAMETER_FOUTAFHANDELINGMELDING)).split("\n").length);
-        Assert.assertNotNull(result.get(PARAMETER_FOUTPAD));
+        assertNotNull(result.get(PARAMETER_FOUTPAD));
         Assert.assertEquals(FOUTPAD, result.get(PARAMETER_FOUTPAD));
     }
 
@@ -113,56 +115,56 @@ public class ValideerBulkBestandActionTest {
         final String aNummerNull = null;
         final String aNummerNietAlleenCijfers = "123test234";
         final String negatiefANummerOngeldig = "-123123124";
-        final String doelGemeente = "0599";
-        final String doelGemeenteOngeldigeLengte = "600";
-        final String doelGemeenteNonGba = "0699";
-        final String doelGemeenteNietBestaand = "0600";
+        final String doelPartijCode = "0599";
+        final String doelPartijCodeOngeldigeLengte = "600";
+        final String doelPartijCodeNonGba = "0699";
+        final String doelPartijCodeNietBestaand = "0600";
 
         final String bulkSynchronisatievraag =
-                doelGemeente
+                doelPartijCode
                         + ","
                         + aNummer
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummer2
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummerOngeldig
                         + "\n"
-                        + doelGemeenteNonGba
+                        + doelPartijCodeNonGba
                         + ","
                         + aNummer
                         + "\n"
-                        + doelGemeenteNonGba
+                        + doelPartijCodeNonGba
                         + ","
                         + aNummer2
                         + "\n"
-                        + doelGemeenteNietBestaand
+                        + doelPartijCodeNietBestaand
                         + ","
                         + aNummerOngeldig
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + negatiefANummerOngeldig
                         + "\n"
-                        + doelGemeenteOngeldigeLengte
+                        + doelPartijCodeOngeldigeLengte
                         + ","
                         + "\n"
-                        + doelGemeenteOngeldigeLengte
+                        + doelPartijCodeOngeldigeLengte
                         + ","
                         + aNummer
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummerOngeldigeLengte
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummerNull
                         + "\n"
-                        + doelGemeente
+                        + doelPartijCode
                         + ","
                         + aNummerNietAlleenCijfers
                         + "\n";
@@ -175,9 +177,10 @@ public class ValideerBulkBestandActionTest {
         parameters.put(PARAMETER_INPUT, uc812BerichtId);
 
         final Map<String, Object> result = service.execute(parameters);
-        Assert.assertNotNull(result.get(PARAMETER_FOUTAFHANDELINGMELDING));
+        assertNotNull(result);
+        assertNotNull(result.get(PARAMETER_FOUTAFHANDELINGMELDING));
         Assert.assertEquals(11, ((String) result.get(PARAMETER_FOUTAFHANDELINGMELDING)).split("\n").length);
-        Assert.assertNotNull(result.get(PARAMETER_FOUTPAD));
+        assertNotNull(result.get(PARAMETER_FOUTPAD));
         Assert.assertEquals(FOUTPAD, result.get(PARAMETER_FOUTPAD));
     }
 

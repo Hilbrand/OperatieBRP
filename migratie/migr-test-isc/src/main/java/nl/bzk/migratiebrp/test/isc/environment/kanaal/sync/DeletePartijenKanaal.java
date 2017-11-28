@@ -28,11 +28,11 @@ public final class DeletePartijenKanaal extends LazyLoadingKanaal {
      */
     public DeletePartijenKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-jta.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:infra-em-sync.xml"));
+                "classpath:configuratie.xml",
+                "classpath:infra-db-brp.xml",
+                "classpath:infra-jta.xml",
+                "classpath:infra-db-sync.xml",
+                "classpath:infra-em-sync.xml"));
     }
 
     /**
@@ -70,7 +70,6 @@ public final class DeletePartijenKanaal extends LazyLoadingKanaal {
             jdbcTemplate.update("DELETE FROM doc WHERE partij > ?", vanafPartijId);
             jdbcTemplate.update("DELETE FROM gem WHERE partij > ?", vanafPartijId);
             jdbcTemplate.update("DELETE FROM his_bijhautorisatie WHERE geautoriseerdepartij > ?", vanafPartijId);
-            jdbcTemplate.update("DELETE FROM his_doc WHERE partij > ?", vanafPartijId);
             jdbcTemplate.update("DELETE FROM his_partij WHERE partij > ?", vanafPartijId);
             jdbcTemplate.update("DELETE FROM his_persbijhouding WHERE bijhpartij > ?", vanafPartijId);
             jdbcTemplate.update("DELETE FROM his_perspk WHERE gempk > ?", vanafPartijId);

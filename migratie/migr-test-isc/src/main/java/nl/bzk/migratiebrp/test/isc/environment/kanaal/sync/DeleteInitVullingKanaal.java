@@ -40,7 +40,7 @@ public final class DeleteInitVullingKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -62,6 +62,13 @@ public final class DeleteInitVullingKanaal extends LazyLoadingKanaal {
                     statement.executeUpdate("truncate initvul.initvullingresult_afnind_regel cascade");
                     statement.executeUpdate("truncate initvul.initvullingresult_afnind cascade");
                     statement.executeUpdate("truncate initvul.initvullingresult_aut cascade");
+                    statement.executeUpdate("truncate initvul.initvullingresult_protocollering_activiteit cascade");
+                    statement.executeUpdate("truncate initvul.initvullingresult_protocollering_brp_dienst cascade");
+                    statement.executeUpdate("truncate initvul.initvullingresult_protocollering_brp_pers cascade");
+                    statement.executeUpdate("truncate initvul.initvullingresult_protocollering_brp_toeglevaut cascade");
+                    statement.executeUpdate("truncate initvul.initvullingresult_protocollering_dienst cascade");
+                    statement.executeUpdate("truncate initvul.initvullingresult_protocollering_toeglevaut cascade");
+                    statement.executeUpdate("truncate initvul.initvullingresult_protocollering cascade");
                 }
 
             } catch (final SQLException e) {

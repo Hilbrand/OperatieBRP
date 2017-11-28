@@ -14,10 +14,11 @@ import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.dal.AbstractTestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
@@ -29,6 +30,7 @@ public final class ConversieTestCasusFactory extends AbstractTestCasusFactory {
     private final AutowireCapableBeanFactory migratieAutowireBeanFactory;
     private final AutowireCapableBeanFactory brpLeveringAutowireBeanFactory;
     private final AutowireCapableBeanFactory brpBijhoudingAutowireBeanFactory;
+    private final TestSkipper skipper;
 
     /**
      * Constructor.
@@ -43,11 +45,13 @@ public final class ConversieTestCasusFactory extends AbstractTestCasusFactory {
     protected ConversieTestCasusFactory(
         final AutowireCapableBeanFactory migratieAutowireBeanFactory,
         final AutowireCapableBeanFactory brpLeveringAutowireBeanFactory,
-        final AutowireCapableBeanFactory brpBijhoudingAutowireBeanFactory)
+        final AutowireCapableBeanFactory brpBijhoudingAutowireBeanFactory,
+        final TestSkipper skipper)
     {
         this.migratieAutowireBeanFactory = migratieAutowireBeanFactory;
         this.brpLeveringAutowireBeanFactory = brpLeveringAutowireBeanFactory;
         this.brpBijhoudingAutowireBeanFactory = brpBijhoudingAutowireBeanFactory;
+        this.skipper = skipper;
     }
 
     @Override
@@ -96,6 +100,7 @@ public final class ConversieTestCasusFactory extends AbstractTestCasusFactory {
                                     new File(input, testcaseName),
                                     line);
 
+                        testCasus.setSkipper(skipper);
                         migratieAutowireBeanFactory.autowireBean(testCasus.getBeanForMigratieAutowire());
                         brpLeveringAutowireBeanFactory.autowireBean(testCasus.getBeanForBrpLeveringAutowire());
                         brpBijhoudingAutowireBeanFactory.autowireBean(testCasus.getBeanForBrpBijhoudingAutowire());

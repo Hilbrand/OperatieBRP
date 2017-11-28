@@ -18,11 +18,8 @@ public interface BcmService {
 
     /**
      * Controleer de Lo3Persoonslijst door de BCM.
-     * 
-     * @param lo3Persoonslijst
-     *            Lo3Persoonslijst
-     * @param foutMelder
-     *            Het object om verwerkingsfouten aan te melden.
+     * @param lo3Persoonslijst Lo3Persoonslijst
+     * @param foutMelder Het object om verwerkingsfouten aan te melden.
      * @return bcmSignaleringen Lijst met fouten.
      */
     List<GgoFoutRegel> controleerDoorBCM(Lo3Persoonslijst lo3Persoonslijst, FoutMelder foutMelder);

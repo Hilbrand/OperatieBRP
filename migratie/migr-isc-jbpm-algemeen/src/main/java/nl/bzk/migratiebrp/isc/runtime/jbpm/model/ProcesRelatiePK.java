@@ -13,7 +13,7 @@ import org.jbpm.graph.exe.ProcessInstance;
 /**
  * Proces relatie PK.
  */
-@SuppressWarnings("checkstyle:designforextension")
+
 public class ProcesRelatiePK implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -22,7 +22,6 @@ public class ProcesRelatiePK implements Serializable {
 
     /**
      * Geeft de eerste proces instantie.
-     * 
      * @return de eerste proces instantie.
      */
     public ProcessInstance getProcessInstanceEen() {
@@ -31,9 +30,7 @@ public class ProcesRelatiePK implements Serializable {
 
     /**
      * Zet de eerste proces instantie.
-     * 
-     * @param processInstanceEen
-     *            de te zetten eerste proces instantie
+     * @param processInstanceEen de te zetten eerste proces instantie
      */
     public void setProcessInstanceEen(final ProcessInstance processInstanceEen) {
         this.processInstanceEen = processInstanceEen;
@@ -41,7 +38,6 @@ public class ProcesRelatiePK implements Serializable {
 
     /**
      * Geeft de tweede proces instantie.
-     * 
      * @return de tweede proces instantie
      */
     public ProcessInstance getProcessInstanceTwee() {
@@ -50,9 +46,7 @@ public class ProcesRelatiePK implements Serializable {
 
     /**
      * Zet de tweede proces instantie.
-     * 
-     * @param processInstanceTwee
-     *            De te zetten tweede proces instantie
+     * @param processInstanceTwee De te zetten tweede proces instantie
      */
     public void setProcessInstanceTwee(final ProcessInstance processInstanceTwee) {
         this.processInstanceTwee = processInstanceTwee;

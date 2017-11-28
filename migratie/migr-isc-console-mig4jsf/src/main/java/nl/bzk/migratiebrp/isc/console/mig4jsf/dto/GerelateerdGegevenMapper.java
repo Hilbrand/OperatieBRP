@@ -14,20 +14,20 @@ import java.sql.SQLException;
  */
 public final class GerelateerdGegevenMapper {
 
+    public static final int INT_2 = 2;
+    public static final int INT_1 = 1;
+
     /**
      * Map een results et naar een gerelateerd gegeven.
-     *
-     * @param rs
-     *            result set
+     * @param rs result set
      * @return bericht
-     * @throws SQLException
-     *             bij sql fouten
+     * @throws SQLException bij sql fouten
      */
     public GerelateerdGegeven map(final ResultSet rs) throws SQLException {
         final GerelateerdGegeven gerelateerdGegeven = new GerelateerdGegeven();
 
-        gerelateerdGegeven.setSoort(rs.getString(1));
-        gerelateerdGegeven.setGegeven(rs.getString(2));
+        gerelateerdGegeven.setSoort(rs.getString(INT_1));
+        gerelateerdGegeven.setGegeven(rs.getString(INT_2));
 
         return gerelateerdGegeven;
     }

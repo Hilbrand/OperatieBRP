@@ -7,12 +7,12 @@
 package nl.bzk.migratiebrp.conversie.model.tussen.autorisatie;
 
 import java.util.List;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 
 /**
  * Migratie representatie voor alle afnemersindicaties van een persoon (BRP inhoud, LO3 historie).
@@ -20,42 +20,36 @@ import org.simpleframework.xml.ElementList;
 
 public final class TussenAfnemersindicaties {
 
-    @Element(name = "administratienummer", required = false)
-    private final Long administratienummer;
+    @Element(name = "administratienummer")
+    private final String administratienummer;
 
-    @ElementList(name = "afnemersindicaties", entry = "afnemersindicatie", type = TussenAfnemersindicatie.class, required = false)
+    @ElementList(name = "afnemersindicaties", entry = "afnemersindicatie", type = TussenAfnemersindicatie.class)
     private final List<TussenAfnemersindicatie> afnemersindicaties;
 
     /**
      * Maak een nieuw BrpAfnemersindicaties object.
-     * 
-     * @param administratienummer
-     *            het administratienummer van de persoon
-     * @param afnemersindicaties
-     *            de afnemersindicaties
+     * @param administratienummer het administratienummer van de persoon
+     * @param afnemersindicaties de afnemersindicaties
      */
-    public TussenAfnemersindicaties(
-        @Element(name = "administratienummer", required = false) final Long administratienummer,
-        @ElementList(name = "afnemersindicaties", type = TussenAfnemersindicatie.class, entry = "afnemersindicatie", required = false) final List<TussenAfnemersindicatie> afnemersindicaties)
-    {
+    public TussenAfnemersindicaties(@Element(name = "administratienummer") final String administratienummer,
+                                    @ElementList(name = "afnemersindicaties", type = TussenAfnemersindicatie.class, entry = "afnemersindicatie") final
+                                    List<TussenAfnemersindicatie> afnemersindicaties) {
         super();
         this.administratienummer = administratienummer;
         this.afnemersindicaties = afnemersindicaties;
     }
 
     /**
-     * Geef de waarde van administratienummer.
-     *
-     * @return administratienummer
+     * Geef de waarde van administratienummer van TussenAfnemersindicaties.
+     * @return de waarde van administratienummer van TussenAfnemersindicaties
      */
-    public Long getAdministratienummer() {
+    public String getAdministratienummer() {
         return administratienummer;
     }
 
     /**
-     * Geef de waarde van afnemersindicaties.
-     *
-     * @return afnemersindicaties
+     * Geef de waarde van afnemersindicaties van TussenAfnemersindicaties.
+     * @return de waarde van afnemersindicaties van TussenAfnemersindicaties
      */
     public List<TussenAfnemersindicatie> getAfnemersindicaties() {
         return afnemersindicaties;
@@ -71,8 +65,8 @@ public final class TussenAfnemersindicaties {
         }
         final TussenAfnemersindicaties castOther = (TussenAfnemersindicaties) other;
         return new EqualsBuilder().append(administratienummer, castOther.administratienummer)
-                                  .append(afnemersindicaties, castOther.afnemersindicaties)
-                                  .isEquals();
+                .append(afnemersindicaties, castOther.afnemersindicaties)
+                .isEquals();
     }
 
     @Override
@@ -83,8 +77,8 @@ public final class TussenAfnemersindicaties {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("administratienummer", administratienummer)
-                                                                          .append("afnemersindicaties", afnemersindicaties)
-                                                                          .toString();
+                .append("afnemersindicaties", afnemersindicaties)
+                .toString();
     }
 
 }

@@ -10,15 +10,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datumtijdstempel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import org.apache.commons.lang3.StringUtils;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert het BRP datumTijd type.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek implements Comparable<BrpDatumTijd> {
@@ -34,32 +34,26 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     private static final long serialVersionUID = 1L;
     private static final long MILLIS_FACTOR = 1000L;
-    private static final long EEN_UUR = 10000L;
-    private static final long TIJD_FACTOR = 1000000L;
+    private static final long EEN_UUR = 10_000L;
+    private static final long TIJD_FACTOR = 1_000_000L;
 
     private static final String DATE_TIME_FORMAT = "yyyyMMddHHmmssSSS";
     private static final String DATE_FORMAT = "yyyyMMdd";
 
     /**
      * Maakt een BrpDatumTijd object met onderzoek.
-     * 
-     * @param waarde
-     *            de datumTijdMillis als long in de vorm van jjjjmmdduummssµµµ.
-     * @param onderzoek
-     *            het onderzoek waar deze datum onder valt. Mag NULL zijn.
+     * @param waarde de datumTijdMillis als long in de vorm van jjjjmmdduummssµµµ.
+     * @param onderzoek het onderzoek waar deze datum onder valt. Mag NULL zijn.
      */
     private BrpDatumTijd(
-        @Element(name = "waarde", required = false) final Long waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final Long waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Maakt een BrpDatumTijd object.
-     * 
-     * @param javaDate
-     *            De datumtijd, mag niet null zijn.
+     * @param javaDate De datumtijd, mag niet null zijn.
      */
     public BrpDatumTijd(final Date javaDate) {
         this(javaDate, null);
@@ -67,11 +61,8 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     /**
      * Maakt een BrpDatumTijd object met onderzoek.
-     * 
-     * @param javaDate
-     *            De datumtijd, mag niet null zijn.
-     * @param onderzoek
-     *            het onderzoek waar deze datum onder valt. Mag NULL zijn.
+     * @param javaDate De datumtijd, mag niet null zijn.
+     * @param onderzoek het onderzoek waar deze datum onder valt. Mag NULL zijn.
      */
     public BrpDatumTijd(final Date javaDate, final Lo3Onderzoek onderzoek) {
         super(convertToLong(javaDate), onderzoek);
@@ -88,11 +79,8 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     /**
      * Maakt een BrpDatumTijd object .
-     * 
-     * @param datumTijdMillis
-     *            de datumTijdMillis als long in de vorm van jjjjmmdduummssµµµ.
-     * @param onderzoek
-     *            onderzoek voor datum/tijd
+     * @param datumTijdMillis de datumTijdMillis als long in de vorm van jjjjmmdduummssµµµ.
+     * @param onderzoek onderzoek voor datum/tijd
      * @return de nieuwe BrpDatumTijd
      */
     public static BrpDatumTijd fromDatumTijdMillis(final Long datumTijdMillis, final Lo3Onderzoek onderzoek) {
@@ -101,15 +89,12 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     /**
      * Maakt een BrpDatumTijd object .
-     * 
-     * @param datumTijd
-     *            de datumTijd als Long in de vorm van jjjjmmdduummss.
-     * @param onderzoek
-     *            het onderzoek behorende bij deze datum-tijd.
+     * @param datumTijd de datumTijd als Long in de vorm van jjjjmmdduummss.
+     * @param onderzoek het onderzoek behorende bij deze datum-tijd.
      * @return de nieuwe BrpDatumTijd
      */
     public static BrpDatumTijd fromDatumTijd(final Long datumTijd, final Lo3Onderzoek onderzoek) {
-        if (!Validatie.isGeldigDatumFormaatYYYYMMDDHHMMSS(datumTijd)) {
+        if (!BrpValidatie.isGeldigDatumFormaatYYYYMMDDHHMMSS(datumTijd)) {
             throw new IllegalArgumentException(String.format("Datum/tijd is niet van het formaat jjjjmmdduummss: %s", datumTijd));
         }
         return BrpDatumTijd.fromDatumTijdMillis(datumTijd * MILLIS_FACTOR, onderzoek);
@@ -117,15 +102,12 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     /**
      * Maakt een BrpDatumTijd object met de tijd gezet op 01:00:00 met Onderzoek.
-     * 
-     * @param datum
-     *            de datum als integer in de vorm van jjjjmmdd.
-     * @param onderzoek
-     *            het onderzoek behorende bij deze datum-tijd.
+     * @param datum de datum als integer in de vorm van jjjjmmdd.
+     * @param onderzoek het onderzoek behorende bij deze datum-tijd.
      * @return de nieuwe BrpDatumTijd
      */
     public static BrpDatumTijd fromDatum(final Integer datum, final Lo3Onderzoek onderzoek) {
-        if (!Validatie.isGeldigDatumFormaatYYYYMMDD(datum)) {
+        if (!BrpValidatie.isGeldigDatumFormaatYYYYMMDD(datum)) {
             throw new IllegalArgumentException(String.format("Datum is niet gevuld of niet van het formaat jjjjmmdd: %s", datum));
         }
         final long datumTijd = datum * TIJD_FACTOR;
@@ -134,9 +116,8 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
     }
 
     /**
+     * @param lo3Datum de LO3 datum
      * @return de BRP datum tijd representatie van deze LO3 datum. De tijd wordt geconverteerd naar 01:00:00
-     * @param lo3Datum
-     *            de LO3 datum
      */
     public static BrpDatumTijd fromLo3Datum(final Lo3Datum lo3Datum) {
         final Integer datum = lo3Datum.getWaarde() == null ? null : Integer.valueOf(lo3Datum.getWaarde());
@@ -144,9 +125,8 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
     }
 
     /**
+     * @param lo3Datumtijdstempel de LO3 datum-tijd
      * @return de BRP datum tijd representatie van deze LO3 datum-tijd.
-     * @param lo3Datumtijdstempel
-     *            de LO3 datum-tijd
      */
     public static BrpDatumTijd fromLo3Datumtijdstempel(final Lo3Datumtijdstempel lo3Datumtijdstempel) {
         final Long datum = lo3Datumtijdstempel.getWaarde() == null ? null : Long.valueOf(lo3Datumtijdstempel.getWaarde());
@@ -155,9 +135,7 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     /**
      * Unwrap een BrpDatumTijd object om de String waarde terug te krijgen.
-     * 
-     * @param attribuut
-     *            De BrpDatum, mag null zijn.
+     * @param attribuut De BrpDatum, mag null zijn.
      * @return Een Long object, of null als de BrpDatumTijd null was.
      */
     public static Long unwrap(final BrpDatumTijd attribuut) {
@@ -166,7 +144,7 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -177,7 +155,7 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     @Override
     public int compareTo(final BrpDatumTijd andereDatumTijd) {
-        if (!Validatie.isAttribuutGevuld(andereDatumTijd)) {
+        if (!BrpValidatie.isAttribuutGevuld(andereDatumTijd)) {
             throw new NullPointerException("Andere datumtijd is null");
         }
 
@@ -186,16 +164,16 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     /**
      * Converteer naar Lo3 datum en doet daarbij een conversie van UTC naar CET/CEST.
-     * 
      * @return lo3 datum
      */
     public Lo3Datum converteerNaarLo3Datum() {
-        return new Lo3Datum(new SimpleDateFormat(DATE_FORMAT).format(getJavaDate()), getOnderzoek());
+        final SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+        format.setTimeZone(BRP_TIJDZONE);
+        return new Lo3Datum(format.format(getJavaDate()), getOnderzoek());
     }
 
     /**
      * Converteer naar Lo3 datumtijdstempel.
-     * 
      * @return lo3 datumtijdstempel
      */
     public Lo3Datumtijdstempel converteerNaarLo3Datumtijdstempel() {
@@ -204,7 +182,6 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     /**
      * Geef de waarde van datum tijd.
-     *
      * @return datum tijd zonder milliseconden
      */
     public long getDatumTijd() {
@@ -213,7 +190,6 @@ public final class BrpDatumTijd extends AbstractBrpAttribuutMetOnderzoek impleme
 
     /**
      * Geef de waarde van java date.
-     *
      * @return een Java-Date.
      */
     public Date getJavaDate() {

@@ -13,17 +13,13 @@ public interface RuntimeService {
 
     /**
      * Voeg een lock op de meegegeven runtime toe.
-     * 
-     * @param runtimeNaam
-     *            De naam van de te locken runtime.
+     * @param runtimeNaam De naam van de te locken runtime.
      */
     void lockRuntime(String runtimeNaam);
 
     /**
      * Verwijdert de lock op de meegeven runtime.
-     * 
-     * @param runtimeNaam
-     *            De naam van de te unlocken runtime.
+     * @param runtimeNaam De naam van de te unlocken runtime.
      */
     void unlockRuntime(String runtimeNaam);
 

@@ -8,9 +8,9 @@ package nl.bzk.migratiebrp.test.common.resultaat;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
+import nl.bzk.algemeenbrp.util.xml.annotation.Root;
 
 /**
  * Top level element van de datastructuur die de rapportage van een (regressie)test-run representeert. Dit is een
@@ -25,9 +25,7 @@ public final class TestRapportage {
 
     /**
      * Maakt een nieuw, compleet gevuld, testrapport aan.
-     * 
-     * @param tijdstip
-     *            Het tijdstip waarop de test heeft plaatsgevonden
+     * @param tijdstip Het tijdstip waarop de test heeft plaatsgevonden
      */
     public TestRapportage(final String tijdstip) {
         this.tijdstip = tijdstip;
@@ -35,19 +33,16 @@ public final class TestRapportage {
 
     /**
      * Geeft de resultaten terug.
-     * 
      * @return De lijst met testgeval-resultaat objecten
      */
-    @ElementList(name = "resultaten", inline = true, required = false)
+    @ElementList(name = "resultaten", entry = "resultaat", inline = true, type = TestResultaat.class, required = false)
     public List<TestResultaat> getResultaten() {
         return resultaten;
     }
 
     /**
      * Voeg resultaten toe.
-     * 
-     * @param deResultaten
-     *            resultaten
+     * @param deResultaten resultaten
      */
     public void addResultaat(final List<TestResultaat> deResultaten) {
         resultaten.addAll(deResultaten);
@@ -56,18 +51,15 @@ public final class TestRapportage {
 
     /**
      * Voeg resultaat toe.
-     * 
-     * @param resultaat
-     *            resultaat
+     * @param resultaat resultaat
      */
     public void addResultaat(final TestResultaat resultaat) {
-        this.resultaten.add(resultaat);
+        resultaten.add(resultaat);
 
     }
 
     /**
      * Geef de waarde van tijdstip.
-     *
      * @return tijdstip
      */
     @Element(name = "tijdstip")

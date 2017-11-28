@@ -8,12 +8,10 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Dienst;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.DienstAttenderingHistorie;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstAttenderingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.Dienst;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.DienstAttenderingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 
@@ -22,25 +20,16 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPAc
  */
 // @formatter:off
 public final class DienstAttenderingMapper extends
-    AbstractHistorieMapperStrategie<BrpDienstAttenderingInhoud, DienstAttenderingHistorie, Dienst>
-{
+        AbstractHistorieMapperStrategie<BrpDienstAttenderingInhoud, DienstAttenderingHistorie, Dienst> {
     // @formatter:on
 
     /**
      * Constructor.
-     *
-     * @param dynamischeStamtabelRepository
-     *            dynamische stamtabel repository om oa partijen te bevragen
-     * @param brpActieFactory
-     *            actie factory
+     * @param dynamischeStamtabelRepository dynamische stamtabel repository om oa partijen te bevragen
+     * @param brpActieFactory actie factory
      */
     public DienstAttenderingMapper(final DynamischeStamtabelRepository dynamischeStamtabelRepository, final BRPActieFactory brpActieFactory) {
         super(dynamischeStamtabelRepository, brpActieFactory, null);
-    }
-
-    @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpDienstAttenderingInhoud> brpStapel, final Dienst entiteit) {
-        // Niet nodig voor dit object.
     }
 
     @Override
@@ -51,13 +40,6 @@ public final class DienstAttenderingMapper extends
             entiteit.setDienstAttenderingHistorieSet(historieSet);
         }
         historieSet.add(historie);
-    }
-
-    @Override
-    protected void kopieerActueleGroepNaarEntiteit(final DienstAttenderingHistorie historie, final Dienst entiteit) {
-        if (historie != null) {
-            entiteit.setAttenderingscriterium(historie.getAttenderingscriterium());
-        }
     }
 
     @Override

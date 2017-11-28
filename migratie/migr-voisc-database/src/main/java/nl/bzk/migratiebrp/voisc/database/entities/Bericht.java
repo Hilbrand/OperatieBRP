@@ -7,7 +7,7 @@
 package nl.bzk.migratiebrp.voisc.database.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,8 +17,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import nl.bzk.migratiebrp.util.common.Kopieer;
 
@@ -52,21 +50,20 @@ public class Bericht implements Serializable {
     @Column(name = "correlation_id")
     private String correlationId;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "request_non_receipt_notification")
+    private boolean requestNonReceiptNotification;
+
     @Column(name = "tijdstip_ontvangst", updatable = false, nullable = false)
-    private Date tijdstipOntvangst;
+    private Timestamp tijdstipOntvangst;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "tijdstip_mailbox")
-    private Date tijdstipMailbox;
+    private Timestamp tijdstipMailbox;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "tijdstip_in_verwerking")
-    private Date tijdstipInVerwerking;
+    private Timestamp tijdstipInVerwerking;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "tijdstip_verzonden")
-    private Date tijdstipVerzonden;
+    private Timestamp tijdstipVerzonden;
 
     @Column(name = "dispatch_sequence_number")
     private Integer dispatchSequenceNumber;
@@ -80,13 +77,15 @@ public class Bericht implements Serializable {
     @Column(name = "notification_type")
     private String notificationType;
 
+    @Column(name = "verwerking_code")
+    private String verwerkingsCode;
+
     @Version
     @Column(name = "version")
     private Long version;
 
     /**
      * Geef id.
-     *
      * @return id
      */
     public final Long getId() {
@@ -95,9 +94,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public final void setId(final Long id) {
         this.id = id;
@@ -105,7 +102,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef originator.
-     *
      * @return originator
      */
     public final String getOriginator() {
@@ -114,9 +110,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet originator.
-     *
-     * @param originator
-     *            originator
+     * @param originator originator
      */
     public final void setOriginator(final String originator) {
         this.originator = originator;
@@ -124,7 +118,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef de waarde van recipient.
-     *
      * @return recipient
      */
     public final String getRecipient() {
@@ -133,9 +126,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet recipient.
-     *
-     * @param recipient
-     *            recipient
+     * @param recipient recipient
      */
     public final void setRecipient(final String recipient) {
         this.recipient = recipient;
@@ -143,7 +134,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef status.
-     *
      * @return status
      */
     public final StatusEnum getStatus() {
@@ -152,9 +142,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet status.
-     *
-     * @param status
-     *            status
+     * @param status status
      */
     public final void setStatus(final StatusEnum status) {
         this.status = status;
@@ -162,7 +150,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef message-id.
-     *
      * @return message id
      */
     public final String getMessageId() {
@@ -171,9 +158,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet message-id.
-     *
-     * @param messageId
-     *            message id
+     * @param messageId message id
      */
     public final void setMessageId(final String messageId) {
         this.messageId = messageId;
@@ -181,7 +166,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef correlatie id.
-     *
      * @return correlatie id
      */
     public final String getCorrelationId() {
@@ -190,94 +174,95 @@ public class Bericht implements Serializable {
 
     /**
      * Zet correlatie id.
-     *
-     * @param correlationId
-     *            correlatie id
+     * @param correlationId correlatie id
      */
     public final void setCorrelationId(final String correlationId) {
         this.correlationId = correlationId;
     }
 
     /**
+     * Geef request non-receipt-notification.
+     * @return request non-receipt-notification
+     */
+    public final boolean getRequestNonReceiptNotification() {
+        return requestNonReceiptNotification;
+    }
+
+    /**
+     * Zet request non-receipt-notification.
+     * @param requestNonReceiptNotification request non-receipt-notification
+     */
+    public final void setRequestNonReceiptNotification(final boolean requestNonReceiptNotification) {
+        this.requestNonReceiptNotification = requestNonReceiptNotification;
+    }
+
+    /**
      * Geef tijdstip ontvangst.
-     *
      * @return tijdstip ontvangst
      */
 
-    public final Date getTijdstipOntvangst() {
-        return Kopieer.utilDate(tijdstipOntvangst);
+    public final Timestamp getTijdstipOntvangst() {
+        return Kopieer.timestamp(tijdstipOntvangst);
     }
 
     /**
      * Zet tijdstip ontvangst.
-     *
-     * @param tijdstipOntvangst
-     *            tijdstip ontvangst
+     * @param tijdstipOntvangst tijdstip ontvangst
      */
-    public final void setTijdstipOntvangst(final Date tijdstipOntvangst) {
-        this.tijdstipOntvangst = Kopieer.utilDate(tijdstipOntvangst);
+    public final void setTijdstipOntvangst(final Timestamp tijdstipOntvangst) {
+        this.tijdstipOntvangst = Kopieer.timestamp(tijdstipOntvangst);
     }
 
     /**
      * Geef tijdstip mailbox.
-     *
      * @return tijdstip mailbox
      */
-    public final Date getTijdstipMailbox() {
-        return Kopieer.utilDate(tijdstipMailbox);
+    public final Timestamp getTijdstipMailbox() {
+        return Kopieer.timestamp(tijdstipMailbox);
     }
 
     /**
      * Zet tijdstip mailbox.
-     *
-     * @param tijdstipMailbox
-     *            tijdstip mailbox
+     * @param tijdstipMailbox tijdstip mailbox
      */
-    public final void setTijdstipMailbox(final Date tijdstipMailbox) {
-        this.tijdstipMailbox = Kopieer.utilDate(tijdstipMailbox);
+    public final void setTijdstipMailbox(final Timestamp tijdstipMailbox) {
+        this.tijdstipMailbox = Kopieer.timestamp(tijdstipMailbox);
     }
 
     /**
      * Geef tijdstip in verwerking.
-     *
      * @return tijdstip in verwerking
      */
-    public final Date getTijdstipInVerwerking() {
-        return Kopieer.utilDate(tijdstipInVerwerking);
+    public final Timestamp getTijdstipInVerwerking() {
+        return Kopieer.timestamp(tijdstipInVerwerking);
     }
 
     /**
      * Zet tijdstip in verwerking.
-     *
-     * @param tijdstipInVerwerking
-     *            tijdstip in verwerking
+     * @param tijdstipInVerwerking tijdstip in verwerking
      */
-    public final void setTijdstipInVerwerking(final Date tijdstipInVerwerking) {
-        this.tijdstipInVerwerking = Kopieer.utilDate(tijdstipInVerwerking);
+    public final void setTijdstipInVerwerking(final Timestamp tijdstipInVerwerking) {
+        this.tijdstipInVerwerking = Kopieer.timestamp(tijdstipInVerwerking);
     }
 
     /**
      * Geef tijdstip verzonden.
-     *
      * @return tijdstip verzonden
      */
-    public final Date getTijdstipVerzonden() {
-        return Kopieer.utilDate(tijdstipVerzonden);
+    public final Timestamp getTijdstipVerzonden() {
+        return Kopieer.timestamp(tijdstipVerzonden);
     }
 
     /**
      * Zet tijdstip verzonden.
-     *
-     * @param tijdstipVerzonden
-     *            tijdstip verzonden
+     * @param tijdstipVerzonden tijdstip verzonden
      */
-    public final void setTijdstipVerzonden(final Date tijdstipVerzonden) {
-        this.tijdstipVerzonden = Kopieer.utilDate(tijdstipVerzonden);
+    public final void setTijdstipVerzonden(final Timestamp tijdstipVerzonden) {
+        this.tijdstipVerzonden = Kopieer.timestamp(tijdstipVerzonden);
     }
 
     /**
      * Geef dispatch sequence number.
-     * 
      * @return dispatch sequence number
      */
     public final Integer getDispatchSequenceNumber() {
@@ -286,9 +271,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet dispatch sequence number.
-     * 
-     * @param dispatchSequenceNumber
-     *            dispatch sequence number
+     * @param dispatchSequenceNumber dispatch sequence number
      */
     public final void setDispatchSequenceNumber(final Integer dispatchSequenceNumber) {
         this.dispatchSequenceNumber = dispatchSequenceNumber;
@@ -296,7 +279,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef bericht inhoud.
-     * 
      * @return bericht inhoud
      */
     public final String getBerichtInhoud() {
@@ -305,9 +287,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet bericht inhoud.
-     * 
-     * @param berichtInhoud
-     *            bericht inhoud
+     * @param berichtInhoud bericht inhoud
      */
     public final void setBerichtInhoud(final String berichtInhoud) {
         this.berichtInhoud = berichtInhoud;
@@ -315,7 +295,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef non delivery reason.
-     * 
      * @return non delivery reason
      */
     public final String getNonDeliveryReason() {
@@ -324,9 +303,7 @@ public class Bericht implements Serializable {
 
     /**
      * Zet non delivery reason.
-     * 
-     * @param nonDeliveryReason
-     *            non delivery reason
+     * @param nonDeliveryReason non delivery reason
      */
     public final void setNonDeliveryReason(final String nonDeliveryReason) {
         this.nonDeliveryReason = nonDeliveryReason;
@@ -334,7 +311,6 @@ public class Bericht implements Serializable {
 
     /**
      * Geef notification type.
-     * 
      * @return notification type
      */
     public final String getNotificationType() {
@@ -343,17 +319,30 @@ public class Bericht implements Serializable {
 
     /**
      * Zet notification type.
-     * 
-     * @param notificationType
-     *            notification type
+     * @param notificationType notification type
      */
     public final void setNotificationType(final String notificationType) {
         this.notificationType = notificationType;
     }
 
     /**
+     * Zet de verwerkingscode. Dit is een code die logging over de verschillende subsystemen mogelijk maakt.
+     * @param verwerkingsCode unieke sleutel om logging te kunnen volgen
+     */
+    public final void setVerwerkingsCode(final String verwerkingsCode) {
+        this.verwerkingsCode = verwerkingsCode;
+    }
+
+    /**
+     * Geef verwerkingscode.
+     * @return de verwerkingscode
+     */
+    public final String getVerwerkingsCode() {
+        return verwerkingsCode;
+    }
+
+    /**
      * Geef versie.
-     * 
      * @return versie
      */
     public final Long getVersion() {
@@ -363,36 +352,38 @@ public class Bericht implements Serializable {
     @Override
     public final String toString() {
         return "Bericht [id="
-               + id
-               + ", originator="
-               + originator
-               + ", recipient="
-               + recipient
-               + ", status="
-               + status
-               + ", messageId="
-               + messageId
-               + ", correlationId="
-               + correlationId
-               + ", tijdstipOntvangst="
-               + tijdstipOntvangst
-               + ", tijdstipMailbox="
-               + tijdstipMailbox
-               + ", tijdstipInVerwerking="
-               + tijdstipInVerwerking
-               + ", tijdstipVerzonden="
-               + tijdstipVerzonden
-               + ", dispatchSequenceNumber="
-               + dispatchSequenceNumber
-               + ", berichtInhoud="
-               + berichtInhoud
-               + ", nonDeliveryReason="
-               + nonDeliveryReason
-               + ", notificationType="
-               + notificationType
-               + ", version="
-               + version
-               + "]";
+                + id
+                + ", originator="
+                + originator
+                + ", recipient="
+                + recipient
+                + ", status="
+                + status
+                + ", messageId="
+                + messageId
+                + ", correlationId="
+                + correlationId
+                + ", tijdstipOntvangst="
+                + tijdstipOntvangst
+                + ", tijdstipMailbox="
+                + tijdstipMailbox
+                + ", tijdstipInVerwerking="
+                + tijdstipInVerwerking
+                + ", tijdstipVerzonden="
+                + tijdstipVerzonden
+                + ", dispatchSequenceNumber="
+                + dispatchSequenceNumber
+                + ", berichtInhoud="
+                + berichtInhoud
+                + ", nonDeliveryReason="
+                + nonDeliveryReason
+                + ", notificationType="
+                + notificationType
+                + ", verwerkingsCode="
+                + verwerkingsCode
+                + ", version="
+                + version
+                + "]";
     }
 
 }

@@ -12,10 +12,8 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
-
 import org.junit.Test;
 
 /**
@@ -24,14 +22,11 @@ import org.junit.Test;
  * <li>LO3 datum -> BRP timestamp</li>
  * <li>BRP timestamp -> LO3 datum</li>
  * </ol>
- * 
  */
 public class DatumTijdConversieTest {
 
     /**
      * Test situatie 1: LO3 datum -> BRP timestamp
-     * 
-     * @throws ParseException
      */
     @Test
     public void testSituatie1() throws ParseException {
@@ -57,7 +52,7 @@ public class DatumTijdConversieTest {
         final BrpDatumTijd brpDatumTijdZomer = BrpDatumTijd.fromDatumTijd(20130601223000L, null);
         final BrpDatumTijd brpDatumTijdWinter = BrpDatumTijd.fromDatumTijd(20130101223000L, null);
 
-        assertEquals(new Lo3Datum(20130602), brpDatumTijdZomer.converteerNaarLo3Datum());
+        assertEquals(new Lo3Datum(20130601), brpDatumTijdZomer.converteerNaarLo3Datum());
         assertEquals(new Lo3Datum(20130101), brpDatumTijdWinter.converteerNaarLo3Datum());
     }
 }

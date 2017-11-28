@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.testutils.EqualsAndHashcodeTester;
-
 import org.junit.Assert;
 import org.junit.Test;
 

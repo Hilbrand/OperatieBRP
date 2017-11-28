@@ -14,9 +14,7 @@ public class BerichtInhoudException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            message
+     * @param message message
      */
     public BerichtInhoudException(final String message) {
         super(message);
@@ -24,11 +22,8 @@ public class BerichtInhoudException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            message
-     * @param rootCause
-     *            root cause
+     * @param message message
+     * @param rootCause root cause
      */
     public BerichtInhoudException(final String message, final Throwable rootCause) {
         super(message, rootCause);

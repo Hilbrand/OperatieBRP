@@ -6,20 +6,19 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de BRP Uitsluiting Kiesrecht.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpUitsluitingKiesrechtInhoud extends AbstractBrpGroepInhoud {
     @Element(name = "indicatieUitsluitingKiesrecht", required = false)
@@ -29,43 +28,37 @@ public final class BrpUitsluitingKiesrechtInhoud extends AbstractBrpGroepInhoud 
 
     /**
      * Maakt een nieuw BrpUitsluitingKiesrechtInhoud object.
-     * 
-     * @param indicatieUitsluitingKiesrecht
-     *            de indicatie 'Uitsluiting Kiesrecht', mag null zijn
-     * @param datumVoorzienEindeUitsluitingKiesrecht
-     *            de voorziene datum einde uitsluiting kiesrecht, mag null zijn
+     * @param indicatieUitsluitingKiesrecht de indicatie 'Uitsluiting Kiesrecht', mag null zijn
+     * @param datumVoorzienEindeUitsluitingKiesrecht de voorziene datum einde uitsluiting kiesrecht, mag null zijn
      */
     public BrpUitsluitingKiesrechtInhoud(
-        @Element(name = "indicatieUitsluitingKiesrecht", required = false) final BrpBoolean indicatieUitsluitingKiesrecht,
-        @Element(name = "datumVoorzienEindeUitsluitingKiesrecht", required = false) final BrpDatum datumVoorzienEindeUitsluitingKiesrecht)
-    {
+            @Element(name = "indicatieUitsluitingKiesrecht", required = false) final BrpBoolean indicatieUitsluitingKiesrecht,
+            @Element(name = "datumVoorzienEindeUitsluitingKiesrecht", required = false) final BrpDatum datumVoorzienEindeUitsluitingKiesrecht) {
         this.indicatieUitsluitingKiesrecht = indicatieUitsluitingKiesrecht;
         this.datumVoorzienEindeUitsluitingKiesrecht = datumVoorzienEindeUitsluitingKiesrecht;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(indicatieUitsluitingKiesrecht, datumVoorzienEindeUitsluitingKiesrecht);
+        return !BrpValidatie.isEenParameterGevuld(indicatieUitsluitingKiesrecht, datumVoorzienEindeUitsluitingKiesrecht);
     }
 
     /**
-     * Geef de waarde van datum voorzien einde uitsluiting kiesrecht.
-     *
-     * @return datum voorzien einde uitsluiting kiesrecht
+     * Geef de waarde van datum voorzien einde uitsluiting kiesrecht van BrpUitsluitingKiesrechtInhoud.
+     * @return de waarde van datum voorzien einde uitsluiting kiesrecht van BrpUitsluitingKiesrechtInhoud
      */
     public BrpDatum getDatumVoorzienEindeUitsluitingKiesrecht() {
         return datumVoorzienEindeUitsluitingKiesrecht;
     }
 
     /**
-     * Geef de waarde van indicatie uitsluiting kiesrecht.
-     *
-     * @return indicatie uitsluiting kiesrecht
+     * Geef de waarde van indicatie uitsluiting kiesrecht van BrpUitsluitingKiesrechtInhoud.
+     * @return de waarde van indicatie uitsluiting kiesrecht van BrpUitsluitingKiesrechtInhoud
      */
     public BrpBoolean getIndicatieUitsluitingKiesrecht() {
         return indicatieUitsluitingKiesrecht;
@@ -81,8 +74,8 @@ public final class BrpUitsluitingKiesrechtInhoud extends AbstractBrpGroepInhoud 
         }
         final BrpUitsluitingKiesrechtInhoud castOther = (BrpUitsluitingKiesrechtInhoud) other;
         return new EqualsBuilder().append(indicatieUitsluitingKiesrecht, castOther.indicatieUitsluitingKiesrecht)
-                                  .append(datumVoorzienEindeUitsluitingKiesrecht, castOther.datumVoorzienEindeUitsluitingKiesrecht)
-                                  .isEquals();
+                .append(datumVoorzienEindeUitsluitingKiesrecht, castOther.datumVoorzienEindeUitsluitingKiesrecht)
+                .isEquals();
     }
 
     @Override
@@ -93,10 +86,10 @@ public final class BrpUitsluitingKiesrechtInhoud extends AbstractBrpGroepInhoud 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("indicatieUitsluitingKiesrecht", indicatieUitsluitingKiesrecht)
-                                                                          .append(
-                                                                              "datumVoorzienEindeUitsluitingKiesrecht",
-                                                                              datumVoorzienEindeUitsluitingKiesrecht)
-                                                                          .toString();
+                .append("indicatieUitsluitingKiesrecht", indicatieUitsluitingKiesrecht)
+                .append(
+                        "datumVoorzienEindeUitsluitingKiesrecht",
+                        datumVoorzienEindeUitsluitingKiesrecht)
+                .toString();
     }
 }

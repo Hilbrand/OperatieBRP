@@ -13,7 +13,9 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 
 public class GemeenteConversietabel extends AbstractGemeenteConversietabel implements Conversietabel<Lo3GemeenteCode, BrpGemeenteCode> {
 
-    /** Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk). */
+    /**
+     * Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk).
+     */
     public static final Lo3GemeenteCode LO3_NIET_VALIDE_UITZONDERING = new Lo3GemeenteCode("8888");
     /**
      * Test waarde voor een niet geldige RNI waarde (niet wijzigen, tests zijn hiervan afhankelijk). Waarde wordt wel
@@ -24,7 +26,7 @@ public class GemeenteConversietabel extends AbstractGemeenteConversietabel imple
     @Override
     public boolean valideerLo3(final Lo3GemeenteCode input) {
         return !LO3_NIET_VALIDE_UITZONDERING.equalsWaarde(input)
-               && !LO3_RNI_NIET_VALIDE_UITZONDERING.equalsWaarde(input);
+                && !LO3_RNI_NIET_VALIDE_UITZONDERING.equalsWaarde(input);
     }
 
     @Override

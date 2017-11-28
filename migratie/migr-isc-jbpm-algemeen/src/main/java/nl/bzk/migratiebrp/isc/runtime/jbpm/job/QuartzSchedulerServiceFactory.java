@@ -21,9 +21,7 @@ public final class QuartzSchedulerServiceFactory implements ServiceFactory {
     /**
      * Zet de scheduler. Aangeroepen door
      * {@link nl.bzk.migratiebrp.isc.runtime.jbpm.configuration.JbpmConfigurationFactoryBean}.
-     *
-     * @param scheduler
-     *            scheduler
+     * @param scheduler scheduler
      */
     public void setScheduler(final Scheduler scheduler) {
         this.scheduler = scheduler;
@@ -40,6 +38,7 @@ public final class QuartzSchedulerServiceFactory implements ServiceFactory {
 
     @Override
     public void close() {
+        // Interface methode, hoeft niks te sluiten
     }
 
 }

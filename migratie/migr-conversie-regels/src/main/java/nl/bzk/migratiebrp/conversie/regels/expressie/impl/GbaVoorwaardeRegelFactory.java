@@ -7,37 +7,38 @@
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 /**
  * Factory om AbstractGbaVoorwaardeRegel objecten aan te maken.
- *
  */
 @Component
 public class GbaVoorwaardeRegelFactory {
 
-    @Inject
-    private GbaVoorwaardeRegel[] gbaVoorwaardeRegels;
+    private final List<GbaVoorwaardeRegel> gbaVoorwaardeRegels;
 
+    /**
+     * Constructor.
+     * @param gbaVoorwaardeRegels gba voorwaarde regel vertalers
+     * @param gbaVoorwaardeRegelComparator vergelijker voor voorwaarde regel vertalers
+     */
     @Inject
-    private GbaVoorwaardeRegelComparator gbaVoorwaardeRegelComparator;
+    public GbaVoorwaardeRegelFactory(final GbaVoorwaardeRegel[] gbaVoorwaardeRegels, final GbaVoorwaardeRegelComparator gbaVoorwaardeRegelComparator) {
+        this.gbaVoorwaardeRegels = Arrays.asList(Arrays.copyOf(gbaVoorwaardeRegels, gbaVoorwaardeRegels.length));
+        this.gbaVoorwaardeRegels.sort(gbaVoorwaardeRegelComparator);
+    }
 
     /**
      * Maakt een GbaVoorwaardeRegel object aan van een <b>enkelvoudige</b> gba voorwaarde regel.
-     *
-     * @param gbaVoorwaardeRegel
-     *            De voorwaarderegel obv het object wordt gemaakt
+     * @param gbaVoorwaardeRegel De voorwaarderegel obv het object wordt gemaakt
      * @return een GbaVoorwaardeRegel geschikt voor het verwerken van die voorwaarde regel
      */
-    public final GbaVoorwaardeRegel maakGbaVoorwaardeRegel(final String gbaVoorwaardeRegel) {
+    public final GbaVoorwaardeRegel maakGbaVoorwaardeRegel(final RubriekWaarde gbaVoorwaardeRegel) {
         GbaVoorwaardeRegel result = null;
-        final List<GbaVoorwaardeRegel> regels = Arrays.asList(gbaVoorwaardeRegels);
-        Collections.sort(regels, gbaVoorwaardeRegelComparator);
-        for (final GbaVoorwaardeRegel regel : regels) {
-            if (regel.filter(gbaVoorwaardeRegel)) {
+        for (final GbaVoorwaardeRegel regel : gbaVoorwaardeRegels) {
+            if (regel.filter(gbaVoorwaardeRegel.getLo3Expressie())) {
                 result = regel;
                 break;
             }

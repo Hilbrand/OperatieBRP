@@ -34,6 +34,8 @@
     <ga:parameter name="anummer" target="#{filter_anummer}" default=""/>
     <ga:parameter name="partij" target="#{filter_partij}" default=""/>
     <ga:parameter name="ah" target="#{filter_ah}" default=""/>
+    <ga:parameter name="processInstanceId" target="#{filter_processInstanceId}" default=""/>
+    <ga:parameter name="processDefinition" target="#{filter_processDefinition}" default=""/>
     <ga:parameter name="root" target="#{filter_root}" default="${true}"/>
 
     <ga:parameter name="page" target="#{page}">
@@ -42,7 +44,8 @@
     <mig:pager target="#{piList_pager}" page="#{page}" pageSize="10" />
     <mig:processInstancesFilter target="#{piList_filter}" key="#{pi_key}" startDate="#{startDate}"
      running="#{filter_running}" suspended="#{filter_suspended}" ended="#{filter_ended}"
-     anummer="#{filter_anummer}" partij="#{filter_partij}" administratieveHandelingId="#{filter_ah}" root="#{filter_root}" />
+     anummer="#{filter_anummer}" partij="#{filter_partij}" administratieveHandelingId="#{filter_ah}" 
+     processInstanceId="#{filter_processInstanceId}" processDefinition="#{filter_processDefinition}" root="#{filter_root}" />
     <mig:listProcessInstances target="#{piList}" pager="#{piList_pager}" filter="#{piList_filter}"/>
 </ga:responseActions>
 

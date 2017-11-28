@@ -25,8 +25,8 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3PersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerwijzingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.junit.Assert;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -38,6 +38,7 @@ public class GetterSetterTester {
 
     private static final Logger LOG = LoggerFactory.getLogger();
     private static final Map<Class<?>, Object> VALUES = new HashMap<>();
+
     static {
         VALUES.put(Character.class, 'c');
         VALUES.put(Character.TYPE, 'c');
@@ -54,7 +55,7 @@ public class GetterSetterTester {
         VALUES.put(Timestamp.class, new Timestamp(System.currentTimeMillis()));
         VALUES.put(List.class, Collections.emptyList());
         VALUES.put(Set.class, Collections.emptySet());
-        final byte[] byteArray = new byte[] {};
+        final byte[] byteArray = new byte[]{};
         VALUES.put(byteArray.getClass(), byteArray);
         VALUES.put(Lo3Datum.class, new Lo3Datum(19800101));
         VALUES.put(Lo3AdellijkeTitelPredikaatCode.class, new Lo3AdellijkeTitelPredikaatCode("P"));
@@ -62,6 +63,7 @@ public class GetterSetterTester {
         VALUES.put(Lo3Persoonslijst.class, new Lo3PersoonslijstBuilder().build());
         VALUES.put(BrpPersoonslijst.class, new BrpPersoonslijstBuilder().build());
     }
+
     private final Map<Class<?>, Set<String>> IGNORE = new HashMap<>();
 
     public GetterSetterTester ignore(final Class<?> clazz, final String property) {
@@ -74,9 +76,7 @@ public class GetterSetterTester {
 
     /**
      * Test entities in package.
-     *
-     * @param packageName
-     *            package
+     * @param packageName package
      */
     public void testBerichten(final String packageName) throws ReflectiveOperationException {
 
@@ -123,11 +123,8 @@ public class GetterSetterTester {
 
     /**
      * Test het object (op alle mogelijke manieren {@link #bepaalPropertiesObvFields(Object)}).
-     *
-     * @param objectToTest
-     *            object om te testen
-     * @throws ReflectiveOperationException
-     *             bij fouten
+     * @param objectToTest object om te testen
+     * @throws ReflectiveOperationException bij fouten
      */
     public void test(final Object objectToTest) throws ReflectiveOperationException {
         LOG.info("Test object van klasse: " + objectToTest.getClass().getName());
@@ -146,9 +143,7 @@ public class GetterSetterTester {
 
     /**
      * Bepaal properties obv fields in klassen.
-     *
-     * @param objectToTest
-     *            objcet om te testen
+     * @param objectToTest objcet om te testen
      * @return lisjt van properties
      */
     public Set<String> bepaalPropertiesObvFields(final Object objectToTest) {
@@ -168,13 +163,9 @@ public class GetterSetterTester {
 
     /**
      * Test gebaseerd op property naam (setProperty, getProperty/isProperty, property).
-     *
-     * @param property
-     *            property naam
-     * @param objectToTest
-     *            object om te testen
-     * @throws ReflectiveOperationException
-     *             bij fouten
+     * @param property property naam
+     * @param objectToTest object om te testen
+     * @throws ReflectiveOperationException bij fouten
      */
     public void test(final String property, final Object objectToTest) throws ReflectiveOperationException {
         LOG.info("Test property " + property + " object van klasse: " + objectToTest.getClass().getName());
@@ -195,16 +186,16 @@ public class GetterSetterTester {
                     setter.invoke(objectToTest, value);
                 } catch (final Exception e) {
                     LOG.warn("Kan property "
-                             + property
-                             + " ("
-                             + field.getType().getName()
-                             + ") op object ("
-                             + objectToTest.getClass().getName()
-                             + ") niet setten met "
-                             + value
-                             + " ("
-                             + value.getClass().getName()
-                             + ")", e);
+                            + property
+                            + " ("
+                            + field.getType().getName()
+                            + ") op object ("
+                            + objectToTest.getClass().getName()
+                            + ") niet setten met "
+                            + value
+                            + " ("
+                            + value.getClass().getName()
+                            + ")", e);
                     throw e;
                 }
 

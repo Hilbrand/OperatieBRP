@@ -12,15 +12,15 @@ import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch.Abstra
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
 
 public class NationaliteitConversietabel extends AbstractNationaliteitConversietabel implements
-        Conversietabel<Lo3NationaliteitCode, BrpNationaliteitCode>
-{
+        Conversietabel<Lo3NationaliteitCode, BrpNationaliteitCode> {
 
-    /** Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk). */
+    /**
+     * Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk).
+     */
     public static final Lo3NationaliteitCode LO3_NIET_VALIDE_UITZONDERING = new Lo3NationaliteitCode("8888");
 
     public static final Lo3NationaliteitCode LO3_STAATLOOS = new Lo3NationaliteitCode(Lo3NationaliteitCode.NATIONALITEIT_CODE_STAATLOOS);
-    public static final BrpNationaliteitCode BRP_STAATLOOS = new BrpNationaliteitCode(
-        Short.valueOf(Lo3NationaliteitCode.NATIONALITEIT_CODE_STAATLOOS));
+    public static final BrpNationaliteitCode BRP_STAATLOOS = new BrpNationaliteitCode(Lo3NationaliteitCode.NATIONALITEIT_CODE_STAATLOOS);
 
     @Override
     public boolean valideerLo3(final Lo3NationaliteitCode input) {

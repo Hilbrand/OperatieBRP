@@ -6,11 +6,10 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNummerverwijzingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNummerverwijzingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNummerverwijzingHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -22,22 +21,22 @@ public final class BrpNummerverwijzingMapper extends AbstractBrpMapper<PersoonNu
 
     @Override
     protected BrpNummerverwijzingInhoud mapInhoud(final PersoonNummerverwijzingHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
-        final BrpLong vorigAdministratienummer =
-                BrpLong.wrap(
-                    historie.getVorigeAdministratienummer(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NUMMERVERWIJZING_VORIGEADMINISTRATIENUMMER, true));
-        final BrpLong volgendAdministratienummer =
-                BrpLong.wrap(
-                    historie.getVolgendeAdministratienummer(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NUMMERVERWIJZING_VOLGENDEADMINISTRATIENUMMER, true));
-        final BrpInteger vorigBurgerservicenummer =
-                BrpInteger.wrap(
-                    historie.getVorigeBurgerservicenummer(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NUMMERVERWIJZING_VORIGEBURGERSERVICENUMMER, true));
-        final BrpInteger volgendBurgerservicenummer =
-                BrpInteger.wrap(
-                    historie.getVolgendeBurgerservicenummer(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NUMMERVERWIJZING_VOLGENDEBURGERSERVICENUMMER, true));
+        final BrpString vorigAdministratienummer =
+                BrpString.wrap(
+                        historie.getVorigeAdministratienummer(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NUMMERVERWIJZING_VORIGEADMINISTRATIENUMMER, true));
+        final BrpString volgendAdministratienummer =
+                BrpString.wrap(
+                        historie.getVolgendeAdministratienummer(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NUMMERVERWIJZING_VOLGENDEADMINISTRATIENUMMER, true));
+        final BrpString vorigBurgerservicenummer =
+                BrpString.wrap(
+                        historie.getVorigeBurgerservicenummer(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NUMMERVERWIJZING_VORIGEBURGERSERVICENUMMER, true));
+        final BrpString volgendBurgerservicenummer =
+                BrpString.wrap(
+                        historie.getVolgendeBurgerservicenummer(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NUMMERVERWIJZING_VOLGENDEBURGERSERVICENUMMER, true));
         return new BrpNummerverwijzingInhoud(vorigAdministratienummer, volgendAdministratienummer, vorigBurgerservicenummer, volgendBurgerservicenummer);
     }
 }

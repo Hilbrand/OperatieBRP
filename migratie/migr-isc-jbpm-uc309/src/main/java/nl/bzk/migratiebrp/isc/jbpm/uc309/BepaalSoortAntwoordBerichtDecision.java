@@ -14,6 +14,7 @@ import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkToevalligeGebeurtenisAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringDecision;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,19 +23,30 @@ import org.springframework.stereotype.Component;
 @Component("uc309BepaalSoortAntwoordBerichtDecision")
 public class BepaalSoortAntwoordBerichtDecision implements SpringDecision {
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public BepaalSoortAntwoordBerichtDecision(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public final String execute(final Map<String, Object> parameters) {
         final Long verwerkToevalligeGebeurtenisAntwoordBerichtId = (Long) parameters.get("verwerkToevalligeGebeurtenisAntwoordBericht");
         final VerwerkToevalligeGebeurtenisAntwoordBericht verwerkToevalligeGebeurtenisAntwoordBericht =
                 (VerwerkToevalligeGebeurtenisAntwoordBericht) berichtenDao.leesBericht(verwerkToevalligeGebeurtenisAntwoordBerichtId);
+        final String decision;
         if (StatusType.OK.equals(verwerkToevalligeGebeurtenisAntwoordBericht.getStatus())) {
-            return "4a. maak null bericht";
+            decision = "4a. maak null bericht";
+        } else if (StatusType.AFGEKEURD.equals(verwerkToevalligeGebeurtenisAntwoordBericht.getStatus())) {
+            decision = "4c. afgekeurd";
         } else {
-            return "4b. maak tf21 bericht";
+            decision = "4b. maak tf21 bericht";
         }
+        return decision;
     }
-
 }

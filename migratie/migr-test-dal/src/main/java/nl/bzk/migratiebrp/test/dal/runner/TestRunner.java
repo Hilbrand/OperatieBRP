@@ -14,13 +14,14 @@ import java.util.Date;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.common.output.TestOutput;
 import nl.bzk.migratiebrp.test.common.resultaat.Foutmelding;
 import nl.bzk.migratiebrp.test.common.resultaat.TestRapportage;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.runner.Description;
@@ -41,11 +42,8 @@ public final class TestRunner extends Runner {
 
     /**
      * Constructor (for usage in jUnit).
-     *
-     * @param testConfigurationClass
-     *            test class (configuration)
-     * @throws InitializationError
-     *             if the test could not be initialized
+     * @param testConfigurationClass test class (configuration)
+     * @throws InitializationError if the test could not be initialized
      */
     public TestRunner(final Class<? extends TestConfiguratie> testConfigurationClass) throws InitializationError {
         TestRunner.newInstanceIfNecessary(testConfigurationClass);
@@ -56,19 +54,16 @@ public final class TestRunner extends Runner {
             final TestConfiguratie configuratie;
             try {
                 configuratie = testConfiguratieClass.newInstance();
-            } catch (final
-                InstantiationException
-                | IllegalAccessException e)
-            {
+            } catch (final InstantiationException | IllegalAccessException e) {
                 throw new InitializationError(e);
             }
             builder =
                     new TestBuilder(
-                        testConfiguratieClass,
-                        configuratie.getInputFolder(),
-                        configuratie.getThemaFilter(),
-                        configuratie.getCasusFilter(),
-                        configuratie.getCasusFactory());
+                            testConfiguratieClass,
+                            configuratie.getInputFolder(),
+                            configuratie.getThemaFilter(),
+                            configuratie.getCasusFilter(),
+                            configuratie.getCasusFactory());
             description = builder.build();
         }
     }
@@ -120,23 +115,32 @@ public final class TestRunner extends Runner {
     }
 
     private List<TestResultaat> runTest(final Test test, final RunNotifier notifier) {
-        LOG.info("Starting test: " + test.getDescription().getDisplayName());
-        notifier.fireTestStarted(test.getDescription());
-        try {
-            final TestResultaat result = test.getTestCasus().run();
-            if (!result.isSucces()) {
-                LOG.info("Test assumption failed");
-                notifier.fireTestFailure(new Failure(test.getDescription(), new AssertionFailedError("Test resultaat niet OK.")));
+        final TestCasus testCasus = test.getTestCasus();
+        final String naam = testCasus.getThema() + " - " + test.getDescription().getDisplayName();
+
+        if(testCasus.isSkip()) {
+            notifier.fireTestIgnored(test.getDescription());
+            LOG.info("Skipping test: {}", naam);
+            return Collections.emptyList();
+        } else {
+            notifier.fireTestStarted(test.getDescription());
+            LOG.info("Starting test: {}", naam);
+            try {
+                final TestResultaat result = testCasus.run();
+                if (!result.isSucces()) {
+                    LOG.info("Test assumption failed");
+                    notifier.fireTestFailure(new Failure(test.getDescription(), new AssertionFailedError("Test resultaat niet OK.")));
+                }
+                return Collections.singletonList(result);
+            } catch (final Exception e) {
+                LOG.info("Test exception", e);
+                notifier.fireTestFailure(new Failure(test.getDescription(), e));
+                final TestResultaat resultaat = new FailureResultaat(test.getTestCasus(), e);
+                return Collections.singletonList(resultaat);
+            } finally {
+                LOG.info("Test finished");
+                notifier.fireTestFinished(test.getDescription());
             }
-            return Collections.singletonList(result);
-        } catch (final Exception e) {
-            LOG.info("Test exception", e);
-            notifier.fireTestFailure(new Failure(test.getDescription(), e));
-            final TestResultaat resultaat = new FailureResultaat(test.getTestCasus(), e);
-            return Collections.singletonList(resultaat);
-        } finally {
-            notifier.fireTestFinished(test.getDescription());
-            LOG.info("Test finished");
         }
     }
 
@@ -147,11 +151,8 @@ public final class TestRunner extends Runner {
 
         /**
          * Default constructor.
-         * 
-         * @param testCasus
-         *            De testcasus.
-         * @param cause
-         *            De oorzaak van het falen van de test.
+         * @param testCasus De testcasus.
+         * @param cause De oorzaak van het falen van de test.
          */
         protected FailureResultaat(final TestCasus testCasus, final Exception cause) {
             super(testCasus.getThema(), testCasus.getNaam());

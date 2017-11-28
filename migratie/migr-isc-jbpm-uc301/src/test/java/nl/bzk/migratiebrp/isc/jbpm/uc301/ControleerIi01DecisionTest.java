@@ -9,42 +9,41 @@ package nl.bzk.migratiebrp.isc.jbpm.uc301;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ii01Bericht;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Gemeente;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegisterImpl;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegisterImpl;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Rol;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
-import nl.bzk.migratiebrp.isc.jbpm.common.TestGemeenteService;
+import nl.bzk.migratiebrp.isc.jbpm.common.TestPartijService;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
-import nl.bzk.migratiebrp.register.client.GemeenteService;
+import nl.bzk.migratiebrp.register.client.PartijService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ControleerIi01DecisionTest {
 
     private ControleerIi01Decision subject;
     private BerichtenDao berichtenDao;
-    private GemeenteService gemeenteService;
 
     @Before
     public void setup() {
-        subject = new ControleerIi01Decision();
         berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
 
-        final List<Gemeente> gemeenten = new ArrayList<>();
-        gemeenten.add(new Gemeente("0001", "580001", intToDate(20090101)));
-        gemeenten.add(new Gemeente("0002", "580002", null));
-        gemeenteService = new TestGemeenteService(new GemeenteRegisterImpl(gemeenten));
+        final List<Partij> partijen = new ArrayList<>();
+        partijen.add(new Partij("580001", "0001", intToDate(2009_01_01), Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("580002", "0002", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
 
-        ReflectionTestUtils.setField(subject, "gemeenteRegisterService", gemeenteService);
+        final PartijService partijService = new TestPartijService(new PartijRegisterImpl(partijen));
+
+        subject = new ControleerIi01Decision(berichtenDao, partijService);
     }
 
     private static Date intToDate(final int date) {
@@ -58,8 +57,8 @@ public class ControleerIi01DecisionTest {
     @Test
     public void testOk() {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("0002");
-        ii01Bericht.setDoelGemeente("0001");
+        ii01Bericht.setBronPartijCode("580002");
+        ii01Bericht.setDoelPartijCode("580001");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.BURGERSERVICENUMMER, "2342342432");
 
         final Map<String, Object> parameters = new HashMap<>();
@@ -71,8 +70,8 @@ public class ControleerIi01DecisionTest {
     @Test
     public void testStelselNokBronNull() {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("0003");
-        ii01Bericht.setDoelGemeente("0001");
+        ii01Bericht.setBronPartijCode("580003");
+        ii01Bericht.setDoelPartijCode("580001");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.BURGERSERVICENUMMER, "2342342432");
 
         final Map<String, Object> parameters = new HashMap<>();
@@ -84,8 +83,8 @@ public class ControleerIi01DecisionTest {
     @Test
     public void testStelselNokBronBrp() {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("0001");
-        ii01Bericht.setDoelGemeente("0001");
+        ii01Bericht.setBronPartijCode("580001");
+        ii01Bericht.setDoelPartijCode("580001");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.BURGERSERVICENUMMER, "2342342432");
 
         final Map<String, Object> parameters = new HashMap<>();
@@ -97,8 +96,8 @@ public class ControleerIi01DecisionTest {
     @Test
     public void testStelselNokDoelNull() {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("0002");
-        ii01Bericht.setDoelGemeente("0003");
+        ii01Bericht.setBronPartijCode("580002");
+        ii01Bericht.setDoelPartijCode("580003");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.BURGERSERVICENUMMER, "2342342432");
 
         final Map<String, Object> parameters = new HashMap<>();
@@ -110,8 +109,8 @@ public class ControleerIi01DecisionTest {
     @Test
     public void testStelselNokDoelGba() {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("0002");
-        ii01Bericht.setDoelGemeente("0002");
+        ii01Bericht.setBronPartijCode("580002");
+        ii01Bericht.setDoelPartijCode("580002");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.BURGERSERVICENUMMER, "2342342432");
 
         final Map<String, Object> parameters = new HashMap<>();
@@ -123,8 +122,8 @@ public class ControleerIi01DecisionTest {
     @Test
     public void testCriteriaNok() {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("0002");
-        ii01Bericht.setDoelGemeente("0001");
+        ii01Bericht.setBronPartijCode("580002");
+        ii01Bericht.setDoelPartijCode("580001");
 
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("input", berichtenDao.bewaarBericht(ii01Bericht));

@@ -8,8 +8,9 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-
+import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.Definitie;
 import nl.bzk.migratiebrp.conversie.model.Definities;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
@@ -34,69 +35,61 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OuderInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGezagMinderjarige;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
+import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
+import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenBetrokkenheid;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenRelatie;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
-
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Deze class bevat de logica om een LO3 Ouder (zowel Ouder1 als Ouder2) te converteren naar BRP relaties, betrokkenen
  * en gerelateerde personen.
  */
-@Component
-@Requirement({Requirements.CRP001, Requirements.CRP001_LB01, Requirements.CR001 })
+@Requirement({Requirements.CRP001, Requirements.CRP001_LB01, Requirements.CR001})
 public class OuderConverteerder extends AbstractRelatieConverteerder {
+
+    /**
+     * Constructor voor deze converteerder
+     * @param lo3AttribuutConverteerder de lo3 attributen converteerder
+     */
+    public OuderConverteerder(final Lo3AttribuutConverteerder lo3AttribuutConverteerder) {
+        super(lo3AttribuutConverteerder);
+    }
 
     /**
      * Converteert de LO3 Ouder stapels naar de corresponderende BRP groepen en vult hiermee de migratie builder aan.
      * Als isDummyPL true is, dan wordt er niets geconverteerd.
-     *
-     * @param ouder1Stapel
-     *            de stapels voor Ouder 1, mag niet null en niet leeg zijn
-     * @param ouder2Stapel
-     *            de stapels voor Ouder 2, mag niet null en niet leeg zijn
-     * @param gezagsverhoudingStapel
-     *            de stapel voor Gezagsverhouding, mag null zijn
-     * @param isDummyPL
-     *            geeft aan of de PL een dummy PL is
-     * @param tussenPersoonslijstBuilder
-     *            de migratie persoonslijst builder
+     * @param ouder1Stapel de stapels voor Ouder 1, mag niet null en niet leeg zijn
+     * @param ouder2Stapel de stapels voor Ouder 2, mag niet null en niet leeg zijn
+     * @param gezagsverhoudingStapel de stapel voor Gezagsverhouding, mag null zijn
+     * @param isDummyPL geeft aan of de PL een dummy PL is
+     * @param tussenPersoonslijstBuilder de migratie persoonslijst builder
      */
     public final void converteer(
-        final Lo3Stapel<Lo3OuderInhoud> ouder1Stapel,
-        final Lo3Stapel<Lo3OuderInhoud> ouder2Stapel,
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
-        final boolean isDummyPL,
-        final TussenPersoonslijstBuilder tussenPersoonslijstBuilder)
-    {
+            final Lo3Stapel<Lo3OuderInhoud> ouder1Stapel,
+            final Lo3Stapel<Lo3OuderInhoud> ouder2Stapel,
+            final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
+            final boolean isDummyPL,
+            final TussenPersoonslijstBuilder tussenPersoonslijstBuilder) {
         if (isDummyPL) {
             return;
         }
 
-        final List<TussenBetrokkenheid> betrokkenheidStapels = new ArrayList<>();
+        final List<TussenBetrokkenheid> betrokkenheidStapels = new LinkedList<>();
+        // Inhoudelijke BRP gegevens
+        betrokkenheidStapels.addAll(maakBetrokkenhedenVoorOuders(ouder1Stapel, gezagsverhoudingStapel, OuderType.OUDER_1));
+        betrokkenheidStapels.addAll(maakBetrokkenhedenVoorOuders(ouder2Stapel, gezagsverhoudingStapel, OuderType.OUDER_2));
 
-        for (final Lo3Stapel<Lo3OuderInhoud> ouder1 : Lo3SplitsenGerelateerdeOuders.splitsOuders(ouder1Stapel)) {
-            // ouder1 betrokkenheid
-            if (!bevatAlleenJuridischGeenOuder(ouder1)) {
-                betrokkenheidStapels.add(maakMigratieBetrokkenheidStapel(ouder1, OuderType.OUDER_1, gezagsverhoudingStapel));
-            }
-        }
+        controleerBijzondereSituatieLB042(gezagsverhoudingStapel);
 
-        for (final Lo3Stapel<Lo3OuderInhoud> ouder2 : Lo3SplitsenGerelateerdeOuders.splitsOuders(ouder2Stapel)) {
-            // ouder 2 betrokkenheid
-            if (!bevatAlleenJuridischGeenOuder(ouder2)) {
-                betrokkenheidStapels.add(maakMigratieBetrokkenheidStapel(ouder2, OuderType.OUDER_2, gezagsverhoudingStapel));
-            }
-        }
-
+        // IST gegevens
         final TussenStapel<BrpIstRelatieGroepInhoud> istOuder1Stapel = converteerOuderStapel(ouder1Stapel);
         final TussenStapel<BrpIstRelatieGroepInhoud> istOuder2Stapel = converteerOuderStapel(ouder2Stapel);
-
         final TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> istGezagsVerhoudingStapels = converteerGezagsVerhoudingStapel(gezagsverhoudingStapel);
 
         final TussenRelatie.Builder relatieBuilder =
@@ -113,45 +106,49 @@ public class OuderConverteerder extends AbstractRelatieConverteerder {
         tussenPersoonslijstBuilder.istGezagsverhouding(istGezagsVerhoudingStapels);
     }
 
+    private List<TussenBetrokkenheid> maakBetrokkenhedenVoorOuders(
+            final Lo3Stapel<Lo3OuderInhoud> ouderStapel,
+            final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
+            final OuderType ouderType) {
+        final List<TussenBetrokkenheid> betrokkenheidStapels = new LinkedList<>();
+        for (final OuderRelatie ouderRelatie : Lo3SplitsenGerelateerdeOuders.splitsOuders(ouderStapel)) {
+            if (!ouderRelatie.isJuridischGeenOuder()) {
+                betrokkenheidStapels.add(maakMigratieBetrokkenheidStapel(ouderRelatie, ouderType, gezagsverhoudingStapel));
+            }
+        }
+        return betrokkenheidStapels;
+    }
+
     private TussenBetrokkenheid maakMigratieBetrokkenheidStapel(
-        final Lo3Stapel<Lo3OuderInhoud> ouderStapel,
-        final OuderType ouderType,
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel)
-    {
-
-        final Lo3Categorie<Lo3OuderInhoud> gerelateerdeGegevens = bepaalGerelateerdeGegevensCategorie(ouderStapel);
-
-        final Lo3Categorie<Lo3OuderInhoud> relatieGegevens = bepaalRelatieGegevensCategorie(ouderStapel);
-        final Lo3Categorie<Lo3OuderInhoud> relatieEinde = bepaalRelatieEindeGegevensCategorie(ouderStapel);
-
-        if (relatieGegevens == null || gerelateerdeGegevens == null) {
+            final OuderRelatie ouderRelatie,
+            final OuderType ouderType,
+            final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel) {
+        if (!ouderRelatie.moetOpgenomenWorden()) {
             // formeel beeindigde relatie of geen gerelateerde gegevens. Niet opnemen.
             return null;
         }
 
-        return converteerRelatie(ouderType, gezagsverhoudingStapel, relatieGegevens, relatieEinde, gerelateerdeGegevens);
+        return converteerRelatie(ouderType, gezagsverhoudingStapel, ouderRelatie);
     }
 
     private TussenBetrokkenheid converteerRelatie(
-        final OuderType ouderType,
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
-        final Lo3Categorie<Lo3OuderInhoud> relatieGegevens,
-        final Lo3Categorie<Lo3OuderInhoud> relatieEinde,
-        final Lo3Categorie<Lo3OuderInhoud> gerelateerdeGegevens)
-    {
+            final OuderType ouderType,
+            final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
+            final OuderRelatie ouderRelatie) {
         // GROEPEN
+        final Lo3Categorie<Lo3OuderInhoud> gerelateerdeGegevens = ouderRelatie.getGerelateerdeGegevens();
         final List<TussenGroep<BrpIdentificatienummersInhoud>> identificatienummersGroepenOuder = migreerIdentificatienummersGroep(gerelateerdeGegevens);
         final List<TussenGroep<BrpGeslachtsaanduidingInhoud>> geslachtsaanduidingGroepenOuder = migreerGeslachtsaanduidingGroep(gerelateerdeGegevens);
         final List<TussenGroep<BrpGeboorteInhoud>> geboorteGroepenOuder = migreerGeboorteGroep(gerelateerdeGegevens);
         final List<TussenGroep<BrpSamengesteldeNaamInhoud>> samengesteldeNaamGroepenOuder = migreerSamengesteldeNaamGroep(gerelateerdeGegevens);
 
-        final List<TussenGroep<BrpOuderInhoud>> ouderGroepenOuder = migreerOuderGroep(relatieGegevens, relatieEinde);
+        final List<TussenGroep<BrpOuderInhoud>> ouderGroepenOuder = migreerOuderGroep(ouderRelatie);
         final List<TussenGroep<BrpOuderlijkGezagInhoud>> ouderlijkGezag =
-                migreerOuderlijkGezag(
-                    gezagsverhoudingStapel,
-                    ouderType,
-                    relatieGegevens.getHistorie().getIngangsdatumGeldigheid(),
-                    relatieEinde != null ? relatieEinde.getHistorie().getIngangsdatumGeldigheid() : null);
+                migreerOuderlijkGezagStapel(
+                        gezagsverhoudingStapel,
+                        ouderType,
+                        ouderRelatie.getTeGebruikenRecord().getInhoud().getFamilierechtelijkeBetrekking(),
+                        ouderRelatie.getBeeindigingsRecord() != null ? ouderRelatie.getBeeindigingsRecord().getHistorie().getIngangsdatumGeldigheid() : null);
 
         // STAPELS
         final TussenStapel<BrpIdentificatienummersInhoud> identificatienummersStapel;
@@ -188,234 +185,107 @@ public class OuderConverteerder extends AbstractRelatieConverteerder {
 
         // BETROKKENHEID
         return new TussenBetrokkenheid(
-            BrpSoortBetrokkenheidCode.OUDER,
-            identificatienummersStapel,
-            geslachtsaanduidingStapel,
-            geboorteStapel,
-            ouderlijkGezagStapel,
-            samengesteldeNaamStapel,
-            ouderStapel2);
+                BrpSoortBetrokkenheidCode.OUDER,
+                identificatienummersStapel,
+                geslachtsaanduidingStapel,
+                geboorteStapel,
+                ouderlijkGezagStapel,
+                samengesteldeNaamStapel,
+                ouderStapel2);
     }
 
-    private Lo3Categorie<Lo3OuderInhoud> bepaalRelatieGegevensCategorie(final Lo3Stapel<Lo3OuderInhoud> ouderStapel) {
-        final List<Lo3Categorie<Lo3OuderInhoud>> gevuldeRijen = new ArrayList<>();
-        for (final Lo3Categorie<Lo3OuderInhoud> ouderRij : ouderStapel) {
-            // Als de rij onjuist of leeg is, dan wordt deze niet gebruikt voor relatiegegevens
-            if (ouderRij.getHistorie().isOnjuist() || ouderRij.getInhoud().isLeeg()) {
-                continue;
-            }
-
-            gevuldeRijen.add(ouderRij);
-        }
-
-        Lo3Categorie<Lo3OuderInhoud> relatieGegevensRij;
-
-        // Zoek de te gebruiken actuele rij voor de conversie
-        if (gevuldeRijen.size() == 0) {
-            relatieGegevensRij = null;
-        } else if (gevuldeRijen.size() == 1) {
-            // 1. Er is maar 1 juiste rij. Gebruik die.
-            relatieGegevensRij = gevuldeRijen.get(0);
-        } else {
-            // 2. zoek naar een unieke rij met geldigheid==sluitingsdatum
-            relatieGegevensRij = zoekUniekeRij(gevuldeRijen);
-        }
-
-        // 4. In andere gevallen, zoek rij met meest recente geldigheid.
-        if (relatieGegevensRij == null) {
-            relatieGegevensRij = ouderStapel.getLo3ActueelVoorkomen();
-            if (relatieGegevensRij == null) {
-                relatieGegevensRij = zoekMeestRecenteRij(gevuldeRijen);
-            }
-        }
-        return relatieGegevensRij;
-    }
-
-    private Lo3Categorie<Lo3OuderInhoud> zoekUniekeRij(final List<Lo3Categorie<Lo3OuderInhoud>> gevuldeRijen) {
-        Lo3Categorie<Lo3OuderInhoud> relatieGegevensRij = null;
-        Lo3Datum zoekDatum = null;
-        for (final Lo3Categorie<Lo3OuderInhoud> ouderRij : gevuldeRijen) {
-            if (!isLeegOfStandaard(ouderRij.getInhoud().getFamilierechtelijkeBetrekking())) {
-                zoekDatum = ouderRij.getInhoud().getFamilierechtelijkeBetrekking();
-                break;
-            }
-        }
-
-        if (zoekDatum != null) {
-            relatieGegevensRij = zoekUniekeGeldigheidsWaarde(zoekDatum, gevuldeRijen);
-        }
-
-        // 3. bij geen unieke rij met geldigheid==sluitingsdatum, zoek
-        // een unieke rij met geldigheid==Standaardwaarde==00000000
-        if (relatieGegevensRij == null) {
-            relatieGegevensRij = zoekUniekeGeldigheidsWaarde(Lo3Datum.NULL_DATUM, gevuldeRijen);
-        }
-        return relatieGegevensRij;
-    }
-
-    private Lo3Categorie<Lo3OuderInhoud> bepaalRelatieEindeGegevensCategorie(final Lo3Stapel<Lo3OuderInhoud> ouderStapel) {
-        // Als actueel voorkomen in de stapel voorkomt (actueelVoorkomen niet null) en deze is een niet-leeg voorkomen,
-        // dan geen gegevens mbt materieel einde overnemen
-        final Lo3Categorie<Lo3OuderInhoud> actueelVoorkomen = ouderStapel.getLo3ActueelVoorkomen();
-        if (actueelVoorkomen != null && !actueelVoorkomen.getInhoud().isLeeg()) {
-            return null;
-        }
-
-        final List<Lo3Categorie<Lo3OuderInhoud>> legeRijen = new ArrayList<>();
-        for (final Lo3Categorie<Lo3OuderInhoud> ouderRij : ouderStapel) {
-            // Als de rij onjuist of niet leeg is, dan wordt deze niet gebruikt voor relatie einde gegevens
-            if (ouderRij.getHistorie().isOnjuist() || !ouderRij.getInhoud().isLeeg()) {
-                continue;
-            }
-
-            legeRijen.add(ouderRij);
-        }
-
-        final Lo3Categorie<Lo3OuderInhoud> relatieGegevensRij;
-
-        if (legeRijen.size() == 0) {
-            relatieGegevensRij = null;
-        } else if (legeRijen.size() == 1) {
-            // Er is maar 1 juiste rij. Gebruik die.
-            relatieGegevensRij = legeRijen.get(0);
-        } else {
-            // In andere gevallen, zoek rij met oudste geldigheid.
-            relatieGegevensRij = zoekOudsteRij(legeRijen);
-        }
-
-        return relatieGegevensRij;
-    }
-
-    private Lo3Categorie<Lo3OuderInhoud> bepaalGerelateerdeGegevensCategorie(final Lo3Stapel<Lo3OuderInhoud> ouderStapel) {
-        // Als actueel in de stapel voorkomt, dan is actueelVoorkomen niet null
-        Lo3Categorie<Lo3OuderInhoud> gerelateerde = ouderStapel.getLo3ActueelVoorkomen();
-        if (gerelateerde == null) {
-            final List<Lo3Categorie<Lo3OuderInhoud>> gevuldeRijen = new ArrayList<>();
-            for (final Lo3Categorie<Lo3OuderInhoud> ouderRij : ouderStapel) {
-                // Als de rij onjuist of leeg is, dan wordt deze niet gebruikt voor gerelateerde gegevens
-                if (ouderRij.getHistorie().isOnjuist() || ouderRij.getInhoud().isLeeg()) {
-                    continue;
+    @BijzondereSituatie(SoortMeldingCode.BIJZ_CONV_LB042)
+    private void controleerBijzondereSituatieLB042(final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel) {
+        if (gezagsverhoudingStapel != null) {
+            gezagsverhoudingStapel.forEach(voorkomen -> {
+                if (!voorkomen.getHistorie().isOnjuist() && (!voorkomen.getInhoud().isVoorkomenGebruiktVoorOuder1() || !voorkomen.getInhoud()
+                        .isVoorkomenGebruiktVoorOuder2())) {
+                    Foutmelding.logMeldingFout(voorkomen.getLo3Herkomst(), LogSeverity.INFO, SoortMeldingCode.BIJZ_CONV_LB042, null);
                 }
-
-                gevuldeRijen.add(ouderRij);
-            }
-
-            gerelateerde = zoekMeestRecenteRij(gevuldeRijen);
+            });
         }
-        return gerelateerde;
     }
 
-    private static boolean isLeegOfStandaard(final Lo3Datum datum) {
-        return datum == null || datum.equals(Lo3Datum.NULL_DATUM);
-    }
-
-    private Lo3Categorie<Lo3OuderInhoud> zoekUniekeGeldigheidsWaarde(final Lo3Datum zoekDatum, final List<Lo3Categorie<Lo3OuderInhoud>> ouderRijen) {
-        Lo3Categorie<Lo3OuderInhoud> result = null;
-
-        for (final Lo3Categorie<Lo3OuderInhoud> rij : ouderRijen) {
-            if (zoekDatum.equalsWaarde(rij.getHistorie().getIngangsdatumGeldigheid())) {
-                if (result == null) {
-                    result = rij;
-                } else {
-                    // Meerdere rijen met zoekdatum gevonden. Resultaat wordt null omdat de rij niet uniek is.
-                    result = null;
-                    break;
-                }
-            }
+    @Definitie({Definities.DEF027, Definities.DEF028, Definities.DEF029, Definities.DEF030, Definities.DEF031, Definities.DEF032})
+    private List<TussenGroep<BrpOuderlijkGezagInhoud>> migreerOuderlijkGezagStapel(
+            final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
+            final OuderType ouderType,
+            final Lo3Datum ingangsdatumOuderrelatie,
+            final Lo3Datum einddatumOuderrelatie) {
+        if (gezagsverhoudingStapel == null) {
+            return Collections.emptyList();
         }
-
-        return result;
-    }
-
-    private Lo3Categorie<Lo3OuderInhoud> zoekMeestRecenteRij(final List<Lo3Categorie<Lo3OuderInhoud>> ouderRijen) {
-        Lo3Categorie<Lo3OuderInhoud> result = null;
-
-        if (ouderRijen.size() > 0) {
-            Collections.sort(ouderRijen, Lo3Categorie.DATUM_GELDIGHEID);
-            result = ouderRijen.get(0);
-        }
-
-        return result;
-    }
-
-    private Lo3Categorie<Lo3OuderInhoud> zoekOudsteRij(final List<Lo3Categorie<Lo3OuderInhoud>> ouderRijen) {
-        Lo3Categorie<Lo3OuderInhoud> result = null;
-
-        if (ouderRijen.size() > 0) {
-            Collections.sort(ouderRijen, Lo3Categorie.DATUM_GELDIGHEID);
-            result = ouderRijen.get(ouderRijen.size() - 1);
-        }
-
-        return result;
-    }
-
-    @Definitie({Definities.DEF027, Definities.DEF028, Definities.DEF029, Definities.DEF030, Definities.DEF031, Definities.DEF032 })
-    private List<TussenGroep<BrpOuderlijkGezagInhoud>> migreerOuderlijkGezag(
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsverhoudingStapel,
-        final OuderType ouderType,
-        final Lo3Datum ingangsdatumOuderrelatie,
-        final Lo3Datum einddatumOuderrelatie)
-    {
         final List<TussenGroep<BrpOuderlijkGezagInhoud>> ouderlijkGezagLijst = new ArrayList<>();
 
-        if (gezagsverhoudingStapel != null) {
-            for (final Lo3Categorie<Lo3GezagsverhoudingInhoud> gezagsverhouding : gezagsverhoudingStapel) {
-
-                if (gezagsverhouding.getHistorie().isOnjuist()) {
-                    // Onjuist wordt niet geconverteerd
-                    continue;
-                }
-
-                final Lo3Datum gezagDatum = gezagsverhouding.getHistorie().getIngangsdatumGeldigheid();
-                final boolean isNaIngang = isNaIngang(ingangsdatumOuderrelatie, gezagDatum);
-                final boolean isVoorEinde = isVoorEinde(einddatumOuderrelatie, gezagDatum);
-
-                if (isNaIngang && isVoorEinde) {
-                    final BrpBoolean ouderHeeftGezag = bepaalOuderHeeftGezag(gezagsverhouding, ouderType);
-                    ouderlijkGezagLijst.add(new TussenGroep<>(
-                        new BrpOuderlijkGezagInhoud(ouderHeeftGezag),
-                        gezagsverhouding.getHistorie(),
-                        gezagsverhouding.getDocumentatie(),
-                        gezagsverhouding.getLo3Herkomst()));
-                } else if (isNaIngang || (gezagsverhouding.getLo3Herkomst().isLo3ActueelVoorkomen() && gezagDatum.equalsWaarde(Lo3Datum.NULL_DATUM))) {
-                    // maak afsluitende rij voor stapel
-                    ouderlijkGezagLijst.add(new TussenGroep<>(
-                        new BrpOuderlijkGezagInhoud(null),
-                        gezagsverhouding.getHistorie(),
-                        gezagsverhouding.getDocumentatie(),
-                        gezagsverhouding.getLo3Herkomst()));
-                    // einde loop na afsluiten stapel
-                    break;
-                }
+        for (final Lo3Categorie<Lo3GezagsverhoudingInhoud> gezagsverhouding : gezagsverhoudingStapel) {
+            if (!gezagsverhouding.getHistorie().isOnjuist()) {
+                migreerOuderlijkGezagVoorkomen(gezagsverhouding, ouderlijkGezagLijst, ouderType, ingangsdatumOuderrelatie, einddatumOuderrelatie);
             }
         }
         return ouderlijkGezagLijst;
     }
 
+    private void migreerOuderlijkGezagVoorkomen(final Lo3Categorie<Lo3GezagsverhoudingInhoud> gezagsverhouding,
+                                                List<TussenGroep<BrpOuderlijkGezagInhoud>> ouderlijkGezagLijst, final OuderType ouderType,
+                                                final Lo3Datum ingangsdatumOuderrelatie, final Lo3Datum einddatumOuderrelatie) {
+        final Lo3Datum gezagDatum = gezagsverhouding.getHistorie().getIngangsdatumGeldigheid();
+        final boolean isNaIngang = isNaIngang(ingangsdatumOuderrelatie, gezagDatum);
+        final boolean isVoorEinde = isVoorEinde(einddatumOuderrelatie, gezagDatum);
+        final Lo3GezagsverhoudingInhoud inhoud = gezagsverhouding.getInhoud();
+
+        final BrpBoolean ouderHeeftGezag = bepaalOuderHeeftGezag(inhoud, ouderType);
+        if (isNaIngang && isVoorEinde) {
+            ouderlijkGezagLijst.add(
+                    new TussenGroep<>(
+                            new BrpOuderlijkGezagInhoud(ouderHeeftGezag),
+                            gezagsverhouding.getHistorie(),
+                            gezagsverhouding.getDocumentatie(),
+                            gezagsverhouding.getLo3Herkomst()));
+            setVoorkomenIsGebruikt(inhoud, ouderType);
+        } else if (!ouderlijkGezagLijst.isEmpty() && (isNaIngang || (gezagsverhouding.getLo3Herkomst().isLo3ActueelVoorkomen() && gezagDatum
+                .equalsWaarde(new Lo3Datum(0))))) {
+            // maak afsluitende rij voor de stapel als er al een ouderlijk gezag is EN
+            // - de gezagdatum na de ingangsdatum ouder ligt OF
+            // - Het de actuele rij betreft en de gezagdatum onbekend is
+            ouderlijkGezagLijst.add(
+                    new TussenGroep<>(
+                            new BrpOuderlijkGezagInhoud(null),
+                            gezagsverhouding.getHistorie(),
+                            gezagsverhouding.getDocumentatie(),
+                            gezagsverhouding.getLo3Herkomst()));
+            if (ouderHeeftGezag == null) {
+                setVoorkomenIsGebruikt(inhoud, ouderType);
+            }
+        }
+    }
+
+    private void setVoorkomenIsGebruikt(final Lo3GezagsverhoudingInhoud inhoud, final OuderType ouderType) {
+        if (ouderType == OuderType.OUDER_1) {
+            inhoud.setVoorkomenGebruiktVoorOuder1();
+        } else {
+            inhoud.setVoorkomenGebruiktVoorOuder2();
+        }
+    }
+
     private boolean isVoorEinde(final Lo3Datum einddatumOuderrelatie, final Lo3Datum gezagDatum) {
-        return !Validatie.isElementGevuld(einddatumOuderrelatie)
-               || Validatie.isElementGevuld(gezagDatum)
-               && einddatumOuderrelatie.compareTo(gezagDatum) > 0;
+        return !Lo3Validatie.isElementGevuld(einddatumOuderrelatie)
+                || Lo3Validatie.isElementGevuld(gezagDatum) && einddatumOuderrelatie.compareTo(gezagDatum) > 0;
     }
 
     private boolean isNaIngang(final Lo3Datum ingangsdatumOuderrelatie, final Lo3Datum gezagDatum) {
-        return Validatie.isElementGevuld(ingangsdatumOuderrelatie)
-               && Validatie.isElementGevuld(gezagDatum)
-               && ingangsdatumOuderrelatie.compareTo(gezagDatum) <= 0;
+        return Lo3Validatie.isElementGevuld(ingangsdatumOuderrelatie)
+                && Lo3Validatie.isElementGevuld(gezagDatum)
+                && ingangsdatumOuderrelatie.compareTo(gezagDatum) <= 0;
     }
 
-    private BrpBoolean bepaalOuderHeeftGezag(final Lo3Categorie<Lo3GezagsverhoudingInhoud> gezagsverhouding, final OuderType ouderType) {
-        final Lo3IndicatieGezagMinderjarige indicatieGezagMinderjarige = gezagsverhouding.getInhoud().getIndicatieGezagMinderjarige();
+    private BrpBoolean bepaalOuderHeeftGezag(final Lo3GezagsverhoudingInhoud inhoud, final OuderType ouderType) {
+        final Lo3IndicatieGezagMinderjarige indicatieGezagMinderjarige = inhoud.getIndicatieGezagMinderjarige();
         final BrpBoolean ouderHeeftGezag;
-        switch (ouderType) {
-            case OUDER_1:
-                ouderHeeftGezag = getLo3AttribuutConverteerder().converteerOuder1HeeftGezag(indicatieGezagMinderjarige);
-                break;
-            case OUDER_2:
-                ouderHeeftGezag = getLo3AttribuutConverteerder().converteerOuder2HeeftGezag(indicatieGezagMinderjarige);
-                break;
-            default:
-                ouderHeeftGezag = null;
+
+        if (ouderType == OuderType.OUDER_1) {
+            ouderHeeftGezag = getLo3AttribuutConverteerder().converteerOuder1HeeftGezag(indicatieGezagMinderjarige);
+        } else {
+            ouderHeeftGezag = getLo3AttribuutConverteerder().converteerOuder2HeeftGezag(indicatieGezagMinderjarige);
         }
         return ouderHeeftGezag;
     }
@@ -425,13 +295,14 @@ public class OuderConverteerder extends AbstractRelatieConverteerder {
 
         if (!ouder.getInhoud().isOnbekendeOuder()) {
             final Lo3OuderInhoud inhoud = ouder.getInhoud();
-            result.add(getUtils().maakGeboorteGroep(
-                inhoud.getGeboorteGemeenteCode(),
-                inhoud.getGeboorteLandCode(),
-                inhoud.getGeboortedatum(),
-                ouder.getHistorie(),
-                ouder.getDocumentatie(),
-                ouder.getLo3Herkomst()));
+            result.add(
+                    getUtils().maakGeboorteGroep(
+                            inhoud.getGeboorteGemeenteCode(),
+                            inhoud.getGeboorteLandCode(),
+                            inhoud.getGeboortedatum(),
+                            ouder.getHistorie(),
+                            ouder.getDocumentatie(),
+                            ouder.getLo3Herkomst()));
         }
 
         return result;
@@ -443,11 +314,12 @@ public class OuderConverteerder extends AbstractRelatieConverteerder {
         if (!ouder.getInhoud().isOnbekendeOuder()) {
             final Lo3OuderInhoud inhoud = ouder.getInhoud();
 
-            result.add(getUtils().maakGeslachtsaanduidingInhoud(
-                inhoud.getGeslachtsaanduiding(),
-                ouder.getHistorie(),
-                ouder.getDocumentatie(),
-                ouder.getLo3Herkomst()));
+            result.add(
+                    getUtils().maakGeslachtsaanduidingInhoud(
+                            inhoud.getGeslachtsaanduiding(),
+                            ouder.getHistorie(),
+                            ouder.getDocumentatie(),
+                            ouder.getLo3Herkomst()));
         }
 
         return result;
@@ -458,12 +330,13 @@ public class OuderConverteerder extends AbstractRelatieConverteerder {
 
         if (!ouder.getInhoud().isOnbekendeOuder()) {
             final Lo3OuderInhoud inhoud = ouder.getInhoud();
-            result.add(getUtils().maakIdentificatieGroep(
-                inhoud.getaNummer(),
-                inhoud.getBurgerservicenummer(),
-                ouder.getHistorie(),
-                ouder.getDocumentatie(),
-                ouder.getLo3Herkomst()));
+            result.add(
+                    getUtils().maakIdentificatieGroep(
+                            inhoud.getaNummer(),
+                            inhoud.getBurgerservicenummer(),
+                            ouder.getHistorie(),
+                            ouder.getDocumentatie(),
+                            ouder.getLo3Herkomst()));
         }
 
         return result;
@@ -474,65 +347,53 @@ public class OuderConverteerder extends AbstractRelatieConverteerder {
 
         if (!ouder.getInhoud().isOnbekendeOuder()) {
             final Lo3OuderInhoud inhoud = ouder.getInhoud();
-            result.add(getUtils().maakSamengesteldeNaamGroep(
-                inhoud.getAdellijkeTitelPredikaatCode(),
-                inhoud.getVoornamen(),
-                inhoud.getVoorvoegselGeslachtsnaam(),
-                inhoud.getGeslachtsnaam(),
-                ouder.getHistorie(),
-                ouder.getDocumentatie(),
-                ouder.getLo3Herkomst()));
+            result.add(
+                    getUtils().maakSamengesteldeNaamGroep(
+                            inhoud.getAdellijkeTitelPredikaatCode(),
+                            inhoud.getVoornamen(),
+                            inhoud.getVoorvoegselGeslachtsnaam(),
+                            inhoud.getGeslachtsnaam(),
+                            ouder.getHistorie(),
+                            ouder.getDocumentatie(),
+                            ouder.getLo3Herkomst()));
         }
 
         return result;
     }
 
-    private static List<TussenGroep<BrpOuderInhoud>> migreerOuderGroep(
-        final Lo3Categorie<Lo3OuderInhoud> ouderCategorie,
-        final Lo3Categorie<Lo3OuderInhoud> eindeCategorie)
-    {
+    private static List<TussenGroep<BrpOuderInhoud>> migreerOuderGroep(final OuderRelatie ouderRelatie) {
         final List<TussenGroep<BrpOuderInhoud>> result = new ArrayList<>();
+
+        final Lo3Categorie<Lo3OuderInhoud> ouderCategorie = ouderRelatie.getTeGebruikenRecord();
 
         // Migreer 62.10 'Datum familierechtelijke betrekking' naar historie als datum aanvang.
         final Lo3Datum datumFamilierechtelijkeBetrekking = ouderCategorie.getInhoud().getFamilierechtelijkeBetrekking();
         final Lo3Historie aanvangHistorie =
                 new Lo3Historie(
-                    ouderCategorie.getHistorie().getIndicatieOnjuist(),
-                    datumFamilierechtelijkeBetrekking,
-                    ouderCategorie.getHistorie().getDatumVanOpneming());
+                        ouderCategorie.getHistorie().getIndicatieOnjuist(),
+                        datumFamilierechtelijkeBetrekking,
+                        ouderCategorie.getHistorie().getDatumVanOpneming());
 
-        result.add(new TussenGroep<>(
-            new BrpOuderInhoud(new BrpBoolean(true, null), null),
-            aanvangHistorie,
-            ouderCategorie.getDocumentatie(),
-            ouderCategorie.getLo3Herkomst()));
+        result.add(new TussenGroep<>(new BrpOuderInhoud(null), aanvangHistorie, ouderCategorie.getDocumentatie(), ouderCategorie.getLo3Herkomst()));
 
+        final Lo3Categorie<Lo3OuderInhoud> eindeCategorie = ouderRelatie.getBeeindigingsRecord();
         if (eindeCategorie != null) {
             // Geen migratie van 62.10 nodig, dat is al gebeurd bij het splitsen
-            result.add(new TussenGroep<>(
-                new BrpOuderInhoud(null, null),
-                eindeCategorie.getHistorie(),
-                eindeCategorie.getDocumentatie(),
-                eindeCategorie.getLo3Herkomst(),
-                eindeCategorie.isAfsluitendVoorkomen(),
-                false));
+            result.add(
+                    new TussenGroep<>(
+                            BrpOuderInhoud.maakLegeInhoud(),
+                            eindeCategorie.getHistorie(),
+                            eindeCategorie.getDocumentatie(),
+                            eindeCategorie.getLo3Herkomst(),
+                            eindeCategorie.isAfsluitendVoorkomen(),
+                            false));
         }
 
         return result;
     }
 
-    private static boolean bevatAlleenJuridischGeenOuder(final Lo3Stapel<Lo3OuderInhoud> ouderStapel) {
-        for (final Lo3Categorie<Lo3OuderInhoud> ouder : ouderStapel) {
-            if (!ouder.getInhoud().isJurischeGeenOuder()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> converteerGezagsVerhoudingStapel(
-        final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsVerhoudingStapel)
-    {
+            final Lo3Stapel<Lo3GezagsverhoudingInhoud> gezagsVerhoudingStapel) {
         if (gezagsVerhoudingStapel == null) {
             return null;
         }
@@ -568,21 +429,21 @@ public class OuderConverteerder extends AbstractRelatieConverteerder {
 
             final BrpIstRelatieGroepInhoud istOuderGroepInhoud =
                     maakIstRelatieGroepInhoud(
-                        lo3Inhoud.getAdellijkeTitelPredikaatCode(),
-                        lo3Inhoud.getVoornamen(),
-                        lo3Inhoud.getVoorvoegselGeslachtsnaam(),
-                        lo3Inhoud.getGeslachtsnaam(),
-                        lo3Inhoud.getGeboorteGemeenteCode(),
-                        lo3Inhoud.getGeboorteLandCode(),
-                        lo3Inhoud.getGeboortedatum(),
-                        lo3Inhoud.getGeslachtsaanduiding(),
-                        lo3Inhoud.getaNummer(),
-                        lo3Inhoud.getBurgerservicenummer(),
-                        lo3Inhoud.getFamilierechtelijkeBetrekking(),
-                        lo3Documentatie,
-                        lo3Onderzoek,
-                        lo3Historie,
-                        lo3Herkomst);
+                            lo3Inhoud.getAdellijkeTitelPredikaatCode(),
+                            lo3Inhoud.getVoornamen(),
+                            lo3Inhoud.getVoorvoegselGeslachtsnaam(),
+                            lo3Inhoud.getGeslachtsnaam(),
+                            lo3Inhoud.getGeboorteGemeenteCode(),
+                            lo3Inhoud.getGeboorteLandCode(),
+                            lo3Inhoud.getGeboortedatum(),
+                            lo3Inhoud.getGeslachtsaanduiding(),
+                            lo3Inhoud.getaNummer(),
+                            lo3Inhoud.getBurgerservicenummer(),
+                            lo3Inhoud.getFamilierechtelijkeBetrekking(),
+                            lo3Documentatie,
+                            lo3Onderzoek,
+                            lo3Historie,
+                            lo3Herkomst);
             istOuderGroepen.add(maakMigratieGroep(istOuderGroepInhoud));
         }
 

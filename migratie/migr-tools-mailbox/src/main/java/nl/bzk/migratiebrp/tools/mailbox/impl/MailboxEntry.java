@@ -14,14 +14,31 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public final class MailboxEntry implements Comparable<MailboxEntry> {
 
-    /** Status: NEW. */
+    /**
+     * Status: NEW.
+     */
     public static final int STATUS_NEW = 0;
-    /** Status: LISTED. */
+    /**
+     * Status: LISTED.
+     */
     public static final int STATUS_LISTED = 1;
-    /** Status: PROCESSED. */
+    /**
+     * Status: PROCESSED.
+     */
     public static final int STATUS_PROCESSED = 2;
-    /** Status: SENT. */
+    /**
+     * Status: SENT.
+     */
     public static final int STATUS_SENT = 3;
+
+    /**
+     * Notification request: none.
+     */
+    public static final int NOTIFICATION_REQUEST_NONE = 0;
+    /**
+     * Notification request: non-receipt.
+     */
+    public static final int NOTIFICATION_REQUEST_NON_RECEIPT = 1;
 
     private static final String DEFAULT_MESG_ID_CROSS_REF = "            ";
 
@@ -31,10 +48,10 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
     private int status;
     private String messageId = DEFAULT_MESG_ID_CROSS_REF;
     private String crossReference = DEFAULT_MESG_ID_CROSS_REF;
+    private int notificationRequest = NOTIFICATION_REQUEST_NONE;
 
     /**
      * Geef de waarde van originator or recipient.
-     *
      * @return originator or recipient
      */
     public String getOriginatorOrRecipient() {
@@ -43,9 +60,7 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Zet de waarde van originator or recipient.
-     *
-     * @param originatorOrRecipient
-     *            originator or recipient
+     * @param originatorOrRecipient originator or recipient
      */
     public void setOriginatorOrRecipient(final String originatorOrRecipient) {
         this.originatorOrRecipient = originatorOrRecipient;
@@ -53,7 +68,6 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Geef de waarde van ms sequence id.
-     *
      * @return ms sequence id
      */
     public int getMsSequenceId() {
@@ -62,9 +76,7 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Zet de waarde van ms sequence nr.
-     *
-     * @param msSequenceNr
-     *            ms sequence nr
+     * @param msSequenceNr ms sequence nr
      */
     public void setMsSequenceNr(final int msSequenceNr) {
         msSequenceId = msSequenceNr;
@@ -72,7 +84,6 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Geef de waarde van mesg.
-     *
      * @return mesg
      */
     public String getMesg() {
@@ -81,9 +92,7 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Zet de waarde van mesg.
-     *
-     * @param mesg
-     *            mesg
+     * @param mesg mesg
      */
     public void setMesg(final String mesg) {
         this.mesg = mesg;
@@ -91,7 +100,6 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Geef de waarde van status.
-     *
      * @return status
      */
     public int getStatus() {
@@ -100,9 +108,7 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Zet de waarde van status.
-     *
-     * @param status
-     *            status
+     * @param status status
      */
     public void setStatus(final int status) {
         this.status = status;
@@ -110,7 +116,6 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Geef de waarde van message id.
-     *
      * @return message id
      */
     public String getMessageId() {
@@ -119,9 +124,7 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Zet messageId.
-     * 
-     * @param messageId
-     *            messageId
+     * @param messageId messageId
      */
     public void setMessageId(final String messageId) {
         if (messageId != null && !messageId.isEmpty()) {
@@ -131,7 +134,6 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Geef de waarde van cross reference.
-     *
      * @return cross reference
      */
     public String getCrossReference() {
@@ -140,14 +142,28 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
 
     /**
      * Zet crossReference.
-     * 
-     * @param crossReference
-     *            crossReference
+     * @param crossReference crossReference
      */
     public void setCrossReference(final String crossReference) {
         if (crossReference != null && !crossReference.isEmpty()) {
             this.crossReference = crossReference;
         }
+    }
+
+    /**
+     * Geef de waarde van notification request.
+     * @return notification request
+     */
+    public int getNotificationRequest() {
+        return notificationRequest;
+    }
+
+    /**
+     * Zet de waarde van notification request.
+     * @param notificationRequest notification request
+     */
+    public void setNotificationRequest(final int notificationRequest) {
+        this.notificationRequest = notificationRequest;
     }
 
     @Override
@@ -170,15 +186,11 @@ public final class MailboxEntry implements Comparable<MailboxEntry> {
             return false;
         }
         final MailboxEntry rhs = (MailboxEntry) obj;
-        return new EqualsBuilder()
-                .append(this.msSequenceId, rhs.msSequenceId)
-                .isEquals();
+        return new EqualsBuilder().append(msSequenceId, rhs.msSequenceId).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(msSequenceId)
-                .toHashCode();
+        return new HashCodeBuilder().append(msSequenceId).toHashCode();
     }
 }

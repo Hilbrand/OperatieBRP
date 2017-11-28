@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonPersoonskaartHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonPersoonskaartHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractPersoonHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
@@ -24,19 +24,14 @@ public final class PersoonPersoonskaartMapper extends AbstractPersoonHistorieMap
 
     /**
      * Maakt een PersoonPersoonskaartMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonPersoonskaartMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -52,24 +47,15 @@ public final class PersoonPersoonskaartMapper extends AbstractPersoonHistorieMap
      * {@inheritDoc}
      */
     @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonPersoonskaartHistorie historie, final Persoon persoon) {
-        persoon.setIndicatiePersoonskaartVolledigGeconverteerd(historie.getIndicatiePersoonskaartVolledigGeconverteerd());
-        persoon.setGemeentePersoonskaart(historie.getPartij());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected PersoonPersoonskaartHistorie mapHistorischeGroep(final BrpPersoonskaartInhoud groepInhoud, final Persoon persoon) {
         final PersoonPersoonskaartHistorie result =
                 new PersoonPersoonskaartHistorie(persoon, BrpBoolean.unwrap(groepInhoud.getIndicatiePKVolledigGeconverteerd()));
         result.setPartij(getStamtabelMapping().findPartijByCode(groepInhoud.getGemeentePKCode()));
 
         getOnderzoekMapper().mapOnderzoek(
-            result,
-            groepInhoud.getIndicatiePKVolledigGeconverteerd(),
-            Element.PERSOON_PERSOONSKAART_INDICATIEVOLLEDIGGECONVERTEERD);
+                result,
+                groepInhoud.getIndicatiePKVolledigGeconverteerd(),
+                Element.PERSOON_PERSOONSKAART_INDICATIEVOLLEDIGGECONVERTEERD);
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getGemeentePKCode(), Element.PERSOON_PERSOONSKAART_PARTIJCODE);
 
         return result;

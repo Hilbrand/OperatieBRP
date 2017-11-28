@@ -6,10 +6,10 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +21,11 @@ public final class BrpOuderMapper extends AbstractBrpMapper<BetrokkenheidOuderHi
 
     @Override
     protected BrpOuderInhoud mapInhoud(final BetrokkenheidOuderHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
-        final BrpBoolean indicatieOuder =
-                BrpBoolean.wrap(historie.getIndicatieOuder(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.GERELATEERDEOUDER_OUDERLIJKGEZAG_INDICATIEOUDERHEEFTGEZAG, true));
         final BrpBoolean indicatieAdresgevendeOuder =
                 BrpBoolean.wrap(
-                    historie.getIndicatieOuderUitWieKindIsGeboren(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.GERELATEERDEOUDER_OUDERSCHAP_INDICATIEOUDERUITWIEKINDISGEBOREN, true));
+                        historie.getIndicatieOuderUitWieKindIsGeboren(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.GERELATEERDEOUDER_OUDERSCHAP_INDICATIEOUDERUITWIEKINDISGEBOREN, true));
 
-        return new BrpOuderInhoud(indicatieOuder, indicatieAdresgevendeOuder);
+        return new BrpOuderInhoud(indicatieAdresgevendeOuder);
     }
 }

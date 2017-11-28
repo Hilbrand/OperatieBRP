@@ -9,15 +9,17 @@ package nl.bzk.migratiebrp.ggo.viewer.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Melding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3SoortMelding;
 import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoFoutRegel;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoLogType;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoVoorkomen;
 import nl.bzk.migratiebrp.ggo.viewer.util.NaamUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Melding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3SoortMelding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,9 +29,7 @@ import org.springframework.stereotype.Component;
 public class LogRegelConverter {
     /**
      * Converteer een lijst met DB LogRegels naar een lijst met GgoFoutRegels.
-     * 
-     * @param voorkomens
-     *            de LogRegels.
+     * @param voorkomens de LogRegels.
      * @return de lijst met GgoFoutRegel.
      */
     public final List<GgoFoutRegel> converteerDBNaarGgoFoutRegelList(final Set<Lo3Voorkomen> voorkomens) {
@@ -45,9 +45,7 @@ public class LogRegelConverter {
 
     /**
      * Converteer een Lo3Melding naar een GgoFoutRegel.
-     * 
-     * @param melding
-     *            de Lo3Melding.
+     * @param melding de Lo3Melding.
      * @return de GgoFoutRegel.
      */
     public final GgoFoutRegel converteerDBNaarGgoFoutRegel(final Lo3Melding melding) {
@@ -71,18 +69,16 @@ public class LogRegelConverter {
         }
 
         return new GgoFoutRegel(
-            herkomst,
-            LogSeverity.valueOf(melding.getLogSeverity().toString()),
-            GgoLogType.valueOf(melding.getSoortMelding().getCategorieMelding().toString()),
-            melding.getSoortMelding().getCode(),
-            melding.getSoortMelding().getOmschrijving());
+                herkomst,
+                LogSeverity.valueOf(melding.getLogSeverity().toString()),
+                GgoLogType.valueOf(melding.getSoortMelding().getCategorieMelding().toString()),
+                melding.getSoortMelding().getCode(),
+                melding.getSoortMelding().getOmschrijving());
     }
 
     /**
      * Converteert de Model LogRegels naar GgoFoutRegels.
-     * 
-     * @param regels
-     *            De logRegels.
+     * @param regels De logRegels.
      * @return Omgezette GgoFoutRegels.
      */
     public final List<GgoFoutRegel> converteerModelNaarGgoFoutRegelList(final Set<LogRegel> regels) {
@@ -95,9 +91,7 @@ public class LogRegelConverter {
 
     /**
      * Converteer een model LogRegel naar een GgoFoutRegel.
-     * 
-     * @param logRegel
-     *            de LogRegel.
+     * @param logRegel de LogRegel.
      * @return de GgoFoutRegel.
      */
     public final GgoFoutRegel converteerModelNaarGgoFoutRegel(final LogRegel logRegel) {
@@ -112,10 +106,10 @@ public class LogRegelConverter {
         final Lo3SoortMelding lo3SoortMelding = Lo3SoortMelding.valueOf(logRegel.getSoortMeldingCode().toString());
 
         return new GgoFoutRegel(
-            herkomst,
-            LogSeverity.valueOfSeverity(logRegel.getSeverity().getSeverity()),
-            GgoLogType.valueOf(lo3SoortMelding.getCategorieMelding().toString()),
-            lo3SoortMelding.getCode(),
-            lo3SoortMelding.getOmschrijving());
+                herkomst,
+                LogSeverity.valueOfSeverity(logRegel.getSeverity().getSeverity()),
+                GgoLogType.valueOf(lo3SoortMelding.getCategorieMelding().toString()),
+                lo3SoortMelding.getCode(),
+                lo3SoortMelding.getOmschrijving());
     }
 }

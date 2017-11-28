@@ -1,15 +1,14 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie.brpnaarlo3;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -23,7 +22,6 @@ public final class BrpFamilierechtelijkeBetrekkingInhoud extends AbstractBrpGroe
 
     /**
      * Maakt een BrpFamilierechtelijkeBetrekkingInhoud object.
-     *
      * @param datumFamilierechtelijkeBetrekking datum familierechtelijke betrekking
      */
     public BrpFamilierechtelijkeBetrekkingInhoud(final BrpDatum datumFamilierechtelijkeBetrekking) {
@@ -32,12 +30,11 @@ public final class BrpFamilierechtelijkeBetrekkingInhoud extends AbstractBrpGroe
 
     @Override
     public boolean isLeeg() {
-        return !Validatie.isAttribuutGevuld(datumFamilierechtelijkeBetrekking);
+        return !BrpValidatie.isAttribuutGevuld(datumFamilierechtelijkeBetrekking);
     }
 
     /**
      * Geef de waarde van datum familierechtelijke betrekking.
-     *
      * @return datum familierechtelijke betrekking
      */
     public BrpDatum getDatumFamilierechtelijkeBetrekking() {
@@ -64,7 +61,7 @@ public final class BrpFamilierechtelijkeBetrekkingInhoud extends AbstractBrpGroe
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("datumFamilierechtelijkeBetrekking", datumFamilierechtelijkeBetrekking)
-                                                                          .toString();
+                .append("datumFamilierechtelijkeBetrekking", datumFamilierechtelijkeBetrekking)
+                .toString();
     }
 }

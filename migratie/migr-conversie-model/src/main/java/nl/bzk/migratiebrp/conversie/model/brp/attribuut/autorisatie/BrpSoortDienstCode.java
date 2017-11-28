@@ -6,14 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Text;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAttribuut;
-
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Text;
 
 /**
  * Deze enum representeert een BRP soort dienst.
@@ -22,45 +21,85 @@ import org.simpleframework.xml.Text;
  */
 public final class BrpSoortDienstCode implements BrpAttribuut, Comparable<BrpSoortDienstCode> {
 
-    /** Mutatielevernig obv doelbinding. */
+    /**
+     * Mutatielevernig obv doelbinding.
+     */
     public static final BrpSoortDienstCode MUTATIELEVERING_OP_BASIS_VAN_DOELBINDING = new BrpSoortDienstCode((short) 1);
-    /** Mutatielevering obv afnemersindicatie. */
+    /**
+     * Mutatielevering obv afnemersindicatie.
+     */
     public static final BrpSoortDienstCode MUTATIELEVERING_OP_BASIS_VAN_AFNEMERSINDICATIE = new BrpSoortDienstCode((short) 2);
-    /** Onderhouden afnemersindicatie. */
+    /**
+     * Onderhouden afnemersindicatie.
+     */
     public static final BrpSoortDienstCode PLAATSEN_AFNEMERINDICATIE = new BrpSoortDienstCode((short) 3);
-    /** Attendering. */
+    /**
+     * Attendering.
+     */
     public static final BrpSoortDienstCode ATTENDERING = new BrpSoortDienstCode((short) 4);
-    /** Zoek persoon. */
+    /**
+     * Zoek persoon.
+     */
     public static final BrpSoortDienstCode ZOEK_PERSOON = new BrpSoortDienstCode((short) 5);
-    /** Zoek persoon met adres. */
+    /**
+     * Zoek persoon met adres.
+     */
     public static final BrpSoortDienstCode ZOEK_PERSOON_OP_ADRESGEGEVENS = new BrpSoortDienstCode((short) 6);
-    /** Zoek medebewoners van persoon. */
+    /**
+     * Zoek medebewoners van persoon.
+     */
     public static final BrpSoortDienstCode GEEF_MEDEBEWONERS_VAN_PERSOON = new BrpSoortDienstCode((short) 7);
-    /** Detail persoon. */
+    /**
+     * Detail persoon.
+     */
     public static final BrpSoortDienstCode GEEF_DETAILS_PERSOON = new BrpSoortDienstCode((short) 8);
-    /** Synchronisatie persoon. */
+    /**
+     * Synchronisatie persoon.
+     */
     public static final BrpSoortDienstCode SYNCHRONISATIE_PERSOON = new BrpSoortDienstCode((short) 9);
-    /** Synchronisatie stamgegeven. */
+    /**
+     * Synchronisatie stamgegeven.
+     */
     public static final BrpSoortDienstCode SYNCHRONISATIE_STAMGEGEVEN = new BrpSoortDienstCode((short) 10);
-    /** Mutatielevering stamgegeven. */
+    /**
+     * Mutatielevering stamgegeven.
+     */
     public static final BrpSoortDienstCode MUTATIELEVERING_STAMGEGEVEN = new BrpSoortDienstCode((short) 11);
-    /** Selectie. */
+    /**
+     * Selectie.
+     */
     public static final BrpSoortDienstCode SELECTIE = new BrpSoortDienstCode((short) 12);
-    /** Geef details persoon. */
+    /**
+     * Geef details persoon.
+     */
     public static final BrpSoortDienstCode GEEF_DETAILS_PERSOON_BULK = new BrpSoortDienstCode((short) 13);
-    /** Geef synchroniciteitsgegevens persoon. */
+    /**
+     * Geef synchroniciteitsgegevens persoon.
+     */
     public static final BrpSoortDienstCode GEEF_SYNCHRONICITEITSGEGEVENS_PERSOON = new BrpSoortDienstCode((short) 14);
-    /** Geef identificerende gegevens persoon bulk. */
+    /**
+     * Geef identificerende gegevens persoon bulk.
+     */
     public static final BrpSoortDienstCode GEEF_INDENTIFICERENDE_GEGEVENS_PERSOON_BULK = new BrpSoortDienstCode((short) 15);
-    /** Geef details terugmelding. */
+    /**
+     * Geef details terugmelding.
+     */
     public static final BrpSoortDienstCode GEEF_DETAILS_TERUGMELDING = new BrpSoortDienstCode((short) 16);
-    /** Opvragen aantal personen op adres. */
+    /**
+     * Opvragen aantal personen op adres.
+     */
     public static final BrpSoortDienstCode OPVRAGEN_AANTAL_PERSONEN_OP_ADRES = new BrpSoortDienstCode((short) 17);
-    /** Aanmelding gerede twijfel. */
+    /**
+     * Aanmelding gerede twijfel.
+     */
     public static final BrpSoortDienstCode AANMELDING_GEREDE_TWIJFEL = new BrpSoortDienstCode((short) 18);
-    /** Intrekking terugmelding. */
+    /**
+     * Intrekking terugmelding.
+     */
     public static final BrpSoortDienstCode INTREKKING_TERUGMELDING = new BrpSoortDienstCode((short) 19);
-    /** Verwijderen afnemerindicatie. */
+    /**
+     * Verwijderen afnemerindicatie.
+     */
     public static final BrpSoortDienstCode VERWIJDEREN_AFNEMERINDICATIE = new BrpSoortDienstCode((short) 20);
 
     @Text
@@ -68,9 +107,7 @@ public final class BrpSoortDienstCode implements BrpAttribuut, Comparable<BrpSoo
 
     /**
      * Maakt een BrpSoortDienstCode.
-     *
-     * @param brpCode
-     *            BRP code
+     * @param brpCode BRP code
      */
     public BrpSoortDienstCode(@Text final short brpCode) {
         code = brpCode;
@@ -78,7 +115,6 @@ public final class BrpSoortDienstCode implements BrpAttribuut, Comparable<BrpSoo
 
     /**
      * Geef de waarde van code.
-     *
      * @return the code
      */
     public short getCode() {

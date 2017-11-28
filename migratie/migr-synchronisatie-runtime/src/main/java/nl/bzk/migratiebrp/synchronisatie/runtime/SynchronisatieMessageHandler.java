@@ -6,10 +6,17 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.LoggingContext;
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
@@ -19,11 +26,6 @@ import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.exception.ServiceException;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.SynchronisatieBerichtService;
 import nl.bzk.migratiebrp.util.common.logging.FunctioneleMelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.LoggingContext;
-import nl.bzk.migratiebrp.util.common.logging.MDC;
-import nl.bzk.migratiebrp.util.common.logging.MDC.MDCCloser;
 import nl.bzk.migratiebrp.util.common.logging.MDCVeld;
 
 /**
@@ -36,15 +38,25 @@ public final class SynchronisatieMessageHandler extends AbstractMessageHandler i
 
     private SynchronisatieBerichtService<SyncBericht, SyncBericht>[] berichtServices;
 
+    /**
+     * Constructor.
+     * @param destination destination (queue sync antwoord)
+     * @param connectionFactory queue connection factory
+     */
+    @Inject
+    public SynchronisatieMessageHandler(@Named("queueSyncAntwoord") final Destination destination,
+                                        @Named("queueConnectionFactory") final ConnectionFactory connectionFactory) {
+        super(destination, connectionFactory);
+
+    }
+
     /*
      * ******************************************** Bean properties ***********************************************
      */
 
     /**
      * Sets the sync bericht services.
-     *
-     * @param syncBerichtServices
-     *            the sync bericht services
+     * @param syncBerichtServices the sync bericht services
      */
     public void setSyncBerichtServices(final SynchronisatieBerichtService<SyncBericht, SyncBericht>... syncBerichtServices) {
         berichtServices = syncBerichtServices;
@@ -55,14 +67,14 @@ public final class SynchronisatieMessageHandler extends AbstractMessageHandler i
      */
     @Override
     public void onMessage(final Message message) {
-        try (final MDCCloser verwerkingCloser = MDC.startVerwerking()) {
+        try {
             LoggingContext.reset();
             SynchronisatieLogging.init();
 
             VERKEER_LOG.info("Start verwerken binnenkomend bericht ...");
             final String berichtReferentie = bepaalBerichtReferentie(message);
-            try (final MDCCloser berichtReferentieCloser = MDC.put(MDCVeld.SYNC_BERICHT_REFERENTIE, berichtReferentie)) {
-                SyncBericht antwoord;
+            MDCProcessor.extra(MDCVeld.SYNC_BERICHT_REFERENTIE, berichtReferentie).run(() -> {
+                final SyncBericht antwoord;
 
                 VERKEER_LOG.info("Lees bericht inhoud ...");
                 final String berichtInhoud = bepaalBerichtInhoud(message);
@@ -80,20 +92,22 @@ public final class SynchronisatieMessageHandler extends AbstractMessageHandler i
                 } else {
                     VERKEER_LOG.info("Gereed (geen te versturen antwoord)");
                 }
-            }
+            });
             LOG.info(FunctioneleMelding.SYNC_VERZOEK_VERWERKT);
         } catch (final BerichtLeesException ble) {
             LOG.error("Er is een fout opgetreden bij het lezen van een binnenkomend bericht.", ble);
             VERKEER_LOG.info("Gereed (bericht lees exceptie)", ble);
             throw new ServiceException(ble);
+        } catch (final RuntimeException re) {
+            LOG.error("Er is een fout tijdens verwerking van het bericht opgetreden.", re);
+            VERKEER_LOG.info("Gereed (fout tijdens verwerking)", re);
+            throw re;
         }
     }
 
     /**
      * Handle the message.
-     *
-     * @param bericht
-     *            input
+     * @param bericht input
      * @return output
      */
     // Note: package protected for test.
@@ -106,19 +120,16 @@ public final class SynchronisatieMessageHandler extends AbstractMessageHandler i
                 try {
                     VERKEER_LOG.info("Het bericht wordt verwerkt door: {}", berichtService.getServiceNaam());
                     antwoord = berichtService.verwerkBericht(bericht);
-                } catch (final
-                    OngeldigePersoonslijstException
-                    | BerichtSyntaxException e)
-                {
+                } catch (final OngeldigePersoonslijstException | BerichtSyntaxException e) {
                     /*
                      * Catch exception voor het robuust afhandelen van exceptions op applicatie interface niveau
                      */
                     LOG.error(
-                        String.format(
-                            "Er is een fout opgetreden bij het verwerken van het bericht (ID: %s; type: %s).",
-                            bericht.getMessageId(),
-                            bericht.getBerichtType()),
-                        e);
+                            String.format(
+                                    "Er is een fout opgetreden bij het verwerken van het bericht (ID: %s; type: %s).",
+                                    bericht.getMessageId(),
+                                    bericht.getBerichtType()),
+                            e);
                     throw new ServiceException(e);
                 }
                 berichtIsVerwerkt = true;
@@ -127,8 +138,8 @@ public final class SynchronisatieMessageHandler extends AbstractMessageHandler i
         }
 
         if (!berichtIsVerwerkt) {
-            LOG.error("Onbekend bericht ..." + bericht.getMessageId());
-            throw new ServiceException("[Bericht {}]: Onbekend bericht type: " + bericht.getBerichtType());
+            LOG.error("Onbekend bericht ... (id={})", bericht.getMessageId());
+            throw new ServiceException("[Bericht {" + bericht + "}]: Onbekend bericht type: " + bericht.getBerichtType());
         }
 
         return antwoord;
@@ -146,9 +157,8 @@ public final class SynchronisatieMessageHandler extends AbstractMessageHandler i
             }
             return result;
         } catch (final JMSException e) {
-            throw new BerichtLeesException("Er kon geen waarde gevonden worden voor de property '"
-                    + JMSConstants.BERICHT_REFERENTIE
-                    + "' in het JMS bericht door een fout:", e);
+            throw new BerichtLeesException(
+                    "Er kon geen waarde gevonden worden voor de property '" + JMSConstants.BERICHT_REFERENTIE + "' in het JMS bericht door een fout:", e);
         }
     }
 }

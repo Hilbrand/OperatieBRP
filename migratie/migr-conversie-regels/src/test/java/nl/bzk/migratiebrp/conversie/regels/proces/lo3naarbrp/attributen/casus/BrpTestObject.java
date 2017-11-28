@@ -14,8 +14,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 
 /**
  * Test class om makkelijk de inhoud van de test casus op te nemen
- *
- * @param <T>
  */
 public class BrpTestObject<T extends BrpGroepInhoud> {
 
@@ -30,16 +28,15 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
     private BrpActie actieVerval;
 
     public void vul(
-        final T inhoud,
-        final Integer aanvangGeldigheid,
-        final Integer eindeGeldigheid,
-        final Long registratie,
-        final Long verval,
-        final Character nadereAanduidingVerval,
-        final BrpActie actieInhoud,
-        final BrpActie actieGeldigheid,
-        final BrpActie actieVerval)
-    {
+            final T inhoud,
+            final Integer aanvangGeldigheid,
+            final Integer eindeGeldigheid,
+            final Long registratie,
+            final Long verval,
+            final Character nadereAanduidingVerval,
+            final BrpActie actieInhoud,
+            final BrpActie actieGeldigheid,
+            final BrpActie actieVerval) {
         this.inhoud = inhoud;
         this.aanvangGeldigheid = aanvangGeldigheid == null ? null : new BrpDatum(aanvangGeldigheid, null);
         this.eindeGeldigheid = eindeGeldigheid == null ? null : new BrpDatum(eindeGeldigheid, null);
@@ -53,7 +50,6 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return inhoud
      */
     public T getInhoud() {
@@ -62,7 +58,6 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
 
     /**
      * Geef de waarde van aanvang geldigheid.
-     *
      * @return aanvang geldigheid
      */
     public BrpDatum getAanvangGeldigheid() {
@@ -71,7 +66,6 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
 
     /**
      * Geef de waarde van einde geldigheid.
-     *
      * @return einde geldigheid
      */
     public BrpDatum getEindeGeldigheid() {
@@ -80,7 +74,6 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
 
     /**
      * Geef de waarde van registratie.
-     *
      * @return registratie
      */
     public BrpDatumTijd getRegistratie() {
@@ -89,7 +82,6 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
 
     /**
      * Geef de waarde van verval.
-     *
      * @return verval
      */
     public BrpDatumTijd getVerval() {
@@ -98,7 +90,6 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
 
     /**
      * Geef de waarde van actie inhoud.
-     *
      * @return actie inhoud
      */
     public BrpActie getActieInhoud() {
@@ -107,7 +98,6 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
 
     /**
      * Geef de waarde van actie geldigheid.
-     *
      * @return actie geldigheid
      */
     public BrpActie getActieGeldigheid() {
@@ -116,7 +106,6 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
 
     /**
      * Geef de waarde van actie verval.
-     *
      * @return actie verval
      */
     public BrpActie getActieVerval() {
@@ -125,7 +114,6 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
 
     /**
      * Geef de waarde van nadere aanduiding verval.
-     *
      * @return nadere aanduiding verval
      */
     public BrpCharacter getNadereAanduidingVerval() {
@@ -133,26 +121,24 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
     }
 
     public void vulHuwelijk(
-        final Integer sluitingParam,
-        final Integer ontbindingParam,
-        final Long registratieParam,
-        final Long vervalParam,
-        final BrpActie actieInhoudParam,
-        final BrpActie actieVervalParam)
-    {
+            final Integer sluitingParam,
+            final Integer ontbindingParam,
+            final Long registratieParam,
+            final Long vervalParam,
+            final BrpActie actieInhoudParam,
+            final BrpActie actieVervalParam) {
         vulHuwelijk(sluitingParam, "1234", ontbindingParam, "1234", registratieParam, vervalParam, actieInhoudParam, actieVervalParam);
     }
 
     public void vulHuwelijk(
-        final Integer sluiting,
-        final String sluitingGemeenteCode,
-        final Integer ontbinding,
-        final String ontbindingGemeenteCode,
-        final Long registratie,
-        final Long verval,
-        final BrpActie actieInhoud,
-        final BrpActie actieVerval)
-    {
+            final Integer sluiting,
+            final String sluitingGemeenteCode,
+            final Integer ontbinding,
+            final String ontbindingGemeenteCode,
+            final Long registratie,
+            final Long verval,
+            final BrpActie actieInhoud,
+            final BrpActie actieVerval) {
         inhoud = (T) AbstractCasusTest.buildBrpRelatie(sluiting, sluitingGemeenteCode, ontbinding, ontbindingGemeenteCode, 'S');
         this.registratie = registratie == null ? null : BrpDatumTijd.fromDatumTijd(registratie, null);
         this.verval = verval == null ? null : BrpDatumTijd.fromDatumTijd(verval, null);
@@ -161,16 +147,15 @@ public class BrpTestObject<T extends BrpGroepInhoud> {
     }
 
     public void vulHuwelijk(
-        final Integer sluiting,
-        final String sluitingGemeenteCode,
-        final Integer ontbinding,
-        final String ontbindingGemeenteCode,
-        final Character redenOntbinding,
-        final Long registratie,
-        final Long verval,
-        final BrpActie actieInhoud,
-        final BrpActie actieVerval)
-    {
+            final Integer sluiting,
+            final String sluitingGemeenteCode,
+            final Integer ontbinding,
+            final String ontbindingGemeenteCode,
+            final Character redenOntbinding,
+            final Long registratie,
+            final Long verval,
+            final BrpActie actieInhoud,
+            final BrpActie actieVerval) {
         inhoud = (T) AbstractCasusTest.buildBrpRelatie(sluiting, sluitingGemeenteCode, ontbinding, ontbindingGemeenteCode, redenOntbinding);
         this.registratie = registratie == null ? null : BrpDatumTijd.fromDatumTijd(registratie, null);
         this.verval = verval == null ? null : BrpDatumTijd.fromDatumTijd(verval, null);

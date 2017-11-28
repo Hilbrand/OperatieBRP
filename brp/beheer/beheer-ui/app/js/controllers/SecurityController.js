@@ -12,14 +12,14 @@ angular.module('SecurityController', [])
     };
 
     $scope.hasRole = function(role) {
-    	return $rootScope.user && $rootScope.user.authorities.indexOf(role) != -1;
+        return $rootScope.user && $rootScope.user.authorities.indexOf(role) !== -1;
     };
 })
-.run(function($rootScope, $location, $interval) {
+.run(function($rootScope, $location) {
 
     var lastDigestRun = Date.now();
 
-    $rootScope.$watch(function(evt) {
+    $rootScope.$watch(function() {
         var now = Date.now();
         if (now - lastDigestRun > 30*60*1000) {
             $rootScope.$emit('event:logoutRequest');

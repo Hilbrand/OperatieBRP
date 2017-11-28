@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
-    xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-    xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
-    ">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="syncDalEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="BrpEntities" />
@@ -21,14 +11,34 @@
             <props>
                 <prop key="hibernate.transaction.manager_lookup_class">com.atomikos.icatch.jta.hibernate3.TransactionManagerLookup</prop>
                 <prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
-                <prop key="hibernate.transaction.jta.platform">nl.bzk.migratiebrp.synchronisatie.dal.repository.jta.AtomikosJtaPlatform</prop>
-                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+                <prop key="hibernate.transaction.jta.platform">
+                    nl.bzk.algemeenbrp.jta.AtomikosJtaPlatform
+                </prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</prop>
 
+				<!-- Cache -->
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
                 <prop key="hibernate.cache.use_query_cache">false</prop>
+                <!-- 
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
-                <prop key="net.sf.ehcache.configurationResourceName">synchronisatie-dal-stamtabel-ehcache.xml</prop>
-                <prop key="hibernate.generate_statistics">false</prop>
+                <prop key="net.sf.ehcache.configurationResourceName">conversietabel-ehcache.xml</prop>
+                 -->
+                 
+                <!-- Log
+                <prop key="hibernate.generate_statistics">true</prop>
+ 				-->
+				<!--  Batching -->
+                <prop key="hibernate.jdbc.fetch_size">100</prop>
+                <prop key="hibernate.jdbc.batch_size">30</prop>
+				
+				<!-- Connection -->
+                <prop key="hibernate.connection.release_mode">after_transaction</prop>
+               	
+               	<!--                 
+                <prop key="hibernate.jdbc.use_scrollable_resultset">true</prop>
+				<prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
+                <prop key="hibernate.jdbc.use_get_generated_keys">true</prop>
+                -->
             </props>
         </property>
     </bean>

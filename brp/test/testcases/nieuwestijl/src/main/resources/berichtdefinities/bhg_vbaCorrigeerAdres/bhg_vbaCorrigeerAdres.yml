@@ -22,9 +22,9 @@ correctieAdresAH:
       communicatieID: 'comid.correctieAdresAH.bron1'
       document:
         communicatieID: 'comid.correctieAdresAH.bron1.document'
-        soortNaam: 'Aangifte met betrekking tot verblijfplaats'
+        soortNaam: 'Aangifte verblijfplaats'
         identificatie: '1235'
-        aktenummer: '1234568'
+        aktenummer: '[]'
         partijCode: '017401'
       rechtsgrondCode: '[]'
       rechtsgrondomschrijving: '[]'

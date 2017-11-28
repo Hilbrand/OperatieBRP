@@ -6,11 +6,6 @@
 
 package nl.bzk.migratiebrp.tools.proefsynchronisatie.service.impl;
 
-import java.io.BufferedReader;
-import java.io.Console;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -18,18 +13,19 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.repository.ProefSynchronisatieRepository;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.service.ProefSynchronisatieService;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.verwerker.impl.AbstractProefSynchronisatieBerichtVerwerker;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.verwerker.impl.JMSProefSynchronisatieBerichtVerwerker;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.verwerker.impl.MailboxProefSynchronisatieBerichtVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.voisc.database.repository.MailboxRepository;
-import nl.bzk.migratiebrp.voisc.spd.MailboxClient;
-import nl.bzk.migratiebrp.voisc.spd.exception.SpdProtocolException;
-import nl.bzk.migratiebrp.voisc.spd.impl.SslConnectionFactory;
+import nl.bzk.migratiebrp.voisc.mailbox.client.Connection;
+import nl.bzk.migratiebrp.voisc.mailbox.client.MailboxClient;
+import nl.bzk.migratiebrp.voisc.spd.exception.VoaException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -44,13 +40,13 @@ public final class ProefSynchronisatieServiceImpl implements ProefSynchronisatie
 
     private static final int QUEUE_SEND_THREAD_POOL_SIZE = 8;
     private static final int DEFAULT_QUEUE_BATCH_SIZE = 10000;
-    private static final Long DEFAULT_TIME_OUT = Long.valueOf(3600000);
+    private static final Long DEFAULT_TIME_OUT = 3600000L;
     private static final String PARAMETER_BATCH_GROOTTE = "batchSize";
     private static final String PARAMETER_TIME_OUT = "timeout";
     private static final String PARAMETER_SOORT_VERWERKER = "verwerker";
-    private static final String PARAMETER_MAILBOX_HOST = "voisc.mailbox.hostname";
-    private static final String PARAMETER_MAILBOX_PORT = "voisc.mailbox.portnumber";
-    private static final int DEFAULT_MAILBOX_PORT = 1212;
+
+    private static final int DEFAULT_MAX_THREAD_POOL_SIZE = 32;
+    private static final int DEFAULT_THREAD_POOL_WAIT_TIME = 10;
 
     @Inject
     private JmsTemplate jmsTemplate;
@@ -70,6 +66,26 @@ public final class ProefSynchronisatieServiceImpl implements ProefSynchronisatie
     @Inject
     private ApplicationContext applicationContext;
 
+    private Integer maxThreadPoolSize = DEFAULT_MAX_THREAD_POOL_SIZE;
+
+    private Integer threadPoolWaitTime = DEFAULT_THREAD_POOL_WAIT_TIME;
+
+    /**
+     * Maximale grootte van de thread pool.
+     * @param maxThreadPoolSize De maximale grootte
+     */
+    public void setMaxThreadPoolSize(final Integer maxThreadPoolSize) {
+        this.maxThreadPoolSize = maxThreadPoolSize;
+    }
+
+    /**
+     * De maximale wachttijd voordat een thread pool geforceerd wordt beeindigd.
+     * @param threadPoolWaitTime De maximale wachttijd
+     */
+    public void setThreadPoolWaitTime(final Integer threadPoolWaitTime) {
+        this.threadPoolWaitTime = threadPoolWaitTime;
+    }
+
     @Override
     public void laadInitProefSynchronisatieBerichtenTabel(final Properties config) {
         LOG.info("De initiele vulling tabel voor de proefsynchronisatie berichten wordt nu gevuld.");
@@ -85,21 +101,27 @@ public final class ProefSynchronisatieServiceImpl implements ProefSynchronisatie
         if ("mailbox".equals(config.getProperty(PARAMETER_SOORT_VERWERKER))) {
             LOG.info("Verstuur berichten naar mailbox.");
 
-            LOG.info("Configureren SSL verbinding ...");
-            configureSsl(getMailboxHost(config), getMailboxPort(config));
+            checkMailbox();
 
-            executor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-            verwerker = new MailboxProefSynchronisatieBerichtVerwerker(executor, proefSynchronisatieRepository, mailboxRepository, mailboxClient);
+            executor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+            verwerker =
+                    new MailboxProefSynchronisatieBerichtVerwerker(
+                            executor,
+                            proefSynchronisatieRepository,
+                            mailboxRepository,
+                            mailboxClient,
+                            maxThreadPoolSize,
+                            threadPoolWaitTime);
         } else {
             LOG.info("Verstuur bericht naar ISC queue");
             executor =
                     new ThreadPoolExecutor(
-                        QUEUE_SEND_THREAD_POOL_SIZE,
-                        QUEUE_SEND_THREAD_POOL_SIZE,
-                        0L,
-                        TimeUnit.MILLISECONDS,
-                        new LinkedBlockingQueue<Runnable>(),
-                        new ThreadPoolExecutor.CallerRunsPolicy());
+                            QUEUE_SEND_THREAD_POOL_SIZE,
+                            QUEUE_SEND_THREAD_POOL_SIZE,
+                            0L,
+                            TimeUnit.MILLISECONDS,
+                            new LinkedBlockingQueue<>(),
+                            new ThreadPoolExecutor.CallerRunsPolicy());
             verwerker = new JMSProefSynchronisatieBerichtVerwerker(executor, destination, jmsTemplate, proefSynchronisatieRepository);
         }
 
@@ -144,24 +166,6 @@ public final class ProefSynchronisatieServiceImpl implements ProefSynchronisatie
         return wachtPeriode;
     }
 
-    private String getMailboxHost(final Properties config) {
-        final String result = config.getProperty(PARAMETER_MAILBOX_HOST);
-        if (result == null) {
-            throw new IllegalArgumentException("Paramter '" + PARAMETER_MAILBOX_HOST + "' verplicht voor mailbox verbinding.");
-        }
-        return result;
-    }
-
-    private int getMailboxPort(final Properties config) {
-        final int result;
-        final String resultString = config.getProperty(PARAMETER_MAILBOX_PORT);
-        if (resultString != null) {
-            result = Integer.parseInt(resultString);
-        } else {
-            result = DEFAULT_MAILBOX_PORT;
-        }
-        return result;
-    }
 
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
@@ -169,65 +173,15 @@ public final class ProefSynchronisatieServiceImpl implements ProefSynchronisatie
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private void configureSsl(final String host, final Integer port) {
-        final SslConnectionFactory connectionFactory = applicationContext.getBean(SslConnectionFactory.class);
-        final char[] pwdArray = getPasswd();
-        connectionFactory.setPassword(new String(pwdArray));
-        if (host != null) {
-            connectionFactory.setHostname(host);
-        }
-        if (port != null) {
-            connectionFactory.setPortNumber(port);
-        }
-        checkMailbox();
-    }
-
-    /**
-     * Geef de waarde van passwd.
-     *
-     * @return passwd
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    private char[] getPasswd() {
-        // readPassword method call.
-        char[] pwdArray = new char[] {};
-        final File voiscPwd = new File(".voiscPwd");
-        if (voiscPwd.exists()) {
-            try {
-                final BufferedReader br = new BufferedReader(new FileReader(voiscPwd));
-                final String pwd = br.readLine();
-                if (pwd != null) {
-                    pwdArray = pwd.toCharArray();
-                }
-                br.close();
-            } catch (final IOException e) {
-                LOG.error("Kan .voiscPwd file niet lezen", e);
-                System.exit(1);
-            }
-        } else {
-            final Console console = System.console();
-            final String pwdPrompt = "%1$26s";
-
-            if (console == null) {
-                LOG.error("Console Object is not available.");
-                System.exit(1);
-            } else {
-                pwdArray = console.readPassword(pwdPrompt, "Voer het SSL wachtwoord in: ");
-            }
-        }
-        return pwdArray;
-    }
 
     private void checkMailbox() {
         LOG.info("Controleren SSL verbinding ...");
-        final MailboxClient mailboxClient = applicationContext.getBean(MailboxClient.class);
-        try {
-            mailboxClient.connect();
-            mailboxClient.logOff();
-        } catch (final SpdProtocolException e) {
+        final MailboxClient client = applicationContext.getBean(MailboxClient.class);
+        try (final Connection mailboxConnection = mailboxClient.connect()) {
+            client.logOff(mailboxConnection);
+        } catch (final VoaException e) {
             LOG.error("Exception bij opzetten van verbinding naar mailbox: ", e);
-            System.exit(1);
+            ((ConfigurableApplicationContext) applicationContext).close();
         }
     }
 

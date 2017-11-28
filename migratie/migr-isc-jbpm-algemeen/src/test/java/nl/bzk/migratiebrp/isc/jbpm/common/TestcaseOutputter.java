@@ -16,28 +16,26 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.Bericht;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.brp.BrpBericht;
 import nl.bzk.migratiebrp.bericht.model.isc.IscBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3EindBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Vb01Bericht;
+import nl.bzk.migratiebrp.bericht.model.notificatie.NotificatieBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieRegisterType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieRegisterVoorkomenType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.GemeenteRegisterType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.GemeenteType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.LeesAutorisatieRegisterAntwoordType;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.LeesGemeenteRegisterAntwoordType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.LeesPartijRegisterAntwoordType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.PartijRegisterType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.PartijType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.RolType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesAutorisatieRegisterAntwoordBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesGemeenteRegisterAntwoordBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Autorisatie;
-import nl.bzk.migratiebrp.bericht.model.sync.register.AutorisatieRegister;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Gemeente;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegister;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesPartijRegisterAntwoordBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -67,7 +65,6 @@ public class TestcaseOutputter {
 
     /**
      * Geef de outputting.
-     *
      * @return outputting
      */
     public boolean isOutputting() {
@@ -105,7 +102,7 @@ public class TestcaseOutputter {
     }
 
     private String bepaalExtension(final String kanaal) {
-        if ("vospg".equals(kanaal)) {
+        if ("voisc".equals(kanaal)) {
             return "txt";
         }
 
@@ -117,11 +114,13 @@ public class TestcaseOutputter {
         if (bericht instanceof BrpBericht) {
             kanaal = "brp";
         } else if (bericht instanceof Lo3Bericht) {
-            kanaal = "vospg";
+            kanaal = "voisc";
         } else if (bericht instanceof SyncBericht) {
             kanaal = "sync";
         } else if (bericht instanceof IscBericht) {
             kanaal = "isc";
+        } else if (bericht instanceof NotificatieBericht) {
+            kanaal = "notificatie";
         } else {
             throw new AssertionError("Onbekend bericht type.");
         }
@@ -145,7 +144,7 @@ public class TestcaseOutputter {
 
         final String bestandsNaam = bepaalBestandsnaam(volgnummer, inUit, correlatie, kanaal, bepaalExtension(kanaal), bericht.getBerichtType());
 
-        if ("vospg".equals(kanaal)) {
+        if ("voisc".equals(kanaal)) {
             outputPropertiesVoorLo3(inUit, bericht, bestandsNaam);
         }
 
@@ -162,15 +161,19 @@ public class TestcaseOutputter {
         }
 
         final Lo3Bericht lo3Bericht = (Lo3Bericht) bericht;
-        final String verzendendePartij = lo3Bericht.getBronGemeente() == null ? "" : lo3Bericht.getBronGemeente();
-        final String ontvangendePartij = lo3Bericht.getDoelGemeente() == null ? "" : lo3Bericht.getDoelGemeente();
-        // Output .properties bestand met bron en doelgemeente
+        final String verzendendePartij = lo3Bericht.getBronPartijCode() == null ? "" : lo3Bericht.getBronPartijCode();
+        final String ontvangendePartij = lo3Bericht.getDoelPartijCode() == null ? "" : lo3Bericht.getDoelPartijCode();
+        // Output .properties bestand met bron en doelPartijCode
         final StringBuilder properties = new StringBuilder();
         properties.append("in".equals(inUit) ? "ontvangendePartij=" : "verzendendePartij=")
-                  .append("in".equals(inUit) ? ontvangendePartij : verzendendePartij);
+                .append("in".equals(inUit) ? ontvangendePartij : verzendendePartij);
         properties.append("\n");
         properties.append("uit".equals(inUit) ? "ontvangendePartij=" : "verzendendePartij=")
-                  .append("uit".equals(inUit) ? ontvangendePartij : verzendendePartij);
+                .append("uit".equals(inUit) ? ontvangendePartij : verzendendePartij);
+        properties.append("\n");
+        if ("in".equals(inUit)) {
+            properties.append("requestNonReceiptNotification=").append(bericht instanceof Lo3EindBericht ? "true" : "false");
+        }
         output(bestandsNaam + ".properties", properties.toString());
     }
 
@@ -192,19 +195,14 @@ public class TestcaseOutputter {
 
     /**
      * &lt;nr>-&lt;in/uit>-&lt;kanaal>.ext
-     *
-     * @param kanaal
-     * @param omschrijving
-     * @return
      */
     private String bepaalBestandsnaam(
-        final int volgnummer,
-        final String inUit,
-        final Integer correlatie,
-        final String kanaal,
-        final String extension,
-        final String omschrijving)
-    {
+            final int volgnummer,
+            final String inUit,
+            final Integer correlatie,
+            final String kanaal,
+            final String extension,
+            final String omschrijving) {
         final StringBuilder result = new StringBuilder();
 
         result.append(NR_FORMAT.format(volgnummer)).append("0-").append(inUit);
@@ -236,58 +234,32 @@ public class TestcaseOutputter {
         return result;
     }
 
-    public void outputAutorisatieRegister(final AutorisatieRegister autorisatieRegister) {
+    public void outputPartijRegister(final PartijRegister partijRegister) {
         if (!output) {
             return;
         }
 
-        output("0020-uit-jmx_isc-autorisatieregister cache legen.txt", "nl.bzk.migratiebrp.isc:name=AUTORISATIE\nclearRegister");
-        output("0021-uit-jmx_isc-autorisatieregister cache refresh.txt", "nl.bzk.migratiebrp.isc:name=AUTORISATIE\nrefreshRegister");
+        output("0010-uit-jmx_isc-partijregister cache legen.txt", "nl.bzk.migratiebrp.isc:name=PARTIJ\nclearRegister");
+        output("0011-uit-jmx_isc-partijregister cache refresh.txt", "nl.bzk.migratiebrp.isc:name=PARTIJ\nrefreshRegister");
         output(
-            "0022-in-afnemer-LeesAutorisatieRegisterVerzoek.xml",
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><leesAutorisatieRegisterVerzoek xmlns=\"http://www.bzk.nl/migratiebrp/SYNC/0001\"/>");
+                "0012-in-partij-LeesPartijRegisterVerzoek.xml",
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><leesPartijRegisterVerzoek xmlns=\"http://www.bzk"
+                        + ".nl/migratiebrp/SYNC/0001\"/>");
 
-        final LeesAutorisatieRegisterAntwoordType jaxb = new LeesAutorisatieRegisterAntwoordType();
+        final LeesPartijRegisterAntwoordType jaxb = new LeesPartijRegisterAntwoordType();
         jaxb.setStatus(StatusType.OK);
-        jaxb.setAutorisatieRegister(new AutorisatieRegisterType());
-        for (final Autorisatie autorisatie : autorisatieRegister.geefAlleAutorisaties()) {
-            final AutorisatieRegisterVoorkomenType autorisatieType = new AutorisatieRegisterVoorkomenType();
-            autorisatieType.setPartijCode(autorisatie.getPartijCode());
-            autorisatieType.setToegangLeveringsautorisatieId(autorisatie.getToegangLeveringsautorisatieId());
-            autorisatieType.setPlaatsenAfnemersindicatiesDienstId(autorisatie.getPlaatsenAfnemersindicatieDienstId());
-            autorisatieType.setVerwijderenAfnemersindicatiesDienstId(autorisatie.getVerwijderenAfnemersindicatieDienstId());
-            autorisatieType.setBevragenPersoonDienstId(autorisatie.getBevragenPersoonDienstId());
-            autorisatieType.setBevragenAdresDienstId(autorisatie.getBevragenAdresDienstId());
-            jaxb.getAutorisatieRegister().getAutorisatie().add(autorisatieType);
+        jaxb.setPartijRegister(new PartijRegisterType());
+        for (final Partij partij : partijRegister.geefAllePartijen()) {
+            final PartijType partijType = new PartijType();
+            partijType.setGemeenteCode(partij.getGemeenteCode());
+            partijType.setPartijCode(partij.getPartijCode());
+            partijType.setDatumBrp(partij.getDatumOvergangNaarBrp() == null ? null : converteerDateNaarBigInteger(partij.getDatumOvergangNaarBrp()));
+            partijType.getRollen().addAll(partij.getActuelePartijRollen().stream().map(rol -> RolType.valueOf(rol.toString())).collect(Collectors.toList()));
+
+            jaxb.getPartijRegister().getPartij().add(partijType);
         }
 
-        output("0023-uit-afnemer-LeesAutorisatieRegisterAntwoord.xml", new LeesAutorisatieRegisterAntwoordBericht(jaxb).format());
-    }
-
-    public void outputGemeenteRegister(final GemeenteRegister gemeenteRegister) {
-        if (!output) {
-            return;
-        }
-
-        output("0010-uit-jmx_isc-gemeenteregister cache legen.txt", "nl.bzk.migratiebrp.isc:name=GEMEENTE\nclearRegister");
-        output("0011-uit-jmx_isc-gemeenteregister cache refresh.txt", "nl.bzk.migratiebrp.isc:name=GEMEENTE\nrefreshRegister");
-        output(
-            "0012-in-gemeente-LeesGemeenteRegisterVerzoek.xml",
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><leesGemeenteRegisterVerzoek xmlns=\"http://www.bzk.nl/migratiebrp/SYNC/0001\"/>");
-
-        final LeesGemeenteRegisterAntwoordType jaxb = new LeesGemeenteRegisterAntwoordType();
-        jaxb.setStatus(StatusType.OK);
-        jaxb.setGemeenteRegister(new GemeenteRegisterType());
-        for (final Gemeente gemeente : gemeenteRegister.geefAlleGemeenten()) {
-            final GemeenteType gemeenteType = new GemeenteType();
-            gemeenteType.setGemeenteCode(gemeente.getGemeenteCode());
-            gemeenteType.setPartijCode(gemeente.getPartijCode());
-            gemeenteType.setDatumBrp(converteerDateNaarBigInteger(gemeente.getDatumOvergangNaarBrp()));
-
-            jaxb.getGemeenteRegister().getGemeente().add(gemeenteType);
-        }
-
-        output("0013-uit-gemeente-LeesGemeenteRegisterAntwoord.xml", new LeesGemeenteRegisterAntwoordBericht(jaxb).format());
+        output("0013-uit-partij-LeesPartijRegisterAntwoord.xml", new LeesPartijRegisterAntwoordBericht(jaxb).format());
     }
 
     private BigInteger converteerDateNaarBigInteger(final Date date) {

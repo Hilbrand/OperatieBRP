@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -25,13 +26,14 @@ import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class Lo3Preconditie055Test {
 
-    private static final Lo3PreconditiesTester TESTER = new Lo3PreconditiesTester();
+    private static final Lo3PreconditiesTester TESTER = new Lo3PreconditiesTester(new ConversietabelFactoryImpl());
 
     private final Lo3Historie lo3Historie0 = new Lo3Historie(null, new Lo3Datum(20120101), new Lo3Datum(20130101));
     private final Lo3Historie lo3Historie1 = new Lo3Historie(null, new Lo3Datum(20120101), new Lo3Datum(20130102));
@@ -45,8 +47,8 @@ public class Lo3Preconditie055Test {
     private final Lo3Herkomst lo3Herkomst3 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_11, 0, 0);
 
     private final Lo3GezagsverhoudingInhoud inhoud = new Lo3GezagsverhoudingInhoud(
-        new Lo3IndicatieGezagMinderjarige("1"),
-        new Lo3IndicatieCurateleregister(1));
+            new Lo3IndicatieGezagMinderjarige("1"),
+            new Lo3IndicatieCurateleregister(1));
 
     @Before
     public void setup() {
@@ -205,5 +207,12 @@ public class Lo3Preconditie055Test {
     }
 
     private static final class Lo3PreconditiesTester extends AbstractLo3Precondities {
+        /**
+         * Constructor.
+         * @param conversieTabelFactory {@link ConversietabelFactory}
+         */
+        public Lo3PreconditiesTester(final ConversietabelFactory conversieTabelFactory) {
+            super(conversieTabelFactory);
+        }
     }
 }

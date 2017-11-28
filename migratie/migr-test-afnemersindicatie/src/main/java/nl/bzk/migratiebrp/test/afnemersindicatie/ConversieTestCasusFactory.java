@@ -10,10 +10,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.dal.AbstractTestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
@@ -23,15 +24,15 @@ public final class ConversieTestCasusFactory extends AbstractTestCasusFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger();
     private final AutowireCapableBeanFactory autowireBeanFactory;
+    private final TestSkipper skipper;
 
     /**
      * Constructor.
-     *
-     * @param autowireBeanFactory
-     *            spring bean factory
+     * @param autowireBeanFactory spring bean factory
      */
-    protected ConversieTestCasusFactory(final AutowireCapableBeanFactory autowireBeanFactory) {
+    protected ConversieTestCasusFactory(final AutowireCapableBeanFactory autowireBeanFactory, final TestSkipper skipper) {
         this.autowireBeanFactory = autowireBeanFactory;
+        this.skipper = skipper;
     }
 
     @Override
@@ -51,11 +52,12 @@ public final class ConversieTestCasusFactory extends AbstractTestCasusFactory {
                 if (testcaseFile.isFile()) {
                     final TestCasus testCasus =
                             new ConversieTestCasus(
-                                getThema(),
-                                input.getName() + File.separator + testcaseFile.getName(),
-                                getOutputFolder(),
-                                getExpectedFolder(),
-                                testcaseFile);
+                                    getThema(),
+                                    input.getName() + File.separator + testcaseFile.getName(),
+                                    getOutputFolder(),
+                                    getExpectedFolder(),
+                                    testcaseFile);
+                    testCasus.setSkipper(skipper);
                     autowireBeanFactory.autowireBean(testCasus);
                     result.add(testCasus);
                 }

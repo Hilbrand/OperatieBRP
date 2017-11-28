@@ -18,7 +18,7 @@ import java.util.Set;
 public class GgoBetrokkenheid implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long aNummer;
+    private String aNummer;
     private int brpStapelNr;
     private String label;
     private final List<GgoStapel> stapels = new ArrayList<>();
@@ -27,21 +27,19 @@ public class GgoBetrokkenheid implements Serializable {
     /**
      * @return the aNummer
      */
-    public final Long getaNummer() {
+    public final String getaNummer() {
         return aNummer;
     }
 
     /**
-     * @param aNummer
-     *            the aNummer to set
+     * @param aNummer the aNummer to set
      */
-    public final void setaNummer(final Long aNummer) {
+    public final void setaNummer(final String aNummer) {
         this.aNummer = aNummer;
     }
 
     /**
      * Geef de waarde van brp stapel nr.
-     *
      * @return the brpStapelNr
      */
     public final int getBrpStapelNr() {
@@ -50,9 +48,7 @@ public class GgoBetrokkenheid implements Serializable {
 
     /**
      * Zet de waarde van brp stapel nr.
-     *
-     * @param brpStapelNr
-     *            the brpStapelNr to set
+     * @param brpStapelNr the brpStapelNr to set
      */
     public final void setBrpStapelNr(final int brpStapelNr) {
         this.brpStapelNr = brpStapelNr;
@@ -60,7 +56,6 @@ public class GgoBetrokkenheid implements Serializable {
 
     /**
      * Geef de waarde van label.
-     *
      * @return the label
      */
     public final String getLabel() {
@@ -69,9 +64,7 @@ public class GgoBetrokkenheid implements Serializable {
 
     /**
      * Zet de waarde van label.
-     *
-     * @param label
-     *            the label to set
+     * @param label the label to set
      */
     public final void setLabel(final String label) {
         this.label = label;
@@ -79,7 +72,6 @@ public class GgoBetrokkenheid implements Serializable {
 
     /**
      * Geef de waarde van stapels.
-     *
      * @return the stapels
      */
     public final List<GgoStapel> getStapels() {
@@ -87,8 +79,7 @@ public class GgoBetrokkenheid implements Serializable {
     }
 
     /**
-     * @param stapel
-     *            Voeg deze toe aan de stapels.
+     * @param stapel Voeg deze toe aan de stapels.
      */
     public final void addStapel(final GgoStapel stapel) {
         stapels.add(stapel);
@@ -96,7 +87,6 @@ public class GgoBetrokkenheid implements Serializable {
 
     /**
      * Geef de waarde van onderzoeken.
-     *
      * @return the onderzoeken
      */
     public final Set<GgoBrpOnderzoek> getOnderzoeken() {
@@ -105,9 +95,7 @@ public class GgoBetrokkenheid implements Serializable {
 
     /**
      * Zet de waarde van onderzoeken.
-     *
-     * @param onderzoeken
-     *            the onderzoeken to set
+     * @param onderzoeken the onderzoeken to set
      */
     public final void setOnderzoeken(final Set<GgoBrpOnderzoek> onderzoeken) {
         if (onderzoeken != null && onderzoeken.size() > 0) {

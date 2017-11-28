@@ -8,15 +8,14 @@ package nl.bzk.migratiebrp.isc.jbpm.uc301;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ii01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.springframework.stereotype.Component;
@@ -29,8 +28,15 @@ public final class MaakBlokkeringAction implements SpringAction {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    @Inject
-    private BerichtenDao berichtenDao;
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
+    protected MaakBlokkeringAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -51,8 +57,9 @@ public final class MaakBlokkeringAction implements SpringAction {
 
         blokkeringBericht.setProcessId(String.valueOf(processInstanceId));
         blokkeringBericht.setPersoonsaanduiding(PersoonsaanduidingType.VERHUIZEND_VAN_BRP_NAAR_LO_3_GBA);
-        blokkeringBericht.setGemeenteNaar(ii01Bericht.getBronGemeente());
-        blokkeringBericht.setGemeenteRegistratie(ii01Bericht.getDoelGemeente());
+
+        blokkeringBericht.setGemeenteNaar(ii01Bericht.getBronPartijCode());
+        blokkeringBericht.setGemeenteRegistratie(ii01Bericht.getDoelPartijCode());
 
         final Map<String, Object> result = new HashMap<>();
         result.put("blokkeringBericht", berichtenDao.bewaarBericht(blokkeringBericht));

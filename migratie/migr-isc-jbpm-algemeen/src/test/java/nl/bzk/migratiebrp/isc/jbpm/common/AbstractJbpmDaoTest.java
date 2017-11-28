@@ -13,8 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
@@ -37,10 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @Rollback(value = false)
 @ContextConfiguration({"classpath:isc-jbpm-algemeen.xml",
-                       "classpath*:isc-jbpm-usecase-beans.xml",
-                       "classpath:test-datasource.xml",
-                       "classpath:test-jta.xml",
-                       "classpath:test-outbound.xml", })
+        "classpath*:isc-jbpm-usecase-beans.xml",
+        "classpath:test-datasource.xml",
+        "classpath:test-jta.xml",
+        "classpath:test-outbound.xml",})
 public abstract class AbstractJbpmDaoTest {
 
     private static final Logger LOG = LoggerFactory.getLogger();
@@ -57,7 +57,6 @@ public abstract class AbstractJbpmDaoTest {
 
     /**
      * Geef de waarde van connection.
-     *
      * @return connection
      */
     protected Session getSession() {

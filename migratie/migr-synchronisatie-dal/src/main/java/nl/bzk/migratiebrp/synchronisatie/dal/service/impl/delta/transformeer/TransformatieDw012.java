@@ -6,12 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractFormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
+
+import java.util.ArrayList;
 
 /**
  * Deze situatie herkent een gewijzigde rij waarbij tsverval, actie verval en aand. verval gevuld wordt. In dit geval
@@ -19,43 +18,20 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
  */
 public final class TransformatieDw012 extends AbstractTransformatie {
 
-    private static final int INT_3 = 3;
+    private static final int VERWACHT_AANTAL_WIJZIGINGEN = 3;
 
     @Override
     public boolean accept(final VerschilGroep verschillen) {
         return isWijzigingOpFormeleHistorie(verschillen)
-               && zijnHetVerwachtAantalVeldenGevuld(verschillen, INT_3)
-               && zijnVerwachteVeldenGevuld(verschillen);
-    }
-
-    private boolean zijnVerwachteVeldenGevuld(final VerschilGroep verschillen) {
-        boolean datumTijdVervalGevuld = false;
-        boolean actieVervalGevuld = false;
-        boolean nadereAanduidingVervalGevuld = false;
-        for (final Verschil verschil : verschillen) {
-            if (AbstractFormeleHistorie.DATUM_TIJD_VERVAL.equals(verschil.getSleutel().getVeld())
-                && VerschilType.ELEMENT_NIEUW.equals(verschil.getVerschilType()))
-            {
-                datumTijdVervalGevuld = true;
-            } else if (AbstractFormeleHistorie.ACTIE_VERVAL.equals(verschil.getSleutel().getVeld())
-                       && VerschilType.ELEMENT_NIEUW.equals(verschil.getVerschilType()))
-            {
-                actieVervalGevuld = true;
-            } else if (AbstractFormeleHistorie.NADERE_AANDUIDING_VERVAL.equals(verschil.getSleutel().getVeld())
-                       && VerschilType.ELEMENT_NIEUW.equals(verschil.getVerschilType()))
-            {
-                nadereAanduidingVervalGevuld = true;
-            }
-        }
-        return datumTijdVervalGevuld && actieVervalGevuld && nadereAanduidingVervalGevuld;
+                && zijnHetVerwachtAantalVeldenGevuld(verschillen, VERWACHT_AANTAL_WIJZIGINGEN)
+                && zijnVerwachteVervalVeldenGevuld(new ArrayList<>(verschillen.getVerschillen()), true);
     }
 
     @Override
     public VerschilGroep execute(
-        final VerschilGroep verschilGroep,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final DeltaBepalingContext deltaBepalingContext)
-    {
+            final VerschilGroep verschilGroep,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final DeltaBepalingContext deltaBepalingContext) {
         return voegActieVervalTbvLeveringMutatiesToeAanVerschilGroep(verschilGroep, actieVervalTbvLeveringMuts);
     }
 

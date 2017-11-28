@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * Verzender.
  */
-@SuppressWarnings("checkstyle:designforextension")
+
 public class Verzender implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long instantiecode;
@@ -19,7 +19,6 @@ public class Verzender implements Serializable {
 
     /**
      * Geeft de instantie code.
-     * 
      * @return de instantie code
      */
     public Long getInstantiecode() {
@@ -28,9 +27,7 @@ public class Verzender implements Serializable {
 
     /**
      * Zet de instantie code.
-     * 
-     * @param instantiecode
-     *            De te zetten instantie code
+     * @param instantiecode De te zetten instantie code
      */
     public void setInstantiecode(final Long instantiecode) {
         this.instantiecode = instantiecode;
@@ -38,7 +35,6 @@ public class Verzender implements Serializable {
 
     /**
      * Geeft de verzendende instantie code.
-     * 
      * @return de verzendende instantie code
      */
     public Long getVerzendendeInstantiecode() {
@@ -47,9 +43,7 @@ public class Verzender implements Serializable {
 
     /**
      * Zet de verzenden instantie code.
-     * 
-     * @param verzendendeInstantiecode
-     *            De te zetten verzendende instantie code
+     * @param verzendendeInstantiecode De te zetten verzendende instantie code
      */
     public void setVerzendendeInstantiecode(final Long verzendendeInstantiecode) {
         this.verzendendeInstantiecode = verzendendeInstantiecode;

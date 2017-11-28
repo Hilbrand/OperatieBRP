@@ -6,10 +6,11 @@
 
 package nl.bzk.migratiebrp.init.logging.runtime.listeners.handlers;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieAntwoordRecordType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.AutorisatieAntwoordBericht;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAutorisatie;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 import org.springframework.stereotype.Component;
 
@@ -17,29 +18,24 @@ import org.springframework.stereotype.Component;
  * Handler voor het {@link AutorisatieAntwoordBericht}.
  */
 @Component
-public final class AutorisatieAntwoordHandler extends AbstractInitVullingLogHandler {
+public final class AutorisatieAntwoordHandler extends BasisInitVullingLogHandler implements AntwoordHandler<AutorisatieAntwoordBericht> {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    /**
-     * Verwerk het bericht.
-     *
-     * @param antwoordBericht
-     *            bericht
-     * @param messageId
-     *            message id
-     * @param correlationId
-     *            correlation id
-     */
+    @Override
     public void verwerk(final AutorisatieAntwoordBericht antwoordBericht, final String messageId, final String correlationId) {
-        final Integer afnemerCode = extractIdentifier(correlationId).intValue();
-        final InitVullingAutorisatie log = getLoggingService().zoekInitVullingAutorisatie(afnemerCode);
-        if (log == null) {
-            LOG.warn("Kon geen logs vinden voor afnemercode: {}", afnemerCode);
-        } else {
-            log.setConversieResultaat(antwoordBericht.getStatus().toString());
-            log.setFoutmelding(antwoordBericht.getFoutmelding());
-            getLoggingService().persisteerInitVullingAutorisatie(log);
+
+        for (AutorisatieAntwoordRecordType record : antwoordBericht.getAutorisatieTabelRegels()) {
+            final InitVullingAutorisatie initVullingAutorisatie = getLoggingService().zoekInitVullingAutorisatie(record.getAutorisatieId());
+
+            if (initVullingAutorisatie == null) {
+                final Integer afnemerCode = Integer.valueOf(extractIdentifier(correlationId));
+                LOG.warn("Kon geen logs (initvul.initvullingresult_aut) vinden voor autorisatie id {} (afnemer: {})", record.getAutorisatieId(), afnemerCode);
+            } else {
+                initVullingAutorisatie.setConversieResultaat(record.getStatus().toString());
+                initVullingAutorisatie.setConversieMelding(record.getFoutmelding());
+                getLoggingService().persisteerInitVullingAutorisatie(initVullingAutorisatie);
+            }
         }
     }
 }

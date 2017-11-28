@@ -9,32 +9,39 @@ package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingVerblijfstitelCode;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.RubriekWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
 import org.springframework.stereotype.Component;
 
 /**
  * Voor voorwaarden waarvan de waarde van een rubriek een verblijfsrecht betreft.
  */
 @Component
-public class VerbijfsrechtVoorwaardeRegel extends AbstractStandaardVoorwaardeRegel {
+public final class VerbijfsrechtVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
 
     private static final String REGEX_PATROON = "^(10|60)\\.39\\.10.*";
     private static final int VOLGORDE = 500;
 
-    @Inject
-    private ConversietabelFactory conversieTabelFactory;
+    private final StandaardVoorwaardeRegelUtil standaardVoorwaardeRegelUtil;
 
     /**
-     * Maakt niet voorwaarderegel aan.
+     * Maakt nieuwe voorwaarderegel aan.
+     * @param conversieTabelFactory conversie tabel factory
+     * @param gbaRubriekNaarBrpTypeVertaler rubriekvertaler
      */
-    public VerbijfsrechtVoorwaardeRegel() {
+    @Inject
+    public VerbijfsrechtVoorwaardeRegel(
+            final ConversietabelFactory conversieTabelFactory,
+            final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler) {
         super(VOLGORDE, REGEX_PATROON);
+        standaardVoorwaardeRegelUtil = new StandaardVoorwaardeRegelUtil(gbaRubriekNaarBrpTypeVertaler, waarde ->
+                conversieTabelFactory.createVerblijfsrechtConversietabel().converteerNaarBrp(new Lo3AanduidingVerblijfstitelCode(waarde)).getWaarde());
     }
 
     @Override
-    protected final String vertaalWaardeVanRubriek(final String ruweWaarde) {
-        return Short.toString(conversieTabelFactory.createVerblijfsrechtConversietabel()
-                                                   .converteerNaarBrp(new Lo3AanduidingVerblijfstitelCode(ruweWaarde))
-                                                   .getWaarde());
+    public Expressie getBrpExpressie(final RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
+        return standaardVoorwaardeRegelUtil.getBrpExpressie(voorwaardeRegel);
     }
-
 }

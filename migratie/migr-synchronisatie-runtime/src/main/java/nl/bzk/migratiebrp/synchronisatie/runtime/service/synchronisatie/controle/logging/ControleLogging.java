@@ -13,14 +13,11 @@ import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
  */
 public final class ControleLogging {
 
-    // private final List<String> meldingen = new ArrayList<>();
     private final ControleMelding controleMelding;
 
     /**
      * Constructor (en log start).
-     *
-     * @param controleMelding
-     *            melding
+     * @param controleMelding melding
      */
     public ControleLogging(final ControleMelding controleMelding) {
         this.controleMelding = controleMelding;
@@ -29,9 +26,7 @@ public final class ControleLogging {
 
     /**
      * Log waarden aangeboden persoonlijst.
-     *
-     * @param waarden
-     *            waarden
+     * @param waarden waarden
      */
     public void logAangebodenWaarden(final Object... waarden) {
         SynchronisatieLogging.addMelding(String.format("[%s] Waarden aangeboden persoonslijst: %s", controleMelding.getKey(), arrayToString(waarden)));
@@ -39,9 +34,7 @@ public final class ControleLogging {
 
     /**
      * Log waarden gevonden persoonslijst.
-     *
-     * @param waarden
-     *            waarden
+     * @param waarden waarden
      */
     public void logGevondenWaarden(final Object... waarden) {
         SynchronisatieLogging.addMelding(String.format("[%s] Waarden gevonden persoonslijst: %s", controleMelding.getKey(), arrayToString(waarden)));
@@ -49,19 +42,36 @@ public final class ControleLogging {
 
     /**
      * Log resultaat.
-     *
-     * @param resultaat
-     *            resultaat
+     * @param resultaat resultaat
      */
     public void logResultaat(final boolean resultaat) {
-        SynchronisatieLogging.addMelding(String.format("[%s] Resultaat: %s", controleMelding.getKey(), resultaat));
+        logResultaat(resultaat, false);
+    }
+
+    /**
+     * Log resultaat.
+     * @param resultaat resultaat
+     * @param voegWitregelToe indicatie of een witregel toegevoegd moet worden.
+     */
+    public void logResultaat(final boolean resultaat, final boolean voegWitregelToe) {
+        if (voegWitregelToe) {
+            SynchronisatieLogging.addMelding(String.format("[%s] Resultaat: %s%n", controleMelding.getKey(), resultaat));
+        } else {
+            SynchronisatieLogging.addMelding(String.format("[%s] Resultaat: %s", controleMelding.getKey(), resultaat));
+        }
+    }
+
+    /**
+     * Log resultaat.
+     * @param controleUitkomst Het resultaat
+     */
+    public void logResultaat(final ControleUitkomst controleUitkomst) {
+        SynchronisatieLogging.addMelding(String.format("[%s] Resultaat: %s", controleMelding.getKey(), controleUitkomst.getResultaat()));
     }
 
     /**
      * Log een melding (in context van de controle).
-     *
-     * @param melding
-     *            melding
+     * @param melding melding
      */
     public void addMelding(final String melding) {
         SynchronisatieLogging.addMelding(String.format("[%s] %s", controleMelding.getKey(), melding));

@@ -13,18 +13,14 @@ public interface Vergelijking {
 
     /**
      * Geef de reguliere expressie om deze vergelijking weer te geven.
-     * 
      * @return regex string
      */
     String getRegex();
 
     /**
      * Controleer de inhoud.
-     * 
-     * @param context
-     *            context
-     * @param value
-     *            te controleren waarde
+     * @param context context
+     * @param value te controleren waarde
      * @return true, als de waarde 'gelijk' is, anders false
      */
     boolean check(VergelijkingContext context, String value);

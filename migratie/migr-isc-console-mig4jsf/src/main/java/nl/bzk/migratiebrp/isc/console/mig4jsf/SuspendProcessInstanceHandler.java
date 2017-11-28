@@ -19,15 +19,13 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  * Suspend proces instance handler.
  */
 @TldTag(name = "suspendProcessInstance", description = "Suspend a process instance.", attributes = {@TldAttribute(name = "processInstance",
-        description = "The process instance to suspend.", required = true, deferredType = ProcessInstance.class) })
+        description = "The process instance to suspend.", required = true, deferredType = ProcessInstance.class)})
 public final class SuspendProcessInstanceHandler extends AbstractHandler {
     private final TagAttribute processInstanceTagAttribute;
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public SuspendProcessInstanceHandler(final TagConfig config) {
         super(config);

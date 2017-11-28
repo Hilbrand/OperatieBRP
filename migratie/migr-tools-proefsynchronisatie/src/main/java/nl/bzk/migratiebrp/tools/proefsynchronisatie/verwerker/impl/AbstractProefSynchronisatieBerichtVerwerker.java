@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.domein.ProefSynchronisatieBericht;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.repository.ProefSynchronisatieRepository;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.verwerker.BerichtVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * ProefSynchronisatie bericht verwerker.
@@ -34,14 +34,12 @@ public abstract class AbstractProefSynchronisatieBerichtVerwerker implements Ber
 
     /**
      * Constructor.
-     *
-     * @param executor
-     *            {@link ThreadPoolExecutor}
-     * @param proefSynchronisatieRepository
-     *            De repository waaruit de proefsynchronisatie berichten moeten worden gelezen
+     * @param executor {@link ThreadPoolExecutor}
+     * @param proefSynchronisatieRepository De repository waaruit de proefsynchronisatie berichten moeten worden gelezen
      */
-    public AbstractProefSynchronisatieBerichtVerwerker(final ThreadPoolExecutor executor, final ProefSynchronisatieRepository proefSynchronisatieRepository)
-    {
+    public AbstractProefSynchronisatieBerichtVerwerker(
+            final ThreadPoolExecutor executor,
+            final ProefSynchronisatieRepository proefSynchronisatieRepository) {
         this.executor = executor;
         proefSynchronisatieBerichten = new ArrayList<>();
         this.proefSynchronisatieRepository = proefSynchronisatieRepository;
@@ -89,7 +87,6 @@ public abstract class AbstractProefSynchronisatieBerichtVerwerker implements Ber
 
     /**
      * Geef de waarde van verwerk teller.
-     *
      * @return aantal verwerkte berichten
      */
     @Override
@@ -99,9 +96,7 @@ public abstract class AbstractProefSynchronisatieBerichtVerwerker implements Ber
 
     /**
      * Verstuur berichten.
-     *
-     * @param teVersturenBerichten
-     *            te versturen berichten
+     * @param teVersturenBerichten te versturen berichten
      * @return verstuurde berichten
      */
     protected abstract List<ProefSynchronisatieBericht> verstuurProefSynchronisatieBerichten(final List<ProefSynchronisatieBericht> teVersturenBerichten);

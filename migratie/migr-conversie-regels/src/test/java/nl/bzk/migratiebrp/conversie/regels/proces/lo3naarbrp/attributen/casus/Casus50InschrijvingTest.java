@@ -6,10 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.casus;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -40,12 +41,10 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Emigratie. Datum cat7 zelfde als datum cat8.
- * 
  */
 public class Casus50InschrijvingTest extends AbstractCasusTest {
 
@@ -53,7 +52,7 @@ public class Casus50InschrijvingTest extends AbstractCasusTest {
 
     @Override
     protected Lo3Stapel<Lo3InschrijvingInhoud> maakInschrijvingStapel() {
-        return buildInschrijving(Lo3RedenOpschortingBijhoudingCodeEnum.EMIGRATIE, new Lo3Datum(20100101), null, null);
+        return buildInschrijving(Lo3RedenOpschortingBijhoudingCodeEnum.EMIGRATIE, new Lo3Datum(20100101));
     }
 
     @Override
@@ -63,61 +62,60 @@ public class Casus50InschrijvingTest extends AbstractCasusTest {
 
     private Lo3Stapel<Lo3VerblijfplaatsInhoud> buildVerblijfplaatsBuitenland() {
         final Lo3Categorie<Lo3VerblijfplaatsInhoud> verblijfplaats1 =
-                new Lo3Categorie<>(new Lo3VerblijfplaatsInhoud(
-                    new Lo3GemeenteCode("0518"),
-                    new Lo3Datum(20100101),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Lo3LandCode("4322"),
-                    new Lo3Datum(20100101),
-                    Lo3String.wrap("regel 1"),
-                    Lo3String.wrap("regel 2"),
-                    Lo3String.wrap("regel 3"),
-                    null,
-                    null,
-                    Lo3AangifteAdreshoudingEnum.ONBEKEND.asElement(),
-                    null), null, new Lo3Historie(null, new Lo3Datum(20100101), new Lo3Datum(20100101)), new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_08,
-                    0,
-                    0));
-        return new Lo3Stapel<>(Arrays.asList(verblijfplaats1));
+                new Lo3Categorie<>(
+                        new Lo3VerblijfplaatsInhoud(
+                                new Lo3GemeenteCode("0518"),
+                                new Lo3Datum(20100101),
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                new Lo3LandCode("4322"),
+                                new Lo3Datum(20100101),
+                                Lo3String.wrap("regel 1"),
+                                Lo3String.wrap("regel 2"),
+                                Lo3String.wrap("regel 3"),
+                                null,
+                                null,
+                                Lo3AangifteAdreshoudingEnum.ONBEKEND.asElement(),
+                                null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20100101), new Lo3Datum(20100101)),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 0));
+        return new Lo3Stapel<>(Collections.singletonList(verblijfplaats1));
     }
 
     private Lo3Stapel<Lo3InschrijvingInhoud> buildInschrijving(
-        final Lo3RedenOpschortingBijhoudingCodeEnum redenOpschorting,
-        final Lo3Datum datumOpschorting,
-        final Lo3Datum datumVerificatie,
-        final Lo3String omschrijvingVerificatie)
-    {
+            final Lo3RedenOpschortingBijhoudingCodeEnum redenOpschorting,
+            final Lo3Datum datumOpschorting) {
         final Lo3Categorie<Lo3InschrijvingInhoud> inschrijving =
-                new Lo3Categorie<>(new Lo3InschrijvingInhoud(
-                    null,
-                    datumOpschorting,
-                    redenOpschorting != null ? redenOpschorting.asElement() : null,
-                    new Lo3Datum(19600303),
-                    new Lo3GemeenteCode("0518"),
-                    Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement(),
-                    datumVerificatie,
-                    omschrijvingVerificatie,
-                    new Lo3Integer("0333", null),
-                    LO3_DATUMTIJDSTEMPEL,
-                    Lo3IndicatiePKVolledigGeconverteerdCodeEnum.VOLLEDIG_GECONVERTEERD.asElement()), null, Lo3Historie.NULL_HISTORIE, new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_07,
-                    0,
-                    0));
-        return new Lo3Stapel<>(Arrays.asList(inschrijving));
+                new Lo3Categorie<>(
+                        new Lo3InschrijvingInhoud(
+                                null,
+                                datumOpschorting,
+                                redenOpschorting != null ? redenOpschorting.asElement() : null,
+                                new Lo3Datum(19600303),
+                                new Lo3GemeenteCode("0518"),
+                                Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement(),
+                                null,
+                                null,
+                                new Lo3Integer("0333", null),
+                                LO3_DATUMTIJDSTEMPEL,
+                                Lo3IndicatiePKVolledigGeconverteerdCodeEnum.VOLLEDIG_GECONVERTEERD.asElement()),
+                        null,
+                        new Lo3Historie(null, null, null),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0));
+        return new Lo3Stapel<>(Collections.singletonList(inschrijving));
     }
 
     @Override
@@ -128,31 +126,29 @@ public class Casus50InschrijvingTest extends AbstractCasusTest {
         assertNotNull(brpPersoonslijst);
 
         final BrpStapel<BrpBijhoudingInhoud> bijhoudingStapel = brpPersoonslijst.getBijhoudingStapel();
-        Assert.assertEquals(2, bijhoudingStapel.size());
+        assertEquals(2, bijhoudingStapel.size());
 
         // sorteren op datumAanvangGeldigheid
         final List<BrpGroep<BrpBijhoudingInhoud>> groepen = bijhoudingStapel.getGroepen();
-        Collections.sort(groepen, new BrpBijhoudingComparator());
+        groepen.sort(new BrpBijhoudingComparator());
         final BrpStapel<BrpBijhoudingInhoud> sortedBijhoudingStapel = new BrpStapel<>(groepen);
 
         checkInhoud(
-            sortedBijhoudingStapel,
-            0,
-            BrpBijhoudingsaardCode.NIET_INGEZETENE,
-            BrpNadereBijhoudingsaardCode.EMIGRATIE,
-            new BrpPartijCode(51801),
-            new BrpDatum(20100101, null),
-            null,
-            false);
+                sortedBijhoudingStapel,
+                0,
+                BrpBijhoudingsaardCode.INGEZETENE,
+                BrpNadereBijhoudingsaardCode.EMIGRATIE,
+                new BrpPartijCode("051801"),
+                new BrpDatum(20100101, null),
+                false);
         checkInhoud(
-            sortedBijhoudingStapel,
-            1,
-            BrpBijhoudingsaardCode.ONBEKEND,
-            BrpNadereBijhoudingsaardCode.ONBEKEND,
-            new BrpPartijCode(51801),
-            new BrpDatum(20100101, null),
-            null,
-            true);
+                sortedBijhoudingStapel,
+                1,
+                BrpBijhoudingsaardCode.INGEZETENE,
+                BrpNadereBijhoudingsaardCode.ONBEKEND,
+                new BrpPartijCode("051801"),
+                new BrpDatum(20100101, null),
+                true);
 
     }
 
@@ -163,36 +159,31 @@ public class Casus50InschrijvingTest extends AbstractCasusTest {
         final Lo3Persoonslijst terug = converteerBrpNaarLo3Service.converteerBrpPersoonslijst(brpPersoonslijst);
         final Lo3Stapel<Lo3InschrijvingInhoud> rondverteerdeStapel = terug.getInschrijvingStapel();
         final Lo3Stapel<Lo3InschrijvingInhoud> origineleStapel = getLo3Persoonslijst().getInschrijvingStapel();
-        Assert.assertEquals(1, rondverteerdeStapel.size());
-        Assert.assertEquals(origineleStapel.size(), rondverteerdeStapel.size());
+        assertEquals(1, rondverteerdeStapel.size());
+        assertEquals(origineleStapel.size(), rondverteerdeStapel.size());
 
-        Assert.assertTrue(Lo3StapelHelper.vergelijkStapels(origineleStapel, rondverteerdeStapel));
-        // Lo3StapelHelper.vergelijk(origineleStapel, rondverteerdeStapel);
-        // assertEquals(origineleStapels, rondverteerdeStapels);
+        assertTrue(Lo3StapelHelper.vergelijkStapels(origineleStapel, rondverteerdeStapel));
     }
 
     private void checkInhoud(
-        final BrpStapel<BrpBijhoudingInhoud> brpBijhoudingStapel,
-        final int index,
-        final BrpBijhoudingsaardCode bijhaard,
-        final BrpNadereBijhoudingsaardCode nadereBijhaard,
-        final BrpPartijCode partij,
-        final BrpDatum datumAanvang,
-        final BrpDatum datumEinde,
-        final boolean vervallen)
-    {
+            final BrpStapel<BrpBijhoudingInhoud> brpBijhoudingStapel,
+            final int index,
+            final BrpBijhoudingsaardCode bijhaard,
+            final BrpNadereBijhoudingsaardCode nadereBijhaard,
+            final BrpPartijCode partij,
+            final BrpDatum datumAanvang,
+            final boolean vervallen) {
         final BrpBijhoudingInhoud inhoud = brpBijhoudingStapel.get(index).getInhoud();
-        Assert.assertEquals(bijhaard, inhoud.getBijhoudingsaardCode());
-        Assert.assertEquals(nadereBijhaard, inhoud.getNadereBijhoudingsaardCode());
-        Assert.assertEquals(partij, inhoud.getBijhoudingspartijCode());
-        Assert.assertEquals(datumAanvang, brpBijhoudingStapel.get(index).getHistorie().getDatumAanvangGeldigheid());
-        Assert.assertEquals(datumEinde, brpBijhoudingStapel.get(index).getHistorie().getDatumEindeGeldigheid());
-        Assert.assertEquals(vervallen, brpBijhoudingStapel.get(index).getHistorie().isVervallen());
+        assertEquals(bijhaard, inhoud.getBijhoudingsaardCode());
+        assertEquals(nadereBijhaard, inhoud.getNadereBijhoudingsaardCode());
+        assertEquals(partij, inhoud.getBijhoudingspartijCode());
+        assertEquals(datumAanvang, brpBijhoudingStapel.get(index).getHistorie().getDatumAanvangGeldigheid());
+        assertEquals(null, brpBijhoudingStapel.get(index).getHistorie().getDatumEindeGeldigheid());
+        assertEquals(vervallen, brpBijhoudingStapel.get(index).getHistorie().isVervallen());
     }
 
     /**
      * Comparator welke de BrpBijhoudingInhoud vergelijkt op basis van de datumAanvangGeldigheid.
-     * 
      */
     private static class BrpBijhoudingComparator implements Comparator<BrpGroep<BrpBijhoudingInhoud>>, Serializable {
         private static final long serialVersionUID = 1L;

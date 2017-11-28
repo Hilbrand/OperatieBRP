@@ -15,17 +15,13 @@ public interface DeltaProces {
 
     /**
      * Bepaalt de verschillen tussen oude en bestaande versie van bijvoorbeeld personen.
-     *
-     * @param context
-     *            de context voor de deltabepaling en relateer processen
+     * @param context de context voor de deltabepaling en relateer processen
      */
     void bepaalVerschillen(final DeltaBepalingContext context);
 
     /**
      * Verwerken van de gevonden verschillen.
-     *
-     * @param context
-     *            administratieve handeling cache met daarin administratie handelingen per soort.
+     * @param context administratieve handeling cache met daarin administratie handelingen per soort.
      */
     void verwerkVerschillen(final DeltaBepalingContext context);
 }

@@ -6,13 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerificatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
@@ -21,38 +19,22 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Onder
 /**
  * Mapper waarmee een {@link nl.bzk.migratiebrp.conversie.model.brp.BrpStapel <BrpVerificatieInhoud>} gemapt kan worden
  * op een verzameling van
- * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatieHistorie}.
+ * {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatieHistorie}.
  */
 public final class PersoonVerificatieMapper extends
-        AbstractHistorieMapperStrategie<BrpVerificatieInhoud, PersoonVerificatieHistorie, PersoonVerificatie>
-{
+        AbstractHistorieMapperStrategie<BrpVerificatieInhoud, PersoonVerificatieHistorie, PersoonVerificatie> {
 
     /**
      * Maakt een PersoonVerificatieMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonVerificatieMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpVerificatieInhoud> brpStapel, final PersoonVerificatie entiteit) {
-        final BrpVerificatieInhoud actueleInhoud = brpStapel.getActueel().getInhoud();
-        entiteit.setPartij(getStamtabelMapping().findPartijByCode(actueleInhoud.getPartij()));
-        entiteit.setSoortVerificatie(BrpString.unwrap(actueleInhoud.getSoort()));
     }
 
     /**
@@ -61,14 +43,6 @@ public final class PersoonVerificatieMapper extends
     @Override
     protected void voegHistorieToeAanEntiteit(final PersoonVerificatieHistorie historie, final PersoonVerificatie persoonVerificatie) {
         persoonVerificatie.addPersoonVerificatieHistorie(historie);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonVerificatieHistorie historie, final PersoonVerificatie persoonVerificatie) {
-        persoonVerificatie.setDatum(historie.getDatum());
     }
 
     /**

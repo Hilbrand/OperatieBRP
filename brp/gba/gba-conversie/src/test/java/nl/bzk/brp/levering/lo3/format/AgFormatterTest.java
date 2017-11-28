@@ -6,6 +6,7 @@
 
 package nl.bzk.brp.levering.lo3.format;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import java.util.Arrays;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
@@ -39,9 +40,26 @@ public class AgFormatterTest {
         categorie08.addElement(Lo3ElementEnum.ELEMENT_0910, ELEMENT_0910_WAARDE);
 
         final List<Lo3CategorieWaarde> categorieen = Arrays.asList(categorie01, categorie08);
-        final String resultaat = subject.maakPlatteTekst(null, categorieen, categorieen);
+        final String resultaat = subject.maakPlatteTekst(null, null, categorieen, categorieen);
 
         final String verwachteResultaat = "00000000Ag31A000000000005301032011001034509243210310008197701010801109100040518";
+        Assert.assertEquals(verwachteResultaat, resultaat);
+    }
+
+    @Test
+    public void testLegeCategorieenLijst() {
+        final List<Lo3CategorieWaarde> categorieen = Collections.emptyList();
+        final String resultaat = subject.maakPlatteTekst(null, null, categorieen, categorieen);
+
+        final String verwachteResultaat = "00000000Ag31A0000000000000";
+        Assert.assertEquals(verwachteResultaat, resultaat);
+    }
+
+    @Test
+    public void testNullCategorieenLijst() {
+        final String resultaat = subject.maakPlatteTekst(null, null, null, null);
+
+        final String verwachteResultaat = "00000000Ag31A0000000000000";
         Assert.assertEquals(verwachteResultaat, resultaat);
     }
 
@@ -58,7 +76,7 @@ public class AgFormatterTest {
 
         final List<Lo3CategorieWaarde> categorieen = Arrays.asList(categorie01, categorie07, categorie08);
         final List<Lo3CategorieWaarde> categorieenGefilterd = Arrays.asList(categorie01, categorie08);
-        final String resultaat = subject.maakPlatteTekst(null, categorieen, categorieenGefilterd);
+        final String resultaat = subject.maakPlatteTekst(null, null, categorieen, categorieenGefilterd);
 
         final String verwachteResultaat = "00000000Ag31O201401010005301032011001034509243210310008197701010801109100040518";
         Assert.assertEquals(verwachteResultaat, resultaat);

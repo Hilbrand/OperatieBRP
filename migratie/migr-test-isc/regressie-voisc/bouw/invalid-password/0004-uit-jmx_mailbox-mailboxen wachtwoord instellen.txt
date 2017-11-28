@@ -1,4 +1,4 @@
 nl.bzk.migratiebrp.mailbox:name=MAILBOX
 setMailboxWachtwoord
-3000200
-WachtwoordWatNietInDeVoiscConfigStaat!Hahaha
+3000230
+X*@&#$WW

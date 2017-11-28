@@ -26,8 +26,7 @@ public final class Lo3AfnemersindicatieSorter {
     }
 
     private static List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> sorteerAfnemersindicaties(
-        final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersindicatieStapels)
-    {
+            final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersindicatieStapels) {
         final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> result = new ArrayList<>();
 
         for (final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatieStapel : afnemersindicatieStapels) {
@@ -49,10 +48,10 @@ public final class Lo3AfnemersindicatieSorter {
             return getAfnemerindicatie(o1).compareTo(getAfnemerindicatie(o2));
         }
 
-        private Integer getAfnemerindicatie(final Lo3Stapel<Lo3AfnemersindicatieInhoud> stapel) {
+        private String getAfnemerindicatie(final Lo3Stapel<Lo3AfnemersindicatieInhoud> stapel) {
             for (final Lo3Categorie<Lo3AfnemersindicatieInhoud> categorie : stapel) {
                 final Lo3AfnemersindicatieInhoud inhoud = categorie.getInhoud();
-                final Integer afnemersindicatie = inhoud.getAfnemersindicatie();
+                final String afnemersindicatie = inhoud.getAfnemersindicatie();
                 if (afnemersindicatie != null) {
                     return afnemersindicatie;
                 }

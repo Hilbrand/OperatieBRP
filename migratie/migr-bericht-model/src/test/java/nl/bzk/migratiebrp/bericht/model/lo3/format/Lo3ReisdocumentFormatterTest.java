@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.bericht.model.lo3.format;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3ReisdocumentInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum;
@@ -24,20 +24,20 @@ public class Lo3ReisdocumentFormatterTest {
         final Lo3CategorieWaardeFormatter lo3Formatter = new Lo3CategorieWaardeFormatter();
         final Lo3ReisdocumentInhoud reisdocumentInhoud =
                 new Lo3ReisdocumentInhoud(
-                    new Lo3SoortNederlandsReisdocument("PN"),
-                    Lo3String.wrap("P12345678"),
-                    new Lo3Datum(20010101),
-                    new Lo3AutoriteitVanAfgifteNederlandsReisdocument("1234"),
-                    new Lo3Datum(20100101),
-                    new Lo3Datum(20080101),
-                    Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum.INGEHOUDEN.asElement(),
-                    null);
+                        new Lo3SoortNederlandsReisdocument("PN"),
+                        Lo3String.wrap("P12345678"),
+                        new Lo3Datum(20010101),
+                        new Lo3AutoriteitVanAfgifteNederlandsReisdocument("1234"),
+                        new Lo3Datum(20100101),
+                        new Lo3Datum(20080101),
+                        Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum.INGEHOUDEN.asElement(),
+                        null);
         lo3Formatter.categorie(Lo3CategorieEnum.CATEGORIE_12);
         lo3ReisdocumentFormatter.format(reisdocumentInhoud, lo3Formatter);
         final String formatted = Lo3Inhoud.formatInhoud(lo3Formatter.getList());
         Assert.assertEquals(
-"00094120893510002PN3520009P12345678353000820010101354000412343550008201001013560008200801013570001I",
-            formatted);
+                "00094120893510002PN3520009P12345678353000820010101354000412343550008201001013560008200801013570001I",
+                formatted);
     }
 
     @Test
@@ -46,20 +46,20 @@ public class Lo3ReisdocumentFormatterTest {
         final Lo3CategorieWaardeFormatter lo3Formatter = new Lo3CategorieWaardeFormatter();
         final Lo3ReisdocumentInhoud reisdocumentInhoud =
                 new Lo3ReisdocumentInhoud(
-                    new Lo3SoortNederlandsReisdocument("PN"),
-                    Lo3String.wrap("P12345678"),
-                    new Lo3Datum(20010101),
-                    new Lo3AutoriteitVanAfgifteNederlandsReisdocument("1234"),
-                    new Lo3Datum(20100101),
-                    new Lo3Datum(20080101),
-                    Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum.INGEHOUDEN.asElement(),
-                    null);
+                        new Lo3SoortNederlandsReisdocument("PN"),
+                        Lo3String.wrap("P12345678"),
+                        new Lo3Datum(20010101),
+                        new Lo3AutoriteitVanAfgifteNederlandsReisdocument("1234"),
+                        new Lo3Datum(20100101),
+                        new Lo3Datum(20080101),
+                        Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum.INGEHOUDEN.asElement(),
+                        null);
         lo3Formatter.categorie(Lo3CategorieEnum.CATEGORIE_12);
         lo3ReisdocumentFormatter.format(reisdocumentInhoud, lo3Formatter);
         final String formatted = Lo3Inhoud.formatInhoud(lo3Formatter.getList());
         Assert.assertEquals(
-"00094120893510002PN3520009P12345678353000820010101354000412343550008201001013560008200801013570001I",
-            formatted);
+                "00094120893510002PN3520009P12345678353000820010101354000412343550008201001013560008200801013570001I",
+                formatted);
     }
 
     @Test
@@ -68,19 +68,19 @@ public class Lo3ReisdocumentFormatterTest {
         final Lo3CategorieWaardeFormatter lo3Formatter = new Lo3CategorieWaardeFormatter();
         final Lo3ReisdocumentInhoud reisdocumentInhoud =
                 new Lo3ReisdocumentInhoud(
-                    new Lo3SoortNederlandsReisdocument("PN"),
-                    Lo3String.wrap("P12345678"),
-                    new Lo3Datum(20010101),
-                    new Lo3AutoriteitVanAfgifteNederlandsReisdocument("1234"),
-                    new Lo3Datum(20100101),
-                    new Lo3Datum(20080101),
-                    Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum.INGEHOUDEN.asElement(),
-                    null);
+                        new Lo3SoortNederlandsReisdocument("PN"),
+                        Lo3String.wrap("P12345678"),
+                        new Lo3Datum(20010101),
+                        new Lo3AutoriteitVanAfgifteNederlandsReisdocument("1234"),
+                        new Lo3Datum(20100101),
+                        new Lo3Datum(20080101),
+                        Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum.INGEHOUDEN.asElement(),
+                        null);
         lo3Formatter.categorie(Lo3CategorieEnum.CATEGORIE_12);
         lo3ReisdocumentFormatter.format(reisdocumentInhoud, lo3Formatter);
         final String formatted = Lo3Inhoud.formatInhoud(lo3Formatter.getList());
         Assert.assertEquals(
-"00094120893510002PN3520009P12345678353000820010101354000412343550008201001013560008200801013570001I",
-            formatted);
+                "00094120893510002PN3520009P12345678353000820010101354000412343550008201001013560008200801013570001I",
+                formatted);
     }
 }

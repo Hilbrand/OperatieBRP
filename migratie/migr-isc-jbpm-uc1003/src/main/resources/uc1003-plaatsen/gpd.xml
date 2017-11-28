@@ -35,7 +35,7 @@
       <label x="-130" y="-17"/>
       <bendpoint w1="107" h1="56" w2="419" h2="-1192"/>
       <bendpoint w1="264" h1="57" w2="576" h2="-1191"/>
-      <bendpoint w1="264" h1="1247" w2="576" h2="-1"/>
+      <bendpoint w1="275" h1="1214" w2="119" h2="-34"/>
     </edge>
   </node>
   <node name="CONTROLEREN PERSOON" x="300" y="636" width="385" height="36">
@@ -92,8 +92,7 @@
       <label x="-119" y="-374"/>
       <bendpoint w1="108" h1="43" w2="420" h2="-1349"/>
       <bendpoint w1="252" h1="43" w2="564" h2="-1349"/>
-      <bendpoint w1="251" h1="762" w2="563" h2="-30"/>
-      <bendpoint w1="-181" h1="761" w2="131" h2="-31"/>
+      <bendpoint w1="253" h1="731" w2="97" h2="-61"/>
     </edge>
     <edge>
       <label x="-286" y="-19"/>
@@ -154,16 +153,30 @@
       <label x="-47" y="-379"/>
       <bendpoint w1="157" h1="-5" w2="469" h2="-401"/>
       <bendpoint w1="158" h1="354" w2="470" h2="-42"/>
-      <bendpoint w1="-180" h1="354" w2="132" h2="-42"/>
     </edge>
     <edge>
       <label x="-300" y="-20"/>
       <bendpoint w1="-109" h1="-121" w2="755" h2="-1"/>
     </edge>
   </node>
-  <node name="X-1. Maak Af01 bericht" x="912" y="1548" width="265" height="36">
+  <node name="X-1. Maak Af01 bericht" x="1380" y="1548" width="265" height="36">
     <edge>
-      <label x="-15" y="-21"/>
+      <label x="-57" y="-19"/>
+    </edge>
+  </node>
+  <node name="X-2. Keuze (X)" x="1068" y="1548" width="181" height="37">
+    <edge>
+      <label x="-49" y="-20"/>
+    </edge>
+    <edge>
+      <label x="146" y="-18"/>
+      <bendpoint w1="-87" h1="33" w2="579" h2="33"/>
+      <bendpoint w1="-528" h1="33" w2="180" h2="33"/>
+    </edge>
+  </node>
+  <node name="X-3. Foutafhandeling (autorisatie)" x="672" y="1548" width="265" height="37">
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="O-2. Loggen einde proces" x="372" y="1548" width="241" height="36">

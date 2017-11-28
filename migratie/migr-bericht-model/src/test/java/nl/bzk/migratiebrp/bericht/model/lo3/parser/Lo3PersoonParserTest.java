@@ -7,8 +7,9 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -38,19 +39,19 @@ public class Lo3PersoonParserTest extends AbstractParserTest {
 
         final Lo3PersoonInhoud persoonInhoud =
                 new Lo3PersoonInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110, null),
-                    maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
-                    new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
-                    maakLo3Long(WAARDE_ELEMENT_2010, null),
-                    maakLo3Long(WAARDE_ELEMENT_2020, null),
-                    new Lo3AanduidingNaamgebruikCode(WAARDE_ELEMENT_6110, onderzoek));
+                        maakLo3String(WAARDE_ELEMENT_0110, null),
+                        maakLo3String(WAARDE_ELEMENT_0120, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
+                        new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_2010, null),
+                        maakLo3String(WAARDE_ELEMENT_2020, null),
+                        new Lo3AanduidingNaamgebruikCode(WAARDE_ELEMENT_6110, onderzoek));
 
         final Lo3Categorie<Lo3PersoonInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(persoonInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0));
@@ -184,14 +185,51 @@ public class Lo3PersoonParserTest extends AbstractParserTest {
     @Test
     public void testPersoonParserGeenWaarden() {
         final Lo3PersoonParser parser = new Lo3PersoonParser();
-        final Lo3Stapel<Lo3PersoonInhoud> parsedInhoud = parser.parse(new ArrayList<Lo3CategorieWaarde>());
+        final Lo3Stapel<Lo3PersoonInhoud> parsedInhoud = parser.parse(new ArrayList<>());
         Assert.assertNull(parsedInhoud);
 
     }
 
+    @Test
+    public void testOnterechtGevuldeDatumOpneming() {
+        final Lo3CategorieWaarde categorieActueel = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_01, 1, 1);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0110, WAARDE_ELEMENT_0110);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0120, WAARDE_ELEMENT_0120);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0210, WAARDE_ELEMENT_0210);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0220, WAARDE_ELEMENT_0220);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0230, WAARDE_ELEMENT_0230);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0240, WAARDE_ELEMENT_0240);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0310, WAARDE_ELEMENT_0310);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0320, WAARDE_ELEMENT_0320);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0330, WAARDE_ELEMENT_0330);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_0410, WAARDE_ELEMENT_0410);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_8110, WAARDE_ELEMENT_8110);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_8120, WAARDE_ELEMENT_8120);
+        categorieActueel.addElement(Lo3ElementEnum.ELEMENT_8510, WAARDE_ELEMENT_8510);
+        final Lo3CategorieWaarde categorie = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 1, 1);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0110, WAARDE_ELEMENT_0110);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0120, WAARDE_ELEMENT_0120);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0210, WAARDE_ELEMENT_0210);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0220, WAARDE_ELEMENT_0220);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0230, WAARDE_ELEMENT_0230);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0240, WAARDE_ELEMENT_0240);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0310, WAARDE_ELEMENT_0310);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0320, WAARDE_ELEMENT_0320);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0330, WAARDE_ELEMENT_0330);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_0410, WAARDE_ELEMENT_0410);
+
+        final List<Lo3CategorieWaarde> categorieen = Arrays.asList(categorieActueel, categorie);
+
+        final Lo3PersoonParser parser = new Lo3PersoonParser();
+        final Lo3Stapel<Lo3PersoonInhoud> gegenereerdeInhoud = parser.parse(categorieen);
+        Assert.assertEquals("Moeten twee categorieen zijn", 2, gegenereerdeInhoud.getCategorieen().size());
+        Assert.assertEquals("Er moet een null historie zijn", new Lo3Historie(null, null, null), gegenereerdeInhoud.getCategorieen().get(1).getHistorie());
+        Assert.assertNotNull("Documentatie moet gevuld zijn", gegenereerdeInhoud.getCategorieen().get(1).getDocumentatie());
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.parser.AbstractParserTest#getGegevensInOnderzoek()
      */
     @Override
@@ -201,7 +239,7 @@ public class Lo3PersoonParserTest extends AbstractParserTest {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.parser.AbstractParserTest#getCategorie()
      */
     @Override

@@ -1,18 +1,18 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
-import nl.bzk.brp.model.HistorieSet;
-import nl.bzk.brp.model.basis.HistorieEntiteit;
-import nl.bzk.brp.model.basis.ModelIdentificeerbaar;
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
@@ -23,7 +23,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpAttribuutConverteerder;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpDocumentatieConverteerder;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Basis mutatie verwerker.
@@ -31,24 +30,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractMutatieVerwerker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
+    private static final int MULTIPLIER_GROEP = 100;
+    private static final int MULTIPLIER_CATEGORIE = 10_000;
 
-    @Autowired
-    private BrpDocumentatieConverteerder brpDocumentatieConverteerder;
-    @Autowired
-    private BrpAttribuutConverteerder brpAttribuutConverteerder;
+    private final BrpAttribuutConverteerder brpAttribuutConverteerder;
+
+    /**
+     * Constructor.
+     * @param attribuutConverteerder attribuut converteerder brp
+     */
+    @Inject
+    public AbstractMutatieVerwerker(final BrpAttribuutConverteerder attribuutConverteerder) {
+        this.brpAttribuutConverteerder = attribuutConverteerder;
+    }
 
     /**
      * Converteer historie.
-     *
-     * @param historie
-     *            brp historie
-     * @param actie
-     *            actie
-     * @param indicatieEindeGeldigheid
-     *            indicatie of einde (true) of ingang (false) geldigheid gebruikt moet worden
+     * @param historie brp historie
+     * @param actie actie
+     * @param indicatieEindeGeldigheid indicatie of einde (true) of ingang (false) geldigheid gebruikt moet worden
      * @return lo3 historie
      */
-    protected final Lo3Historie converteerHistorie(final BrpHistorie historie, final BrpActie actie, final boolean indicatieEindeGeldigheid) {
+    final Lo3Historie converteerHistorie(final BrpHistorie historie, final BrpActie actie, final boolean indicatieEindeGeldigheid) {
         // 84.10 Onjuist
         final Lo3IndicatieOnjuist indicatieOnjuist;
         if (historie.getNadereAanduidingVerval() != null && historie.getNadereAanduidingVerval().getWaarde() != null) {
@@ -74,81 +77,66 @@ public abstract class AbstractMutatieVerwerker {
 
     /**
      * Converteer documentatie.
-     *
-     * @param actie
-     *            actie
+     * @param actie actie
      * @return lo3 documentatie
      */
     protected final Lo3Documentatie converteerDocument(final BrpActie actie) {
-        return brpDocumentatieConverteerder.maakDocumentatie(actie);
+        return new BrpDocumentatieConverteerder(brpAttribuutConverteerder).maakDocumentatie(actie);
     }
 
     /**
      * Merge RNI gegevens in documentatie.
-     *
-     * @param nieuweDocumentatie
-     *            nieuwe documentatie
-     * @param oudeDocumentatie
-     *            oude documentatie
+     * @param nieuweDocumentatie nieuwe documentatie
+     * @param oudeDocumentatie oude documentatie
      * @return nieuwe documentatie met eventueel RNI gemerged uit oude documentatie
      */
-    protected final Lo3Documentatie mergeRni(final Lo3Documentatie nieuweDocumentatie, final Lo3Documentatie oudeDocumentatie) {
-        LOGGER.debug("mergeRni ({}): nieuw -> {}, oud -> {}", this.getClass().getSimpleName(), nieuweDocumentatie, oudeDocumentatie);
+    public static Lo3Documentatie mergeRni(final Lo3Documentatie nieuweDocumentatie, final Lo3Documentatie oudeDocumentatie) {
+        LOGGER.debug("mergeRni: nieuw -> {}, oud -> {}", nieuweDocumentatie, oudeDocumentatie);
         final Lo3Documentatie resultaat;
         if (oudeDocumentatie != null) {
             if (nieuweDocumentatie == null) {
                 resultaat =
                         Lo3Documentatie.build(
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            oudeDocumentatie.getRniDeelnemerCode(),
-                            oudeDocumentatie.getOmschrijvingVerdrag());
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                oudeDocumentatie.getRniDeelnemerCode(),
+                                oudeDocumentatie.getOmschrijvingVerdrag());
             } else if (nieuweDocumentatie.getRniDeelnemerCode() == null
-                       && nieuweDocumentatie.getOmschrijvingVerdrag() == null
-                       && (oudeDocumentatie.getRniDeelnemerCode() != null || oudeDocumentatie.getOmschrijvingVerdrag() != null))
-            {
+                    && nieuweDocumentatie.getOmschrijvingVerdrag() == null
+                    && (oudeDocumentatie.getRniDeelnemerCode() != null || oudeDocumentatie.getOmschrijvingVerdrag() != null)) {
                 resultaat =
                         new Lo3Documentatie(
-                            nieuweDocumentatie.getId(),
-                            nieuweDocumentatie.getGemeenteAkte(),
-                            nieuweDocumentatie.getNummerAkte(),
-                            nieuweDocumentatie.getGemeenteDocument(),
-                            nieuweDocumentatie.getDatumDocument(),
-                            nieuweDocumentatie.getBeschrijvingDocument(),
-                            oudeDocumentatie.getRniDeelnemerCode(),
-                            oudeDocumentatie.getOmschrijvingVerdrag());
+                                nieuweDocumentatie.getId(),
+                                nieuweDocumentatie.getGemeenteAkte(),
+                                nieuweDocumentatie.getNummerAkte(),
+                                nieuweDocumentatie.getGemeenteDocument(),
+                                nieuweDocumentatie.getDatumDocument(),
+                                nieuweDocumentatie.getBeschrijvingDocument(),
+                                oudeDocumentatie.getRniDeelnemerCode(),
+                                oudeDocumentatie.getOmschrijvingVerdrag());
             } else {
                 resultaat = nieuweDocumentatie;
             }
         } else {
             resultaat = nieuweDocumentatie;
         }
-        LOGGER.debug("mergeRni ({}): resultaat -> {}", this.getClass().getSimpleName(), resultaat);
+        LOGGER.debug("mergeRni: resultaat -> {}", resultaat);
         return resultaat;
     }
 
     /**
      * Bepaal voorkomen sleutels.
-     *
-     * @param historieSet
-     *            historie set
-     * @param <H>
-     *            historie type
+     * @param records records
      * @return voorkomen sleutels
      */
-    protected final <H extends HistorieEntiteit & ModelIdentificeerbaar<? extends Number>> List<Long> bepaalVoorkomenSleutels(
-        final HistorieSet<H> historieSet)
-    {
+    final List<Long> bepaalVoorkomenSleutels(final Collection<MetaRecord> records) {
         final List<Long> voorkomenSleutels = new ArrayList<>();
 
-        for (final H historieVoorkomen : historieSet) {
-            final Number voorkomenSleutel = historieVoorkomen.getID();
-            if (voorkomenSleutel != null) {
-                voorkomenSleutels.add(voorkomenSleutel.longValue());
-            }
+        for (final MetaRecord historieVoorkomen : records) {
+            voorkomenSleutels.add(historieVoorkomen.getVoorkomensleutel());
         }
 
         return voorkomenSleutels;
@@ -156,14 +144,11 @@ public abstract class AbstractMutatieVerwerker {
 
     /**
      * Merge onderzoeken.
-     *
-     * @param bestaand
-     *            bestaand onderzoek
-     * @param nieuw
-     *            nieuw onderzoek
+     * @param bestaand bestaand onderzoek
+     * @param nieuw nieuw onderzoek
      * @return gemerged onderzoek
      */
-    protected Lo3Onderzoek mergeOnderzoek(final Lo3Onderzoek bestaand, final Lo3Onderzoek nieuw) {
+    final Lo3Onderzoek mergeOnderzoek(final Lo3Onderzoek bestaand, final Lo3Onderzoek nieuw) {
         final Lo3Onderzoek resultaat;
         if (nieuw == null) {
             resultaat = bestaand;
@@ -180,11 +165,8 @@ public abstract class AbstractMutatieVerwerker {
 
     /**
      * Merge onderzoeken; beide onderzoeken bestaan.
-     *
-     * @param onderzoek1
-     *            onderzoek
-     * @param onderzoek2
-     *            onderzoek
+     * @param onderzoek1 onderzoek
+     * @param onderzoek2 onderzoek
      * @return onderzoek
      */
     private Lo3Onderzoek mergeOnderzoeken(final Lo3Onderzoek onderzoek1, final Lo3Onderzoek onderzoek2) {
@@ -210,7 +192,7 @@ public abstract class AbstractMutatieVerwerker {
             element = mergeGegevenInOnderzoek(element1, element2);
         }
 
-        return new Lo3Integer(categorie * 10000 + groep * 100 + element);
+        return new Lo3Integer(categorie * MULTIPLIER_CATEGORIE + groep * MULTIPLIER_GROEP + element);
     }
 
     private int mergeGegevenInOnderzoek(final int gegeven1, final int gegeven2) {

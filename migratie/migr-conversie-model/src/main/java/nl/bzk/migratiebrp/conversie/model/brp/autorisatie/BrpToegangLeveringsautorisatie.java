@@ -7,17 +7,15 @@
 package nl.bzk.migratiebrp.conversie.model.brp.autorisatie;
 
 import java.util.List;
-
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpToegangLeveringsautorisatieInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 
 /**
  * Deze class representeert het BRP objecttype BrpToegangLeveringsautorisatie.
@@ -52,40 +50,30 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Maak een nieuw BrpToegangLeveringsAutorisatie object.
-     *
-     * @param afleverpunt
-     *            afleverpunt
-     * @param datumIngang
-     *            datumIngang
-     * @param datumEinde
-     *            datumEinde
-     * @param geautoriseerde
-     *            geautoriseerde
-     * @param indicatieGeblokkeerd
-     *            indicatieGeblokkeerd
-     * @param naderePopulatiebeperking
-     *            naderePopulatiebeperking
-     * @param ondertekenaar
-     *            ondertekenaar
-     * @param transporteur
-     *            transporteur
-     * @param leveringsautorisaties
-     *            leveringsautorisaties
-     * @param toegangLeveringsautorisatieStapel
-     *            de stapel met toegangLeveringsAutorisatieStapel
+     * @param afleverpunt afleverpunt
+     * @param datumIngang datumIngang
+     * @param datumEinde datumEinde
+     * @param geautoriseerde geautoriseerde
+     * @param indicatieGeblokkeerd indicatieGeblokkeerd
+     * @param naderePopulatiebeperking naderePopulatiebeperking
+     * @param ondertekenaar ondertekenaar
+     * @param transporteur transporteur
+     * @param leveringsautorisaties leveringsautorisaties
+     * @param toegangLeveringsautorisatieStapel de stapel met toegangLeveringsAutorisatieStapel
      */
     public BrpToegangLeveringsautorisatie(
-        @Element(name = "afleverpunt", required = false) final String afleverpunt,
-        @Element(name = "datumIngang", required = false) final BrpDatum datumIngang,
-        @Element(name = "datumEinde", required = false) final BrpDatum datumEinde,
-        @Element(name = "geautoriseerde", required = false) final BrpPartij geautoriseerde,
-        @Element(name = "indicatieGeblokkeerd", required = false) final Boolean indicatieGeblokkeerd,
-        @Element(name = "naderePopulatiebeperking", required = false) final String naderePopulatiebeperking,
-        @Element(name = "ondertekenaar", required = false) final BrpPartij ondertekenaar,
-        @Element(name = "transporteur", required = false) final BrpPartij transporteur,
-        @ElementList(name = "leveringsautorisaties", entry = "leveringsautorisatie", type = BrpLeveringsautorisatie.class, required = false) final List<BrpLeveringsautorisatie> leveringsautorisaties,
-        @Element(name = "toegangLeveringsautorisatieStapel", required = false) final BrpStapel<BrpToegangLeveringsautorisatieInhoud> toegangLeveringsautorisatieStapel)
-    {
+            @Element(name = "afleverpunt", required = false) final String afleverpunt,
+            @Element(name = "datumIngang", required = false) final BrpDatum datumIngang,
+            @Element(name = "datumEinde", required = false) final BrpDatum datumEinde,
+            @Element(name = "geautoriseerde", required = false) final BrpPartij geautoriseerde,
+            @Element(name = "indicatieGeblokkeerd", required = false) final Boolean indicatieGeblokkeerd,
+            @Element(name = "naderePopulatiebeperking", required = false) final String naderePopulatiebeperking,
+            @Element(name = "ondertekenaar", required = false) final BrpPartij ondertekenaar,
+            @Element(name = "transporteur", required = false) final BrpPartij transporteur,
+            @ElementList(name = "leveringsautorisaties", entry = "leveringsautorisatie", type = BrpLeveringsautorisatie.class,
+                    required = false) final List<BrpLeveringsautorisatie> leveringsautorisaties,
+            @Element(name = "toegangLeveringsautorisatieStapel",
+                    required = false) final BrpStapel<BrpToegangLeveringsautorisatieInhoud> toegangLeveringsautorisatieStapel) {
         super();
         this.afleverpunt = afleverpunt;
         this.datumIngang = datumIngang;
@@ -101,7 +89,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van de toegangleveringautorisatieinhoud stapel.
-     *
      * @return toegangleveringautorisatieinhoud stapel
      */
     public BrpStapel<BrpToegangLeveringsautorisatieInhoud> getToegangLeveringsautorisatieStapel() {
@@ -110,7 +97,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van de leveringsautorisaties.
-     *
      * @return leveringsautorisaties
      */
     public List<BrpLeveringsautorisatie> getLeveringsautorisaties() {
@@ -119,7 +105,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van het afleverpunt.
-     *
      * @return afleverpunt
      */
     public String getAfleverpunt() {
@@ -128,7 +113,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van de datumIngang.
-     *
      * @return datumIngang
      */
     public BrpDatum getDatumIngang() {
@@ -137,7 +121,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van de datumEinde.
-     *
      * @return datumEinde
      */
     public BrpDatum getDatumEinde() {
@@ -146,7 +129,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van de indicatieGeblokkeerd.
-     *
      * @return indicatieGeblokkeerd
      */
     public BrpPartij getGeautoriseerde() {
@@ -155,7 +137,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van de toegangleveringautorisatieinhoud stapel.
-     *
      * @return toegangleveringautorisatieinhoud stapel
      */
     public Boolean getIndicatieGeblokkeerd() {
@@ -164,7 +145,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van de naderePopulatiebeperking.
-     *
      * @return naderePopulatiebeperking
      */
     public String getNaderePopulatiebeperking() {
@@ -173,7 +153,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van de ondertekenaar.
-     *
      * @return ondertekenaar
      */
     public BrpPartij getOndertekenaar() {
@@ -182,7 +161,6 @@ public final class BrpToegangLeveringsautorisatie {
 
     /**
      * Geef de waarde van de transporteur.
-     *
      * @return transporteur
      */
     public BrpPartij getTransporteur() {
@@ -199,16 +177,16 @@ public final class BrpToegangLeveringsautorisatie {
         }
         final BrpToegangLeveringsautorisatie castOther = (BrpToegangLeveringsautorisatie) other;
         return new EqualsBuilder().append(afleverpunt, castOther.afleverpunt)
-                                  .append(datumIngang, castOther.datumIngang)
-                                  .append(datumEinde, castOther.datumEinde)
-                                  .append(geautoriseerde, castOther.geautoriseerde)
-                                  .append(indicatieGeblokkeerd, castOther.indicatieGeblokkeerd)
-                                  .append(naderePopulatiebeperking, castOther.naderePopulatiebeperking)
-                                  .append(ondertekenaar, castOther.ondertekenaar)
-                                  .append(transporteur, castOther.transporteur)
-                                  .append(leveringsautorisaties, castOther.leveringsautorisaties)
-                                  .append(toegangLeveringsautorisatieStapel, castOther.toegangLeveringsautorisatieStapel)
-                                  .isEquals();
+                .append(datumIngang, castOther.datumIngang)
+                .append(datumEinde, castOther.datumEinde)
+                .append(geautoriseerde, castOther.geautoriseerde)
+                .append(indicatieGeblokkeerd, castOther.indicatieGeblokkeerd)
+                .append(naderePopulatiebeperking, castOther.naderePopulatiebeperking)
+                .append(ondertekenaar, castOther.ondertekenaar)
+                .append(transporteur, castOther.transporteur)
+                .append(leveringsautorisaties, castOther.leveringsautorisaties)
+                .append(toegangLeveringsautorisatieStapel, castOther.toegangLeveringsautorisatieStapel)
+                .isEquals();
     }
 
     @Override

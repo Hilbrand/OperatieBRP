@@ -48,15 +48,15 @@ public class InMemoryBerichtenDao implements BerichtenDao {
 
     @Override
     public Long bewaar(
-        final String kanaal,
-        final Direction direction,
-        final String messageId,
-        final String correlatieId,
-        final String bericht,
-        final String originator,
-        final String recipient,
-        final Long msSequenceNumber)
-    {
+            final String kanaal,
+            final Direction direction,
+            final String messageId,
+            final String correlatieId,
+            final String bericht,
+            final String originator,
+            final String recipient,
+            final Long msSequenceNumber,
+            final Boolean requestNonReceipt) {
         throw new UnsupportedOperationException();
     }
 
@@ -77,11 +77,10 @@ public class InMemoryBerichtenDao implements BerichtenDao {
 
     @Override
     public nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht zoekVraagBericht(
-        final String correlatieId,
-        final String kanaal,
-        final String originator,
-        final String recipient)
-    {
+            final String correlatieId,
+            final String kanaal,
+            final String originator,
+            final String recipient) {
         throw new UnsupportedOperationException();
     }
 
@@ -92,23 +91,21 @@ public class InMemoryBerichtenDao implements BerichtenDao {
 
     @Override
     public int telBerichtenBehalveId(
-        final String messageId,
-        final String originator,
-        final String recipient,
-        final String kanaal,
-        final Direction direction,
-        final Long berichtId)
-    {
+            final String messageId,
+            final String originator,
+            final String recipient,
+            final String kanaal,
+            final Direction direction,
+            final Long berichtId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht zoekMeestRecenteAntwoord(
-        final String messageId,
-        final String originator,
-        final String recipient,
-        final String kanaal)
-    {
+            final String messageId,
+            final String originator,
+            final String recipient,
+            final String kanaal) {
         throw new UnsupportedOperationException();
     }
 

@@ -6,7 +6,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="1.1 Loggen start proces" x="384" y="120" width="217" height="36">
+  <node name="O-1. Loggen start proces" x="384" y="120" width="217" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -67,6 +67,11 @@
     <edge>
       <label x="2" y="31"/>
       <bendpoint w1="203" h1="-1" w2="0" h2="-121"/>
+    </edge>
+    <edge>
+      <label x="55" y="-22"/>
+      <bendpoint w1="123" h1="-27" w2="-369" h2="237"/>
+      <bendpoint w1="413" h1="-26" w2="-79" h2="238"/>
     </edge>
   </node>
   <node name="4.2 Maak null antwoord bericht" x="180" y="924" width="217" height="36">

@@ -52,7 +52,7 @@ public class FindTest {
     private static void findInZipfile(final File file, final String filename) throws Exception {
         System.out.println("Checking file: " + file.getName());
         try (
-            final ZipFile zip = new ZipFile(file)) {
+                final ZipFile zip = new ZipFile(file)) {
             final Enumeration<? extends ZipEntry> e = zip.entries();
             while (e.hasMoreElements()) {
                 final ZipEntry entry = e.nextElement();

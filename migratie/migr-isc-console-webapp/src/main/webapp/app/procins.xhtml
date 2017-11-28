@@ -174,7 +174,7 @@
                 <th>#{msgs['processinstance.heading.start']}</th>
                 <td>
                     <h:outputText value="#{pi.start}">
-                        <f:convertDateTime type="both" timeZone="#{j4j:getServerTimeZone()}"/>
+                        <f:convertDateTime type="both" timeZone="Europe/Amsterdam"/>
                     </h:outputText>
                 </td>
             </tr>
@@ -182,7 +182,7 @@
                 <th>#{msgs['processinstance.heading.end']}</th>
                 <td>
                     <h:outputText value="#{pi.end}">
-                        <f:convertDateTime type="both" timeZone="#{j4j:getServerTimeZone()}"/>
+                        <f:convertDateTime type="both" timeZone="Europe/Amsterdam"/>
                     </h:outputText>
                 </td>
             </tr>

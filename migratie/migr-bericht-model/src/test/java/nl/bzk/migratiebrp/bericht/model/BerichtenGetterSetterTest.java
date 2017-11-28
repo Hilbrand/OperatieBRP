@@ -6,8 +6,9 @@
 
 package nl.bzk.migratiebrp.bericht.model;
 
-import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesAutorisatieRegisterAntwoordBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesGemeenteRegisterAntwoordBericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.Hq01Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.Xq01Bericht;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesPartijRegisterAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.testutils.GetterSetterTester;
 import org.junit.Test;
 
@@ -25,14 +26,14 @@ public class BerichtenGetterSetterTest {
 
     @Test
     public void lo3() throws ReflectiveOperationException {
-        new GetterSetterTester().testBerichten("nl.bzk.migratiebrp.bericht.model.lo3");
+        new GetterSetterTester().ignore(Hq01Bericht.class, "categorieen").ignore(Xq01Bericht.class, "categorieen")
+                .testBerichten("nl.bzk.migratiebrp.bericht.model.lo3");
     }
 
     @Test
     public void sync() throws ReflectiveOperationException {
-        new GetterSetterTester().ignore(LeesGemeenteRegisterAntwoordBericht.class, "gemeenteRegister")
-                                .ignore(LeesAutorisatieRegisterAntwoordBericht.class, "autorisatieRegister")
-                                .testBerichten("nl.bzk.migratiebrp.bericht.model.sync");
+        new GetterSetterTester().ignore(LeesPartijRegisterAntwoordBericht.class, "partijRegister")
+                .testBerichten("nl.bzk.migratiebrp.bericht.model.sync");
     }
 
 }

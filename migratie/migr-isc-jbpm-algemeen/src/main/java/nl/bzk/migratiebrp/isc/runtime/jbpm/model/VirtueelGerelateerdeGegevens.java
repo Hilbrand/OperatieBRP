@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * Virtueel proces gerelateerde gegevens.
  */
-@SuppressWarnings("checkstyle:designforextension")
+
 public class VirtueelGerelateerdeGegevens implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -22,7 +22,6 @@ public class VirtueelGerelateerdeGegevens implements Serializable {
 
     /**
      * Geeft het ID.
-     *
      * @return het ID
      */
     public Long getId() {
@@ -31,9 +30,7 @@ public class VirtueelGerelateerdeGegevens implements Serializable {
 
     /**
      * Zet het ID.
-     *
-     * @param id
-     *            Het te zetten ID
+     * @param id Het te zetten ID
      */
     public void setId(final Long id) {
         this.id = id;
@@ -41,7 +38,6 @@ public class VirtueelGerelateerdeGegevens implements Serializable {
 
     /**
      * Geeft het virtueel proces.
-     *
      * @return het virtueel proces
      */
     public VirtueelProces getVirtueelProces() {
@@ -50,9 +46,7 @@ public class VirtueelGerelateerdeGegevens implements Serializable {
 
     /**
      * Zet het virtueel proces.
-     *
-     * @param virtueelProces
-     *            Het te zetten virtueel proces
+     * @param virtueelProces Het te zetten virtueel proces
      */
     public void setVirtueelProces(final VirtueelProces virtueelProces) {
         this.virtueelProces = virtueelProces;
@@ -60,7 +54,6 @@ public class VirtueelGerelateerdeGegevens implements Serializable {
 
     /**
      * Geeft het soort gegeven.
-     *
      * @return het soort gegeven
      */
     public String getSoortGegeven() {
@@ -69,9 +62,7 @@ public class VirtueelGerelateerdeGegevens implements Serializable {
 
     /**
      * Zet het soort gegeven.
-     *
-     * @param soortGegeven
-     *            Het te zetten soort gegeven
+     * @param soortGegeven Het te zetten soort gegeven
      */
     public void setSoortGegeven(final String soortGegeven) {
         this.soortGegeven = soortGegeven;
@@ -79,7 +70,6 @@ public class VirtueelGerelateerdeGegevens implements Serializable {
 
     /**
      * Geeft het gegeven.
-     *
      * @return het gegeven
      */
     public String getGegeven() {
@@ -88,9 +78,7 @@ public class VirtueelGerelateerdeGegevens implements Serializable {
 
     /**
      * Zet het gegeven.
-     *
-     * @param gegeven
-     *            Het te zetten gegeven
+     * @param gegeven Het te zetten gegeven
      */
     public void setGegeven(final String gegeven) {
         this.gegeven = gegeven;

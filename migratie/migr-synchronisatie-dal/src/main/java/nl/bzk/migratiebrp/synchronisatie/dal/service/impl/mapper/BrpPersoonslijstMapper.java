@@ -6,17 +6,16 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpIndicatieGroepInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,84 +24,85 @@ import org.springframework.stereotype.Component;
 @Component
 public final class BrpPersoonslijstMapper {
 
-    @Inject
+    @Autowired
     private BrpNaamgebruikMapper brpNaamgebruikMapper;
-    @Inject
+    @Autowired
     private BrpAdresMapper brpAdresMapper;
-    @Inject
+    @Autowired
     private BrpPersoonAfgeleidAdministratiefMapper brpPersoonAfgeleidAdministratiefMapper;
-    @Inject
+    @Autowired
     private BrpBehandeldAlsNederlanderIndicatieMapper brpBehandeldAlsNederlanderIndicatieMapper;
-    @Inject
+    @Autowired
+    private BrpOnverwerktDocumentAanwezigIndicatieMapper brpOnverwerktDocumentAanwezigIndicatieMapper;
+    @Autowired
     private BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentMapper brpSignaleringMetBetrekkingTotVerstrekkenReisdocumentMapper;
-    @Inject
+    @Autowired
     private BrpBijhoudingMapper brpBijhoudingMapper;
-    @Inject
+    @Autowired
     private BrpDerdeHeeftGezagIndicatieMapper brpDerdeHeeftGezagIndicatieMapper;
-    @Inject
+    @Autowired
     private BrpDeelnameEuVerkiezingenMapper brpDeelnameEuVerkiezingenMapper;
-    @Inject
+    @Autowired
     private BrpGeboorteMapper brpGeboorteMapper;
-    @Inject
+    @Autowired
     private BrpGeslachtsaanduidingMapper brpGeslachtsaanduidingMapper;
-    @Inject
+    @Autowired
     private BrpGeslachtsnaamcomponentMapper brpGeslachtsnaamcomponentMapper;
-    @Inject
+    @Autowired
     private BrpIdentificatienummersMapper brpIdentificatienummersMapper;
-    @Inject
+    @Autowired
     private BrpMigratieMapper brpMigratieMapper;
-    @Inject
+    @Autowired
     private BrpInschrijvingMapper brpInschrijvingMapper;
-    @Inject
+    @Autowired
     private BrpNationaliteitMapper brpNationaliteitMapper;
-    @Inject
+    @Autowired
+    private BrpBuitenlandsPersoonsnummerMapper brpBuitenlandsPersoonsnummerMapper;
+    @Autowired
     private BrpNummerverwijzingMapper brpNummerverwijzingMapper;
-    @Inject
+    @Autowired
     private BrpOnderCurateleIndicatieMapper brpOnderCurateleIndicatieMapper;
-    @Inject
+    @Autowired
     private BrpOverlijdenMapper brpOverlijdenMapper;
-    @Inject
+    @Autowired
     private BrpPersoonskaartMapper brpPersoonskaartMapper;
-    @Inject
+    @Autowired
     private BrpReisdocumentMapper brpReisdocumentMapper;
-    @Inject
+    @Autowired
     private BrpRelatieMapper brpRelatieMapper;
-    @Inject
+    @Autowired
     private BrpSamengesteldeNaamMapper brpSamengesteldeNaamMapper;
-    @Inject
+    @Autowired
     private BrpStaatloosIndicatieMapper brpStaatloosIndicatieMapper;
-    @Inject
+    @Autowired
     private BrpUitsluitingKiesrechtMapper brpUitsluitingKiesrechtMapper;
-    @Inject
+    @Autowired
     private BrpVastgesteldNietNederlanderIndicatieMapper brpVastgesteldNietNederlanderIndicatieMapper;
-    @Inject
+    @Autowired
     private BrpVerblijfsrechtMapper brpVerblijfsrechtMapper;
-    @Inject
+    @Autowired
     private BrpVerificatieMapper brpVerificatieMapper;
-    @Inject
+    @Autowired
     private BrpBijzondereVerblijfsrechtelijkePositieIndicatieMapper brpBijzondereVerblijfsrechtelijkePositieMapper;
-    @Inject
+    @Autowired
     private BrpVerstrekkingsbeperkingIndicatieMapper brpVerstrekkingsbeperkingIndicatieMapper;
-    @Inject
+    @Autowired
     private BrpVoornaamMapper brpVoornaamMapper;
-    @Inject
+    @Autowired
     private BrpIstOuder1Mapper brpIstOuder1Mapper;
-    @Inject
+    @Autowired
     private BrpIstOuder2Mapper brpIstOuder2Mapper;
-    @Inject
+    @Autowired
     private BrpIstHuwelijkOfGpMapper brpIstHuwelijkOfGpMapper;
-    @Inject
+    @Autowired
     private BrpIstKindMapper brpIstKindMapper;
-    @Inject
+    @Autowired
     private BrpIstGezagsverhoudingMapper brpIstGezagsverhoudingMapper;
 
     /**
      * Map een database persoon naar het BRP conversiemodel.
-     *
-     * @param persoon
-     *            database persoon
-     * @param brpOnderzoekMapper
-     *            De mapper voor onderzoeken
+     * @param persoon database persoon
+     * @param brpOnderzoekMapper De mapper voor onderzoeken
      * @return BRP conversiemodel persoon
      */
     public BrpPersoonslijst mapNaarMigratie(final Persoon persoon, final BrpOnderzoekMapper brpOnderzoekMapper) {
@@ -112,6 +112,10 @@ public final class BrpPersoonslijstMapper {
 
         final BrpPersoonslijstBuilder plBuilder = new BrpPersoonslijstBuilder();
         plBuilder.persoonId(persoon.getId());
+        plBuilder.persoonVersie(persoon.getLockVersie());
+        if (persoon.getAdministratieveHandeling() != null) {
+            plBuilder.administratieveHandelingId(persoon.getAdministratieveHandeling().getId());
+        }
         mapBasis(persoon, plBuilder, brpOnderzoekMapper);
         mapIndicaties(persoon, plBuilder, brpOnderzoekMapper);
         mapRelaties(persoon, plBuilder, brpOnderzoekMapper);
@@ -123,10 +127,10 @@ public final class BrpPersoonslijstMapper {
         plBuilder.naamgebruikStapel(brpNaamgebruikMapper.map(persoon.getPersoonNaamgebruikHistorieSet(), brpOnderzoekMapper));
         plBuilder.adresStapel(brpAdresMapper.map(persoon.getPersoonAdresSet(), brpOnderzoekMapper));
         plBuilder.persoonAfgeleidAdministratiefStapel(
-            brpPersoonAfgeleidAdministratiefMapper.map(persoon.getPersoonAfgeleidAdministratiefHistorieSet(), brpOnderzoekMapper));
+                brpPersoonAfgeleidAdministratiefMapper.map(persoon.getPersoonAfgeleidAdministratiefHistorieSet(), brpOnderzoekMapper));
         plBuilder.bijhoudingStapel(brpBijhoudingMapper.map(persoon.getPersoonBijhoudingHistorieSet(), brpOnderzoekMapper));
         plBuilder.deelnameEuVerkiezingenStapel(
-            brpDeelnameEuVerkiezingenMapper.map(persoon.getPersoonDeelnameEuVerkiezingenHistorieSet(), brpOnderzoekMapper));
+                brpDeelnameEuVerkiezingenMapper.map(persoon.getPersoonDeelnameEuVerkiezingenHistorieSet(), brpOnderzoekMapper));
         plBuilder.geboorteStapel(brpGeboorteMapper.map(persoon.getPersoonGeboorteHistorieSet(), brpOnderzoekMapper));
         plBuilder.geslachtsaanduidingStapel(brpGeslachtsaanduidingMapper.map(persoon.getPersoonGeslachtsaanduidingHistorieSet(), brpOnderzoekMapper));
         plBuilder.geslachtsnaamcomponentStapels(brpGeslachtsnaamcomponentMapper.map(persoon.getPersoonGeslachtsnaamcomponentSet(), brpOnderzoekMapper));
@@ -134,6 +138,8 @@ public final class BrpPersoonslijstMapper {
         plBuilder.migratieStapel(brpMigratieMapper.map(persoon.getPersoonMigratieHistorieSet(), brpOnderzoekMapper));
         plBuilder.inschrijvingStapel(brpInschrijvingMapper.map(persoon.getPersoonInschrijvingHistorieSet(), brpOnderzoekMapper));
         plBuilder.nationaliteitStapels(brpNationaliteitMapper.map(persoon.getPersoonNationaliteitSet(), brpOnderzoekMapper));
+        plBuilder
+                .buitenlandsPersoonsnummerStapels(brpBuitenlandsPersoonsnummerMapper.map(persoon.getPersoonBuitenlandsPersoonsnummerSet(), brpOnderzoekMapper));
         plBuilder.nummerverwijzingStapel(brpNummerverwijzingMapper.map(persoon.getPersoonNummerverwijzingHistorieSet(), brpOnderzoekMapper));
         plBuilder.overlijdenStapel(brpOverlijdenMapper.map(persoon.getPersoonOverlijdenHistorieSet(), brpOnderzoekMapper));
         plBuilder.persoonskaartStapel(brpPersoonskaartMapper.map(persoon.getPersoonPersoonskaartHistorieSet(), brpOnderzoekMapper));
@@ -165,15 +171,15 @@ public final class BrpPersoonslijstMapper {
                     break;
                 case VOLLEDIGE_VERSTREKKINGSBEPERKING:
                     plBuilder.verstrekkingsbeperkingIndicatieStapel(
-                        mapIndicatie(brpOnderzoekMapper, persoonIndicatie, brpVerstrekkingsbeperkingIndicatieMapper));
+                            mapIndicatie(brpOnderzoekMapper, persoonIndicatie, brpVerstrekkingsbeperkingIndicatieMapper));
                     break;
                 case VASTGESTELD_NIET_NEDERLANDER:
                     plBuilder.vastgesteldNietNederlanderIndicatieStapel(
-                        mapIndicatie(brpOnderzoekMapper, persoonIndicatie, brpVastgesteldNietNederlanderIndicatieMapper));
+                            mapIndicatie(brpOnderzoekMapper, persoonIndicatie, brpVastgesteldNietNederlanderIndicatieMapper));
                     break;
                 case BEHANDELD_ALS_NEDERLANDER:
                     plBuilder.behandeldAlsNederlanderIndicatieStapel(
-                        mapIndicatie(brpOnderzoekMapper, persoonIndicatie, brpBehandeldAlsNederlanderIndicatieMapper));
+                            mapIndicatie(brpOnderzoekMapper, persoonIndicatie, brpBehandeldAlsNederlanderIndicatieMapper));
                     break;
                 case SIGNALERING_MET_BETREKKING_TOT_VERSTREKKEN_REISDOCUMENT:
                     final BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentMapper mapper = brpSignaleringMetBetrekkingTotVerstrekkenReisdocumentMapper;
@@ -184,7 +190,11 @@ public final class BrpPersoonslijstMapper {
                     break;
                 case BIJZONDERE_VERBLIJFSRECHTELIJKE_POSITIE:
                     plBuilder.bijzondereVerblijfsrechtelijkePositieIndicatieStapel(
-                        mapIndicatie(brpOnderzoekMapper, persoonIndicatie, brpBijzondereVerblijfsrechtelijkePositieMapper));
+                            mapIndicatie(brpOnderzoekMapper, persoonIndicatie, brpBijzondereVerblijfsrechtelijkePositieMapper));
+                    break;
+                case ONVERWERKT_DOCUMENT_AANWEZIG:
+                    plBuilder.onverwerktDocumentAanwezigIndicatieStapel(mapIndicatie(brpOnderzoekMapper, persoonIndicatie,
+                            brpOnverwerktDocumentAanwezigIndicatieMapper));
                     break;
                 default:
                     throw new IllegalArgumentException("Onbekende soort indicatie: " + soortIndicatie);
@@ -193,10 +203,9 @@ public final class BrpPersoonslijstMapper {
     }
 
     private <B extends AbstractBrpIndicatieGroepInhoud> BrpStapel<B> mapIndicatie(
-        final BrpOnderzoekMapper brpOnderzoekMapper,
-        final PersoonIndicatie persoonIndicatie,
-        final AbstractBrpMapper<PersoonIndicatieHistorie, B> indicatieMapper)
-    {
+            final BrpOnderzoekMapper brpOnderzoekMapper,
+            final PersoonIndicatie persoonIndicatie,
+            final AbstractBrpMapper<PersoonIndicatieHistorie, B> indicatieMapper) {
         final BrpStapel<B> indicatieInhoudBrpStapel;
         indicatieInhoudBrpStapel = indicatieMapper.map(persoonIndicatie.getPersoonIndicatieHistorieSet(), brpOnderzoekMapper);
         return indicatieInhoudBrpStapel;

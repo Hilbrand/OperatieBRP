@@ -33,11 +33,8 @@ public final class DemoMode {
 
     /**
      * Constructor. Inject de parameters via Spring uit de config file.
-     * 
-     * @param defaultPlLocation
-     *            String
-     * @param demoMode
-     *            boolean
+     * @param defaultPlLocation String
+     * @param demoMode boolean
      */
     @Autowired
     public DemoMode(@Value("${defaultpl.location}") final String defaultPlLocation, @Value("${demo.mode}") final boolean demoMode) {
@@ -52,7 +49,6 @@ public final class DemoMode {
 
     /**
      * Zet een map in elkaar welke op de ModelAndView wordt gezet. Map bevat demoMode, defaultPlen en FilenameUtils.
-     * 
      * @return model Map<String, Object>
      */
     public Map<String, Object> getDemoModel() {
@@ -69,12 +65,9 @@ public final class DemoMode {
 
     /**
      * Zoekt en controleert aan de hand van de filename de echte file op en retourneert deze als byte array.
-     * 
-     * @param filename
-     *            String
+     * @param filename String
      * @return file byte[]
-     * @throws IOException
-     *             als de file niet gelezen kan worden
+     * @throws IOException als de file niet gelezen kan worden
      */
     public byte[] getDemoUploadFile(final String filename) throws IOException {
         if (filename != null) {
@@ -88,7 +81,6 @@ public final class DemoMode {
 
     /**
      * Geef de waarde van default p len.
-     *
      * @return De lijst met PL bestanden in de directory.
      */
     private List<File> getDefaultPLen() {
@@ -110,7 +102,6 @@ public final class DemoMode {
 
     /**
      * Geeft aan of de GGO-viewer in demo mode draait of niet.
-     * 
      * @return true als de GGO-viewer in demo mode draait.
      */
     public boolean isDemoMode() {

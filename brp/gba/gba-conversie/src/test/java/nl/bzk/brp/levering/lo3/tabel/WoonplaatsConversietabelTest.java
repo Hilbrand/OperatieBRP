@@ -8,8 +8,7 @@ package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.NaamEnumeratiewaardeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Plaats;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Plaats;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,6 +30,6 @@ public class WoonplaatsConversietabelTest {
     }
 
     private Plaats maakConversietabelRegel(final String woonplaatsnaam) throws ReflectiveOperationException {
-        return new Plaats(null, new NaamEnumeratiewaardeAttribuut(woonplaatsnaam), null, null);
+        return new Plaats(woonplaatsnaam);
     }
 }

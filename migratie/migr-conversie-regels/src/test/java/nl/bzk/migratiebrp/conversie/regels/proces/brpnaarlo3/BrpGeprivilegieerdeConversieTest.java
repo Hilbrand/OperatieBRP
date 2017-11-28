@@ -46,7 +46,6 @@ import org.junit.Test;
 
 /**
  * Test de scenarios waarbij een persoon geprivilegieerd is.
- * 
  */
 public class BrpGeprivilegieerdeConversieTest extends AbstractBrpConversieTest {
 
@@ -251,11 +250,10 @@ public class BrpGeprivilegieerdeConversieTest extends AbstractBrpConversieTest {
         builder.bijzondereVerblijfsrechtelijkePositieIndicatieStapel(bijzondereVerblijfsrechtelijkePositieIndicatieStapel);
     }
 
-    private void vulNationaliteitMetProbas(final BrpPersoonslijstBuilder builder, final String natCode, final String verkrijgCode, final String verliesCode)
-    {
+    private void vulNationaliteitMetProbas(final BrpPersoonslijstBuilder builder, final String natCode, final String verkrijgCode, final String verliesCode) {
         final List<BrpGroep<BrpNationaliteitInhoud>> natGroepen = new ArrayList<>();
-        final BrpDocumentInhoud doc = doc("PROBAS", "042");
-        final BrpActie actie = act(123L, "Conversie GBA", "042", 20010101000000L, null, doc);
+        final BrpDocumentInhoud doc = doc("PROBAS", "000042");
+        final BrpActie actie = act(123L, "Conversie GBA", "000042", 20010101000000L, null, doc);
         final BrpGroep<BrpNationaliteitInhoud> natGroep =
                 new BrpGroep<>(nationaliteit(natCode, verkrijgCode, verliesCode), his(20100101, 20100102000000L), actie, null, null);
         natGroepen.add(natGroep);
@@ -311,7 +309,7 @@ public class BrpGeprivilegieerdeConversieTest extends AbstractBrpConversieTest {
 
     private boolean bevatProbas(final Lo3Documentatie documentatie) {
         return documentatie != null
-               && documentatie.getBeschrijvingDocument() != null
-               && Lo3String.unwrap(documentatie.getBeschrijvingDocument()).startsWith("PROBAS");
+                && documentatie.getBeschrijvingDocument() != null
+                && Lo3String.unwrap(documentatie.getBeschrijvingDocument()).startsWith("PROBAS");
     }
 }

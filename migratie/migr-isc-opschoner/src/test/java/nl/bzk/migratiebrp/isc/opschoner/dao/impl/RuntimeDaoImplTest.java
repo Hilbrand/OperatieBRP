@@ -8,8 +8,8 @@ package nl.bzk.migratiebrp.isc.opschoner.dao.impl;
 
 import java.sql.SQLException;
 import javax.inject.Inject;
-import junit.framework.Assert;
 import nl.bzk.migratiebrp.isc.opschoner.dao.RuntimeDao;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class RuntimeDaoImplTest extends AbstractDaoTest {

@@ -7,6 +7,8 @@
 package nl.bzk.migratiebrp.isc.console.mig4jsf.filter;
 
 import java.io.Serializable;
+import java.util.EnumMap;
+import java.util.Map;
 import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
@@ -19,55 +21,19 @@ import javax.faces.event.ActionListener;
 public final class BerichtenFilterActionListener implements ActionListener, Serializable {
     private static final long serialVersionUID = 1L;
 
+    private final Map<FilterEnum, ValueExpression> waarden;
     private final ValueExpression targetExpression;
-
-    private final ValueExpression kanaalExpression;
-    private final ValueExpression richtingExpression;
-    private final ValueExpression bronExpression;
-    private final ValueExpression doelExpression;
-    private final ValueExpression typeExpression;
-    private final ValueExpression berichtIdExpression;
-    private final ValueExpression correlatieIdExpression;
 
     /**
      * Constructor.
-     * 
-     * @param targetExpression
-     *            expression voor target
-     * @param kanaalExpression
-     *            expression voor kanaal
-     * @param richtingExpression
-     *            expression voor richting
-     * @param bronExpression
-     *            expression voor bron
-     * @param doelExpression
-     *            expression voor doel
-     * @param typeExpression
-     *            expression voor type
-     * @param berichtIdExpression
-     *            expression voor bericht id
-     * @param correlatieIdExpression
-     *            expression voor correlatie id
+     * @param waarden de benodigde value expressions
+     * @param targetExpression target expression
      */
-    public BerichtenFilterActionListener(
-        final ValueExpression targetExpression,
-        final ValueExpression kanaalExpression,
-        final ValueExpression richtingExpression,
-        final ValueExpression bronExpression,
-        final ValueExpression doelExpression,
-        final ValueExpression typeExpression,
-        final ValueExpression berichtIdExpression,
-        final ValueExpression correlatieIdExpression)
-    {
+    public BerichtenFilterActionListener(final Map<FilterEnum, ValueExpression> waarden,
+                                         final ValueExpression targetExpression) {
         super();
+        this.waarden = waarden;
         this.targetExpression = targetExpression;
-        this.kanaalExpression = kanaalExpression;
-        this.richtingExpression = richtingExpression;
-        this.bronExpression = bronExpression;
-        this.doelExpression = doelExpression;
-        this.typeExpression = typeExpression;
-        this.berichtIdExpression = berichtIdExpression;
-        this.correlatieIdExpression = correlatieIdExpression;
     }
 
     @Override
@@ -75,15 +41,9 @@ public final class BerichtenFilterActionListener implements ActionListener, Seri
         final FacesContext facesContext = FacesContext.getCurrentInstance();
         final ELContext elContext = facesContext.getELContext();
 
-        final String kanaal = ExpressionHelper.getString(kanaalExpression, elContext);
-        final String richting = ExpressionHelper.getString(richtingExpression, elContext);
-        final String bron = ExpressionHelper.getString(bronExpression, elContext);
-        final String doel = ExpressionHelper.getString(doelExpression, elContext);
-        final String type = ExpressionHelper.getString(typeExpression, elContext);
-        final String berichtId = ExpressionHelper.getString(berichtIdExpression, elContext);
-        final String correlatieId = ExpressionHelper.getString(correlatieIdExpression, elContext);
-
-        targetExpression.setValue(elContext, new BerichtenFilter(kanaal, richting, bron, doel, type, berichtId, correlatieId));
+        final Map<FilterEnum, String> stringWaarden = new EnumMap<>(FilterEnum.class);
+        waarden.forEach((sleutel, waarde) -> stringWaarden.put(sleutel, ExpressionHelper.getString(waarde, elContext)));
+        targetExpression.setValue(elContext, new BerichtenFilter(stringWaarden));
     }
 
 }

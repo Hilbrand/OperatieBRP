@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -20,7 +19,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,13 +30,16 @@ public class BrpGeslachtsnaamcomponentInhoudTest {
     private BrpGeslachtsnaamcomponentInhoud testInhoud;
 
     public static BrpGeslachtsnaamcomponentInhoud createInhoud() {
+        return createInhoud(1);
+    }
+    public static BrpGeslachtsnaamcomponentInhoud createInhoud(final int volgnummer) {
         return new BrpGeslachtsnaamcomponentInhoud(
-            new BrpString(VAN),
-            new BrpCharacter(' '),
-            new BrpString(HOREN_ZEGGEN),
-            null,
-            new BrpAdellijkeTitelCode(AT),
-            new BrpInteger(1));
+                new BrpString(VAN),
+                new BrpCharacter(' '),
+                new BrpString(HOREN_ZEGGEN),
+                null,
+                new BrpAdellijkeTitelCode(AT),
+                new BrpInteger(volgnummer));
     }
 
     public static BrpStapel<BrpGeslachtsnaamcomponentInhoud> createStapel() {
@@ -58,44 +59,44 @@ public class BrpGeslachtsnaamcomponentInhoudTest {
     public void setup() {
         testInhoud =
                 new BrpGeslachtsnaamcomponentInhoud(
-                    new BrpString(VAN),
-                    new BrpCharacter(' '),
-                    new BrpString(HOREN_ZEGGEN),
-                    null,
-                    new BrpAdellijkeTitelCode(AT),
-                    new BrpInteger(1));
+                        new BrpString(VAN),
+                        new BrpCharacter(' '),
+                        new BrpString(HOREN_ZEGGEN),
+                        null,
+                        new BrpAdellijkeTitelCode(AT),
+                        new BrpInteger(1));
     }
 
     @Test
     public void testHashCode() {
         final BrpGeslachtsnaamcomponentInhoud inhoud1 =
                 new BrpGeslachtsnaamcomponentInhoud(
-                    new BrpString(VAN),
-                    new BrpCharacter(' '),
-                    new BrpString(HOREN_ZEGGEN),
-                    null,
-                    new BrpAdellijkeTitelCode(AT),
-                    new BrpInteger(1));
+                        new BrpString(VAN),
+                        new BrpCharacter(' '),
+                        new BrpString(HOREN_ZEGGEN),
+                        null,
+                        new BrpAdellijkeTitelCode(AT),
+                        new BrpInteger(1));
         final BrpGeslachtsnaamcomponentInhoud inhoud2 =
                 new BrpGeslachtsnaamcomponentInhoud(
-                    new BrpString(VAN),
-                    new BrpCharacter(' '),
-                    new BrpString(HOREN_ZEGGEN),
-                    null,
-                    new BrpAdellijkeTitelCode(AT),
-                    new BrpInteger(1));
+                        new BrpString(VAN),
+                        new BrpCharacter(' '),
+                        new BrpString(HOREN_ZEGGEN),
+                        null,
+                        new BrpAdellijkeTitelCode(AT),
+                        new BrpInteger(1));
         assertEquals(inhoud1.hashCode(), inhoud2.hashCode());
     }
 
     @Test
     public void testBrpGeslachtsnaamcomponentInhoud() {
         new BrpGeslachtsnaamcomponentInhoud(
-            new BrpString(VAN),
-            new BrpCharacter(' '),
-            new BrpString(HOREN_ZEGGEN),
-            null,
-            new BrpAdellijkeTitelCode(AT),
-            new BrpInteger(1));
+                new BrpString(VAN),
+                new BrpCharacter(' '),
+                new BrpString(HOREN_ZEGGEN),
+                null,
+                new BrpAdellijkeTitelCode(AT),
+                new BrpInteger(1));
     }
 
     /**
@@ -112,12 +113,12 @@ public class BrpGeslachtsnaamcomponentInhoudTest {
     @Test(expected = IllegalArgumentException.class)
     public void testBrpGeslachtsnaamcomponentInhoudFout2() {
         new BrpGeslachtsnaamcomponentInhoud(
-            new BrpString(VAN),
-            new BrpCharacter(' '),
-            new BrpString(""),
-            null,
-            new BrpAdellijkeTitelCode(AT),
-            new BrpInteger(1));
+                new BrpString(VAN),
+                new BrpCharacter(' '),
+                new BrpString(""),
+                null,
+                new BrpAdellijkeTitelCode(AT),
+                new BrpInteger(1));
     }
 
     @Test
@@ -159,20 +160,20 @@ public class BrpGeslachtsnaamcomponentInhoudTest {
     public void testEqualsObject() {
         final BrpGeslachtsnaamcomponentInhoud inhoud1 =
                 new BrpGeslachtsnaamcomponentInhoud(
-                    new BrpString(VAN),
-                    new BrpCharacter(' '),
-                    new BrpString(HOREN_ZEGGEN),
-                    null,
-                    new BrpAdellijkeTitelCode(AT),
-                    new BrpInteger(1));
+                        new BrpString(VAN),
+                        new BrpCharacter(' '),
+                        new BrpString(HOREN_ZEGGEN),
+                        null,
+                        new BrpAdellijkeTitelCode(AT),
+                        new BrpInteger(1));
         final BrpGeslachtsnaamcomponentInhoud inhoud2 =
                 new BrpGeslachtsnaamcomponentInhoud(
-                    new BrpString(VAN),
-                    new BrpCharacter(' '),
-                    new BrpString(HOREN_ZEGGEN),
-                    null,
-                    new BrpAdellijkeTitelCode(AT),
-                    new BrpInteger(1));
+                        new BrpString(VAN),
+                        new BrpCharacter(' '),
+                        new BrpString(HOREN_ZEGGEN),
+                        null,
+                        new BrpAdellijkeTitelCode(AT),
+                        new BrpInteger(1));
         assertEquals(inhoud1, inhoud2);
     }
 
@@ -180,20 +181,20 @@ public class BrpGeslachtsnaamcomponentInhoudTest {
     public void testToString() {
         final BrpGeslachtsnaamcomponentInhoud inhoud1 =
                 new BrpGeslachtsnaamcomponentInhoud(
-                    new BrpString(VAN),
-                    new BrpCharacter(' '),
-                    new BrpString(HOREN_ZEGGEN),
-                    null,
-                    new BrpAdellijkeTitelCode(AT),
-                    new BrpInteger(1));
+                        new BrpString(VAN),
+                        new BrpCharacter(' '),
+                        new BrpString(HOREN_ZEGGEN),
+                        null,
+                        new BrpAdellijkeTitelCode(AT),
+                        new BrpInteger(1));
         final BrpGeslachtsnaamcomponentInhoud inhoud2 =
                 new BrpGeslachtsnaamcomponentInhoud(
-                    new BrpString(VAN),
-                    new BrpCharacter(' '),
-                    new BrpString(HOREN_ZEGGEN),
-                    null,
-                    new BrpAdellijkeTitelCode(AT),
-                    new BrpInteger(1));
+                        new BrpString(VAN),
+                        new BrpCharacter(' '),
+                        new BrpString(HOREN_ZEGGEN),
+                        null,
+                        new BrpAdellijkeTitelCode(AT),
+                        new BrpInteger(1));
         assertEquals(inhoud1.toString(), inhoud2.toString());
     }
 }

@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.test.dal.runner;
 import java.io.File;
 import java.io.FilenameFilter;
 import nl.bzk.migratiebrp.test.dal.TestCasusFactory;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 
 /**
  * Base class to configure the factory and locations.
@@ -18,7 +19,6 @@ public abstract class TestConfiguratie {
     /**
      * Geeft aan of de test tegen een in-memory-DB (bv HSQL-db) of tegen een echte database plaats vindt. Default: false
      * (echt database).
-     *
      * @return false voor een echte database, true voor een in-memory-DB
      */
     public boolean useMemoryDS() {
@@ -27,14 +27,12 @@ public abstract class TestConfiguratie {
 
     /**
      * Geef de waarde van input folder.
-     *
      * @return the input folder
      */
     public abstract File getInputFolder();
 
     /**
      * Geef de waarde van thema filter.
-     *
      * @return the thema filter
      */
     public FilenameFilter getThemaFilter() {
@@ -43,7 +41,6 @@ public abstract class TestConfiguratie {
 
     /**
      * Geef de waarde van casus filter.
-     *
      * @return the casus filter
      */
     public FilenameFilter getCasusFilter() {
@@ -52,8 +49,15 @@ public abstract class TestConfiguratie {
 
     /**
      * Geef de waarde van casus factory.
-     *
      * @return the casus factory
      */
     public abstract TestCasusFactory getCasusFactory();
+
+    /**
+     * Geef de waarde van test skipper
+     * @return test skipper
+     */
+    public TestSkipper getTestSkipper() {
+        return TestSkipper.nooit();
+    }
 }

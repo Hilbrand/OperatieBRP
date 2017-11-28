@@ -7,32 +7,11 @@
 package nl.bzk.migratiebrp.test.isc;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import nl.bzk.migratiebrp.test.common.util.BaseFilter;
-import nl.bzk.migratiebrp.test.common.util.CompositeFilter;
-import nl.bzk.migratiebrp.test.common.util.CompositeFilter.Type;
-import nl.bzk.migratiebrp.test.common.util.FilterType;
-import nl.bzk.migratiebrp.test.common.util.NotEndsWithFilter;
-import nl.bzk.migratiebrp.test.common.util.StartsWithFilter;
 
-public class RegressieVoiscTest extends IscTestConfiguration {
+public class RegressieVoiscTest extends IscRegressieConfiguration {
 
     @Override
     public File getInputFolder() {
         return new File("./regressie-voisc");
     }
-
-    @Override
-    public FilenameFilter getThemaFilter() {
-        return new BaseFilter(FilterType.DIRECTORY);
-    }
-
-    @Override
-    public FilenameFilter getCasusFilter() {
-        final StartsWithFilter startsWith = new StartsWithFilter("", FilterType.DIRECTORY);
-        final NotEndsWithFilter notEndsWith = new NotEndsWithFilter(FilterType.DIRECTORY, "NO TEST", "NOK");
-
-        return new CompositeFilter(Type.AND, startsWith, notEndsWith);
-    }
-
 }

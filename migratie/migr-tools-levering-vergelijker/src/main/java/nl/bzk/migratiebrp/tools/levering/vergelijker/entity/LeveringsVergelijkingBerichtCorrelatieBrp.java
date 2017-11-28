@@ -24,7 +24,7 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     @Id
     @SequenceGenerator(name = "mig_leveringsvergelijking_berichtcorrelatie_brp_id_generator",
-    sequenceName = "public.mig_leveringsvergelijking_berichtcorrelatie_brp_id_seq", allocationSize = 1)
+            sequenceName = "public.mig_leveringsvergelijking_berichtcorrelatie_brp_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mig_leveringsvergelijking_berichtcorrelatie_brp_id_generator")
     @Column(nullable = false)
     private Integer id;
@@ -42,7 +42,6 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public Integer getId() {
@@ -51,9 +50,7 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public void setId(final Integer id) {
         this.id = id;
@@ -61,7 +58,6 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Geef de waarde van bijhouding bericht message id.
-     *
      * @return bijhouding bericht message id
      */
     public Long getBijhoudingBerichtMessageId() {
@@ -70,9 +66,7 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Zet de waarde van bijhouding bericht message id.
-     *
-     * @param bijhoudingBerichtMessageId
-     *            bijhouding bericht message id
+     * @param bijhoudingBerichtMessageId bijhouding bericht message id
      */
     public void setBijhoudingBerichtMessageId(final Long bijhoudingBerichtMessageId) {
         this.bijhoudingBerichtMessageId = bijhoudingBerichtMessageId;
@@ -80,7 +74,6 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Geef de waarde van bijhouding bericht id.
-     *
      * @return bijhouding bericht id
      */
     public Long getBijhoudingBerichtId() {
@@ -89,9 +82,7 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Zet de waarde van bijhouding bericht id.
-     *
-     * @param bijhoudingBerichtId
-     *            bijhouding bericht id
+     * @param bijhoudingBerichtId bijhouding bericht id
      */
     public void setBijhoudingBerichtId(final Long bijhoudingBerichtId) {
         this.bijhoudingBerichtId = bijhoudingBerichtId;
@@ -99,7 +90,6 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Geef de waarde van afnemer code.
-     *
      * @return afnemer code
      */
     public String getAfnemerCode() {
@@ -108,9 +98,7 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Zet de waarde van afnemer code.
-     *
-     * @param afnemerCode
-     *            afnemer code
+     * @param afnemerCode afnemer code
      */
     public void setAfnemerCode(final String afnemerCode) {
         this.afnemerCode = afnemerCode;
@@ -118,7 +106,6 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Geef de waarde van levering bericht id.
-     *
      * @return levering bericht id
      */
     public Long getLeveringBerichtId() {
@@ -127,9 +114,7 @@ public class LeveringsVergelijkingBerichtCorrelatieBrp {
 
     /**
      * Zet de waarde van levering bericht id.
-     *
-     * @param leveringBerichtId
-     *            levering bericht id
+     * @param leveringBerichtId levering bericht id
      */
     public void setLeveringBerichtId(final Long leveringBerichtId) {
         this.leveringBerichtId = leveringBerichtId;

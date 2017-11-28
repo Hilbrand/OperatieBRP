@@ -9,17 +9,20 @@ package nl.bzk.migratiebrp.conversie.model.lo3.codes;
 import java.util.HashMap;
 import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3FunctieAdres;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze enum type representeert de LO3 waarde voor functie adres.
- * 
  */
 public enum Lo3FunctieAdresEnum {
 
-    /** Briefadres. */
+    /**
+     * Briefadres.
+     */
     BRIEFADRES("B", "Briefadres"),
-    /** Woonadres. */
+    /**
+     * Woonadres.
+     */
     WOONADRES("W", "Woonadres");
 
     /* ************************************************************************************************************* */
@@ -28,14 +31,14 @@ public enum Lo3FunctieAdresEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private static final Map<String, Lo3FunctieAdresEnum> CODE_MAP = new HashMap<String, Lo3FunctieAdresEnum>() {
-        private static final long serialVersionUID = 1L;
-        {
-            for (final Lo3FunctieAdresEnum value : Lo3FunctieAdresEnum.values()) {
-                put(value.getCode(), value);
-            }
+    private static final Map<String, Lo3FunctieAdresEnum> CODE_MAP = new HashMap<>();
+
+    static {
+        for (final Lo3FunctieAdresEnum value : Lo3FunctieAdresEnum.values()) {
+            CODE_MAP.put(value.getCode(), value);
         }
-    };
+    }
+
     private final String code;
     private final String label;
 
@@ -45,7 +48,7 @@ public enum Lo3FunctieAdresEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private Lo3FunctieAdresEnum(final String code, final String label) {
+    Lo3FunctieAdresEnum(final String code, final String label) {
         this.code = code;
         this.label = label;
     }
@@ -58,9 +61,7 @@ public enum Lo3FunctieAdresEnum {
 
     /**
      * Bestaat de gegeven code in de enumeratie.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return true, als de code bestaat, anders false
      */
     public static boolean containsCode(final String code) {
@@ -69,9 +70,7 @@ public enum Lo3FunctieAdresEnum {
 
     /**
      * Geef de enumeratie waarde voor de gegeven code.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3FunctieAdresEnum getByCode(final String code) {
@@ -80,9 +79,7 @@ public enum Lo3FunctieAdresEnum {
 
     /**
      * Geef de enumeratie waarde voor (de code van) het gegeven element.
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3FunctieAdresEnum getByElement(final Lo3FunctieAdres element) {
@@ -97,7 +94,6 @@ public enum Lo3FunctieAdresEnum {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {
@@ -106,7 +102,6 @@ public enum Lo3FunctieAdresEnum {
 
     /**
      * Geef de enumeratie als element.
-     * 
      * @return element
      */
     public Lo3FunctieAdres asElement() {
@@ -115,18 +110,15 @@ public enum Lo3FunctieAdresEnum {
 
     /**
      * Is de enumeratie waarde gelijk aan (de code van) het element?
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return true, als de waarde gelijk is, anders false
      */
     public boolean equalsElement(final Lo3FunctieAdres element) {
-        return Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
+        return Lo3Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
     }
 
     /**
      * Geef de waarde van label.
-     *
      * @return the label
      */
     public String getLabel() {

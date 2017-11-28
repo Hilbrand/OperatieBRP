@@ -1,24 +1,22 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.filter;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
+import nl.bzk.brp.levering.lo3.conversie.IdentificatienummerMutatie;
 import nl.bzk.brp.levering.lo3.util.PersoonUtil;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.logisch.ist.Stapel;
-import nl.bzk.brp.model.operationeel.kern.AdministratieveHandelingModel;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,23 +25,33 @@ import org.springframework.stereotype.Component;
 @Component("lo3_resyncBerichtFilter")
 public final class ResyncBerichtFilter implements Filter {
 
-    /** Logger. */
+    /**
+     * Logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private final VulBerichtFilter vulBerichtFilter;
+
+    /**
+     * Constructor.
+     * @param vulBerichtFilter vul bericht filter
+     */
     @Inject
-    private VulBerichtFilter vulBerichtFilter;
+    public ResyncBerichtFilter(final VulBerichtFilter vulBerichtFilter) {
+        this.vulBerichtFilter = vulBerichtFilter;
+    }
 
     @Override
     public List<Lo3CategorieWaarde> filter(
-        final PersoonHisVolledig persoon,
-        final List<Stapel> istStapels,
-        final AdministratieveHandelingModel administratieveHandeling,
-        final List<Lo3CategorieWaarde> categorieen,
-        final List<String> lo3Filterrubrieken)
-    {
+            final Persoonslijst persoon,
+            final List<Stapel> istStapels,
+            final AdministratieveHandeling administratieveHandeling,
+            final IdentificatienummerMutatie identificatienummerMutatieResultaat,
+            final List<Lo3CategorieWaarde> categorieen,
+            final List<String> lo3Filterrubrieken) {
         LOGGER.debug("Filter bericht op basis van abonnement filter rubrieken: {}", lo3Filterrubrieken);
 
-        if (persoon != null && administratieveHandeling != null && administratieveHandeling.getID() != null) {
+        if (persoon != null && administratieveHandeling != null && administratieveHandeling.getId() != null) {
             // Bepalen welke rubrieken geraakt zijn bij deze administratieve handeling
             final List<String> resyncRubrieken = bepaalRubrieken(persoon, istStapels, administratieveHandeling);
             LOGGER.debug("Resync rubrieken: {}", resyncRubrieken);
@@ -58,54 +66,43 @@ public final class ResyncBerichtFilter implements Filter {
     }
 
     @Override
-    public boolean leveringUitvoeren(final PersoonHisVolledig persoon, final List<Lo3CategorieWaarde> gefilterd) {
+    public boolean leveringUitvoeren(final Persoonslijst persoon, final List<Lo3CategorieWaarde> gefilterd) {
         return gefilterd != null && !gefilterd.isEmpty() && !PersoonUtil.isAfgevoerd(persoon);
     }
 
     /**
      * Bepaal de geraakte rubrieken voor een bepaalde administratieve handeling.
-     *
      * @param persoon persoon
      * @param opgehaaldeIstStapels opgehaalde ist stapels
      * @param administratieveHandeling administratieve handeling.
      * @return lijst van ReysncGroep-en
      */
     public static List<String> bepaalRubrieken(
-        final PersoonHisVolledig persoon,
-        final List<Stapel> opgehaaldeIstStapels,
-        final AdministratieveHandelingModel administratieveHandeling)
-    {
+            final Persoonslijst persoon,
+            final List<Stapel> opgehaaldeIstStapels,
+            final AdministratieveHandeling administratieveHandeling) {
         final RubriekenVisitor rubriekenVisitor = new RubriekenVisitor(administratieveHandeling);
-        rubriekenVisitor.visit(persoon);
+        rubriekenVisitor.visit(persoon.getMetaObject());
         rubriekenVisitor.visit(opgehaaldeIstStapels);
 
         return rubriekenVisitor.getRubrieken();
     }
 
     /**
-     * Controleert of de gegeven filterRubrieken een rubriek bevat die wordt aangegeven door de gegevens
-     * resyncRubrieken.
-     *
+     * Controleert of de gegeven filterRubrieken een rubriek bevat die wordt aangegeven door de gegevens resyncRubrieken.
      * @param filterRubrieken filter rubrieken (uit abonnement)
      * @param resyncRubrieken resync rubrieken (uit {@link #bepaalRubrieken})
      * @return true, als er een filterRubriek is die wordt aangegeven
      */
     public static boolean bevatRubrieken(final List<String> filterRubrieken, final List<String> resyncRubrieken) {
-        boolean result = false;
-        if (resyncRubrieken == null) {
-            result = true;
-        } else {
-            rubriekenLoop:
-            for (final String resyncRubriek : resyncRubrieken) {
-                for (final String filterRubriek : filterRubrieken) {
-                    if (filterRubriek.startsWith(resyncRubriek)) {
-                        result = true;
-                        break rubriekenLoop;
-                    }
-                }
-            }
-        }
-        return result;
+        return resyncRubrieken.isEmpty() || filterRubrieken.stream().anyMatch(value -> komtFilterRubriekVoorInResyncRubrieken(value, resyncRubrieken));
+    }
+
+    private static boolean komtFilterRubriekVoorInResyncRubrieken(final String filterRubriek, final List<String> resyncRubrieken) {
+        return resyncRubrieken.stream().anyMatch(value -> isFilterRubriekGelijkAanResyncRubriek(filterRubriek, value));
+    }
+    private static boolean isFilterRubriekGelijkAanResyncRubriek(final String filterRubriek, final String resyncRubriek) {
+        return filterRubriek.startsWith(resyncRubriek);
     }
 
 }

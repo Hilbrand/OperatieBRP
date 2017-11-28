@@ -6,8 +6,19 @@
 		<property name="serverConnection" ref="iscMBeanServerConnection" />
 	</bean>
 
+	<bean id="iscMBeanServerConnectionCredentials" class="nl.bzk.algemeenbrp.util.jmx.client.CredentialsFactory">
+		<property name="username" value="${isc.jmx.service.username:admin}" />
+		<property name="password" value="${isc.jmx.service.password:admin}" />
+	</bean>
+
     <bean id="iscMBeanServerConnection" class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean">
-        <property name="serviceUrl" value="${isc.jmx.service.url:service:jmx:rmi://localhost:9875/jndi/rmi://localhost:1099/jmxrmi}"/>
+    	<property name="environment">
+			<map>
+				<entry key="jmx.remote.credentials" value-ref="iscMBeanServerConnectionCredentials" />
+				<entry key="jmx.remote.requesttimeout" value="60" />
+			</map>
+    	</property>
+        <property name="serviceUrl" value="service:jmx:simple://${isc.jmx.service.host:localhost}:${isc.jmx.service.port:3481}"/>
     </bean>
 
 </beans>

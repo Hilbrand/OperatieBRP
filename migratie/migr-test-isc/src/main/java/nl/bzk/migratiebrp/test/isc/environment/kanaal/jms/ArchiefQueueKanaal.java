@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
+
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
@@ -17,7 +18,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
  */
 public final class ArchiefQueueKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "archief";
 
     /**
@@ -25,11 +28,11 @@ public final class ArchiefQueueKanaal extends LazyLoadingKanaal {
      */
     public ArchiefQueueKanaal() {
         super(new Worker(),
-              new Configuration(
-                  "classpath:configuratie.xml",
-                  "classpath:infra-jms-isc.xml",
-                  "classpath:infra-queues-isc-archief.xml",
-                  "classpath:infra-jmx-routering.xml"));
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-jms-isc.xml",
+                        "classpath:infra-queues-isc-archief.xml",
+                        "classpath:infra-jmx-routering.xml"));
     }
 
     /**

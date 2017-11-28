@@ -6,6 +6,8 @@
 
 package nl.bzk.migratiebrp.isc.runtime.service;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.Bericht;
 import nl.bzk.migratiebrp.bericht.model.impl.AbstractOngeldigBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
@@ -14,8 +16,7 @@ import nl.bzk.migratiebrp.isc.runtime.jbpm.JbpmService;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.model.Correlatie;
 import nl.bzk.migratiebrp.isc.runtime.message.Acties;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -67,14 +68,14 @@ public final class VerwerkInProcesAction implements Action {
 
             processInstanceId =
                     jbpmService.startFoutmeldingProces(
-                        bericht,
-                        message.getBerichtId(),
-                        message.getOriginator(),
-                        message.getRecipient(),
-                        "esb.start.ongeldig",
-                        foutmelding,
-                        false,
-                        false);
+                            bericht,
+                            message.getBerichtId(),
+                            message.getOriginator(),
+                            message.getRecipient(),
+                            "esb.start.ongeldig",
+                            foutmelding,
+                            false,
+                            false);
         } else {
             berichtenDao.updateActie(message.getBerichtId(), Acties.ACTIE_PROCES_GESTART);
             LOG.info("Start nieuw JBPM proces '{}'", cyclus);
@@ -94,14 +95,14 @@ public final class VerwerkInProcesAction implements Action {
             berichtenDao.updateActie(message.getBerichtId(), Acties.ACTIE_FOUTAFHANDELING_GESTART);
             final long foutProcessInstanceId =
                     jbpmService.startFoutmeldingProces(
-                        message.getBericht(),
-                        message.getBerichtId(),
-                        message.getOriginator(),
-                        message.getRecipient(),
-                        "esb.proces.statusFout",
-                        "Gecorreleerd bericht ontvangen, maar proces niet in status om bericht te ontvangen.",
-                        true,
-                        false);
+                            message.getBericht(),
+                            message.getBerichtId(),
+                            message.getOriginator(),
+                            message.getRecipient(),
+                            "esb.proces.statusFout",
+                            "Gecorreleerd bericht ontvangen, maar proces niet in status om bericht te ontvangen.",
+                            true,
+                            false);
             berichtenDao.updateProcessInstance(message.getBerichtId(), foutProcessInstanceId);
             procesDao.registreerProcesRelatie(processInstanceId, foutProcessInstanceId);
 

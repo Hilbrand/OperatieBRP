@@ -9,20 +9,26 @@ package nl.bzk.migratiebrp.conversie.model.lo3.codes;
 import java.util.HashMap;
 import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortVerbintenis;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze enum type identificeert de LO3 Soort verbintenis gebruikt in element 15.10.
  */
 public enum Lo3SoortVerbintenisEnum {
 
-    /** Onbekend. */
+    /**
+     * Onbekend.
+     */
     ONBEKEND(".", "Onbekend"),
 
-    /** Huwelijk. */
+    /**
+     * Huwelijk.
+     */
     HUWELIJK("H", "Huwelijk"),
 
-    /** Geregistreerd partnerschap. */
+    /**
+     * Geregistreerd partnerschap.
+     */
     GEREGISTREERD_PARTNERSCHAP("P", "Geregistreerd partnerschap");
 
     /* ************************************************************************************************************* */
@@ -31,14 +37,14 @@ public enum Lo3SoortVerbintenisEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private static final Map<String, Lo3SoortVerbintenisEnum> CODE_MAP = new HashMap<String, Lo3SoortVerbintenisEnum>() {
-        private static final long serialVersionUID = 1L;
-        {
-            for (final Lo3SoortVerbintenisEnum value : Lo3SoortVerbintenisEnum.values()) {
-                put(value.getCode(), value);
-            }
+    private static final Map<String, Lo3SoortVerbintenisEnum> CODE_MAP = new HashMap<>();
+
+    static {
+        for (final Lo3SoortVerbintenisEnum value : Lo3SoortVerbintenisEnum.values()) {
+            CODE_MAP.put(value.getCode(), value);
         }
-    };
+    }
+
     private final String code;
     private final String label;
 
@@ -48,7 +54,7 @@ public enum Lo3SoortVerbintenisEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private Lo3SoortVerbintenisEnum(final String code, final String label) {
+    Lo3SoortVerbintenisEnum(final String code, final String label) {
         this.code = code;
         this.label = label;
     }
@@ -58,11 +64,10 @@ public enum Lo3SoortVerbintenisEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
+
     /**
      * Bestaat de gegeven code in de enumeratie.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return true, als de code bestaat, anders false
      */
     public static boolean containsCode(final String code) {
@@ -71,9 +76,7 @@ public enum Lo3SoortVerbintenisEnum {
 
     /**
      * Geef de enumeratie waarde voor de gegeven code.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3SoortVerbintenisEnum getByCode(final String code) {
@@ -82,9 +85,7 @@ public enum Lo3SoortVerbintenisEnum {
 
     /**
      * Geef de enumeratie waarde voor (de code van) het gegeven element.
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3SoortVerbintenisEnum getByElement(final Lo3SoortVerbintenis element) {
@@ -93,10 +94,8 @@ public enum Lo3SoortVerbintenisEnum {
 
     /**
      * Geeft terug of de verbintenis een 'partnerschap' is.
-     * 
+     * @param lo3SoortVerbintenis de soort verbintenis
      * @return True indien partnerschap, false in overige gevallen.
-     * @param lo3SoortVerbintenis
-     *            de soort verbintenis
      */
     public static boolean isPartnerschap(final Lo3SoortVerbintenis lo3SoortVerbintenis) {
         return GEREGISTREERD_PARTNERSCHAP.getCode().equals(lo3SoortVerbintenis.getWaarde());
@@ -104,10 +103,8 @@ public enum Lo3SoortVerbintenisEnum {
 
     /**
      * Geeft terug of de verbintenis een 'huwelijk' is.
-     * 
+     * @param lo3SoortVerbintenis de soort verbintenis
      * @return True indien huwelijk, false in overige gevallen.
-     * @param lo3SoortVerbintenis
-     *            de soort verbintenis
      */
     public static boolean isHuwelijk(final Lo3SoortVerbintenis lo3SoortVerbintenis) {
         return HUWELIJK.getCode().equals(lo3SoortVerbintenis.getWaarde());
@@ -121,7 +118,6 @@ public enum Lo3SoortVerbintenisEnum {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {
@@ -130,7 +126,6 @@ public enum Lo3SoortVerbintenisEnum {
 
     /**
      * Geef de enumeratie als element.
-     * 
      * @return element
      */
     public Lo3SoortVerbintenis asElement() {
@@ -139,18 +134,15 @@ public enum Lo3SoortVerbintenisEnum {
 
     /**
      * Is de enumeratie waarde gelijk aan (de code van) het element?
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return true, als de waarde gelijk is, anders false
      */
     public boolean equalsElement(final Lo3SoortVerbintenis element) {
-        return Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
+        return Lo3Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
     }
 
     /**
      * Geef de waarde van label.
-     *
      * @return the label
      */
     public String getLabel() {

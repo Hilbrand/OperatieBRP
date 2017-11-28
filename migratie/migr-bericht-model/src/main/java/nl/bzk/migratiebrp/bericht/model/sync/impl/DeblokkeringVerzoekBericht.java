@@ -31,9 +31,7 @@ public final class DeblokkeringVerzoekBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een storebericht te maken.
-     *
-     * @param deblokkeringVerzoekType
-     *            het deblokkeringVerzoek type
+     * @param deblokkeringVerzoekType het deblokkeringVerzoek type
      */
     public DeblokkeringVerzoekBericht(final DeblokkeringVerzoekType deblokkeringVerzoekType) {
         super("DeblokkeringVerzoek");
@@ -51,7 +49,6 @@ public final class DeblokkeringVerzoekBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Geeft het A-nummer dat op het bericht staat.
-     *
      * @return Het A-nummer dat op het bericht staat.
      */
     public String getANummer() {
@@ -60,9 +57,7 @@ public final class DeblokkeringVerzoekBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Zet het A-nummer op het bericht.
-     *
-     * @param aNummer
-     *            Het te zetten A-nummer.
+     * @param aNummer Het te zetten A-nummer.
      */
     public void setANummer(final String aNummer) {
         deblokkeringVerzoekType.setANummer(aNummer);
@@ -70,7 +65,6 @@ public final class DeblokkeringVerzoekBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Geeft het process ID dat op het bericht staat.
-     *
      * @return Het process ID
      */
     public String getProcessId() {
@@ -79,9 +73,7 @@ public final class DeblokkeringVerzoekBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Zet het proces ID op het bericht.
-     *
-     * @param processId
-     *            Het te zetten proces ID.
+     * @param processId Het te zetten proces ID.
      */
     public void setProcessId(final String processId) {
         deblokkeringVerzoekType.setProcessId(processId);
@@ -89,7 +81,6 @@ public final class DeblokkeringVerzoekBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Geeft de registratiegemeente van de blokkering dat op het bericht staat.
-     *
      * @return De registratiegemeente van de blokkering
      */
     public String getGemeenteRegistratie() {
@@ -98,9 +89,7 @@ public final class DeblokkeringVerzoekBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Zet de registratiegemeente van de blokkering op het bericht.
-     *
-     * @param gemeenteRegistratie
-     *            De te zetten registratiegemeente.
+     * @param gemeenteRegistratie De te zetten registratiegemeente.
      */
     public void setGemeenteRegistratie(final String gemeenteRegistratie) {
         deblokkeringVerzoekType.setGemeenteRegistratie(gemeenteRegistratie);

@@ -14,19 +14,18 @@
  * <li>BrpActie</li>
  * <li>Herkomst</li>
  * </ul>
- * 
+ *
  * De {@link nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud inhoud} bestaat uit
  * {@link nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAttribuut brp-attributen}
  * die hier zijn gedefinieerd.
- * 
+ *
  * De BrpHistorie en BrpActie zijn onderdeel van het BRP model en zijn in het bovenliggende package gedefinieerd.
- * 
+ *
  * De Herkomst is toegevoegd om tracing mogelijk te maken tussen LO3 gegevens en de daaruit afgeleide BRP gegevens.
  * Deze tracing is bedoeld
  * om vast te leggen hoe BRP gegevens tot stand zijn gekomen naar conversie vanuit het LO3 domein.
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.model.brp
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 

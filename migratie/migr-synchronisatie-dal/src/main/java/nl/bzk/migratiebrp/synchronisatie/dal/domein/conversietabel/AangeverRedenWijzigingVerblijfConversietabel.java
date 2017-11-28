@@ -9,13 +9,14 @@ package nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AangifteAdreshouding;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblijfCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AangeverRedenWijzigingVerblijfPaar;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.ConversieMapEntry;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch.AbstractAangeverRedenWijzigingVerblijfConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AangifteAdreshouding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.AangifteAdreshouding;
 
 /**
  * De Conversietabel voor aangever adreshouding. Deze mapt een Lo3AangifteAdreshouding op de unieke combinatie van
@@ -25,17 +26,14 @@ public final class AangeverRedenWijzigingVerblijfConversietabel extends Abstract
 
     /**
      * Maakt een AangeverRedenWijzigingVerblijfConversietabel object.
-     * 
-     * @param aangifteAdreshoudingLijst
-     *            de lijst met alle AangifteAdreshouding entries uit de conversietabel
+     * @param aangifteAdreshoudingLijst de lijst met alle AangifteAdreshouding entries uit de conversietabel
      */
     public AangeverRedenWijzigingVerblijfConversietabel(final List<AangifteAdreshouding> aangifteAdreshoudingLijst) {
         super(converteerAangifteAdreshoudingLijst(aangifteAdreshoudingLijst));
     }
 
     private static List<Map.Entry<Lo3AangifteAdreshouding, AangeverRedenWijzigingVerblijfPaar>> converteerAangifteAdreshoudingLijst(
-        final List<AangifteAdreshouding> aangifteAdreshoudingLijst)
-    {
+            final List<AangifteAdreshouding> aangifteAdreshoudingLijst) {
         final List<Map.Entry<Lo3AangifteAdreshouding, AangeverRedenWijzigingVerblijfPaar>> result = new ArrayList<>();
 
         for (final AangifteAdreshouding aangifteAdreshouding : aangifteAdreshoudingLijst) {
@@ -44,8 +42,8 @@ public final class AangeverRedenWijzigingVerblijfConversietabel extends Abstract
 
             final AangeverRedenWijzigingVerblijfPaar paar =
                     new AangeverRedenWijzigingVerblijfPaar(
-                        maakAangeverAdreshoudingCode(aangifteAdreshouding),
-                        maakRedenWijzigingAdresCode(aangifteAdreshouding));
+                            maakAangeverAdreshoudingCode(aangifteAdreshouding),
+                            maakRedenWijzigingAdresCode(aangifteAdreshouding));
             result.add(new ConversieMapEntry<>(lo3Code, paar));
         }
         return result;

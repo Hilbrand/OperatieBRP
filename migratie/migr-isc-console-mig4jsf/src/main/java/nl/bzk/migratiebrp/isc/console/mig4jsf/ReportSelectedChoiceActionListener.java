@@ -13,6 +13,8 @@ import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.jbpm.jsf.JbpmJsfContext;
 import org.jbpm.jsf.core.impl.UpdatesHashMap;
 
@@ -20,13 +22,14 @@ import org.jbpm.jsf.core.impl.UpdatesHashMap;
  * Rapporteerd geselecteerd keuze.
  */
 public final class ReportSelectedChoiceActionListener extends AbstractActionListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final ValueExpression variableMapExpression;
 
     /**
      * Constructor.
-     *
-     * @param variableMapExpression
-     *            variable map expression
+     * @param variableMapExpression variable map expression
      */
     public ReportSelectedChoiceActionListener(final ValueExpression variableMapExpression) {
         super("reportSelectedChoice");
@@ -60,18 +63,17 @@ public final class ReportSelectedChoiceActionListener extends AbstractActionList
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     private Map<String, String> getSelectItems(final Object foutpaden) {
         try {
-            final Method method = foutpaden.getClass().getMethod("getSelectItems", new Class<?>[] {});
+            final Method method = foutpaden.getClass().getMethod("getSelectItems", new Class<?>[]{});
             return (Map<String, String>) method.invoke(foutpaden);
         } catch (final
-            NoSuchMethodException
-            | SecurityException
-            | IllegalAccessException
-            | IllegalArgumentException
-            | InvocationTargetException e)
-        {
+        NoSuchMethodException
+                | SecurityException
+                | IllegalAccessException
+                | IllegalArgumentException
+                | InvocationTargetException e) {
+            LOGGER.warn("Kon select items niet ophalen", e);
             return null;
 
         }

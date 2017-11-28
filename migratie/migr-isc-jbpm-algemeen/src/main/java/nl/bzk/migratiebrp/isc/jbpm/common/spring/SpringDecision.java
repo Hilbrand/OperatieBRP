@@ -15,9 +15,7 @@ public interface SpringDecision {
 
     /**
      * Execute.
-     * 
-     * @param parameters
-     *            input parameters
+     * @param parameters input parameters
      * @return decision (Naam van de transitie die gevolgd moet worden)
      */
     String execute(Map<String, Object> parameters);

@@ -9,6 +9,10 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
+
+import nl.bzk.migratiebrp.bericht.model.brp.BrpBericht;
+import nl.bzk.migratiebrp.bericht.model.brp.factory.BrpBerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.brp.impl.OngeldigBericht;
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
@@ -17,7 +21,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
  */
 public class GbaToevalligeGebeurtenissenKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "gbaToevalligeGebeurtenissen";
 
     /**
@@ -59,6 +65,17 @@ public class GbaToevalligeGebeurtenissenKanaal extends LazyLoadingKanaal {
         @Override
         protected boolean vergelijkInhoud(final String verwachteInhoud, final String ontvangenInhoud) {
             return VergelijkXml.vergelijkXml(verwachteInhoud, ontvangenInhoud);
+        }
+
+        @Override
+        protected boolean basisValidatie(final String inhoud) {
+            if (inhoud == null || "".equals(inhoud)) {
+                return true;
+            }
+
+            final BrpBericht bericht = BrpBerichtFactory.SINGLETON.getBericht(inhoud);
+
+            return !(bericht instanceof OngeldigBericht);
         }
     }
 }

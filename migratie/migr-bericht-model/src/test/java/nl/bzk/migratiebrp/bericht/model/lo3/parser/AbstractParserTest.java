@@ -105,6 +105,7 @@ public abstract class AbstractParserTest {
     static final String WAARDE_ELEMENT_7110 = "20111111";
     static final String WAARDE_ELEMENT_7120 = "OmschrijvingVerificatie";
     static final String WAARDE_ELEMENT_7210 = "BZM-aanmelding";
+    static final String WAARDE_ELEMENT_7310 = "1 2+a-f/Z.D";
     static final String WAARDE_ELEMENT_7510 = "0";
     static final String WAARDE_ELEMENT_8010 = "1";
     static final String WAARDE_ELEMENT_8020 = "20121219000000";
@@ -133,8 +134,7 @@ public abstract class AbstractParserTest {
     Lo3Historie maakHistorie() {
         final Lo3CategorieEnum categorie = getCategorie();
         final Lo3IndicatieOnjuist indicatieOnjuist = Lo3CategorieEnum.CATEGORIE_12.equals(categorie) ? null : new Lo3IndicatieOnjuist(WAARDE_ELEMENT_8410);
-        final Lo3Datum datumVanOpneming =
-                Lo3CategorieEnum.CATEGORIE_12.equals(categorie) ? maakDatum(WAARDE_ELEMENT_8610, null) : maakDatum(WAARDE_ELEMENT_8610, null);
+        final Lo3Datum datumVanOpneming = maakDatum(WAARDE_ELEMENT_8610, null);
 
         return new Lo3Historie(indicatieOnjuist, maakDatum(WAARDE_ELEMENT_8510, maakOnderzoek()), datumVanOpneming);
 
@@ -147,33 +147,30 @@ public abstract class AbstractParserTest {
         boolean bevatGroep88 = true;
 
         if (Lo3CategorieEnum.CATEGORIE_04.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_07.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_08.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_10.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_11.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_12.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_13.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_21.equals(categorie))
-        {
+                || Lo3CategorieEnum.CATEGORIE_07.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_08.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_10.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_11.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_12.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_13.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_21.equals(categorie)) {
             bevatGroep81 = false;
         }
         if (Lo3CategorieEnum.CATEGORIE_07.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_08.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_10.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_21.equals(categorie))
-        {
+                || Lo3CategorieEnum.CATEGORIE_08.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_10.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_21.equals(categorie)) {
             bevatGroep82 = false;
         }
         if (Lo3CategorieEnum.CATEGORIE_02.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_03.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_05.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_09.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_10.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_11.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_12.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_13.equals(categorie)
-            || Lo3CategorieEnum.CATEGORIE_21.equals(categorie))
-        {
+                || Lo3CategorieEnum.CATEGORIE_03.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_05.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_09.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_10.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_11.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_12.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_13.equals(categorie)
+                || Lo3CategorieEnum.CATEGORIE_21.equals(categorie)) {
             bevatGroep88 = false;
         }
 
@@ -219,14 +216,12 @@ public abstract class AbstractParserTest {
 
     /**
      * Geef de waarde van gegevens in onderzoek.
-     *
      * @return gegevens in onderzoek
      */
     abstract String getGegevensInOnderzoek();
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return categorie
      */
     abstract Lo3CategorieEnum getCategorie();

@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Aanduiding bijzonder nederlandschap.
@@ -16,9 +16,7 @@ public final class Lo3AanduidingBijzonderNederlandschap extends AbstractLo3Eleme
 
     /**
      * Constructor.
-     * 
-     * @param waarde
-     *            code
+     * @param waarde code
      */
     public Lo3AanduidingBijzonderNederlandschap(final String waarde) {
         this(waarde, null);
@@ -26,15 +24,11 @@ public final class Lo3AanduidingBijzonderNederlandschap extends AbstractLo3Eleme
 
     /**
      * Constructor.
-     * 
-     * @param waarde
-     *            code
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde code
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
     public Lo3AanduidingBijzonderNederlandschap(@Element(name = "waarde", required = false) final String waarde, @Element(
-            name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 }

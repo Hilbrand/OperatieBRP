@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.bzm;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.bzm.impl.BzmBrpService;
 
@@ -17,7 +16,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.bzm.impl.BzmBrpService;
  */
 public class BzmBhgBevragingKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "bzmBhgBevraging";
 
     /**
@@ -25,15 +26,11 @@ public class BzmBhgBevragingKanaal extends LazyLoadingKanaal {
      */
     public BzmBhgBevragingKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-bzm.xml",
-            "classpath:bzm-soap.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-db-gbav.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:infra-db-voisc.xml",
-            "classpath:infra-sql.xml"));
+                "classpath:configuratie.xml",
+                "classpath:infra-bzm.xml",
+                "classpath:bzm-soap.xml",
+                "classpath:infra-db-brp.xml",
+                "classpath:infra-sql.xml"));
     }
 
     /**

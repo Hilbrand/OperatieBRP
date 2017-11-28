@@ -12,7 +12,7 @@ import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class VerwerkAfnemersindicatieAntwoordBerichtTest extends AbstractSyncBerichtTest {
+public class VerwerkAfnemersindicatieAntwoordBerichtTest extends AbstractSyncBerichtTestBasis {
 
     @Test
     public void test() throws Exception {

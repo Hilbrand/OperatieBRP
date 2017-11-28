@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponent;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
@@ -17,9 +20,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponent;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -29,22 +29,26 @@ import org.springframework.stereotype.Component;
 @Component
 public final class BrpGeslachtsnaamcomponentMapper {
 
+    private final BrpGeslachtsnaamcomponentInhoudMapper mapper;
+
+    /**
+     * Constructor.
+     * @param mapper inhoud mapper
+     */
     @Inject
-    private BrpGeslachtsnaamcomponentInhoudMapper mapper;
+    public BrpGeslachtsnaamcomponentMapper(final BrpGeslachtsnaamcomponentInhoudMapper mapper) {
+        this.mapper = mapper;
+    }
 
     /**
      * Map de geslachtsnaam componenten.
-     * 
-     * @param persoonGeslachtsnaamcomponentSet
-     *            set aan geslachtnaam componenten
-     * @param brpOnderzoekMapper
-     *            De mapper voor onderzoeken
+     * @param persoonGeslachtsnaamcomponentSet set aan geslachtnaam componenten
+     * @param brpOnderzoekMapper De mapper voor onderzoeken
      * @return lijst geslachtsnaam componenten
      */
     public List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> map(
-        final Set<PersoonGeslachtsnaamcomponent> persoonGeslachtsnaamcomponentSet,
-        final BrpOnderzoekMapper brpOnderzoekMapper)
-    {
+            final Set<PersoonGeslachtsnaamcomponent> persoonGeslachtsnaamcomponentSet,
+            final BrpOnderzoekMapper brpOnderzoekMapper) {
         if (persoonGeslachtsnaamcomponentSet == null) {
             return null;
         }
@@ -63,37 +67,35 @@ public final class BrpGeslachtsnaamcomponentMapper {
      */
     @Component
     public static final class BrpGeslachtsnaamcomponentInhoudMapper extends
-            AbstractBrpMapper<PersoonGeslachtsnaamcomponentHistorie, BrpGeslachtsnaamcomponentInhoud>
-    {
+            AbstractBrpMapper<PersoonGeslachtsnaamcomponentHistorie, BrpGeslachtsnaamcomponentInhoud> {
 
         @Override
         protected BrpGeslachtsnaamcomponentInhoud mapInhoud(
-            final PersoonGeslachtsnaamcomponentHistorie historie,
-            final BrpOnderzoekMapper brpOnderzoekMapper)
-        {
+                final PersoonGeslachtsnaamcomponentHistorie historie,
+                final BrpOnderzoekMapper brpOnderzoekMapper) {
             final BrpString voorvoegsel =
                     BrpString.wrap(
-                        historie.getVoorvoegsel(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_VOORVOEGSEL, true));
+                            historie.getVoorvoegsel(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_VOORVOEGSEL, true));
             final BrpCharacter scheidingsteken =
                     BrpCharacter.wrap(
-                        historie.getScheidingsteken(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_SCHEIDINGSTEKEN, true));
+                            historie.getScheidingsteken(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_SCHEIDINGSTEKEN, true));
             final BrpString stam =
                     BrpString.wrap(historie.getStam(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_STAM, true));
             final BrpPredicaatCode predicaat =
                     BrpMapperUtil.mapBrpPredicaatCode(
-                        historie.getPredicaat(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_PREDICAATCODE, true));
+                            historie.getPredicaat(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_PREDICAATCODE, true));
             final BrpAdellijkeTitelCode adellijkeTitel;
             adellijkeTitel =
                     BrpMapperUtil.mapBrpAdellijkeTitelCode(
-                        historie.getAdellijkeTitel(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_ADELLIJKETITELCODE, true));
+                            historie.getAdellijkeTitel(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_ADELLIJKETITELCODE, true));
             final BrpInteger volgnummer =
                     BrpInteger.wrap(
-                        historie.getPersoonGeslachtsnaamcomponent().getVolgnummer(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_VOLGNUMMER, true));
+                            historie.getPersoonGeslachtsnaamcomponent().getVolgnummer(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_GESLACHTSNAAMCOMPONENT_VOLGNUMMER, true));
 
             return new BrpGeslachtsnaamcomponentInhoud(voorvoegsel, scheidingsteken, stam, predicaat, adellijkeTitel, volgnummer);
         }

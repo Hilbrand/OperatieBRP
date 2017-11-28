@@ -23,6 +23,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.common.resultaat.Foutmelding;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStatus;
@@ -31,11 +34,10 @@ import nl.bzk.migratiebrp.test.dal.TestCasusOutputStap;
 import nl.bzk.migratiebrp.test.perf.levering.bericht.TestBericht;
 import nl.bzk.migratiebrp.test.perf.levering.environment.TestEnvironment;
 import nl.bzk.migratiebrp.util.common.Kopieer;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal.Strategie;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
+
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -52,9 +54,9 @@ public final class ProcessenTestCasus extends TestCasus {
         @Override
         public boolean accept(final File file) {
             return file.isFile()
-                   && !file.getName().contains(".DS_Store")
-                   && !file.getName().contains(FILENAME_BERICHTEN_ZIP)
-                   && !file.getName().contains("properties");
+                    && !file.getName().contains(".DS_Store")
+                    && !file.getName().contains(FILENAME_BERICHTEN_ZIP)
+                    && !file.getName().contains("properties");
         }
     };
     private final File inputDirectory;
@@ -65,28 +67,20 @@ public final class ProcessenTestCasus extends TestCasus {
 
     /**
      * Constructor.
-     *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
-     * @param outputFolder
-     *            output folder
-     * @param expectedFolder
-     *            expected folder
-     * @param input
-     *            input
-     * @param environment
-     *            environment
+     * @param thema thema
+     * @param naam naam
+     * @param outputFolder output folder
+     * @param expectedFolder expected folder
+     * @param input input
+     * @param environment environment
      */
     protected ProcessenTestCasus(
-        final String thema,
-        final String naam,
-        final File outputFolder,
-        final File expectedFolder,
-        final File input,
-        final TestEnvironment environment)
-    {
+            final String thema,
+            final String naam,
+            final File outputFolder,
+            final File expectedFolder,
+            final File input,
+            final TestEnvironment environment) {
         super(thema, naam, outputFolder, expectedFolder);
         inputDirectory = input;
         outputDirectory = new File(outputFolder, inputDirectory.getName());
@@ -95,7 +89,6 @@ public final class ProcessenTestCasus extends TestCasus {
 
     /**
      * Geef de waarde van name.
-     *
      * @return name
      */
     public String getName() {
@@ -104,7 +97,6 @@ public final class ProcessenTestCasus extends TestCasus {
 
     /**
      * Geef de waarde van output directory.
-     *
      * @return output directory
      */
     public File getOutputDirectory() {
@@ -113,7 +105,6 @@ public final class ProcessenTestCasus extends TestCasus {
 
     /**
      * Geef de waarde van aantal.
-     *
      * @return aantal
      */
     public long getAantal() {
@@ -122,7 +113,6 @@ public final class ProcessenTestCasus extends TestCasus {
 
     /**
      * Geef de waarde van started.
-     *
      * @return started
      */
     public Date getStarted() {
@@ -233,9 +223,7 @@ public final class ProcessenTestCasus extends TestCasus {
 
         /**
          * Default constructor.
-         *
-         * @param environment
-         *            De Environment.
+         * @param environment De Environment.
          */
         public AbstractVerwerker(final TestEnvironment environment) {
             this.environment = environment;
@@ -270,11 +258,8 @@ public final class ProcessenTestCasus extends TestCasus {
 
         /**
          * Default constructor.
-         *
-         * @param file
-         *            Het te gebruiken bestand.
-         * @param environment
-         *            De Environment.
+         * @param file Het te gebruiken bestand.
+         * @param environment De Environment.
          */
         public BestandVerwerker(final File file, final TestEnvironment environment) {
             super(environment);
@@ -304,15 +289,10 @@ public final class ProcessenTestCasus extends TestCasus {
 
         /**
          * Default constructor.
-         *
-         * @param zipFile
-         *            Het te gebruiken zip-bestand.
-         * @param entry
-         *            De te gebruiken zip-entry.
-         * @param environment
-         *            De Environment.
-         * @param zipDir
-         *            De te gebruiken zip-dir.
+         * @param zipFile Het te gebruiken zip-bestand.
+         * @param entry De te gebruiken zip-entry.
+         * @param environment De Environment.
+         * @param zipDir De te gebruiken zip-dir.
          */
         public ZipEntryVerwerker(final ZipFile zipFile, final ZipEntry entry, final TestEnvironment environment, final String zipDir) {
             super(environment);

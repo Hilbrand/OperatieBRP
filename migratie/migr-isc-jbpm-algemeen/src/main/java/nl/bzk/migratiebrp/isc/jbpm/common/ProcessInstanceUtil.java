@@ -20,9 +20,7 @@ public final class ProcessInstanceUtil {
 
     /**
      * Geef de 'root' process instance voor een process instance.
-     * 
-     * @param processInstance
-     *            process instance
+     * @param processInstance process instance
      * @return 'root' process instance
      */
     public static ProcessInstance getRootProcessInstance(final ProcessInstance processInstance) {

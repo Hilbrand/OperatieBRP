@@ -31,9 +31,7 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een storebericht te maken.
-     *
-     * @param zoekPersoonOpActueleGegevensVerzoekType
-     *            het zoekPersoonOpActueleGegevensVerzoek type
+     * @param zoekPersoonOpActueleGegevensVerzoekType het zoekPersoonOpActueleGegevensVerzoek type
      */
     public ZoekPersoonOpActueleGegevensVerzoekBericht(final ZoekPersoonOpActueleGegevensVerzoekType zoekPersoonOpActueleGegevensVerzoekType) {
         super("ZoekPersoonOpActueleGegevensVerzoek");
@@ -51,7 +49,6 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Geeft het A-nummer op het bericht terug.
-     *
      * @return Het A-nummer op het bericht.
      */
     public String getANummer() {
@@ -60,9 +57,7 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Zet het A-nummer op het bericht.
-     *
-     * @param aNummer
-     *            Het te zetten A-nummer.
+     * @param aNummer Het te zetten A-nummer.
      */
     public void setANummer(final String aNummer) {
         zoekPersoonOpActueleGegevensVerzoekType.setANummer(aNummer);
@@ -70,7 +65,6 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Geeft het BSN op het bericht terug.
-     *
      * @return Het BSN op het bericht.
      */
     public String getBsn() {
@@ -79,9 +73,7 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Zet het BSN op het bericht.
-     *
-     * @param bsn
-     *            Het te zetten BSN.
+     * @param bsn Het te zetten BSN.
      */
     public void setBsn(final String bsn) {
         zoekPersoonOpActueleGegevensVerzoekType.setBurgerservicenummer(bsn);
@@ -89,7 +81,6 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Geeft de geslachtsnaam op het bericht terug.
-     *
      * @return De geslachtsnaam op het bericht.
      */
     public String getGeslachtsnaam() {
@@ -98,9 +89,7 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Zet de geslachtsnaam op het bericht.
-     *
-     * @param geslachtsnaam
-     *            De te zetten geslachtsnaamstam.
+     * @param geslachtsnaam De te zetten geslachtsnaamstam.
      */
     public void setGeslachtsnaam(final String geslachtsnaam) {
         zoekPersoonOpActueleGegevensVerzoekType.setGeslachtsnaam(geslachtsnaam);
@@ -108,7 +97,6 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Geeft de postcode op het bericht terug.
-     *
      * @return De postcode op het bericht.
      */
     public String getPostcode() {
@@ -117,9 +105,7 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Zet de postcode op het bericht.
-     *
-     * @param postcode
-     *            De te zetten postcode.
+     * @param postcode De te zetten postcode.
      */
     public void setPostcode(final String postcode) {
         zoekPersoonOpActueleGegevensVerzoekType.setPostcode(postcode);
@@ -127,7 +113,6 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Geeft de aanvullende zoekcriteria op het bericht terug.
-     *
      * @return De aanvullende zoekcriteria op het bericht.
      */
     public String getAanvullendeZoekcriteria() {
@@ -136,9 +121,7 @@ public final class ZoekPersoonOpActueleGegevensVerzoekBericht extends AbstractSy
 
     /**
      * Zet de aanvullende zoekcriteria op het bericht.
-     *
-     * @param aanvullendeZoekcriteria
-     *            De te zetten aanvullende zoekcriteria.
+     * @param aanvullendeZoekcriteria De te zetten aanvullende zoekcriteria.
      */
     public void setAanvullendeZoekcriteria(final String aanvullendeZoekcriteria) {
         zoekPersoonOpActueleGegevensVerzoekType.setAanvullendeZoekcriteria(aanvullendeZoekcriteria);

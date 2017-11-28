@@ -13,13 +13,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.jms.Destination;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.PlaatsAfnemersindicatieVerzoekBericht;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -30,6 +29,9 @@ import org.springframework.jms.core.MessageCreator;
 @RunWith(MockitoJUnitRunner.class)
 public class PlaatsAfnemersindicatieServiceTest {
 
+    private static final String PARTIJ_CODE = "059901";
+    private static final String BSN = "123456789";
+
     @Mock(name = "gbaAfnemersindicaties")
     private Destination gbaAfnemersindicatiesQueue;
     @Mock(name = "brpQueueJmsTemplate")
@@ -37,11 +39,15 @@ public class PlaatsAfnemersindicatieServiceTest {
     @Mock
     private Session jmsSession;
 
-    @InjectMocks
     private PlaatsAfnemersindicatieService subject;
 
     @Mock
     private TextMessage messageToBrp;
+
+    @Before
+    public void setup() {
+        subject = new PlaatsAfnemersindicatieService(jmsTemplate, gbaAfnemersindicatiesQueue);
+    }
 
     @Test
     public void test() throws Exception {
@@ -49,11 +55,9 @@ public class PlaatsAfnemersindicatieServiceTest {
         Assert.assertNotNull(subject.getServiceNaam());
 
         final PlaatsAfnemersindicatieVerzoekBericht verzoek = new PlaatsAfnemersindicatieVerzoekBericht();
-        verzoek.setMessageId("MSG-ID");
         verzoek.setReferentie("REFERENTIE");
-        verzoek.setPersoonId(123);
-        verzoek.setToegangLeveringsautorisatieId(34544);
-        verzoek.setDienstId(432);
+        verzoek.setBsn(BSN);
+        verzoek.setPartijCode(PARTIJ_CODE);
 
         // Execute voor subject
         subject.verwerkBericht(verzoek);
@@ -70,10 +74,10 @@ public class PlaatsAfnemersindicatieServiceTest {
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(jmsSession).createTextMessage(messageCaptor.capture());
         Mockito.verifyNoMoreInteractions(jmsSession);
-        Mockito.verify(messageToBrp).setStringProperty(JMSConstants.BERICHT_REFERENTIE, "MSG-ID");
 
-        final String expectedMessage =
-                "{\"effectAfnemerindicatie\":\"PLAATSING\",\"persoonId\":123,\"toegangLeveringsautorisatieId\":34544,\"referentienummer\":\"REFERENTIE\",\"dienstId\":432}";
+        final String
+                expectedMessage =
+                "{\"effectAfnemerindicatie\":\"PLAATSING\",\"partijCode\":\"059901\",\"bsn\":\"123456789\",\"referentienummer\":\"REFERENTIE\"}";
         final String message = messageCaptor.getValue();
 
         final ObjectMapper objectMapper = new ObjectMapper();

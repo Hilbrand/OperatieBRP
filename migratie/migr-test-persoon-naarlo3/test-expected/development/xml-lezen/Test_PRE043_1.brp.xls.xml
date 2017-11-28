@@ -3,7 +3,7 @@
    <context>lezen</context>
    <stacktrace>java.lang.NullPointerException: naam mag niet null zijn
        at nl.bzk.migratiebrp.conversie.regels.validatie.ValidationUtils.controleerOpNullWaarden(ValidationUtils.java:35)
-       at nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie.&lt;init&gt;(PersoonGeslachtsnaamcomponentHistorie.java:101)
+       at nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponentHistorie.&lt;init&gt;(PersoonGeslachtsnaamcomponentHistorie.java:101)
        at
        nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity.PersoonGeslachtsnaamcomponentHistorieConverter.maakHistorieEntity(PersoonGeslachtsnaamcomponentHistorieConverter.java:126)
        at

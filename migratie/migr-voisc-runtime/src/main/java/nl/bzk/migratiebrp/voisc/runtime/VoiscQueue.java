@@ -16,24 +16,17 @@ import nl.bzk.migratiebrp.voisc.runtime.exceptions.VoiscQueueException;
 public interface VoiscQueue {
 
     /**
-     * Verstuurt een bericht naar de vospgOntvangst queue die weer door de ESB verwerkt kan worden.
-     *
-     * @param bericht
-     *            Het bericht dat door de ESB verwerkt moet worden.
-     * @throws VoiscQueueException
-     *             bij fouten
+     * Verstuurt een bericht naar de voiscOntvangst queue die weer door de ESB verwerkt kan worden.
+     * @param bericht Het bericht dat door de ESB verwerkt moet worden.
+     * @throws VoiscQueueException bij fouten
      */
     void verstuurBerichtNaarIsc(final Bericht bericht) throws VoiscQueueException;
 
     /**
      * Verstuurt het bericht voor archivering.
-     *
-     * @param bericht
-     *            bericht
-     * @param richting
-     *            richting (ingaand of uitgaand)
-     * @throws VoiscQueueException
-     *             bij fouten
+     * @param bericht bericht
+     * @param richting richting (ingaand of uitgaand)
+     * @throws VoiscQueueException bij fouten
      */
     void archiveerBericht(final Bericht bericht, final RichtingType richting) throws VoiscQueueException;
 }

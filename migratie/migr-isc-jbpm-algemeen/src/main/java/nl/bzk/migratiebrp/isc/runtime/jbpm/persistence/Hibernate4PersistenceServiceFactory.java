@@ -21,9 +21,7 @@ public final class Hibernate4PersistenceServiceFactory implements ServiceFactory
     /**
      * Zet de hibernate session factory. Aangeroepen door
      * {@link nl.bzk.migratiebrp.isc.runtime.jbpm.configuration.JbpmConfigurationFactoryBean}.
-     *
-     * @param sessionFactory
-     *            session factory
+     * @param sessionFactory session factory
      */
     public void setSessionFactory(final SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -40,6 +38,7 @@ public final class Hibernate4PersistenceServiceFactory implements ServiceFactory
 
     @Override
     public void close() {
+        // Interface methode, hoeft niks te sluiten
     }
 
 }

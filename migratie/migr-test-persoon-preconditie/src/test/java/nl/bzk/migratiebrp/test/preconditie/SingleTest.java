@@ -37,11 +37,11 @@ public class SingleTest extends PreconditieTestConfiguratie {
      */
     @Override
     public FilenameFilter getCasusFilter() {
-        // return new BaseFilter(FilterType.FILE);
-        final List<String> fileList = new ArrayList<>();
-        fileList.add("Test_oranje_147.xls");
+         return new BaseFilter(FilterType.FILE);
+//        final List<String> fileList = new ArrayList<>();
+//        fileList.add("Test_oranje_147.xls");
         // fileList.add("PRE103C10T60");
-        return new StartsWithListFilter(fileList, FilterType.FILE);
+//        return new StartsWithListFilter(fileList, FilterType.FILE);
     }
 
     /* (non-Javadoc)

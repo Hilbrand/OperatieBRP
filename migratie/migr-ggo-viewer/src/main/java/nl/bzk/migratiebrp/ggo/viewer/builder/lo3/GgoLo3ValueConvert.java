@@ -56,11 +56,8 @@ public class GgoLo3ValueConvert {
 
     /**
      * Zet de waarde om in een viewer geformatteerde waarde.
-     *
-     * @param value
-     *            De eventueel om te zetten waarde.
-     * @param element
-     *            Element enum welke aangeeft welk element het is.
+     * @param value De eventueel om te zetten waarde.
+     * @param element Element enum welke aangeeft welk element het is.
      * @return De omgezette waarde.
      */
     protected final String convertToViewerValue(final Lo3Element value, final Lo3ElementEnum element) {
@@ -203,26 +200,19 @@ public class GgoLo3ValueConvert {
 
     /**
      * Maak een Ggo categorie key van een Lo3Categorie.
-     *
-     * @param categorie
-     *            Lo3Categorie.
-     * @param aNummer
-     *            Het anummer van de PL.
-     * @param catNr
-     *            Het nummer van de categorie.
-     * @param vermoedelijkStapelNr
-     *            Het vermoedelijke stapelNr, te gebruiken als Herkomst niet is ingevuld
-     * @param vermoedelijkVoorkomenNr
-     *            Het vermoedelijke voorkomenNr, te gebruiken als Herkomst niet is ingevuld
+     * @param categorie Lo3Categorie.
+     * @param aNummer Het anummer van de PL.
+     * @param catNr Het nummer van de categorie.
+     * @param vermoedelijkStapelNr Het vermoedelijke stapelNr, te gebruiken als Herkomst niet is ingevuld
+     * @param vermoedelijkVoorkomenNr Het vermoedelijke voorkomenNr, te gebruiken als Herkomst niet is ingevuld
      * @return GgoCategorieKey met de unieke plek in LO3.
      */
     public final GgoVoorkomen createVoorkomen(
-        final Lo3Categorie<?> categorie,
-        final Long aNummer,
-        final int catNr,
-        final int vermoedelijkStapelNr,
-        final int vermoedelijkVoorkomenNr)
-    {
+            final Lo3Categorie<?> categorie,
+            final String aNummer,
+            final int catNr,
+            final int vermoedelijkStapelNr,
+            final int vermoedelijkVoorkomenNr) {
         final GgoVoorkomen voorkomen = new GgoVoorkomen();
 
         voorkomen.setCategorieLabelNr(catNr);
@@ -254,13 +244,9 @@ public class GgoLo3ValueConvert {
 
     /**
      * Voeg een element toe aan voorkomen.
-     *
-     * @param voorkomen
-     *            Voorkomen waar het element aan toegevoegd wordt.
-     * @param lo3ElementEnum
-     *            Het element.
-     * @param value
-     *            De waarde die gezet moet worden.
+     * @param voorkomen Voorkomen waar het element aan toegevoegd wordt.
+     * @param lo3ElementEnum Het element.
+     * @param value De waarde die gezet moet worden.
      */
     public final void addElement(final Map<String, String> voorkomen, final Lo3ElementEnum lo3ElementEnum, final Lo3Element value) {
         if (value != null && value.isInhoudelijkGevuld()) {

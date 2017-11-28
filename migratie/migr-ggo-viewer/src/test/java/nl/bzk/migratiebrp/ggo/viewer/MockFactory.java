@@ -6,11 +6,12 @@
 
 package nl.bzk.migratiebrp.ggo.viewer;
 
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.ggo.viewer.service.BcmService;
 import nl.bzk.migratiebrp.ggo.viewer.service.DbService;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.PersoonRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+
 import org.mockito.Mockito;
 
 /**

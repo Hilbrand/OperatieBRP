@@ -7,13 +7,13 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.IOException;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
-import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTest;
+import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTestBasis;
 import org.junit.Test;
 
-public class Lq01BerichtTest extends AbstractLo3BerichtTest {
+public class Lq01BerichtTest extends AbstractLo3BerichtTestBasis {
 
     private static final String A_NUMMER = "9876543210";
     private static final String BRON_GEMEENTE = "0600";
@@ -31,8 +31,8 @@ public class Lq01BerichtTest extends AbstractLo3BerichtTest {
         final Lq01Bericht bericht = new Lq01Bericht();
         bericht.setMessageId(MessageIdGenerator.generateId());
         bericht.setANummer(A_NUMMER);
-        bericht.setBronGemeente(BRON_GEMEENTE);
-        bericht.setDoelGemeente(DOEL_GEMEENTE);
+        bericht.setBronPartijCode(BRON_GEMEENTE);
+        bericht.setDoelPartijCode(DOEL_GEMEENTE);
 
         testFormatAndParseBericht(bericht);
     }
@@ -42,8 +42,8 @@ public class Lq01BerichtTest extends AbstractLo3BerichtTest {
         final Lq01Bericht bericht = new Lq01Bericht();
         bericht.setMessageId(MessageIdGenerator.generateId());
         bericht.setANummer(A_NUMMER);
-        bericht.setBronGemeente(BRON_GEMEENTE);
-        bericht.setDoelGemeente(DOEL_GEMEENTE);
+        bericht.setBronPartijCode(BRON_GEMEENTE);
+        bericht.setDoelPartijCode(DOEL_GEMEENTE);
 
         testFormatAndParseBericht(bericht);
 
@@ -52,8 +52,8 @@ public class Lq01BerichtTest extends AbstractLo3BerichtTest {
 
         final Lq01Bericht controleBericht = new Lq01Bericht();
         controleBericht.setANummer(A_NUMMER);
-        controleBericht.setBronGemeente(BRON_GEMEENTE);
-        controleBericht.setDoelGemeente(DOEL_GEMEENTE);
+        controleBericht.setBronPartijCode(BRON_GEMEENTE);
+        controleBericht.setDoelPartijCode(DOEL_GEMEENTE);
         controleBericht.setMessageId(bericht.getMessageId());
 
         Assert.assertTrue(bericht.equals(bericht));

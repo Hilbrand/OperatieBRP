@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -28,16 +28,16 @@ public class Lo3KiesrechtParserTest extends AbstractParserTest {
 
         final Lo3KiesrechtParser parser = new Lo3KiesrechtParser();
 
-        final Lo3Historie historie = Lo3Historie.NULL_HISTORIE;
+        final Lo3Historie historie = new Lo3Historie(null, null, null);
         final List<Lo3Categorie<Lo3KiesrechtInhoud>> categorieInhoudLijst = new ArrayList<>();
 
         final Lo3KiesrechtInhoud gezagsverhoudingInhoud =
                 new Lo3KiesrechtInhoud(
-                    new Lo3AanduidingEuropeesKiesrecht(Integer.valueOf(WAARDE_ELEMENT_3110)),
-                    maakDatum(WAARDE_ELEMENT_3120, null),
-                    maakDatum(WAARDE_ELEMENT_3130, null),
-                    new Lo3AanduidingUitgeslotenKiesrecht(WAARDE_ELEMENT_3810),
-                    maakDatum(WAARDE_ELEMENT_3820, null));
+                        new Lo3AanduidingEuropeesKiesrecht(Integer.valueOf(WAARDE_ELEMENT_3110)),
+                        maakDatum(WAARDE_ELEMENT_3120, null),
+                        maakDatum(WAARDE_ELEMENT_3130, null),
+                        new Lo3AanduidingUitgeslotenKiesrecht(WAARDE_ELEMENT_3810),
+                        maakDatum(WAARDE_ELEMENT_3820, null));
         final Lo3Categorie<Lo3KiesrechtInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(gezagsverhoudingInhoud, null, null, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_13, 0, 0));
         categorieInhoudLijst.add(categorieInhoudCategorie);
@@ -116,7 +116,7 @@ public class Lo3KiesrechtParserTest extends AbstractParserTest {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.parser.AbstractParserTest#getGegevensInOnderzoek()
      */
     @Override
@@ -126,7 +126,7 @@ public class Lo3KiesrechtParserTest extends AbstractParserTest {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.parser.AbstractParserTest#getCategorie()
      */
     @Override

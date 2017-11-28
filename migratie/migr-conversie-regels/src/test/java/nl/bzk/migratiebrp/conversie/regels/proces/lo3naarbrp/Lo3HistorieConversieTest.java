@@ -70,8 +70,7 @@ public class Lo3HistorieConversieTest extends AbstractComponentTest {
 
         for (final BrpRelatie relatie : relaties) {
             if (BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING.equals(relatie.getSoortRelatieCode())
-                && BrpSoortBetrokkenheidCode.OUDER.equals(relatie.getRolCode()))
-            {
+                    && BrpSoortBetrokkenheidCode.OUDER.equals(relatie.getRolCode())) {
                 final BrpStapel<BrpIstRelatieGroepInhoud> istKindStapel = relatie.getIstKindStapel();
                 assertNotNull(istKindStapel);
                 assertFalse(istKindStapel.isEmpty());
@@ -115,8 +114,7 @@ public class Lo3HistorieConversieTest extends AbstractComponentTest {
         assertEquals("Aantal relaties klopt niet", aantalStapels, relaties.size());
         for (final BrpRelatie relatie : relaties) {
             if (BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING.equals(relatie.getSoortRelatieCode())
-                && BrpSoortBetrokkenheidCode.OUDER.equals(relatie.getRolCode()))
-            {
+                    && BrpSoortBetrokkenheidCode.OUDER.equals(relatie.getRolCode())) {
                 final BrpStapel<BrpIstRelatieGroepInhoud> istKindStapel = relatie.getIstKindStapel();
                 assertNotNull(istKindStapel);
                 assertFalse(istKindStapel.isEmpty());
@@ -153,8 +151,7 @@ public class Lo3HistorieConversieTest extends AbstractComponentTest {
         assertEquals("Aantal relaties klopt niet", 1, relaties.size());
         for (final BrpRelatie relatie : relaties) {
             if (BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING.equals(relatie.getSoortRelatieCode())
-                && BrpSoortBetrokkenheidCode.OUDER.equals(relatie.getRolCode()))
-            {
+                    && BrpSoortBetrokkenheidCode.OUDER.equals(relatie.getRolCode())) {
                 final BrpStapel<BrpIstRelatieGroepInhoud> istKindStapel = relatie.getIstKindStapel();
                 assertNotNull(istKindStapel);
                 assertFalse(istKindStapel.isEmpty());
@@ -184,68 +181,8 @@ public class Lo3HistorieConversieTest extends AbstractComponentTest {
         return maakMigratieStapel(istGegevens);
     }
 
-    @Ignore("Verder afmaken en dan Logging enablen")
-    @Test
-    public void testIstRelatieLegeRelatieGevuldeIst() {
-        final TussenPersoonslijstBuilder migPlBuilder = new TussenPersoonslijstBuilder();
-
-        final TussenRelatie.Builder relatieBuilder =
-                new TussenRelatie.Builder(BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, BrpSoortBetrokkenheidCode.OUDER);
-
-        // IST gegevens
-        final TussenStapel<BrpIstRelatieGroepInhoud> istGegevens = maakIstMeerdereVoorkomens();
-
-        // Betrokkene / lege LO3 rij
-        final BrpIdentificatienummersInhoud idInhoud = new BrpIdentificatienummersInhoud(null, null);
-        final BrpGeboorteInhoud geboorteInhoud = new BrpGeboorteInhoud(null, null, null, null, null, null, null);
-        final BrpSamengesteldeNaamInhoud naamInhoud =
-                new BrpSamengesteldeNaamInhoud(null, null, null, null, null, null, new BrpBoolean(false, null), new BrpBoolean(false, null));
-        final BrpOuderInhoud ouderInhoud = new BrpOuderInhoud(null, null);
-
-        final TussenBetrokkenheid betrokkenheidStapelKind =
-                new TussenBetrokkenheid(
-                    BrpSoortBetrokkenheidCode.KIND,
-                    maakStapel(idInhoud),
-                    null,
-                    maakStapel(geboorteInhoud),
-                    null,
-                    maakStapel(naamInhoud),
-                    maakStapel(ouderInhoud));
-
-        relatieBuilder.betrokkenheden(Arrays.asList(betrokkenheidStapelKind));
-        relatieBuilder.istKind(istGegevens);
-        migPlBuilder.relatie(relatieBuilder.build());
-
-        final BrpPersoonslijst brpPL = conversie.converteer(migPlBuilder.build());
-
-        assertNotNull(brpPL);
-        // 2 voorkomens zou als het goed is 1 relatie moeten opleveren met 2 IST-gegeven stapels
-        final List<BrpRelatie> relaties = brpPL.getRelaties();
-        assertNotNull(relaties);
-        assertFalse(relaties.isEmpty());
-        assertEquals("Aantal relaties klopt niet", 1, relaties.size());
-        for (final BrpRelatie relatie : relaties) {
-            if (BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING.equals(relatie.getSoortRelatieCode())
-                && BrpSoortBetrokkenheidCode.OUDER.equals(relatie.getRolCode()))
-            {
-                final BrpStapel<BrpIstRelatieGroepInhoud> istKindStapel = relatie.getIstKindStapel();
-                assertNotNull(istKindStapel);
-                assertFalse(istKindStapel.isEmpty());
-                assertEquals("Aantal ist groepen bij relatie klopt niet", 2, istKindStapel.size());
-                break;
-            }
-        }
-
-        // Er moeten dus 1 IST stapel met 2 groepen aan de persoon hangen
-        final List<BrpStapel<BrpIstRelatieGroepInhoud>> istKindStapels = brpPL.getIstKindStapels();
-        assertNotNull(istKindStapels);
-        assertFalse(istKindStapels.isEmpty());
-        assertEquals("Aantal ist stapels aan persoon klopt niet", 1, istKindStapels.size());
-        assertEquals("Aantal ist groepen bij persoon klopt niet", 2, istKindStapels.get(0).size());
-    }
-
     private <T extends BrpGroepInhoud> TussenStapel<T> maakStapel(final T inhoud) {
-        return new TussenStapel<>(Arrays.asList(new TussenGroep<>(inhoud, Lo3Historie.NULL_HISTORIE, null, null)));
+        return new TussenStapel<>(Arrays.asList(new TussenGroep<>(inhoud, new Lo3Historie(null, null, null), null, null)));
     }
 
     private <T extends AbstractBrpIstGroepInhoud> TussenStapel<T> maakMigratieStapel(final T inhoud) {
@@ -255,7 +192,7 @@ public class Lo3HistorieConversieTest extends AbstractComponentTest {
     private <T extends AbstractBrpIstGroepInhoud> TussenStapel<T> maakMigratieStapel(final List<T> inhouden) {
         final List<TussenGroep<T>> groepen = new ArrayList<>();
         for (final T inhoud : inhouden) {
-            groepen.add(new TussenGroep<>(inhoud, Lo3Historie.NULL_HISTORIE, null, null));
+            groepen.add(new TussenGroep<>(inhoud, new Lo3Historie(null, null, null), null, null));
         }
         return new TussenStapel<>(groepen);
     }

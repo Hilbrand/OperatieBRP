@@ -16,6 +16,7 @@ import com.mockrunner.mock.jms.MockTextMessage;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -31,7 +32,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.Lo3SyntaxControle;
-import nl.bzk.migratiebrp.init.naarbrp.repository.GbavRepository;
+import nl.bzk.migratiebrp.init.naarbrp.repository.PortInitializer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,7 +46,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Test de service voor het versturen van LO3-berichten.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:runtime-test-beans.xml")
+@ContextConfiguration(locations = "classpath:runtime-test-beans.xml", initializers = PortInitializer.class)
 public class InitieleVullingCharacterSetTest {
 
     @Resource
@@ -57,60 +58,59 @@ public class InitieleVullingCharacterSetTest {
     @Inject
     private DataSource dataSource;
 
-    @Inject
-    private GbavRepository gbavRepository;
-
     @Before
     public void before() {
         final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.execute("CREATE TABLE initvul.initvullingresultBU AS (SELECT * from initvul.initvullingresult) WITH DATA");
         jdbcTemplate.update("DELETE FROM initvul.initvullingresult");
-        jdbcTemplate.update("INSERT INTO initvul.initvullingresult"
-                            + "(gbav_pl_id,"
-                            + " bericht_inhoud,"
-                            + " datum_opschorting,"
-                            + " reden_opschorting,"
-                            + " anummer,"
-                            + " datumtijd_opname_in_gbav,"
-                            + " berichtidentificatie,"
-                            + " berichttype,"
-                            + " gemeente_van_inschrijving,"
-                            + " conversie_resultaat)"
-                            + "  VALUES"
-                            + "  (11,"
-                            + "   '00497011770110010734505193701200099416914520210007Johanna0240004Maas0310008200401010320"
-                            + "0041033033000460300410001V6110001E821000407628220008199409308230003PKA851000819750831861000"
-                            + "819951001020110240004Maas030220240004Maas03300045003040510510004000163100030018510008197508"
-                            + "3186100081994093007077681000819940930691000407627010001780100040003802001720070110113041000"
-                            + "8710001P08129091000406270920008199603191010001W1030008200701091110013D\u00c8omaar\u0073traat1120"
-                            + "0023111600062575RD7210001I851000820070109861000820070110', "
-                            + "NULL, NULL, 7345051937, '2012-07-09 18:17:06.577', 184, 1111, 762, 'TE_VERZENDEN')");
-        jdbcTemplate.update("INSERT INTO initvul.initvullingresult"
-                            + "(gbav_pl_id,"
-                            + " bericht_inhoud,"
-                            + " datum_opschorting,"
-                            + " reden_opschorting,"
-                            + " anummer,"
-                            + " datumtijd_opname_in_gbav,"
-                            + " berichtidentificatie,"
-                            + " berichttype,"
-                            + " gemeente_van_inschrijving,"
-                            + " conversie_resultaat)"
-                            + "  VALUES"
-                            + "  (12,"
-                            + "   '00497011770110010129703510501200099416914520210007Johanna0240004Maas0310008200401010320"
-                            + "0041033033000460300410001V6110001E821000407628220008199409308230003PKA851000819750831861000"
-                            + "819951001020110240004Maas030220240004Maas03300045003040510510004000163100030018510008197508"
-                            + "3186100081994093007077681000819940930691000407627010001780100040003802001720070110113041000"
-                            + "8710001P08129091000406270920008199603191010001W1030008200701091110013Doemaar\u001dtraat1120"
-                            + "0023111600062575RD7210001I851000820070109861000820070110', "
-                            + "NULL, NULL, 1297035105, '2012-07-09 18:17:06.577', 184, 1111, 762, 'TE_VERZENDEN')");
+        jdbcTemplate.update(
+                "INSERT INTO initvul.initvullingresult"
+                        + "(gbav_pl_id,"
+                        + " bericht_inhoud,"
+                        + " datum_opschorting,"
+                        + " reden_opschorting,"
+                        + " anummer,"
+                        + " datumtijd_opname_in_gbav,"
+                        + " berichtidentificatie,"
+                        + " berichttype,"
+                        + " gemeente_van_inschrijving,"
+                        + " conversie_resultaat)"
+                        + "  VALUES"
+                        + "  (11,"
+                        + "   '00497011770110010734505193701200099416914520210007Johanna0240004Maas0310008200401010320"
+                        + "0041033033000460300410001V6110001E821000407628220008199409308230003PKA851000819750831861000"
+                        + "819951001020110240004Maas030220240004Maas03300045003040510510004000163100030018510008197508"
+                        + "3186100081994093007077681000819940930691000407627010001780100040003802001720070110113041000"
+                        + "8710001P08129091000406270920008199603191010001W1030008200701091110013D\u00c8omaar\u0073traat1120"
+                        + "0023111600062575RD7210001I851000820070109861000820070110', "
+                        + "NULL, NULL, 7345051937, '2012-07-09 18:17:06.577', 184, 'Lg01', 762, 'TE_VERZENDEN')");
+        jdbcTemplate.update(
+                "INSERT INTO initvul.initvullingresult"
+                        + "(gbav_pl_id,"
+                        + " bericht_inhoud,"
+                        + " datum_opschorting,"
+                        + " reden_opschorting,"
+                        + " anummer,"
+                        + " datumtijd_opname_in_gbav,"
+                        + " berichtidentificatie,"
+                        + " berichttype,"
+                        + " gemeente_van_inschrijving,"
+                        + " conversie_resultaat)"
+                        + "  VALUES"
+                        + "  (12,"
+                        + "   '00497011770110010129703510501200099416914520210007Johanna0240004Maas0310008200401010320"
+                        + "0041033033000460300410001V6110001E821000407628220008199409308230003PKA851000819750831861000"
+                        + "819951001020110240004Maas030220240004Maas03300045003040510510004000163100030018510008197508"
+                        + "3186100081994093007077681000819940930691000407627010001780100040003802001720070110113041000"
+                        + "8710001P08129091000406270920008199603191010001W1030008200701091110013Doemaar\u001dtraat1120"
+                        + "0023111600062575RD7210001I851000820070109861000820070110', "
+                        + "NULL, NULL, 1297035105, '2012-07-09 18:17:06.577', 184, 'La01', 762, 'TE_VERZENDEN')");
 
-        gbavRepository.setAnummerLimitString("");
-        gbavRepository.setStartDatumString("");
-        gbavRepository.setEindDatumString("");
-        gbavRepository.setGemeenteString("");
-        service.setBatchSize(100);
+        service.setBatchPersoon(100);
+        service.setBatchAutorisatie(100);
+        service.setBatchAfnemersindicatie(100);
+        service.setBatchProtocollering(10);
+        service.setAantalProtocollering(1000);
     }
 
     @After
@@ -123,10 +123,7 @@ public class InitieleVullingCharacterSetTest {
 
     @Test
     public void leesBerichtEnControleerXmlParsing() throws JMSException, BerichtSyntaxException, OngeldigePersoonslijstException {
-        gbavRepository.setStartDatumString("01-01-1990");
-        gbavRepository.setEindDatumString("01-01-2013");
-        service.setBatchSize(15);
-        // config.put("batch.aantal", "15");
+        service.setBatchPersoon(15);
 
         try {
             service.synchroniseerPersonen();
@@ -138,12 +135,13 @@ public class InitieleVullingCharacterSetTest {
         final List<MockTextMessage> messages = queue.getCurrentMessageList();
         Assert.assertEquals("Aantal berichten klopt niet!", 2, messages.size());
 
-        final List<Long> verwachtteIds = new ArrayList<>();
-        verwachtteIds.add(1297035105L);
-        verwachtteIds.add(7345051937L);
+        final List<String> verwachtteIds = new ArrayList<>();
+        verwachtteIds.add("1297035105");
+        verwachtteIds.add("7345051937");
 
         for (final MockTextMessage message : messages) {
             final String berichtText = message.getText();
+            System.out.println("BERICHT TEXT: " + berichtText);
 
             final SyncBericht bericht = SyncBerichtFactory.SINGLETON.getBericht(berichtText);
 
@@ -156,18 +154,20 @@ public class InitieleVullingCharacterSetTest {
             verwachtteIds.remove(pl.getActueelAdministratienummer());
 
             Logging.initContext();
-            if (pl.getActueelAdministratienummer() == 1297035105L) {
+            if (Objects.equals(pl.getActueelAdministratienummer(), "1297035105")) {
                 try {
-                    new Lo3SyntaxControle().controleer(Lo3Inhoud.parseInhoud(syncBericht.getLo3BerichtAsTeletexString()));
+                    new Lo3SyntaxControle().controleer(Lo3Inhoud.parseInhoud(syncBericht.getLo3PersoonslijstAlsTeletexString()));
                     fail("OngeldigePersoonslijstException verwacht");
                 } catch (final OngeldigePersoonslijstException e) {
                     final Set<LogRegel> logRegels = Logging.getLogging().getRegels();
                     assertEquals(1, logRegels.size());
-                    assertEquals("LogRegel[herkomst=Lo3Herkomst[categorie=08,stapel=0,voorkomen=0],severity=ERROR,"
-                                 + "soortMeldingCode=TELETEX,lo3ElementNummer=ELEMENT_1110]", logRegels.iterator().next().toString());
+                    assertEquals(
+                            "LogRegel[herkomst=Lo3Herkomst[categorie=08,stapel=0,voorkomen=0],severity=ERROR,"
+                                    + "soortMeldingCode=TELETEX,lo3ElementNummer=ELEMENT_1110]",
+                            logRegels.iterator().next().toString());
                 }
             } else {
-                new Lo3SyntaxControle().controleer(Lo3Inhoud.parseInhoud(syncBericht.getLo3BerichtAsTeletexString()));
+                new Lo3SyntaxControle().controleer(Lo3Inhoud.parseInhoud(syncBericht.getLo3PersoonslijstAlsTeletexString()));
             }
             Logging.destroyContext();
         }

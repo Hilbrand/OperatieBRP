@@ -31,9 +31,7 @@ public final class VerwerkAfnemersindicatieAntwoordBericht extends AbstractSyncB
 
     /**
      * JAXB constructor.
-     *
-     * @param verwerkAfnemersindicatieAntwoordType
-     *            Het verwerk afnemersindicatie antwoord type {@link VerwerkAfnemersindicatieAntwoordType}
+     * @param verwerkAfnemersindicatieAntwoordType Het verwerk afnemersindicatie antwoord type {@link VerwerkAfnemersindicatieAntwoordType}
      */
     public VerwerkAfnemersindicatieAntwoordBericht(final VerwerkAfnemersindicatieAntwoordType verwerkAfnemersindicatieAntwoordType) {
         super("VerwerkAfnemersindicatieAntwoord");
@@ -51,7 +49,6 @@ public final class VerwerkAfnemersindicatieAntwoordBericht extends AbstractSyncB
 
     /**
      * Geef de waarde van status.
-     *
      * @return De status {@link StatusType} op het bericht.
      */
     public StatusType getStatus() {
@@ -60,9 +57,7 @@ public final class VerwerkAfnemersindicatieAntwoordBericht extends AbstractSyncB
 
     /**
      * Zet de waarde van status.
-     *
-     * @param status
-     *            status
+     * @param status status
      */
     public void setStatus(final StatusType status) {
         if (status == null) {
@@ -73,7 +68,6 @@ public final class VerwerkAfnemersindicatieAntwoordBericht extends AbstractSyncB
 
     /**
      * Geef de waarde van foutcode.
-     *
      * @return De foutcode {@link AfnemersindicatieFoutcodeType} op het bericht.
      */
     public AfnemersindicatieFoutcodeType getFoutcode() {
@@ -82,9 +76,7 @@ public final class VerwerkAfnemersindicatieAntwoordBericht extends AbstractSyncB
 
     /**
      * Zet de waarde van foutcode.
-     *
-     * @param foutcode
-     *            fout code
+     * @param foutcode fout code
      */
     public void setFoutcode(final AfnemersindicatieFoutcodeType foutcode) {
         if (foutcode == null) {

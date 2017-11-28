@@ -22,11 +22,8 @@ public final class TimerUtil {
 
     /**
      * Geef een due date op basis van de huidige datumtijd en de gegeven duration.
-     * 
-     * @param duration
-     *            duration
-     * @param herhaling
-     *            herhaling
+     * @param duration duration
+     * @param herhaling herhaling
      * @return due date
      */
     public static Date getDueDate(final Duration duration, final Integer herhaling) {

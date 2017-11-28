@@ -69,9 +69,9 @@ public class PlControleVersienummerTest {
     private BrpPersoonslijst maakPl(final int versienummer) {
         final BrpPersoonslijstBuilder builder = new BrpPersoonslijstBuilder();
         builder.inschrijvingStapel(BrpStapelHelper.stapel(BrpStapelHelper.groep(
-            BrpStapelHelper.inschrijving(19770101, versienummer, 20000101000000L),
-            BrpStapelHelper.his(20000101),
-            BrpStapelHelper.act(1, 20000101))));
+                BrpStapelHelper.inschrijving(19770101, versienummer, 20000101000000L),
+                BrpStapelHelper.his(20000101),
+                BrpStapelHelper.act(1, 20000101))));
         return builder.build();
     }
 }

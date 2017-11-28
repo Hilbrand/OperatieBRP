@@ -6,53 +6,31 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;
 
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 
 /**
  * Deze abstracte class geeft invulling aan de te volgen strategie voor het mappen van historische BrpGroepen uit het
  * migratie model op de Persoon-entiteit.
- * 
- * @param <T>
- *            het type inhoud van de BrpGroep
- * @param <H>
- *            Het type van de BrpDatabaseGroep
+ * @param <T> het type inhoud van de BrpGroep
+ * @param <H> Het type van de BrpDatabaseGroep
  */
 public abstract class AbstractPersoonHistorieMapperStrategie<T extends BrpGroepInhoud, H extends FormeleHistorie> extends
-        AbstractHistorieMapperStrategie<T, H, Persoon>
-{
+        AbstractHistorieMapperStrategie<T, H, Persoon> {
 
     /**
      * Maakt een AbstractPersoonHistorieMapperStrategie object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public AbstractPersoonHistorieMapperStrategie(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
-    /**
-     * Voor PersoonHistorie mappers worden geen actuele gegevens uit de stapel gekopieerd. Deze implementatie doet dus
-     * niets.
-     * 
-     * @param brpStapel
-     *            de BRP stapel
-     * @param entiteit
-     *            de entiteit waarop de actuele gegevens gemapped moeten worden
-     */
-    @Override
-    protected final void mapActueleGegevens(final BrpStapel<T> brpStapel, final Persoon entiteit) {
-    }
 }

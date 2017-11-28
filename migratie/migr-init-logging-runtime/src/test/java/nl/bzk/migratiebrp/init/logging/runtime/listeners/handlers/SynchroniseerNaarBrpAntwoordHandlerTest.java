@@ -36,23 +36,21 @@ public class SynchroniseerNaarBrpAntwoordHandlerTest {
         antwoordBericht.setCorrelationId(correlatieId);
         antwoordBericht.setStatus(StatusType.FOUT);
 
-        Mockito.when(loggingService.zoekInitVullingLog(Long.valueOf(correlatieId))).thenReturn(new InitVullingLog());
+        Mockito.when(loggingService.zoekInitVullingLog(correlatieId)).thenReturn(new InitVullingLog());
 
         // Execute
         subject.verwerk(antwoordBericht, messageId, correlatieId);
 
         // Verify
-        Mockito.verify(loggingService, Mockito.times(1)).zoekInitVullingLog(Long.valueOf(correlatieId));
+        Mockito.verify(loggingService, Mockito.times(1)).zoekInitVullingLog(correlatieId);
 
         final ArgumentCaptor<InitVullingLog> entityCaptor = ArgumentCaptor.forClass(InitVullingLog.class);
-        Mockito.verify(loggingService, Mockito.times(1)).bepalenEnOpslaanVerschillen(entityCaptor.capture());
+        Mockito.verify(loggingService, Mockito.times(1)).persisteerInitVullingLog(entityCaptor.capture());
         Mockito.verifyNoMoreInteractions(loggingService);
 
         final InitVullingLog entity = entityCaptor.getValue();
         Assert.assertEquals("FOUT", entity.getConversieResultaat());
         Assert.assertNull("Foutmelding niet leeg", entity.getFoutmelding());
-        Assert.assertNull("Preconditie niet leeg", entity.getPreconditie());
-        Assert.assertNull("FoutCategorie niet leeg", entity.getFoutCategorie());
     }
 
     @Test
@@ -62,13 +60,13 @@ public class SynchroniseerNaarBrpAntwoordHandlerTest {
         final SynchroniseerNaarBrpAntwoordBericht antwoordBericht = new SynchroniseerNaarBrpAntwoordBericht();
         antwoordBericht.setCorrelationId(correlatieId);
 
-        Mockito.when(loggingService.zoekInitVullingLog(Long.valueOf(correlatieId))).thenReturn(null);
+        Mockito.when(loggingService.zoekInitVullingLog(correlatieId)).thenReturn(null);
 
         // Execute
         subject.verwerk(antwoordBericht, messageId, correlatieId);
 
         // Verify
-        Mockito.verify(loggingService, Mockito.times(1)).zoekInitVullingLog(Long.valueOf(correlatieId));
+        Mockito.verify(loggingService, Mockito.times(1)).zoekInitVullingLog(correlatieId);
         Mockito.verifyNoMoreInteractions(loggingService);
     }
 }

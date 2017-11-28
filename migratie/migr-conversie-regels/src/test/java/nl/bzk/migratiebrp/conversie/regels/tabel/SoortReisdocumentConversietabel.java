@@ -12,7 +12,9 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocu
 
 public class SoortReisdocumentConversietabel implements Conversietabel<Lo3SoortNederlandsReisdocument, BrpSoortNederlandsReisdocumentCode> {
 
-    /** Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk). */
+    /**
+     * Test waarde voor een niet geldige waarde (niet wijzigen, tests zijn hiervan afhankelijk).
+     */
     public static final Lo3SoortNederlandsReisdocument LO3_NIET_VALIDE_UITZONDERING = new Lo3SoortNederlandsReisdocument("QQ");
 
     @Override

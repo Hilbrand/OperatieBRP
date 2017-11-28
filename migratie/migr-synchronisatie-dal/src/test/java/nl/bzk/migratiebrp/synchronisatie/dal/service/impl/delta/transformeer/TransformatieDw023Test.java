@@ -14,21 +14,21 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import org.junit.Before;
+import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class TransformatieDw023Test extends AbstractTransformatieTest {
 
@@ -104,9 +104,8 @@ public class TransformatieDw023Test extends AbstractTransformatieTest {
     }
 
     private VerschilGroep maakActieAanpassingGeldigheidVerschil(
-        final boolean voegActieAanpassingGeldigheidVerschilToe,
-        final boolean voegDatumEindeGeldigheidVerschilToe)
-    {
+            final boolean voegActieAanpassingGeldigheidVerschilToe,
+            final boolean voegDatumEindeGeldigheidVerschilToe) {
         final EntiteitSleutel sleutel = maakActieAanpassingGeldigheidVerschilSleutel();
         final Object oudeWaarde = new Object();
         final Object nieuweWaarde = new Object();
@@ -116,15 +115,15 @@ public class TransformatieDw023Test extends AbstractTransformatieTest {
         final List<Verschil> verschillen = new ArrayList<>();
         if (voegDatumEindeGeldigheidVerschilToe) {
             final EntiteitSleutel degSleutel = maakDatumEindeGeldigheidVerschilSleutel();
-            final int degOudeWaarde = 20140202;
-            final int degNieuweWaarde = 20140201;
+            final int degOudeWaarde = 2014_02_02;
+            final int degNieuweWaarde = 2014_02_01;
             verschillen.add(new Verschil(
-                degSleutel,
-                degOudeWaarde,
-                degNieuweWaarde,
-                VerschilType.ELEMENT_AANGEPAST,
-                bestaandeHistorieRij,
-                nieuweHistorieRij));
+                    degSleutel,
+                    degOudeWaarde,
+                    degNieuweWaarde,
+                    VerschilType.ELEMENT_AANGEPAST,
+                    bestaandeHistorieRij,
+                    nieuweHistorieRij));
         }
         if (voegActieAanpassingGeldigheidVerschilToe) {
             verschillen.add(new Verschil(sleutel, oudeWaarde, nieuweWaarde, VerschilType.ELEMENT_AANGEPAST, bestaandeHistorieRij, nieuweHistorieRij));
@@ -139,7 +138,7 @@ public class TransformatieDw023Test extends AbstractTransformatieTest {
         final EntiteitSleutel eigenaar = new EntiteitSleutel(Persoon.class, "persoonAdresSet");
         final EntiteitSleutel persoonAdres = new EntiteitSleutel(PersoonAdres.class, "persoonAdresHistorieSet", eigenaar);
         final EntiteitSleutel result = new EntiteitSleutel(PersoonAdresHistorie.class, "datumEindeGeldigheid", persoonAdres);
-        result.addSleuteldeel("dataanvgel", Integer.valueOf(20000101));
+        result.addSleuteldeel("dataanvgel", 2000_01_01);
         result.addSleuteldeel("tsreg", maakTimestamp("2000-01-02 02"));
         return result;
     }
@@ -149,7 +148,7 @@ public class TransformatieDw023Test extends AbstractTransformatieTest {
         final EntiteitSleutel persoonAdres = new EntiteitSleutel(PersoonAdres.class, "persoonAdresHistorieSet", eigenaar);
         final EntiteitSleutel result = new EntiteitSleutel(PersoonAdresHistorie.class, "actieAanpassingGeldigheid", persoonAdres);
 
-        result.addSleuteldeel("dataanvgel", Integer.valueOf(20000101));
+        result.addSleuteldeel("dataanvgel", 2000_01_01);
         result.addSleuteldeel("tsreg", maakTimestamp("2000-01-02 02"));
         return result;
     }
@@ -162,8 +161,8 @@ public class TransformatieDw023Test extends AbstractTransformatieTest {
     }
 
     private PersoonAdresHistorie maakDummyPersoonAdresHistorie(final PersoonAdres persoonAdres) {
-        final LandOfGebied landOfGebied = new LandOfGebied((short) 1, "testland");
+        final LandOfGebied landOfGebied = new LandOfGebied("0001", "testland");
         final RedenWijzigingVerblijf redenWijzging = new RedenWijzigingVerblijf('t', "test");
-        return new PersoonAdresHistorie(persoonAdres, FunctieAdres.WOONADRES, landOfGebied, redenWijzging);
+        return new PersoonAdresHistorie(persoonAdres, SoortAdres.WOONADRES, landOfGebied, redenWijzging);
     }
 }

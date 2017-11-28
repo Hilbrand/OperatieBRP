@@ -13,42 +13,38 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.MaterieleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.MaterieleHistorie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 
 /**
  * Converter voor Historische Entities.
- * 
- * @param <T>
- *            extends FormeleHistorie
+ * @param <T> extends FormeleHistorie
  */
 public abstract class AbstractEntityHistorieConverter<T extends FormeleHistorie> extends EntityConverter {
 
     private static final List<String> IGNORE_FIELDS_VOOR_ACTUEEL = Arrays.asList(
-        "datumAanvangGeldigheid",
-        "datumEindeGeldigheid",
-        "datumTijdRegistratie",
-        "datumTijdVerval",
-        "actieInhoud",
-        "actieVerval",
-        "actieAanpassingGeldigheid",
-        "persoon",
-        "persoonAdres",
-        "persoonGeslachtsnaamcomponent",
-        "persoonIndicatie",
-        "persoonNationaliteit",
-        "persoonReisdocument",
-        "persoonVoornaam",
-        "relatie",
-        "betrokkenheid",
-        "nadereAanduidingVerval");
+            "datumAanvangGeldigheid",
+            "datumEindeGeldigheid",
+            "datumTijdRegistratie",
+            "datumTijdVerval",
+            "actieInhoud",
+            "actieVerval",
+            "actieAanpassingGeldigheid",
+            "persoon",
+            "persoonAdres",
+            "persoonGeslachtsnaamcomponent",
+            "persoonIndicatie",
+            "persoonNationaliteit",
+            "persoonReisdocument",
+            "persoonVoornaam",
+            "relatie",
+            "betrokkenheid",
+            "nadereAanduidingVerval");
 
     /**
      * Default constructor.
-     * 
-     * @param type
-     *            type van de converter
+     * @param type type van de converter
      */
     public AbstractEntityHistorieConverter(final String type) {
         super(type);
@@ -67,9 +63,7 @@ public abstract class AbstractEntityHistorieConverter<T extends FormeleHistorie>
 
     /**
      * Maakt de historische entities aan.
-     * 
-     * @param context
-     *            context waar de herbruikebare entities zitten zoals Persoon en Relatie
+     * @param context context waar de herbruikebare entities zitten zoals Persoon en Relatie
      */
     protected abstract void maakHistorieEntity(final ConverterContext context);
 
@@ -87,12 +81,12 @@ public abstract class AbstractEntityHistorieConverter<T extends FormeleHistorie>
         }
 
         throw new IllegalArgumentException("JPA field '"
-                                           + name
-                                           + "' not found on class '"
-                                           + object.getClass().getName()
-                                           + "'. (converter="
-                                           + this.getClass().getSimpleName()
-                                           + ")");
+                + name
+                + "' not found on class '"
+                + object.getClass().getName()
+                + "'. (converter="
+                + this.getClass().getSimpleName()
+                + ")");
     }
 
     private String getJPAName(final Field field) {
@@ -124,12 +118,9 @@ public abstract class AbstractEntityHistorieConverter<T extends FormeleHistorie>
     /**
      * Bepaal het actuele historie record (datumtijd verval is leeg en in geval van MaterieleHistorie is ook datum einde
      * geldigheid leeg).
-     * 
-     * @param set
-     *            set
+     * @param set set
      * @return actuele historie record
-     * @throws IllegalArgumentException
-     *             als er geen actueel record is
+     * @throws IllegalArgumentException als er geen actueel record is
      */
     protected final T getActueel(final Set<T> set) {
         T actueel = null;
@@ -152,11 +143,8 @@ public abstract class AbstractEntityHistorieConverter<T extends FormeleHistorie>
     /**
      * Vul de JPA waarden vanuit een record naar een ander record. Velden worden gecorreleerd aan de hand van de JPA
      * veld namen.
-     * 
-     * @param target
-     *            te vullen record
-     * @param record
-     *            record om waardne uit te lezen
+     * @param target te vullen record
+     * @param record record om waardne uit te lezen
      */
     protected final void vulActueelVanuit(final Object target, final T record) {
         if (record == null) {

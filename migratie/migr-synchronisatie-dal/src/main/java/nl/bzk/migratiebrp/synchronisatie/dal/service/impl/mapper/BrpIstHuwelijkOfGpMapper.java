@@ -8,6 +8,8 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.List;
 import java.util.Set;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
@@ -19,22 +21,17 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstHuwelijkOfGpGroepInhou
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstRelatieGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstStandaardGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
 import org.springframework.stereotype.Component;
 
 /**
  * Mapped IST stapels van een Persoon op de IST Huwelijk of GP stapel van de BrpPersoonslijst.
- * 
  */
 @Component
 public final class BrpIstHuwelijkOfGpMapper extends AbstractBrpIstMapper<BrpIstHuwelijkOfGpGroepInhoud> {
 
     /**
      * Mapped van de set met stapels de categorie 5 stapels op een lijst van BrpStapels met BrpIstRelatieGroepInhoud.
-     * 
-     * @param stapels
-     *            de set met IST stapels
+     * @param stapels de set met IST stapels
      * @return een lijst van stapels met BrpIstRelatieGroepInhoud
      */
     public List<BrpStapel<BrpIstHuwelijkOfGpGroepInhoud>> map(final Set<Stapel> stapels) {
@@ -43,9 +40,7 @@ public final class BrpIstHuwelijkOfGpMapper extends AbstractBrpIstMapper<BrpIstH
 
     /**
      * Mapped een StapelVoorkomen op een BrpIstRelatieGroepInhoud.
-     * 
-     * @param voorkomen
-     *            het voorkomen dat gemapped moet worden
+     * @param voorkomen het voorkomen dat gemapped moet worden
      * @return het resultaat van de mapping
      */
     @Override

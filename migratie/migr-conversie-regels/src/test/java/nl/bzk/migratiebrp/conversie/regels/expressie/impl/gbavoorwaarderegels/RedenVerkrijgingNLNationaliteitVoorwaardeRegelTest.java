@@ -7,12 +7,12 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,12 +28,22 @@ public class RedenVerkrijgingNLNationaliteitVoorwaardeRegelTest {
     @Inject
     private RedenVerkrijgingNLNationaliteitVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test of vertaalWaardeVanRubriek method, of class RedenVerkrijgingNLNationaliteitVoorwaardeRegel.
      */
     @Test
     public void testVertaalWaardeVanRubriek() throws GbaVoorwaardeOnvertaalbaarExceptie {
-        testVoorwaarde("04.63.10 GA1 018", "ER_IS(RMAP(nationaliteiten, x, x.reden_verkrijging), v, v = 18)");
+        testUtil.testVoorwaarde(
+                "04.63.10 GA1 018",
+                "(Persoon.Nationaliteit.RedenVerkrijgingCode E= \"018\" OF Persoon.Nationaliteit.MigratieRedenOpnameNationaliteit E= \"018\" OF Persoon.Indicatie"
+                        + ".Staatloos.MigratieRedenOpnameNationaliteit E= \"018\")");
     }
 
     /**
@@ -47,10 +57,5 @@ public class RedenVerkrijgingNLNationaliteitVoorwaardeRegelTest {
     @Test
     public void testFilterFalse() {
         assertFalse(instance.filter("04.64.10 GA1 034"));
-    }
-
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
     }
 }

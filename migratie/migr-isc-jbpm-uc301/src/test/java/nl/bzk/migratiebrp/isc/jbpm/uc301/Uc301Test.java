@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.isc.jbpm.uc301;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
@@ -21,8 +22,9 @@ import nl.bzk.migratiebrp.bericht.model.sync.generated.ZoekPersoonResultaatType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonAntwoordBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Gemeente;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegisterImpl;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegisterImpl;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Rol;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerwijzingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieGeheimCodeEnum;
@@ -44,8 +46,11 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration("classpath:/uc301-test-beans.xml")
 public class Uc301Test extends AbstractJbpmTest {
 
-    private static final String LO3_PL_STRING =
-            "00697011640110010817238743501200092995889450210004Mart0240005Vries03100081990010103200040599033000460300410001M6110001E8110004059981200071 A9102851000819900101861000819900102021720110010192829389501200099911223340210006Jannie0240004Smit03100081969010103200041901033000460300410001M6210008199001018110004059981200071 A9102851000819900101861000819900102031750110010172625463201200093827261340210008Mitchell0240005Vries03100081970010103200041900033000460300410001M6210008199001018110004059981200071 A910285100081990010186100081990010207055681000819900101701000108010001180200170000000000000000008106091000405990920008199001011010001W102000405991030008199001011110001.7210001G851000819900101861000819900102";
+    private static final String
+            LO3_PL_STRING =
+            "00697011640110010817238743501200092995889450210004Mart0240005Vries03100081990010103200040599033000460300410001M6110001E8110004059981200071 "
+                    +
+                    "A9102851000819900101861000819900102021720110010192829389501200099911223340210006Jannie0240004Smit03100081969010103200041901033000460300410001M6210008199001018110004059981200071 A9102851000819900101861000819900102031750110010172625463201200093827261340210008Mitchell0240005Vries03100081970010103200041900033000460300410001M6210008199001018110004059981200071 A910285100081990010186100081990010207055681000819900101701000108010001180200170000000000000000008106091000405990920008199001011010001W102000405991030008199001011110001.7210001G851000819900101861000819900102";
 
     public Uc301Test() {
         super("/uc301/processdefinition.xml,/foutafhandeling/processdefinition.xml");
@@ -57,11 +62,11 @@ public class Uc301Test extends AbstractJbpmTest {
     }
 
     @Before
-    public void setupGemeenteRegister() {
-        final List<Gemeente> gemeenten = new ArrayList<>();
-        gemeenten.add(new Gemeente("0399", "580002", null));
-        gemeenten.add(new Gemeente("0499", "580001", intToDate(20090101)));
-        setGemeenteRegister(new GemeenteRegisterImpl(gemeenten));
+    public void setupPartijRegister() {
+        final List<Partij> partijen = new ArrayList<>();
+        partijen.add(new Partij("039901", "0399", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("049901", "0499", intToDate(20090101), Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        setPartijRegister(new PartijRegisterImpl(partijen));
     }
 
     @Test
@@ -71,13 +76,13 @@ public class Uc301Test extends AbstractJbpmTest {
         input.setMessageId("TstBer001");
         // input.setANummer("1234579892");
         input.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.BURGERSERVICENUMMER, "123457892");
-        input.setBronGemeente("0399");
-        input.setDoelGemeente("0499");
+        input.setBronPartijCode("039901");
+        input.setDoelPartijCode("049901");
         startProcess(input);
 
         // Verwacht: BRP zoekpersoon
         Assert.assertEquals("Geen BRP berichten verwacht", 0, getBrpBerichten().size());
-        Assert.assertEquals("Geen VOSPG bericht verwacht", 0, getVospgBerichten().size());
+        Assert.assertEquals("Geen VOISC bericht verwacht", 0, getVoiscBerichten().size());
         Assert.assertEquals("Een (1) sync bericht verwacht", 1, getSyncBerichten().size());
 
         final SyncBericht zoekPersoonBericht = getSyncBerichten().remove(0);
@@ -100,7 +105,7 @@ public class Uc301Test extends AbstractJbpmTest {
 
         // Verwacht: 1 blokkering
         Assert.assertEquals("Geen BRP berichten verwacht", 0, getBrpBerichten().size());
-        Assert.assertEquals("Geen VOSPG berichten verwacht", 0, getVospgBerichten().size());
+        Assert.assertEquals("Geen VOISC berichten verwacht", 0, getVoiscBerichten().size());
         Assert.assertEquals("Een (1) sync bericht verwacht", 1, getSyncBerichten().size());
 
         final SyncBericht blokkeringBericht = getSyncBerichten().remove(0);
@@ -117,7 +122,7 @@ public class Uc301Test extends AbstractJbpmTest {
 
         // Verwacht: sync bericht opvragen PL
         Assert.assertEquals("Geen BRP bericht verwacht", 0, getBrpBerichten().size());
-        Assert.assertEquals("Geen VOSPG berichten verwacht", 0, getVospgBerichten().size());
+        Assert.assertEquals("Geen VOISC berichten verwacht", 0, getVoiscBerichten().size());
         Assert.assertEquals("Een (1) sync berichten verwacht", 1, getSyncBerichten().size());
 
         final SyncBericht leesUitBrpVerzoekBericht = getSyncBerichten().remove(0);
@@ -139,45 +144,45 @@ public class Uc301Test extends AbstractJbpmTest {
 
         // Verwacht: ib01 bericht
         Assert.assertEquals("Geen BRP bericht verwacht", 0, getBrpBerichten().size());
-        Assert.assertEquals("Een (1) VOSPG berichten verwacht", 1, getVospgBerichten().size());
+        Assert.assertEquals("Een (1) VOISC berichten verwacht", 1, getVoiscBerichten().size());
         Assert.assertEquals("Geen sync berichten verwacht", 0, getSyncBerichten().size());
 
-        final Lo3Bericht ib01Bericht = getVospgBerichten().remove(0);
+        final Lo3Bericht ib01Bericht = getVoiscBerichten().remove(0);
         Assert.assertEquals("ib01Bericht verwacht", "Ib01", ib01Bericht.getBerichtType());
         System.out.println("ib01Bericht: " + ib01Bericht);
 
         // Verzend: iv01 bericht als antwoord op ib01
         final Lo3VerwijzingInhoud inhoud =
                 new Lo3VerwijzingInhoud(
-                    Lo3Long.wrap(2349326344L),
-                    new Lo3Integer(546589734),
-                    new Lo3String("Jaap"),
-                    null,
-                    null,
-                    new Lo3String("Appelenberg"),
-                    new Lo3Datum(19540307),
-                    new Lo3GemeenteCode("0518"),
-                    new Lo3LandCode(Lo3LandCode.CODE_NEDERLAND),
-                    new Lo3GemeenteCode("0518"),
-                    new Lo3Datum(19540309),
-                    Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement());
+                        Lo3Long.wrap(2349326344L),
+                        new Lo3Integer(546589734),
+                        new Lo3String("Jaap"),
+                        null,
+                        null,
+                        new Lo3String("Appelenberg"),
+                        new Lo3Datum(19540307),
+                        new Lo3GemeenteCode("0518"),
+                        new Lo3LandCode(Lo3LandCode.CODE_NEDERLAND),
+                        new Lo3GemeenteCode("0518"),
+                        new Lo3Datum(19540309),
+                        Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement());
 
         final Iv01Bericht iv01Bericht = new Iv01Bericht();
         iv01Bericht.setMessageId("TstBer005");
         iv01Bericht.setVerwijzing(inhoud);
         iv01Bericht.setCorrelationId(ib01Bericht.getMessageId());
-        iv01Bericht.setBronGemeente(ib01Bericht.getDoelGemeente());
-        iv01Bericht.setDoelGemeente(ib01Bericht.getBronGemeente());
+        iv01Bericht.setBronPartijCode(ib01Bericht.getDoelPartijCode());
+        iv01Bericht.setDoelPartijCode(ib01Bericht.getBronPartijCode());
 
         System.out.println("Iv01: " + iv01Bericht);
-        signalVospg(iv01Bericht);
+        signalVoisc(iv01Bericht);
 
         // Verwacht: null-bericht en deblokkeerantwoord bericht
         Assert.assertEquals("Geen BRP berichten verwacht", 0, getBrpBerichten().size());
-        Assert.assertEquals("Een (1) VOSPG bericht verwacht", 1, getVospgBerichten().size());
+        Assert.assertEquals("Een (1) VOISC bericht verwacht", 1, getVoiscBerichten().size());
         Assert.assertEquals("Geen sync berichten verwacht", 0, getSyncBerichten().size());
 
-        final Lo3Bericht nullBericht = getVospgBerichten().remove(0);
+        final Lo3Bericht nullBericht = getVoiscBerichten().remove(0);
         Assert.assertEquals("nullbericht verwacht", "Null", nullBericht.getBerichtType());
         System.out.println("nullbericht:" + nullBericht);
         Assert.assertEquals("nullbericht correlatie niet juist", iv01Bericht.getMessageId(), nullBericht.getCorrelationId());

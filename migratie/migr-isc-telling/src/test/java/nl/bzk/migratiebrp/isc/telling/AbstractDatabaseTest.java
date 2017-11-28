@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(transactionManager = "tellingTransactionManager")
 @Rollback(false)
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class })
-@ContextConfiguration(locations = {"classpath:isc-telling.xml", "classpath:inmemory-datasource.xml" })
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class})
+@ContextConfiguration(locations = {"classpath:isc-telling.xml", "classpath:inmemory-datasource.xml"})
 public abstract class AbstractDatabaseTest {
 
     /**

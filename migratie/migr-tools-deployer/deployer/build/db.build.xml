@@ -26,9 +26,9 @@
 	<property name="application.directory" value="database" />
 	
 	<target name="checkProperties">
-		<fail unless="server.host" message="server.host property is verplicht." />
-		<fail unless="server.username" message="server.username property is verplicht." />
-		<fail unless="server.password" message="server.password property is verplicht." />
+		<fail unless="server.db" message="server.db property is verplicht." />
+		<fail unless="server.db.username" message="server.db.username property is verplicht." />
+		<fail unless="server.db.password" message="server.db.password property is verplicht." />
 
 		<fail unless="database.name" message="database.name property is verplicht." />
 		<fail unless="database.username" message="database.username property is verplicht." />
@@ -105,21 +105,21 @@
 	
 	<target name="execute" depends="createLocalConfigurationFiles" >
 		<echo message="Setup temporary directory" />
-		<sshexec host="${server.host}" username="${server.username}" password="${server.password}" trust="true"
+		<sshexec host="${server.db}" username="${server.db.username}" password="${server.db.password}" trust="true"
 				 command="cd /tmp; mkdir ${application.directory}; cd ${application.directory}; rm -rf *;" />
 
 		<echo message="Copy ${file}" />
-		<scp todir="${server.username}:${server.password}@${server.host}:/tmp/${application.directory}" trust="true">
+		<scp todir="${server.db.username}:${server.db.password}@${server.db}:/tmp/${application.directory}" trust="true">
 			<fileset dir="${file.source}"  includes="${file.file}" />
 		</scp>	
-		<scp todir="${server.username}:${server.password}@${server.host}:/tmp/${application.directory}" trust="true">
+		<scp todir="${server.db.username}:${server.db.password}@${server.db}:/tmp/${application.directory}" trust="true">
 			<fileset dir="tmp">
 				<include name="execute.sh" />
 			</fileset>
 		</scp>
 		
 		<echo message="Executing sql files" />
-		<sshexec host="${server.host}" username="${server.username}" password="${server.password}" trust="true"
+		<sshexec host="${server.db}" username="${server.db.username}" password="${server.db.password}" trust="true"
 				 command="cd /tmp; cd ${application.directory}; chmod u+x execute.sh; ./execute.sh" />
 	</target>
 

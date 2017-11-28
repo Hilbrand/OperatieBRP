@@ -67,8 +67,7 @@ public abstract class AbstractConverteerTest {
             public boolean accept(final File candidate) {
                 return candidate.isFile(); // any file is processed
             }
-        }))
-        {
+        })) {
             try {
                 // Read LO3 messages from an XLS file as lists of Lo3CategorieWaarde's
                 final List<ExcelData> berichtDtos = excelAdapter.leesExcelBestand(new FileInputStream(file));
@@ -98,13 +97,9 @@ public abstract class AbstractConverteerTest {
 
     /**
      * Output a berichtDto as a LO3 message to a file
-     *
-     * @param file
-     *            File to write a LO3 message (Lg01) to
-     * @param categorieLijst
-     *            List of values within a category that needs to be converted to a LO3 message
-     * @throws IOException
-     *             if writing to a file fails
+     * @param file File to write a LO3 message (Lg01) to
+     * @param categorieLijst List of values within a category that needs to be converted to a LO3 message
+     * @throws IOException if writing to a file fails
      */
     private void outputBerichtDto(final File file, final ExcelData berichtDto) throws IOException {
         // final String[] headerValues = berichtDto.getHeaders();
@@ -113,12 +108,12 @@ public abstract class AbstractConverteerTest {
         if (header.isEmpty()) {
             final Lo3Header HEADER =
                     new Lo3Header(
-                        Lo3HeaderVeld.RANDOM_KEY,
-                        Lo3HeaderVeld.BERICHTNUMMER,
-                        Lo3HeaderVeld.DATUM_TIJD,
-                        Lo3HeaderVeld.A_NUMMER,
-                        Lo3HeaderVeld.OUD_A_NUMMER);
-            final String[] headers = new String[] {null, "Lg01", maakDatumTijd(), getAnummer(berichtDto.getCategorieLijst()), null };
+                            Lo3HeaderVeld.RANDOM_KEY,
+                            Lo3HeaderVeld.BERICHTNUMMER,
+                            Lo3HeaderVeld.DATUM_TIJD,
+                            Lo3HeaderVeld.A_NUMMER,
+                            Lo3HeaderVeld.OUD_A_NUMMER);
+            final String[] headers = new String[]{null, "Lg01", maakDatumTijd(), getAnummer(berichtDto.getCategorieLijst()), null};
             header = HEADER.formatHeaders(headers);
         }
 

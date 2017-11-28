@@ -20,29 +20,26 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "listTasksForActor", description = "Read a list of task instances assigned to an actor ID.",
         attributes = {@TldAttribute(name = "target", description = "An EL expression into which the task instance list should be stored.",
-                              required = true, deferredType = List.class),
-                      @TldAttribute(name = "actorId", description = "The actor ID whose task instances are to be read.", required = true) })
+                required = true, deferredType = List.class),
+                @TldAttribute(name = "actorId", description = "The actor ID whose task instances are to be read.", required = true)})
 public final class ListTasksForActorHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
-    private final TagAttribute actorIdTagAttribute;
+
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public ListTasksForActorHandler(final TagConfig config) {
         super(config);
         targetTagAttribute = getRequiredAttribute("target");
-        actorIdTagAttribute = getRequiredAttribute("actorId");
     }
 
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new ListTasksForActorActionListener(getValueExpression(
-            targetTagAttribute,
-            ctx,
-            List.class));
+                targetTagAttribute,
+                ctx,
+                List.class));
     }
 }

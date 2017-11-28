@@ -19,8 +19,8 @@ import java.util.TreeSet;
 import javax.persistence.Entity;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.junit.Assert;
 import org.reflections.Reflections;
 
@@ -31,6 +31,7 @@ public class GetterSetterTester {
 
     private static final Logger LOG = LoggerFactory.getLogger();
     private static final Map<Class<?>, Object> VALUES = new HashMap<>();
+
     static {
         VALUES.put(Character.class, 'c');
         VALUES.put(Character.TYPE, 'c');
@@ -47,16 +48,14 @@ public class GetterSetterTester {
         VALUES.put(Date.class, new Date());
         VALUES.put(Timestamp.class, new Timestamp(System.currentTimeMillis()));
         VALUES.put(Set.class, Collections.emptySet());
-        final byte[] byteArray = new byte[] {};
+        final byte[] byteArray = new byte[]{};
         VALUES.put(byteArray.getClass(), byteArray);
         VALUES.put(Lo3Herkomst.class, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0));
     }
 
     /**
      * Test entities in package.
-     *
-     * @param packageName
-     *            package
+     * @param packageName package
      */
     public void testEntities(final String packageName) throws ReflectiveOperationException {
         final Reflections reflections = new Reflections(packageName);
@@ -82,11 +81,8 @@ public class GetterSetterTester {
 
     /**
      * Test het object (op alle mogelijke manieren {@link #bepaalPropertiesObvFields(Object)}).
-     *
-     * @param objectToTest
-     *            object om te testen
-     * @throws ReflectiveOperationException
-     *             bij fouten
+     * @param objectToTest object om te testen
+     * @throws ReflectiveOperationException bij fouten
      */
     public void test(final Object objectToTest) throws ReflectiveOperationException {
         LOG.info("Test object van klasse: " + objectToTest.getClass().getName());
@@ -100,9 +96,7 @@ public class GetterSetterTester {
 
     /**
      * Bepaal properties obv fields in klassen.
-     *
-     * @param objectToTest
-     *            objcet om te testen
+     * @param objectToTest objcet om te testen
      * @return lisjt van properties
      */
     public Set<String> bepaalPropertiesObvFields(final Object objectToTest) {
@@ -122,13 +116,9 @@ public class GetterSetterTester {
 
     /**
      * Test gebaseerd op property naam (setProperty, getProperty/isProperty, property).
-     *
-     * @param property
-     *            property naam
-     * @param objectToTest
-     *            object om te testen
-     * @throws ReflectiveOperationException
-     *             bij fouten
+     * @param property property naam
+     * @param objectToTest object om te testen
+     * @throws ReflectiveOperationException bij fouten
      */
     public void test(final String property, final Object objectToTest) throws ReflectiveOperationException {
         LOG.info("Test property " + property + " object van klasse: " + objectToTest.getClass().getName());
@@ -149,16 +139,16 @@ public class GetterSetterTester {
                     setter.invoke(objectToTest, value);
                 } catch (final Exception e) {
                     LOG.warn("Kan property "
-                             + property
-                             + " ("
-                             + field.getType().getName()
-                             + ") op object ("
-                             + objectToTest.getClass().getName()
-                             + ") niet setten met "
-                             + value
-                             + " ("
-                             + value.getClass().getName()
-                             + ")", e);
+                            + property
+                            + " ("
+                            + field.getType().getName()
+                            + ") op object ("
+                            + objectToTest.getClass().getName()
+                            + ") niet setten met "
+                            + value
+                            + " ("
+                            + value.getClass().getName()
+                            + ")", e);
                     throw e;
                 }
 

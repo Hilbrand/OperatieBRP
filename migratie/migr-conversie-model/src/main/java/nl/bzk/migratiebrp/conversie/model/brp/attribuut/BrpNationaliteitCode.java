@@ -6,59 +6,43 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de BRP nationaliteit code. Deze code verwijst binnen BRP naar de stamtabel Nationaliteit.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
- * 
- * 
  */
 public final class BrpNationaliteitCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * De code voor de Nederlandse nationaliteit.
      */
-    public static final BrpNationaliteitCode NEDERLANDS = new BrpNationaliteitCode((short) 1);
-
+    public static final BrpNationaliteitCode NEDERLANDS = new BrpNationaliteitCode("0001");
+    private static final int LENGTE_CODE = 4;
     private static final long serialVersionUID = 1L;
 
     /**
      * Maakt een BrpNationaliteitCode object.
-     * 
-     * @param waarde
-     *            de waarde
+     * @param waarde de waarde
      */
-    public BrpNationaliteitCode(final Short waarde) {
+    public BrpNationaliteitCode(final String waarde) {
         this(waarde, null);
     }
 
     /**
      * Maakt een BrpNationaliteitCode object met onderzoek.
-     * 
-     * @param waarde
-     *            de waarde
-     * @param onderzoek
-     *            het onderzoek waar deze datum onder valt. Mag NULL zijn.
+     * @param waarde de waarde
+     * @param onderzoek het onderzoek waar deze datum onder valt. Mag NULL zijn.
      */
-    public BrpNationaliteitCode(
-        @Element(name = "waarde", required = false) final Short waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
-        super(waarde, onderzoek);
+    public BrpNationaliteitCode(@Element(name = "waarde") final String waarde, @Element(name = "onderzoek") final Lo3Onderzoek onderzoek) {
+        super(waarde, LENGTE_CODE, onderzoek);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
-     */
     @Override
-    @Element(name = "waarde", required = false)
-    public Short getWaarde() {
-        return (Short) unwrapImpl(this);
+    @Element(name = "waarde")
+    public String getWaarde() {
+        return (String) unwrapImpl(this);
     }
 }

@@ -20,13 +20,9 @@ public class TestCasusContext {
 
     /**
      * Maak een nieuwe test casus context.
-     *
-     * @param testcaseConfiguratie
-     *            the testcase configuratie
-     * @param inputDirectory
-     *            the input directory
-     * @param outputDirectory
-     *            the output directory
+     * @param testcaseConfiguratie the testcase configuratie
+     * @param inputDirectory the input directory
+     * @param outputDirectory the output directory
      */
     public TestCasusContext(final Properties testcaseConfiguratie, final File inputDirectory, final File outputDirectory) {
         super();
@@ -37,7 +33,6 @@ public class TestCasusContext {
 
     /**
      * Geef de waarde van testcase configuratie.
-     *
      * @return testcase configuratie
      */
     public Properties getTestcaseConfiguratie() {
@@ -46,7 +41,6 @@ public class TestCasusContext {
 
     /**
      * Geef de waarde van input directory.
-     *
      * @return input directory
      */
     public File getInputDirectory() {
@@ -55,7 +49,6 @@ public class TestCasusContext {
 
     /**
      * Geef de waarde van output directory.
-     *
      * @return output directory
      */
     public File getOutputDirectory() {

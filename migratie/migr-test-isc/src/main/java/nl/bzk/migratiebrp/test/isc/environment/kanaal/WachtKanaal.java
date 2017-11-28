@@ -6,8 +6,9 @@
 
 package nl.bzk.migratiebrp.test.isc.environment.kanaal;
 
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import java.util.concurrent.TimeUnit;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Wacht kanaal.
@@ -51,7 +52,7 @@ public final class WachtKanaal extends AbstractKanaal {
     private void wacht(final long seconds) {
         try {
             LOG.info("Testtooling wacht gedurende " + seconds + " seconden.");
-            Thread.sleep(seconds * MILLIS);
+            TimeUnit.MILLISECONDS.sleep(seconds * MILLIS);
         } catch (final InterruptedException e) {
             LOG.debug("Wacht interrupted.");
         }

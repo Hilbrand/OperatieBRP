@@ -8,14 +8,12 @@ package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
 /**
  * Deze marker interface typeert alle LO3 categorie inhoud typen.
- * 
  */
 public interface Lo3CategorieInhoud {
 
     /**
-     * Geef de leeg.
-     *
-     * @return true als deze LO3 inhoud semantisch leeg is
+     * Geef de waarde van leeg van Lo3CategorieInhoud.
+     * @return de waarde van leeg van Lo3CategorieInhoud
      */
     boolean isLeeg();
 }

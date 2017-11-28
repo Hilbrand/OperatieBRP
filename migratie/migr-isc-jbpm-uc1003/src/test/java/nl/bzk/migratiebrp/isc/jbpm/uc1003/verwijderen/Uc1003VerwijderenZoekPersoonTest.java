@@ -7,9 +7,8 @@
 package nl.bzk.migratiebrp.isc.jbpm.uc1003.verwijderen;
 
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf03Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.Vb01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonOpActueleGegevensVerzoekBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.AdHocZoekPersoonVerzoekBericht;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.AbstractUc1003Test;
 import org.junit.After;
 import org.junit.Assert;
@@ -25,7 +24,7 @@ public class Uc1003VerwijderenZoekPersoonTest extends AbstractUc1003Test {
     private static final String END = "end";
     private static final String FOUTAFHANDELING_FOUT = "foutafhandelingFout";
     private static final String A_NUMMER = "1234567890";
-    private static final String AFNEMER = "580001";
+    private static final String AFNEMER = "059901";
 
     public Uc1003VerwijderenZoekPersoonTest() {
         super("/uc1003-verwijderen/processdefinition.xml,/foutafhandeling/processdefinition.xml");
@@ -53,7 +52,7 @@ public class Uc1003VerwijderenZoekPersoonTest extends AbstractUc1003Test {
     @Test
     public void afbreken() {
         controleerBerichten(0, 0, 1);
-        getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
+        getBericht(AdHocZoekPersoonVerzoekBericht.class);
 
         // Afbreken
         signalProcess("afbreken");
@@ -63,23 +62,22 @@ public class Uc1003VerwijderenZoekPersoonTest extends AbstractUc1003Test {
 
         // Nog een keer
         controleerBerichten(0, 0, 1);
-        getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
+        getBericht(AdHocZoekPersoonVerzoekBericht.class);
         signalProcess("afbreken");
 
         // Beheerderskeuze: end
         checkVariabele(FOUTAFHANDELING_FOUT, "uc1003.zoek.afgebroken");
         signalHumanTask(END);
 
-        // Verwacht 2 output berichten (Pf03 en Vb01) om de ap01/av01 cyclus netjes af te ronden
-        controleerBerichten(0, 2, 0);
+        // Verwacht 1 output bericht (Pf03) om de ap01/av01 cyclus netjes af te ronden
+        controleerBerichten(0, 1, 0);
         getBericht(Pf03Bericht.class);
-        getBericht(Vb01Bericht.class);
     }
 
     @Test
     public void afbrekenGeenPf03() {
         controleerBerichten(0, 0, 1);
-        getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
+        getBericht(AdHocZoekPersoonVerzoekBericht.class);
 
         // Afbreken
         signalProcess("afbreken");
@@ -91,10 +89,10 @@ public class Uc1003VerwijderenZoekPersoonTest extends AbstractUc1003Test {
     @Test
     public void foutiefBericht() {
         controleerBerichten(0, 0, 1);
-        final ZoekPersoonOpActueleGegevensVerzoekBericht zoekPersoonVerzoek = getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
+        final AdHocZoekPersoonVerzoekBericht adHocZoekPersoonVerzoekBericht = getBericht(AdHocZoekPersoonVerzoekBericht.class);
 
         // Onverwacht bericht
-        final SyncBericht foutiefBericht = maakOnverwachtBericht(zoekPersoonVerzoek);
+        final SyncBericht foutiefBericht = maakOnverwachtBericht(adHocZoekPersoonVerzoekBericht);
         signalSync(foutiefBericht);
 
         // Beheerderskeuze: restart
@@ -102,27 +100,26 @@ public class Uc1003VerwijderenZoekPersoonTest extends AbstractUc1003Test {
 
         // Nog een keer
         controleerBerichten(0, 0, 1);
-        final ZoekPersoonOpActueleGegevensVerzoekBericht zoekPersoonVerzoek2 = getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
-        final SyncBericht foutiefBericht2 = maakOnverwachtBericht(zoekPersoonVerzoek2);
+        final AdHocZoekPersoonVerzoekBericht adHocZoekPersoonVerzoekBericht2 = getBericht(AdHocZoekPersoonVerzoekBericht.class);
+        final SyncBericht foutiefBericht2 = maakOnverwachtBericht(adHocZoekPersoonVerzoekBericht2);
         signalSync(foutiefBericht2);
 
         // Beheerderskeuze: end
         checkVariabele(FOUTAFHANDELING_FOUT, "uc1003.zoek.foutiefbericht");
         signalHumanTask(END);
 
-        // Verwacht 2 output berichten (Pf03 en Vb01) om de ap01/av01 cyclus netjes af te ronden
-        controleerBerichten(0, 2, 0);
+        // Verwacht 1 output bericht (Pf03) om de ap01/av01 cyclus netjes af te ronden
+        controleerBerichten(0, 1, 0);
         getBericht(Pf03Bericht.class);
-        getBericht(Vb01Bericht.class);
     }
 
     @Test
     public void foutiefBerichtGeenPf03() {
         controleerBerichten(0, 0, 1);
-        final ZoekPersoonOpActueleGegevensVerzoekBericht zoekPersoonVerzoek = getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
+        final AdHocZoekPersoonVerzoekBericht adHocZoekPersoonVerzoekBericht = getBericht(AdHocZoekPersoonVerzoekBericht.class);
 
         // Onverwacht bericht
-        final SyncBericht foutiefBericht = maakOnverwachtBericht(zoekPersoonVerzoek);
+        final SyncBericht foutiefBericht = maakOnverwachtBericht(adHocZoekPersoonVerzoekBericht);
         signalSync(foutiefBericht);
 
         // Beheerderskeuze

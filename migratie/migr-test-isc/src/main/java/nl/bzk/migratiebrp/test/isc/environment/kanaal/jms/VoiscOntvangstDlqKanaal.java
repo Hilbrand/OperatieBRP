@@ -9,11 +9,17 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
+
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
+/**
+ * VOISC Ontvangst DLQ.
+ */
 public class VoiscOntvangstDlqKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "voisc_ontvangst_dlq";
 
     /**
@@ -21,11 +27,11 @@ public class VoiscOntvangstDlqKanaal extends LazyLoadingKanaal {
      */
     public VoiscOntvangstDlqKanaal() {
         super(new Worker(),
-              new Configuration(
-                  "classpath:configuratie.xml",
-                  "classpath:infra-jms-isc.xml",
-                  "classpath:infra-queues-isc-voisc.xml",
-                  "classpath:infra-jmx-routering.xml"));
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-jms-isc.xml",
+                        "classpath:infra-queues-isc-voisc.xml",
+                        "classpath:infra-jmx-routering.xml"));
     }
 
     /**

@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import junit.framework.AssertionFailedError;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.dbunit.Assertion;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
@@ -63,7 +63,6 @@ public abstract class DBUnitUtil {
 
     /**
      * Geeft een SQL-connectie terug naar de testdatabase.
-     *
      * @return Een {@link java.sql.Connection} naar de testdatabase.
      */
     protected abstract Connection createSqlConnection() throws SQLException;
@@ -76,10 +75,7 @@ public abstract class DBUnitUtil {
 
     /**
      * Geeft een door DBUnit gewrapte connectie terug naar de testdatabase.
-     *
      * @return Een DBUnit {@link IDatabaseConnection} naar de testdatabase.
-     * @throws SQLException
-     * @throws DatabaseUnitException
      */
     protected IDatabaseConnection createConnection() throws DatabaseUnitException, SQLException {
         final IDatabaseConnection connection = new DatabaseConnection(createSqlConnection());
@@ -114,13 +110,8 @@ public abstract class DBUnitUtil {
     /**
      * Retourneert de actuele dataset uit de testdatabase. Merk op dat dit een relatief dure methode is, het resultaat
      * moet indien mogelijk gecached worden.
-     *
      * @return De database vulling als dataset.
-     * @throws DatabaseUnitException
-     * @throws SQLException
-     *
-     * @throws Exception
-     *             Als er een fout optreedt.
+     * @throws Exception Als er een fout optreedt.
      */
     protected IDataSet createActualSet() throws SQLException, DatabaseUnitException {
         return createConnection().createDataSet();
@@ -134,12 +125,7 @@ public abstract class DBUnitUtil {
      * Vergelijkt een actuele dataset met de verwachte dataset. Alle records in de verwachte dataset dienen ook voor te
      * komen in de actuele dataset. Tabellen die niet in de expected set voorkomen worden genegeerd.
      * <p>
-     *
-     * @param expected
-     *            De expected dataset.
-     * @throws DatabaseUnitException
-     * @throws SQLException
-     * @throws Exception
+     * @param expected De expected dataset.
      */
     protected void compareExpectedWithActual(final IDataSet expected) throws SQLException, DatabaseUnitException {
         if (expected == null) {
@@ -184,12 +170,7 @@ public abstract class DBUnitUtil {
      * niet voor te komen in de actuele dataset. Tabellen/records die niet in de not-expected set voorkomen worden
      * genegeerd.
      * <p>
-     *
-     * @param notExpected
-     *            De not-expected dataset.
-     * @throws DatabaseUnitException
-     * @throws SQLException
-     * @throws Exception
+     * @param notExpected De not-expected dataset.
      */
     protected void compareNotExpectedWithActual(final IDataSet notExpected) throws DatabaseUnitException, SQLException {
         if (notExpected == null) {
@@ -208,10 +189,10 @@ public abstract class DBUnitUtil {
             if (0 != actualRowCount) {
                 final String foutmelding =
                         "Er zijn "
-                                           + actualRowCount
-                                           + " records gevonden in de tabel "
-                                           + currentTableName.toUpperCase()
-                                           + " die voorkomen in de NOT EXPECTED dataset";
+                                + actualRowCount
+                                + " records gevonden in de tabel "
+                                + currentTableName.toUpperCase()
+                                + " die voorkomen in de NOT EXPECTED dataset";
                 LOG.error(foutmelding);
                 LOG.error("****** De volgende 'NotExpected' records zijn aangetroffen in de database:");
                 LOG.error(FORMATTER.format(filteredActTable));
@@ -236,13 +217,8 @@ public abstract class DBUnitUtil {
 
     /**
      * Lees een resource uit het classpath.
-     *
-     * @param clazz
-     *            De class (van bijvoorbeeld een unit test) dat wordt toegepast om resource lookups tegen uit te voeren.
-     *
-     * @param resourceName
-     *            De naam van de resource. Deze moet bestaan, anders wordt er een {@link IllegalStateException} gegooid.
-     *
+     * @param clazz De class (van bijvoorbeeld een unit test) dat wordt toegepast om resource lookups tegen uit te voeren.
+     * @param resourceName De naam van de resource. Deze moet bestaan, anders wordt er een {@link IllegalStateException} gegooid.
      * @return De inputstream naar het resource.
      */
     public static InputStream getResource(final Class<?> clazz, final String resourceName) {
@@ -259,14 +235,9 @@ public abstract class DBUnitUtil {
     /**
      * Retourneert een dataset op basis van een XML bestand dat als resource is opgenomen. Dit resource wordt relatief
      * tov de opgegeven klasse bepaald.
-     *
-     * @param resource
-     *            De naam van de resource waartegen de resources geresolved worden.
-     *
+     * @param resource De naam van de resource waartegen de resources geresolved worden.
      * @return De ingelezen dataset.
-     *
-     * @throws DataSetException
-     *             Als de dataset problemen bevat.
+     * @throws DataSetException Als de dataset problemen bevat.
      */
     private IDataSet getDataSet(final Class<?> clazz, final String resource) throws DataSetException {
         if (resource == null) {
@@ -291,16 +262,10 @@ public abstract class DBUnitUtil {
 
     /**
      * Retourneert een dataset op basis van een XML bestand.
-     *
-     * @param file
-     *            xml file
-     *
+     * @param file xml file
      * @return De ingelezen dataset.
-     * @throws FileNotFoundException
-     *             als het opgegeven bestand niet gevonden kan worden
-     *
-     * @throws DataSetException
-     *             Als de dataset problemen bevat.
+     * @throws FileNotFoundException als het opgegeven bestand niet gevonden kan worden
+     * @throws DataSetException Als de dataset problemen bevat.
      */
     public IDataSet readDataSet(final File file) throws FileNotFoundException, DataSetException {
         if (file == null) {
@@ -325,9 +290,7 @@ public abstract class DBUnitUtil {
 
     /**
      * Zet de waarde van qualified names.
-     *
-     * @param connection
-     *            qualified names
+     * @param connection qualified names
      */
     private void setQualifiedNames(final IDatabaseConnection connection) {
         final DatabaseConfig config = connection.getConfig();

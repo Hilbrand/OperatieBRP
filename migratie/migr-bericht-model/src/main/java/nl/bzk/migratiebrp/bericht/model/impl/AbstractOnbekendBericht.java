@@ -17,11 +17,8 @@ public abstract class AbstractOnbekendBericht extends AbstractMeldingBericht imp
 
     /**
      * Constructor.
-     *
-     * @param bericht
-     *            ongeparsed bericht
-     * @param melding
-     *            melding
+     * @param bericht ongeparsed bericht
+     * @param melding melding
      */
     protected AbstractOnbekendBericht(final String bericht, final String melding) {
         super("OnbekendBericht", bericht, melding);

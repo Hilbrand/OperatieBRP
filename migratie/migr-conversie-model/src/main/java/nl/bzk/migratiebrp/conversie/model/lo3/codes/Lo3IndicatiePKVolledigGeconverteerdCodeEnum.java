@@ -9,15 +9,16 @@ package nl.bzk.migratiebrp.conversie.model.lo3.codes;
 import java.util.HashMap;
 import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatiePKVolledigGeconverteerdCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze enum type representeert de LO3 waarde voor pk volledig geconverteerd.
- * 
  */
 public enum Lo3IndicatiePKVolledigGeconverteerdCodeEnum {
 
-    /** Volledig geconverteerd. */
+    /**
+     * Volledig geconverteerd.
+     */
     VOLLEDIG_GECONVERTEERD("P", "Volledig geconverteerd");
 
     /* ************************************************************************************************************* */
@@ -27,6 +28,7 @@ public enum Lo3IndicatiePKVolledigGeconverteerdCodeEnum {
     /* ************************************************************************************************************* */
 
     private static final Map<String, Lo3IndicatiePKVolledigGeconverteerdCodeEnum> CODE_MAP = new HashMap<>();
+
     static {
         final Lo3IndicatiePKVolledigGeconverteerdCodeEnum[] values = Lo3IndicatiePKVolledigGeconverteerdCodeEnum.values();
         for (final Lo3IndicatiePKVolledigGeconverteerdCodeEnum value : values) {
@@ -43,7 +45,7 @@ public enum Lo3IndicatiePKVolledigGeconverteerdCodeEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private Lo3IndicatiePKVolledigGeconverteerdCodeEnum(final String code, final String label) {
+    Lo3IndicatiePKVolledigGeconverteerdCodeEnum(final String code, final String label) {
         this.code = code;
         this.label = label;
     }
@@ -56,9 +58,7 @@ public enum Lo3IndicatiePKVolledigGeconverteerdCodeEnum {
 
     /**
      * Bestaat de gegeven code in de enumeratie.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return true, als de code bestaat, anders false
      */
     public static boolean containsCode(final String code) {
@@ -67,9 +67,7 @@ public enum Lo3IndicatiePKVolledigGeconverteerdCodeEnum {
 
     /**
      * Geef de enumeratie waarde voor de gegeven code.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3IndicatiePKVolledigGeconverteerdCodeEnum getByCode(final String code) {
@@ -78,9 +76,7 @@ public enum Lo3IndicatiePKVolledigGeconverteerdCodeEnum {
 
     /**
      * Geef de enumeratie waarde voor (de code van) het gegeven element.
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3IndicatiePKVolledigGeconverteerdCodeEnum getByElement(final Lo3IndicatiePKVolledigGeconverteerdCode element) {
@@ -95,7 +91,6 @@ public enum Lo3IndicatiePKVolledigGeconverteerdCodeEnum {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {
@@ -104,7 +99,6 @@ public enum Lo3IndicatiePKVolledigGeconverteerdCodeEnum {
 
     /**
      * Geef de enumeratie als element.
-     * 
      * @return element
      */
     public Lo3IndicatiePKVolledigGeconverteerdCode asElement() {
@@ -113,18 +107,15 @@ public enum Lo3IndicatiePKVolledigGeconverteerdCodeEnum {
 
     /**
      * Is de enumeratie waarde gelijk aan (de code van) het element?
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return true, als de waarde gelijk is, anders false
      */
     public boolean equalsElement(final Lo3IndicatiePKVolledigGeconverteerdCode element) {
-        return Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
+        return Lo3Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
     }
 
     /**
      * Geef de waarde van label.
-     *
      * @return the label
      */
     public String getLabel() {

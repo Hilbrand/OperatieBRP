@@ -16,33 +16,23 @@ public interface Lo3Formatter {
 
     /**
      * Start een nieuwe categorie.
-     *
-     * @param categorie
-     *            categorie
+     * @param categorie categorie
      */
     void categorie(final Lo3CategorieEnum categorie);
 
     /**
      * Start een nieuwe categorie.
-     *
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            stapel
-     * @param voorkomen
-     *            voorkomen
+     * @param categorie categorie
+     * @param stapel stapel
+     * @param voorkomen voorkomen
      */
     void categorie(final Lo3CategorieEnum categorie, int stapel, int voorkomen);
 
     /**
      * Voeg een element toe aan de huidige categorie.
-     *
-     * @param element
-     *            element
-     * @param inhoud
-     *            inhoud
-     * @throws IllegalStateException
-     *             als er nog geen categorie is aangemaakt
+     * @param element element
+     * @param inhoud inhoud
+     * @throws IllegalStateException als er nog geen categorie is aangemaakt
      */
     void element(final Lo3ElementEnum element, final String inhoud);
 }

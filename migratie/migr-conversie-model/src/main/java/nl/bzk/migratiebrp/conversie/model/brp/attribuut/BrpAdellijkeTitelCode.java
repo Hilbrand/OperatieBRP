@@ -6,14 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een BRP Predikaat code. Deze is onderdeel van het BRP geslachtsnaamcomponent.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpAdellijkeTitelCode extends AbstractBrpAttribuutMetOnderzoek {
     private static final long serialVersionUID = 1L;
@@ -22,9 +21,7 @@ public final class BrpAdellijkeTitelCode extends AbstractBrpAttribuutMetOnderzoe
 
     /**
      * Maakt een BrpAdellijkeTitelCode object.
-     * 
-     * @param waarde
-     *            de waarde
+     * @param waarde de waarde
      */
     public BrpAdellijkeTitelCode(final String waarde) {
         this(waarde, null);
@@ -32,22 +29,18 @@ public final class BrpAdellijkeTitelCode extends AbstractBrpAttribuutMetOnderzoe
 
     /**
      * Maakt een BrpAdellijkeTitelCode object met onderzoek.
-     * 
-     * @param waarde
-     *            de waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde de waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpAdellijkeTitelCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -58,7 +51,6 @@ public final class BrpAdellijkeTitelCode extends AbstractBrpAttribuutMetOnderzoe
 
     /**
      * Geef de waarde van geslachtsaanduiding.
-     *
      * @return geslachtsaanduiding
      */
     public BrpGeslachtsaanduidingCode getGeslachtsaanduiding() {
@@ -67,9 +59,7 @@ public final class BrpAdellijkeTitelCode extends AbstractBrpAttribuutMetOnderzoe
 
     /**
      * Zet de waarde van geslachtsaanduiding.
-     *
-     * @param brpGeslachtsaanduidingCode
-     *            geslachtsaanduiding
+     * @param brpGeslachtsaanduidingCode geslachtsaanduiding
      */
     public void setGeslachtsaanduiding(final BrpGeslachtsaanduidingCode brpGeslachtsaanduidingCode) {
         geslachtsaanduiding = brpGeslachtsaanduidingCode;
@@ -77,7 +67,6 @@ public final class BrpAdellijkeTitelCode extends AbstractBrpAttribuutMetOnderzoe
 
     /**
      * Geeft een kopie van het attribuut terug zonder onderzoek.
-     * 
      * @return Geeft een kopie van het attribuut terug zonder onderzoek
      */
     public BrpAdellijkeTitelCode verwijderOnderzoek() {
@@ -89,11 +78,8 @@ public final class BrpAdellijkeTitelCode extends AbstractBrpAttribuutMetOnderzoe
 
     /**
      * Wrap de waarde en onderzoek naar een BrpAdellijkeTitelCode.
-     * 
-     * @param waarde
-     *            de String waarde
-     * @param onderzoek
-     *            het Lo3 onderzoek
+     * @param waarde de String waarde
+     * @param onderzoek het Lo3 onderzoek
      * @return BrpAdellijkeTitelCode object met daarin waarde en onderzoek
      */
     public static BrpAdellijkeTitelCode wrap(final String waarde, final Lo3Onderzoek onderzoek) {

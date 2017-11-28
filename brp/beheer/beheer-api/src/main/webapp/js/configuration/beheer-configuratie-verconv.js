@@ -1,82 +1,82 @@
 var verconvConfig = angular.module('VerconvConfig', []);
-var LO3BerichtenBron = {
-	titel: 'LO3 Berichten Bron (Statisch Stamgegeven)',
-	resourceNaam: 'LO3BerichtenBron',
-	resourceUrl: 'lo3berichtenbron/:id',
-	loaderNaam: 'LO3BerichtenBronLoader',
-	kolommen: [
-	           { name:'#', display:'ordinal'},
-	           { name:'LO3 Berichten Bron', display:'naam'},
-	           ],
-	listUri: '/lo3berichtenbron/list',
-	listTemplateUrl: 'views/generic/list.html',
+var Lo3BerichtenBron = {
+    titel: 'LO3 Berichten Bron',
+    resourceNaam: 'Lo3BerichtenBron',
+    resourceUrl: 'lo3berichtenbron/:id',
+    loaderNaam: 'Lo3BerichtenBronLoader',
+    kolommen: [
+        { name:'Id', display: 'id'},
+        { name:'Lo3 Berichten Bron', display:'naam'},
+    ],
+    listUri: '/lo3berichtenbron/list',
+    listTemplateUrl: 'views/generic/list.html',
     geenDetail: true
 };
-verconvConfig.value("LO3BerichtenBronConfig", LO3BerichtenBron);
-beheerConfiguratie.setup(LO3BerichtenBron);
+verconvConfig.value("Lo3BerichtenBronConfig", Lo3BerichtenBron);
+beheerConfiguratie.setup(Lo3BerichtenBron);
 
-var LO3CategorieMelding = {
-	titel: 'LO3 Categorie Melding (Statisch Stamgegeven)',
-	resourceNaam: 'LO3CategorieMelding',
-	resourceUrl: 'lo3categoriemelding/:id',
-	loaderNaam: 'LO3CategorieMeldingLoader',
-	kolommen: [
-	           { name:'#', display:'ordinal'},
-	           { name:'LO3 Categorie Melding', display:'naam'},
-	           ],
-	listUri: '/lo3categoriemelding/list',
-	listTemplateUrl: 'views/generic/list.html',
+var Lo3CategorieMelding = {
+    titel: 'LO3 Categorie Melding',
+    resourceNaam: 'Lo3CategorieMelding',
+    resourceUrl: 'lo3categoriemelding/:id',
+    loaderNaam: 'Lo3CategorieMeldingLoader',
+    kolommen: [
+        { name:'Id', display: 'id'},
+        { name:'Lo3 Categorie Melding', display:'naam'},
+    ],
+    listUri: '/lo3categoriemelding/list',
+    listTemplateUrl: 'views/generic/list.html',
     geenDetail: true
 };
-verconvConfig.value("LO3CategorieMeldingConfig", LO3CategorieMelding);
-beheerConfiguratie.setup(LO3CategorieMelding);
+verconvConfig.value("Lo3CategorieMeldingConfig", Lo3CategorieMelding);
+beheerConfiguratie.setup(Lo3CategorieMelding);
 
-var LO3Severity = {
-	titel: 'LO3 Severity (Statisch Stamgegeven)',
-	resourceNaam: 'LO3Severity',
-	resourceUrl: 'lo3severity/:id',
-	loaderNaam: 'LO3SeverityLoader',
-	kolommen: [
-	           { name:'#', display:'ordinal'},
-	           { name:'LO3 Severity', display:'naam'},
-	           ],
-	listUri: '/lo3severity/list',
-	listTemplateUrl: 'views/generic/list.html',
+var Lo3Severity = {
+    titel: 'LO3 Severity',
+    resourceNaam: 'Lo3Severity',
+    resourceUrl: 'lo3severity/:id',
+    loaderNaam: 'Lo3SeverityLoader',
+    kolommen: [
+        { name:'Id', display: 'id'},
+        { name:'Lo3 Severity', display:'naam'},
+    ],
+    listUri: '/lo3severity/list',
+    listTemplateUrl: 'views/generic/list.html',
     geenDetail: true
 };
-verconvConfig.value("LO3SeverityConfig", LO3Severity);
-beheerConfiguratie.setup(LO3Severity);
+verconvConfig.value("Lo3SeverityConfig", Lo3Severity);
+beheerConfiguratie.setup(Lo3Severity);
 
-var LO3SoortAanduidingOuder = {
-		titel: 'LO3 Soort Aanduiding Ouder (Statisch Stamgegeven)',
-		resourceNaam: 'LO3SoortAanduidingOuder',
-		resourceUrl: 'lo3soortaanduidingouder/:id',
-		loaderNaam: 'LO3SoortAanduidingOuderLoader',
-		kolommen: [
-		           { name:'#', display:'ordinal'},
-		           { name:'Naam', display:'naam'},
-		           ],
-		listUri: '/lo3soortaanduidingouder/list',
-		listTemplateUrl: 'views/generic/list.html',
-	    geenDetail: true
-	};
-verconvConfig.value("LO3SoortAanduidingOuderConfig", LO3SoortAanduidingOuder);
-beheerConfiguratie.setup(LO3SoortAanduidingOuder);
-
-var LO3SoortMelding = {
-	titel: 'LO3 Soort Melding (Statisch Stamgegeven)',
-	resourceNaam: 'LO3SoortMelding',
-	resourceUrl: 'lo3soortmelding/:id',
-	loaderNaam: 'LO3SoortMeldingLoader',
-	kolommen: [
-	           { name:'#', display:'ordinal'},
-	           { name:'Code', display:'code'},
-	           { name:'LO3 Soort Melding', display:'omschrijving'},
-	           { name:'LO3 Categorie Melding', display:'categorieMelding.naam'},
-	           ],
-	listUri: '/lo3soortmelding/list',
-	listTemplateUrl: 'views/generic/list.html',
+var Lo3SoortAanduidingOuder = {
+    titel: 'LO3 Soort Aanduiding Ouder',
+    resourceNaam: 'Lo3SoortAanduidingOuder',
+    resourceUrl: 'lo3soortaanduidingouder/:id',
+    loaderNaam: 'Lo3SoortAanduidingOuderLoader',
+    kolommen: [
+        { name:'Id', display: 'id'},
+        { name:'Ouder', display:'id'},
+    ],
+    listUri: '/lo3soortaanduidingouder/list',
+    listTemplateUrl: 'views/generic/list.html',
     geenDetail: true
 };
-verconvConfig.value("LO3SoortMeldingConfig", LO3SoortMelding);
-beheerConfiguratie.setup(LO3SoortMelding);
+verconvConfig.value("Lo3SoortAanduidingOuderConfig", Lo3SoortAanduidingOuder);
+beheerConfiguratie.setup(Lo3SoortAanduidingOuder);
+
+var Lo3SoortMelding = {
+    titel: 'LO3 Soort Melding',
+    resourceNaam: 'Lo3SoortMelding',
+    resourceUrl: 'lo3soortmelding/:id',
+    loaderNaam: 'Lo3SoortMeldingLoader',
+    kolommen: [
+        { name:'Id', display: 'id'},
+        { name:'Code', display:'code'},
+        { name:'Lo3 Soort Melding', display:'omschrijving'},
+        { name:'Lo3 Categorie Melding', display:'categorieMelding.naam'},
+    ],
+    listUri: '/lo3soortmelding/list',
+    listTemplateUrl: 'views/generic/list.html',
+    geenDetail: true
+};
+verconvConfig.value("Lo3SoortMeldingConfig", Lo3SoortMelding);
+beheerConfiguratie.setup(Lo3SoortMelding);

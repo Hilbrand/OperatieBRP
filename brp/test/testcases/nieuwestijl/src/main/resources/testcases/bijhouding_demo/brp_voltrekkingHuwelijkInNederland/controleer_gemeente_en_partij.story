@@ -8,7 +8,7 @@ H/GP mag alleen door betrokken gemeente worden geregistreerd
 
 Scenario: 1. Voltrekking huwelijk in Nederland, controleer partij en gemeente
 
-Given bijhoudingautorisatie uit /bijhoudingsautorisaties/Gemeente_Tiel.txt
+Gemeente BRP 1
 Given bijhoudingsverzoek voor partij 'Gemeente Tiel'
 
 Given de personen 826933129,526521673,141901317,631512457,140678177,698938057 zijn verwijderd

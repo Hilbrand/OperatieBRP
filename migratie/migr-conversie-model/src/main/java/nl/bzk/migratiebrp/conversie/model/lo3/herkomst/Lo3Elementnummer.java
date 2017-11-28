@@ -18,6 +18,7 @@ public @interface Lo3Elementnummer {
 
     /**
      * Waarde van het elementnummer, gevuld door {@link Lo3ElementEnum}.
+     * @return het Lo3Element enum object
      */
     Lo3ElementEnum value();
 }

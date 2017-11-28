@@ -20,8 +20,9 @@ public class MailboxCachingTest extends AbstractRepositoryTest {
 
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW, value = "voiscTransactionManager")
-    public void test() {
-        final Mailbox mailbox = mailboxRepository.getMailboxByInstantiecode(3000200);
+    public void test() throws CentraleMailboxException {
+        final Mailbox mailbox = mailboxRepository.getMailboxByPartijcode("051801");
+        Assert.assertNotNull(mailbox);
 
         mailbox.setMailboxpwd("Blablabla");
         mailboxRepository.save(mailbox);

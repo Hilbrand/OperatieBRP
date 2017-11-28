@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
@@ -17,11 +18,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
-*
-*/
+ * BrpIstHuwelijkOfGpGroepInhoud
+ */
 public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInhoud {
     @Element(name = "standaardGegevens", required = true)
     private final BrpIstStandaardGroepInhoud standaardGegevens;
@@ -58,52 +58,36 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
      * Maakt een BrpIstHuwelijkOfGpStapelInhoud object.<br>
      * LET OP: Niet gebruiken, is alleen voor het (de)serializeren van de XML-representatie. Maak gebruik van de
      * Builder.
-     *
-     * @param standaardGroepInhoud
-     *            standaard IST gegevens
-     * @param relatieInhoud
-     *            relatie inhoud
-     * @param aanvangDatum
-     *            datum aanvang (85.10)
-     * @param aanvangGemeenteCode
-     *            gemeente van aanvang
-     * @param aanvangBuitenlandsePlaats
-     *            buitenlandse plaats van aanvang
-     * @param aanvangOmschrijvingLocatie
-     *            omschrijving locatie aanvang
-     * @param aanvangLandOfGebiedCode
-     *            land aanvang
-     * @param redenEindeRelatie
-     *            reden beeindiging relatie
-     * @param eindeDatum
-     *            datum einde
-     * @param eindeGemeenteCode
-     *            gemeente einde
-     * @param eindeBuitenlandsePlaats
-     *            buitenlandse plaats einde
-     * @param eindeOmschrijvingLocatie
-     *            omschrijving locatie einde
-     * @param eindeLandOfGebiedCode
-     *            land einde
-     * @param soortRelatie
-     *            soort relatie
+     * @param standaardGroepInhoud standaard IST gegevens
+     * @param relatieInhoud relatie inhoud
+     * @param aanvangDatum datum aanvang (85.10)
+     * @param aanvangGemeenteCode gemeente van aanvang
+     * @param aanvangBuitenlandsePlaats buitenlandse plaats van aanvang
+     * @param aanvangOmschrijvingLocatie omschrijving locatie aanvang
+     * @param aanvangLandOfGebiedCode land aanvang
+     * @param redenEindeRelatie reden beeindiging relatie
+     * @param eindeDatum datum einde
+     * @param eindeGemeenteCode gemeente einde
+     * @param eindeBuitenlandsePlaats buitenlandse plaats einde
+     * @param eindeOmschrijvingLocatie omschrijving locatie einde
+     * @param eindeLandOfGebiedCode land einde
+     * @param soortRelatie soort relatie
      */
     public BrpIstHuwelijkOfGpGroepInhoud(
-        @Element(name = "standaardGegevens", required = true) final BrpIstStandaardGroepInhoud standaardGroepInhoud,
-        @Element(name = "relatie", required = true) final BrpIstRelatieGroepInhoud relatieInhoud,
-        @Element(name = "datumAanvang", required = false) final BrpInteger aanvangDatum,
-        @Element(name = "gemeenteCodeAanvang", required = false) final BrpGemeenteCode aanvangGemeenteCode,
-        @Element(name = "buitenlandsePlaatsAanvang", required = false) final BrpString aanvangBuitenlandsePlaats,
-        @Element(name = "omschrijvingLocatieAanvang", required = false) final BrpString aanvangOmschrijvingLocatie,
-        @Element(name = "landOfGebiedCodeAanvang", required = false) final BrpLandOfGebiedCode aanvangLandOfGebiedCode,
-        @Element(name = "redenEindeRelatieCode", required = false) final BrpRedenEindeRelatieCode redenEindeRelatie,
-        @Element(name = "datumEinde", required = false) final BrpInteger eindeDatum,
-        @Element(name = "gemeenteCodeEinde", required = false) final BrpGemeenteCode eindeGemeenteCode,
-        @Element(name = "buitenlandsePlaatsEinde", required = false) final BrpString eindeBuitenlandsePlaats,
-        @Element(name = "omschrijvingLocatieEinde", required = false) final BrpString eindeOmschrijvingLocatie,
-        @Element(name = "landOfGebiedCodeEinde", required = false) final BrpLandOfGebiedCode eindeLandOfGebiedCode,
-        @Element(name = "soortRelatieCode", required = false) final BrpSoortRelatieCode soortRelatie)
-    {
+            @Element(name = "standaardGegevens", required = true) final BrpIstStandaardGroepInhoud standaardGroepInhoud,
+            @Element(name = "relatie", required = true) final BrpIstRelatieGroepInhoud relatieInhoud,
+            @Element(name = "datumAanvang", required = false) final BrpInteger aanvangDatum,
+            @Element(name = "gemeenteCodeAanvang", required = false) final BrpGemeenteCode aanvangGemeenteCode,
+            @Element(name = "buitenlandsePlaatsAanvang", required = false) final BrpString aanvangBuitenlandsePlaats,
+            @Element(name = "omschrijvingLocatieAanvang", required = false) final BrpString aanvangOmschrijvingLocatie,
+            @Element(name = "landOfGebiedCodeAanvang", required = false) final BrpLandOfGebiedCode aanvangLandOfGebiedCode,
+            @Element(name = "redenEindeRelatieCode", required = false) final BrpRedenEindeRelatieCode redenEindeRelatie,
+            @Element(name = "datumEinde", required = false) final BrpInteger eindeDatum,
+            @Element(name = "gemeenteCodeEinde", required = false) final BrpGemeenteCode eindeGemeenteCode,
+            @Element(name = "buitenlandsePlaatsEinde", required = false) final BrpString eindeBuitenlandsePlaats,
+            @Element(name = "omschrijvingLocatieEinde", required = false) final BrpString eindeOmschrijvingLocatie,
+            @Element(name = "landOfGebiedCodeEinde", required = false) final BrpLandOfGebiedCode eindeLandOfGebiedCode,
+            @Element(name = "soortRelatieCode", required = false) final BrpSoortRelatieCode soortRelatie) {
         standaardGegevens = standaardGroepInhoud;
         relatie = relatieInhoud;
         datumAanvang = aanvangDatum;
@@ -144,63 +128,63 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
         }
         final BrpIstHuwelijkOfGpGroepInhoud castOther = (BrpIstHuwelijkOfGpGroepInhoud) other;
         return new EqualsBuilder().append(standaardGegevens, castOther.standaardGegevens)
-                                  .append(relatie, castOther.relatie)
-                                  .append(datumAanvang, castOther.datumAanvang)
-                                  .append(gemeenteCodeAanvang, castOther.gemeenteCodeAanvang)
-                                  .append(buitenlandsePlaatsAanvang, castOther.buitenlandsePlaatsAanvang)
-                                  .append(omschrijvingLocatieAanvang, castOther.omschrijvingLocatieAanvang)
-                                  .append(landOfGebiedCodeAanvang, castOther.landOfGebiedCodeAanvang)
-                                  .append(redenEindeRelatieCode, castOther.redenEindeRelatieCode)
-                                  .append(datumEinde, castOther.datumEinde)
-                                  .append(gemeenteCodeEinde, castOther.gemeenteCodeEinde)
-                                  .append(buitenlandsePlaatsEinde, castOther.buitenlandsePlaatsEinde)
-                                  .append(omschrijvingLocatieEinde, castOther.omschrijvingLocatieEinde)
-                                  .append(landOfGebiedCodeEinde, castOther.landOfGebiedCodeEinde)
-                                  .append(soortRelatieCode, castOther.soortRelatieCode)
-                                  .isEquals();
+                .append(relatie, castOther.relatie)
+                .append(datumAanvang, castOther.datumAanvang)
+                .append(gemeenteCodeAanvang, castOther.gemeenteCodeAanvang)
+                .append(buitenlandsePlaatsAanvang, castOther.buitenlandsePlaatsAanvang)
+                .append(omschrijvingLocatieAanvang, castOther.omschrijvingLocatieAanvang)
+                .append(landOfGebiedCodeAanvang, castOther.landOfGebiedCodeAanvang)
+                .append(redenEindeRelatieCode, castOther.redenEindeRelatieCode)
+                .append(datumEinde, castOther.datumEinde)
+                .append(gemeenteCodeEinde, castOther.gemeenteCodeEinde)
+                .append(buitenlandsePlaatsEinde, castOther.buitenlandsePlaatsEinde)
+                .append(omschrijvingLocatieEinde, castOther.omschrijvingLocatieEinde)
+                .append(landOfGebiedCodeEinde, castOther.landOfGebiedCodeEinde)
+                .append(soortRelatieCode, castOther.soortRelatieCode)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(standaardGegevens)
-                                    .append(relatie)
-                                    .append(datumAanvang)
-                                    .append(gemeenteCodeAanvang)
-                                    .append(buitenlandsePlaatsAanvang)
-                                    .append(omschrijvingLocatieAanvang)
-                                    .append(landOfGebiedCodeAanvang)
-                                    .append(redenEindeRelatieCode)
-                                    .append(datumEinde)
-                                    .append(gemeenteCodeEinde)
-                                    .append(buitenlandsePlaatsEinde)
-                                    .append(omschrijvingLocatieEinde)
-                                    .append(landOfGebiedCodeEinde)
-                                    .append(soortRelatieCode)
-                                    .toHashCode();
+                .append(relatie)
+                .append(datumAanvang)
+                .append(gemeenteCodeAanvang)
+                .append(buitenlandsePlaatsAanvang)
+                .append(omschrijvingLocatieAanvang)
+                .append(landOfGebiedCodeAanvang)
+                .append(redenEindeRelatieCode)
+                .append(datumEinde)
+                .append(gemeenteCodeEinde)
+                .append(buitenlandsePlaatsEinde)
+                .append(omschrijvingLocatieEinde)
+                .append(landOfGebiedCodeEinde)
+                .append(soortRelatieCode)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("standaardGegevens", standaardGegevens)
-                                                                          .append("relatie", relatie)
-                                                                          .append("datumAanvang", datumAanvang)
-                                                                          .append("gemeenteCodeAanvang", gemeenteCodeAanvang)
-                                                                          .append("buitenlandsePlaatsAanvang", buitenlandsePlaatsAanvang)
-                                                                          .append("omschrijvingLocatieAanvang", omschrijvingLocatieAanvang)
-                                                                          .append("landOfGebiedCodeAanvang", landOfGebiedCodeAanvang)
-                                                                          .append("redenBeeindigingRelatieCode", redenEindeRelatieCode)
-                                                                          .append("datumEinde", datumEinde)
-                                                                          .append("gemeenteCodeEinde", gemeenteCodeEinde)
-                                                                          .append("buitenlandsePlaatsEinde", buitenlandsePlaatsEinde)
-                                                                          .append("omschrijvingLocatieEinde", omschrijvingLocatieEinde)
-                                                                          .append("landOfGebiedCodeEinde", landOfGebiedCodeEinde)
-                                                                          .append("soortRelatieCode", soortRelatieCode)
-                                                                          .toString();
+                .append("relatie", relatie)
+                .append("datumAanvang", datumAanvang)
+                .append("gemeenteCodeAanvang", gemeenteCodeAanvang)
+                .append("buitenlandsePlaatsAanvang", buitenlandsePlaatsAanvang)
+                .append("omschrijvingLocatieAanvang", omschrijvingLocatieAanvang)
+                .append("landOfGebiedCodeAanvang", landOfGebiedCodeAanvang)
+                .append("redenBeeindigingRelatieCode", redenEindeRelatieCode)
+                .append("datumEinde", datumEinde)
+                .append("gemeenteCodeEinde", gemeenteCodeEinde)
+                .append("buitenlandsePlaatsEinde", buitenlandsePlaatsEinde)
+                .append("omschrijvingLocatieEinde", omschrijvingLocatieEinde)
+                .append("landOfGebiedCodeEinde", landOfGebiedCodeEinde)
+                .append("soortRelatieCode", soortRelatieCode)
+                .toString();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getCategorie()
      */
     @Override
@@ -210,7 +194,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getStapel()
      */
     @Override
@@ -220,7 +204,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getVoorkomen()
      */
     @Override
@@ -230,7 +214,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getStandaardGegevens()
      */
     @Override
@@ -239,117 +223,104 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
     }
 
     /**
-     * Geef de waarde van relatie.
-     *
-     * @return relatie
+     * Geef de waarde van relatie van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van relatie van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpIstRelatieGroepInhoud getRelatie() {
         return relatie;
     }
 
     /**
-     * Geef de waarde van datum aanvang.
-     *
-     * @return datum aanvang
+     * Geef de waarde van datum aanvang van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van datum aanvang van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpInteger getDatumAanvang() {
         return datumAanvang;
     }
 
     /**
-     * Geef de waarde van gemeente code aanvang.
-     *
-     * @return gemeente code aanvang
+     * Geef de waarde van gemeente code aanvang van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van gemeente code aanvang van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpGemeenteCode getGemeenteCodeAanvang() {
         return gemeenteCodeAanvang;
     }
 
     /**
-     * Geef de waarde van buitenlandse plaats aanvang.
-     *
-     * @return buitenlandse plaats aanvang
+     * Geef de waarde van buitenlandse plaats aanvang van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van buitenlandse plaats aanvang van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpString getBuitenlandsePlaatsAanvang() {
         return buitenlandsePlaatsAanvang;
     }
 
     /**
-     * Geef de waarde van omschrijving locatie aanvang.
-     *
-     * @return omschrijving locatie aanvang
+     * Geef de waarde van omschrijving locatie aanvang van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van omschrijving locatie aanvang van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpString getOmschrijvingLocatieAanvang() {
         return omschrijvingLocatieAanvang;
     }
 
     /**
-     * Geef de waarde van land of gebied code aanvang.
-     *
-     * @return land of gebied code aanvang
+     * Geef de waarde van land of gebied code aanvang van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van land of gebied code aanvang van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpLandOfGebiedCode getLandOfGebiedCodeAanvang() {
         return landOfGebiedCodeAanvang;
     }
 
     /**
-     * Geef de waarde van reden einde relatie code.
-     *
-     * @return reden einde relatie code
+     * Geef de waarde van reden einde relatie code van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van reden einde relatie code van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpRedenEindeRelatieCode getRedenEindeRelatieCode() {
         return redenEindeRelatieCode;
     }
 
     /**
-     * Geef de waarde van datum einde.
-     *
-     * @return datum einde
+     * Geef de waarde van datum einde van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van datum einde van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpInteger getDatumEinde() {
         return datumEinde;
     }
 
     /**
-     * Geef de waarde van gemeente code einde.
-     *
-     * @return gemeente code einde
+     * Geef de waarde van gemeente code einde van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van gemeente code einde van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpGemeenteCode getGemeenteCodeEinde() {
         return gemeenteCodeEinde;
     }
 
     /**
-     * Geef de waarde van buitenlandse plaats einde.
-     *
-     * @return buitenlandse plaats einde
+     * Geef de waarde van buitenlandse plaats einde van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van buitenlandse plaats einde van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpString getBuitenlandsePlaatsEinde() {
         return buitenlandsePlaatsEinde;
     }
 
     /**
-     * Geef de waarde van omschrijving locatie einde.
-     *
-     * @return omschrijving locatie einde
+     * Geef de waarde van omschrijving locatie einde van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van omschrijving locatie einde van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpString getOmschrijvingLocatieEinde() {
         return omschrijvingLocatieEinde;
     }
 
     /**
-     * Geef de waarde van land of gebied code einde.
-     *
-     * @return land of gebied code einde
+     * Geef de waarde van land of gebied code einde van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van land of gebied code einde van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpLandOfGebiedCode getLandOfGebiedCodeEinde() {
         return landOfGebiedCodeEinde;
     }
 
     /**
-     * Geef de waarde van soort relatie code.
-     *
-     * @return soort relatie code
+     * Geef de waarde van soort relatie code van BrpIstHuwelijkOfGpGroepInhoud.
+     * @return de waarde van soort relatie code van BrpIstHuwelijkOfGpGroepInhoud
      */
     public BrpSoortRelatieCode getSoortRelatieCode() {
         return soortRelatieCode;
@@ -376,11 +347,8 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * Constructor met verplichte velden categorie, stapel en voorkomen.
-         *
-         * @param standaardGroepInhoud
-         *            {@link BrpIstStandaardGroepInhoud} inhoud met de standaard IST gegevens
-         * @param relatieInhoud
-         *            {@link BrpIstRelatieGroepInhoud} inhoud van de relatie gedeelte van dit huweljk/GP
+         * @param standaardGroepInhoud {@link BrpIstStandaardGroepInhoud} inhoud met de standaard IST gegevens
+         * @param relatieInhoud {@link BrpIstRelatieGroepInhoud} inhoud van de relatie gedeelte van dit huweljk/GP
          */
         public Builder(final BrpIstStandaardGroepInhoud standaardGroepInhoud, final BrpIstRelatieGroepInhoud relatieInhoud) {
             standaardGegevens = standaardGroepInhoud;
@@ -389,9 +357,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet de datum aanvang.
-         *
-         * @param param
-         *            datum aanvang
+         * @param param datum aanvang
          * @return builder object
          */
         public final Builder datumAanvang(final BrpInteger param) {
@@ -401,9 +367,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet de gemeentecode aanvang.
-         *
-         * @param param
-         *            gemeente aanvang
+         * @param param gemeente aanvang
          * @return builder object
          */
         public final Builder gemeenteCodeAanvang(final BrpGemeenteCode param) {
@@ -413,9 +377,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet de buitenlandse plaats aanvang.
-         *
-         * @param param
-         *            buitenlandse plaats aanvang
+         * @param param buitenlandse plaats aanvang
          * @return builder object
          */
         public final Builder buitenlandsePlaatsAanvang(final BrpString param) {
@@ -425,9 +387,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet de omschrijving locatie aanvang.
-         *
-         * @param param
-         *            omschrijving locatie aanvang
+         * @param param omschrijving locatie aanvang
          * @return builder object
          */
         public final Builder omschrijvingLocatieAanvang(final BrpString param) {
@@ -437,9 +397,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet het land/gebied aanvang.
-         *
-         * @param param
-         *            land aanvang
+         * @param param land aanvang
          * @return builder object
          */
         public final Builder landOfGebiedAanvang(final BrpLandOfGebiedCode param) {
@@ -449,9 +407,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet de reden beeindiging relatie code.
-         *
-         * @param param
-         *            reden beeindiging relatie
+         * @param param reden beeindiging relatie
          * @return builder object
          */
         public final Builder redenBeeindigingRelatieCode(final BrpRedenEindeRelatieCode param) {
@@ -461,9 +417,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet de datum einde.
-         *
-         * @param param
-         *            datum einde
+         * @param param datum einde
          * @return builder object
          */
         public final Builder datumEinde(final BrpInteger param) {
@@ -473,9 +427,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet de gemeente einde.
-         *
-         * @param param
-         *            gemeente einde
+         * @param param gemeente einde
          * @return builder object
          */
         public final Builder gemeenteCodeEinde(final BrpGemeenteCode param) {
@@ -485,9 +437,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet de buitenlandse plaats einde.
-         *
-         * @param param
-         *            buitenlandse plaats einde
+         * @param param buitenlandse plaats einde
          * @return builder object
          */
         public final Builder buitenlandsePlaatsEinde(final BrpString param) {
@@ -497,9 +447,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet de omschrijving locatie einde.
-         *
-         * @param param
-         *            omschrijving locatie einde
+         * @param param omschrijving locatie einde
          * @return builder object
          */
         public final Builder omschrijvingLocatieEinde(final BrpString param) {
@@ -509,9 +457,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet het land/gebied einde.
-         *
-         * @param param
-         *            land einde
+         * @param param land einde
          * @return builder object
          */
         public final Builder landOfGebiedEinde(final BrpLandOfGebiedCode param) {
@@ -521,9 +467,7 @@ public final class BrpIstHuwelijkOfGpGroepInhoud extends AbstractBrpIstGroepInho
 
         /**
          * zet het soort relatie code.
-         *
-         * @param param
-         *            soort relatie code
+         * @param param soort relatie code
          * @return builder object
          */
         public final Builder soortRelatieCode(final BrpSoortRelatieCode param) {

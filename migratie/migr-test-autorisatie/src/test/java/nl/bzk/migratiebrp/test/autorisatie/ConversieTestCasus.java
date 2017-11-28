@@ -10,15 +10,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.List;
 import java.util.Properties;
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.sql.DataSource;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ToegangLeveringsAutorisatie;
+import nl.bzk.algemeenbrp.dal.repositories.StamtabelRepository;
+import nl.bzk.algemeenbrp.util.cache.DalCacheController;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.LoggingContext;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAutorisatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Autorisatie;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerLo3NaarBrpService;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.PreconditiesService;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpAutorisatieService;
 import nl.bzk.migratiebrp.test.common.output.TestOutputException;
 import nl.bzk.migratiebrp.test.common.resultaat.Foutmelding;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
@@ -26,14 +37,12 @@ import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStatus;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
 import nl.bzk.migratiebrp.test.dal.TestCasusOutputStap;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.LoggingContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Test casus: conversie lo3 naar brp.
  */
-@SuppressWarnings("checkstyle:illegalcatch")
+
 public final class ConversieTestCasus extends TestCasus {
     private static final String SUFFIX_VERSCHILLEN = "-verschillen";
 
@@ -53,36 +62,33 @@ public final class ConversieTestCasus extends TestCasus {
     @Inject
     private PreconditiesService preconditieService;
     @Inject
-    private BrpDalService brpDalService;
+    private BrpAutorisatieService autorisatieService;
     @Inject
     private ConverteerLo3NaarBrpService converteerLo3NaarBrpService;
     @Inject
     private DataSource dataSource;
+    @Inject
+    DalCacheController dalCacheController;
+    @Resource
+    private StamtabelRepository<Partij, Short, Integer> partijRepository;
 
     /**
      * Constructor.
      *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
-     * @param outputFolder
-     *            output folder
-     * @param expectedFolder
-     *            expected folder
-     * @param input
-     *            input lo3autorisatie
-     * @param inputFile
-     *            input file
+     * @param thema          thema
+     * @param naam           naam
+     * @param outputFolder   output folder
+     * @param expectedFolder expected folder
+     * @param input          input lo3autorisatie
+     * @param inputFile      input file
      */
     protected ConversieTestCasus(
-        final String thema,
-        final String naam,
-        final File outputFolder,
-        final File expectedFolder,
-        final Lo3Autorisatie input,
-        final File inputFile)
-    {
+            final String thema,
+            final String naam,
+            final File outputFolder,
+            final File expectedFolder,
+            final Lo3Autorisatie input,
+            final File inputFile) {
         super(thema, naam, outputFolder, expectedFolder);
         this.input = input;
         this.inputFile = inputFile;
@@ -97,7 +103,7 @@ public final class ConversieTestCasus extends TestCasus {
             Logging.initContext();
             // Stap 0: initieren
             readSetup();
-            initieren(input, result);
+            initieren(input, inputFile, result);
 
             if (TestStatus.OK.equals(result.getInitieren().getStatus())) {
 
@@ -110,11 +116,11 @@ public final class ConversieTestCasus extends TestCasus {
                 // Stap 1b: Converteren (input=lo3 model, output=brp model)
                 final BrpAutorisatie brp = testLo3NaarBrp(aut, result);
 
+                // Stap 2: Opslaan (input=brp model, output=partijCode)
+                final String partijCode = testOpslaanBrp(brp, result);
+
                 // Stap 1c: Controleer logging
                 controleerLogging(logging, result);
-
-                // Stap 2: Opslaan (input=brp model, output=partijCode)
-                final Integer partijCode = testOpslaanBrp(brp, result);
 
                 // Stap 3: Lezen (input=brp model, partij)
                 testLezenBrp(partijCode, brp, result);
@@ -143,12 +149,10 @@ public final class ConversieTestCasus extends TestCasus {
     /**
      * Initieren (schrijf debug info).
      *
-     * @param lo3
-     *            lo3
-     * @param result
-     *            result
+     * @param lo3    lo3
+     * @param result result
      */
-    private void initieren(final Lo3Autorisatie lo3, final ConversieTestResultaat result) {
+    private void initieren(final Lo3Autorisatie lo3, final File inputFile, final ConversieTestResultaat result) {
         try {
             final String testCase = result.getNaam();
             LOG.info("Testcase: {}", testCase);
@@ -158,6 +162,8 @@ public final class ConversieTestCasus extends TestCasus {
                 initierenBrpDatabase(dataSource);
                 laatsteTestCase = testCase;
             }
+            initierenPartij(dataSource, lo3.getAfnemersindicatie(), inputFile);
+
             final String htmlLo3 = debugOutputXmlEnHtml(lo3, TestCasusOutputStap.STAP_LO3);
             result.setInitieren(new TestStap(TestStatus.OK, null, htmlLo3, null));
 
@@ -166,6 +172,42 @@ public final class ConversieTestCasus extends TestCasus {
             final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_LO3, STR_EXCEPTION);
 
             result.setInitieren(new TestStap(TestStatus.NOK, e.getMessage(), htmlFout, null));
+        }
+    }
+
+    protected final void initierenPartij(final DataSource dataSource, final String partijCode, final File inputFile) {
+        final Properties properties = new Properties();
+        final File propertiesFile = new File(inputFile.getParentFile(), inputFile.getName() + ".properties");
+        if (propertiesFile.isFile()) {
+            LOG.info("Properties laden");
+            try (InputStream fis = new FileInputStream(propertiesFile)) {
+                properties.load(fis);
+            } catch (final IOException e) {
+                throw new IllegalArgumentException("Kan .properties niet laden");
+            }
+            LOG.info("Properties: " + properties);
+        }
+
+        if ("false".equalsIgnoreCase(properties.getProperty("autorisatie.partij.aanmaken"))) {
+            LOG.info("Geen partij aanmaken");
+            return;
+        }
+
+        final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
+        List<Integer> partijIds = jdbcTemplate.queryForList("select id from kern.partij where code = ?", Integer.class, partijCode);
+        if (partijIds.isEmpty()) {
+            LOG.info("Partij {} aanmaken", partijCode);
+            jdbcTemplate.update("insert into kern.partij(code, naam) values (?, ?)", partijCode, "test" + partijCode);
+            partijIds = jdbcTemplate.queryForList("select id from kern.partij where code = ?", Integer.class, partijCode);
+            jdbcTemplate.update(
+                    "insert into kern.his_partij(partij, tsreg, naam, datingang, indverstrbeperkingmogelijk) values (?, ?, ?, ?, ?)",
+                    partijIds.get(0),
+                    Timestamp.from(Instant.now()),
+                    "test" + partijCode,
+                    20120101,
+                    false);
+            dalCacheController.maakCachesLeeg();
         }
     }
 
@@ -184,10 +226,10 @@ public final class ConversieTestCasus extends TestCasus {
 
             try {
                 // Precondities
-                preconditieService.verwerk(lo3Autorisatie);
+                Lo3Autorisatie verwerkteAutorisatie = preconditieService.verwerk(lo3Autorisatie);
                 result.setPrecondities(new TestStap(TestStatus.OK));
 
-                return lo3Autorisatie;
+                return verwerkteAutorisatie;
             } catch (final Exception aoe) {
                 final Foutmelding fout = new Foutmelding("Fout tijdens controleren precondities.", aoe);
                 final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_SYNTAX_PRECONDITIES);
@@ -197,10 +239,11 @@ public final class ConversieTestCasus extends TestCasus {
                 if (verwachteFout != null) {
                     if (verwachteFout.equals(fout)) {
                         result.setPrecondities(
-                            new TestStap(TestStatus.OK, "Er is een verwachte exceptie opgetreden (controleren precondities)", htmlFout, null));
+                                new TestStap(TestStatus.OK, "Er is een verwachte exceptie opgetreden (controleren precondities)", htmlFout, null));
                     } else {
                         result.setPrecondities(
-                            new TestStap(TestStatus.NOK, "Er is een anders dan verwachte exceptie opgetreden (controleren precondities)", htmlFout, null));
+                                new TestStap(TestStatus.NOK, "Er is een anders dan verwachte exceptie opgetreden (controleren precondities)", htmlFout,
+                                        null));
                     }
                 } else {
                     result.setPrecondities(new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (controleren precondities)", htmlFout, null));
@@ -215,10 +258,8 @@ public final class ConversieTestCasus extends TestCasus {
     /**
      * Test conversie lo3 naar brp.
      *
-     * @param lo3
-     *            lo3
-     * @param result
-     *            result
+     * @param lo3    lo3
+     * @param result result
      * @return bp
      */
     private BrpAutorisatie testLo3NaarBrp(final Lo3Autorisatie lo3, final ConversieTestResultaat result) {
@@ -226,7 +267,10 @@ public final class ConversieTestCasus extends TestCasus {
             LOG.info("Test converteer LO3 naar BRP ...");
             try {
 
-                final BrpAutorisatie brp = BrpAutorisatieSorter.sorteerAutorisatie(converteerLo3NaarBrpService.converteerLo3Autorisatie(lo3));
+                final BrpAutorisatie brp = converteerLo3NaarBrpService.converteerLo3Autorisatie(lo3);
+                if (brp != null) {
+                    brp.sorteer();
+                }
                 final String htmlBrp = debugOutputXmlEnHtml(brp, TestCasusOutputStap.STAP_BRP);
 
                 try {
@@ -235,9 +279,9 @@ public final class ConversieTestCasus extends TestCasus {
                     if (expectedBrp == null) {
                         result.setLo3NaarBrp(new TestStap(TestStatus.GEEN_VERWACHTING, null, htmlBrp, null));
                     } else {
-                        final BrpAutorisatie expected = BrpAutorisatieSorter.sorteerAutorisatie(expectedBrp);
+                        expectedBrp.sorteer();
                         final StringBuilder verschillenLog = new StringBuilder();
-                        if (BrpAutorisatieVergelijker.vergelijkAutorisaties(verschillenLog, expected, brp, false)) {
+                        if (BrpAutorisatieVergelijker.vergelijkAutorisaties(verschillenLog, expectedBrp, brp, false)) {
                             result.setLo3NaarBrp(new TestStap(TestStatus.OK, null, htmlBrp, null));
                         } else {
                             final Foutmelding fout =
@@ -252,13 +296,14 @@ public final class ConversieTestCasus extends TestCasus {
                     final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_BRP, STR_EXCEPTION);
 
                     result.setLo3NaarBrp(
-                        new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (vergelijken verwachting conversie naar brp) ", htmlFout, null));
+                            new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (vergelijken verwachting conversie naar brp) ", htmlFout,
+                                    null));
 
                 }
                 return brp;
             } catch (final Exception e) {
                 final Foutmelding fout = new Foutmelding("Fout tijdens converteren LO3 naar BRP.", e);
-                final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_BRP);
+                final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_BRP, STR_EXCEPTION);
 
                 final Foutmelding expectedFout = leesVerwachteFoutmelding(TestCasusOutputStap.STAP_BRP);
                 if (expectedFout != null) {
@@ -266,7 +311,7 @@ public final class ConversieTestCasus extends TestCasus {
                         result.setLo3NaarBrp(new TestStap(TestStatus.OK, "De verwachte fout is opgetreden", htmlFout, null));
                     } else {
                         result.setLo3NaarBrp(
-                            new TestStap(TestStatus.NOK, "Er is een anders dan verwacht fout opgetreden (conversie naar brp)", htmlFout, null));
+                                new TestStap(TestStatus.NOK, "Er is een anders dan verwacht fout opgetreden (conversie naar brp)", htmlFout, null));
                     }
                 } else {
                     result.setLo3NaarBrp(new TestStap(TestStatus.NOK, "Onverwachte fout  (conversie naar brp)", htmlFout, null));
@@ -310,29 +355,47 @@ public final class ConversieTestCasus extends TestCasus {
     /**
      * Test opslaan in BRP.
      *
-     * @param brpAutorisatie
-     *            brp
-     * @param result
-     *            resultaat
+     * @param brpAutorisatie brp
+     * @param result         resultaat
      * @return anummer
      */
-    private Integer testOpslaanBrp(final BrpAutorisatie brpAutorisatie, final ConversieTestResultaat result) {
+    private String testOpslaanBrp(final BrpAutorisatie brpAutorisatie, final ConversieTestResultaat result) {
         if (brpAutorisatie != null) {
             LOG.info("Test opslaan in BRP ...");
             try {
                 // Opslaan in database
-                brpDalService.persisteerAutorisatie(brpAutorisatie);
+                final List<ToegangLeveringsAutorisatie> toegangen = autorisatieService.persisteerAutorisatie(brpAutorisatie);
 
                 result.setOpslaanBrp(new TestStap(TestStatus.OK));
 
                 // Partij teruggeven om hiermee vervolgens uit de db te lezen
-                return brpAutorisatie.getPartij().getPartijCode().getWaarde();
+                if (toegangen == null || toegangen.isEmpty()) {
+                    return null;
+                } else {
+                    return partijRepository.findById(toegangen.get(0).getGeautoriseerde().getPartij().getId()).getCode();
+                }
 
             } catch (final Exception e) {
                 final Foutmelding fout = new Foutmelding("Fout tijdens opslaan BRP.", e);
-                final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_OPSLAAN);
+                final Foutmelding verwachteFoutmelding = leesVerwachteFoutmelding(TestCasusOutputStap.STAP_OPSLAAN);
 
-                result.setOpslaanBrp(new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (opslaan)", htmlFout, null));
+                if (verwachteFoutmelding != null) {
+                    final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_OPSLAAN, "exceptie");
+                    if (verwachteFoutmelding.equals(fout)) {
+                        result.setOpslaanBrp(new TestStap(TestStatus.OK, "Er is een verwachte exceptie opgetreden (conversie naar brp)", htmlFout,
+                                null));
+                    } else {
+                        result.setOpslaanBrp(
+                                new TestStap(TestStatus.NOK, "Er is een anders dan verwachte exceptie opgetreden (conversie naar brp)", htmlFout,
+                                        null));
+                    }
+                } else {
+                    final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_OPSLAAN, STR_EXCEPTION);
+
+                    result.setOpslaanBrp(
+                            new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (opslaan)", htmlFout,
+                                    null));
+                }
             }
         }
 
@@ -349,15 +412,12 @@ public final class ConversieTestCasus extends TestCasus {
     /**
      * Test lezen uit brp.
      *
-     * @param partijCode
-     *            partijCode
-     * @param inputBrp
-     *            brp input
-     * @param result
-     *            resultaat
+     * @param partijCode partijCode
+     * @param inputBrp   brp input
+     * @param result     resultaat
      */
 
-    private void testLezenBrp(final Integer partijCode, final BrpAutorisatie inputBrp, final ConversieTestResultaat result) {
+    private void testLezenBrp(final String partijCode, final BrpAutorisatie inputBrp, final ConversieTestResultaat result) {
 
         if (partijCode != null) {
             LOG.info("Test lezen uit BRP ...");
@@ -370,8 +430,10 @@ public final class ConversieTestCasus extends TestCasus {
                             inputBrp.getLeveringsAutorisatieLijst().get(0).getLeveringsautorisatieStapel().get(0).getInhoud().getDatumIngang().getWaarde();
                 }
 
-                final BrpAutorisatie brp =
-                        BrpAutorisatieSorter.sorteerAutorisatie(brpDalService.bevraagAutorisatie(partijCode, besluitNaam, ingangsDatumRegel));
+                final BrpAutorisatie brp = autorisatieService.bevraagAutorisatie(partijCode, besluitNaam, ingangsDatumRegel);
+                if (brp != null) {
+                    brp.sorteer();
+                }
                 final String htmlBrp = debugOutputXmlEnHtml(brp, TestCasusOutputStap.STAP_LEZEN);
 
                 try {
@@ -380,10 +442,10 @@ public final class ConversieTestCasus extends TestCasus {
                         expectedBrp = inputBrp;
                     }
 
-                    final BrpAutorisatie expected = BrpAutorisatieSorter.sorteerAutorisatie(expectedBrp);
+                    expectedBrp.sorteer();
 
                     final StringBuilder verschillenLog = new StringBuilder();
-                    if (BrpAutorisatieVergelijker.vergelijkAutorisaties(verschillenLog, expected, brp, skipPartij)) {
+                    if (BrpAutorisatieVergelijker.vergelijkAutorisaties(verschillenLog, expectedBrp, brp, skipPartij)) {
                         result.setLezenBrp(new TestStap(TestStatus.OK, null, htmlBrp, null));
                     } else {
                         final Foutmelding fout = new Foutmelding("Vergelijking (lezen)", "Inhoud is ongelijk (lezen)", verschillenLog.toString());
@@ -396,10 +458,12 @@ public final class ConversieTestCasus extends TestCasus {
                     final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_LEZEN, STR_EXCEPTION);
 
                     result.setLezenBrp(
-                        new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (vergelijken verwachting conversie naar brp)", htmlFout, null));
+                            new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (vergelijken verwachting conversie naar brp)", htmlFout,
+                                    null));
 
                 }
             } catch (final Exception e) {
+                LOG.info("Fout tijdens lezen BRP", e);
                 final Foutmelding fout = new Foutmelding("Fout tijdens lezen BRP.", e);
                 final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_LEZEN);
 

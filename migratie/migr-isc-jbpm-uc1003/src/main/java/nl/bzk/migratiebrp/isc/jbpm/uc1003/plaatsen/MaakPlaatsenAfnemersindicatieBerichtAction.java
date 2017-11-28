@@ -9,13 +9,13 @@ package nl.bzk.migratiebrp.isc.jbpm.uc1003.plaatsen;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ap01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.PlaatsAfnemersindicatieVerzoekBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.AfnemersIndicatieJbpmConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,25 +26,30 @@ public final class MaakPlaatsenAfnemersindicatieBerichtAction implements SpringA
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakPlaatsenAfnemersindicatieBerichtAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
         LOG.debug("execute(parameters={})", parameters);
 
-        final Integer toegangLeveringsautorisatieId = (Integer) parameters.get(AfnemersIndicatieJbpmConstants.TOEGANGLEVERINGSAUTORISATIEID_KEY);
-        final Integer dienstId = (Integer) parameters.get(AfnemersIndicatieJbpmConstants.PLAATSEN_DIENSTID_KEY);
-        final Integer persoonId = (Integer) parameters.get(AfnemersIndicatieJbpmConstants.PERSOONID_KEY);
+        final String persoonBsn = (String) parameters.get(AfnemersIndicatieJbpmConstants.PERSOON_BSN);
 
         final Long berichtId = (Long) parameters.get("input");
         final Ap01Bericht ap01Bericht = (Ap01Bericht) berichtenDao.leesBericht(berichtId);
 
         // verzoek
         final PlaatsAfnemersindicatieVerzoekBericht verzoek = new PlaatsAfnemersindicatieVerzoekBericht();
-        verzoek.setToegangLeveringsautorisatieId(toegangLeveringsautorisatieId);
-        verzoek.setDienstId(dienstId);
-        verzoek.setPersoonId(persoonId);
+        verzoek.setPartijCode(ap01Bericht.getBronPartijCode());
+        verzoek.setBsn(persoonBsn);
         verzoek.setReferentie(ap01Bericht.getMessageId());
 
         // opslaan

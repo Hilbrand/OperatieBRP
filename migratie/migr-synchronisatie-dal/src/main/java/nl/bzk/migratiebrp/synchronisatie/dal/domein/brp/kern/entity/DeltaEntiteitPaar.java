@@ -6,55 +6,48 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
 import nl.bzk.migratiebrp.conversie.model.validatie.ValidationUtils;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Class om een match tussen 2 delta entiteiten vast te leggen. Deze class dwingt af dat een bestaande
- * {@link DeltaEntiteit} een id moet bevatten.
+ * {@link Entiteit} een id moet bevatten.
  */
 public final class DeltaEntiteitPaar {
 
-    private final DeltaEntiteit bestaand;
-    private final DeltaEntiteit nieuw;
+    private final Entiteit bestaand;
+    private final Entiteit nieuw;
     private boolean wordtBestaandMRij;
 
     /**
      * Constructor voor {@link DeltaEntiteitPaar}. Deze constructor controleert of beide input niet null is en of de
-     * bestaande {@link DeltaEntiteit} een ID bevat (uit een database komt).
-     *
-     * @param bestaand
-     *            de (in database) bestaande entiteit
-     * @param nieuw
-     *            de (in memory opgebouwde) nieuwe entiteit
-     * @throws NullPointerException
-     *             als 1 of beide input null is
-     * @throws IllegalArgumentException
-     *             als bestaand entiteit geen ID bevat
+     * bestaande {@link Entiteit} een ID bevat (uit een database komt).
+     * @param bestaand de (in database) bestaande entiteit
+     * @param nieuw de (in memory opgebouwde) nieuwe entiteit
+     * @throws NullPointerException als 1 of beide input null is
+     * @throws IllegalArgumentException als bestaand entiteit geen ID bevat
      */
-    public DeltaEntiteitPaar(final DeltaEntiteit bestaand, final DeltaEntiteit nieuw) {
+    public DeltaEntiteitPaar(final Entiteit bestaand, final Entiteit nieuw) {
         ValidationUtils.controleerOpNullWaarden("Input mag niet null zijn", bestaand, nieuw);
         this.bestaand = bestaand;
         this.nieuw = nieuw;
     }
 
     /**
-     * Geef de nieuwe delta entiteit.
-     * 
-     * @return de nieuwe delta entiteit.
+     * Geef de waarde van nieuw van EntiteitPaar.
+     * @return de waarde van nieuw van EntiteitPaar
      */
-    public DeltaEntiteit getNieuw() {
+    public Entiteit getNieuw() {
         return nieuw;
     }
 
     /**
-     * Geef de bestaande delta entiteit.
-     * 
-     * @return de bestaande delta entiteit
+     * Geef de waarde van bestaand van EntiteitPaar.
+     * @return de waarde van bestaand van EntiteitPaar
      */
-    public DeltaEntiteit getBestaand() {
+    public Entiteit getBestaand() {
         return bestaand;
     }
 
@@ -67,8 +60,8 @@ public final class DeltaEntiteitPaar {
             return false;
         }
 
-        final DeltaEntiteitPaar otherDeltaEntiteitPaar = (DeltaEntiteitPaar) obj;
-        return new EqualsBuilder().append(bestaand, otherDeltaEntiteitPaar.bestaand).append(nieuw, otherDeltaEntiteitPaar.nieuw).isEquals();
+        final DeltaEntiteitPaar otherEntiteitPaar = (DeltaEntiteitPaar) obj;
+        return new EqualsBuilder().append(bestaand, otherEntiteitPaar.bestaand).append(nieuw, otherEntiteitPaar.nieuw).isEquals();
     }
 
     @Override
@@ -86,6 +79,14 @@ public final class DeltaEntiteitPaar {
      */
     public void markeerBestaandAlsMRij() {
         this.wordtBestaandMRij = true;
+    }
+
+
+    /**
+     * Demarkeer dat de bestaande delta entiteit geen M-rij gaat worden tijdens deltabepaling.
+     */
+    public void demarkeerBestaandAlsMRij() {
+        this.wordtBestaandMRij = false;
     }
 
     /**

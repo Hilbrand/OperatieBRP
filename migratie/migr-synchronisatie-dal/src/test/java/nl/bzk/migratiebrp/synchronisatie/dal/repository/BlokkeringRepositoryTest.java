@@ -12,15 +12,11 @@ import static org.junit.Assert.assertNotNull;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.RedenBlokkering;
+import nl.bzk.algemeenbrp.test.dal.DBUnit.InsertBefore;
 import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.Blokkering;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.RedenBlokkering;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
-
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Test BlokkeringRepository
  */
-@Rollback(value = true)
+@Rollback()
 @Transactional(transactionManager = "syncDalTransactionManager")
 public class BlokkeringRepositoryTest extends AbstractDatabaseTest {
 
@@ -50,10 +46,12 @@ public class BlokkeringRepositoryTest extends AbstractDatabaseTest {
         tijdstip.set(Calendar.MINUTE, 11);
         tijdstip.set(Calendar.SECOND, 11);
         tijdstip.set(Calendar.MILLISECOND, 111);
-        final Long teBlokkerenANummer = 1234567890L;
-        final Blokkering teBlokkeren =
-                new Blokkering(teBlokkerenANummer, 1L, "0599", "0600", RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP, new Timestamp(
-                    tijdstip.getTimeInMillis()));
+        final String teBlokkerenANummer = "1234567890";
+        final Blokkering teBlokkeren = new Blokkering(teBlokkerenANummer, new Timestamp(tijdstip.getTimeInMillis()));
+        teBlokkeren.setProcessId(1L);
+        teBlokkeren.setGemeenteCodeNaar("059901");
+        teBlokkeren.setRegistratieGemeente("060001");
+        teBlokkeren.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
 
         final Blokkering blokkering = blokkeringRepository.blokkeerPersoonslijst(teBlokkeren);
 
@@ -77,12 +75,12 @@ public class BlokkeringRepositoryTest extends AbstractDatabaseTest {
     @Test
     @InsertBefore(value = "BlokkeringTestData.xml")
     public void testStatusBlokkering() {
-        final Long aNummer = 1234567890L;
+        final String aNummer = "1234567890";
         final Blokkering blokkering = blokkeringRepository.statusBlokkering(aNummer);
         assertNotNull("De blokkering kon niet worden gevonden.", blokkering);
         assertEquals("Het A-nummer komt niet overeen met het opgegeven A-nummer.", aNummer, blokkering.getaNummer());
         assertEquals("Het process id komt niet overeen met de verwachting", Long.valueOf(1), blokkering.getProcessId());
-        assertEquals("De registratiegemeent komt niet overeen met de verwachting", "0600", blokkering.getRegistratieGemeente());
+        assertEquals("De registratiegemeente komt niet overeen met de verwachting", "060001", blokkering.getRegistratieGemeente());
     }
 
     /**
@@ -98,10 +96,9 @@ public class BlokkeringRepositoryTest extends AbstractDatabaseTest {
      * Test het deblokkeren van een blokkering.
      */
     @Test
-    @Ignore
     @InsertBefore(value = "BlokkeringTestData.xml")
     public void testDeblokkering() {
-        final Long aNummer = 1234567890L;
+        final String aNummer = "1234567890";
         final Blokkering blokkering = blokkeringRepository.statusBlokkering(aNummer);
         blokkeringRepository.deblokkeerPersoonslijst(blokkering);
     }

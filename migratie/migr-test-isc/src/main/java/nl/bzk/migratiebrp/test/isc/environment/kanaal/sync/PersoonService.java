@@ -15,11 +15,8 @@ public interface PersoonService {
 
     /**
      * Persisteer een persoon.
-     * 
-     * @param inhoud
-     *            inhoud
-     * @throws KanaalException
-     *             bij fouten
+     * @param inhoud inhoud
+     * @throws KanaalException bij fouten
      */
     void persisteerPersoon(final String inhoud) throws KanaalException;
 }

@@ -13,25 +13,19 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Test;
 
 public class BrpGemeenteCodeTest {
 
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
-
-    @Test
-    public void testGetFormattedStringCode() throws Exception {
-        BrpGemeenteCode code = new BrpGemeenteCode(Short.parseShort("45"), onderzoek);
-        assertEquals("0045", code.getFormattedStringCode());
-    }
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testVerwijderOnderzoek() throws Exception {
-        BrpGemeenteCode code = new BrpGemeenteCode(Short.parseShort("45"), onderzoek);
+        BrpGemeenteCode code = new BrpGemeenteCode("0045", onderzoek);
         assertNotNull(code.getOnderzoek());
-        BrpGemeenteCode newCode = code.verwijderOnderzoek();
+        final BrpGemeenteCode newCode = code.verwijderOnderzoek();
         assertNotNull(code.getOnderzoek());
+        assertNotNull(newCode);
         assertNull(newCode.getOnderzoek());
         code = new BrpGemeenteCode(null, onderzoek);
         assertNotNull(code.getOnderzoek());
@@ -45,14 +39,14 @@ public class BrpGemeenteCodeTest {
 
     @Test
     public void testWrapMetWaardeEnZonderOnderzoek() throws Exception {
-        BrpGemeenteCode result = BrpGemeenteCode.wrap(Short.parseShort("49"), null);
+        final BrpGemeenteCode result = BrpGemeenteCode.wrap("0049", null);
         assertNull(result.getOnderzoek());
-        assertEquals("0049", result.getFormattedStringCode());
+        assertEquals("0049", result.getWaarde());
     }
 
     @Test
     public void testWrapZonderWaardeEnMetOnderzoek() throws Exception {
-        BrpGemeenteCode result = BrpGemeenteCode.wrap(null, onderzoek);
+        final BrpGemeenteCode result = BrpGemeenteCode.wrap(null, onderzoek);
         assertNotNull(result.getOnderzoek());
         assertNull(result.getWaarde());
     }

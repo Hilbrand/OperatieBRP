@@ -15,14 +15,19 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.tools.mailbox.impl.MailboxFactory;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * LO3 MailboxServer Simulator.
@@ -34,30 +39,37 @@ public final class MailboxServer {
     private static final String DEFAULT_PASSWORD = "changeit";
 
     // 3 minuten read timeout als er een verbinding is.
-    private static final int MAX_READ_TIMEOUT = 180000;
+    private static final int MAX_READ_TIMEOUT = 180_000;
 
     // Geef de client 5 seconden voordat de connectie wordt gesloten na een logout
     private static final long LINGER_TIMEOUT = 5000;
-
     private final MailboxFactory mbFactory;
-
+    private final CountDownLatch startSignal;
+    private String[] tlsAllowedProtocols;
+    private String[] tlsAllowedCipherSuites;
     private String name;
-
     private boolean keepOnRunning = true;
 
     /**
      * Constructor waarbij de mailboxFactory implementatie wordt gezet.
-     *
-     * @param mbFactory
-     *            De te gebruiken mailboxFactory.
+     * @param startSignal Synchronisatie hulpmiddel om te bepalen of de mailbox server gestart is.
+     * @param mbFactory De te gebruiken mailboxFactory.
+     * @param tlsAllowedProtocols list of allowed TLS protocols
+     * @param tlsAllowedCipherSuites list of allowed TLS cipher suites
      */
-    public MailboxServer(final MailboxFactory mbFactory) {
+    public MailboxServer(
+            final CountDownLatch startSignal,
+            final MailboxFactory mbFactory,
+            final String[] tlsAllowedProtocols,
+            final String[] tlsAllowedCipherSuites) {
+        this.startSignal = startSignal;
         this.mbFactory = mbFactory;
+        this.tlsAllowedProtocols = Arrays.copyOf(tlsAllowedProtocols, tlsAllowedProtocols.length);
+        this.tlsAllowedCipherSuites = Arrays.copyOf(tlsAllowedCipherSuites, tlsAllowedCipherSuites.length);
     }
 
     /**
      * Geef de waarde van mailbox factory.
-     *
      * @return mailbox factory
      */
     public MailboxFactory getMailboxFactory() {
@@ -66,44 +78,70 @@ public final class MailboxServer {
 
     /**
      * Open an SSL port, wait for clients and handle them.
-     *
-     * @param port
-     *            Port to listen to
-     * @param listenTimeoutMillis
-     *            After which the server stops waiting and exits
+     * @param port Port to listen to
+     * @param listenTimeoutMillis After which the server stops waiting and exits
      */
     public void run(final int port, final int listenTimeoutMillis) {
+        SSLServerSocket listen = null;
         try {
             final ServerSocketFactory factory = setupServerSocketFactory();
 
             // Open listen socket
-            try (SSLServerSocket listen = (SSLServerSocket) factory.createServerSocket(port)) {
-                listen.setSoTimeout(listenTimeoutMillis);
 
-                final String[] enabledCipherSuites = {"SSL_RSA_WITH_3DES_EDE_CBC_SHA" };
-                listen.setEnabledCipherSuites(enabledCipherSuites);
+            listen = (SSLServerSocket) factory.createServerSocket(port);
+            listen.setSoTimeout(listenTimeoutMillis);
 
-                LOGGER.info("MBS Started on port: " + port);
-                // Only stop with an Exception occurred during setup of SSL or else continue until Ctrl-C
-                while (keepOnRunning) {
-                    LOGGER.debug("Waiting for connection ... (timeout " + listenTimeoutMillis + "ms)");
-                    runMailboxThread(listen);
-                }
-            } catch (final IOException e) {
-                LOGGER.error("Fout tijdens wachten op connectie", e);
+            listen.setEnabledProtocols(filter(tlsAllowedProtocols, listen.getSupportedProtocols()));
+            listen.setEnabledCipherSuites(filter(tlsAllowedCipherSuites, listen.getSupportedCipherSuites()));
+
+            LOGGER.info("MBS Started on port: " + port);
+            // Only stop with an Exception occurred during setup of SSL or else continue until Ctrl-C
+            while (keepOnRunning) {
+                startSignal.countDown();
+                LOGGER.debug("Waiting for connection ... (timeout " + listenTimeoutMillis + "ms)");
+                runMailboxThread(listen);
             }
+
+        } catch (final IOException e) {
+            LOGGER.error("Fout tijdens wachten op connectie", e);
         } catch (final GeneralSecurityException e) {
             LOGGER.error("Fout tijdens initialisatie SSL", e);
+        } finally {
+            if (listen != null) {
+                try {
+                    listen.close();
+                } catch (IOException e) {
+                    LOGGER.debug(e.getMessage(), e);
+                }
+
+            }
         }
 
         LOGGER.info("Stopped");
+    }
+
+    private String[] filter(final String[] allAllowed, final String[] allSupported) {
+        final List<String> result = new ArrayList<>();
+        final List<String> supportedList = Arrays.asList(allSupported);
+
+        for (final String allowed : allAllowed) {
+            if (supportedList.contains(allowed)) {
+                result.add(allowed);
+            }
+        }
+
+        if (result.isEmpty()) {
+            LOGGER.warn("Allowed {0} not supported {1}", Arrays.asList(allAllowed), supportedList);
+        }
+
+        return result.toArray(new String[]{});
     }
 
     private void runMailboxThread(final SSLServerSocket listen) throws IOException {
         try {
             new ServerThread(listen.accept(), mbFactory).start();
         } catch (final SocketTimeoutException e) {
-            LOGGER.debug("Connection listen timeout. Looping ...");
+            LOGGER.debug("Connection listen timeout. Looping ...", e);
             // Expected, loop to listen again
         }
     }
@@ -119,7 +157,7 @@ public final class MailboxServer {
             final KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
             kmf.init(ks, keypassword);
 
-            final SSLContext sslcontext = SSLContext.getInstance("SSLv3");
+            final SSLContext sslcontext = SSLContext.getInstance(tlsAllowedProtocols[0]);
             sslcontext.init(kmf.getKeyManagers(), null, null);
 
             return sslcontext.getServerSocketFactory();
@@ -130,10 +168,8 @@ public final class MailboxServer {
 
     /**
      * Geef de waarde van keystore stream.
-     *
      * @return keystore stream
-     * @throws FileNotFoundException
-     *             the file not found exception
+     * @throws FileNotFoundException the file not found exception
      */
     private InputStream getKeystoreStream() throws FileNotFoundException {
         final String keystore = System.getProperty("keystore", "keystores/keystore.jks");
@@ -165,7 +201,6 @@ public final class MailboxServer {
 
     /**
      * Geef de waarde van name.
-     *
      * @return name
      */
     public String getName() {
@@ -174,9 +209,7 @@ public final class MailboxServer {
 
     /**
      * Zet de waarde van name.
-     *
-     * @param name
-     *            name
+     * @param name name
      */
     public void setName(final String name) {
         this.name = name;
@@ -192,11 +225,8 @@ public final class MailboxServer {
 
         /**
          * Constructor.
-         *
-         * @param connection
-         *            connection
-         * @param mbFactory
-         *            mailbox factory
+         * @param connection connection
+         * @param mbFactory mailbox factory
          */
         public ServerThread(final Socket connection, final MailboxFactory mbFactory) {
             super("MailboxServerThread");
@@ -215,20 +245,24 @@ public final class MailboxServer {
                 ((SSLSocket) connection).startHandshake();
 
                 client.process();
-
-                // 5 seconden voor de client om de boel te lezen voordat we de connectie sluiten.
-                try {
-                    Thread.sleep(LINGER_TIMEOUT);
-                } catch (final InterruptedException e) {
-                    LOGGER.debug("Interrupted", e);
-                    // No problem
-                }
+                wacht5Seconden();
 
                 // Close connection.
                 connection.close();
             } catch (final IOException e) {
                 LOGGER.info("IOEXception", e);
                 // Ignore
+            }
+        }
+
+        private void wacht5Seconden() {
+            // 5 seconden voor de client om de boel te lezen voordat we de connectie sluiten.
+            try {
+                TimeUnit.MILLISECONDS.sleep(LINGER_TIMEOUT);
+            } catch (final InterruptedException e) {
+                LOGGER.debug("Interrupted", e);
+                Thread.currentThread().interrupt();
+                // No problem
             }
         }
     }

@@ -30,9 +30,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
 import javax.sql.DataSource;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringServiceFactory;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
@@ -49,8 +49,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -62,7 +60,7 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({FacesContext.class, JbpmContext.class })
+@PrepareForTest({FacesContext.class, JbpmContext.class})
 public abstract class AbstractTagTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
@@ -83,16 +81,16 @@ public abstract class AbstractTagTest {
     }
 
     public JbpmActionListener initializeSubject(final Class<? extends AbstractHandler> clazz) throws Exception {
-        final Constructor<? extends AbstractHandler> handlerConstructor = clazz.getConstructor(new Class<?>[] {TagConfig.class, });
+        final Constructor<? extends AbstractHandler> handlerConstructor = clazz.getConstructor(new Class<?>[]{TagConfig.class,});
 
         final TagHandler handler = handlerConstructor.newInstance(makeTagConfig());
-        final Method getListenerMethod = clazz.getDeclaredMethod("getListener", new Class<?>[] {FaceletContext.class, });
+        final Method getListenerMethod = clazz.getDeclaredMethod("getListener", new Class<?>[]{FaceletContext.class,});
         getListenerMethod.setAccessible(true);
         return (JbpmActionListener) getListenerMethod.invoke(handler, faceletContext);
     }
 
     protected ActionListener initializeBasicSubject(final Class<? extends TagHandler> clazz) throws Exception {
-        final Constructor<? extends TagHandler> handlerConstructor = clazz.getConstructor(new Class<?>[] {TagConfig.class, });
+        final Constructor<? extends TagHandler> handlerConstructor = clazz.getConstructor(new Class<?>[]{TagConfig.class,});
 
         final TagHandler handler = handlerConstructor.newInstance(makeTagConfig());
         final UIComponent parent = Mockito.mock(UIComponent.class, Mockito.withSettings().extraInterfaces(ActionSource.class));
@@ -104,7 +102,7 @@ public abstract class AbstractTagTest {
     }
 
     private TagConfig makeTagConfig() {
-        final TagAttributes tagAttributes = new TagAttributes(tagAttributeList.toArray(new TagAttribute[] {}));
+        final TagAttributes tagAttributes = new TagAttributes(tagAttributeList.toArray(new TagAttribute[]{}));
         final Tag tag = new Tag(new Location("test", 1, 1), "", "test", "test", tagAttributes);
 
         final TagConfig tagConfig = Mockito.mock(TagConfig.class);
@@ -128,33 +126,22 @@ public abstract class AbstractTagTest {
         faceletContext = Mockito.mock(FaceletContext.class);
 
         Mockito.when(faceletContext.getExpressionFactory()).thenReturn(expressionFactory);
-        Mockito.when(expressionFactory.createValueExpression(Matchers.eq(faceletContext), Matchers.anyString(), Matchers.<Class<?>>any())).then(
-            new Answer<ValueExpression>() {
-                @Override
-                public ValueExpression answer(final InvocationOnMock invocation) {
-                    final ValueExpression result = Mockito.mock(ValueExpression.class);
-                    final String expression = (String) invocation.getArguments()[1];
+        Mockito.when(expressionFactory.createValueExpression(Matchers.eq(faceletContext), Matchers.anyString(), Matchers.<Class<?>>any())).then(invocation -> {
+            final ValueExpression result = Mockito.mock(ValueExpression.class);
+            final String expression = (String) invocation.getArguments()[1];
 
-                    // hier de 'when' doen dat bij het opvragen de value geidentifieerd door het tweede argument
-                    // uit de map experssion values wordt teruggegeven.
-                    Mockito.when(result.getValue(Matchers.<ELContext>anyObject())).then(new Answer<Object>() {
-                        @Override
-                        public Object answer(final InvocationOnMock invocation) {
-                            return expressionValues.get(expression);
-                        }
-                    });
+            // hier de 'when' doen dat bij het opvragen de value geidentifieerd door het tweede
+            // argument
+            // uit de map experssion values wordt teruggegeven.
+            Mockito.when(result.getValue(Matchers.<ELContext>anyObject())).then(invocation1 -> expressionValues.get(expression));
 
-                    Mockito.doAnswer(new Answer<Void>() {
-                        @Override
-                        public Void answer(final InvocationOnMock invocation) {
-                            expressionValues.put(expression, invocation.getArguments()[1]);
-                            return null;
-                        }
-                    }).when(result).setValue(Matchers.<ELContext>anyObject(), Matchers.anyObject());
+            Mockito.doAnswer(invocation1 -> {
+                expressionValues.put(expression, invocation1.getArguments()[1]);
+                return null;
+            }).when(result).setValue(Matchers.<ELContext>anyObject(), Matchers.anyObject());
 
-                    return result;
-                }
-            });
+            return result;
+        });
 
         // Setup JBPM JSF Context
         jbpmJsfContext = Mockito.mock(JbpmJsfContext.class);
@@ -166,24 +153,15 @@ public abstract class AbstractTagTest {
         Mockito.when(jbpmJsfContext.getJbpmContext()).thenReturn(jbpmContext);
 
         // Mock outcome
-        Mockito.when(jbpmJsfContext.getOutcome()).thenAnswer(new Answer<String>() {
-            @Override
-            public String answer(final InvocationOnMock invocation) {
-                return jbpmJsfContextOutcome;
-            }
-        });
-        Mockito.doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(final InvocationOnMock invocation) {
-                jbpmJsfContextOutcome = (String) invocation.getArguments()[0];
-                return null;
-            }
+        Mockito.when(jbpmJsfContext.getOutcome()).thenAnswer(invocation -> jbpmJsfContextOutcome);
+        Mockito.doAnswer(invocation -> {
+            jbpmJsfContextOutcome = (String) invocation.getArguments()[0];
+            return null;
         }).when(jbpmJsfContext).selectOutcome(Matchers.<String>anyObject());
     }
 
     /**
      * Geef de waarde van expression values.
-     *
      * @return expression values
      */
     public Map<String, Object> getExpressionValues() {
@@ -197,24 +175,18 @@ public abstract class AbstractTagTest {
 
     protected void setupDatabase(final String... sqls) {
         try {
-            Class.forName("org.h2.Driver");
+            Class.forName("org.hsqldb.jdbc.JDBCDriver");
         } catch (final ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        dataSource = new SingleConnectionDataSource("jdbc:h2:mem:test", true);
+        dataSource = new SingleConnectionDataSource("jdbc:hsqldb:mem:test", true);
 
         final ResourceLoader resourceLoader = new DefaultResourceLoader();
         for (final String sql : sqls) {
             try (Connection connection = dataSource.getConnection()) {
-                ScriptUtils.executeSqlScript(
-                    connection,
-                    new EncodedResource(resourceLoader.getResource(sql)),
-                    true,
-                    false,
-                    ScriptUtils.DEFAULT_COMMENT_PREFIX,
-                    ScriptUtils.DEFAULT_STATEMENT_SEPARATOR,
-                    ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER,
-                    ScriptUtils.DEFAULT_BLOCK_COMMENT_END_DELIMITER);
+                ScriptUtils.executeSqlScript(connection, new EncodedResource(resourceLoader.getResource(sql)), true, false, ScriptUtils.DEFAULT_COMMENT_PREFIX,
+                        ScriptUtils.DEFAULT_STATEMENT_SEPARATOR, ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER,
+                        ScriptUtils.DEFAULT_BLOCK_COMMENT_END_DELIMITER);
             } catch (final SQLException e) {
                 throw new IllegalArgumentException("Kan SQL niet uitvoeren", e);
             }
@@ -229,14 +201,11 @@ public abstract class AbstractTagTest {
             throw new RuntimeException(e);
         }
 
-        Mockito.doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(final InvocationOnMock invocation) throws Throwable {
-                final Work work = (Work) invocation.getArguments()[0];
-                work.execute(connection);
+        Mockito.doAnswer(invocation -> {
+            final Work work = (Work) invocation.getArguments()[0];
+            work.execute(connection);
 
-                return null;
-            }
+            return null;
         }).when(session).doWork(Matchers.<Work>anyObject());
     }
 

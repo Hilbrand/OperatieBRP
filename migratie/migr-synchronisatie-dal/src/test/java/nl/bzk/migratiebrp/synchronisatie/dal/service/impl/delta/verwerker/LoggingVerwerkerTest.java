@@ -11,28 +11,29 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonDeelnameEuVerkiezingenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonPersoonskaartHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util.DalUtil;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
 import org.junit.Assert;
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonDeelnameEuVerkiezingenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonPersoonskaartHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util.DalUtil;
 
 public class LoggingVerwerkerTest {
 
@@ -40,9 +41,8 @@ public class LoggingVerwerkerTest {
     private static final Timestamp DATUMTIJD_CONVERSIE = Timestamp.valueOf("2015-01-01 01:00:00.0");
     private static final long VERSIENUMMER = 1L;
 
-    private final AdministratieveHandeling administratieveHandeling = new AdministratieveHandeling(
-        maakPartij(),
-        SoortAdministratieveHandeling.GBA_INITIELE_VULLING);
+    private final AdministratieveHandeling administratieveHandeling =
+            new AdministratieveHandeling(maakPartij(), SoortAdministratieveHandeling.GBA_INITIELE_VULLING, new Timestamp(System.currentTimeMillis()));
     private final Lo3Bericht nieuwBericht = new Lo3Bericht("test-1", Lo3BerichtenBron.INITIELE_VULLING, DATUMTIJD_CONVERSIE, "TESTDATA", true);
 
     @Test
@@ -56,12 +56,12 @@ public class LoggingVerwerkerTest {
 
         final Map<BRPActie, Lo3Voorkomen> herkomstMap = new IdentityHashMap<>();
         herkomstMap.put(
-            persoon.getPersoonIndicatieSet().iterator().next().getPersoonIndicatieHistorieSet().iterator().next().getActieInhoud(),
-            nieuwBericht.addVoorkomen("07", 0, 0, null));
+                persoon.getPersoonIndicatieSet().iterator().next().getPersoonIndicatieHistorieSet().iterator().next().getActieInhoud(),
+                nieuwBericht.addVoorkomen("07", 0, 0, null));
 
         Assert.assertNotSame(
-            persoon.getPersoonIndicatieSet().iterator().next().getPersoonIndicatieHistorieSet().iterator().next().getActieInhoud(),
-            persoon.getPersoonAfgeleidAdministratiefHistorieSet().iterator().next().getActieInhoud());
+                persoon.getPersoonIndicatieSet().iterator().next().getPersoonIndicatieHistorieSet().iterator().next().getActieInhoud(),
+                persoon.getPersoonAfgeleidAdministratiefHistorieSet().iterator().next().getActieInhoud());
 
         Assert.assertNotNull(relatieActie.getLo3Voorkomen());
         Assert.assertTrue(nieuwBericht.getVoorkomens().contains(relatieHerkomst));
@@ -76,7 +76,6 @@ public class LoggingVerwerkerTest {
     private Persoon maakPersoon() {
         final SoortPersoon soortPersoon = SoortPersoon.INGESCHREVENE;
         final Timestamp timestamp = DATUMTIJD_STEMPEL;
-        final long versienummer = VERSIENUMMER;
         final Persoon persoon = new Persoon(soortPersoon);
         persoon.setTijdstipLaatsteWijziging(timestamp);
 
@@ -86,15 +85,16 @@ public class LoggingVerwerkerTest {
         persoon.getPersoonInschrijvingHistorieSet().add(maakPersoonInschrijvingHistorie(persoon));
         persoon.getPersoonDeelnameEuVerkiezingenHistorieSet().add(maakDeelnameEuVerkiezingenHistorie(persoon));
         persoon.getPersoonPersoonskaartHistorieSet().add(maakPersoonskaartHistorie(persoon));
+        persoon.addPersoonIDHistorie(maakPersoonIdHistorie(persoon));
 
         persoon.setTijdstipLaatsteWijziging(timestamp);
-        persoon.setVersienummer(versienummer);
+        persoon.setVersienummer(VERSIENUMMER);
         persoon.setDatumtijdstempel(timestamp);
         return persoon;
     }
 
     private Partij maakPartij() {
-        return new Partij("naam", 1);
+        return new Partij("naam", "000001");
     }
 
     private PersoonIndicatie maakPersoonIndicatie(final Persoon persoon) {
@@ -133,9 +133,18 @@ public class LoggingVerwerkerTest {
         return pph;
     }
 
+    private PersoonIDHistorie maakPersoonIdHistorie(final Persoon persoon) {
+        final PersoonIDHistorie historie = new PersoonIDHistorie(persoon);
+        final Timestamp tijdstempel = DATUMTIJD_STEMPEL;
+        historie.setDatumTijdRegistratie(tijdstempel);
+        historie.setActieInhoud(maakBrpActie(tijdstempel, "01"));
+        historie.setAdministratienummer("1234567890");
+        return historie;
+    }
+
     private PersoonAfgeleidAdministratiefHistorie maakAfgeleidAdministratiefHistorie(final Persoon persoon, final AdministratieveHandeling ah) {
         final Timestamp tijdstempel = DATUMTIJD_STEMPEL;
-        final PersoonAfgeleidAdministratiefHistorie paah = new PersoonAfgeleidAdministratiefHistorie((short) 0, persoon, ah, tijdstempel, false);
+        final PersoonAfgeleidAdministratiefHistorie paah = new PersoonAfgeleidAdministratiefHistorie((short) 0, persoon, ah, tijdstempel);
         paah.setDatumTijdRegistratie(tijdstempel);
         paah.setActieInhoud(maakBrpActie(tijdstempel, "07"));
         return paah;

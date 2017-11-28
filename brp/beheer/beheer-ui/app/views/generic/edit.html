@@ -1,3 +1,4 @@
+
 <div ng-controller="ItemController" ng-if="!lijstZichtbaar && !jsonZichtbaar && user">
     <div ng-form="editHoofdForm" class="form-horizontal">
         <div class="panel panel-default">
@@ -13,14 +14,14 @@
                 </div>
             </div>
             <div class="panel-body">
-                <div ng-repeat="column in columns" ng-if="(column.toonOpBewerken)">
+                <div ng-repeat="column in columns" ng-if="(column.toonOpBewerken && !(status.nieuw && column.nieuwReadonly))">
                     <div class="form-group clearrow {{column.required && !((!status.nieuw && column.readonly) || (status.nieuw && column.nieuwReadonly)) ? 'required' : ''}}">
                         <div class="col-md-2 col-sm-4 col-xs-12">
                             <label class="text-left control-label">{{column.name}}</label>
                         </div>
-                        <!-- div class="col-sm-6 col-xs-12" -->
+                        <div class="col-md-{{column.breedte}} col-sm-8 col-xs-12">
                             <brp-veld kolom="{{column}}" waarde="onderhandenitem.item" itemstatus="status"></brp-veld>
-                        <!-- /div -->
+                        </div>
                     </div>
                 </div>
                 <div class="row">

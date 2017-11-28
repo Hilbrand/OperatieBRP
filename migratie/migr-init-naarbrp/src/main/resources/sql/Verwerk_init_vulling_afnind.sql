@@ -1,6 +1,7 @@
-select * 
-from initvul.initvullingresult_afnind_regel
-join initvul.initvullingresult_afnind
-on initvul.initvullingresult_afnind.pl_id = initvul.initvullingresult_afnind_regel.pl_id
-and initvul.initvullingresult_afnind.conversie_resultaat = 'TE_VERZENDEN'
-order by initvul.initvullingresult_afnind.a_nr
+select *
+from initvul.initvullingresult_afnind
+where pl_id in ( select pl_id
+                 from initvul.initvullingresult_afnind
+                 where bericht_resultaat = :conversie_resultaat
+                 LIMIT :batch_grootte
+               )

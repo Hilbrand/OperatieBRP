@@ -6,73 +6,54 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc309;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigInteger;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import nl.bzk.migratiebrp.bericht.model.sync.generated.RelatieSluitingGroepType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkToevalligeGebeurtenisVerzoekBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
-import org.junit.Before;
+import nl.bzk.migratiebrp.register.client.PartijService;
+import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
-/**
- */
+@RunWith(MockitoJUnitRunner.class)
 public class MaakVerwerkToevalligeGebeurtenisVerzoekBerichtActionTest {
 
-    private MaakVerwerkToevalligeGebeurtenisVerzoekBerichtAction subject;
-    private BerichtenDao berichtenDao;
+    @Mock
+    private PartijService partijService;
+    @Mock
+    private PartijRegister partijRegister;
+
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+
+
     private final Tb02Factory tb02Factory = new Tb02Factory();
 
-    @Before
-    public void setUp() throws Exception {
-        subject = new MaakVerwerkToevalligeGebeurtenisVerzoekBerichtAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-        ReflectionTestUtils.setField(subject, "verwerkToevalligeGebeurtenisVerzoekBerichtFactory", new VerwerkToevalligeGebeurtenisVerzoekBerichtFactory());
-    }
-
     @Test
-    public void testExecuteMetCorrecteRelatieSluiting() throws Exception {
+    public void test() throws Exception {
+        Mockito.when(partijService.geefRegister()).thenReturn(partijRegister);
+        Mockito.when(partijRegister.zoekPartijOpPartijCode("333301")).thenReturn(new Partij("333301", "3333", null, Collections.emptyList()));
+        Mockito.when(partijRegister.zoekPartijOpPartijCode("222201")).thenReturn(new Partij("222201", "2222", null, Collections.emptyList()));
+        MaakVerwerkToevalligeGebeurtenisVerzoekBerichtAction subject = new MaakVerwerkToevalligeGebeurtenisVerzoekBerichtAction(partijService, berichtenDao);
         final Map<String, Object> parameters = new HashMap<>();
-        parameters.put("input", berichtenDao.bewaarBericht(tb02Factory.maakTb02Bericht(Tb02Factory.Soort.SLUITING)));
+        parameters.put("input", berichtenDao.bewaarBericht(tb02Factory.maakSluitingTb02Bericht()));
 
         final Map<String, Object> result = subject.execute(parameters);
         assertTrue("Resultaatmap moet sleutel bevatten", result.containsKey("verwerkToevalligeGebeurtenisVerzoekBericht"));
         final Long berichtId = (Long) result.get("verwerkToevalligeGebeurtenisVerzoekBericht");
         final VerwerkToevalligeGebeurtenisVerzoekBericht bericht = (VerwerkToevalligeGebeurtenisVerzoekBericht) berichtenDao.leesBericht(berichtId);
-        final RelatieSluitingGroepType sluiting = bericht.getRelatie().getSluiting().getSluiting();
-        assertEquals("Sluitingdatum moet zelde zijn als in tb02 bericht", new BigInteger("19990101"), sluiting.getDatum());
-        assertEquals("Plaats van sluiting moet overeenkomen", "5555", sluiting.getPlaats());
-        assertEquals("Land van sluiting moet overeenkomen", "1", sluiting.getLand());
-        assertNull("Bij sluiting geen ontbinding mogelijk", bericht.getRelatie().getOntbinding());
-        assertNull("Bij sluiting geen omzetting mogelijk", bericht.getRelatie().getOmzetting());
-        assertNotNull("Akte dient aanwezig te zijn", bericht.getAkte());
-        assertNotNull("Persoon moet gevuld zijn", bericht.getPersoon());
-        assertNotNull("Geldigheid moet gevuld zijn", bericht.getGeldigheid());
+        Assert.assertEquals("Aktenummer dient overeen te komen met waarde uit header tb02", "3QA1234", bericht.getAktenummer());
+        Assert.assertEquals("Verzendende gemeente dient overeen te komen met bronPartijCode tb02", "3333", bericht.getVerzendendeGemeente());
+        Assert.assertEquals("Ontvangende gemeente dient overeen te komen met doelPartijCode tb02", "2222", bericht.getOntvangendeGemeente());
+        Assert.assertNotNull("Inhoud moet gevuld zijn", bericht.getTb02InhoudAlsTeletex());
     }
 
-    @Test
-    public void testExecuteMetCorrecteRelatieOntbinding() throws Exception {
-        final Map<String, Object> parameters = new HashMap<>();
-        parameters.put("input", berichtenDao.bewaarBericht(tb02Factory.maakTb02Bericht(Tb02Factory.Soort.ONTBINDING)));
-
-        final Map<String, Object> result = subject.execute(parameters);
-        assertTrue("Resultaatmap moet sleutel bevatten", result.containsKey("verwerkToevalligeGebeurtenisVerzoekBericht"));
-        final Long berichtId = (Long) result.get("verwerkToevalligeGebeurtenisVerzoekBericht");
-        final VerwerkToevalligeGebeurtenisVerzoekBericht bericht = (VerwerkToevalligeGebeurtenisVerzoekBericht) berichtenDao.leesBericht(berichtId);
-        assertNotNull("Ontbinding dient gevuld te zijn", bericht.getRelatie().getOntbinding());
-        assertNotNull("Bij ontbinding moet sluiting ook gevuld zijn", bericht.getRelatie().getSluiting());
-        assertNotNull("Persoon van de relatie moet gevuld zijn", bericht.getRelatie().getPersoon());
-        assertNull("Bij ontbinding geen omzetting mogelijk", bericht.getRelatie().getOmzetting());
-        assertNotNull("Akte dient aanwezig te zijn", bericht.getAkte());
-        assertNotNull("Persoon moet gevuld zijn", bericht.getPersoon());
-        assertNotNull("Geldigheid moet gevuld zijn", bericht.getGeldigheid());
-    }
 }

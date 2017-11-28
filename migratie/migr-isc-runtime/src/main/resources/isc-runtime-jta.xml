@@ -21,18 +21,23 @@
         </property>
     </bean>
 
-	<bean id="atomikosUserTransactionService" class="com.atomikos.icatch.config.UserTransactionServiceImp" init-method="init" destroy-method="shutdownForce" depends-on="atomikosSystemProperties">
+    <bean id="atomikosLogBaseCreator" class="nl.bzk.algemeenbrp.jta.util.DirectoryCreator">
+    	<property name="directory" value="${atomikos.base.dir:work/atomikos}" />
+    </bean>
+
+	<bean id="atomikosUserTransactionService" class="com.atomikos.icatch.config.UserTransactionServiceImp" 
+	      init-method="init" destroy-method="shutdownForce" depends-on="atomikosSystemProperties,atomikosLogBaseCreator">
 	    <constructor-arg>
 	        <props>
 	            <prop key="com.atomikos.icatch.max_timeout">${atomikos.max.timeout:300}000</prop>
 	            <prop key="com.atomikos.icatch.default_jta_timeout">${atomikos.default.timeout:10}000</prop>
 	            <prop key="com.atomikos.icatch.max_actives">${atomikos.max.actives:50}</prop>
-	            <prop key="com.atomikos.icatch.enable_logging">true</prop>
+	            <prop key="com.atomikos.icatch.enable_logging">${atomikos.enable_logging:true}</prop>
 	            <prop key="com.atomikos.icatch.tm_unique_name">${atomikos.unique.name:isc-runtime}-</prop>
 	            <prop key="com.atomikos.icatch.serial_jta_transactions">true</prop>
 	            <prop key="com.atomikos.icatch.force_shutdown_on_vm_exit">false</prop>
 	            <prop key="com.atomikos.icatch.log_base_name">${atomikos.unique.name:isc-runtime}-tmlog-</prop>
-	            <prop key="com.atomikos.icatch.log_base_dir">${atomikos.base.dir:target/atomikos}</prop>
+	            <prop key="com.atomikos.icatch.log_base_dir">${atomikos.base.dir:work/atomikos}</prop>
 	            <prop key="com.atomikos.icatch.checkpoint_interval">500</prop>
 	            <prop key="com.atomikos.icatch.threaded_2pc">false</prop>
 	        </props>

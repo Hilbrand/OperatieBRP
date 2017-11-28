@@ -26,12 +26,9 @@ public final class CsvReader implements Reader {
 
     /**
      * Leest de alle regels van een CSV-bestand en voegt deze regels samen tot 1 regel, gescheiden door een '\n'.
-     * 
-     * @param file
-     *            Bestand dat ingelezen moet worden
-     * @throws java.io.IOException
-     *             Als in de onderliggende CSVReader een Exception optreedt
+     * @param file Bestand dat ingelezen moet worden
      * @return String met daarin de inhoud van het bestand
+     * @throws java.io.IOException Als in de onderliggende CSVReader een Exception optreedt
      */
     @Override
     public String readFile(final File file) throws IOException {
@@ -44,9 +41,7 @@ public final class CsvReader implements Reader {
 
     /**
      * Niet geimplementeerd. Geeft null terug.
-     * 
-     * @param file
-     *            Bestand dat ingelezen moet worden
+     * @param file Bestand dat ingelezen moet worden
      * @return null, deze methode is niet geimplementeerd.
      */
     @Override
@@ -56,13 +51,10 @@ public final class CsvReader implements Reader {
 
     /**
      * Leest het CSV-bestand in en retourneert een lijst met daarin een map van header/value.
-     * 
-     * @param file
-     *            het csv-bestand dat ingelezen moet worden
-     * @return Een lijst met daarin header/value combinatie. Elke entry in de lijst is een regel in het bestand. Elke
-     *         map-entry is een combinatie van header en value.
-     * @throws IOException
-     *             als er iets mis is gegaan bij het inlezen van het bestand
+     * @param file het csv-bestand dat ingelezen moet worden
+     * @return Een lijst met daarin header/value combinatie. Elke entry in de lijst is een regel in het bestand. Elke map-entry is een combinatie van header en
+     * value.
+     * @throws IOException als er iets mis is gegaan bij het inlezen van het bestand
      */
     @Override
     public List<Map<String, Object>> readFileAsSqlOutput(final File file) throws IOException {

@@ -8,4 +8,3 @@
  * Standalone runtime voor initiele vulling.
  */
 package nl.bzk.migratiebrp.init.naarbrp;
-

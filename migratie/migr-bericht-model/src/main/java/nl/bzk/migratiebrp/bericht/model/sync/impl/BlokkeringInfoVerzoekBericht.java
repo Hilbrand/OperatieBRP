@@ -31,9 +31,7 @@ public final class BlokkeringInfoVerzoekBericht extends AbstractSyncBerichtZonde
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een storebericht te maken.
-     *
-     * @param blokkeringInfoVerzoekType
-     *            het blokkeringInfoVerzoek type
+     * @param blokkeringInfoVerzoekType het blokkeringInfoVerzoek type
      */
     public BlokkeringInfoVerzoekBericht(final BlokkeringInfoVerzoekType blokkeringInfoVerzoekType) {
         super("BlokkeringInfoVerzoek");
@@ -51,7 +49,6 @@ public final class BlokkeringInfoVerzoekBericht extends AbstractSyncBerichtZonde
 
     /**
      * Geeft het A-nummer dat op het bericht staat.
-     *
      * @return Het A-nummer dat op het bericht staat.
      */
     public String getANummer() {
@@ -60,9 +57,7 @@ public final class BlokkeringInfoVerzoekBericht extends AbstractSyncBerichtZonde
 
     /**
      * Zet het A-nummer op het bericht.
-     *
-     * @param aNummer
-     *            Het te zetten A-nummer.
+     * @param aNummer Het te zetten A-nummer.
      */
     public void setANummer(final String aNummer) {
         blokkeringInfoVerzoekType.setANummer(aNummer);

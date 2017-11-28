@@ -18,8 +18,8 @@ import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.BlokkeringVerzoekType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -28,8 +28,8 @@ import org.junit.Test;
 public class BlokkeringVerzoekBerichtTest {
 
     private static final String A_NUMMER = "1234567890";
-    private static final String GEMEENTE_NAAR = "1905";
-    private static final String GEMEENTE_REGISTRATIE = "1904";
+    private static final String GEMEENTE_NAAR = "190501";
+    private static final String GEMEENTE_REGISTRATIE = "190401";
 
     private static final Logger LOG = LoggerFactory.getLogger();
 

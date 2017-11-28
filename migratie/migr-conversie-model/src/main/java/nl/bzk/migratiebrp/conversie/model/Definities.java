@@ -11,9 +11,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Enumeratie van alle te implementeren requirements.
- *
  */
-@SuppressWarnings("checkstyle:multiplestringliterals")
+
 public enum Definities {
     /**
      * Nederlandse gemeente.
@@ -150,7 +149,7 @@ public enum Definities {
      * derden en niet aan kerken.
      */
     DEF036("DEF036", "niet zonder toestemming aan derden ter uitvoering van een algemeen "
-                     + "verbindend voorschrift en niet aan vrije derden en niet aan kerken"),
+            + "verbindend voorschrift en niet aan vrije derden en niet aan kerken"),
     /**
      * Slechts een deel van de beperkingen uit DEF036 zijn van toepassing.
      */
@@ -281,13 +280,9 @@ public enum Definities {
      */
     DEF076("DEF076", "Immigratie"),
     /**
-     * Niet ingezetene.
-     */
-    DEF078("DEF078", "Niet ingezetene"),
-    /**
      * Opgeschort, met uitzondering van niet ingezetene.
      */
-    DEF079("DEF079", "Opgeschort, met uitzondering van niet ingezetene"),
+    DEF079("DEF079", "Opgeschort"),
     /**
      * Persoon is Vertrokken onbekend waarheen (VOW).
      */
@@ -319,14 +314,25 @@ public enum Definities {
     /**
      * Persoonslijst is actueel (niet opgeschort).
      */
-    DEF087("DEF087", "Persoonslijst is actueel (niet opgeschort)");
+    DEF087("DEF087", "Persoonslijst is actueel (niet opgeschort)"),
+    /**
+     * Ingeschreven in gemeente.
+     */
+    DEF092("DEF092", "Ingeschreven in gemeente"),
+    /**
+     * Ingeschreven in RNI.
+     */
+    DEF093("DEF093", "Ingeschreven in RNI"),
+    /**
+     * Onbekend waar ingeschreven.
+     */
+    DEF094("DEF094", "Onbekend waar ingeschreven");
 
     private final String code;
     private final String omschrijving;
 
     /**
      * Constructor.
-     *
      * @param code code
      * @param omschrijving Omschrijving
      */
@@ -337,7 +343,6 @@ public enum Definities {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {
@@ -346,7 +351,6 @@ public enum Definities {
 
     /**
      * Geef de waarde van omschrijving.
-     *
      * @return omschrijving
      */
     public String getOmschrijving() {

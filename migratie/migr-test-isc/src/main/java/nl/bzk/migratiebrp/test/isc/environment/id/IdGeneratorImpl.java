@@ -26,7 +26,6 @@ public final class IdGeneratorImpl implements IdGenerator {
 
     /**
      * Genereer (max lengte 12) ID. Let op: enkel uniek binnen JVM (implementatie dmv AtomicInteger).
-     *
      * @return id
      */
     @Override

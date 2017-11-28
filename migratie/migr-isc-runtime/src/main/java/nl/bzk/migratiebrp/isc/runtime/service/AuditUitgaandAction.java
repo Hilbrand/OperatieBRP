@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.isc.runtime.service;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao.Direction;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.model.Bericht;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -55,6 +55,7 @@ public final class AuditUitgaandAction implements Action {
         message.setCorrelatieId(bericht.getCorrelationId());
         message.setOriginator(bericht.getVerzendendePartij());
         message.setRecipient(bericht.getOntvangendePartij());
+        message.setRequestNonReceiptNotification(Boolean.TRUE.equals(bericht.getRequestNonReceipt()));
 
         return true;
     }

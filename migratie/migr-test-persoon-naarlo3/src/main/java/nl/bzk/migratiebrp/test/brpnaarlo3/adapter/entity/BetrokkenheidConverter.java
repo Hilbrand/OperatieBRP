@@ -6,12 +6,13 @@
 
 package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -45,7 +46,7 @@ public final class BetrokkenheidConverter extends EntityConverter {
                 relatie = context.getRelatie(Integer.parseInt(value));
                 break;
             case HEADER_ROL:
-                rol = SoortBetrokkenheid.parseId(Short.parseShort(value));
+                rol = SoortBetrokkenheid.parseId(Integer.parseInt(value));
                 break;
             case HEADER_PERSOON:
                 persoon = context.getPersoon(Integer.parseInt(value));

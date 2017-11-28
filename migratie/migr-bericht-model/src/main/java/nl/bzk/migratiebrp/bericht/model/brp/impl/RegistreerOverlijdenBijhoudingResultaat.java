@@ -8,14 +8,14 @@ package nl.bzk.migratiebrp.bericht.model.brp.impl;
 
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.brp.AbstractBrpBericht;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerOverlijdenBijhoudingResultaat;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingResultaatRegistreerOverlijdenMigVrz;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjectFactory;
 import nl.bzk.migratiebrp.bericht.model.brp.xml.BrpXml;
 
 /**
  * Resultaat van een overlijden bijhouding.
  */
-public final class RegistreerOverlijdenBijhoudingResultaat extends AbstractBrpBericht<MigratievoorzieningRegistreerOverlijdenBijhoudingResultaat> {
+public final class RegistreerOverlijdenBijhoudingResultaat extends AbstractBrpBericht<BijhoudingResultaatRegistreerOverlijdenMigVrz> {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,16 +25,14 @@ public final class RegistreerOverlijdenBijhoudingResultaat extends AbstractBrpBe
      * Default constructor.
      */
     public RegistreerOverlijdenBijhoudingResultaat() {
-        this(new MigratievoorzieningRegistreerOverlijdenBijhoudingResultaat());
+        this(new BijhoudingResultaatRegistreerOverlijdenMigVrz());
     }
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param resultaat
-     *            het resultaat type
+     * @param resultaat het resultaat type
      */
-    public RegistreerOverlijdenBijhoudingResultaat(final MigratievoorzieningRegistreerOverlijdenBijhoudingResultaat resultaat) {
+    public RegistreerOverlijdenBijhoudingResultaat(final BijhoudingResultaatRegistreerOverlijdenMigVrz resultaat) {
         super("RegistreerOverlijdenBijhoudingResultaat", resultaat);
     }
 

@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -25,13 +25,11 @@ import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.exception.TestException;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
@@ -56,16 +54,13 @@ public final class IscQueuer {
 
     /**
      * Verstuur een bericht via JMS.
-     *
-     * @param destination
-     *            destination
-     * @param bericht
-     *            bericht
+     * @param destination destination
+     * @param bericht bericht
      */
     public void sendMessage(final Destination destination, final Bericht bericht) {
-        LOG.info(
-            "Sending message (id={}, correlatie={}): {}",
-            new Object[] {bericht.getBerichtReferentie(), bericht.getCorrelatieReferentie(), bericht.getInhoud(), });
+        LOG.info("Sending message (id={}, correlatie={}, originator={}, recipient={}): {}",
+                new Object[]{bericht.getBerichtReferentie(), bericht.getCorrelatieReferentie(),
+                        bericht.getVerzendendePartij(), bericht.getOntvangendePartij(), bericht.getInhoud(),});
 
         jmsTemplate.send(destination, new MessageCreator() {
             @Override
@@ -82,6 +77,9 @@ public final class IscQueuer {
                 if (bericht.getMsSequenceNumber() != null) {
                     message.setStringProperty(JMSConstants.BERICHT_MS_SEQUENCE_NUMBER, bericht.getMsSequenceNumber());
                 }
+                if (Boolean.TRUE.equals(bericht.getRequestNonReceiptNotification())) {
+                    message.setStringProperty(JMSConstants.REQUEST_NON_RECEIPT_NOTIFICATION, "true");
+                }
 
                 return message;
             }
@@ -90,19 +88,16 @@ public final class IscQueuer {
 
     /**
      * Ontvang een bericht via JMS.
-     *
-     * @param destination
-     *            destination
-     * @param messageSelector
-     *            message selector
+     * @param destination destination
+     * @param messageSelector message selector
      * @return ontvangen bericht
      */
     public Bericht ontvangBericht(final Destination destination, final String messageSelector) {
-        LOG.info("Ontvang bericht op {} met selector '{}' (timeout {})", new Object[] {destination, messageSelector, jmsTemplate.getReceiveTimeout() });
+        LOG.info("Ontvang bericht op {} met selector '{}' (timeout {})", new Object[]{destination, messageSelector, jmsTemplate.getReceiveTimeout()});
 
         final long originalTimeout = jmsTemplate.getReceiveTimeout();
         try {
-            jmsTemplate.setReceiveTimeout(originalTimeout / DEFAULT_LOOP_TELLER);
+            jmsTemplate.setReceiveTimeout(3000);
 
             Message message = null;
             int count = 0;
@@ -138,6 +133,13 @@ public final class IscQueuer {
             } else {
                 throw new IllegalArgumentException("Onbekend bericht type: " + message.getClass().getName());
             }
+
+            LOG.info(
+                    "Ontvangen request-non-receipt-notification property: '{}'",
+                    message.getStringProperty(JMSConstants.REQUEST_NON_RECEIPT_NOTIFICATION));
+
+            bericht.setRequestNonReceiptNotification(Boolean.valueOf(message.getStringProperty(JMSConstants.REQUEST_NON_RECEIPT_NOTIFICATION) != null));
+
         } catch (final JMSException e) {
             throw new IllegalArgumentException(e);
         }
@@ -147,11 +149,8 @@ public final class IscQueuer {
 
     /**
      * Clean up: lees alle 'overblijvende' berichten van de queue.
-     *
-     * @param destination
-     *            queue
-     * @param serverConnection
-     *            connector voor JMX.
+     * @param destination queue
+     * @param serverConnection connector voor JMX.
      * @return lijst aan berichten
      */
     public List<Bericht> cleanUp(final Destination destination, final MBeanServerConnection serverConnection) {
@@ -180,7 +179,7 @@ public final class IscQueuer {
                     result.add(mapMessage(message));
                 } else {
                     LOG.info("Bericht kon niet worden gelezen van queue (" + queueName + "), wacht " + CLEANUP_TIMEOUT + "ms. Retry = " + numberOfRetries);
-                    Thread.sleep(CLEANUP_TIMEOUT);
+                    TimeUnit.MILLISECONDS.sleep(CLEANUP_TIMEOUT);
                     numberOfRetries++;
                 }
 
@@ -190,7 +189,7 @@ public final class IscQueuer {
                 LOG.error("Op queue " + queueName + " nog staande berichten konden niet worden gelezen; fallback op JMX operatie.");
                 if (DESTINATION_QUEUE.equals(destinationType)) {
                     verwijderBerichtenOpQueueViaJmx(queueName, serverConnection);
-                    Thread.sleep(CLEANUP_TIMEOUT);
+                    TimeUnit.MILLISECONDS.sleep(CLEANUP_TIMEOUT);
                 }
 
                 if (telAantalBerichtenOpQueue(queueName, destinationType, serverConnection) > 0) {
@@ -198,10 +197,9 @@ public final class IscQueuer {
                 }
             }
         } catch (final
-                InterruptedException
+        InterruptedException
                 | JMSException
-                | TestException e)
-        {
+                | TestException e) {
             throw new IllegalStateException("Fout opgetreden bij het lezen van berichten op de queue.", e);
         } finally {
             jmsTemplate.setReceiveTimeout(timeout);
@@ -216,19 +214,19 @@ public final class IscQueuer {
 
             // Get the MBeanInfo for the JNDIView MBean
             final ObjectName objectNaam =
-                    new ObjectName("org.apache.activemq:type=Broker,brokerName=routeringCentrale,destinationType="
-                            + destinationType
-                            + ",destinationName="
-                            + queueName);
+                    new ObjectName(
+                            "org.apache.activemq:type=Broker,brokerName=routeringCentrale,destinationType="
+                                    + destinationType
+                                    + ",destinationName="
+                                    + queueName);
             return ((Long) serverConnection.getAttribute(objectNaam, "QueueSize")).intValue();
         } catch (final
-                AttributeNotFoundException
+        AttributeNotFoundException
                 | InstanceNotFoundException
                 | MBeanException
                 | ReflectionException
                 | IOException
-                | MalformedObjectNameException e)
-        {
+                | MalformedObjectNameException e) {
             throw new IllegalStateException("Fout opgetreden bij het bepalen van het aantal berichten op de queue ( " + queueName + " ).", e);
         }
     }
@@ -239,14 +237,13 @@ public final class IscQueuer {
             // Get the MBeanInfo for the JNDIView MBean
             final ObjectName objectNaam =
                     new ObjectName("org.apache.activemq:type=Broker,brokerName=routeringCentrale,destinationType=Queue,destinationName=" + queueName);
-            serverConnection.invoke(objectNaam, "purge", new Object[] {}, new String[] {});
+            serverConnection.invoke(objectNaam, "purge", new Object[]{}, new String[]{});
         } catch (final
-                MalformedObjectNameException
+        MalformedObjectNameException
                 | InstanceNotFoundException
                 | MBeanException
                 | ReflectionException
-                | IOException e)
-        {
+                | IOException e) {
             throw new IllegalStateException("Fout opgetreden bij het verwijderen van berichten op de queue ( " + queueName + " ). ", e);
         }
     }

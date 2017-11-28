@@ -20,17 +20,11 @@ public final class TestBuildFailure extends TestCasus {
 
     /**
      * Constructor.
-     *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
-     * @param outputFolder
-     *            output folder
-     * @param expectedFolder
-     *            expected folder
-     * @param exception
-     *            De exceptie.
+     * @param thema thema
+     * @param naam naam
+     * @param outputFolder output folder
+     * @param expectedFolder expected folder
+     * @param exception De exceptie.
      */
     protected TestBuildFailure(final String thema, final String naam, final File outputFolder, final File expectedFolder, final Exception exception) {
         super(thema, naam, outputFolder, expectedFolder);
@@ -49,13 +43,9 @@ public final class TestBuildFailure extends TestCasus {
 
         /**
          * Constructor.
-         *
-         * @param thema
-         *            thema
-         * @param naam
-         *            naam
-         * @param exception
-         *            De exceptie.
+         * @param thema thema
+         * @param naam naam
+         * @param exception De exceptie.
          */
         protected FailureTestResultaat(final String thema, final String naam, final Exception exception) {
             super(thema, naam);

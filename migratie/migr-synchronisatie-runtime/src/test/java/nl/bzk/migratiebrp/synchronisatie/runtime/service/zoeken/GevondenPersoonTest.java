@@ -13,9 +13,9 @@ public class GevondenPersoonTest {
 
     @Test
     public void test() {
-        final GevondenPersoon subject = new GevondenPersoon(1, 2L, "3");
-        Assert.assertEquals(Integer.valueOf(1), subject.getPersoonId());
-        Assert.assertEquals(Long.valueOf(2), subject.getAdministratienummer());
+        final GevondenPersoon subject = new GevondenPersoon(1L, "2", "3");
+        Assert.assertEquals(Long.valueOf(1), subject.getPersoonId());
+        Assert.assertEquals("2", subject.getAdministratienummer());
         Assert.assertEquals("3", subject.getBijhoudingsgemeente());
     }
 }

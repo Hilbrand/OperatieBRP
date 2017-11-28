@@ -7,14 +7,15 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.DienstSelectieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.EenheidSelectieInterval;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.LeverwijzeSelectie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortSelectie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstSelectieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.DienstSelectieHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.AbstractBrpMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.BrpMapperUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,9 +26,7 @@ public final class BrpDienstSelectieMapper extends AbstractBrpMapper<DienstSelec
 
     /**
      * Map een database entiteit partij naar een BRP conversie model object.
-     *
-     * @param dienstSelectieHistorieSet
-     *            database entiteit
+     * @param dienstSelectieHistorieSet database entiteit
      * @return conversie model object
      */
     public BrpStapel<BrpDienstSelectieInhoud> mapDienstAttendering(final Set<DienstSelectieHistorie> dienstSelectieHistorieSet) {
@@ -36,6 +35,22 @@ public final class BrpDienstSelectieMapper extends AbstractBrpMapper<DienstSelec
 
     @Override
     protected BrpDienstSelectieInhoud mapInhoud(final DienstSelectieHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
-        return new BrpDienstSelectieInhoud(BrpMapperUtil.mapDatum(historie.getEersteSelectieDatum()), historie.getSelectiePeriodeInMaanden());
+
+        return new BrpDienstSelectieInhoud(
+                SoortSelectie.parseId(historie.getSoortSelectie()),
+                BrpMapperUtil.mapDatum(historie.getEersteSelectieDatum()),
+                bepaalSelectiePeriodeInMaand(historie),
+                historie.getIndVerzVolBerBijWijzAfniNaSelectie(),
+                LeverwijzeSelectie.parseId(historie.getLeverwijzeSelectie()));
+    }
+
+    private Short bepaalSelectiePeriodeInMaand(final DienstSelectieHistorie historie) {
+        if (EenheidSelectieInterval.MAAND == EenheidSelectieInterval.parseId(historie.getEenheidSelectieInterval())
+                && historie.getSelectieInterval() != null) {
+            return historie.getSelectieInterval().shortValue();
+        }
+        return null;
+
+
     }
 }

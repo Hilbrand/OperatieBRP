@@ -21,26 +21,27 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingOuder;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3AanduidingOuder;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeboorteHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RelatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3AanduidingOuder;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeboorteHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RelatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AanduidingOuder;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 
 import org.junit.Test;
 
@@ -51,16 +52,17 @@ public class RelatieDecoratorTest {
 
     private static final RedenBeeindigingRelatie OVERLIJDEN = new RedenBeeindigingRelatie('O', "Overlijden");
     private static final RedenBeeindigingRelatie OMZETTING = new RedenBeeindigingRelatie('Z', "Omzetting");
-    private static final Partij PARTIJ = new Partij("partij", 1);
-    private static final LandOfGebied LAND_OF_GEBIED = new LandOfGebied((short) 2, "Nederland");
+    private static final Partij PARTIJ = new Partij("partij", "000001");
+    private static final LandOfGebied LAND_OF_GEBIED = new LandOfGebied("0002", "Nederland");
     private static final AdministratieveHandeling ADMINISTRATIEVE_HANDELING = new AdministratieveHandeling(
-        PARTIJ,
-        SoortAdministratieveHandeling.GBA_INITIELE_VULLING);
+            PARTIJ,
+            SoortAdministratieveHandeling.GBA_INITIELE_VULLING,
+            new Timestamp(System.currentTimeMillis()));
     private static final BRPActie ACTIE = new BRPActie(
-        SoortActie.CONVERSIE_GBA,
-        ADMINISTRATIEVE_HANDELING,
-        PARTIJ,
-        Timestamp.valueOf("2015-01-01 12:00:00.000"));
+            SoortActie.CONVERSIE_GBA,
+            ADMINISTRATIEVE_HANDELING,
+            PARTIJ,
+            Timestamp.valueOf("2015-01-01 12:00:00.000"));
 
     @Test
     public void testDecorate() {
@@ -91,40 +93,42 @@ public class RelatieDecoratorTest {
         final int datum2 = 20130101;
         final int datum3 = 20140101;
 
-        final Relatie relatie1 = new Relatie(SoortRelatie.HUWELIJK);
-        final Relatie relatie2 = new Relatie(SoortRelatie.HUWELIJK);
+        final Relatie relatie1 = maakRelatie(SoortRelatie.HUWELIJK);
+        final RelatieHistorie relatieHistorie1 = relatie1.getActueleRelatieHistorie();
+        final Relatie relatie2 = maakRelatie(SoortRelatie.HUWELIJK);
+        final RelatieHistorie relatieHistorie2 = relatie2.getActueleRelatieHistorie();
 
         Comparator<RelatieDecorator> sorteerder = RelatieDecorator.getSorteerder();
         assertNotNull(sorteerder);
-        relatie1.setDatumAanvang(datum1);
-        relatie2.setDatumAanvang(datum2);
+        relatieHistorie1.setDatumAanvang(datum1);
+        relatieHistorie2.setDatumAanvang(datum2);
         assertTrue(sorteerder.compare(RelatieDecorator.decorate(relatie1), RelatieDecorator.decorate(relatie2)) < 0);
 
-        relatie1.setDatumEinde(null);
-        relatie2.setDatumEinde(datum3);
+        relatieHistorie1.setDatumEinde(null);
+        relatieHistorie2.setDatumEinde(datum3);
         assertTrue(sorteerder.compare(RelatieDecorator.decorate(relatie1), RelatieDecorator.decorate(relatie2)) < 0);
 
-        relatie1.setDatumEinde(datum2);
-        relatie2.setDatumEinde(null);
+        relatieHistorie1.setDatumEinde(datum2);
+        relatieHistorie2.setDatumEinde(null);
         assertTrue(sorteerder.compare(RelatieDecorator.decorate(relatie1), RelatieDecorator.decorate(relatie2)) > 0);
 
-        relatie2.setDatumEinde(datum3);
+        relatieHistorie2.setDatumEinde(datum3);
         assertTrue(sorteerder.compare(RelatieDecorator.decorate(relatie1), RelatieDecorator.decorate(relatie2)) < 0);
 
-        relatie2.setDatumEinde(datum2);
+        relatieHistorie2.setDatumEinde(datum2);
         assertTrue(sorteerder.compare(RelatieDecorator.decorate(relatie1), RelatieDecorator.decorate(relatie2)) < 0);
 
-        relatie2.setDatumAanvang(datum1);
+        relatieHistorie2.setDatumAanvang(datum1);
         assertTrue(sorteerder.compare(RelatieDecorator.decorate(relatie1), RelatieDecorator.decorate(relatie2)) == 0);
 
-        relatie1.setRedenBeeindigingRelatie(OVERLIJDEN);
+        relatieHistorie1.setRedenBeeindigingRelatie(OVERLIJDEN);
         assertTrue(sorteerder.compare(RelatieDecorator.decorate(relatie1), RelatieDecorator.decorate(relatie2)) > 0);
 
-        relatie1.setRedenBeeindigingRelatie(null);
-        relatie2.setRedenBeeindigingRelatie(OVERLIJDEN);
+        relatieHistorie1.setRedenBeeindigingRelatie(null);
+        relatieHistorie2.setRedenBeeindigingRelatie(OVERLIJDEN);
         assertTrue(sorteerder.compare(RelatieDecorator.decorate(relatie1), RelatieDecorator.decorate(relatie2)) < 0);
 
-        relatie1.setRedenBeeindigingRelatie(OMZETTING);
+        relatieHistorie1.setRedenBeeindigingRelatie(OMZETTING);
         assertTrue(sorteerder.compare(RelatieDecorator.decorate(relatie1), RelatieDecorator.decorate(relatie2)) > 0);
     }
 
@@ -182,10 +186,11 @@ public class RelatieDecoratorTest {
         final Betrokkenheid kind = new Betrokkenheid(SoortBetrokkenheid.KIND, relatie);
 
         final Persoon ouderPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        ouderPersoon.setAdministratienummer(1234567890L);
+        voegAnummerToeAanPersoon(ouderPersoon, "1234567890");
         ouderPersoon.addBetrokkenheid(ouder);
-        final Persoon kindPersoon = new Persoon(SoortPersoon.ONBEKEND);
-        kindPersoon.setAdministratienummer(9876543210L);
+
+        final Persoon kindPersoon = new Persoon(SoortPersoon.PSEUDO_PERSOON);
+        voegAnummerToeAanPersoon(kindPersoon, "9876543210");
         kindPersoon.addBetrokkenheid(kind);
 
         relatie.addBetrokkenheid(ouder);
@@ -202,17 +207,17 @@ public class RelatieDecoratorTest {
 
     @Test
     public void testGetAndereBetrokkenheidHuwelijk() {
-        final Relatie relatie = new Relatie(SoortRelatie.HUWELIJK);
+        final Relatie relatie = maakRelatie(SoortRelatie.HUWELIJK);
         final Betrokkenheid partner1 = new Betrokkenheid(SoortBetrokkenheid.PARTNER, relatie);
         final Betrokkenheid partner2 = new Betrokkenheid(SoortBetrokkenheid.PARTNER, relatie);
         relatie.addBetrokkenheid(partner1);
         relatie.addBetrokkenheid(partner2);
 
         final Persoon partner1Persoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        partner1Persoon.setAdministratienummer(1234567890L);
+        voegAnummerToeAanPersoon(partner1Persoon, "1234567890");
         partner1Persoon.addBetrokkenheid(partner1);
-        final Persoon partner2Persoon = new Persoon(SoortPersoon.ONBEKEND);
-        partner2Persoon.setAdministratienummer(9876543210L);
+        final Persoon partner2Persoon = new Persoon(SoortPersoon.PSEUDO_PERSOON);
+        voegAnummerToeAanPersoon(partner2Persoon, "9876543210");
         partner2Persoon.addBetrokkenheid(partner2);
 
         final RelatieDecorator relatieDecorator = RelatieDecorator.decorate(relatie);
@@ -234,10 +239,10 @@ public class RelatieDecoratorTest {
         relatie.addBetrokkenheid(partner2);
 
         final Persoon partner1Persoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        partner1Persoon.setAdministratienummer(1234567890L);
+        voegAnummerToeAanPersoon(partner1Persoon, "1234567890");
         partner1Persoon.addBetrokkenheid(partner1);
-        final Persoon partner2Persoon = new Persoon(SoortPersoon.ONBEKEND);
-        partner2Persoon.setAdministratienummer(9876543210L);
+        final Persoon partner2Persoon = new Persoon(SoortPersoon.PSEUDO_PERSOON);
+        voegAnummerToeAanPersoon(partner2Persoon, "9876543210");
         partner2Persoon.addBetrokkenheid(partner2);
 
         final RelatieDecorator relatieDecorator = RelatieDecorator.decorate(relatie);
@@ -257,7 +262,7 @@ public class RelatieDecoratorTest {
         final Betrokkenheid kind = new Betrokkenheid(SoortBetrokkenheid.KIND, relatie);
 
         final Persoon ouderPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        ouderPersoon.setAdministratienummer(1234567890L);
+        voegAnummerToeAanPersoon(ouderPersoon, "1234567890");
         ouderPersoon.addBetrokkenheid(ouder);
 
         relatie.addBetrokkenheid(ouder);
@@ -275,7 +280,7 @@ public class RelatieDecoratorTest {
         final Betrokkenheid ouder = new Betrokkenheid(SoortBetrokkenheid.OUDER, relatie);
 
         final Persoon ouderPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        ouderPersoon.setAdministratienummer(1234567890L);
+        voegAnummerToeAanPersoon(ouderPersoon, "1234567890");
         ouderPersoon.addBetrokkenheid(ouder);
 
         relatie.addBetrokkenheid(ouder);
@@ -287,7 +292,7 @@ public class RelatieDecoratorTest {
 
     @Test(expected = IllegalStateException.class)
     public void testGetAndereBetrokkenheidOverigeRelatie() {
-        final Relatie relatie = new Relatie(SoortRelatie.ERKENNING_ONGEBOREN_VRUCHT);
+        final Relatie relatie = new Relatie(SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
         final RelatieDecorator decorator = RelatieDecorator.decorate(relatie);
         final Betrokkenheid partner1 = new Betrokkenheid(SoortBetrokkenheid.PARTNER, relatie);
         relatie.addBetrokkenheid(partner1);
@@ -297,7 +302,7 @@ public class RelatieDecoratorTest {
 
     @Test
     public void testGetAndereBetrokkenheidGeenBetrokkenhedenInRelatie() {
-        final Relatie relatie = new Relatie(SoortRelatie.HUWELIJK);
+        final Relatie relatie = maakRelatie(SoortRelatie.HUWELIJK);
         final RelatieDecorator decorator = RelatieDecorator.decorate(relatie);
         final Betrokkenheid partner1 = new Betrokkenheid(SoortBetrokkenheid.PARTNER, relatie);
 
@@ -311,10 +316,10 @@ public class RelatieDecoratorTest {
         final Betrokkenheid kind = new Betrokkenheid(SoortBetrokkenheid.KIND, relatie);
 
         final Persoon ouderPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        ouderPersoon.setAdministratienummer(1234567890L);
+        voegAnummerToeAanPersoon(ouderPersoon, "1234567890");
         ouderPersoon.addBetrokkenheid(ouder);
-        final Persoon kindPersoon = new Persoon(SoortPersoon.ONBEKEND);
-        kindPersoon.setAdministratienummer(9876543210L);
+        final Persoon kindPersoon = new Persoon(SoortPersoon.PSEUDO_PERSOON);
+        voegAnummerToeAanPersoon(kindPersoon, "9876543210");
         kindPersoon.addBetrokkenheid(kind);
 
         ouder.setAanduidingOuder(new Lo3AanduidingOuder(AanduidingOuder.OUDER_1, ouder));
@@ -339,10 +344,10 @@ public class RelatieDecoratorTest {
         final Betrokkenheid kind = new Betrokkenheid(SoortBetrokkenheid.KIND, relatie);
 
         final Persoon ouderPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        ouderPersoon.setAdministratienummer(1234567890L);
+        voegAnummerToeAanPersoon(ouderPersoon, "1234567890");
         ouderPersoon.addBetrokkenheid(ouder);
-        final Persoon kindPersoon = new Persoon(SoortPersoon.ONBEKEND);
-        kindPersoon.setAdministratienummer(9876543210L);
+        final Persoon kindPersoon = new Persoon(SoortPersoon.PSEUDO_PERSOON);
+        voegAnummerToeAanPersoon(kindPersoon, "9876543210");
         kindPersoon.addBetrokkenheid(kind);
 
         relatie.addBetrokkenheid(ouder);
@@ -361,7 +366,7 @@ public class RelatieDecoratorTest {
 
         final Persoon ouderPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
         ouderPersoon.addBetrokkenheid(ouder);
-        final Persoon kindPersoon = new Persoon(SoortPersoon.ONBEKEND);
+        final Persoon kindPersoon = new Persoon(SoortPersoon.PSEUDO_PERSOON);
 
         relatie.addBetrokkenheid(ouder);
         relatie.addBetrokkenheid(kind);
@@ -378,15 +383,16 @@ public class RelatieDecoratorTest {
 
     @Test
     public void testMatches() {
-        final Partij partij = new Partij("partij", 1);
-        final Relatie relatieA = new Relatie(SoortRelatie.HUWELIJK);
-        final Relatie relatieB = new Relatie(SoortRelatie.HUWELIJK);
-        final Relatie relatieC = new Relatie(SoortRelatie.GEREGISTREERD_PARTNERSCHAP);
-        final Relatie relatieD = new Relatie(SoortRelatie.HUWELIJK);
+        final Partij partij = new Partij("partij", "000001");
+        final Relatie relatieA = maakRelatie(SoortRelatie.HUWELIJK);
+        final Relatie relatieB = maakRelatie(SoortRelatie.HUWELIJK);
+        final Relatie relatieC = maakRelatie(SoortRelatie.GEREGISTREERD_PARTNERSCHAP);
+        final Relatie relatieD = maakRelatie(SoortRelatie.HUWELIJK);
+        final RelatieHistorie relatieHistorieD = relatieD.getActueleRelatieHistorie();
 
-        relatieD.setRedenBeeindigingRelatie(OMZETTING);
-        relatieD.setDatumEinde(20120101);
-        relatieD.setGemeenteEinde(new Gemeente((short) 1, "GemeentA", (short) 1, partij));
+        relatieHistorieD.setRedenBeeindigingRelatie(OMZETTING);
+        relatieHistorieD.setDatumEinde(20120101);
+        relatieHistorieD.setGemeenteEinde(new Gemeente((short) 1, "GemeentA", "0001", partij));
 
         final RelatieDecorator relatieADecorator = RelatieDecorator.decorate(relatieA);
         final RelatieDecorator relatieBDecorator = RelatieDecorator.decorate(relatieB);
@@ -401,13 +407,25 @@ public class RelatieDecoratorTest {
         assertFalse(relatieADecorator.matches(relatieDDecorator, true));
     }
 
+    private Relatie maakRelatie(final SoortRelatie soortRelatie) {
+        final Relatie relatie = new Relatie(soortRelatie);
+        final RelatieHistorie relatieHistorie1 = new RelatieHistorie(relatie);
+        relatie.addRelatieHistorie(relatieHistorie1);
+        return relatie;
+    }
+
     @Test
     public void testIsOntbonden() {
-        final Relatie relatieA = new Relatie(SoortRelatie.HUWELIJK);
-        final Relatie relatieB = new Relatie(SoortRelatie.HUWELIJK);
-        relatieB.setDatumEinde(20150101);
-        final Relatie relatieC = new Relatie(SoortRelatie.HUWELIJK);
-        relatieC.setRedenBeeindigingRelatie(OMZETTING);
+        final Relatie relatieA = maakRelatie(SoortRelatie.HUWELIJK);
+        final Relatie relatieB = maakRelatie(SoortRelatie.HUWELIJK);
+        final RelatieHistorie relatieHistorieB = new RelatieHistorie(relatieB);
+        relatieHistorieB.setDatumEinde(20150101);
+        relatieB.addRelatieHistorie(relatieHistorieB);
+
+        final Relatie relatieC = maakRelatie(SoortRelatie.HUWELIJK);
+        final RelatieHistorie relatieHistorieC = new RelatieHistorie(relatieC);
+        relatieHistorieC.setRedenBeeindigingRelatie(OMZETTING);
+        relatieC.addRelatieHistorie(relatieHistorieC);
 
         final RelatieDecorator relatieADecorator = RelatieDecorator.decorate(relatieA);
         final RelatieDecorator relatieBDecorator = RelatieDecorator.decorate(relatieB);
@@ -420,16 +438,17 @@ public class RelatieDecoratorTest {
 
     @Test(expected = IllegalStateException.class)
     public void testZoekMatchendeRelatie() {
-        final Partij partij = new Partij("partij", 1);
-        final Relatie relatieA = new Relatie(SoortRelatie.HUWELIJK);
-        final Relatie relatieB = new Relatie(SoortRelatie.HUWELIJK);
-        final Relatie relatieC = new Relatie(SoortRelatie.GEREGISTREERD_PARTNERSCHAP);
-        final Relatie relatieD = new Relatie(SoortRelatie.HUWELIJK);
-        final Relatie relatieE = new Relatie(SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
+        final Partij partij = new Partij("partij", "000001");
+        final Relatie relatieA = maakRelatie(SoortRelatie.HUWELIJK);
+        final Relatie relatieB = maakRelatie(SoortRelatie.HUWELIJK);
+        final Relatie relatieC = maakRelatie(SoortRelatie.GEREGISTREERD_PARTNERSCHAP);
+        final Relatie relatieD = maakRelatie(SoortRelatie.HUWELIJK);
+        final RelatieHistorie relatieHistorieD = relatieD.getActueleRelatieHistorie();
+        final Relatie relatieE = maakRelatie(SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
 
-        relatieD.setRedenBeeindigingRelatie(OMZETTING);
-        relatieD.setDatumEinde(20120101);
-        relatieD.setGemeenteEinde(new Gemeente((short) 1, "GemeentA", (short) 1, partij));
+        relatieHistorieD.setRedenBeeindigingRelatie(OMZETTING);
+        relatieHistorieD.setDatumEinde(20120101);
+        relatieHistorieD.setGemeenteEinde(new Gemeente((short) 1, "GemeentA", "0001", partij));
 
         final RelatieDecorator relatieADecorator = RelatieDecorator.decorate(relatieA);
         final RelatieDecorator relatieBDecorator = RelatieDecorator.decorate(relatieB);
@@ -464,11 +483,11 @@ public class RelatieDecoratorTest {
         final BetrokkenheidHistorie kindHistorie = new BetrokkenheidHistorie(kind);
         kind.addBetrokkenheidHistorie(kindHistorie);
 
-        final Persoon ouderPersoon = new Persoon(SoortPersoon.ONBEKEND);
-        ouderPersoon.setAdministratienummer(1234567890L);
+        final Persoon ouderPersoon = new Persoon(SoortPersoon.PSEUDO_PERSOON);
+        voegAnummerToeAanPersoon(ouderPersoon, "1234567890");
         ouderPersoon.addBetrokkenheid(ouder);
         final Persoon kindPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        kindPersoon.setAdministratienummer(9876543210L);
+        voegAnummerToeAanPersoon(kindPersoon, "9876543210");
         kindPersoon.addBetrokkenheid(kind);
 
         final PersoonGeboorteHistorie ouderPersoonGeboorteHistorie = new PersoonGeboorteHistorie(ouderPersoon, 19800101, LAND_OF_GEBIED);
@@ -490,7 +509,8 @@ public class RelatieDecoratorTest {
         assertNull(relatieHistorie.getActieVervalTbvLeveringMutaties());
         assertNull(relatieHistorie.getIndicatieVoorkomenTbvLeveringMutaties());
 
-        // Kind is de IK-persoon. Daar vervalt de persoon, de bestrokkenheid en de relatie niet bij een kind-ouder relatie
+        // Kind is de IK-persoon. Daar vervalt de persoon, de bestrokkenheid en de relatie niet bij een kind-ouder
+        // relatie
         assertNull(kindHistorie.getActieVervalTbvLeveringMutaties());
         assertNull(kindPersoonGeboorteHistorie.getActieVervalTbvLeveringMutaties());
 
@@ -514,10 +534,10 @@ public class RelatieDecoratorTest {
         kind.addBetrokkenheidHistorie(kindHistorie);
 
         final Persoon ouderPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        ouderPersoon.setAdministratienummer(1234567890L);
+        voegAnummerToeAanPersoon(ouderPersoon, "1234567890");
         ouderPersoon.addBetrokkenheid(ouder);
-        final Persoon kindPersoon = new Persoon(SoortPersoon.ONBEKEND);
-        kindPersoon.setAdministratienummer(9876543210L);
+        final Persoon kindPersoon = new Persoon(SoortPersoon.PSEUDO_PERSOON);
+        voegAnummerToeAanPersoon(kindPersoon, "9876543210");
         kindPersoon.addBetrokkenheid(kind);
 
         final PersoonGeboorteHistorie ouderPersoonGeboorteHistorie = new PersoonGeboorteHistorie(ouderPersoon, 19800101, LAND_OF_GEBIED);
@@ -540,5 +560,11 @@ public class RelatieDecoratorTest {
 
         assertEquals(ACTIE, ouderHistorie.getActieVervalTbvLeveringMutaties());
         assertNull(ouderPersoonGeboorteHistorie.getActieVervalTbvLeveringMutaties());
+    }
+
+    private void voegAnummerToeAanPersoon(final Persoon persoon, final String anummer) {
+        final PersoonIDHistorie idHistorie = new PersoonIDHistorie(persoon);
+        idHistorie.setAdministratienummer(anummer);
+        persoon.addPersoonIDHistorie(idHistorie);
     }
 }

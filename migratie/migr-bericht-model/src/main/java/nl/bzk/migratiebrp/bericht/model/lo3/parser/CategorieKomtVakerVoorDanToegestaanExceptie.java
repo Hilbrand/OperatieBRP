@@ -18,20 +18,16 @@ public class CategorieKomtVakerVoorDanToegestaanExceptie extends ParseException 
     /**
      * Maakt een CategorieKomtVakerVoorDanToegestaanExceptie, die aangeeft dat er meer categorieën dan toegestaan werden
      * gevonden tijdens het parsen.
-     *
-     * @param categorie
-     *            De categorie waarin het onverwachte element werd gevonden
-     * @param aantalToegestaan
-     *            het aantal toegestane categorieën.
-     * @param aantalVoorkomens
-     *            het aantal gevonden categorieën
+     * @param categorie De categorie waarin het onverwachte element werd gevonden
+     * @param aantalToegestaan het aantal toegestane categorieën.
+     * @param aantalVoorkomens het aantal gevonden categorieën
      */
     public CategorieKomtVakerVoorDanToegestaanExceptie(final Lo3CategorieEnum categorie, final int aantalToegestaan, final int aantalVoorkomens) {
         super(String.format(
-            "Categorie %d (%s) komt vaker voor dan toegestaan (Toegestaan = %d, Aanwezig = %d).",
-            categorie.getCategorieAsInt(),
-            categorie.getLabel(),
-            aantalToegestaan,
-            aantalVoorkomens));
+                "Categorie %d (%s) komt vaker voor dan toegestaan (Toegestaan = %d, Aanwezig = %d).",
+                categorie.getCategorieAsInt(),
+                categorie.getLabel(),
+                aantalToegestaan,
+                aantalVoorkomens));
     }
 }

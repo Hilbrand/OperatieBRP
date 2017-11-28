@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
@@ -54,33 +54,33 @@ public class Lo3InhoudDiakrietenTest {
         Assert.assertEquals(27, utf8Bytes.length);
 
         final byte[] expected =
-                new byte[] {'0',
-                            '0',
-                            '0',
-                            '2',
-                            '0',
-                            '0',
-                            '1',
-                            '0',
-                            '1',
-                            '5',
-                            '0',
-                            '2',
-                            '1',
-                            '0',
-                            '0',
-                            '0',
-                            '8',
-                            'H',
-                            (byte) 0xc3,
-                            (byte) 0x82,
-                            'e',
-                            'l',
-                            (byte) 0xc3,
-                            (byte) 0x81,
-                            'e',
-                            'n',
-                            'e' };
+                new byte[]{'0',
+                        '0',
+                        '0',
+                        '2',
+                        '0',
+                        '0',
+                        '1',
+                        '0',
+                        '1',
+                        '5',
+                        '0',
+                        '2',
+                        '1',
+                        '0',
+                        '0',
+                        '0',
+                        '8',
+                        'H',
+                        (byte) 0xc3,
+                        (byte) 0x82,
+                        'e',
+                        'l',
+                        (byte) 0xc3,
+                        (byte) 0x81,
+                        'e',
+                        'n',
+                        'e'};
 
         // Het unicode teken 0+00C2 wordt in UTF-8 geencode als 0xc3 0x82
 

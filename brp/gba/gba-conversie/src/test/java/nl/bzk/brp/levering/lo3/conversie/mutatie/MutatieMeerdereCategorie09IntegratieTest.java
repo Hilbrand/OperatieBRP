@@ -6,113 +6,253 @@
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
-import java.util.Date;
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.logMetaObject;
+
+import java.util.HashSet;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Geslachtsaanduiding;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Naamgebruik;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortActie;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortAdministratieveHandeling;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.impl.kern.FamilierechtelijkeBetrekkingHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.impl.kern.KindHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonHisVolledigImpl;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
-import nl.bzk.brp.util.hisvolledig.kern.FamilierechtelijkeBetrekkingHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.KindHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.OuderHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.brp.levering.lo3.builder.MetaObjectAdder;
+import nl.bzk.brp.levering.lo3.conversie.ConversieCache;
+import nl.bzk.brp.domain.leveringmodel.Actie;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
+
 import org.junit.Assert;
 import org.junit.Test;
-import support.PersoonHisVolledigUtil;
 
 /**
  * Kind.
  */
 public class MutatieMeerdereCategorie09IntegratieTest extends AbstractMutatieConverteerderIntegratieTest {
 
+    @Inject
+    private MutatieConverteerder subject;
+
     @Test
     public void test() {
-        final ActieModel actieKinderenGeboorte =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        // Kind01
-        final PersoonHisVolledigImplBuilder kind01Builder = new PersoonHisVolledigImplBuilder(SoortPersoon.ONBEKEND);
-        kind01Builder.nieuwGeboorteRecord(actieKinderenGeboorte)
-                     .datumGeboorte(actieKinderenGeboorte.getDatumAanvangGeldigheid())
-                     .gemeenteGeboorte((short) 518)
-                     .landGebiedGeboorte((short) 6030)
-                     .eindeRecord();
-        kind01Builder.nieuwGeslachtsaanduidingRecord(actieKinderenGeboorte).geslachtsaanduiding(Geslachtsaanduiding.MAN).eindeRecord();
-        kind01Builder.nieuwIdentificatienummersRecord(actieKinderenGeboorte).administratienummer(1231231234L).burgerservicenummer(345345345).eindeRecord();
-        kind01Builder.nieuwInschrijvingRecord(actieKinderenGeboorte)
-                     .datumInschrijving(actieKinderenGeboorte.getDatumAanvangGeldigheid())
-                     .versienummer(1L)
-                     .datumtijdstempel(new Date(123456))
-                     .eindeRecord();
-        kind01Builder.nieuwNaamgebruikRecord(actieKinderenGeboorte).indicatieNaamgebruikAfgeleid(true).naamgebruik(Naamgebruik.EIGEN).eindeRecord();
-        kind01Builder.nieuwAfgeleidAdministratiefRecord(actieKinderenGeboorte)
-                     .indicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig(false)
-                     .tijdstipLaatsteWijziging(actieKinderenGeboorte.getTijdstipRegistratie())
-                     .tijdstipLaatsteWijzigingGBASystematiek(actieKinderenGeboorte.getTijdstipRegistratie())
-                     .eindeRecord();
-        kind01Builder.nieuwSamengesteldeNaamRecord(actieKinderenGeboorte)
-                     .geslachtsnaamstam("Trommelen")
-                     .voorvoegsel("van")
-                     .voornamen("Pimmetje")
-                     .scheidingsteken(" ")
-                     .eindeRecord();
+        final MetaObject.Builder persoonBuilder = maakBasisPersoonBuilder(idTeller.getAndIncrement());
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(persoonBuilder.build());
 
-        final PersoonHisVolledigImpl kind01 = kind01Builder.build();
-        final KindHisVolledigImplBuilder gerelateerdeKind01BetrokkendheidBuilder = new KindHisVolledigImplBuilder(null, kind01);
-        final KindHisVolledigImpl gerelateerdeKind01Betrokkendheid = gerelateerdeKind01BetrokkendheidBuilder.build();
+        Actie lokaleActie = administratieveHandeling.getActies().iterator().next();
 
-        final FamilierechtelijkeBetrekkingHisVolledigImplBuilder relatie01Builder = new FamilierechtelijkeBetrekkingHisVolledigImplBuilder();
-        final FamilierechtelijkeBetrekkingHisVolledigImpl relatie01 = relatie01Builder.build();
-        relatie01.getBetrokkenheden().add(gerelateerdeKind01Betrokkendheid);
+        final MetaRecord ouder1Record =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_OUDER.getId()))
+                          .metId(1)
+                          .metGroep()
+                          .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_OUDER_IDENTITEIT.getId()))
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metActieInhoud(lokaleActie)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_OUDER_ROLCODE.getId()), "OUDER")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(ElementHelper.getGroepElement(Element.PERSOON_OUDER_IDENTITEIT.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
+        persoonAdder.voegPersoonMutatieToe(ouder1Record);
 
-        final OuderHisVolledigImplBuilder mijnOuderBetrokkenheid01Builder = new OuderHisVolledigImplBuilder(relatie01, null);
-        builder.voegBetrokkenheidToe(mijnOuderBetrokkenheid01Builder.build());
+        final MetaRecord ouder2Record =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_OUDER.getId()))
+                          .metId(2)
+                          .metGroep()
+                          .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_OUDER_IDENTITEIT.getId()))
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metActieInhoud(lokaleActie)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_OUDER_ROLCODE.getId()), "OUDER")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(ElementHelper.getGroepElement(Element.PERSOON_OUDER_IDENTITEIT.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
+        persoonAdder.voegPersoonMutatieToe(ouder2Record);
 
-        // Kind02
-        final PersoonHisVolledigImplBuilder kind02Builder = new PersoonHisVolledigImplBuilder(SoortPersoon.ONBEKEND);
-        kind02Builder.nieuwGeboorteRecord(actieKinderenGeboorte)
-                     .datumGeboorte(actieKinderenGeboorte.getDatumAanvangGeldigheid())
-                     .gemeenteGeboorte((short) 518)
-                     .landGebiedGeboorte((short) 6030)
-                     .eindeRecord();
-        kind02Builder.nieuwGeslachtsaanduidingRecord(actieKinderenGeboorte).geslachtsaanduiding(Geslachtsaanduiding.MAN).eindeRecord();
-        kind02Builder.nieuwIdentificatienummersRecord(actieKinderenGeboorte).administratienummer(1231231235L).burgerservicenummer(345345346).eindeRecord();
-        kind02Builder.nieuwInschrijvingRecord(actieKinderenGeboorte)
-                     .datumInschrijving(actieKinderenGeboorte.getDatumAanvangGeldigheid())
-                     .versienummer(1L)
-                     .datumtijdstempel(new Date(123456))
-                     .eindeRecord();
-        kind02Builder.nieuwNaamgebruikRecord(actieKinderenGeboorte).indicatieNaamgebruikAfgeleid(true).naamgebruik(Naamgebruik.EIGEN).eindeRecord();
-        kind02Builder.nieuwAfgeleidAdministratiefRecord(actieKinderenGeboorte)
-                     .indicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig(false)
-                     .tijdstipLaatsteWijziging(actieKinderenGeboorte.getTijdstipRegistratie())
-                     .tijdstipLaatsteWijzigingGBASystematiek(actieKinderenGeboorte.getTijdstipRegistratie())
-                     .eindeRecord();
-        kind02Builder.nieuwSamengesteldeNaamRecord(actieKinderenGeboorte)
-                     .geslachtsnaamstam("Trommelen")
-                     .voorvoegsel("van")
-                     .voornamen("Pommetje")
-                     .scheidingsteken(" ")
-                     .eindeRecord();
+        MetaObject.Builder familierechterlijkeBetrekking1Builder =
+                new MetaObject.Builder().metObjectElement(ElementHelper.getObjectElement(Element.FAMILIERECHTELIJKEBETREKKING.getId()))
+                                        .metId(10)
+                                        .metGroep()
+                                        .metGroepElement(ElementHelper.getGroepElement(Element.FAMILIERECHTELIJKEBETREKKING_IDENTITEIT.getId()))
+                                        .metRecord()
+                                        .metId(idTeller.getAndIncrement())
+                                        .metAttribuut(ElementHelper.getAttribuutElement(Element.FAMILIERECHTELIJKEBETREKKING_SOORTCODE.getId()), "F")
+                                        .eindeRecord()
+                                        .eindeGroep();
 
-        final PersoonHisVolledigImpl kind02 = kind02Builder.build();
-        final KindHisVolledigImplBuilder gerelateerdeKind02BetrokkendheidBuilder = new KindHisVolledigImplBuilder(null, kind02);
-        final KindHisVolledigImpl gerelateerdeKind02Betrokkendheid = gerelateerdeKind02BetrokkendheidBuilder.build();
+        MetaObject.Builder familierechterlijkeBetrekking2Builder =
+                new MetaObject.Builder().metObjectElement(ElementHelper.getObjectElement(Element.FAMILIERECHTELIJKEBETREKKING.getId()))
+                                        .metId(11)
+                                        .metGroep()
+                                        .metGroepElement(ElementHelper.getGroepElement(Element.FAMILIERECHTELIJKEBETREKKING_IDENTITEIT.getId()))
+                                        .metRecord()
+                                        .metId(idTeller.getAndIncrement())
+                                        .metAttribuut(ElementHelper.getAttribuutElement(Element.FAMILIERECHTELIJKEBETREKKING_SOORTCODE.getId()), "F")
+                                        .eindeRecord()
+                                        .eindeGroep();
 
-        final FamilierechtelijkeBetrekkingHisVolledigImplBuilder relatie02Builder = new FamilierechtelijkeBetrekkingHisVolledigImplBuilder();
-        final FamilierechtelijkeBetrekkingHisVolledigImpl relatie02 = relatie02Builder.build();
-        relatie02.getBetrokkenheden().add(gerelateerdeKind02Betrokkendheid);
+        final MetaRecord mutatieRecord1 =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_OUDER.getId()))
+                          .metId(1)
+                          .metObject(familierechterlijkeBetrekking1Builder)
+                          .build()
+                          .getObjecten(ElementHelper.getObjectElement(Element.FAMILIERECHTELIJKEBETREKKING.getId()))
+                          .iterator()
+                          .next()
+                          .getGroep(ElementHelper.getGroepElement(Element.FAMILIERECHTELIJKEBETREKKING_IDENTITEIT.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
+        persoonAdder.voegPersoonMutatieToe(mutatieRecord1);
 
-        final OuderHisVolledigImplBuilder mijnOuderBetrokkenheid02Builder = new OuderHisVolledigImplBuilder(relatie02, null);
-        builder.voegBetrokkenheidToe(mijnOuderBetrokkenheid02Builder.build());
+        final MetaRecord mutatieRecord2 =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_OUDER.getId()))
+                          .metId(2)
+                          .metObject(familierechterlijkeBetrekking2Builder)
+                          .build()
+                          .getObjecten(ElementHelper.getObjectElement(Element.FAMILIERECHTELIJKEBETREKKING.getId()))
+                          .iterator()
+                          .next()
+                          .getGroep(ElementHelper.getGroepElement(Element.FAMILIERECHTELIJKEBETREKKING_IDENTITEIT.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
+        persoonAdder.voegPersoonMutatieToe(mutatieRecord2);
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actieKinderenGeboorte);
+        final MetaObject.Builder kind1MetaObjectBuilder =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.GERELATEERDEKIND_PERSOON.getId()))
+                          .metId(100)
+                          .metGroep()
+                          .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEKIND_PERSOON_IDENTITEIT.getId()))
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_SOORTCODE.getId()), "O")
+                          .eindeRecord()
+                          .eindeGroep();
+
+        voegGerelateerdeKindGeboorteToe(kind1MetaObjectBuilder, lokaleActie, 19400101, "0518", "6030");
+        voegGerelateerdeKindIdentificatieNummersToe(kind1MetaObjectBuilder, lokaleActie, 19400101, "1231231234", "345345345");
+        voegGerelateerdeKindSamengesteldeNaamToe(kind1MetaObjectBuilder, lokaleActie, 19400101, "Pimmetje", "van", " ", "Trommelen");
+
+        MetaObject.Builder kind1GerelateerdeKindBuilder = new MetaObject.Builder();
+        kind1GerelateerdeKindBuilder.metObjectElement(ElementHelper.getObjectElement(Element.GERELATEERDEKIND.getId()))
+                                    .metId(20)
+                                    .metObject(kind1MetaObjectBuilder)
+                                    .metGroep()
+                                    .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEKIND_IDENTITEIT.getId()))
+                                    .metRecord()
+                                    .metId(idTeller.getAndIncrement())
+                                    .metActieInhoud(lokaleActie)
+                                    .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_ROLCODE.getId()), "KIND")
+                                    .eindeRecord()
+                                    .eindeGroep();
+
+        final MetaRecord mutatieRecord4 =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.FAMILIERECHTELIJKEBETREKKING.getId()))
+                          .metId(10)
+                          .metObject(kind1GerelateerdeKindBuilder)
+                          .build()
+                          .getObjecten(ElementHelper.getObjectElement(Element.GERELATEERDEKIND.getId()))
+                          .iterator()
+                          .next()
+                          .getGroep(ElementHelper.getGroepElement(Element.GERELATEERDEKIND_IDENTITEIT.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
+
+        persoonAdder.voegPersoonMutatieToe(mutatieRecord4);
+
+        MetaObject.maakBuilder()
+                  .metObjectElement(ElementHelper.getObjectElement(Element.GERELATEERDEKIND.getId()))
+                  .metId(20)
+                  .metObject(kind1MetaObjectBuilder)
+                  .build()
+                  .getObjecten(ElementHelper.getObjectElement(Element.GERELATEERDEKIND_PERSOON.getId()))
+                  .iterator()
+                  .next()
+                  .getGroepen()
+                  .forEach(g -> g.getRecords().stream().forEach(persoonAdder::voegPersoonMutatieToe));
+
+        final MetaObject.Builder kind2MetaObjectBuilder =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.GERELATEERDEKIND_PERSOON.getId()))
+                          .metId(101)
+                          .metGroep()
+                          .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEKIND_PERSOON_IDENTITEIT.getId()))
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_PERSOON_SOORTCODE.getId()), "O")
+                          .eindeRecord()
+                          .eindeGroep();
+
+        voegGerelateerdeKindGeboorteToe(kind2MetaObjectBuilder, lokaleActie, 19400101, "0518", "6030");
+        voegGerelateerdeKindIdentificatieNummersToe(kind2MetaObjectBuilder, lokaleActie, 19400101, "1231231235L", "345345346");
+        voegGerelateerdeKindSamengesteldeNaamToe(kind2MetaObjectBuilder, lokaleActie, 19400101, "Pommetje", "van", " ", "Trommelen");
+
+        MetaObject.Builder kind2GerelateerdeKindBuilder = new MetaObject.Builder();
+        kind2GerelateerdeKindBuilder.metObjectElement(ElementHelper.getObjectElement(Element.GERELATEERDEKIND.getId()))
+                                    .metId(21)
+                                    .metObject(kind2MetaObjectBuilder)
+                                    .metGroep()
+                                    .metGroepElement(ElementHelper.getGroepElement(Element.GERELATEERDEKIND_IDENTITEIT.getId()))
+                                    .metRecord()
+                                    .metId(idTeller.getAndIncrement())
+                                    .metActieInhoud(lokaleActie)
+                                    .metAttribuut(ElementHelper.getAttribuutElement(Element.GERELATEERDEKIND_ROLCODE.getId()), "KIND")
+                                    .eindeRecord()
+                                    .eindeGroep();
+
+        final MetaRecord mutatieRecord5 =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(Element.FAMILIERECHTELIJKEBETREKKING.getId()))
+                          .metId(11)
+                          .metObject(kind2GerelateerdeKindBuilder)
+                          .build()
+                          .getObjecten(ElementHelper.getObjectElement(Element.GERELATEERDEKIND.getId()))
+                          .iterator()
+                          .next()
+                          .getGroep(ElementHelper.getGroepElement(Element.GERELATEERDEKIND_IDENTITEIT.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
+        persoonAdder.voegPersoonMutatieToe(mutatieRecord5);
+
+        MetaObject.maakBuilder()
+                  .metObjectElement(ElementHelper.getObjectElement(Element.GERELATEERDEKIND.getId()))
+                  .metId(21)
+                  .metObject(kind2MetaObjectBuilder)
+                  .build()
+                  .getObjecten(ElementHelper.getObjectElement(Element.GERELATEERDEKIND_PERSOON.getId()))
+                  .iterator()
+                  .next()
+                  .getGroepen()
+                  .forEach(g -> g.getRecords().stream().forEach(persoonAdder::voegPersoonMutatieToe));
+
+        final Persoonslijst persoon = new Persoonslijst(persoonAdder.build(), 0L);
+
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         Assert.assertEquals(4, resultaat.size());
     }

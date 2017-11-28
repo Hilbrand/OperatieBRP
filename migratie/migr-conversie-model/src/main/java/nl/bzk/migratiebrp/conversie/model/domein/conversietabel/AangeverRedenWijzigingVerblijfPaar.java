@@ -22,23 +22,18 @@ public final class AangeverRedenWijzigingVerblijfPaar {
 
     /**
      * Maakt een AangeverRedenWijzigingVerblijfPaar object.
-     * 
-     * @param brpAangeverCode
-     *            de aangever code in de BRP
-     * @param brpRedenWijzigingVerblijfCode
-     *            de reden wijzging verblijf code in de BRP
+     * @param brpAangeverCode de aangever code in de BRP
+     * @param brpRedenWijzigingVerblijfCode de reden wijzging verblijf code in de BRP
      */
     public AangeverRedenWijzigingVerblijfPaar(
-        final BrpAangeverCode brpAangeverCode,
-        final BrpRedenWijzigingVerblijfCode brpRedenWijzigingVerblijfCode)
-    {
+            final BrpAangeverCode brpAangeverCode,
+            final BrpRedenWijzigingVerblijfCode brpRedenWijzigingVerblijfCode) {
         this.brpAangeverCode = brpAangeverCode;
         this.brpRedenWijzigingVerblijfCode = brpRedenWijzigingVerblijfCode;
     }
 
     /**
      * Geef de waarde van brp aangever code.
-     *
      * @return brp aangever code
      */
     public BrpAangeverCode getBrpAangeverCode() {
@@ -47,7 +42,6 @@ public final class AangeverRedenWijzigingVerblijfPaar {
 
     /**
      * Geef de waarde van brp reden wijziging verblijf code.
-     *
      * @return brp reden wijziging verblijf code
      */
     public BrpRedenWijzigingVerblijfCode getBrpRedenWijzigingVerblijfCode() {
@@ -66,7 +60,7 @@ public final class AangeverRedenWijzigingVerblijfPaar {
         final AangeverRedenWijzigingVerblijfPaar castOther = (AangeverRedenWijzigingVerblijfPaar) other;
 
         return isGelijk(brpAangeverCode, castOther.brpAangeverCode)
-               && isGelijk(brpRedenWijzigingVerblijfCode, castOther.brpRedenWijzigingVerblijfCode);
+                && isGelijk(brpRedenWijzigingVerblijfCode, castOther.brpRedenWijzigingVerblijfCode);
     }
 
     private static boolean isGelijk(final Object o1, final Object o2) {
@@ -81,10 +75,10 @@ public final class AangeverRedenWijzigingVerblijfPaar {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("brpAangeverCode", brpAangeverCode)
-                                                                          .append(
-                                                                              "brpRedenWijzigingVerblijfCode",
-                                                                              brpRedenWijzigingVerblijfCode)
-                                                                          .toString();
+                .append(
+                        "brpRedenWijzigingVerblijfCode",
+                        brpRedenWijzigingVerblijfCode)
+                .toString();
     }
 
 }

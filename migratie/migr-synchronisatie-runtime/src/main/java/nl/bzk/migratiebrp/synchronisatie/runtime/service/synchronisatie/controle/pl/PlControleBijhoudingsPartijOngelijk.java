@@ -14,12 +14,10 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-import org.springframework.stereotype.Component;
 
 /**
  * Controle dat bijhoudingspartij op aangeboden en gevonden persoonslijst gelijk is.
  */
-@Component(value = "plControleBijhoudingsPartijOngelijk")
 public final class PlControleBijhoudingsPartijOngelijk implements PlControle {
 
     @Override

@@ -9,12 +9,18 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
+
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
+/**
+ * Sync verzoek DLQ.
+ */
 public class SyncVerzoekDlqKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "sync_verzoek_dlq";
 
     /**
@@ -22,11 +28,11 @@ public class SyncVerzoekDlqKanaal extends LazyLoadingKanaal {
      */
     public SyncVerzoekDlqKanaal() {
         super(new Worker(),
-              new Configuration(
-                  "classpath:configuratie.xml",
-                  "classpath:infra-jms-isc.xml",
-                  "classpath:infra-queues-isc-sync.xml",
-                  "classpath:infra-jmx-routering.xml"));
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-jms-isc.xml",
+                        "classpath:infra-queues-isc-sync.xml",
+                        "classpath:infra-jmx-routering.xml"));
     }
 
     /**

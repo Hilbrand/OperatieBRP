@@ -10,19 +10,17 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.MDC;
-import nl.bzk.migratiebrp.util.common.logging.MDCVeld;
+import org.springframework.jms.support.JmsUtils;
 
 /**
  * Basis afhandeling van berichten.
  */
 public abstract class AbstractMessageListener implements MessageListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger();
-    private static final Logger VERKEER_LOG = LoggerFactory.getBerichtVerkeerLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * {@inheritDoc}
@@ -32,39 +30,32 @@ public abstract class AbstractMessageListener implements MessageListener {
         try {
             final String messageId = message.getStringProperty(JMSConstants.BERICHT_REFERENTIE);
             final String correlationId = message.getStringProperty(JMSConstants.CORRELATIE_REFERENTIE);
-
-            MDC.put(MDCVeld.SYNC_BERICHT_REFERENTIE, messageId);
-            MDC.put(MDCVeld.SYNC_CORRELATIE_REFERENTIE, correlationId);
-
             if (messageId == null || "".equals(messageId)) {
-                LOG.error("Bericht ontvangen zonder message-id!\n{}", message);
+                LOGGER.error("Bericht ontvangen zonder message-id!\n{}", message);
+                throw new IllegalArgumentException("Bericht ontvangen zonder message-id");
             } else {
-                VERKEER_LOG.info("[Bericht {}]: Parse bericht ...", messageId);
-
-                if (message instanceof TextMessage) {
-                    verwerkBericht(((TextMessage) message).getText(), messageId, correlationId);
-
-                } else {
-                    LOG.error("[Bericht {}]: JMS bericht is niet van het type TextMessage", messageId);
-                }
+                LoggerFactory.getBerichtVerkeerLogger().info("[Bericht {}]: Parse bericht ...", messageId);
+                verwerkBericht(message, messageId, correlationId);
             }
         } catch (final JMSException e1) {
-            LOG.error("Kan message-id niet lezen van bericht, of geen valide bericht!\n{}", message);
-        } finally {
-            MDC.remove(MDCVeld.SYNC_BERICHT_REFERENTIE);
-            MDC.remove(MDCVeld.SYNC_CORRELATIE_REFERENTIE);
+            throw JmsUtils.convertJmsAccessException(e1);
+        }
+    }
+
+    private void verwerkBericht(Message message, String messageId, String correlationId) throws JMSException {
+        if (message instanceof TextMessage) {
+            verwerkBericht(((TextMessage) message).getText(), messageId, correlationId);
+
+        } else {
+            LOGGER.error("[Bericht {}]: JMS bericht is niet van het type TextMessage", messageId);
         }
     }
 
     /**
      * Verwerk bericht.
-     *
-     * @param text
-     *            bericht inhoud
-     * @param messageId
-     *            message id
-     * @param correlationId
-     *            correlation id
+     * @param text bericht inhoud
+     * @param messageId message id
+     * @param correlationId correlation id
      */
     protected abstract void verwerkBericht(final String text, final String messageId, final String correlationId);
 }

@@ -7,39 +7,38 @@
 package nl.bzk.migratiebrp.test.sleutelrubrieken.brp;
 
 import java.util.List;
-
-import nl.bzk.brp.expressietaal.Context;
-import nl.bzk.brp.expressietaal.Expressie;
-import nl.bzk.brp.expressietaal.ExpressieType;
-import nl.bzk.brp.expressietaal.expressies.functies.Functieberekening;
-import nl.bzk.brp.expressietaal.expressies.functies.signatuur.Signatuur;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.brp.domain.expressie.Context;
+import nl.bzk.brp.domain.expressie.Expressie;
+import nl.bzk.brp.domain.expressie.ExpressieType;
+import nl.bzk.brp.domain.expressie.functie.Functie;
+import nl.bzk.brp.domain.expressie.signatuur.Signatuur;
 
 /**
  * Delegate voor het uitvoeren van functies.
  */
-public class FunctieDelegate implements Functieberekening {
+public class FunctieDelegate implements Functie {
 
     private final Logger log;
-    private final Functieberekening delegate;
+    private final Functie delegate;
 
     /**
      * Constructor.
-     * 
+     *
      * @param delegate
      *            De delegate om te gebruiken.
      * @param log
      *            De logger.
      */
-    public FunctieDelegate(final Functieberekening delegate, final Logger log) {
+    public FunctieDelegate(final Functie delegate, final Logger log) {
         this.delegate = delegate;
         this.log = log;
     }
 
     @Override
-    public List<Expressie> vulDefaultArgumentenIn(final List<Expressie> argumenten) {
-        log.info("vulDefaultArgumentenIn({})", argumenten);
-        return delegate.vulDefaultArgumentenIn(argumenten);
+    public List<Expressie> init(final List<Expressie> argumenten) {
+        log.info("init({})", argumenten);
+        return delegate.init(argumenten);
     }
 
     @Override
@@ -55,33 +54,19 @@ public class FunctieDelegate implements Functieberekening {
     }
 
     @Override
-    public ExpressieType getTypeVanElementen(final List<Expressie> argumenten, final Context context) {
-        log.info("getTypeVanElementen({},{})", argumenten, context);
-        return delegate.getTypeVanElementen(argumenten, context);
-    }
-
-    @Override
     public boolean evalueerArgumenten() {
         log.info("evalueerArgumenten()");
         return delegate.evalueerArgumenten();
     }
 
     @Override
-    public Expressie pasToe(final List<Expressie> argumenten, final Context context) {
+    public Expressie evalueer(final List<Expressie> argumenten, final Context context) {
         log.info("pasToe({},{})", argumenten, context);
-        return delegate.pasToe(argumenten, context);
+        return delegate.evalueer(argumenten, context);
     }
 
     @Override
-    public boolean berekenBijOptimalisatie() {
-        log.info("berekenBijOptimalisatie()");
-        return delegate.berekenBijOptimalisatie();
+    public String getKeyword() {
+        return delegate.getKeyword();
     }
-
-    @Override
-    public Expressie optimaliseer(final List<Expressie> argumenten, final Context context) {
-        log.info("optimaliseer({},{})", argumenten, context);
-        return delegate.optimaliseer(argumenten, context);
-    }
-
 }

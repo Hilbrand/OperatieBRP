@@ -23,9 +23,7 @@ public final class BaseFilter implements FilenameFilter {
 
     /**
      * Constructor.
-     * 
-     * @param type
-     *            type of files to accept
+     * @param type type of files to accept
      */
     public BaseFilter(final FilterType type) {
         this.type = type;

@@ -6,11 +6,13 @@
 
 package nl.bzk.migratiebrp.tools.mailbox;
 
+import javax.inject.Inject;
 import nl.bzk.migratiebrp.tools.mailbox.impl.FileMailboxFactory;
 import nl.bzk.migratiebrp.tools.mailbox.impl.HsqldbMailboxFactory;
 import nl.bzk.migratiebrp.tools.mailbox.impl.MailboxException;
 import nl.bzk.migratiebrp.tools.mailbox.impl.MailboxFactory;
 import nl.bzk.migratiebrp.tools.mailbox.impl.MemoryMailboxFactory;
+import nl.bzk.migratiebrp.tools.mailbox.impl.PostgresqlMailboxFactory;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
@@ -18,21 +20,40 @@ import org.springframework.beans.factory.FactoryBean;
  */
 public final class MailboxFactoryFactory implements FactoryBean<MailboxFactory> {
 
-    /** In-memory (Map based) mailbox factory. */
+    /**
+     * In-memory (Map based) mailbox factory.
+     */
     public static final String MEMORY_MAILBOX_FACTORY = "memory";
-    /** HSQLDB mailbox factory. */
+    /**
+     * HSQLDB mailbox factory.
+     */
     public static final String HSQLDB_MAILBOX_FACTORY = "hsqldb";
-    /** File (CSV) mailbox factory. */
+    /**
+     * Postgresql mailbox factory.
+     */
+    public static final String POSTGRESQL_MAILBOX_FACTORY = "postgresql";
+    /**
+     * File (CSV) mailbox factory.
+     */
     public static final String FILE_MAILBOX_FACTORY = "file";
 
     private Boolean inMemoryMailboxFactory;
     private String mailboxType;
 
+    private PostgresqlMailboxFactory postgresqlMailboxFactory;
+
+    /**
+     * Constructor.
+     * @param postgresqlMailboxFactory postgresqlMailboxFactory
+     */
+    @Inject
+    public MailboxFactoryFactory(final PostgresqlMailboxFactory postgresqlMailboxFactory) {
+        this.postgresqlMailboxFactory = postgresqlMailboxFactory;
+    }
+
     /**
      * Gebruik de in-memory mailbox (oude setting).
-     *
-     * @param inMemoryMailboxFactory
-     *            true of false
+     * @param inMemoryMailboxFactory true of false
      */
     public void setInMemoryMailboxFactory(final boolean inMemoryMailboxFactory) {
         this.inMemoryMailboxFactory = inMemoryMailboxFactory;
@@ -40,9 +61,7 @@ public final class MailboxFactoryFactory implements FactoryBean<MailboxFactory> 
 
     /**
      * Definieer het te gebruiken mailbox type.
-     *
-     * @param mailboxType
-     *            "memory", "hsqldb" of "file"
+     * @param mailboxType "memory", "hsqldb" of "file"
      */
     public void setMailboxType(final String mailboxType) {
         this.mailboxType = mailboxType;
@@ -62,6 +81,9 @@ public final class MailboxFactoryFactory implements FactoryBean<MailboxFactory> 
                 break;
             case "database":
             case "sql":
+            case POSTGRESQL_MAILBOX_FACTORY:
+                result = postgresqlMailboxFactory;
+                break;
             case HSQLDB_MAILBOX_FACTORY:
             case "hsql":
                 result = new HsqldbMailboxFactory();

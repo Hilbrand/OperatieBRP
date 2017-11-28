@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.tools.mailbox.impl;
 
+import java.util.concurrent.TimeUnit;
 import nl.bzk.migratiebrp.tools.mailbox.MailboxMain;
 import org.junit.Test;
 
@@ -13,8 +14,8 @@ public class MailboxMainTest {
 
     @Test
     public void test() throws InterruptedException {
-        MailboxMain.main(new String[] {});
+        MailboxMain.main(new String[]{});
 
-        Thread.sleep(13000);
+        TimeUnit.MILLISECONDS.sleep(3000);
     }
 }

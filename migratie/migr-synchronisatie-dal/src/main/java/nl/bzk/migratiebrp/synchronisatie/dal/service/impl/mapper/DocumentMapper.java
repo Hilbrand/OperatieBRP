@@ -6,86 +6,42 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Document;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortDocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Document;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieMapperStrategie;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
 
 /**
  * Mapped een stapel met BrpDocumentInhoud naar de corresponderen BRP entiteiten uit het operationele gevevensmodel van
  * de BRP.
  */
-public final class DocumentMapper extends AbstractHistorieMapperStrategie<BrpDocumentInhoud, DocumentHistorie, Document> {
+public final class DocumentMapper extends AbstractMapperStrategie<BrpDocumentInhoud, Document> {
 
     /**
      * Maakt een DocumentMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public DocumentMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
-        super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final OnderzoekMapper onderzoekMapper) {
+        super(dynamischeStamtabelRepository, onderzoekMapper);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpDocumentInhoud> brpStapel, final Document entiteit) {
-        final BrpSoortDocumentCode soortDocumentCode = brpStapel.getLaatsteElement().getInhoud().getSoortDocumentCode();
-        entiteit.setSoortDocument(getStamtabelMapping().findSoortDocumentByCode(soortDocumentCode));
-    }
+    protected void mapHistorischeGegevens(final BrpStapel<BrpDocumentInhoud> brpStapel, final Document entiteit, final Element objecttype) {
+        final BrpDocumentInhoud documentInhoud = brpStapel.getLaatsteElement().getInhoud();
+        getOnderzoekMapper().mapOnderzoek(entiteit, documentInhoud.getPartijCode(), Element.DOCUMENT_PARTIJCODE);
+        getOnderzoekMapper().mapOnderzoek(entiteit, documentInhoud.getSoortDocumentCode(), Element.DOCUMENT_SOORTNAAM);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void voegHistorieToeAanEntiteit(final DocumentHistorie historie, final Document entiteit) {
-        entiteit.addDocumentHistorie(historie);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void kopieerActueleGroepNaarEntiteit(final DocumentHistorie historie, final Document entiteit) {
-        entiteit.setAktenummer(historie.getAktenummer());
-        entiteit.setIdentificatie(historie.getIdentificatie());
-        entiteit.setOmschrijving(historie.getOmschrijving());
-        entiteit.setPartij(historie.getPartij());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected DocumentHistorie mapHistorischeGroep(final BrpDocumentInhoud groepInhoud, final Document entiteit) {
-        final DocumentHistorie result = new DocumentHistorie(entiteit, getStamtabelMapping().findPartijByCode(groepInhoud.getPartijCode()));
-        getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getPartijCode(), Element.DOCUMENT_PARTIJCODE);
-        getOnderzoekMapper().mapOnderzoek(entiteit, groepInhoud.getSoortDocumentCode(), Element.DOCUMENT_SOORTNAAM);
-
-        result.setAktenummer(BrpString.unwrap(groepInhoud.getAktenummer()));
-        getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getAktenummer(), Element.DOCUMENT_AKTENUMMER);
-        result.setIdentificatie(BrpString.unwrap(groepInhoud.getIdentificatie()));
-        getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getIdentificatie(), Element.DOCUMENT_IDENTIFICATIE);
-        result.setOmschrijving(BrpString.unwrap(groepInhoud.getOmschrijving()));
-        getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getOmschrijving(), Element.DOCUMENT_OMSCHRIJVING);
-        return result;
+        entiteit.setAktenummer(BrpString.unwrap(documentInhoud.getAktenummer()));
+        getOnderzoekMapper().mapOnderzoek(entiteit, documentInhoud.getAktenummer(), Element.DOCUMENT_AKTENUMMER);
+        entiteit.setOmschrijving(BrpString.unwrap(documentInhoud.getOmschrijving()));
+        getOnderzoekMapper().mapOnderzoek(entiteit, documentInhoud.getOmschrijving(), Element.DOCUMENT_OMSCHRIJVING);
     }
 
 }

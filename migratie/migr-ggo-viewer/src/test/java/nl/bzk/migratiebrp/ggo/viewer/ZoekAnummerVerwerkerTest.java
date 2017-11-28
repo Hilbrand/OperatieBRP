@@ -17,10 +17,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import javax.inject.Inject;
-
-import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpBetrokkenheid;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
@@ -28,15 +27,13 @@ import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpRelatie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -50,10 +47,8 @@ import nl.bzk.migratiebrp.ggo.viewer.service.DbService;
 import nl.bzk.migratiebrp.ggo.viewer.service.PermissionService;
 import nl.bzk.migratiebrp.ggo.viewer.service.ProtocolleringService;
 import nl.bzk.migratiebrp.ggo.viewer.service.ViewerService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
+import nl.bzk.migratiebrp.ggo.viewer.util.PortInitializer;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.PersoonRepository;
-
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.mgt.SecurityManager;
@@ -80,7 +75,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml" })
+@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml"}, initializers = {PortInitializer.class})
 public class ZoekAnummerVerwerkerTest {
 
     @Mock
@@ -141,12 +136,12 @@ public class ZoekAnummerVerwerkerTest {
                 new Lo3Bericht("ggo_viewer_test", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(new Date().getTime()), "data", true);
         final List<GgoFoutRegel> logRegels = new ArrayList<>();
 
-        final Long aNr = (long) 42;
+        final String aNr = "42";
         when(dbService.zoekLo3Bericht(aNr)).thenReturn(lo3Bericht);
         when(dbService.haalLo3PersoonslijstUitLo3Bericht(lo3Bericht)).thenReturn(lo3Persoonslijst);
         when(permissionService.hasPermissionOnPl(lo3Persoonslijst)).thenReturn(Boolean.TRUE);
         when(dbService.haalLogRegelsUitLo3Bericht(lo3Bericht)).thenReturn(logRegels);
-        when(bcmService.controleerDoorBCM(eq(lo3Persoonslijst), any(FoutMelder.class))).thenReturn(new ArrayList<GgoFoutRegel>());
+        when(bcmService.controleerDoorBCM(eq(lo3Persoonslijst), any(FoutMelder.class))).thenReturn(new ArrayList<>());
         when(dbService.zoekBrpPersoonsLijst(aNr)).thenReturn(brpPersoonslijst);
         when(viewerService.converteerTerug(eq(brpPersoonslijst), any(FoutMelder.class))).thenReturn(lo3Persoonslijst);
 
@@ -168,12 +163,12 @@ public class ZoekAnummerVerwerkerTest {
                 new Lo3Bericht("ggo_viewer_test", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(new Date().getTime()), "data", true);
         final List<GgoFoutRegel> logRegels = new ArrayList<>();
 
-        final Long aNr = (long) 42;
+        final String aNr = "42";
         when(dbService.zoekLo3Bericht(aNr)).thenReturn(lo3Bericht);
         when(dbService.haalLo3PersoonslijstUitLo3Bericht(lo3Bericht)).thenReturn(lo3Persoonslijst);
         when(permissionService.hasPermissionOnPl(lo3Persoonslijst)).thenReturn(Boolean.TRUE);
         when(dbService.haalLogRegelsUitLo3Bericht(lo3Bericht)).thenReturn(logRegels);
-        when(bcmService.controleerDoorBCM(eq(lo3Persoonslijst), any(FoutMelder.class))).thenReturn(new ArrayList<GgoFoutRegel>());
+        when(bcmService.controleerDoorBCM(eq(lo3Persoonslijst), any(FoutMelder.class))).thenReturn(new ArrayList<>());
         when(dbService.zoekPersoon(aNr)).thenReturn(null);
         when(dbService.zoekBrpPersoonsLijst(aNr)).thenReturn(null);
 
@@ -193,7 +188,7 @@ public class ZoekAnummerVerwerkerTest {
         final Lo3Persoonslijst lo3Persoonslijst = Lo3PersoonslijstTestHelper.retrieveLo3Persoonslijsten("Omzetting.txt", new FoutMelder()).get(0);
         final Lo3Bericht lo3Bericht =
                 new Lo3Bericht("ggo_viewer_test", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(new Date().getTime()), "data", true);
-        final Long aNr = (long) 42;
+        final String aNr = "42";
         when(dbService.zoekLo3Bericht(aNr)).thenReturn(lo3Bericht);
         when(dbService.haalLo3PersoonslijstUitLo3Bericht(lo3Bericht)).thenReturn(lo3Persoonslijst);
         when(permissionService.hasPermissionOnPl(lo3Persoonslijst)).thenReturn(Boolean.FALSE);
@@ -211,7 +206,7 @@ public class ZoekAnummerVerwerkerTest {
         final FoutMelder foutMelder = new FoutMelder();
         final Lo3Bericht lo3Bericht =
                 new Lo3Bericht("ggo_viewer_test", Lo3BerichtenBron.INITIELE_VULLING, new Timestamp(new Date().getTime()), "data", true);
-        final Long aNr = (long) 42;
+        final String aNr = "42";
         when(dbService.zoekLo3Bericht(aNr)).thenReturn(lo3Bericht);
         when(dbService.haalLo3PersoonslijstUitLo3Bericht(lo3Bericht)).thenReturn(null);
 
@@ -226,42 +221,52 @@ public class ZoekAnummerVerwerkerTest {
     private BrpPersoonslijst createBrpPersoonslijst(final BrpGemeenteCode gemeenteCode) {
         final BrpPartijCode brpGemeenteCode;
         if (gemeenteCode == null) {
-            brpGemeenteCode = new BrpPartijCode(59901);
+            brpGemeenteCode = new BrpPartijCode("059901");
         } else {
-            brpGemeenteCode = new BrpPartijCode(gemeenteCode.getWaarde() * 100 + 1);
+            brpGemeenteCode = new BrpPartijCode(gemeenteCode.getWaarde() + "01");
         }
         final BrpPersoonslijstBuilder builder = new BrpPersoonslijstBuilder();
-        final List<BrpGroep<BrpIdentificatienummersInhoud>> idBrpGroep = createIdentificatie(12345L, 54321);
+        final List<BrpGroep<BrpIdentificatienummersInhoud>> idBrpGroep = createIdentificatie("12345", "54321");
         builder.identificatienummersStapel(new BrpStapel<>(idBrpGroep));
         final List<BrpGroep<BrpBijhoudingInhoud>> groepen = new ArrayList<>();
-        groepen.add(new BrpGroep<>(new BrpBijhoudingInhoud(brpGemeenteCode, null, null, new BrpBoolean(false, null)), new BrpHistorie(new BrpDatum(
-            20000101,
-            null), new BrpDatum(20110101, null), new BrpDatumTijd(new Date()), new BrpDatumTijd(new Date()), null), null, null, null));
+        groepen.add(
+                new BrpGroep<>(
+                        new BrpBijhoudingInhoud(brpGemeenteCode, null, null),
+                        new BrpHistorie(
+                                new BrpDatum(20000101, null),
+                                new BrpDatum(20110101, null),
+                                new BrpDatumTijd(new Date()),
+                                new BrpDatumTijd(new Date()),
+                                null),
+                        null,
+                        null,
+                        null));
         builder.bijhoudingStapel(new BrpStapel<>(groepen));
         final List<BrpBetrokkenheid> betrokkenheid = new ArrayList<>();
-        final List<BrpGroep<BrpIdentificatienummersInhoud>> idBrpGroepBetrokkenheid = createIdentificatie(43L, 43);
+        final List<BrpGroep<BrpIdentificatienummersInhoud>> idBrpGroepBetrokkenheid = createIdentificatie("43", "43");
         betrokkenheid.add(new BrpBetrokkenheid(null, new BrpStapel<>(idBrpGroepBetrokkenheid), null, null, null, null, null, null));
         final BrpRelatie.Builder relatieBuilder =
                 new BrpRelatie.Builder(
-                    BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING,
-                    BrpSoortBetrokkenheidCode.OUDER,
-                    new LinkedHashMap<Long, BrpActie>());
+                        null,
+                        BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING,
+                        BrpSoortBetrokkenheidCode.OUDER,
+                        new LinkedHashMap<>());
         relatieBuilder.betrokkenheden(betrokkenheid);
         builder.relatie(relatieBuilder.build());
 
         return builder.build();
     }
 
-    private List<BrpGroep<BrpIdentificatienummersInhoud>> createIdentificatie(final Long aNummer, final Integer bsn) {
+    private List<BrpGroep<BrpIdentificatienummersInhoud>> createIdentificatie(final String aNummer, final String bsn) {
         final List<BrpGroep<BrpIdentificatienummersInhoud>> idBrpGroep = new ArrayList<>();
-        final BrpIdentificatienummersInhoud inhoud = new BrpIdentificatienummersInhoud(new BrpLong(aNummer), new BrpInteger(bsn));
+        final BrpIdentificatienummersInhoud inhoud = new BrpIdentificatienummersInhoud(new BrpString(aNummer), new BrpString(bsn));
         final BrpHistorie historie =
                 new BrpHistorie(
-                    new BrpDatum(20000101, null),
-                    new BrpDatum(20110101, null),
-                    new BrpDatumTijd(new Date()),
-                    new BrpDatumTijd(new Date()),
-                    null);
+                        new BrpDatum(20000101, null),
+                        new BrpDatum(20110101, null),
+                        new BrpDatumTijd(new Date()),
+                        new BrpDatumTijd(new Date()),
+                        null);
         final BrpGroep<BrpIdentificatienummersInhoud> brpIdGroep = new BrpGroep<>(inhoud, historie, null, null, null);
         idBrpGroep.add(brpIdGroep);
         return idBrpGroep;

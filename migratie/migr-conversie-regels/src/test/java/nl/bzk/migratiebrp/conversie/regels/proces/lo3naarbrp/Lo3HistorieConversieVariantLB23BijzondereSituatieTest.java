@@ -36,16 +36,16 @@ public class Lo3HistorieConversieVariantLB23BijzondereSituatieTest extends Abstr
     public <T extends BrpGroepInhoud> void testBijzondereSituatieLB018() {
         final TussenGroep<BrpOuderlijkGezagInhoud> tussenGroep1 =
                 new TussenGroep<>(new BrpOuderlijkGezagInhoud(new BrpBoolean(true, null)), Lo3StapelHelper.lo3His(19830205), Lo3StapelHelper.lo3Doc(
-                    1L,
-                    null,
-                    null,
-                    null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_61, 0, 1));
+                        1L,
+                        null,
+                        null,
+                        null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_61, 0, 1));
         final TussenGroep<BrpOuderlijkGezagInhoud> tussenGroep2 =
                 new TussenGroep<>(
-                    new BrpOuderlijkGezagInhoud(null),
-                    Lo3StapelHelper.lo3His(19840204),
-                    Lo3StapelHelper.lo3Doc(2L, null, null, null),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_11, 0, 0));
+                        new BrpOuderlijkGezagInhoud(null),
+                        Lo3StapelHelper.lo3His(19840204),
+                        Lo3StapelHelper.lo3Doc(2L, null, null, null),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_11, 0, 0));
 
         final List<TussenGroep<T>> lo3Groepen = new ArrayList<>();
         lo3Groepen.add((TussenGroep<T>) tussenGroep1);
@@ -59,16 +59,16 @@ public class Lo3HistorieConversieVariantLB23BijzondereSituatieTest extends Abstr
     public <T extends BrpGroepInhoud> void testBijzondereSituatieLB018LegeHistorie() {
         final TussenGroep<BrpOuderlijkGezagInhoud> tussenGroep1 =
                 new TussenGroep<>(new BrpOuderlijkGezagInhoud(new BrpBoolean(true, null)), Lo3StapelHelper.lo3His(19830205), Lo3StapelHelper.lo3Doc(
-                    1L,
-                    null,
-                    null,
-                    null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_11, 0, 0));
+                        1L,
+                        null,
+                        null,
+                        null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_11, 0, 0));
         final TussenGroep<BrpOuderlijkGezagInhoud> tussenGroep2 =
                 new TussenGroep<>(
-                    new BrpOuderlijkGezagInhoud(null),
-                    Lo3StapelHelper.lo3His(19840204),
-                    Lo3StapelHelper.lo3Doc(2L, null, null, null),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_61, 0, 1));
+                        new BrpOuderlijkGezagInhoud(null),
+                        Lo3StapelHelper.lo3His(19840204),
+                        Lo3StapelHelper.lo3Doc(2L, null, null, null),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_61, 0, 1));
 
         final List<TussenGroep<T>> lo3Groepen = new ArrayList<>();
         lo3Groepen.add((TussenGroep<T>) tussenGroep1);
@@ -82,10 +82,10 @@ public class Lo3HistorieConversieVariantLB23BijzondereSituatieTest extends Abstr
     public <T extends BrpGroepInhoud> void testBijzondereSituatieLB018NietGelogd() {
         final TussenGroep<BrpOuderlijkGezagInhoud> tussenGroep2 =
                 new TussenGroep<>(
-                    new BrpOuderlijkGezagInhoud(null),
-                    Lo3StapelHelper.lo3His(19840204),
-                    Lo3StapelHelper.lo3Doc(2L, null, null, null),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_11, 0, 0));
+                        new BrpOuderlijkGezagInhoud(null),
+                        Lo3StapelHelper.lo3His(19840204),
+                        Lo3StapelHelper.lo3Doc(2L, null, null, null),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_11, 0, 0));
 
         final List<TussenGroep<T>> lo3Groepen = new ArrayList<>();
         lo3Groepen.add((TussenGroep<T>) tussenGroep2);
@@ -98,40 +98,40 @@ public class Lo3HistorieConversieVariantLB23BijzondereSituatieTest extends Abstr
     public <T extends BrpGroepInhoud> void testBijzondereSituatieLB019() {
         final TussenGroep<BrpGeslachtsaanduidingInhoud> tussenGroep1 =
                 new TussenGroep<>(new BrpGeslachtsaanduidingInhoud(null), Lo3StapelHelper.lo3His(null, 20100101, 20100101), new Lo3Documentatie(
-                    3L,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0));
+                        3L,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0));
         final TussenGroep<BrpGeslachtsaanduidingInhoud> tussenGroep2 =
                 new TussenGroep<>(new BrpGeslachtsaanduidingInhoud(null), Lo3StapelHelper.lo3His(null, 20100101, 20100101), new Lo3Documentatie(
-                    4L,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_51, 0, 1));
+                        4L,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_51, 0, 1));
         final TussenGroep<BrpGeslachtsaanduidingInhoud> tussenGroep3 =
                 new TussenGroep<>(new BrpGeslachtsaanduidingInhoud(null), Lo3StapelHelper.lo3His("O", 20100102, 20100102), new Lo3Documentatie(
-                    1L,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_51, 0, 2));
+                        1L,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_51, 0, 2));
         final TussenGroep<BrpGeslachtsaanduidingInhoud> tussenGroep4 =
                 new TussenGroep<>(
-                    new BrpGeslachtsaanduidingInhoud(BrpGeslachtsaanduidingCode.ONBEKEND),
-                    Lo3StapelHelper.lo3His("O", 20100101, 20100101),
-                    new Lo3Documentatie(2L, null, null, null, null, null, null, null),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_51, 0, 3));
+                        new BrpGeslachtsaanduidingInhoud(BrpGeslachtsaanduidingCode.ONBEKEND),
+                        Lo3StapelHelper.lo3His("O", 20100101, 20100101),
+                        new Lo3Documentatie(2L, null, null, null, null, null, null, null),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_51, 0, 3));
 
         final List<TussenGroep<T>> lo3Groepen = new ArrayList<>();
         lo3Groepen.add((TussenGroep<T>) tussenGroep1);

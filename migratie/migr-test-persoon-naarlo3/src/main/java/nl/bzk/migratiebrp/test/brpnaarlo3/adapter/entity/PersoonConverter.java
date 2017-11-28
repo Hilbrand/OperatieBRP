@@ -7,10 +7,12 @@
 package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,7 +56,7 @@ public final class PersoonConverter extends EntityConverter {
                 id = Integer.valueOf(value);
                 break;
             case HEADER_SOORT:
-                soortPersoon = SoortPersoon.parseId(Short.valueOf(value));
+                soortPersoon = SoortPersoon.parseId(Integer.valueOf(value));
                 break;
             case HEADER_TIJDSTIP_LAATSTE_WIJZIGING:
                 tijdstipLaatsteWijziging = maakTimestamp(value);

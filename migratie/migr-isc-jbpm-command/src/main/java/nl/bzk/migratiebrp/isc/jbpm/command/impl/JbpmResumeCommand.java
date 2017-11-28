@@ -24,9 +24,7 @@ public final class JbpmResumeCommand implements Command<Void> {
 
     /**
      * Default constructor.
-     *
-     * @param processInstanceId
-     *            Het proces instantie Id.
+     * @param processInstanceId Het proces instantie Id.
      */
     public JbpmResumeCommand(final Long processInstanceId) {
         this.processInstanceId = processInstanceId;

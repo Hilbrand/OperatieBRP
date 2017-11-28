@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.conversie.model.lo3.codes;
 import java.util.HashMap;
 import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingInhoudingVermissingNederlandsReisdocument;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze enum type representeert de mogelijke aanduidingen voor inhouding dan wel vermissing Nederlands reisdocument
@@ -17,12 +17,22 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
  */
 public enum Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum {
 
-    /** ingehouden, ingeleverd. */
+    /**
+     * ingehouden, ingeleverd.
+     */
     INGEHOUDEN("I", "Ingehouden"),
-    /** vermist. */
+    /**
+     * vermist.
+     */
     VERMIST("V", "Vermist"),
-    /** onbekend. */
-    ONBEKEND(".", "Onbekend");
+    /**
+     * onbekend.
+     */
+    ONBEKEND(".", "Onbekend"),
+    /**
+     * Van rechtswege vervallen.
+     */
+    RECHTSWEGE("R", "Van rechtswege vervallen");
 
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
@@ -31,6 +41,7 @@ public enum Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum {
     /* ************************************************************************************************************* */
 
     private static final Map<String, Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum> CODE_MAP = new HashMap<>();
+
     static {
         final Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum[] values = Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum.values();
         for (final Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum value : values) {
@@ -47,7 +58,7 @@ public enum Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum(final String code, final String label) {
+    Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum(final String code, final String label) {
         this.code = code;
         this.label = label;
     }
@@ -60,9 +71,7 @@ public enum Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum {
 
     /**
      * Bestaat de gegeven code in de enumeratie.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return true, als de code bestaat, anders false
      */
     public static boolean containsCode(final String code) {
@@ -71,9 +80,7 @@ public enum Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum {
 
     /**
      * Geef de enumeratie waarde voor de gegeven code.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum getByCode(final String code) {
@@ -82,14 +89,11 @@ public enum Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum {
 
     /**
      * Geef de enumeratie waarde voor (de code van) het gegeven element.
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum getByElement(
-        final Lo3AanduidingInhoudingVermissingNederlandsReisdocument element)
-    {
+            final Lo3AanduidingInhoudingVermissingNederlandsReisdocument element) {
         return element == null ? null : getByCode(element.getWaarde());
     }
 
@@ -101,7 +105,6 @@ public enum Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {
@@ -110,7 +113,6 @@ public enum Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum {
 
     /**
      * Geef de enumeratie als element.
-     * 
      * @return element
      */
     public Lo3AanduidingInhoudingVermissingNederlandsReisdocument asElement() {
@@ -119,18 +121,15 @@ public enum Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum {
 
     /**
      * Is de enumeratie waarde gelijk aan (de code van) het element?
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return true, als de waarde gelijk is, anders false
      */
     public boolean equalsElement(final Lo3AanduidingInhoudingVermissingNederlandsReisdocument element) {
-        return Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
+        return Lo3Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
     }
 
     /**
      * Geef de waarde van label.
-     *
      * @return the label
      */
     public String getLabel() {

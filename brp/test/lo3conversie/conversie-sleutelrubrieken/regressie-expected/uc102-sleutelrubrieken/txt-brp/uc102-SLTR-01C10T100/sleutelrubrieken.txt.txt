@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [indicatie.behandeld_als_nederlander]) OF GEWIJZIGD(oud, nieuw, [indicatie.vastgesteld_niet_nederlander])
+GEWIJZIGD(oud, nieuw, [Persoon.Indicatie.BehandeldAlsNederlander.Waarde]) OF GEWIJZIGD(oud, nieuw, [Persoon.Indicatie.VastgesteldNietNederlander.Waarde])

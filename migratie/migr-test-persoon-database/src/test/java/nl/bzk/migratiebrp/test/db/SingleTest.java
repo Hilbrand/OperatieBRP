@@ -33,7 +33,7 @@ public class SingleTest extends DbConversieTestConfiguratie {
         final List<String> fileList = new ArrayList<>();
         if (true) {
 //            fileList.add("DELTABIJHC70T10.xls");
-            fileList.add("DELTAVERS02C10T170.xls");
+            fileList.add("ORANJE-5418.xls");
             return new StartsWithListFilter(fileList, FilterType.FILE);
 
         } else if(true) {

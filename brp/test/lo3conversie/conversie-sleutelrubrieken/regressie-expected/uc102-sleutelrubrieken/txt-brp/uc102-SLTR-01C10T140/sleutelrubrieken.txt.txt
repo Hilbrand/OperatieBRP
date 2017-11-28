@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [overlijden.datum])
+GEWIJZIGD(oud, nieuw, [Persoon.Overlijden.Datum])

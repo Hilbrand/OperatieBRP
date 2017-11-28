@@ -34,9 +34,7 @@ public final class Uc811Bericht extends AbstractIscBericht {
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param uc811Type
-     *            het uc811Type type
+     * @param uc811Type het uc811Type type
      */
     public Uc811Bericht(final Uc811Type uc811Type) {
         this.uc811Type = uc811Type;
@@ -53,7 +51,6 @@ public final class Uc811Bericht extends AbstractIscBericht {
 
     /**
      * Geeft de gemeente code.
-     *
      * @return De gemeente code.
      */
     public String getGemeenteCode() {
@@ -62,9 +59,7 @@ public final class Uc811Bericht extends AbstractIscBericht {
 
     /**
      * Zet de gemeente code.
-     *
-     * @param gemeenteCode
-     *            De te zetten gemeente code
+     * @param gemeenteCode De te zetten gemeente code
      */
     public void setGemeenteCode(final String gemeenteCode) {
         uc811Type.setGemeenteCode(gemeenteCode);
@@ -72,7 +67,6 @@ public final class Uc811Bericht extends AbstractIscBericht {
 
     /**
      * Geef de waarde van anummer.
-     *
      * @return het-nummer
      */
     public Long getAnummer() {
@@ -81,9 +75,7 @@ public final class Uc811Bericht extends AbstractIscBericht {
 
     /**
      * Zet de waarde van a nummer.
-     *
-     * @param aNummer
-     *            Het te zetten a-nummer
+     * @param aNummer Het te zetten a-nummer
      */
     public void setANummer(final Long aNummer) {
         uc811Type.setANummer(AbstractBericht.asString(aNummer));

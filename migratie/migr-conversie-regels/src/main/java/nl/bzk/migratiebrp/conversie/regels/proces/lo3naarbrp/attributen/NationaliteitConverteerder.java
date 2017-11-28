@@ -8,23 +8,24 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.Definitie;
 import nl.bzk.migratiebrp.conversie.model.Definities;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenVerkrijgingNederlandschapCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenVerliesNederlandschapCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBehandeldAlsNederlanderIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBuitenlandsPersoonsnummerInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNationaliteitInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpStaatloosIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVastgesteldNietNederlanderIndicatieInhoud;
@@ -38,40 +39,40 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingBijzonderNede
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
-import org.springframework.stereotype.Component;
 
 /**
  * Converteert een LO3 Nationaliteit categorie naar de corresponderende BRP groepen.
- * 
  */
-@Component
-@Requirement({Requirements.CCA04, Requirements.CCA04_LB01 })
+@Requirement({Requirements.CCA04, Requirements.CCA04_LB01})
 public class NationaliteitConverteerder {
 
+    private final Lo3AttribuutConverteerder converteerder;
+
+    /**
+     * Constructor.
+     * @param lo3AttribuutConverteerder Lo3AttribuutConverteerder
+     */
     @Inject
-    private Lo3AttribuutConverteerder converteerder;
+    public NationaliteitConverteerder(final Lo3AttribuutConverteerder lo3AttribuutConverteerder) {
+        this.converteerder = lo3AttribuutConverteerder;
+    }
 
     /**
      * Converteert de LO3 Nationaliteit stapels naar de corresponderende BRP groepen.
-     * 
-     * @param stapels
-     *            de te converteren LO3 Nationaliteit stapels
-     * @param inschrijvingStapel
-     *            de LO3 Inschrijving stapel
-     * @param builder
-     *            de migratiepersoonslijst builder waarin de BRP groepen worden opgeslagen
+     * @param stapels de te converteren LO3 Nationaliteit stapels
+     * @param inschrijvingStapel de LO3 Inschrijving stapel
+     * @param builder de migratiepersoonslijst builder waarin de BRP groepen worden opgeslagen
      */
     @Requirement(Requirements.CCA04_LB02)
-    @Definitie({Definities.DEF054, Definities.DEF055, Definities.DEF007, Definities.DEF008, Definities.DEF009, Definities.DEF038, Definities.DEF039 })
+    @Definitie({Definities.DEF054, Definities.DEF055, Definities.DEF007, Definities.DEF008, Definities.DEF009, Definities.DEF038, Definities.DEF039})
     public final void converteer(
-        final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels,
-        final Lo3Stapel<Lo3InschrijvingInhoud> inschrijvingStapel,
-        final TussenPersoonslijstBuilder builder)
-    {
+            final List<Lo3Stapel<Lo3NationaliteitInhoud>> stapels,
+            final Lo3Stapel<Lo3InschrijvingInhoud> inschrijvingStapel,
+            final TussenPersoonslijstBuilder builder) {
 
         // Uitgangspunten:
         // - Verkrijging nederlanderschap (63) en verlies nederlanderschap (64) kunnen alleen bij nationaliteitcode
@@ -81,7 +82,7 @@ public class NationaliteitConverteerder {
         // - 404 bij reden verlies(beeindiging) gaat naar einde bijhouding.
 
         for (final Lo3Stapel<Lo3NationaliteitInhoud> stapel : stapels) {
-            final Set<StapelType> typen = bepaalTypen(stapel);
+            final EnumSet<StapelType> typen = bepaalTypen(stapel);
 
             if (typen.contains(StapelType.NATIONALITEIT)) {
                 // DEF055
@@ -107,14 +108,14 @@ public class NationaliteitConverteerder {
         }
     }
 
-    private Set<StapelType> bepaalTypen(final Lo3Stapel<Lo3NationaliteitInhoud> stapel) {
-        final Set<StapelType> result = EnumSet.noneOf(StapelType.class);
+    private EnumSet<StapelType> bepaalTypen(final Lo3Stapel<Lo3NationaliteitInhoud> stapel) {
+        final EnumSet<StapelType> result = EnumSet.noneOf(StapelType.class);
 
         for (final Lo3Categorie<Lo3NationaliteitInhoud> categorie : stapel) {
             final Lo3NationaliteitInhoud inhoud = categorie.getInhoud();
 
             final Lo3NationaliteitCode nationaliteit = inhoud.getNationaliteitCode();
-            if (Validatie.isElementGevuld(nationaliteit)) {
+            if (Lo3Validatie.isElementGevuld(nationaliteit)) {
                 if (Lo3NationaliteitCode.NATIONALITEIT_CODE_STAATLOOS.equals(nationaliteit.getWaarde())) {
                     result.add(StapelType.STAATLOOS);
                 } else {
@@ -123,7 +124,7 @@ public class NationaliteitConverteerder {
             }
 
             final Lo3AanduidingBijzonderNederlandschap aanduiding = inhoud.getAanduidingBijzonderNederlandschap();
-            if (Validatie.isElementGevuld(aanduiding)) {
+            if (Lo3Validatie.isElementGevuld(aanduiding)) {
                 result.add(StapelType.BIJZONDER);
             }
         }
@@ -150,13 +151,13 @@ public class NationaliteitConverteerder {
                     converteerder.converteerLo3RedenVerkrijgingNederlandschapCodeToBrpString(inhoud.getRedenVerkrijgingNederlandschapCode());
 
             groepen.add(
-                new TussenGroep<>(
-                    new BrpStaatloosIndicatieInhoud(indicatie, migratieRedenOpnameNationaliteit, migratieRedenBeeindigingNationaliteit),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getLo3Herkomst(),
-                    false,
-                    inhoud.isLeeg()));
+                    new TussenGroep<>(
+                            new BrpStaatloosIndicatieInhoud(indicatie, migratieRedenOpnameNationaliteit, migratieRedenBeeindigingNationaliteit),
+                            categorie.getHistorie(),
+                            categorie.getDocumentatie(),
+                            categorie.getLo3Herkomst(),
+                            false,
+                            inhoud.isLeeg()));
         }
 
         builder.staatloosIndicatieStapel(new TussenStapel<>(groepen));
@@ -180,27 +181,25 @@ public class NationaliteitConverteerder {
             final boolean oorsprongVoorkomenLeeg = inhoud.isLeeg();
 
             behandeldGroepen.add(
-                new TussenGroep<>(
-                    new BrpBehandeldAlsNederlanderIndicatieInhoud(
-                        indicatieBehandeld,
-                        migratieRedenOpnameNationaliteit,
-                        migratieRedenBeeindigingNationaliteit),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getLo3Herkomst(),
-                    false,
-                    oorsprongVoorkomenLeeg));
+                    new TussenGroep<>(
+                            new BrpBehandeldAlsNederlanderIndicatieInhoud(indicatieBehandeld, migratieRedenOpnameNationaliteit,
+                                    migratieRedenBeeindigingNationaliteit),
+                            categorie.getHistorie(),
+                            categorie.getDocumentatie(),
+                            categorie.getLo3Herkomst(),
+                            false,
+                            oorsprongVoorkomenLeeg));
             vastgesteldGroepen.add(
-                new TussenGroep<>(
-                    new BrpVastgesteldNietNederlanderIndicatieInhoud(
-                        indicatieVastgesteld,
-                        migratieRedenOpnameNationaliteit,
-                        migratieRedenBeeindigingNationaliteit),
-                    categorie.getHistorie(),
-                    categorie.getDocumentatie(),
-                    categorie.getLo3Herkomst(),
-                    false,
-                    oorsprongVoorkomenLeeg));
+                    new TussenGroep<>(
+                            new BrpVastgesteldNietNederlanderIndicatieInhoud(
+                                    indicatieVastgesteld,
+                                    migratieRedenOpnameNationaliteit,
+                                    migratieRedenBeeindigingNationaliteit),
+                            categorie.getHistorie(),
+                            categorie.getDocumentatie(),
+                            categorie.getLo3Herkomst(),
+                            false,
+                            oorsprongVoorkomenLeeg));
         }
 
         if (!behandeldGroepen.isEmpty()) {
@@ -214,10 +213,9 @@ public class NationaliteitConverteerder {
     }
 
     private void verwerkAlsGepriviligieerdeStapel(
-        final Lo3Stapel<Lo3NationaliteitInhoud> stapel,
-        final Lo3Stapel<Lo3InschrijvingInhoud> inschrijvingStapel,
-        final TussenPersoonslijstBuilder builder)
-    {
+            final Lo3Stapel<Lo3NationaliteitInhoud> stapel,
+            final Lo3Stapel<Lo3InschrijvingInhoud> inschrijvingStapel,
+            final TussenPersoonslijstBuilder builder) {
         final List<TussenGroep<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud>> groepen = new ArrayList<>();
 
         final Lo3Categorie<Lo3NationaliteitInhoud> nationaliteit = stapel.getLaatsteElement();
@@ -228,83 +226,98 @@ public class NationaliteitConverteerder {
 
         final Lo3Categorie<Lo3InschrijvingInhoud> lo3Inschrijving = inschrijvingStapel.getLaatsteElement();
         final Lo3Datum lo3Datumstempel = BrpDatumTijd.fromLo3Datumtijdstempel(lo3Inschrijving.getInhoud().getDatumtijdstempel()).converteerNaarLo3Datum();
-        final Lo3Historie historie = new Lo3Historie(null, Lo3Datum.NULL_DATUM, lo3Datumstempel);
+        final Lo3Historie historie = new Lo3Historie(null, null, lo3Datumstempel);
 
         groepen.add(
-            new TussenGroep<>(
-                brpInhoud,
-                historie,
-                nationaliteit.getDocumentatie(),
-                nationaliteit.getLo3Herkomst(),
-                false,
-                lo3Inschrijving.getInhoud().isLeeg()));
+                new TussenGroep<>(
+                        brpInhoud,
+                        historie,
+                        nationaliteit.getDocumentatie(),
+                        nationaliteit.getLo3Herkomst(),
+                        false,
+                        lo3Inschrijving.getInhoud().isLeeg()));
 
         builder.bijzondereVerblijfsrechtelijkePositieIndicatieStapel(new TussenStapel<>(groepen));
     }
 
-    private void verwerkAlsNationaliteitStapel(final Lo3Stapel<Lo3NationaliteitInhoud> stapel, final TussenPersoonslijstBuilder builder) {
-        final List<TussenGroep<BrpNationaliteitInhoud>> groepen = new ArrayList<>();
+    private void verwerkAlsNationaliteitStapel(final Lo3Stapel<Lo3NationaliteitInhoud> stapel, final TussenPersoonslijstBuilder tussenPersoonslijstBuilder) {
+        final List<TussenGroep<BrpNationaliteitInhoud>> nationaliteitGroepen = new ArrayList<>();
+        final Map<String, List<TussenGroep<BrpBuitenlandsPersoonsnummerInhoud>>> buitenlandsPersoonsnummerGroepen = new HashMap<>();
 
         for (final Lo3Categorie<Lo3NationaliteitInhoud> categorie : stapel) {
             final Lo3NationaliteitInhoud inhoud = categorie.getInhoud();
+            final TussenGroep<BrpNationaliteitInhoud> nationaliteitInhoudTussenGroep = maakNationaliteitTussenGroep(categorie, inhoud);
+            nationaliteitGroepen.add(nationaliteitInhoudTussenGroep);
 
-            final Lo3RedenNederlandschapCode lo3RedenVerlies = inhoud.getRedenVerliesNederlandschapCode();
-            final BrpRedenVerliesNederlandschapCode redenVerlies;
-            final BrpBoolean eindeBijhouding;
-            final BrpDatum migratieDatum;
-            final BrpString migratieRedenBeeindigingNationaliteit;
+            final BrpString buitenlandsPersoonsnummer = converteerder.converteerString(inhoud.getBuitenlandsPersoonsnummer());
+            if (buitenlandsPersoonsnummer != null && buitenlandsPersoonsnummer.isInhoudelijkGevuld()) {
+                final BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer autoriteitVanAfgifteBuitenlandsPersoonsnummer =
+                        converteerder.converteerLo3AutoriteitVanAfgifteBuitenlandsPersoonsnummer(inhoud.getNationaliteitCode());
 
-            if (Validatie.isElementGevuld(lo3RedenVerlies)) {
-                if (Lo3RedenNederlandschapCode.EINDE_BIJHOUDING.equalsWaarde(lo3RedenVerlies)) {
-                    redenVerlies = null;
-                    migratieRedenBeeindigingNationaliteit = null;
-                    eindeBijhouding = new BrpBoolean(true, lo3RedenVerlies.getOnderzoek());
-                    migratieDatum = BrpDatum.fromLo3Datum(categorie.getHistorie().getIngangsdatumGeldigheid());
+                final List<TussenGroep<BrpBuitenlandsPersoonsnummerInhoud>> buitenlandsPersoonsnummerInhoudTussenGroep;
+                final String waarde = buitenlandsPersoonsnummer.getWaarde();
+                if (buitenlandsPersoonsnummerGroepen.containsKey(waarde)) {
+                    buitenlandsPersoonsnummerInhoudTussenGroep = buitenlandsPersoonsnummerGroepen.get(waarde);
                 } else {
-                    redenVerlies = converteerder.converteerLo3RedenVerliesNederlandschapCode(lo3RedenVerlies);
-                    eindeBijhouding = null;
-                    migratieDatum = null;
-                    if (redenVerlies == null || redenVerlies.getWaarde() == null) {
-                        migratieRedenBeeindigingNationaliteit = converteerder.converteerLo3RedenVerkrijgingNederlandschapCodeToBrpString(lo3RedenVerlies);
-                    } else {
-                        migratieRedenBeeindigingNationaliteit = null;
-                    }
+                    buitenlandsPersoonsnummerInhoudTussenGroep = new ArrayList<>();
+                    buitenlandsPersoonsnummerGroepen.put(waarde, buitenlandsPersoonsnummerInhoudTussenGroep);
                 }
-            } else {
-                redenVerlies = null;
-                eindeBijhouding = null;
-                migratieDatum = null;
-                migratieRedenBeeindigingNationaliteit = null;
+                buitenlandsPersoonsnummerInhoudTussenGroep.add(
+                        new TussenGroep<>(
+                                new BrpBuitenlandsPersoonsnummerInhoud(buitenlandsPersoonsnummer, autoriteitVanAfgifteBuitenlandsPersoonsnummer),
+                                categorie.getHistorie(),
+                                categorie.getDocumentatie(),
+                                categorie.getLo3Herkomst()));
             }
 
-            final BrpNationaliteitCode nationaliteitCode = converteerder.converteerLo3NationaliteitCode(inhoud.getNationaliteitCode());
-            Lo3RedenNederlandschapCode lo3RedenOpnameNationaliteit = null;
-            if (!Validatie.isElementGevuld(inhoud.getAanduidingBijzonderNederlandschap())) {
-                lo3RedenOpnameNationaliteit = inhoud.getRedenVerkrijgingNederlandschapCode();
-            }
-            BrpRedenVerkrijgingNederlandschapCode redenVerkrijging =
-                    converteerder.converteerLo3RedenVerkrijgingNederlandschapCode(lo3RedenOpnameNationaliteit);
-            final BrpString migratieRedenOpnameNationaliteit;
-            if (redenVerkrijging == null || redenVerkrijging.getWaarde() == null) {
-                migratieRedenOpnameNationaliteit = converteerder.converteerLo3RedenVerkrijgingNederlandschapCodeToBrpString(lo3RedenOpnameNationaliteit);
-                redenVerkrijging = null;
-            } else {
-                migratieRedenOpnameNationaliteit = null;
-            }
-            final BrpNationaliteitInhoud brpInhoud =
-                    new BrpNationaliteitInhoud(
-                        nationaliteitCode,
-                        redenVerkrijging,
-                        redenVerlies,
-                        eindeBijhouding,
-                        migratieDatum,
-                        migratieRedenOpnameNationaliteit,
-                        migratieRedenBeeindigingNationaliteit);
-            groepen.add(
-                new TussenGroep<>(brpInhoud, categorie.getHistorie(), categorie.getDocumentatie(), categorie.getLo3Herkomst(), false, inhoud.isLeeg()));
         }
 
-        builder.nationaliteitStapel(new TussenStapel<>(groepen));
+        tussenPersoonslijstBuilder.nationaliteitStapel(new TussenStapel<>(nationaliteitGroepen));
+        for (final List<TussenGroep<BrpBuitenlandsPersoonsnummerInhoud>> groep : buitenlandsPersoonsnummerGroepen.values()) {
+            tussenPersoonslijstBuilder.buitenlandsPersoonsnummerStapel(new TussenStapel<>(groep));
+        }
+    }
+
+    private TussenGroep<BrpNationaliteitInhoud> maakNationaliteitTussenGroep(
+            final Lo3Categorie<Lo3NationaliteitInhoud> categorie,
+            final Lo3NationaliteitInhoud inhoud) {
+        final BrpNationaliteitInhoud.Builder inhoudBuilder =
+                new BrpNationaliteitInhoud.Builder(converteerder.converteerLo3NationaliteitCode(inhoud.getNationaliteitCode()));
+
+        final Lo3RedenNederlandschapCode lo3RedenVerlies = inhoud.getRedenVerliesNederlandschapCode();
+        if (Lo3Validatie.isElementGevuld(lo3RedenVerlies)) {
+            if (Lo3RedenNederlandschapCode.EINDE_BIJHOUDING.equalsWaarde(lo3RedenVerlies)) {
+                inhoudBuilder.eindeBijhouding(new BrpBoolean(true, lo3RedenVerlies.getOnderzoek()));
+                inhoudBuilder.migratieDatum(BrpDatum.fromLo3Datum(categorie.getHistorie().getIngangsdatumGeldigheid()));
+            } else {
+                final BrpRedenVerliesNederlandschapCode redenVerlies = converteerder.converteerLo3RedenVerliesNederlandschapCode(lo3RedenVerlies);
+                inhoudBuilder.redenVerliesNederlandschapCode(redenVerlies);
+                if (redenVerlies == null || !redenVerlies.isInhoudelijkGevuld()) {
+                    inhoudBuilder.migratieRedenBeeindigingNationaliteit(
+                            converteerder.converteerLo3RedenVerkrijgingNederlandschapCodeToBrpString(lo3RedenVerlies));
+                }
+            }
+        }
+
+        Lo3RedenNederlandschapCode lo3RedenOpnameNationaliteit = null;
+        if (!Lo3Validatie.isElementGevuld(inhoud.getAanduidingBijzonderNederlandschap())) {
+            lo3RedenOpnameNationaliteit = inhoud.getRedenVerkrijgingNederlandschapCode();
+        }
+
+        BrpRedenVerkrijgingNederlandschapCode redenVerkrijging = converteerder.converteerLo3RedenVerkrijgingNederlandschapCode(lo3RedenOpnameNationaliteit);
+        if (redenVerkrijging == null || !redenVerkrijging.isInhoudelijkGevuld()) {
+            inhoudBuilder.migratieRedenOpnameNationaliteit(
+                    converteerder.converteerLo3RedenVerkrijgingNederlandschapCodeToBrpString(lo3RedenOpnameNationaliteit));
+            redenVerkrijging = null;
+        }
+        inhoudBuilder.redenVerkrijgingNederlandschapCode(redenVerkrijging);
+        return new TussenGroep<>(
+                inhoudBuilder.build(),
+                categorie.getHistorie(),
+                categorie.getDocumentatie(),
+                categorie.getLo3Herkomst(),
+                false,
+                inhoud.isLeeg());
     }
 
     /**

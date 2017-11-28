@@ -6,40 +6,40 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc301;
 
-import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
+
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.If01Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ii01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.ZoekPersoonResultaatType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
-import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.stereotype.Component;
 
 /**
  * Maak een if01 bericht omdat buiten de bijhoudingsgemeente is gezocht.
  */
 @Component("uc301MaakIf01BerichtGUVAction")
-public final class MaakIf01BerichtGUVAction implements SpringAction {
+public final class MaakIf01BerichtGUVAction extends AbstractMaakIf01BerichtAction {
 
-    private static final Logger LOG = LoggerFactory.getLogger();
+    private final BerichtenDao berichtenDao;
 
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakIf01BerichtGUVAction(final BerichtenDao berichtenDao) {
+        super(berichtenDao);
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
-    public Map<String, Object> execute(final Map<String, Object> parameters) {
-        LOG.info("execute(parameters={})", parameters);
-        final Ii01Bericht ii01Bericht = (Ii01Bericht) berichtenDao.leesBericht((Long) parameters.get("input"));
+    protected void aanvullenIf01(final Map<String, Object> parameters, final If01Bericht if01Bericht) {
         final ZoekPersoonAntwoordBericht zoekPersoonAntwoord =
                 (ZoekPersoonAntwoordBericht) berichtenDao.leesBericht((Long) parameters.get("zoekPersoonBuitenGemeenteAntwoordBericht"));
-
-        final If01Bericht if01Bericht = new If01Bericht();
-        if01Bericht.setCorrelationId(ii01Bericht.getMessageId());
 
         if (zoekPersoonAntwoord.getResultaat() == ZoekPersoonResultaatType.GEEN) {
             if01Bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "G");
@@ -51,15 +51,5 @@ public final class MaakIf01BerichtGUVAction implements SpringAction {
             if01Bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "U");
         }
 
-        // If01 inhoud
-        if01Bericht.setCategorieen(ii01Bericht.getCategorieen());
-
-        // Zet de adressering.
-        if01Bericht.setBronGemeente(ii01Bericht.getDoelGemeente());
-        if01Bericht.setDoelGemeente(ii01Bericht.getBronGemeente());
-
-        final Map<String, Object> result = new HashMap<>();
-        result.put("if01Bericht", berichtenDao.bewaarBericht(if01Bericht));
-        return result;
     }
 }

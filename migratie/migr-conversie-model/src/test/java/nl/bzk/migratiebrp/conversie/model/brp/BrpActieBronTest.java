@@ -11,11 +11,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoudTest;
-
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoudTestUtil;
 import org.junit.Test;
 
 public class BrpActieBronTest {
@@ -24,7 +22,7 @@ public class BrpActieBronTest {
     public void testEquals() throws Exception {
         List<BrpGroep<BrpDocumentInhoud>> groepen = new ArrayList<>();
 
-        BrpDocumentInhoud inhoud = BrpDocumentInhoudTest.createInhoud();
+        BrpDocumentInhoud inhoud = BrpDocumentInhoudTestUtil.createInhoud();
         BrpHistorie history = BrpHistorieTest.createdefaultInhoud();
         BrpGroep<BrpDocumentInhoud> groep = new BrpGroep<>(inhoud, history, null, null, null);
         groepen.add(groep);

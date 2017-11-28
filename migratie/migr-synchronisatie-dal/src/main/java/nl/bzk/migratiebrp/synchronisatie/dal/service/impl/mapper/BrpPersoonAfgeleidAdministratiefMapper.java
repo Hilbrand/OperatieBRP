@@ -6,11 +6,8 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -19,32 +16,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public final class BrpPersoonAfgeleidAdministratiefMapper
-        extends AbstractBrpMapper<PersoonAfgeleidAdministratiefHistorie, BrpPersoonAfgeleidAdministratiefInhoud>
-{
+        extends AbstractBrpMapper<PersoonAfgeleidAdministratiefHistorie, BrpPersoonAfgeleidAdministratiefInhoud> {
 
-    /**
-     * Map de gegevens.
-     * 
-     * @param historie
-     *            persoonAfgeleidAdministratiefHistorie
-     * @param brpOnderzoekMapper
-     *            De mapper voor onderzoeken
-     * @return persoon afgeleid administratief
-     */
+    @Override
     public BrpPersoonAfgeleidAdministratiefInhoud mapInhoud(
-        final PersoonAfgeleidAdministratiefHistorie historie,
-        final BrpOnderzoekMapper brpOnderzoekMapper)
-    {
-        final BrpBoolean onverwerktBijhoudingsvoorstelNietIngezeteneAanwezig;
-        final Lo3Onderzoek onderzoekOnverwerktBijhoudingsvoorstel;
-        onderzoekOnverwerktBijhoudingsvoorstel =
-                brpOnderzoekMapper.bepaalOnderzoek(
-                    historie,
-                    Element.PERSOON_AFGELEIDADMINISTRATIEF_INDICATIEONVERWERKTBIJHOUDINGSVOORSTELNIETINGEZETENEAANWEZIG,
-                    true);
-        final boolean onverwerktBijhoudingsvoorstel = historie.getIndicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig();
-        onverwerktBijhoudingsvoorstelNietIngezeteneAanwezig =
-                BrpMapperUtil.mapBrpBoolean(onverwerktBijhoudingsvoorstel, onderzoekOnverwerktBijhoudingsvoorstel);
-        return new BrpPersoonAfgeleidAdministratiefInhoud(onverwerktBijhoudingsvoorstelNietIngezeteneAanwezig);
+            final PersoonAfgeleidAdministratiefHistorie historie,
+            final BrpOnderzoekMapper brpOnderzoekMapper) {
+        return new BrpPersoonAfgeleidAdministratiefInhoud();
     }
 }

@@ -9,52 +9,39 @@ package nl.bzk.migratiebrp.conversie.model.domein.conversietabel;
 /**
  * Een conversietabel converteert een LO3 object naar een BrpObject en vice versa, door gebruikt te maken van een
  * conversietabel.
- * 
- * @param <LT>
- *            het LO3 Object type
- * @param <BT>
- *            het BRP Object type
+ * @param <L> het LO3 Object type
+ * @param <B> het BRP Object type
  */
-public interface Conversietabel<LT, BT> {
+public interface Conversietabel<L, B> {
 
     /**
      * Converteert de LO3 input naar BRP output.
-     * 
-     * @param input
-     *            de LO3 input
+     * @param input de LO3 input
      * @return de corresponderen BRP waarde, null als input null was.
-     * @throws IllegalArgumentException
-     *             als de gegeven LO3 code niet bestaat.
+     * @throws IllegalArgumentException als de gegeven LO3 code niet bestaat.
      */
-    BT converteerNaarBrp(LT input);
+    B converteerNaarBrp(L input);
 
     /**
      * Valideer een LO3 input als geldige code.
-     * 
-     * @param input
-     *            de LO3 input
+     * @param input de LO3 input
      * @return true, als de input een geldige code is
      */
-    boolean valideerLo3(LT input);
+    boolean valideerLo3(L input);
 
     /**
      * Converteert de BRP input naar LO3 output.
-     * 
-     * @param input
-     *            de BRP input
+     * @param input de BRP input
      * @return de corresponderende LO3 waarde, null als input null was.
-     * @throws IllegalArgumentException
-     *             als de gegeven BRP code niet bestaat.
+     * @throws IllegalArgumentException als de gegeven BRP code niet bestaat.
      */
-    LT converteerNaarLo3(BT input);
+    L converteerNaarLo3(B input);
 
     /**
      * Valideer een BRP input als geldige code.
-     * 
-     * @param input
-     *            de BRP input
+     * @param input de BRP input
      * @return true, als de input een geldige code is
      */
-    boolean valideerBrp(BT input);
+    boolean valideerBrp(B input);
 
 }

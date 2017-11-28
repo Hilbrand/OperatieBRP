@@ -9,7 +9,11 @@ package nl.bzk.migratiebrp.ggo.viewer.impl;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
@@ -25,8 +29,7 @@ import nl.bzk.migratiebrp.ggo.viewer.service.DbService;
 import nl.bzk.migratiebrp.ggo.viewer.service.PermissionService;
 import nl.bzk.migratiebrp.ggo.viewer.service.ProtocolleringService;
 import nl.bzk.migratiebrp.ggo.viewer.service.ViewerService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
+
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -61,28 +64,20 @@ public class ZoekAnummerVerwerkerImpl implements ZoekAnummerVerwerker {
 
     /**
      * Constructor zodat je deze class ook gewoon echt kunt gebruiken.
-     * 
-     * @param dbService
-     *            DbService
-     * @param viewerService
-     *            ViewerService
-     * @param bcmService
-     *            BcmService
-     * @param permissionService
-     *            PermissionService
-     * @param ggoPlGroepBuilder
-     *            PersoonslijstGroepBuilder
-     * @param protocolleringService
-     *            ProtocolleringService
+     * @param dbService DbService
+     * @param viewerService ViewerService
+     * @param bcmService BcmService
+     * @param permissionService PermissionService
+     * @param ggoPlGroepBuilder PersoonslijstGroepBuilder
+     * @param protocolleringService ProtocolleringService
      */
     public ZoekAnummerVerwerkerImpl(
-        final DbService dbService,
-        final ViewerService viewerService,
-        final BcmService bcmService,
-        final PermissionService permissionService,
-        final GgoPersoonslijstGroepBuilder ggoPlGroepBuilder,
-        final ProtocolleringService protocolleringService)
-    {
+            final DbService dbService,
+            final ViewerService viewerService,
+            final BcmService bcmService,
+            final PermissionService permissionService,
+            final GgoPersoonslijstGroepBuilder ggoPlGroepBuilder,
+            final ProtocolleringService protocolleringService) {
         this.dbService = dbService;
         this.viewerService = viewerService;
         this.bcmService = bcmService;
@@ -96,7 +91,7 @@ public class ZoekAnummerVerwerkerImpl implements ZoekAnummerVerwerker {
      */
     @Override
     @Transactional(value = "syncDalTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-    public final List<GgoPersoonslijstGroep> zoekOpAnummer(final long aNummer, final FoutMelder foutMelder) {
+    public final List<GgoPersoonslijstGroep> zoekOpAnummer(final String aNummer, final FoutMelder foutMelder) {
         final List<GgoPersoonslijstGroep> persoonslijstGroepen = new ArrayList<>();
 
         // zoek Lo3 BerichtLog op
@@ -111,10 +106,10 @@ public class ZoekAnummerVerwerkerImpl implements ZoekAnummerVerwerker {
             // Protocolleren opvragen PL.
             final Protocollering protocollering =
                     new Protocollering(
-                        String.valueOf(SecurityUtils.getSubject().getPrincipal()),
-                        new Timestamp(System.currentTimeMillis()),
-                        aNummer,
-                        permission);
+                            String.valueOf(SecurityUtils.getSubject().getPrincipal()),
+                            new Timestamp(System.currentTimeMillis()),
+                            aNummer,
+                            permission);
             protocolleringService.persisteerProtocollering(protocollering);
 
             if (permission) {
@@ -158,19 +153,19 @@ public class ZoekAnummerVerwerkerImpl implements ZoekAnummerVerwerker {
 
                 // Bouw model
                 persoonslijstGroepen.add(ggoPlGroepBuilder.build(
-                    lo3Persoonslijst,
-                    brpPersoonslijst,
-                    persoon,
-                    teruggeconverteerd,
-                    matches,
-                    meldingen,
-                    foutLog.getFoutRegels()));
+                        lo3Persoonslijst,
+                        brpPersoonslijst,
+                        persoon,
+                        teruggeconverteerd,
+                        matches,
+                        meldingen,
+                        foutLog.getFoutRegels()));
             } else {
                 foutMelder.log(
-                    LogSeverity.WARNING,
-                    "De PL met A-nummer " + aNummer + " mag niet ingezien worden",
-                    "Deze persoon woont in een andere gemeente dan waarvoor u geautoriseerd bent.",
-                    ANUMMER_FIELDID);
+                        LogSeverity.WARNING,
+                        "De PL met A-nummer " + aNummer + " mag niet ingezien worden",
+                        "Deze persoon woont in een andere gemeente dan waarvoor u geautoriseerd bent.",
+                        ANUMMER_FIELDID);
             }
         } else {
             foutMelder.log(LogSeverity.WARNING, "Geen PL gevonden met A-nummer " + aNummer, "Controleer het nummer en probeer opnieuw.", ANUMMER_FIELDID);

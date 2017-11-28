@@ -1,4 +1,4 @@
-<project name="migr-init-naarlo3" basedir="." default="fail">
+<project name="Proefsynchronisatie" basedir="." default="fail">
 
     <!--
      | Algemene properties
@@ -36,7 +36,9 @@
      | voisc.database.user
      | voisc.database.pass
      |
-     | voisc.mailbox.password
+     | voisc.mailbox.ssl.keystore.password
+     | voisc.mailbox.ssl.key.password
+     | voisc.mailbox.ssl.truststore.password
     -->
 
     <property name="application.directory" value="migr-tools-proefsync" />
@@ -95,12 +97,11 @@
         <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/" trust="true" failonerror="true">
             <fileset dir="tmp">
                 <include name="proef-sync.properties" />
-                <include name=".voiscPwd" />
             </fileset>
         </scp>
 
-		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
-                 command="cd ~; cd ${application.directory}; chmod 600 .voiscPwd; chmod 600 proef-sync.properties" />
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
+                 command="cd ~; cd ${application.directory}; chmod 600 proef-sync.properties" />
     </target>
 
     <target name="createLocalConfigurationFile" depends="checkProperties">
@@ -131,6 +132,9 @@ voisc.database.password=${voisc.database.pass}
 ##
 voisc.mailbox.hostname=${mailbox.host}
 voisc.mailbox.portnumber=${mailbox.port}
+voisc.mailbox.ssl.keystore.password=${mailbox.ssl.keystore.password}
+voisc.mailbox.ssl.key.password=${mailbox.ssl.key.password}
+voisc.mailbox.ssl.truststore.password=${mailbox.ssl.truststore.password}
 
 ##
 ## Database (jbpm schema)
@@ -143,8 +147,6 @@ jdbc.password=${gbav.database.pass}
 #
 ## Maximale batch grootte
 max.batch.size=1000]]></echo>
-
-		<echo file="tmp/.voiscPwd" append="false" force="true">${voisc.mailbox.password}</echo>
      </target>
 
     <target name="deinstall" depends="checkProperties">

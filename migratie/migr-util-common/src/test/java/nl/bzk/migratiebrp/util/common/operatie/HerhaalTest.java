@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class HerhaalTest {

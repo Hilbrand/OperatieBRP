@@ -7,9 +7,8 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -24,7 +23,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 
 /**
  * Deze parser verwerkt de LO3 verblijfstitel velden in de excel input.
- * 
  */
 public final class Lo3VerblijfstitelParser extends AbstractLo3CategorieParser<Lo3VerblijfstitelInhoud> {
 
@@ -32,7 +30,8 @@ public final class Lo3VerblijfstitelParser extends AbstractLo3CategorieParser<Lo
     public Lo3Stapel<Lo3VerblijfstitelInhoud> parse(final List<Lo3CategorieWaarde> categorieen) {
         final List<Lo3Categorie<Lo3VerblijfstitelInhoud>> verblijfstitelList = new ArrayList<>();
         for (final Lo3CategorieWaarde categorie : categorieen) {
-            final Map<Lo3ElementEnum, String> elementen = new HashMap<>(categorie.getElementen());
+            final EnumMap<Lo3ElementEnum, String> elementen = new EnumMap<>(Lo3ElementEnum.class);
+            elementen.putAll(categorie.getElementen());
             final Lo3Herkomst lo3Herkomst = categorie.getLo3Herkomst();
             final Lo3Onderzoek lo3Onderzoek = parseLo3Onderzoek(elementen, lo3Herkomst);
             final Lo3CategorieEnum herkomstCategorie = lo3Herkomst.getCategorie();
@@ -50,11 +49,11 @@ public final class Lo3VerblijfstitelParser extends AbstractLo3CategorieParser<Lo
 
             final Lo3Categorie<Lo3VerblijfstitelInhoud> verblijfstitel =
                     new Lo3Categorie<>(
-                        new Lo3VerblijfstitelInhoud(aanduidingVerblijfstitelCode, datumEindeVerblijfstitel,datumAanvangVerblijfstitel),
-                        null,
-                        lo3Onderzoek,
-                        lo3Historie,
-                        categorie.getLo3Herkomst());
+                            new Lo3VerblijfstitelInhoud(aanduidingVerblijfstitelCode, datumEindeVerblijfstitel, datumAanvangVerblijfstitel),
+                            null,
+                            lo3Onderzoek,
+                            lo3Historie,
+                            categorie.getLo3Herkomst());
 
             verblijfstitelList.add(verblijfstitel);
         }

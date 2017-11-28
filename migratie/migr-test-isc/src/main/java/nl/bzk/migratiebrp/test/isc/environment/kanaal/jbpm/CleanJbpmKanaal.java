@@ -8,18 +8,20 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jbpm;
 
 import javax.inject.Inject;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * JBPM Opschonen.
  */
 public class CleanJbpmKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "clean_jbpm";
 
     private static final Logger LOG = LoggerFactory.getLogger();
@@ -28,11 +30,8 @@ public class CleanJbpmKanaal extends LazyLoadingKanaal {
      * Constructor.
      */
     public CleanJbpmKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-jms-isc.xml",
-            "classpath:infra-jbpm.xml"));
+        super(new Worker(),
+                new Configuration("classpath:configuratie.xml", "classpath:infra-db-isc.xml", "classpath:infra-jms-isc.xml", "classpath:infra-jbpm.xml"));
     }
 
     /**
@@ -44,7 +43,7 @@ public class CleanJbpmKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override

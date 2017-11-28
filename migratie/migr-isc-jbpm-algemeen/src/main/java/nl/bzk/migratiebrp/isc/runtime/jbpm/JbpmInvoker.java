@@ -15,28 +15,21 @@ public interface JbpmInvoker {
 
     /**
      * Voer arbitaire code uit binnen een Jbpm context.
-     *
-     * @param execution
-     *            uit te voeren code
-     * @param <T>
-     *            return type
+     * @param execution uit te voeren code
+     * @param <T> return type
      * @return result
      */
     <T> T executeInContext(final JbpmExecution<T> execution);
 
     /**
      * Code om uit te voeren binnen een Jbpm context.
-     *
-     * @param <T>
-     *            return type
+     * @param <T> return type
      */
     interface JbpmExecution<T> {
 
         /**
          * Uit te voeren code.
-         *
-         * @param jbpmContext
-         *            jbpm context
+         * @param jbpmContext jbpm context
          * @return resultaat
          */
         T doInContext(JbpmContext jbpmContext);

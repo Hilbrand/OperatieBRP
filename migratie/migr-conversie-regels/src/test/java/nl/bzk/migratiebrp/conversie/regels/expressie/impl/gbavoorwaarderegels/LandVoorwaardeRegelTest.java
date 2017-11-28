@@ -6,12 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,12 +23,19 @@ public class LandVoorwaardeRegelTest {
     @Inject
     private LandVoorwaardeRegel instance;
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     /**
      * Test of getBrpExpressie method, of class LandVoorwaardeRegel.
      */
     @Test
     public void testGetBrpExpressie() throws Exception {
-        testVoorwaarde("01.03.30 GA1 \"6030\"", "geboorte.land_gebied = 6030");
+        testUtil.testVoorwaarde("01.03.30 GA1 \"6030\"", "Persoon.Geboorte.LandGebiedCode E= \"6030\"");
     }
 
     @Test
@@ -40,10 +46,5 @@ public class LandVoorwaardeRegelTest {
     @Test
     public void testFilterFalse() {
         assertFalse(instance.filter("01.03.20 GA1 \"6030\""));
-    }
-
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
     }
 }

@@ -14,7 +14,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf02Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf03Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesGemeenteRegisterVerzoekBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesPartijRegisterVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.OngeldigBericht;
 
 public abstract class AbstractUcTest extends AbstractJbpmTest {
@@ -48,11 +48,11 @@ public abstract class AbstractUcTest extends AbstractJbpmTest {
     /* *** ONVERWACHT ************************************************************************************** */
 
     /**
-     * Huidige implementatie: LeesGemeenteRegisterVerzoek. Dat verwacht (behalve het voisc control proces) een ISC
+     * Huidige implementatie: LeesPartijRegisterVerzoek. Dat verwacht (behalve het voisc control proces) een ISC
      * proces nooit als input of antwoord bericht.
      */
     protected SyncBericht maakOnverwachtBericht(final SyncBericht verzoek) {
-        final SyncBericht result = new LeesGemeenteRegisterVerzoekBericht();
+        final SyncBericht result = new LeesPartijRegisterVerzoekBericht();
         result.setMessageId(generateMessageId());
         result.setCorrelationId(verzoek.getMessageId());
 
@@ -67,8 +67,8 @@ public abstract class AbstractUcTest extends AbstractJbpmTest {
         result.setANummer("1231231232");
         result.setMessageId(generateMessageId());
         result.setCorrelationId(verzoek.getMessageId());
-        result.setBronGemeente(verzoek.getDoelGemeente());
-        result.setDoelGemeente(verzoek.getBronGemeente());
+        result.setBronPartijCode(verzoek.getDoelPartijCode());
+        result.setDoelPartijCode(verzoek.getBronPartijCode());
 
         return result;
     }
@@ -81,8 +81,8 @@ public abstract class AbstractUcTest extends AbstractJbpmTest {
         final Pf01Bericht result = new Pf01Bericht();
         result.setMessageId(generateMessageId());
         result.setCorrelationId(verzoek.getMessageId());
-        result.setBronGemeente(verzoek.getDoelGemeente());
-        result.setDoelGemeente(verzoek.getBronGemeente());
+        result.setBronPartijCode(verzoek.getDoelPartijCode());
+        result.setDoelPartijCode(verzoek.getBronPartijCode());
 
         return result;
     }
@@ -95,8 +95,8 @@ public abstract class AbstractUcTest extends AbstractJbpmTest {
         final Pf02Bericht result = new Pf02Bericht();
         result.setMessageId(generateMessageId());
         result.setCorrelationId(verzoek.getMessageId());
-        result.setBronGemeente(verzoek.getDoelGemeente());
-        result.setDoelGemeente(verzoek.getBronGemeente());
+        result.setBronPartijCode(verzoek.getDoelPartijCode());
+        result.setDoelPartijCode(verzoek.getBronPartijCode());
 
         return result;
 
@@ -110,8 +110,8 @@ public abstract class AbstractUcTest extends AbstractJbpmTest {
         final Pf03Bericht result = new Pf03Bericht();
         result.setMessageId(generateMessageId());
         result.setCorrelationId(verzoek.getMessageId());
-        result.setBronGemeente(verzoek.getDoelGemeente());
-        result.setDoelGemeente(verzoek.getBronGemeente());
+        result.setBronPartijCode(verzoek.getDoelPartijCode());
+        result.setDoelPartijCode(verzoek.getBronPartijCode());
 
         return result;
 

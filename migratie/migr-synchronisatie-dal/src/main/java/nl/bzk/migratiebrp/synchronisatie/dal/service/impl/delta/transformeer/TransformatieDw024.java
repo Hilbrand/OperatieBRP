@@ -6,12 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractFormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
+
+import java.util.ArrayList;
 
 /**
  * Deze situatie herkent een gewijzigde rij waarbij tsverval, actie verval en aand. verval gevuld wordt. In dit geval
@@ -19,36 +18,21 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
  */
 public final class TransformatieDw024 extends AbstractTransformatie {
 
+    private static final int VERWACHTE_AANTAL_WIJZIGINGEN = 2;
+
     @Override
     public boolean accept(final VerschilGroep verschillen) {
         return isWijzigingOpMaterieleHistorie(verschillen)
-               && zijnHetVerwachtAantalVeldenGevuld(verschillen, 2)
-               && zijnVerwachteVervalVeldenGevuld(verschillen);
+                && zijnHetVerwachtAantalVeldenGevuld(verschillen, VERWACHTE_AANTAL_WIJZIGINGEN)
+                && zijnVerwachteVervalVeldenGevuld(new ArrayList<>(verschillen.getVerschillen()), false);
     }
 
-    private boolean zijnVerwachteVervalVeldenGevuld(final VerschilGroep verschillen) {
-        boolean datumTijdVervalGevuld = false;
-        boolean actieVervalGevuld = false;
-        for (final Verschil verschil : verschillen) {
-            if (AbstractFormeleHistorie.DATUM_TIJD_VERVAL.equals(verschil.getSleutel().getVeld())
-                && VerschilType.ELEMENT_NIEUW.equals(verschil.getVerschilType()))
-            {
-                datumTijdVervalGevuld = true;
-            } else if (AbstractFormeleHistorie.ACTIE_VERVAL.equals(verschil.getSleutel().getVeld())
-                       && VerschilType.ELEMENT_NIEUW.equals(verschil.getVerschilType()))
-            {
-                actieVervalGevuld = true;
-            }
-        }
-        return datumTijdVervalGevuld && actieVervalGevuld;
-    }
 
     @Override
     public VerschilGroep execute(
-        final VerschilGroep verschilGroep,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final DeltaBepalingContext deltaBepalingContext)
-    {
+            final VerschilGroep verschilGroep,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final DeltaBepalingContext deltaBepalingContext) {
         return maakMRijEnNieuweRijVerschilVoorVerschilGroep(verschilGroep, actieVervalTbvLeveringMuts, true, true, deltaBepalingContext);
     }
 

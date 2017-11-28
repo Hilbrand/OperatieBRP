@@ -10,6 +10,7 @@
     <context:property-placeholder
             location="classpath:datasource.properties"/>
     <import resource="main-beans.xml"/>
+    <import resource="classpath:/test-dal-beans.xml"/>
 
     <beans>
         <!-- Configuratie voor beide profielen -->
@@ -63,8 +64,8 @@
     <beans profile="memoryDS">
         <!-- In memory profile -->
         <jdbc:embedded-database id="syncDalDataSource">
-            <jdbc:script location="classpath:sql/hsqldb/HSQLDB.sql"/>
-            <jdbc:script location="classpath:sql/hsqldb/4_brp-migratie-tijdelijk.sql"/>
+            <jdbc:script location="classpath:bmr/HSQLDB/HSQLDB.sql" encoding="UTF-8"/>
+            <jdbc:script location="classpath:bmr/HSQLDB/PENDING_BMR_CHANGES.sql" encoding="UTF-8"/>
         </jdbc:embedded-database>
 
         <bean id="syncDalEntityManagerFactory"
@@ -84,7 +85,7 @@
                     <prop key="net.sf.ehcache.configurationResourceName">synchronisatie-dal-stamtabel-ehcache.xml</prop>
                     <prop key="hibernate.generate_statistics">true</prop>
                     <prop key="hibernate.transaction.jta.platform">
-                        nl.bzk.migratiebrp.synchronisatie.dal.repository.jta.AtomikosJtaPlatform
+                        nl.bzk.algemeenbrp.jta.AtomikosJtaPlatform
                     </prop>
                 </props>
             </property>
@@ -123,7 +124,7 @@
                     <prop key="net.sf.ehcache.configurationResourceName">synchronisatie-dal-stamtabel-ehcache.xml</prop>
                     <prop key="hibernate.generate_statistics">true</prop>
                     <prop key="hibernate.transaction.jta.platform">
-                        nl.bzk.migratiebrp.synchronisatie.dal.repository.jta.AtomikosJtaPlatform
+                        hibernate.transaction.jta.platform.AtomikosJtaPlatform
                     </prop>
                     <!--<prop key="hibernate.hbm2ddl.auto">validate</prop>-->
                 </props>

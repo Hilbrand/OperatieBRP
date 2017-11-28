@@ -10,12 +10,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import javax.inject.Inject;
+
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
 import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
+import nl.bzk.algemeenbrp.test.dal.DBUnit.InsertBefore;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,26 +35,26 @@ public class SoortNlReisdocumentConversietabelTest extends AbstractDatabaseTest 
         conversietabel = conversietabelFactory.createSoortReisdocumentConversietabel();
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test
     public void testNullConversie() {
         assertNull(conversietabel.converteerNaarBrp(null));
         assertNull(conversietabel.converteerNaarLo3(null));
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test(expected = IllegalArgumentException.class)
     public void testOntbrekendeConversieNaarBrp() {
         conversietabel.converteerNaarBrp(new Lo3SoortNederlandsReisdocument("ONBEKEND"));
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test(expected = IllegalArgumentException.class)
     public void testOntbrekendeConversieNaarLo3() {
         conversietabel.converteerNaarLo3(new BrpSoortNederlandsReisdocumentCode("ONBEKEND"));
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test
     public void testConverteerNaarBrp() {
         final BrpSoortNederlandsReisdocumentCode verwachtResultaat = BRP_REISDOCUMENT_SOORT;
@@ -60,7 +62,7 @@ public class SoortNlReisdocumentConversietabelTest extends AbstractDatabaseTest 
         assertEquals(verwachtResultaat, conversieResultaat);
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test
     public void testConverteerNaarLo3() {
         final Lo3SoortNederlandsReisdocument verwachtResultaat = LO3_SOORT_NEDERLANDS_REISDOCUMENT;

@@ -13,108 +13,84 @@ package nl.bzk.migratiebrp.ggo.viewer.service;
 public interface BrpStamtabelService extends StamtabelService {
     /**
      * Haalt de stamgegevens van Aangever op.
-     *
-     * @param brpAangeverCode
-     *            Character
+     * @param brpAangeverCode Character
      * @return formatted String
      */
-    String getAangever(final Character brpAangeverCode);
+    String getAangever(Character brpAangeverCode);
 
     /**
      * Haalt de stamgegevens van AdellijkeTitel op.
-     *
-     * @param brpAdellijkeTitelCode
-     *            String
+     * @param brpAdellijkeTitelCode String
      * @return formatted String
      */
-    String getAdellijkeTitel(final String brpAdellijkeTitelCode);
+    String getAdellijkeTitel(String brpAdellijkeTitelCode);
 
     /**
      * Haalt de stamgegevens van Bijhoudingsaard op.
-     *
-     * @param brpBijhoudingsaardCode
-     *            String
+     * @param brpBijhoudingsaardCode String
      * @return formatted String
      */
-    String getBijhoudingsaard(final String brpBijhoudingsaardCode);
+    String getBijhoudingsaard(String brpBijhoudingsaardCode);
 
     /**
      * Haalt de stamgegevens van nadere bijhoudingsaard op.
-     *
-     * @param brpNadereBijhoudingsaard
-     *            String
+     * @param brpNadereBijhoudingsaard String
      * @return formatted String
      */
-    String getNadereBijhoudingsaard(final String brpNadereBijhoudingsaard);
+    String getNadereBijhoudingsaard(String brpNadereBijhoudingsaard);
 
     /**
      * Haalt de stamgegevens van PartijCode op.
-     *
-     * @param brpPartijCode
-     *            int
+     * @param brpPartijCode int
      * @return formatted String
      */
-    String getPartij(final int brpPartijCode);
+    String getPartij(String brpPartijCode);
 
     /**
      * Haalt de stamgegevens van Predikaat op.
-     *
-     * @param brpPredicaatCode
-     *            String
+     * @param brpPredicaatCode String
      * @return formatted String
      */
-    String getPredicaat(final String brpPredicaatCode);
+    String getPredicaat(String brpPredicaatCode);
 
     /**
      * Haalt de stamgegevens van RedenOpschorting op.
-     *
-     * @param brpRedenOpschortingBijhoudingCode
-     *            String
+     * @param brpRedenOpschortingBijhoudingCode String
      * @return formatted String
      */
-    String getRedenOpschorting(final String brpRedenOpschortingBijhoudingCode);
+    String getRedenOpschorting(String brpRedenOpschortingBijhoudingCode);
 
     /**
      * Haalt de stamgegevens van ReisdocumentRedenOntbreken op.
-     *
-     * @param brpReisdocumentRedenOntbreken
-     *            String
+     * @param brpReisdocumentRedenOntbreken String
      * @return formatted String
      */
-    String getRedenOntbrekenReisdocument(final String brpReisdocumentRedenOntbreken);
+    String getRedenOntbrekenReisdocument(String brpReisdocumentRedenOntbreken);
 
     /**
      * Haalt de stamgegevens van RedenWijzigingVerblijf op.
-     *
-     * @param brpRedenWijzigingVerblijfCode
-     *            Character
+     * @param brpRedenWijzigingVerblijfCode Character
      * @return formatted String
      */
-    String getRedenWijzigingVerblijf(final Character brpRedenWijzigingVerblijfCode);
+    String getRedenWijzigingVerblijf(Character brpRedenWijzigingVerblijfCode);
 
     /**
      * Haalt de stamgegevens van Gemeente op adhv een partijCode.
-     *
-     * @param gemeentePartijCode
-     *            int
+     * @param gemeentePartijCode int
      * @return formatted String
      */
-    String getGemeenteByPartij(final int gemeentePartijCode);
+    String getGemeenteByPartij(String gemeentePartijCode);
 
     /**
      * Haalt de gemeente op adhv de partijcode.
-     *
-     * @param gemeentePartijCode
-     *            int
+     * @param gemeentePartijCode int
      * @return formatted gemeentecode String
      */
-    String getGemeenteCodeByPartij(final int gemeentePartijCode);
+    String getGemeenteCodeByPartij(String gemeentePartijCode);
 
     /**
      * Haalt de soort migratie op.
-     *
-     * @param brpSoortMigratieCode
-     *            String
+     * @param brpSoortMigratieCode String
      * @return formatted String
      */
     String getSoortMigratieCode(String brpSoortMigratieCode);

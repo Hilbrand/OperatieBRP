@@ -6,20 +6,17 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * 33.10 Indicatie curateleregister.
- * 
  */
 public final class Lo3IndicatieCurateleregister extends AbstractLo3Element {
     private static final long serialVersionUID = 1L;
 
     /**
      * Constructor.
-     * 
-     * @param waarde
-     *            code
+     * @param waarde code
      */
     public Lo3IndicatieCurateleregister(final Integer waarde) {
         this(String.valueOf(waarde), null);
@@ -27,21 +24,16 @@ public final class Lo3IndicatieCurateleregister extends AbstractLo3Element {
 
     /**
      * Constructor met onderzoek.
-     * 
-     * @param waarde
-     *            code
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde code
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
     public Lo3IndicatieCurateleregister(@Element(name = "waarde", required = false) final String waarde, @Element(name = "onderzoek",
-            required = false) final Lo3Onderzoek onderzoek)
-    {
+            required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Geef de waarde van integer waarde.
-     *
      * @return integer waarde
      */
     public Integer getIntegerWaarde() {

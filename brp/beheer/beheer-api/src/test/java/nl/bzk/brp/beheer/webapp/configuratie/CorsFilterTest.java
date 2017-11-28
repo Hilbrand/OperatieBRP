@@ -9,10 +9,12 @@ package nl.bzk.brp.beheer.webapp.configuratie;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +39,9 @@ public class CorsFilterTest {
 
     /**
      * Test of doFilterInternal method, of class CorsFilter.
-     * @throws java.lang.Exception kan stuk gaan
+     * 
+     * @throws java.lang.Exception
+     *             kan stuk gaan
      */
     @Test
     public final void testDoFilterInternal() throws Exception {

@@ -13,19 +13,12 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class Wa11BerichtFilterTest {
 
     private final VulBerichtFilter vulBerichtFilter = new VulBerichtFilter();
-    private final Wa11BerichtFilter subject = new Wa11BerichtFilter();
-
-    @Before
-    public void injectDependencies() {
-        ReflectionTestUtils.setField(subject, "vulBerichtFilter", vulBerichtFilter);
-    }
+    private final Wa11BerichtFilter subject = new Wa11BerichtFilter(vulBerichtFilter);
 
     @Test
     public void test() {
@@ -42,7 +35,7 @@ public class Wa11BerichtFilterTest {
         lo3Filterrubrieken.add("01.01.20");
         lo3Filterrubrieken.add("51.02.20");
 
-        final List<Lo3CategorieWaarde> categorieenGefiltered = subject.filter(null, null, null, categorieen, lo3Filterrubrieken);
+        final List<Lo3CategorieWaarde> categorieenGefiltered = subject.filter(null, null, null, null, categorieen, lo3Filterrubrieken);
 
         Assert.assertEquals(1, categorieenGefiltered.size());
         final Lo3CategorieWaarde catGefilterd = categorieenGefiltered.get(0);

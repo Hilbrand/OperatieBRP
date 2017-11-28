@@ -22,12 +22,12 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "listBerichten", description = "Read a list of berichten.",
         attributes = {@TldAttribute(name = "target",
-                              description = "An EL expression into which the process instance list should be stored.", required = true,
-                              deferredType = List.class),
-                      @TldAttribute(name = "pager", description = "An EL expression of the PagerBean to be used.", required = true,
-                              deferredType = PagerBean.class),
-                      @TldAttribute(name = "filter", description = "An EL expression of the filter to be used.", required = true,
-                              deferredType = Filter.class) })
+                description = "An EL expression into which the process instance list should be stored.", required = true,
+                deferredType = List.class),
+                @TldAttribute(name = "pager", description = "An EL expression of the PagerBean to be used.", required = true,
+                        deferredType = PagerBean.class),
+                @TldAttribute(name = "filter", description = "An EL expression of the filter to be used.", required = true,
+                        deferredType = Filter.class)})
 public final class ListBerichtenHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute pagerTagAttribute;
@@ -35,9 +35,7 @@ public final class ListBerichtenHandler extends AbstractHandler {
 
     /**
      * Constructor waarbij de tag configuratie meegegeven kan worden.
-     * 
-     * @param config
-     *            Tag configuratie waarin o.a. migratie tags staan.
+     * @param config Tag configuratie waarin o.a. migratie tags staan.
      */
     public ListBerichtenHandler(final TagConfig config) {
         super(config);
@@ -49,8 +47,8 @@ public final class ListBerichtenHandler extends AbstractHandler {
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new ListBerichtenActionListener(getValueExpression(targetTagAttribute, ctx, List.class), getValueExpression(
-            pagerTagAttribute,
-            ctx,
-            PagerBean.class), getValueExpression(filterTagAttribute, ctx, Filter.class));
+                pagerTagAttribute,
+                ctx,
+                PagerBean.class), getValueExpression(filterTagAttribute, ctx, Filter.class));
     }
 }

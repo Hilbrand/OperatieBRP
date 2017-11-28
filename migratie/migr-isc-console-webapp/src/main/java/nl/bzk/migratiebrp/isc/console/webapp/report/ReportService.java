@@ -15,14 +15,10 @@ public interface ReportService {
 
     /**
      * Voer een rapport uit.
-     * 
-     * @param report
-     *            rapport
-     * @param parameters
-     *            parameters
+     * @param report rapport
+     * @param parameters parameters
      * @return rapport filenaam
-     * @throws ReportException
-     *             bij fouten
+     * @throws ReportException bij fouten
      */
     String genereerReport(String report, Map<String, Object> parameters) throws ReportException;
 }

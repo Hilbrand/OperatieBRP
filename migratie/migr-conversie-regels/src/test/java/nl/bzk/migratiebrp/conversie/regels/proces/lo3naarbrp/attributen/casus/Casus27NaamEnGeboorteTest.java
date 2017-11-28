@@ -35,32 +35,32 @@ public class Casus27NaamEnGeboorteTest extends AbstractCasusTest {
 
     private static final String JANSEN = "Jansen";
     private final BrpSamengesteldeNaamInhoud brpInhoudPietJansen = new BrpSamengesteldeNaamInhoud(
-        null,
-        new BrpString("Piet"),
-        null,
-        null,
-        null,
-        new BrpString(JANSEN),
-        new BrpBoolean(false, null),
-        new BrpBoolean(true, null));
+            null,
+            new BrpString("Piet"),
+            null,
+            null,
+            null,
+            new BrpString(JANSEN),
+            new BrpBoolean(false, null),
+            new BrpBoolean(true, null));
     private final BrpSamengesteldeNaamInhoud brpInhoudJansJansen = new BrpSamengesteldeNaamInhoud(
-        null,
-        new BrpString("Jans"),
-        null,
-        null,
-        null,
-        new BrpString(JANSEN),
-        new BrpBoolean(false, null),
-        new BrpBoolean(true, null));
+            null,
+            new BrpString("Jans"),
+            null,
+            null,
+            null,
+            new BrpString(JANSEN),
+            new BrpBoolean(false, null),
+            new BrpBoolean(true, null));
     private final BrpSamengesteldeNaamInhoud brpInhoudJanJansen = new BrpSamengesteldeNaamInhoud(
-        null,
-        new BrpString("Jan"),
-        null,
-        null,
-        null,
-        new BrpString(JANSEN),
-        new BrpBoolean(false, null),
-        new BrpBoolean(true, null));
+            null,
+            new BrpString("Jan"),
+            null,
+            null,
+            null,
+            new BrpString(JANSEN),
+            new BrpBoolean(false, null),
+            new BrpBoolean(true, null));
     private final Lo3PersoonInhoud lo3PietJansenRdam = buildPersoonMetNaamEnGeboorte("Piet", JANSEN, 20000101, "1234");
     private final Lo3PersoonInhoud lo3PietJansenAdam = buildPersoonMetNaamEnGeboorte("Piet", JANSEN, 20000101, GEMEENTE_CODE);
     private final Lo3PersoonInhoud lo3JansJansen = buildPersoonMetNaamEnGeboorte("Jans", JANSEN, 20000101, GEMEENTE_CODE);

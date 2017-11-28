@@ -14,17 +14,9 @@ import java.sql.Timestamp;
 public interface OpschonerService {
 
     /**
-     * Standaard wachttijd voor opschonen.
-     */
-    Integer STANDAARD_WACHT_TIJD_IN_UREN = 27;
-
-    /**
      * Opschonen van tellingen die al verwerkt zijn en ouder zijn dan de opgegeven datum.
-     * 
-     * @param ouderDan
-     *            Datum waarvoor de tellingen worden verwijderd.
-     * @param wachtTijdInUren
-     *            De gebruikte wachttijd in uren voordat een proces wordt opgeschoond.
+     * @param ouderDan Datum waarvoor de tellingen worden verwijderd.
+     * @param wachtTijdInUren De gebruikte wachttijd in uren voordat een proces wordt opgeschoond.
      */
     void opschonenProcessen(Timestamp ouderDan, Integer wachtTijdInUren);
 }

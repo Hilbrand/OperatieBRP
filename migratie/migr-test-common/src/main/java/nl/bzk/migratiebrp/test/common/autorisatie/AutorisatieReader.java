@@ -18,12 +18,9 @@ public interface AutorisatieReader {
 
     /**
      * Lees de autorisaties uit een input.
-     * 
-     * @param input
-     *            input
+     * @param input input
      * @return autorisaties
-     * @throws IOException
-     *             bij lees fouten
+     * @throws IOException bij lees fouten
      */
     List<Lo3Autorisatie> read(final InputStream input) throws IOException;
 }

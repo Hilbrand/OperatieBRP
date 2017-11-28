@@ -10,6 +10,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
@@ -20,25 +26,20 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVerificatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersoonVerificatieMapperTest {
 
-    public static final BrpDatum DATUM_VERIFICATIE = new BrpDatum(19991231, null);
+    public static final BrpDatum DATUM_VERIFICATIE = new BrpDatum(1999_12_31, null);
     @Mock
     private DynamischeStamtabelRepository dynamischeStamtabelRepository;
 
@@ -60,17 +61,9 @@ public class PersoonVerificatieMapperTest {
 
         final BrpStapel<BrpVerificatieInhoud> brpStapel = new BrpStapel<>(groepen);
         final PersoonVerificatie persoonVerificatie =
-                new PersoonVerificatie(new Persoon(SoortPersoon.INGESCHREVENE), new Partij("leeg", -1));
+                new PersoonVerificatie(new Persoon(SoortPersoon.INGESCHREVENE), new Partij("leeg", "000001"), "soort verificatie");
 
-        final Partij testPartij = new Partij("test", 101);
-        Mockito.when(dynamischeStamtabelRepository.getPartijByCode(BrpPartijCode.ONBEKEND.getWaarde())).thenReturn(testPartij);
-
-        mapper.mapVanMigratie(brpStapel, persoonVerificatie);
-
-        // Test A-laag
-        assertEquals(testPartij, persoonVerificatie.getPartij());
-        assertEquals("testVerificatie", persoonVerificatie.getSoortVerificatie());
-        assertEquals(DATUM_VERIFICATIE.getWaarde(), persoonVerificatie.getDatum());
+        mapper.mapVanMigratie(brpStapel, persoonVerificatie, null);
 
         // Test historie
         assertEquals(1, persoonVerificatie.getPersoonVerificatieHistorieSet().size());
@@ -80,14 +73,18 @@ public class PersoonVerificatieMapperTest {
     }
 
     private BrpGroep<BrpVerificatieInhoud> maakGroep() {
-        final BrpVerificatieInhoud inhoud =
-                new BrpVerificatieInhoud(BrpPartijCode.ONBEKEND, new BrpString("testVerificatie", null), DATUM_VERIFICATIE);
-        final BrpHistorie historie =
-                new BrpHistorie(new BrpDatum(20000101, null), null, BrpDatumTijd.fromDatumTijdMillis(20000101121212L, null), null, null);
+        final BrpVerificatieInhoud inhoud = new BrpVerificatieInhoud(BrpPartijCode.ONBEKEND, new BrpString("testVerificatie", null), DATUM_VERIFICATIE);
+        final BrpHistorie historie = new BrpHistorie(new BrpDatum(2000_01_01, null), null, BrpDatumTijd.fromDatumTijdMillis(2000_01_01121212L, null), null, null);
         final BrpActie actieInhoud =
-                new BrpActie(1L, BrpSoortActieCode.CONVERSIE_GBA, new BrpPartijCode(1), BrpDatumTijd.fromDatumTijdMillis(
-                    20000101121212L,
-                    null), null, null, 1, null);
+                new BrpActie(
+                        1L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        new BrpPartijCode("000001"),
+                        BrpDatumTijd.fromDatumTijdMillis(2000_01_01121212L, null),
+                        null,
+                        null,
+                        1,
+                        null);
         return new BrpGroep<>(inhoud, historie, actieInhoud, null, null);
     }
 }

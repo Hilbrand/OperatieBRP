@@ -15,16 +15,16 @@ import java.util.Set;
 public class ANummerGenerator {
 
     private static final Random RANDOM = new Random();
-    private static final Set<Long> ANUMMERS = new HashSet<>();
+    private static final Set<String> ANUMMERS = new HashSet<>();
 
-    public Long genereer() {
+    public String genereer() {
         while (true) {
             final byte[] basis = genereerBasis();
             // System.out.println("Basis: " + basis);
             final Byte eindcijfer = geefEindCijfer(basis);
             // System.out.println("Eindcijfer: " + eindcijfer);
             if (eindcijfer != null) {
-                final Long anummer = maakAnummer(basis, eindcijfer);
+                final String anummer = maakAnummer(basis, eindcijfer);
 
                 if (!ANUMMERS.contains(anummer)) {
                     ANUMMERS.add(anummer);
@@ -35,7 +35,7 @@ public class ANummerGenerator {
         }
     }
 
-    private Long maakAnummer(final byte[] basis, final Byte eindcijfer) {
+    private String maakAnummer(final byte[] basis, final Byte eindcijfer) {
         final StringBuilder result = new StringBuilder(10);
         result.append(basis[0]);
         result.append(basis[1]);
@@ -48,7 +48,7 @@ public class ANummerGenerator {
         result.append(basis[8]);
         result.append(eindcijfer);
 
-        return Long.valueOf(result.toString());
+        return result.toString();
     }
 
     private Byte geefEindCijfer(final byte[] basis) {
@@ -123,8 +123,6 @@ public class ANummerGenerator {
 
     /**
      * Genereerd de eerste negen getallen (random).
-     * 
-     * @return
      */
     byte[] genereerBasis() {
         final byte[] result = new byte[9];

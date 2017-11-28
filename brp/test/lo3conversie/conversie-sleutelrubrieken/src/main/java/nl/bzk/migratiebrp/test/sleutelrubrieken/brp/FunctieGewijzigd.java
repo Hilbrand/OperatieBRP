@@ -7,15 +7,18 @@
 package nl.bzk.migratiebrp.test.sleutelrubrieken.brp;
 
 import java.util.List;
-
-import nl.bzk.brp.expressietaal.Context;
-import nl.bzk.brp.expressietaal.Expressie;
-import nl.bzk.brp.expressietaal.expressies.functies.FunctieGEWIJZIGD;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.domain.expressie.Context;
+import nl.bzk.brp.domain.expressie.Expressie;
+import nl.bzk.brp.domain.expressie.ExpressieTaalConstanten;
+import nl.bzk.brp.domain.expressie.ExpressieType;
+import nl.bzk.brp.domain.expressie.functie.FunctieFactory;
+import nl.bzk.brp.domain.expressie.MetaObjectLiteral;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
 
 /**
- * Wrapper om {@link FunctieGEWIJZIGD} tbv logging.
+ * Wrapper om {@link nl.bzk.brp.domain.expressie.functie.FunctieGewijzigd} tbv logging.
  */
 public final class FunctieGewijzigd extends FunctieDelegate {
 
@@ -27,7 +30,7 @@ public final class FunctieGewijzigd extends FunctieDelegate {
      * Constructor.
      */
     public FunctieGewijzigd() {
-        super(new FunctieGEWIJZIGD(), LOG);
+        super(FunctieFactory.geefFunctie("GEWIJZIGD"), LOG);
     }
 
     /**
@@ -37,30 +40,46 @@ public final class FunctieGewijzigd extends FunctieDelegate {
      *            De te zetten logger.
      */
     public static void setLogger(final StringBuilder logger) {
-        FunctieGewijzigd.logger = logger;
+        nl.bzk.migratiebrp.test.sleutelrubrieken.brp.FunctieGewijzigd.logger = logger;
     }
 
     @Override
-    public Expressie pasToe(final List<Expressie> argumenten, final Context context) {
-        final Expressie resultaat = super.pasToe(argumenten, context);
+    public Expressie evalueer(final List<Expressie> argumenten, final Context context) {
+        final Expressie resultaat = super.evalueer(argumenten, context);
 
         if (logger != null) {
             if (argumenten.size() > 2) {
                 final Expressie attribuutCode = argumenten.get(2);
                 logger.append(attribuutCode.alsString()).append(": ");
             }
+            try {
+                final Context newContext = new Context(context);
+                newContext.definieer(
+                    ExpressieTaalConstanten.CONTEXT_PERSOON_OUD,
+                    new MetaObjectLiteral(context.<Persoonslijst>getProperty("oud").getMetaObject(), ExpressieType.BRP_METAOBJECT));
+                newContext.definieer(
+                    ExpressieTaalConstanten.CONTEXT_PERSOON_NIEUW,
+                    new MetaObjectLiteral(context.<Persoonslijst>getProperty("nieuw").getMetaObject(), ExpressieType.BRP_METAOBJECT));
 
-            final Expressie oudeWaarde = argumenten.get(0).evalueer(context);
-            final Expressie nieuweWaarde = argumenten.get(1).evalueer(context);
+                final Expressie oudeWaarde = argumenten.get(0).evalueer(newContext);
+                final Expressie nieuweWaarde = argumenten.get(1).evalueer(newContext);
 
-            logger.append(oudeWaarde.evalueer(context).alsString())
-                  .append(" -> ")
-                  .append(nieuweWaarde.evalueer(context).alsString())
-                  .append(" ==> ")
-                  .append(resultaat.alsString())
-                  .append("\n");
+                logger.append(oudeWaarde.evalueer(context).alsString())
+                      .append(" -> ")
+                      .append(nieuweWaarde.evalueer(context).alsString())
+                      .append(" ==> ")
+                      .append(resultaat.alsString())
+                      .append("\n");
+            } catch (final Exception e) {
+                logger.append("Opgedeelde expressie kan niet worden geevalueert. Complete expressie geeft geen fouten");
+            }
         }
 
         return resultaat;
+    }
+
+    @Override
+    public boolean evalueerArgumenten() {
+        return false;
     }
 }

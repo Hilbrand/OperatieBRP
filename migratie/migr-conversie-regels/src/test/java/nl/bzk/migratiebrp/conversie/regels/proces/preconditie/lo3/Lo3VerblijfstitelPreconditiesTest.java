@@ -17,6 +17,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.VerblijfsrechtsConversietabel;
 import org.junit.Test;
 
@@ -29,8 +30,7 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
     private static final Lo3Herkomst LO3_HERKOMST_VERBLIJFSTITEL_1 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_10, 0, 1);
     private static final Lo3Herkomst LO3_HERKOMST_VERBLIJFSTITEL_2 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_10, 0, 2);
 
-    @Inject
-    private Lo3VerblijfstitelPrecondities precondities;
+    private Lo3VerblijfstitelPrecondities precondities = new Lo3VerblijfstitelPrecondities(new ConversietabelFactoryImpl());
 
     private Lo3VerblijfstitelInhoud.Builder builder() {
         final Lo3VerblijfstitelInhoud.Builder builder = new Lo3VerblijfstitelInhoud.Builder();
@@ -61,12 +61,12 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
     public void testContr101() {
         final Lo3Stapel<Lo3VerblijfstitelInhoud> stapelBeeindigingOk =
                 Lo3StapelHelper.lo3Stapel(
-                    Lo3StapelHelper.lo3Cat(builder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFSTITEL_1),
-                    Lo3StapelHelper.lo3Cat(
-                        new Lo3VerblijfstitelInhoud.Builder().build(),
-                        null,
-                        Lo3StapelHelper.lo3His(20010101),
-                        LO3_HERKOMST_VERBLIJFSTITEL));
+                        Lo3StapelHelper.lo3Cat(builder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFSTITEL_1),
+                        Lo3StapelHelper.lo3Cat(
+                                new Lo3VerblijfstitelInhoud.Builder().build(),
+                                null,
+                                Lo3StapelHelper.lo3His(20010101),
+                                LO3_HERKOMST_VERBLIJFSTITEL));
 
         precondities.controleerStapel(stapelBeeindigingOk);
 
@@ -74,16 +74,16 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3VerblijfstitelInhoud> stapelNok =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    new Lo3VerblijfstitelInhoud.Builder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_VERBLIJFSTITEL));
+                        new Lo3VerblijfstitelInhoud.Builder().build(),
+                        null,
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_VERBLIJFSTITEL));
 
         precondities.controleerStapel(stapelNok);
 
         assertAantalWarnings(0);
-        assertAantalErrors(1);
-        assertSoortMeldingCode(SoortMeldingCode.PRE050, 1);
+        assertAantalErrors(0);
+        assertSoortMeldingCode(SoortMeldingCode.PRE050, 0);
     }
 
     @Test
@@ -112,10 +112,10 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
     public void testContr110() {
         final Lo3Stapel<Lo3VerblijfstitelInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, 20000101, 20000100),
-                    LO3_HERKOMST_VERBLIJFSTITEL));
+                        builder().build(),
+                        null,
+                        Lo3StapelHelper.lo3His(null, 20000101, 20000100),
+                        LO3_HERKOMST_VERBLIJFSTITEL));
 
         precondities.controleerStapel(stapel);
 
@@ -133,10 +133,10 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
     public void testContr258() {
         final Lo3Stapel<Lo3VerblijfstitelInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, null, 20000101),
-                    LO3_HERKOMST_VERBLIJFSTITEL));
+                        builder().build(),
+                        null,
+                        Lo3StapelHelper.lo3His(null, null, 20000101),
+                        LO3_HERKOMST_VERBLIJFSTITEL));
 
         precondities.controleerStapel(stapel);
 
@@ -148,10 +148,10 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
     public void testContr259() {
         final Lo3Stapel<Lo3VerblijfstitelInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, 20000101, null),
-                    LO3_HERKOMST_VERBLIJFSTITEL));
+                        builder().build(),
+                        null,
+                        Lo3StapelHelper.lo3His(null, 20000101, null),
+                        LO3_HERKOMST_VERBLIJFSTITEL));
 
         precondities.controleerStapel(stapel);
 
@@ -163,10 +163,10 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
     public void testContr260() {
         final Lo3Stapel<Lo3VerblijfstitelInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000101),
-                    LO3_HERKOMST_VERBLIJFSTITEL));
+                        builder().build(),
+                        null,
+                        Lo3StapelHelper.lo3His("O", 20000101, 20000101),
+                        LO3_HERKOMST_VERBLIJFSTITEL));
 
         precondities.controleerStapel(stapel);
 
@@ -244,10 +244,10 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40124() {
         final Lo3Stapel<Lo3VerblijfstitelInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, 20040141, 20010101),
-                    LO3_HERKOMST_VERBLIJFSTITEL));
+                        builder().build(),
+                        null,
+                        Lo3StapelHelper.lo3His(null, 20040141, 20010101),
+                        LO3_HERKOMST_VERBLIJFSTITEL));
 
         precondities.controleerStapel(stapel);
 
@@ -258,10 +258,10 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40125() {
         final Lo3Stapel<Lo3VerblijfstitelInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, 20010101, 20040141),
-                    LO3_HERKOMST_VERBLIJFSTITEL));
+                        builder().build(),
+                        null,
+                        Lo3StapelHelper.lo3His(null, 20010101, 20040141),
+                        LO3_HERKOMST_VERBLIJFSTITEL));
 
         precondities.controleerStapel(stapel);
 
@@ -293,11 +293,11 @@ public class Lo3VerblijfstitelPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Onderzoek lo3Onderzoek = new Lo3Onderzoek(null, new Lo3Datum(20140101), null);
         final Lo3Stapel<Lo3VerblijfstitelInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
-                    lo3Onderzoek,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_VERBLIJFSTITEL));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
+                        lo3Onderzoek,
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_VERBLIJFSTITEL));
 
         precondities.controleerStapel(stapel);
 

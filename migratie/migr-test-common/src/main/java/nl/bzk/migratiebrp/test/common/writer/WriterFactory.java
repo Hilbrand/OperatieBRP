@@ -18,9 +18,7 @@ public final class WriterFactory extends AbstractIOFactory {
 
     /**
      * Geef writer voor het bestand. De writer wordt bepaald aan de hand van de extensie.
-     * 
-     * @param file
-     *            bestand
+     * @param file bestand
      * @return reader
      */
     public Writer getWriter(final File file) {

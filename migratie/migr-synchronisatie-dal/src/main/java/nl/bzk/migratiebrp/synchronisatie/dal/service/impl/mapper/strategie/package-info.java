@@ -6,7 +6,6 @@
 
 /**
  * Definitie van de strategie waarmee het BRP-migratiemodel gemapt kan worden op het BRP-datamodel en vice versa.
- * 
  * @since 1.0
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;

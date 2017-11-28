@@ -18,10 +18,10 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.regels.AbstractComponentTest;
 
 public abstract class AbstractRelatieConverteerderTest extends AbstractComponentTest {
-    protected static final int BSN = 123456789;
-    protected static final int BSN_2 = 98754321;
-    protected static final long A_NUMMER = 1234567890L;
-    protected static final long A_NUMMER_2 = 9876543210L;
+    protected static final String BSN = "123456789";
+    protected static final String BSN_2 = "98754321";
+    protected static final String A_NUMMER = "1234567890";
+    protected static final String A_NUMMER_2 = "9876543210";
     protected static final Lo3String AKTENUMMER = Lo3String.wrap("1 ACD12");
     protected static final String DOCUMENT_BESCHRIJVING = "Beschrijving";
     protected static final String LAND_CODE = "6030";
@@ -30,21 +30,19 @@ public abstract class AbstractRelatieConverteerderTest extends AbstractComponent
     protected static final String GESLACHTSNAAM_2 = "Smit";
     protected static final String VOORNAAM = "Billy";
     protected static final String VOORNAAM_2 = "Piet";
-    protected static final int DATUM_DOCUMENT = 20090103;
-    protected static final int DATUM_STANDAARD = Lo3Datum.NULL_DATUM.getIntegerWaarde();
-    protected static final int DATUM_GELDIGHEID = 20090101;
-    protected static final int DATUM_GELDIGHEID_1 = 20080601;
-    protected static final int DATUM_GELDIGHEID_2 = 20080101;
-    protected static final int DATUM_GELDIGHEID_3 = 20070101;
-    protected static final int DATUM_OPNEMING = 20090102;
-    protected static final int DATUM_OPNEMING_1 = 20080602;
-    protected static final int DATUM_OPNEMING_2 = 20080102;
-    protected static final int DATUM_OPNEMING_3 = 20070102;
-    protected static final int DATUM_OPNEMING_4 = 20060102;
-    protected static final int DATUM_GEBOORTE = 19850101;
-    protected static final int DATUM_GEBOORTE_2 = 19800101;
-    protected static final int DATUM_FAMILIERECHTELIJKE_BETREKKING = 20061231;
-    protected static final int DATUM_FAMILIERECHTELIJKE_BETREKKING_2 = 20050101;
+    protected static final int DATUM_DOCUMENT = 2009_01_03;
+    protected static final int DATUM_STANDAARD = 0;
+    protected static final int DATUM_GELDIGHEID = 2009_01_01;
+    protected static final int DATUM_GELDIGHEID_2 = 2008_01_01;
+    protected static final int DATUM_GELDIGHEID_3 = 2007_01_01;
+    protected static final int DATUM_OPNEMING = 2009_01_02;
+    protected static final int DATUM_OPNEMING_2 = 2008_01_02;
+    protected static final int DATUM_OPNEMING_3 = 2007_01_02;
+    protected static final int DATUM_OPNEMING_4 = 2006_01_02;
+    protected static final int DATUM_GEBOORTE = 1985_01_01;
+    protected static final int DATUM_GEBOORTE_2 = 1980_01_01;
+    protected static final int DATUM_FAMILIERECHTELIJKE_BETREKKING = 2006_12_31;
+    protected static final int DATUM_FAMILIERECHTELIJKE_BETREKKING_2 = 2005_01_01;
 
     protected Lo3Historie maakActueleHistorie() {
         return maakHistorie(false, DATUM_GELDIGHEID, DATUM_OPNEMING);
@@ -76,19 +74,18 @@ public abstract class AbstractRelatieConverteerderTest extends AbstractComponent
 
     protected Lo3Documentatie maakDocumentatie(final int datumDocument, final String beschrijving) {
         return new Lo3Documentatie(
-            UniqueSequence.next(),
-            null,
-            null,
-            new Lo3GemeenteCode(GEMEENTE_CODE),
-            new Lo3Datum(datumDocument),
-            Lo3String.wrap(beschrijving),
-            null,
-            null);
+                UniqueSequence.next(),
+                null,
+                null,
+                new Lo3GemeenteCode(GEMEENTE_CODE),
+                new Lo3Datum(datumDocument),
+                Lo3String.wrap(beschrijving),
+                null,
+                null);
     }
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return categorie
      */
     protected abstract Lo3CategorieEnum getCategorie();

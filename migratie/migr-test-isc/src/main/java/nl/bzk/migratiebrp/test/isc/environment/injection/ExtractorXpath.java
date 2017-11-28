@@ -38,11 +38,10 @@ public final class ExtractorXpath implements Extractor {
 
             return (String) expr.evaluate(doc, XPathConstants.STRING);
         } catch (final
-                IOException
+        IOException
                 | ParserConfigurationException
                 | SAXException
-                | XPathExpressionException e)
-        {
+                | XPathExpressionException e) {
             throw new TestException("Probleem tijdens xpath extractie", e);
         }
 

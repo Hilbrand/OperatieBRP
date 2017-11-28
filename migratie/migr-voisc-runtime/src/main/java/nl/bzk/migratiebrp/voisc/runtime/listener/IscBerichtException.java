@@ -14,9 +14,7 @@ public class IscBerichtException extends RuntimeException {
 
     /**
      * Constructor.
-     *
-     * @param cause
-     *            cause
+     * @param cause cause
      */
     public IscBerichtException(final Exception cause) {
         super(cause);
@@ -24,9 +22,7 @@ public class IscBerichtException extends RuntimeException {
 
     /**
      * Constructor.
-     *
-     * @param message
-     *            message
+     * @param message message
      */
     public IscBerichtException(final String message) {
         super(message);
@@ -34,11 +30,8 @@ public class IscBerichtException extends RuntimeException {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            message
-     * @param cause
-     *            cause
+     * @param message message
+     * @param cause cause
      */
     public IscBerichtException(final String message, final Exception cause) {
         super(message, cause);

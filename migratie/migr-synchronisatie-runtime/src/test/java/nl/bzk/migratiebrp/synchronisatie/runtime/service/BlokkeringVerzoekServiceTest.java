@@ -14,21 +14,21 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.sql.Timestamp;
 import java.util.UUID;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.RedenBlokkering;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.BlokkeringVerzoekType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringVerzoekBericht;
 import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstException;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.Blokkering;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.RedenBlokkering;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -36,36 +36,40 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class BlokkeringVerzoekServiceTest {
 
-    private static final Long ANUMMER = 186512465L;
-    private static final Long ANUMMER_BESTAANDE_BLOKKERING = 14534465L;
+    private static final String ANUMMER = "1865124650";
+    private static final String ANUMMER_BESTAANDE_BLOKKERING = "145344650";
     private static final String PROCESS_ID = "2451";
-    private static final String GEMEENTE_NAAR = "1904";
-    private static final String GEMEENTE_REGISTRATIE = "1905";
-    private static final Blokkering DUMMY_BLOKKERING = Blokkering.newInstance(
-        ANUMMER,
-        Long.valueOf(PROCESS_ID),
-        GEMEENTE_NAAR,
-        GEMEENTE_REGISTRATIE,
-        RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
+    private static final String GEMEENTE_NAAR = "190401";
+    private static final String GEMEENTE_REGISTRATIE = "190501";
+    private static final Blokkering DUMMY_BLOKKERING;
+
+    static {
+        DUMMY_BLOKKERING = new Blokkering(ANUMMER, new Timestamp(System.currentTimeMillis()));
+        DUMMY_BLOKKERING.setProcessId(Long.valueOf(PROCESS_ID));
+        DUMMY_BLOKKERING.setGemeenteCodeNaar(GEMEENTE_NAAR);
+        DUMMY_BLOKKERING.setRegistratieGemeente(GEMEENTE_REGISTRATIE);
+        DUMMY_BLOKKERING.setRedenBlokkering(RedenBlokkering.VERHUIZEND_VAN_LO3_NAAR_BRP);
+    }
 
     @Mock
     private BrpDalService brpDalService;
 
-    @InjectMocks
-    private final BlokkeringVerzoekService blokkeringVerzoekService = new BlokkeringVerzoekService();
+
+    private BlokkeringVerzoekService blokkeringVerzoekService;
 
     @Before
     public void setup() throws OngeldigePersoonslijstException {
         when(brpDalService.vraagOpBlokkering(ANUMMER)).thenReturn(null);
         when(brpDalService.vraagOpBlokkering(ANUMMER_BESTAANDE_BLOKKERING)).thenReturn(DUMMY_BLOKKERING);
-        when(brpDalService.persisteerBlokkering(Matchers.<Blokkering>any())).thenReturn(DUMMY_BLOKKERING);
+        when(brpDalService.persisteerBlokkering(Matchers.any())).thenReturn(DUMMY_BLOKKERING);
+        blokkeringVerzoekService = new BlokkeringVerzoekService(brpDalService);
     }
 
     @Test
     public void testBlokkeringAntwoordOK() {
         final BlokkeringVerzoekType blokkeringVerzoekType = new BlokkeringVerzoekType();
 
-        blokkeringVerzoekType.setANummer(ANUMMER.toString());
+        blokkeringVerzoekType.setANummer(ANUMMER);
         blokkeringVerzoekType.setGemeenteNaar(GEMEENTE_NAAR);
         blokkeringVerzoekType.setGemeenteRegistratie(GEMEENTE_REGISTRATIE);
         blokkeringVerzoekType.setProcessId(PROCESS_ID);
@@ -94,7 +98,7 @@ public class BlokkeringVerzoekServiceTest {
     public void testBlokkeringAntwoordBestaatAl() {
         final BlokkeringVerzoekType blokkeringVerzoekType = new BlokkeringVerzoekType();
 
-        blokkeringVerzoekType.setANummer(ANUMMER_BESTAANDE_BLOKKERING.toString());
+        blokkeringVerzoekType.setANummer(ANUMMER_BESTAANDE_BLOKKERING);
         blokkeringVerzoekType.setGemeenteNaar(GEMEENTE_NAAR);
         blokkeringVerzoekType.setGemeenteRegistratie(GEMEENTE_REGISTRATIE);
         blokkeringVerzoekType.setProcessId(PROCESS_ID);
@@ -127,7 +131,7 @@ public class BlokkeringVerzoekServiceTest {
         } catch (final Exception e) {
             assertNotNull("Er zou een fout op moeten treden.", e);
         }
-        verify(brpDalService, times(0)).vraagOpBlokkering(null);
+        verify(brpDalService, times(0)).vraagOpBlokkering("");
         verify(brpDalService, times(0)).verwijderBlokkering(null);
     }
 

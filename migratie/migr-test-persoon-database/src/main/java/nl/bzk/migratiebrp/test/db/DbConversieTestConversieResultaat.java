@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.test.db;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Attribute;
+import nl.bzk.algemeenbrp.util.xml.annotation.Root;
 import nl.bzk.migratiebrp.test.dal.AbstractConversieTestResultaat;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Root;
 
 /**
  * Resultaat class voor de conversie tests waarbij een SQL-statement als controle gebruikt kan worden.
@@ -21,9 +21,7 @@ public final class DbConversieTestConversieResultaat extends AbstractConversieTe
 
     /**
      * Constructor.
-     *
-     * @param id
-     *            ID van het testgeval
+     * @param id ID van het testgeval
      */
     public DbConversieTestConversieResultaat(final int id) {
         super(null, null);
@@ -32,7 +30,6 @@ public final class DbConversieTestConversieResultaat extends AbstractConversieTe
 
     /**
      * Geeft het ID terug van de testcase.
-     *
      * @return id
      */
     public int getId() {
@@ -41,20 +38,19 @@ public final class DbConversieTestConversieResultaat extends AbstractConversieTe
 
     /**
      * Geef de succes.
-     *
      * @return succes
      */
     @Override
     public boolean isSucces() {
         return isSucces(
-            getSyntaxPrecondities(),
-            getLo3NaarBrp(),
-            getConversieLog(),
-            getOpslaanBrp(),
-            getLezenBrp(),
-            getBrpNaarLo3(),
-            getBrpNaarLo3VerschilAnalyse(),
-            getKruimelpad());
+                getSyntaxPrecondities(),
+                getLo3NaarBrp(),
+                getConversieLog(),
+                getOpslaanBrp(),
+                getLezenBrp(),
+                getBrpNaarLo3(),
+                getBrpNaarLo3VerschilAnalyse(),
+                getKruimelpad());
     }
 
 }

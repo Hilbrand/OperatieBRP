@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.controllers;
@@ -9,9 +9,13 @@ package nl.bzk.brp.beheer.webapp.controllers;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import javax.inject.Inject;
 import nl.bzk.brp.beheer.webapp.configuratie.jpa.PageWarning;
 import nl.bzk.brp.beheer.webapp.controllers.ErrorHandler.NotFoundException;
 import nl.bzk.brp.beheer.webapp.controllers.query.Filter;
@@ -19,7 +23,6 @@ import nl.bzk.brp.beheer.webapp.controllers.query.LikePredicateBuilderFactory;
 import nl.bzk.brp.beheer.webapp.controllers.query.PredicateBuilder;
 import nl.bzk.brp.beheer.webapp.controllers.query.PredicateBuilderSpecification;
 import nl.bzk.brp.beheer.webapp.repository.ReadonlyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -28,9 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @param <T> model type
  * @param <I> id type
  */
+
 public abstract class AbstractBaseReadonlyController<V, T, I extends Serializable> implements ReadonlyController<V, I> {
 
     private static final int DEFAULT_PAGE_SIZE = 50;
@@ -51,24 +53,26 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
     private final ReadonlyRepository<T, I> repository;
     private final List<Filter<?>> filters;
     private final List<String> caseInsensitiveSorts;
+    private final Set<String> caseInsensitiveSortsSet;
     private final List<String> allowedSorts;
+    private final Set<String> allowedSortsSet;
     private final boolean queryShouldContainParameters;
 
     /**
      * Constructor.
      *
      * @param repository repository
-     * @param filters filters
+     * @param filters    filters
      */
     protected AbstractBaseReadonlyController(final ReadonlyRepository<T, I> repository, final List<Filter<?>> filters) {
-        this(repository, filters, null, false);
+        this(repository, filters, Collections.emptyList(), false);
     }
 
     /**
      * Constructor.
      *
-     * @param repository repository
-     * @param filters filters
+     * @param repository   repository
+     * @param filters      filters
      * @param allowedSorts toegestane sorteringen (eerste voorkomen is default)
      */
     protected AbstractBaseReadonlyController(final ReadonlyRepository<T, I> repository, final List<Filter<?>> filters, final List<String> allowedSorts) {
@@ -78,18 +82,17 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
     /**
      * Constructor.
      *
-     * @param repository repository
-     * @param filters filters
-     * @param allowedSorts toegestane sorteringen (eerste voorkomen is default)
-     * @param queryShouldContainParameters geef aan of er geldige parameters moeten worden gebruik om resultaten te
-     *            krijgen
+     * @param repository                   repository
+     * @param filters                      filters
+     * @param allowedSorts                 toegestane sorteringen (eerste voorkomen is default)
+     * @param queryShouldContainParameters geef aan of er geldige parameters moeten worden gebruik
+     *                                     om resultaten te krijgen
      */
     protected AbstractBaseReadonlyController(
-        final ReadonlyRepository<T, I> repository,
-        final List<Filter<?>> filters,
-        final List<String> allowedSorts,
-        final boolean queryShouldContainParameters)
-    {
+            final ReadonlyRepository<T, I> repository,
+            final List<Filter<?>> filters,
+            final List<String> allowedSorts,
+            final boolean queryShouldContainParameters) {
         this.repository = repository;
         this.filters = filters;
         caseInsensitiveSorts = new ArrayList<>();
@@ -98,8 +101,14 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
                 caseInsensitiveSorts.add(((LikePredicateBuilderFactory) filter.getPredicateBuilderFactory()).getAttribuutNaam());
             }
         }
-        this.allowedSorts = allowedSorts;
+        if (allowedSorts != null) {
+            this.allowedSorts = allowedSorts;
+        } else {
+            this.allowedSorts = Collections.emptyList();
+        }
         this.queryShouldContainParameters = queryShouldContainParameters;
+        this.allowedSortsSet = new HashSet<>(this.allowedSorts);
+        this.caseInsensitiveSortsSet = new HashSet<>(this.caseInsensitiveSorts);
     }
 
     /**
@@ -107,11 +116,15 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
      *
      * @param transactionManager transaction manager
      */
-    @Autowired
+    @Inject
     public final void setTransactionManagerReadonly(final PlatformTransactionManager transactionManager) {
         final DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
         transactionDefinition.setReadOnly(true);
         transactionTemplate = new TransactionTemplate(transactionManager, transactionDefinition);
+    }
+
+    protected final TransactionTemplate getReadonlyTransactionTemplate() {
+        return transactionTemplate;
     }
 
     /**
@@ -123,16 +136,12 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
      */
     @Override
     public final V get(@PathVariable("id") final I id) throws NotFoundException {
-        final V result = transactionTemplate.execute(new TransactionCallback<V>() {
-
-            @Override
-            public V doInTransaction(final TransactionStatus status) {
-                final T item = repository.findOne(id);
-                if (item == null) {
-                    return null;
-                }
-                return converteerNaarView(item);
+        final V result = transactionTemplate.execute(status -> {
+            final T item = repository.findOne(id);
+            if (item == null) {
+                return null;
             }
+            return converteerNaarView(item);
         });
 
         if (result == null) {
@@ -148,35 +157,32 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
      * @param item model
      * @return view
      */
-    protected abstract V converteerNaarView(final T item);
+    protected abstract V converteerNaarView(T item);
 
     /**
      * Haal een lijst van items op.
      *
      * @param parameters request parameters
-     * @param pageable paginering
+     * @param pageable   paginering
      * @return lijst van item (inclusief paginering en sortering)
      */
     @Override
     public final Page<V> list(@RequestParam final Map<String, String> parameters, @PageableDefault(size = 10) final Pageable pageable) {
-        return transactionTemplate.execute(new TransactionCallback<Page<V>>() {
-            @Override
-            public Page<V> doInTransaction(final TransactionStatus status) {
-                final PredicateBuilderSpecification<T> specification = new PredicateBuilderSpecification<T>();
-                for (final Filter<?> filter : filters) {
-                    if (parameters.containsKey(filter.getParameterName())) {
-                        final String parameterValue = parameters.get(filter.getParameterName());
-                        if (parameterValue == null || "".equals(parameterValue)) {
-                            continue;
-                        }
-                        specification.addPredicateBuilder(verwerkFilter(filter, parameterValue));
+        return transactionTemplate.execute(status -> {
+            final PredicateBuilderSpecification<T> specification = new PredicateBuilderSpecification<>();
+            for (final Filter<?> filter : filters) {
+                if (parameters.containsKey(filter.getParameterName())) {
+                    final String parameterValue = parameters.get(filter.getParameterName());
+                    if (parameterValue == null || "".equals(parameterValue)) {
+                        continue;
                     }
+                    specification.addPredicateBuilder(verwerkFilter(filter, parameterValue));
                 }
-                if (queryShouldContainParameters && specification.isPredicateListEmpty()) {
-                    return new PageImpl<>(new ArrayList<V>());
-                }
-                return converteerNaarView(repository.findAll(specification, adaptPageble(pageable)));
             }
+            if (queryShouldContainParameters && specification.isPredicateListEmpty()) {
+                return new PageImpl<>(new ArrayList<V>());
+            }
+            return converteerNaarView(repository.findAll(specification, adaptPageble(pageable)));
         });
     }
 
@@ -186,7 +192,7 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
     }
 
     private Page<V> converteerNaarView(final Page<T> page) {
-        return new PageAdapter<V>(converteerNaarView(page.getContent()), page);
+        return new PageAdapter<>(converteerNaarView(page.getContent()), page);
     }
 
     /**
@@ -195,7 +201,7 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
      * @param content lijst van model objecten
      * @return lijst van view objecten
      */
-    protected abstract List<V> converteerNaarView(final List<T> content);
+    protected abstract List<V> converteerNaarView(List<T> content);
 
     /**
      * Adapt the pageable to handle defaults.
@@ -219,29 +225,37 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
     private Sort adaptSort(final Sort sort) {
         final List<Order> orders = new ArrayList<>();
         if (sort != null) {
-            for (final Order order : sort) {
-                if (!allowedSorts.contains(order.getProperty())) {
-                    throw new IllegalArgumentException("Sortering '" + order.getProperty() + "' niet toegestaan.");
-                }
-
-                if (caseInsensitiveSorts.contains(order.getProperty())) {
-                    orders.add(order.ignoreCase());
-                } else {
-                    orders.add(order);
-                }
-            }
+            stelGevraagdeSorteringIn(sort, orders);
         }
 
         if (orders.isEmpty() && allowedSorts != null && !allowedSorts.isEmpty()) {
-            final Order order = new Order(allowedSorts.iterator().next());
-            if (caseInsensitiveSorts.contains(order.getProperty())) {
+            stelStandaardSorteringIn(orders);
+        }
+
+        return orders.isEmpty() ? null : new Sort(orders);
+    }
+
+    private void stelGevraagdeSorteringIn(final Sort sort, final List<Order> orders) {
+        for (final Order order : sort) {
+            if (!allowedSortsSet.contains(order.getProperty())) {
+                throw new IllegalArgumentException("Sortering '" + order.getProperty() + "' niet toegestaan.");
+            }
+
+            if (caseInsensitiveSortsSet.contains(order.getProperty())) {
                 orders.add(order.ignoreCase());
             } else {
                 orders.add(order);
             }
         }
+    }
 
-        return orders.isEmpty() ? null : new Sort(orders);
+    private void stelStandaardSorteringIn(final List<Order> orders) {
+        final Order order = new Order(allowedSorts.iterator().next());
+        if (caseInsensitiveSortsSet.contains(order.getProperty())) {
+            orders.add(order.ignoreCase());
+        } else {
+            orders.add(order);
+        }
     }
 
     /**
@@ -258,7 +272,7 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
          * Constructor.
          *
          * @param content nieuwe content
-         * @param page oude page
+         * @param page    oude page
          */
         public PageAdapter(final List<T> content, final Page<?> page) {
             this.content = content;
@@ -333,7 +347,6 @@ public abstract class AbstractBaseReadonlyController<V, T, I extends Serializabl
         @Override
         public int getTotalPages() {
             return delegate.getTotalPages();
-
         }
 
         @Override

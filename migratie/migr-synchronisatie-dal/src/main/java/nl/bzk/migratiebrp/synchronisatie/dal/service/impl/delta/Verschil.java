@@ -10,26 +10,26 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractFormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.GegevenInOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeboorteHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNaamgebruikHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNummerverwijzingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaamHistorie;
 import nl.bzk.migratiebrp.conversie.model.validatie.ValidationUtils;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractFormeleHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.GegevenInOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeboorteHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNaamgebruikHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNummerverwijzingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaamHistorie;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -44,7 +44,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public final class Verschil {
     private static final Set<Class> CLASSES_TOEGESTAAN_VOOR_A_NUMMER_WIJZIGING;
-    private static final Set<String> PERSOON_ATTRIBUTEN_TOEGESTAAN_VOOR_A_NUMMER_WIJZIGING;
     private static final Set<String> M_RIJ_ATTRIBUTEN_TOEGESTAAN_VOOR_WIJZIGING;
     private static final Set<Class> CLASSES_TOEGESTAAN_VOOR_INFRA_WIJZIGING;
     private static final Set<String> PERSOON_ATTRIBUTEN_TOEGSTAAN_VOOR_INFRA_WIJZIGING;
@@ -75,15 +74,6 @@ public final class Verschil {
         CLASSES_TOEGESTAAN_VOOR_A_NUMMER_WIJZIGING.add(PersoonNummerverwijzingHistorie.class);
         CLASSES_TOEGESTAAN_VOOR_A_NUMMER_WIJZIGING.add(PersoonInschrijvingHistorie.class);
 
-        PERSOON_ATTRIBUTEN_TOEGESTAAN_VOOR_A_NUMMER_WIJZIGING =
-                new HashSet<>(Arrays.asList(
-                    "datumtijdstempel",
-                    "versienummer",
-                    "vorigeAdministratienummer",
-                    "tijdstipLaatsteWijzigingGbaSystematiek",
-                    "administratienummer",
-                    "tijdstipLaatsteWijziging"));
-
         CLASSES_TOEGESTAAN_VOOR_INFRA_WIJZIGING = new HashSet<>();
         CLASSES_TOEGESTAAN_VOOR_INFRA_WIJZIGING.add(PersoonAdres.class);
         CLASSES_TOEGESTAAN_VOOR_INFRA_WIJZIGING.add(PersoonInschrijvingHistorie.class);
@@ -92,78 +82,64 @@ public final class Verschil {
         CLASSES_TOEGESTAAN_VOOR_INFRA_WIJZIGING.add(PersoonMigratieHistorie.class);
 
         PERSOON_ATTRIBUTEN_TOEGSTAAN_VOOR_INFRA_WIJZIGING =
-                new HashSet<>(Arrays.asList(
-                    Persoon.PERSOONMIGRATIEHISTORIESET,
-                    Persoon.PERSOONBIJHOUDINGHISTORIESET,
-                    Persoon.PERSOONADRESSET,
-                    Persoon.PERSOONINSCHRIJVINGHISTORIESET,
-                    Persoon.TIJDSTIPLAATSTEWIJZIGING,
-                    Persoon.VERSIENUMMER,
-                    Persoon.DATUMTIJDSTEMPEL,
-                    Persoon.SOORTMIGRATIEID,
-                    Persoon.BUITENLANDSADRESREGEL1MIGRATIE,
-                    Persoon.BUITENLANDSADRESREGEL2MIGRATIE,
-                    Persoon.BUITENLANDSADRESREGEL3MIGRATIE,
-                    Persoon.BUITENLANDSADRESREGEL4MIGRATIE,
-                    Persoon.BUITENLANDSADRESREGEL5MIGRATIE,
-                    Persoon.BUITENLANDSADRESREGEL6MIGRATIE,
-                    Persoon.TIJDSTIPLAATSTEWIJZIGINGGBASYSTEMATIEK,
-                    Persoon.BIJHOUDINGSPARTIJ,
-                    AbstractFormeleHistorie.DATUM_TIJD_VERVAL,
-                    Persoon.REDENWIJZIGINGMIGRATIE,
-                    Persoon.LANDOFGEBIEDMIGRATIE,
-                    Persoon.AANGEVERMIGRATIE));
+                new HashSet<>(
+                        Arrays.asList(
+                                Persoon.PERSOON_MIGRATIE_HISTORIE_SET,
+                                Persoon.PERSOON_BIJHOUDING_HISTORIE_SET,
+                                Persoon.PERSOON_ADRES_SET,
+                                Persoon.PERSOON_INSCHRIJVING_HISTORIE_SET,
+                                Persoon.TIJDSTIP_LAATSTE_WIJZIGING,
+                                Persoon.VERSIE_NUMMER,
+                                Persoon.DATUM_TIJD_STEMPEL,
+                                Persoon.SOORT_MIGRATIE_ID,
+                                Persoon.BUITENLANDS_ADRES_REGEL1_MIGRATIE,
+                                Persoon.BUITENLANDS_ADRES_REGEL2_MIGRATIE,
+                                Persoon.BUITENLANDS_ADRES_REGEL3_MIGRATIE,
+                                Persoon.BUITENLANDS_ADRES_REGEL4_MIGRATIE,
+                                Persoon.BUITENLANDS_ADRES_REGEL5_MIGRATIE,
+                                Persoon.BUITENLANDS_ADRES_REGEL6_MIGRATIE,
+                                Persoon.TIJDSTIP_LAATSTE_WIJZIGING_GBA_SYSTEMATIEK,
+                                Persoon.BIJHOUDINGS_PARTIJ,
+                                AbstractFormeleHistorie.DATUM_TIJD_VERVAL,
+                                Persoon.REDEN_WIJZIGING_MIGRATIE,
+                                Persoon.LAND_OF_GEBIED_MIGRATIE,
+                                Persoon.AANGEVER_MIGRATIE));
     }
 
     /**
      * Constructor voor een Verschil van een element. Gebruik liever de factory-methode
      * {@link #maakVerschil(Sleutel, Object, Object, FormeleHistorie, FormeleHistorie)}.
-     *
-     * @param sleutel
-     *            De sleutel die dit verschil uniek identificeert, mag niet null zijn
-     * @param oudeWaarde
-     *            Dit kan de oude waarde zijn van een element in een rij of een complete rij als deze verwijderd is.
-     * @param nieuweWaarde
-     *            Dit kan de nieuwe waarde zijn van een element in een rij of een complete rij als deze toegevoegd is.
-     * @param bestaandeHistorieRij
-     *            De bestaande (opgeslagen) historie rij waar dit verschil bij hoort
-     * @param nieuweHistorieRij
-     *            De nieuwe (kluizenaar) historie rij waar dit verschil bij hoort
+     * @param sleutel De sleutel die dit verschil uniek identificeert, mag niet null zijn
+     * @param oudeWaarde Dit kan de oude waarde zijn van een element in een rij of een complete rij als deze verwijderd is.
+     * @param nieuweWaarde Dit kan de nieuwe waarde zijn van een element in een rij of een complete rij als deze toegevoegd is.
+     * @param bestaandeHistorieRij De bestaande (opgeslagen) historie rij waar dit verschil bij hoort
+     * @param nieuweHistorieRij De nieuwe (kluizenaar) historie rij waar dit verschil bij hoort
      */
     public Verschil(
-        final Sleutel sleutel,
-        final Object oudeWaarde,
-        final Object nieuweWaarde,
-        final FormeleHistorie bestaandeHistorieRij,
-        final FormeleHistorie nieuweHistorieRij)
-    {
+            final Sleutel sleutel,
+            final Object oudeWaarde,
+            final Object nieuweWaarde,
+            final FormeleHistorie bestaandeHistorieRij,
+            final FormeleHistorie nieuweHistorieRij) {
         this(sleutel, oudeWaarde, nieuweWaarde, bepaalVerschilType(oudeWaarde, nieuweWaarde), bestaandeHistorieRij, nieuweHistorieRij);
     }
 
     /**
      * Constructor voor een Verschil van een rij uit een verzameling.
-     *
-     * @param sleutel
-     *            De sleutel die dit verschil uniek identificeert, mag niet null zijn
-     * @param oudeWaarde
-     *            Dit kan de oude waarde zijn van een element in een rij of een complete rij als deze verwijderd is.
-     * @param nieuweWaarde
-     *            Dit kan de nieuwe waarde zijn van een element in een rij of een complete rij als deze toegevoegd is.
-     * @param verschilType
-     *            type van dit verschil
-     * @param bestaandeHistorieRij
-     *            De bestaande (opgeslagen) historie rij waar dit verschil bij hoort
-     * @param nieuweHistorieRij
-     *            De nieuwe (kluizenaar) historie rij waar dit verschil bij hoort
+     * @param sleutel De sleutel die dit verschil uniek identificeert, mag niet null zijn
+     * @param oudeWaarde Dit kan de oude waarde zijn van een element in een rij of een complete rij als deze verwijderd is.
+     * @param nieuweWaarde Dit kan de nieuwe waarde zijn van een element in een rij of een complete rij als deze toegevoegd is.
+     * @param verschilType type van dit verschil
+     * @param bestaandeHistorieRij De bestaande (opgeslagen) historie rij waar dit verschil bij hoort
+     * @param nieuweHistorieRij De nieuwe (kluizenaar) historie rij waar dit verschil bij hoort
      */
     public Verschil(
-        final Sleutel sleutel,
-        final Object oudeWaarde,
-        final Object nieuweWaarde,
-        final VerschilType verschilType,
-        final FormeleHistorie bestaandeHistorieRij,
-        final FormeleHistorie nieuweHistorieRij)
-    {
+            final Sleutel sleutel,
+            final Object oudeWaarde,
+            final Object nieuweWaarde,
+            final VerschilType verschilType,
+            final FormeleHistorie bestaandeHistorieRij,
+            final FormeleHistorie nieuweHistorieRij) {
         ValidationUtils.controleerOpNullWaarden("sleutel mag niet null zijn", sleutel);
         this.sleutel = sleutel;
         this.oudeWaarde = oudeWaarde;
@@ -175,11 +151,8 @@ public final class Verschil {
 
     /**
      * Factory method om een consolidatie verschil te maken waarbij een nieuwe rij wordt toegevoegd.
-     *
-     * @param sleutel
-     *            de sleutel voor het verschil
-     * @param nieuweRij
-     *            de rij die toegevoegd moet worden.
+     * @param sleutel de sleutel voor het verschil
+     * @param nieuweRij de rij die toegevoegd moet worden.
      * @return het gevraagde verschil
      */
     public static Verschil maakConsolidatieVerschilRijToevoegen(final Sleutel sleutel, final FormeleHistorie nieuweRij) {
@@ -190,11 +163,8 @@ public final class Verschil {
 
     /**
      * Factory method om een consolidatie verschil te maken waarbij de historie context alleen wordt ingevuld.
-     *
-     * @param sleutel
-     *            de sleutel voor het verschil
-     * @param historie
-     *            de rij die toegevoegd moet worden.
+     * @param sleutel de sleutel voor het verschil
+     * @param historie de rij die toegevoegd moet worden.
      * @return het gevraagde verschil
      */
     public static Verschil maakConsolidatieHistorieContextVerschil(final Sleutel sleutel, final FormeleHistorie historie) {
@@ -205,26 +175,19 @@ public final class Verschil {
 
     /**
      * Factory method om een consolidatie verschil te maken.
-     *
-     * @param sleutel
-     *            de sleutel voor het verschil
-     * @param bestaandeWaarde
-     *            de bestaande waarde
-     * @param nieuweWaarde
-     *            de nieuwe waarde
-     * @param bestaandeHistorieRij
-     *            de bestaande historie rij
-     * @param nieuweHistorieRij
-     *            de nieuwe historie rijd.
+     * @param sleutel de sleutel voor het verschil
+     * @param bestaandeWaarde de bestaande waarde
+     * @param nieuweWaarde de nieuwe waarde
+     * @param bestaandeHistorieRij de bestaande historie rij
+     * @param nieuweHistorieRij de nieuwe historie rijd.
      * @return het gevraagde verschil
      */
     public static Verschil maakConsolidatieVerschil(
-        final Sleutel sleutel,
-        final Object bestaandeWaarde,
-        final Object nieuweWaarde,
-        final FormeleHistorie bestaandeHistorieRij,
-        final FormeleHistorie nieuweHistorieRij)
-    {
+            final Sleutel sleutel,
+            final Object bestaandeWaarde,
+            final Object nieuweWaarde,
+            final FormeleHistorie bestaandeHistorieRij,
+            final FormeleHistorie nieuweHistorieRij) {
         final Verschil verschil = new Verschil(sleutel, bestaandeWaarde, nieuweWaarde, bestaandeHistorieRij, nieuweHistorieRij);
         verschil.isConsolidatieVerschil = true;
         return verschil;
@@ -232,26 +195,19 @@ public final class Verschil {
 
     /**
      * Factory method om een verschil te maken.
-     *
-     * @param sleutel
-     *            de sleutel voor het verschil
-     * @param bestaandeWaarde
-     *            de bestaande waarde
-     * @param nieuweWaarde
-     *            de nieuwe waarde
-     * @param bestaandeHistorieRij
-     *            de bestaande historie rij
-     * @param nieuweHistorieRij
-     *            de nieuwe historie rijd.
+     * @param sleutel de sleutel voor het verschil
+     * @param bestaandeWaarde de bestaande waarde
+     * @param nieuweWaarde de nieuwe waarde
+     * @param bestaandeHistorieRij de bestaande historie rij
+     * @param nieuweHistorieRij de nieuwe historie rijd.
      * @return het gevraagde verschil
      */
     public static Verschil maakVerschil(
-        final Sleutel sleutel,
-        final Object bestaandeWaarde,
-        final Object nieuweWaarde,
-        final FormeleHistorie bestaandeHistorieRij,
-        final FormeleHistorie nieuweHistorieRij)
-    {
+            final Sleutel sleutel,
+            final Object bestaandeWaarde,
+            final Object nieuweWaarde,
+            final FormeleHistorie bestaandeHistorieRij,
+            final FormeleHistorie nieuweHistorieRij) {
         return new Verschil(sleutel, bestaandeWaarde, nieuweWaarde, bestaandeHistorieRij, nieuweHistorieRij);
     }
 
@@ -264,7 +220,6 @@ public final class Verschil {
 
     /**
      * Geef de waarde van sleutel.
-     *
      * @return de sleutel
      */
     public Sleutel getSleutel() {
@@ -273,7 +228,6 @@ public final class Verschil {
 
     /**
      * Geef de waarde van oude waarde.
-     *
      * @return oude waarde
      */
     public Object getOudeWaarde() {
@@ -282,7 +236,6 @@ public final class Verschil {
 
     /**
      * Geef de waarde van nieuwe waarde.
-     *
      * @return nieuwe waarde
      */
     public Object getNieuweWaarde() {
@@ -291,7 +244,6 @@ public final class Verschil {
 
     /**
      * Geef de waarde van verschil type.
-     *
      * @return verschil type
      */
     public VerschilType getVerschilType() {
@@ -301,7 +253,6 @@ public final class Verschil {
     /**
      * Geef de bestaande historie rij waar dit verschil bij hoort, of null als dit verschil niet bij een historie rij
      * hoort.
-     *
      * @return de bestaande historie rij
      */
     public FormeleHistorie getBestaandeHistorieRij() {
@@ -311,7 +262,6 @@ public final class Verschil {
     /**
      * Geef de nieuwe historie rij waar dit verschil bij hoort, of null als dit verschil niet bij een historie rij
      * hoort.
-     *
      * @return de nieuwe historie rij
      */
     public FormeleHistorie getNieuweHistorieRij() {
@@ -320,9 +270,7 @@ public final class Verschil {
 
     /**
      * Maakt een kopie van dit verschil en vult de sleutel van de kopie met de nieuwe sleutel.
-     *
-     * @param nieuweSleutel
-     *            de nieuwe sleutel
+     * @param nieuweSleutel de nieuwe sleutel
      * @return een nieuw verschil object
      */
     public Verschil maakKopieMetNieuweSleutel(final Sleutel nieuweSleutel) {
@@ -375,7 +323,6 @@ public final class Verschil {
 
     /**
      * Controleert of het verschil toegestaan is voor een a-nummer wijziging.
-     * 
      * @return true als het verschil is toegestaan bij een a-nummer wijziging.
      */
     public boolean isToegestaanVoorAnummerWijziging() {
@@ -390,13 +337,7 @@ public final class Verschil {
             case ELEMENT_AANGEPAST:
             case ELEMENT_NIEUW:
                 final Class<?> entiteitClass = ((EntiteitSleutel) sleutel).getEntiteit();
-                if (Persoon.class.isAssignableFrom(entiteitClass)) {
-                    result = PERSOON_ATTRIBUTEN_TOEGESTAAN_VOOR_A_NUMMER_WIJZIGING.contains(sleutel.getVeld());
-                } else {
-                    result =
-                            FormeleHistorie.class.isAssignableFrom(entiteitClass)
-                                    && M_RIJ_ATTRIBUTEN_TOEGESTAAN_VOOR_WIJZIGING.contains(sleutel.getVeld());
-                }
+                result = FormeleHistorie.class.isAssignableFrom(entiteitClass) && M_RIJ_ATTRIBUTEN_TOEGESTAAN_VOOR_WIJZIGING.contains(sleutel.getVeld());
                 break;
             case NIEUWE_RIJ_ELEMENT_AANGEPAST:
                 result = CLASSES_TOEGESTAAN_VOOR_A_NUMMER_WIJZIGING.contains(((EntiteitSleutel) sleutel).getEntiteit());

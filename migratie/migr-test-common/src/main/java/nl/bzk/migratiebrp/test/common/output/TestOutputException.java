@@ -15,11 +15,8 @@ public final class TestOutputException extends RuntimeException {
 
     /**
      * Default constructor.
-     * 
-     * @param message
-     *            De melding.
-     * @param cause
-     *            De oorzaak van de exceptie.
+     * @param message De melding.
+     * @param cause De oorzaak van de exceptie.
      */
     public TestOutputException(final String message, final Throwable cause) {
         super(message, cause);

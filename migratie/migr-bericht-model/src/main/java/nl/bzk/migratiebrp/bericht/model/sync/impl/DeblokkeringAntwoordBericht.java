@@ -34,9 +34,7 @@ public final class DeblokkeringAntwoordBericht extends AbstractSyncBerichtZonder
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een storebericht te maken.
-     *
-     * @param deblokkeringAntwoordType
-     *            het deblokkeringAntwoord type
+     * @param deblokkeringAntwoordType het deblokkeringAntwoord type
      */
     public DeblokkeringAntwoordBericht(final DeblokkeringAntwoordType deblokkeringAntwoordType) {
         super("DeblokkeringAntwoord");
@@ -54,7 +52,6 @@ public final class DeblokkeringAntwoordBericht extends AbstractSyncBerichtZonder
 
     /**
      * Geeft de status {@link StatusType} van het bericht terug.
-     *
      * @return De status {@link StatusType} van het bericht.
      */
     public StatusType getStatus() {
@@ -63,9 +60,7 @@ public final class DeblokkeringAntwoordBericht extends AbstractSyncBerichtZonder
 
     /**
      * Zet de status {@link StatusType} op het bericht.
-     *
-     * @param status
-     *            De te zetten status {@link StatusType}.
+     * @param status De te zetten status {@link StatusType}.
      */
     public void setStatus(final StatusType status) {
         deblokkeringAntwoordType.setStatus(status);

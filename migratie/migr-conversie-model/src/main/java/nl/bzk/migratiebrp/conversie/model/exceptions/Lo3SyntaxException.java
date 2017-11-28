@@ -12,17 +12,24 @@ package nl.bzk.migratiebrp.conversie.model.exceptions;
 public final class Lo3SyntaxException extends Exception {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2654886075134285422L;
 
     /**
      * Maakt een Lo3SyntaxException met de onderliggende exception als message.
-     * 
-     * @param throwable
-     *            de exception die de Lo3SyntaxException heeft veroorzaakt
+     * @param throwable de exception die de Lo3SyntaxException heeft veroorzaakt
      */
     public Lo3SyntaxException(final Throwable throwable) {
         super(throwable);
+    }
+
+    /**
+     * Maakt een Lo3SyntaxException met de onderliggende exception en een aparte melding.
+     * @param message de melding
+     * @param cause de onderliggende exception
+     */
+    public Lo3SyntaxException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.model;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 
 /**
  * Enumeratie van alle BRP groepen. Gebruikt om labels van de BRP groepen vast te leggen welke in de viewer getoond
@@ -16,7 +16,7 @@ public enum GgoBrpGroepEnum {
     /**
      * Actie inhoud.
      */
-    ACTIE_INHOUD("Actie inhoud", Element.DOCUMENT_ACTIEINHOUD),
+    ACTIE_INHOUD("Actie inhoud", Element.ACTIE_IDENTITEIT),
     /**
      * ActieBron.
      */
@@ -36,7 +36,7 @@ public enum GgoBrpGroepEnum {
     /**
      * Persoon Afgeleid Administratief.
      */
-    PERSOON_AFGELEID_ADMINISTRATIEF("Persoon Afgeleid administratief", Element.PERSOON_AFGELEIDADMINISTRATIEF),
+    PERSOON_AFGELEID_ADMINISTRATIEF("Afgeleid administratief", Element.PERSOON_AFGELEIDADMINISTRATIEF),
     /**
      * Behandeld Als Nederlander Indicatie.
      */
@@ -60,7 +60,7 @@ public enum GgoBrpGroepEnum {
     /**
      * Document.
      */
-    DOCUMENT("Document", Element.DOCUMENT, Element.DOCUMENT_STANDAARD),
+    DOCUMENT("Document", Element.DOCUMENT, Element.DOCUMENT_IDENTITEIT),
     /**
      * Europese Verkiezingen.
      */
@@ -82,9 +82,9 @@ public enum GgoBrpGroepEnum {
     /**
      * Identificatienummers.
      */
-    IDENTIFICATIENUMMERS("Identificatienummers", Element.PERSOON_IDENTIFICATIENUMMERS,
-            Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_IDENTIFICATIENUMMERS, Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_IDENTIFICATIENUMMERS,
-            Element.GERELATEERDEOUDER_PERSOON_IDENTIFICATIENUMMERS, Element.GERELATEERDEKIND_PERSOON_IDENTIFICATIENUMMERS),
+    IDENTIFICATIENUMMERS("Identificatienummers", Element.PERSOON_IDENTIFICATIENUMMERS, Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_IDENTIFICATIENUMMERS,
+            Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_IDENTIFICATIENUMMERS, Element.GERELATEERDEOUDER_PERSOON_IDENTIFICATIENUMMERS,
+            Element.GERELATEERDEKIND_PERSOON_IDENTIFICATIENUMMERS),
     /**
      * Migratie.
      */
@@ -108,11 +108,11 @@ public enum GgoBrpGroepEnum {
     /**
      * Ouder.
      */
-    OUDER("Ouderschap", Element.OUDER_OUDERSCHAP),
+    OUDER("Ouderschap", Element.PERSOON_OUDER_OUDERSCHAP),
     /**
      * Ouderlijk Gezag.
      */
-    OUDERLIJK_GEZAG("Ouderlijk gezag", Element.OUDER_OUDERLIJKGEZAG),
+    OUDERLIJK_GEZAG("Ouderlijk gezag", Element.OUDER_OUDERLIJKGEZAG), //FIXME dubieus dit is supertype
     /**
      * Overlijden.
      */
@@ -167,21 +167,32 @@ public enum GgoBrpGroepEnum {
     /**
      * Gerelateerde.
      */
-    GERELATEERDE("Gerelateerde", (Element) null);
+    GERELATEERDE("Gerelateerde", (Element) null),
+    /**
+     * Buitenlands persoonsnummer.
+     */
+    BUITENLANDS_PERSOONSNUMMER("Buitenlands persoonsnummer", Element.PERSOON_BUITENLANDSPERSOONSNUMMER),
+    /**
+     * Onverwerkt document aanwezig indicatie.
+     */
+    ONVERWERKT_DOCUMENT_AANWEZIG_IND("Onverwerkt document aanwezig", Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG);
 
     private final String label;
     private final Element[] elementen;
 
-    private GgoBrpGroepEnum(final String label, final Element... elementen) {
+    /**
+     * Constructor om de enumeratie te maken.
+     * @param label label van de BRP groep
+     * @param elementen elementen die de BRP groep kan bevatten
+     */
+    GgoBrpGroepEnum(final String label, final Element... elementen) {
         this.label = label;
         this.elementen = elementen;
     }
 
     /**
      * Vind het juiste GgoBrpGroepEnum voor het gegeven Element, zodat het label ervan kan worden getoond.
-     *
-     * @param element
-     *            Het Element
+     * @param element Het Element
      * @return Het GgoBrpGroepEnum
      */
     public static GgoBrpGroepEnum findByElement(final Element element) {
@@ -198,7 +209,6 @@ public enum GgoBrpGroepEnum {
 
     /**
      * Geef de waarde van label.
-     *
      * @return de label
      */
     public String getLabel() {

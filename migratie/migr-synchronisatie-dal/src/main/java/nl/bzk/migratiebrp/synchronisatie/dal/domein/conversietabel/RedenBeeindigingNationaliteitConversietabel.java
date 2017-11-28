@@ -10,32 +10,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingNationaliteit;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenVerliesNederlandschapCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.ConversieMapEntry;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch.AbstractRedenVerliesNederlanderschapConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenBeeindigingNationaliteit;
 
 /**
  * Deze conversietabel mapt een Lo3AanduidingVerblijfstitelCode op de corresponderen BrpVerblijfsrechtCode en vice
  * versa.
- * 
  */
 public final class RedenBeeindigingNationaliteitConversietabel extends AbstractRedenVerliesNederlanderschapConversietabel {
 
     /**
      * Maakt een conversie tabel object voor de reden beeindiging nationaliteit.
-     *
-     * @param redenBeeindigingLijst
-     *            de lijst met alle conversies voor reden opname nationaliteit
+     * @param redenBeeindigingLijst de lijst met alle conversies voor reden opname nationaliteit
      */
     public RedenBeeindigingNationaliteitConversietabel(final List<RedenBeeindigingNationaliteit> redenBeeindigingLijst) {
         super(RedenBeeindigingNationaliteitConversietabel.converteerRedenBeeindigingLijst(redenBeeindigingLijst));
     }
 
     private static List<Entry<Lo3RedenNederlandschapCode, BrpRedenVerliesNederlandschapCode>> converteerRedenBeeindigingLijst(
-        final List<RedenBeeindigingNationaliteit> redenBeeindigingLijst)
-    {
+            final List<RedenBeeindigingNationaliteit> redenBeeindigingLijst) {
         final List<Entry<Lo3RedenNederlandschapCode, BrpRedenVerliesNederlandschapCode>> result = new ArrayList<>();
         for (final RedenBeeindigingNationaliteit redenBeeindigingNationaliteit : redenBeeindigingLijst) {
             final Lo3RedenNederlandschapCode lo3RedenNederlandschapCode =

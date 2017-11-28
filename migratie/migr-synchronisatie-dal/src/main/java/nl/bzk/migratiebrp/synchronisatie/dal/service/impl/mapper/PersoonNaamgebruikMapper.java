@@ -6,18 +6,19 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNaamgebruikHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Naamgebruik;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikGeslachtsnaamstam;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNaamgebruikInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Naamgebruik;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNaamgebruikHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractPersoonHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
@@ -30,19 +31,14 @@ public final class PersoonNaamgebruikMapper extends AbstractPersoonHistorieMappe
 
     /**
      * Maakt een PersoonNaamgebruikMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonNaamgebruikMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -58,21 +54,6 @@ public final class PersoonNaamgebruikMapper extends AbstractPersoonHistorieMappe
      * {@inheritDoc}
      */
     @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonNaamgebruikHistorie historie, final Persoon persoon) {
-        persoon.setGeslachtsnaamstamNaamgebruik(historie.getGeslachtsnaamstamNaamgebruik());
-        persoon.setVoornamenNaamgebruik(historie.getVoornamenNaamgebruik());
-        persoon.setScheidingstekenNaamgebruik(historie.getScheidingstekenNaamgebruik());
-        persoon.setVoorvoegselNaamgebruik(historie.getVoorvoegselNaamgebruik());
-        persoon.setIndicatieNaamgebruikAfgeleid(historie.getIndicatieNaamgebruikAfgeleid());
-        persoon.setNaamgebruik(historie.getNaamgebruik());
-        persoon.setPredicaatNaamgebruik(historie.getPredicaat());
-        persoon.setAdellijkeTitelNaamgebruik(historie.getAdellijkeTitel());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected PersoonNaamgebruikHistorie mapHistorischeGroep(final BrpNaamgebruikInhoud groepInhoud, final Persoon persoon) {
         final Naamgebruik naamgebruik = Naamgebruik.parseCode(groepInhoud.getNaamgebruikCode().getWaarde());
 
@@ -82,20 +63,20 @@ public final class PersoonNaamgebruikMapper extends AbstractPersoonHistorieMappe
         }
 
         final PersoonNaamgebruikHistorie result =
-                new PersoonNaamgebruikHistorie(persoon, BrpString.unwrap(groepInhoud.getGeslachtsnaamstam()), afgeleid, naamgebruik);
+                new PersoonNaamgebruikHistorie(persoon, BrpNaamgebruikGeslachtsnaamstam.unwrap(groepInhoud.getGeslachtsnaamstam()), afgeleid, naamgebruik);
         result.setVoornamenNaamgebruik(BrpString.unwrap(groepInhoud.getVoornamen()));
         result.setScheidingstekenNaamgebruik(BrpCharacter.unwrap(groepInhoud.getScheidingsteken()));
         result.setVoorvoegselNaamgebruik(BrpString.unwrap(groepInhoud.getVoorvoegsel()));
-        if (Validatie.isAttribuutGevuld(groepInhoud.getPredicaatCode())) {
+        if (BrpValidatie.isAttribuutGevuld(groepInhoud.getPredicaatCode())) {
             result.setPredicaat(Predicaat.parseCode(groepInhoud.getPredicaatCode().getWaarde()));
         }
-        if (Validatie.isAttribuutGevuld(groepInhoud.getAdellijkeTitelCode())) {
+        if (BrpValidatie.isAttribuutGevuld(groepInhoud.getAdellijkeTitelCode())) {
             result.setAdellijkeTitel(AdellijkeTitel.valueOf(groepInhoud.getAdellijkeTitelCode().getWaarde()));
         }
 
         // onderzoek
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getAdellijkeTitelCode(), Element.PERSOON_NAAMGEBRUIK_ADELLIJKETITELCODE);
-        getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getGeslachtsnaamstam(), Element.PERSOON_NAAMGEBRUIK_GESLACHTSNAAMSTAM);
+        getOnderzoekMapper().mapOnderzoeken(result, groepInhoud.getGeslachtsnaamstam(), Element.PERSOON_NAAMGEBRUIK_GESLACHTSNAAMSTAM);
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getIndicatieAfgeleid(), Element.PERSOON_NAAMGEBRUIK_INDICATIEAFGELEID);
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getNaamgebruikCode(), Element.PERSOON_NAAMGEBRUIK_CODE);
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getPredicaatCode(), Element.PERSOON_NAAMGEBRUIK_PREDICAATCODE);

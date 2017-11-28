@@ -40,7 +40,7 @@ public class BrpNationaliteitConverteerderTest {
         testProbas(" Probe ass", false);
     }
 
-    public void testProbas(final String beschrijvingDocument, final boolean wordtHerkend) {
+    private void testProbas(final String beschrijvingDocument, final boolean wordtHerkend) {
 
         final BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud inhoud =
                 new BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud(BrpBoolean.wrap(true, null), null, null);
@@ -55,16 +55,16 @@ public class BrpNationaliteitConverteerderTest {
         final Lo3Categorie<Lo3NationaliteitInhoud> categorie = new Lo3Categorie<>(lo3Inhoud, documentatie, lo3Historie, herkomst);
         final Lo3Stapel<Lo3NationaliteitInhoud> lo3Nationaliteit = new Lo3Stapel<>(Collections.singletonList(categorie));
 
-        final Lo3Stapel<Lo3NationaliteitInhoud> aangepast = new BrpNationaliteitConverteerder().converteerGeprivilegieerde(stapel, lo3Nationaliteit);
+        final Lo3Stapel<Lo3NationaliteitInhoud> aangepast = new BrpNationaliteitConverteerder(null).converteerGeprivilegieerde(stapel, lo3Nationaliteit);
 
         if (wordtHerkend) {
             assertTrue(
-                "Beschrijving PROBAS zou niet aangepast moeten zijn",
-                beschrijvingDocument.equals(aangepast.get(0).getDocumentatie().getBeschrijvingDocument().getWaarde()));
+                    "Beschrijving PROBAS zou niet aangepast moeten zijn",
+                    beschrijvingDocument.equals(aangepast.get(0).getDocumentatie().getBeschrijvingDocument().getWaarde()));
         } else {
             assertFalse(
-                "Beschrijving PROBAS zou aangepast moeten zijn",
-                beschrijvingDocument.equals(aangepast.get(0).getDocumentatie().getBeschrijvingDocument().getWaarde()));
+                    "Beschrijving PROBAS zou aangepast moeten zijn",
+                    beschrijvingDocument.equals(aangepast.get(0).getDocumentatie().getBeschrijvingDocument().getWaarde()));
         }
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
-import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTest;
+import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTestBasis;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
@@ -22,7 +22,7 @@ import org.junit.Test;
 /**
  * Alle spontaan berichten zijn slechts wrappers om de lo3 categorieen heen.
  */
-public class SpontaanBerichtenTest extends AbstractLo3BerichtTest {
+public class SpontaanBerichtenTest extends AbstractLo3BerichtTestBasis {
 
     @Test
     public void ag11() throws ClassNotFoundException, BerichtInhoudException, IOException, BerichtSyntaxException {
@@ -82,7 +82,7 @@ public class SpontaanBerichtenTest extends AbstractLo3BerichtTest {
     public void wa11() throws ClassNotFoundException, BerichtInhoudException, IOException {
         final Wa11Bericht bericht = new Wa11Bericht();
         bericht.setMessageId(MessageIdGenerator.generateId());
-        bericht.parseInhoud(maakData());
+        bericht.parseCategorieen(maakData());
 
         testFormatAndParseBericht(bericht);
     }

@@ -1,44 +1,42 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
-import nl.bzk.brp.levering.lo3.mapper.InschrijvingMapper;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.ElementEnum;
-import nl.bzk.brp.model.operationeel.kern.HisPersoonInschrijvingModel;
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.levering.lo3.mapper.PersoonInschrijvingMapper;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpInschrijvingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3InschrijvingInhoud;
+import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpAttribuutConverteerder;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpInschrijvingConverteerder.InschrijvingConverteerder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Verwerkt mutaties in persoon/inschrijving.
  */
 @Component
-public final class PersoonInschrijvingMutatieVerwerker
-        extends AbstractFormeelMutatieVerwerker<Lo3InschrijvingInhoud, BrpInschrijvingInhoud, HisPersoonInschrijvingModel>
-{
+public final class PersoonInschrijvingMutatieVerwerker extends AbstractFormeelMutatieVerwerker<Lo3InschrijvingInhoud, BrpInschrijvingInhoud> {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
      * Constructor.
-     *
-     * @param mapper
-     *            mapper
-     * @param converteerder
-     *            converteerder
+     * @param mapper mapper
+     * @param attribuutConverteerder attributen converteerder
      */
-    @Autowired
-    protected PersoonInschrijvingMutatieVerwerker(final InschrijvingMapper mapper, final InschrijvingConverteerder converteerder) {
-        super(mapper, converteerder, null, ElementEnum.PERSOON_INSCHRIJVING);
+    @Inject
+    protected PersoonInschrijvingMutatieVerwerker(final PersoonInschrijvingMapper mapper, final BrpAttribuutConverteerder attribuutConverteerder) {
+        super(mapper, new InschrijvingConverteerder(attribuutConverteerder), attribuutConverteerder, null, PersoonInschrijvingMapper.GROEP_ELEMENT, LOGGER);
     }
 
     @Override
-    protected Lo3Documentatie verwerkInhoudInDocumentatie(final HisPersoonInschrijvingModel brpHistorie, final Lo3Documentatie documentatie) {
+    protected Lo3Documentatie verwerkInhoudInDocumentatie(final MetaRecord identiteitRecord, final MetaRecord record, final Lo3Documentatie documentatie) {
         // Geen documentatie voor categorie 07 (anders gaat groep 88 fout)
         return null;
     }

@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
 
 /**
  * Class waarin de resultaten komen van het opslaan van een persoonslijst.
@@ -23,11 +23,8 @@ public final class PersoonslijstPersisteerResultaat {
 
     /**
      * Constructor voor de resultaat van het persisteren van een persoonslijst.
-     * 
-     * @param persoon
-     *            de persoon die opgeslagen is.
-     * @param administratieveHandelingen
-     *            de set met administratieve handelingen die nieuw zijn voor de persoonslijst.
+     * @param persoon de persoon die opgeslagen is.
+     * @param administratieveHandelingen de set met administratieve handelingen die nieuw zijn voor de persoonslijst.
      */
     public PersoonslijstPersisteerResultaat(final Persoon persoon, final Set<AdministratieveHandeling> administratieveHandelingen) {
         this.persoon = persoon;
@@ -38,7 +35,6 @@ public final class PersoonslijstPersisteerResultaat {
 
     /**
      * Geef de waarde van persoon.
-     *
      * @return persoon
      */
     public Persoon getPersoon() {
@@ -47,7 +43,6 @@ public final class PersoonslijstPersisteerResultaat {
 
     /**
      * Geef de waarde van administratieve handelingen.
-     *
      * @return administratieve handelingen
      */
     public Set<AdministratieveHandeling> getAdministratieveHandelingen() {

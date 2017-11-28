@@ -10,13 +10,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import javax.inject.Inject;
+
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingInhoudingVermissingNederlandsReisdocumentEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingInhoudingVermissingNederlandsReisdocument;
 import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
+import nl.bzk.algemeenbrp.test.dal.DBUnit.InsertBefore;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +38,7 @@ public class AanduidingInhoudingOfVermissingReisdocumentConversietabelTest exten
         conversietabel = conversietabelFactory.createAanduidingInhoudingVermissingReisdocumentConversietabel();
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test
     public void testConverteerNaarBrp() {
         final BrpAanduidingInhoudingOfVermissingReisdocumentCode brpResultaat = conversietabel.converteerNaarBrp(LO3_INGEHOUDEN);
@@ -44,7 +46,7 @@ public class AanduidingInhoudingOfVermissingReisdocumentConversietabelTest exten
         assertNull(conversietabel.converteerNaarBrp(null));
     }
 
-    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml" })
+    @InsertBefore({"/sql/data/brpStamgegevens-kern.xml", "/sql/data/brpStamgegevens-autaut.xml", "/sql/data/brpStamgegevens-conv.xml"})
     @Test
     public void testConverteerNaarLo3() {
         final Lo3AanduidingInhoudingVermissingNederlandsReisdocument lo3Resultaat = conversietabel.converteerNaarLo3(BRP_REDEN_ONTBREKEN);

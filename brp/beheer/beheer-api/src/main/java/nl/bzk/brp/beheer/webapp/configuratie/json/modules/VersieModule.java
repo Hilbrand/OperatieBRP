@@ -1,18 +1,20 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.configuratie.json.modules;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import nl.bzk.brp.versie.Versie;
+import javax.inject.Inject;
+import org.springframework.stereotype.Component;
 
 /**
  * Versie module.
  */
+@Component
 public class VersieModule extends SimpleModule {
 
     /** artifact. */
@@ -33,10 +35,14 @@ public class VersieModule extends SimpleModule {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Default constructor.
+     * Constructor.
+     * 
+     * @param versionSerializer
+     *            specifieke serializer voor versies
      */
-    public VersieModule() {
-        addSerializer(Versie.class, new VersieSerializer());
+    @Inject
+    public VersieModule(final VersionSerializer versionSerializer) {
+        addSerializer(nl.bzk.algemeenbrp.util.common.Version.class, versionSerializer);
     }
 
     @Override

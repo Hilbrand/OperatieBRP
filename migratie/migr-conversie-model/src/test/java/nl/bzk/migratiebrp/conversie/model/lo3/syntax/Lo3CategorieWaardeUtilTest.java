@@ -6,21 +6,22 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.syntax;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Test;
 
 public class Lo3CategorieWaardeUtilTest {
 
-    public static final String STRING_5012 = "5012";
+    private static final String STRING_5012 = "5012";
 
     @Test
     public void testPrivateConstructor() throws IllegalAccessException, InstantiationException {
@@ -28,9 +29,9 @@ public class Lo3CategorieWaardeUtilTest {
             final Constructor<?>[] constructors = Lo3CategorieWaardeUtil.class.getDeclaredConstructors();
             constructors[0].setAccessible(true);
             constructors[0].newInstance((Object[]) null);
-            Assert.fail();
+            fail();
         } catch (InvocationTargetException e) {
-            Assert.assertTrue(e.getCause() instanceof UnsupportedOperationException);
+            assertTrue(e.getCause() instanceof UnsupportedOperationException);
         }
     }
 
@@ -38,7 +39,6 @@ public class Lo3CategorieWaardeUtilTest {
     public void testDeepCopy() {
         final List<Lo3CategorieWaarde> lijst = new ArrayList<>();
         Lo3CategorieWaarde waarde = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_04, 0, 0);
-        Lo3CategorieWaarde andereWaarde = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_05, 0, 0);
         waarde.getElementen().put(Lo3ElementEnum.ANUMMER, "123123");
         lijst.add(waarde);
         lijst.add(new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_04, 1, 0));
@@ -48,12 +48,12 @@ public class Lo3CategorieWaardeUtilTest {
         lijst.add(new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_54, 2, 3));
         lijst.add(new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_54, 2, 4));
         List<Lo3CategorieWaarde> result = Lo3CategorieWaardeUtil.deepCopy(lijst);
-        Assert.assertEquals(1, result.get(0).getElementen().size());
-        Assert.assertEquals("123123", result.get(0).getElementen().get(Lo3ElementEnum.ANUMMER));
-        Assert.assertTrue(waarde.equals(result.get(0)));
-        Assert.assertTrue(waarde.toString().equals(result.get(0).toString()));
-        Assert.assertTrue(waarde.hashCode() == result.get(0).hashCode());
-        Assert.assertTrue(result.get(1).getElementen().isEmpty());
+        assertEquals(1, result.get(0).getElementen().size());
+        assertEquals("123123", result.get(0).getElementen().get(Lo3ElementEnum.ANUMMER));
+        assertTrue(waarde.equals(result.get(0)));
+        assertTrue(waarde.toString().equals(result.get(0).toString()));
+        assertTrue(waarde.hashCode() == result.get(0).hashCode());
+        assertTrue(result.get(1).getElementen().isEmpty());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -80,16 +80,12 @@ public class Lo3CategorieWaardeUtilTest {
         target524.addElement(Lo3ElementEnum.ELEMENT_0510, STRING_5012);
         expected.add(target524);
 
-        Assert.assertTrue(equal(expected, categorieWaarden));
-
-        Assert.assertTrue(equal(expected, categorieWaarden));
-        Assert.assertEquals(
-            null,
-            Lo3CategorieWaardeUtil.getElementWaarde(categorieWaarden, Lo3CategorieEnum.CATEGORIE_04, 1, 3, Lo3ElementEnum.ELEMENT_6510));
-        Assert.assertEquals(
-            STRING_5012,
-            Lo3CategorieWaardeUtil.getElementWaarde(categorieWaarden, Lo3CategorieEnum.CATEGORIE_04, 2, 5, Lo3ElementEnum.ELEMENT_0510));
-
+        assertTrue(equal(expected, categorieWaarden));
+        assertTrue(equal(expected, categorieWaarden));
+        assertEquals(null,
+                Lo3CategorieWaardeUtil.getElementWaarde(categorieWaarden, Lo3CategorieEnum.CATEGORIE_04, 1, 3, Lo3ElementEnum.ELEMENT_6510));
+        assertEquals(STRING_5012,
+                Lo3CategorieWaardeUtil.getElementWaarde(categorieWaarden, Lo3CategorieEnum.CATEGORIE_04, 2, 5, Lo3ElementEnum.ELEMENT_0510));
         Lo3CategorieWaardeUtil.setElementWaarde(categorieWaarden, Lo3CategorieEnum.CATEGORIE_04, 1, 3, Lo3ElementEnum.ELEMENT_6510, "B");
 
         final List<Lo3CategorieWaarde> expected2 = new ArrayList<>();
@@ -109,13 +105,11 @@ public class Lo3CategorieWaardeUtilTest {
         target25.addElement(Lo3ElementEnum.ELEMENT_0510, STRING_5012);
         expected2.add(target25);
 
-        Assert.assertTrue(equal(expected2, categorieWaarden));
-        Assert.assertEquals(
-            "B",
-            Lo3CategorieWaardeUtil.getElementWaarde(categorieWaarden, Lo3CategorieEnum.CATEGORIE_04, 1, 3, Lo3ElementEnum.ELEMENT_6510));
-        Assert.assertEquals(
-            STRING_5012,
-            Lo3CategorieWaardeUtil.getElementWaarde(categorieWaarden, Lo3CategorieEnum.CATEGORIE_04, 2, 5, Lo3ElementEnum.ELEMENT_0510));
+        assertTrue(equal(expected2, categorieWaarden));
+        assertEquals("B",
+                Lo3CategorieWaardeUtil.getElementWaarde(categorieWaarden, Lo3CategorieEnum.CATEGORIE_04, 1, 3, Lo3ElementEnum.ELEMENT_6510));
+        assertEquals(STRING_5012,
+                Lo3CategorieWaardeUtil.getElementWaarde(categorieWaarden, Lo3CategorieEnum.CATEGORIE_04, 2, 5, Lo3ElementEnum.ELEMENT_0510));
     }
 
     public boolean equal(final List<Lo3CategorieWaarde> categorieen1, final List<Lo3CategorieWaarde> categorieen2) {
@@ -134,7 +128,7 @@ public class Lo3CategorieWaardeUtilTest {
 
     public boolean equal(final Lo3CategorieWaarde categorie1, final Lo3CategorieWaarde categorie2) {
         return new EqualsBuilder().append(categorie1.getCategorie(), categorie2.getCategorie())
-                                  .append(categorie1.getElementen(), categorie2.getElementen())
-                                  .isEquals();
+                .append(categorie1.getElementen(), categorie2.getElementen())
+                .isEquals();
     }
 }

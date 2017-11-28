@@ -6,10 +6,10 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
 
 /**
  * BRPActies zijn geen value-objects. Er wordt vanuit verschillende BRP entiteiten naar BRP acties verwezen. Om te
@@ -26,33 +26,26 @@ import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
  * <p/>
  * De class is niet threadsafe. Het ligt voor de hand om één BRPActieFactory per te converteren persoonslijst aan te
  * maken.
- * 
  */
 public interface BRPActieFactory {
 
     /**
      * Converteerd de meegegeven migratieActie naar de corresponderen BRPActie uit het operationele gegevensmodel van de
      * BRP. Als voor de {@link BrpActie#getId()} al een BRPActie was geconverteerd dan wordt dit object geretourneerd.
-     * 
-     * @param migratieActie
-     *            de te converteren BrpActie uit het migratie model, mag null zijn
-     * @return de geconverteerde BRPActie uit het operationele gegevensmodel van de BRP of null als migratieActie null
-     *         is
-     * @throws NullPointerException
-     *             als migratieActie niet null is maar <code>migratieActie.getId</code> is null
+     * @param migratieActie de te converteren BrpActie uit het migratie model, mag null zijn
+     * @return de geconverteerde BRPActie uit het operationele gegevensmodel van de BRP of null als migratieActie null is
+     * @throws NullPointerException als migratieActie niet null is maar <code>migratieActie.getId</code> is null
      */
     BRPActie getBRPActie(BrpActie migratieActie);
 
     /**
      * De administratieve handeling waaronder alle acties worden geplaatst.
-     * 
      * @return de administratieve handeling waaronder alle acties worden geplaatst.
      */
     AdministratieveHandeling getAdministratieveHandeling();
 
     /**
      * Het (dummy) lo3bericht waaraan alle lo3voorkomens als tracing informatie zijn gekoppeld.
-     * 
      * @return het lo3bericht waaraan alle lo3voorkomens als tracing informatie zijn gekoppeld.
      */
     Lo3Bericht getLo3Bericht();

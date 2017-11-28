@@ -8,12 +8,10 @@ package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.AanduidingVerblijfsrechtCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.AanduidingVerblijfsrecht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpVerblijfsrechtCode;
 import org.junit.Assert;
 import org.junit.Test;
-import support.ReflectionUtils;
 
 /**
  * Test voor {@link VerblijfsrechtConversietabel}.
@@ -22,20 +20,15 @@ public class VerblijfsrechtConversietabelTest {
 
     @Test
     public void test() throws ReflectiveOperationException {
-        final List<AanduidingVerblijfsrecht> list = new ArrayList<>();
-        list.add(maakConversietabelRegel(1));
+        final List<Verblijfsrecht> list = new ArrayList<>();
+        list.add(maakConversietabelRegel("01"));
 
         final VerblijfsrechtConversietabel subject = new VerblijfsrechtConversietabel(list);
 
-        Assert.assertEquals("01", subject.converteerNaarLo3(new BrpVerblijfsrechtCode((short) 1)).getWaarde());
+        Assert.assertEquals("01", subject.converteerNaarLo3(new BrpVerblijfsrechtCode("01")).getWaarde());
     }
 
-    private AanduidingVerblijfsrecht maakConversietabelRegel(final Integer waarde) throws ReflectiveOperationException {
-        return ReflectionUtils.instantiate(
-            AanduidingVerblijfsrecht.class,
-            new AanduidingVerblijfsrechtCodeAttribuut(waarde.shortValue()),
-            null,
-            null,
-            null);
+    private Verblijfsrecht maakConversietabelRegel(final String waarde) throws ReflectiveOperationException {
+        return new Verblijfsrecht(waarde, "Omschrijving");
     }
 }

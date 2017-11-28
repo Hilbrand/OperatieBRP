@@ -93,8 +93,8 @@
                 <th>Initieren</th>
                 <th>Precondities</th>
 				<th>LO3 naar BRP</th>
-                <th>Logging conversie</th>
 				<th>Opslaan BRP</th>
+                <th>Logging</th>
 				<th>Lezen BRP</th>
 			</tr>
 			<xsl:for-each select="key('resultaten-per-thema', @thema)">
@@ -137,10 +137,10 @@
 								<xsl:apply-templates select="lo3NaarBrp" />
 						    </td>
 							<td>
-								<xsl:apply-templates select="conversieLog" />
+								<xsl:apply-templates select="opslaanBrp" />
 						    </td>
 							<td>
-								<xsl:apply-templates select="opslaanBrp" />
+								<xsl:apply-templates select="conversieLog" />
 						    </td>
 							<td>
 								<xsl:apply-templates select="lezenBrp" />
@@ -233,9 +233,9 @@
                 <th>Percentage</th>
 				<th>LO3 naar BRP</th>
 				<th>Percentage</th>
-				<th>Logging conversie</th>
-				<th>Percentage</th>
 				<th>Opslaan BRP</th>
+				<th>Percentage</th>
+				<th>Logging conversie</th>
 				<th>Percentage</th>
 				<th>Lezen BRP</th>
 				<th>Percentage</th>
@@ -246,9 +246,9 @@
                 <td>&#160;</td>
 				<td><xsl:value-of select="$totaalLo3" /></td>
 				<td>&#160;</td>
-				<td><xsl:value-of select="$totaalLog" /></td>
-				<td>&#160;</td>
 				<td><xsl:value-of select="$totaalOpslaan" /></td>
+				<td>&#160;</td>
+				<td><xsl:value-of select="$totaalLog" /></td>
 				<td>&#160;</td>
 				<td><xsl:value-of select="$totaalLezen" /></td>
 				<td>&#160;</td>
@@ -277,17 +277,6 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </td>
-				<td><xsl:value-of select="$totaalLogOk" /></td>
-				<td>
-                    <xsl:call-template name="percentage">
-                        <xsl:with-param name="aantal">
-                            <xsl:value-of select="$totaalLogOk"/>
-                        </xsl:with-param>
-                        <xsl:with-param name="totaalAantal">
-                            <xsl:value-of select="$totaalLog"/>
-                        </xsl:with-param>
-                    </xsl:call-template>
-                </td>
 				<td><xsl:value-of select="$totaalOpslaanOk" /></td>
 				<td><!-- <xsl:value-of select="format-number($totaalOpslaanOk div $totaalOpslaan * 100, '##')" /> %-->
                     <xsl:call-template name="percentage">
@@ -296,6 +285,17 @@
                         </xsl:with-param>
                         <xsl:with-param name="totaalAantal">
                             <xsl:value-of select="$totaalOpslaan"/>
+                        </xsl:with-param>
+                    </xsl:call-template>
+                </td>
+				<td><xsl:value-of select="$totaalLogOk" /></td>
+				<td>
+                    <xsl:call-template name="percentage">
+                        <xsl:with-param name="aantal">
+                            <xsl:value-of select="$totaalLogOk"/>
+                        </xsl:with-param>
+                        <xsl:with-param name="totaalAantal">
+                            <xsl:value-of select="$totaalLog"/>
                         </xsl:with-param>
                     </xsl:call-template>
                 </td>
@@ -335,6 +335,8 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </td>
+				<td class="GEEN_VERWACHTING">&#160;</td>
+				<td class="GEEN_VERWACHTING">&#160;</td>
 				<td><xsl:value-of select="$totaalLogNok" /></td>
 				<td>
                     <xsl:call-template name="percentage">
@@ -346,8 +348,6 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </td>
-				<td class="GEEN_VERWACHTING">&#160;</td>
-				<td class="GEEN_VERWACHTING">&#160;</td>
 				<td><xsl:value-of select="$totaalLezenNok" /></td>
 				<td><!-- <xsl:value-of select="format-number($totaalLezenNok div $totaalLezen * 100, '##')" /> %-->
                     <xsl:call-template name="percentage">
@@ -375,6 +375,8 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </td>
+				<td class="GEEN_VERWACHTING">&#160;</td>
+				<td class="GEEN_VERWACHTING">&#160;</td>
 				<td><xsl:value-of select="$totaalLogGeenVerwachting" /></td>
 				<td>
                     <xsl:call-template name="percentage">
@@ -386,8 +388,6 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </td>
-				<td class="GEEN_VERWACHTING">&#160;</td>
-				<td class="GEEN_VERWACHTING">&#160;</td>
 				<td class="GEEN_VERWACHTING">&#160;</td>
 				<td class="GEEN_VERWACHTING">&#160;</td>
 			</tr>
@@ -415,8 +415,6 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </td>
-				<td class="GEEN_VERWACHTING">&#160;</td>
-				<td class="GEEN_VERWACHTING">&#160;</td>
 				<td><xsl:value-of select="$totaalOpslaanExceptie" /></td>
 				<td><!-- <xsl:value-of select="format-number($totaalOpslaanExceptie div $totaalOpslaan * 100, '##')" /> %-->
                     <xsl:call-template name="percentage">
@@ -428,6 +426,8 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </td>
+				<td class="GEEN_VERWACHTING">&#160;</td>
+				<td class="GEEN_VERWACHTING">&#160;</td>
 				<td><xsl:value-of select="$totaalLezenExceptie" /></td>
 				<td><!-- <xsl:value-of select="format-number($totaalLezenExceptie div $totaalLezen * 100, '##')" /> %-->
                     <xsl:call-template name="percentage">

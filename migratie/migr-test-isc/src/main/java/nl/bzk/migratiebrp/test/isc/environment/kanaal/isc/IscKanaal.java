@@ -7,6 +7,9 @@
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.isc;
 
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.isc.IscBericht;
 import nl.bzk.migratiebrp.bericht.model.isc.factory.IscBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.isc.impl.Uc811Bericht;
@@ -21,15 +24,15 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.jbpm.JbpmHelper;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * ISC kanaal.
  */
 public class IscKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "isc";
 
     private static final Logger LOG = LoggerFactory.getLogger();
@@ -38,12 +41,13 @@ public class IscKanaal extends LazyLoadingKanaal {
      * Constructor.
      */
     public IscKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-jms-isc.xml",
-            "classpath:infra-jmx-isc.xml",
-            "classpath:infra-jbpm.xml"));
+        super(new Worker(),
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-db-isc.xml",
+                        "classpath:infra-jms-isc.xml",
+                        "classpath:infra-jmx-isc.xml",
+                        "classpath:infra-jbpm.xml"));
     }
 
     /**
@@ -69,10 +73,10 @@ public class IscKanaal extends LazyLoadingKanaal {
 
             final JbpmSynchronisatievraagCommand commando =
                     new JbpmSynchronisatievraagCommand(
-                        getProcessDefinitionName(iscBericht),
-                        bericht.getInhoud(),
-                        bericht.getOntvangendePartij(),
-                        iscBericht.getBerichtType());
+                            getProcessDefinitionName(iscBericht),
+                            bericht.getInhoud(),
+                            bericht.getOntvangendePartij(),
+                            iscBericht.getBerichtType());
 
             final Long processInstanceId;
             try {

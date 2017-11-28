@@ -7,16 +7,15 @@
 package nl.bzk.migratiebrp.test.levering.mutatiebericht;
 
 import java.io.FilenameFilter;
-import nl.bzk.brp.versie.Versie;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.brpkern.DBUnitBrpUtil;
+import nl.bzk.algemeenbrp.test.dal.DBUnitBrpUtil;
+import nl.bzk.algemeenbrp.util.common.Version;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.common.util.BaseFilter;
 import nl.bzk.migratiebrp.test.common.util.FilterType;
 import nl.bzk.migratiebrp.test.dal.TestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie;
 import nl.bzk.migratiebrp.test.dal.runner.TestRunner;
-import nl.bzk.migratiebrp.util.common.Version;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.junit.runner.RunWith;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -28,14 +27,20 @@ public abstract class LeveringMutatieberichtTestConfiguratie extends TestConfigu
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie#getCasusFactory()
      */
     @Override
     public TestCasusFactory getCasusFactory() {
         LOG.info("\n#####\n#####\n##### VERSIES\n#####\n#####");
-        LOG.info("Migratie: {}", Version.readVersion("nl.bzk.migratiebrp.test", "migr-test-levering").toDetailsString());
-        LOG.info("BRP: \n{}", Versie.leesVersie("nl.bzk.migratiebrp.test", "migr-test-levering").toDetailsString());
+        LOG.info("{}", Version.readVersion("nl.bzk.migratiebrp.test", "migr-test-levering").toDetailsString());
+
+        LOG.info("\n#####\n#####\n##### Starting application context (atomikos)\n#####\n#####");
+
+        final GenericXmlApplicationContext atomikosContext = new GenericXmlApplicationContext();
+        atomikosContext.load("classpath:test-atomikos-beans.xml");
+        atomikosContext.refresh();
+        atomikosContext.registerShutdownHook();
 
         LOG.info("\n#####\n#####\n##### Starting application context (database)\n#####\n#####");
 
@@ -44,6 +49,7 @@ public abstract class LeveringMutatieberichtTestConfiguratie extends TestConfigu
             databaseContext.registerShutdownHook();
 
             final DBUnitBrpUtil dbUtil = databaseContext.getBean(DBUnitBrpUtil.class);
+            dbUtil.setInMemory();
             dbUtil.resetDB(this.getClass(), LOG);
         }
 
@@ -67,7 +73,7 @@ public abstract class LeveringMutatieberichtTestConfiguratie extends TestConfigu
 
         LOG.info("\n#####\n#####\n##### Starting application context (brp levering)");
         final GenericXmlApplicationContext brpLeveringContext = new GenericXmlApplicationContext();
-        brpLeveringContext.setParent(brpDatasourceContext);
+        // brpLeveringContext.setParent(brpDatasourceContext);
         if (useMemoryDS()) {
             brpLeveringContext.getEnvironment().setActiveProfiles("memoryDS");
         }
@@ -87,14 +93,14 @@ public abstract class LeveringMutatieberichtTestConfiguratie extends TestConfigu
 
         LOG.info("\n#####\n#####\n##### Returning new test casus factory...");
         return new LeveringMutatieberichtTestCasusFactory(
-            migratieContext.getAutowireCapableBeanFactory(),
-            brpLeveringContext.getAutowireCapableBeanFactory(),
-            brpBijhoudingContext.getAutowireCapableBeanFactory());
+                migratieContext.getAutowireCapableBeanFactory(),
+                brpLeveringContext.getAutowireCapableBeanFactory(),
+                brpBijhoudingContext.getAutowireCapableBeanFactory(),
+                getTestSkipper());
     }
 
     /**
      * Geef de waarde van thema filter.
-     *
      * @return the thema filter
      */
     @Override
@@ -104,7 +110,6 @@ public abstract class LeveringMutatieberichtTestConfiguratie extends TestConfigu
 
     /**
      * Geef de waarde van casus filter.
-     *
      * @return the casus filter
      */
     @Override

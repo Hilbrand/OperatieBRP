@@ -7,14 +7,12 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LeveringsautorisatieHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpLeveringsautorisatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.LeveringsautorisatieHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.AbstractBrpMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.BrpMapperUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,9 +23,7 @@ public final class BrpLeveringsautorisatieMapper extends AbstractBrpMapper<Lever
 
     /**
      * Map een database entiteit leveringsautorisatie naar een BRP conversie model object.
-     *
-     * @param leveringsautorisatieHistorieSet
-     *            database entiteit
+     * @param leveringsautorisatieHistorieSet database entiteit
      * @return conversie model object
      */
     public BrpStapel<BrpLeveringsautorisatieInhoud> mapLeveringsautorisatie(final Set<LeveringsautorisatieHistorie> leveringsautorisatieHistorieSet) {
@@ -37,14 +33,13 @@ public final class BrpLeveringsautorisatieMapper extends AbstractBrpMapper<Lever
     @Override
     protected BrpLeveringsautorisatieInhoud mapInhoud(final LeveringsautorisatieHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         return new BrpLeveringsautorisatieInhoud(
-            historie.getNaam(),
-            BrpMapperUtil.mapBrpProtocolleringsniveauCode(historie.getProtocolleringsniveau()),
-            historie.getIndicatieAliasSoortAdministratieveHandelingLeveren(),
-            historie.getIndicatieGeblokkeerd(),
-            historie.getIndicatiePopulatiebeperkingVolledigGeconverteerd(),
-            historie.getPopulatiebeperking(),
-            BrpMapperUtil.mapDatum(historie.getDatumIngang()),
-            BrpMapperUtil.mapDatum(historie.getDatumEinde()),
-            historie.getToelichting());
+                historie.getNaam(),
+                BrpMapperUtil.mapBrpProtocolleringsniveauCode(historie.getProtocolleringsniveau()),
+                historie.getIndicatieAliasSoortAdministratieveHandelingLeveren(),
+                historie.getIndicatieGeblokkeerd(),
+                historie.getPopulatiebeperking(),
+                BrpMapperUtil.mapDatum(historie.getDatumIngang()),
+                BrpMapperUtil.mapDatum(historie.getDatumEinde()),
+                historie.getToelichting());
     }
 }

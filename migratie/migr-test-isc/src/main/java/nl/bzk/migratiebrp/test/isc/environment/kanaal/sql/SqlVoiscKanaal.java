@@ -7,6 +7,8 @@
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.sql;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.sql.DataSource;
 
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
@@ -19,7 +21,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
  */
 public class SqlVoiscKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "sql_voisc";
 
     /**
@@ -27,12 +31,8 @@ public class SqlVoiscKanaal extends LazyLoadingKanaal {
      */
     public SqlVoiscKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-db-gbav.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:infra-db-voisc.xml",
+                "classpath:configuratie.xml",
+                "classpath:infra-db-voisc.xml",
                 "classpath:infra-sql.xml"));
     }
 
@@ -40,8 +40,13 @@ public class SqlVoiscKanaal extends LazyLoadingKanaal {
      * Verwerker.
      */
     public static final class Worker extends AbstractKanaal {
+
         @Inject
         private SqlHelper sqlHelper;
+
+        @Inject
+        @Named("voiscDataSource")
+        private DataSource voiscDataSource;
 
         /*
          * (non-Javadoc)
@@ -55,7 +60,7 @@ public class SqlVoiscKanaal extends LazyLoadingKanaal {
 
         @Override
         public void verwerkUitgaand(final TestCasusContext testCasus, final Bericht bericht) throws KanaalException {
-            sqlHelper.uitvoerenSql("VOISC", bericht.getInhoud(), false);
+            sqlHelper.uitvoerenSql(voiscDataSource, bericht.getInhoud(), false);
         }
     }
 }

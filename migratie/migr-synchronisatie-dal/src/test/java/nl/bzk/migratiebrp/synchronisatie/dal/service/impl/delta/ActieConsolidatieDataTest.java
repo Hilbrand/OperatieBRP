@@ -17,27 +17,28 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonDeelnameEuVerkiezingenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonOverlijdenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonDeelnameEuVerkiezingenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonOverlijdenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 
 /**
  * Unittest voor {@link ActieConsolidatieData}.
@@ -53,12 +54,14 @@ public class ActieConsolidatieDataTest {
 
     @Before
     public void setUp() {
+        SynchronisatieLogging.init();
         data = new ActieConsolidatieData();
-        partij = new Partij("partij", 1);
-        administratieveHandeling = new AdministratieveHandeling(partij, SoortAdministratieveHandeling.GBA_INITIELE_VULLING);
+        partij = new Partij("partij", "000001");
+        administratieveHandeling =
+                new AdministratieveHandeling(partij, SoortAdministratieveHandeling.GBA_INITIELE_VULLING, new Timestamp(System.currentTimeMillis()));
         persoon = new Persoon(SoortPersoon.INGESCHREVENE);
         timestamp = Timestamp.valueOf("2015-01-01 01:00:00.000");
-        landOfGebied = new LandOfGebied((short) 1, "Land");
+        landOfGebied = new LandOfGebied("0001", "Land");
     }
 
     @Test
@@ -91,10 +94,9 @@ public class ActieConsolidatieDataTest {
         for (final DeltaStapelMatch match : deltaStapelMatches) {
             final Class<?> historie = match.getOpgeslagenRijen().iterator().next().getClass();
             if (historie.isAssignableFrom(PersoonAdresHistorie.class)
-                || historie.isAssignableFrom(PersoonMigratieHistorie.class)
-                || historie.isAssignableFrom(PersoonIDHistorie.class)
-                || historie.isAssignableFrom(PersoonOverlijdenHistorie.class))
-            {
+                    || historie.isAssignableFrom(PersoonMigratieHistorie.class)
+                    || historie.isAssignableFrom(PersoonIDHistorie.class)
+                    || historie.isAssignableFrom(PersoonOverlijdenHistorie.class)) {
                 result = true;
             } else {
                 result = false;
@@ -111,8 +113,7 @@ public class ActieConsolidatieDataTest {
     }
 
     private void voegAdresStapelToe(final BRPActie oudeActie1, final BRPActie oudeActie2, final BRPActie nieuweActie1, final BRPActie nieuweActie2)
-        throws NoSuchFieldException
-    {
+            throws NoSuchFieldException {
         final PersoonAdres bestaandeAdres = maakAdresStapel(oudeActie1, oudeActie2);
         final PersoonAdres nieuweAdres = maakAdresStapel(nieuweActie1, nieuweActie2);
         final Collection<?> bestaandeHistorie = bestaandeAdres.getPersoonAdresHistorieSet();
@@ -121,28 +122,26 @@ public class ActieConsolidatieDataTest {
         data.koppelNieuweActieMetOudeActie(nieuweActie1, oudeActie1);
         data.koppelNieuweActieMetOudeActie(nieuweActie2, oudeActie2);
         voegAanDataToe(
-            (Collection<FormeleHistorie>) bestaandeHistorie,
-            (Collection<FormeleHistorie>) nieuweHistorie,
-            PersoonAdres.class.getDeclaredField("persoonAdresHistorieSet"));
+                (Collection<FormeleHistorie>) bestaandeHistorie,
+                (Collection<FormeleHistorie>) nieuweHistorie,
+                PersoonAdres.class.getDeclaredField("persoonAdresHistorieSet"));
     }
 
     private void voegMigratieStapelToe(final BRPActie oudeActie1, final BRPActie oudeActie2, final BRPActie nieuweActie1, final BRPActie nieuweActie2)
-        throws NoSuchFieldException
-    {
+            throws NoSuchFieldException {
         final Collection<?> bestaandeHistorie = maakMigratieHistorie(oudeActie1, oudeActie2);
         final Collection<?> nieuweHistorie = maakMigratieHistorie(nieuweActie1, nieuweActie2);
         data.koppelNieuweActieMetOudeActie(nieuweActie1, oudeActie1);
         data.koppelNieuweActieMetOudeActie(nieuweActie2, oudeActie2);
 
         voegAanDataToe(
-            (Collection<FormeleHistorie>) bestaandeHistorie,
-            (Collection<FormeleHistorie>) nieuweHistorie,
-            Persoon.class.getDeclaredField("persoonMigratieHistorieSet"));
+                (Collection<FormeleHistorie>) bestaandeHistorie,
+                (Collection<FormeleHistorie>) nieuweHistorie,
+                Persoon.class.getDeclaredField("persoonMigratieHistorieSet"));
     }
 
     private void voegIDHistorieToe(final BRPActie oudeActie1, final BRPActie oudeActie2, final BRPActie nieuweActie1, final BRPActie nieuweActie2)
-        throws NoSuchFieldException
-    {
+            throws NoSuchFieldException {
         final Collection<?> bestaandeHistorie = maakIDHistorie(oudeActie1, oudeActie2);
         final Collection<?> nieuweHistorie = maakIDHistorie(nieuweActie1, nieuweActie2);
 
@@ -150,41 +149,39 @@ public class ActieConsolidatieDataTest {
         data.koppelNieuweActieMetOudeActie(nieuweActie2, oudeActie2);
 
         voegAanDataToe(
-            (Collection<FormeleHistorie>) bestaandeHistorie,
-            (Collection<FormeleHistorie>) nieuweHistorie,
-            Persoon.class.getDeclaredField("persoonIDHistorieSet"));
+                (Collection<FormeleHistorie>) bestaandeHistorie,
+                (Collection<FormeleHistorie>) nieuweHistorie,
+                Persoon.class.getDeclaredField("persoonIDHistorieSet"));
 
     }
 
     private void voegOverlijdenHistorieToe(final BRPActie oudeActie1, final BRPActie oudeActie2, final BRPActie nieuweActie1, final BRPActie nieuweActie2)
-        throws NoSuchFieldException
-    {
+            throws NoSuchFieldException {
         final Collection<?> bestaandeHistorie = maakOverlijdenHistorie(oudeActie1, oudeActie2);
         final Collection<?> nieuweHistorie = maakOverlijdenHistorie(nieuweActie1, nieuweActie2);
         data.koppelNieuweActieMetOudeActie(nieuweActie1, oudeActie1);
         data.koppelNieuweActieMetOudeActie(nieuweActie2, oudeActie2);
 
         voegAanDataToe(
-            (Collection<FormeleHistorie>) bestaandeHistorie,
-            (Collection<FormeleHistorie>) nieuweHistorie,
-            Persoon.class.getDeclaredField("persoonOverlijdenHistorieSet"));
+                (Collection<FormeleHistorie>) bestaandeHistorie,
+                (Collection<FormeleHistorie>) nieuweHistorie,
+                Persoon.class.getDeclaredField("persoonOverlijdenHistorieSet"));
     }
 
     private void voegDeelnameEuVerkiezingenHistorieToe(
-        final BRPActie oudeActie1,
-        final BRPActie oudeActie2,
-        final BRPActie nieuweActie1,
-        final BRPActie nieuweActie2) throws NoSuchFieldException
-    {
+            final BRPActie oudeActie1,
+            final BRPActie oudeActie2,
+            final BRPActie nieuweActie1,
+            final BRPActie nieuweActie2) throws NoSuchFieldException {
         final Collection<?> bestaandeHistorie = maakDeelnameEuVerkiezingenHistorie(oudeActie1, oudeActie2);
         final Collection<?> nieuweHistorie = maakDeelnameEuVerkiezingenHistorie(nieuweActie1, nieuweActie2);
         data.koppelNieuweActieMetOudeActie(nieuweActie1, oudeActie1);
         data.koppelNieuweActieMetOudeActie(nieuweActie2, oudeActie2);
 
         voegAanDataToe(
-            (Collection<FormeleHistorie>) bestaandeHistorie,
-            (Collection<FormeleHistorie>) nieuweHistorie,
-            Persoon.class.getDeclaredField("persoonDeelnameEuVerkiezingenHistorieSet"));
+                (Collection<FormeleHistorie>) bestaandeHistorie,
+                (Collection<FormeleHistorie>) nieuweHistorie,
+                Persoon.class.getDeclaredField("persoonDeelnameEuVerkiezingenHistorieSet"));
     }
 
     private void voegAanDataToe(final Collection<FormeleHistorie> bestaandeHistorie, final Collection<FormeleHistorie> nieuweHistorie, final Field field) {
@@ -201,10 +198,10 @@ public class ActieConsolidatieDataTest {
     private PersoonAdres maakAdresStapel(final BRPActie actie1, final BRPActie actie2) {
         final PersoonAdres adres = new PersoonAdres(persoon);
         final PersoonAdresHistorie adresHistorie =
-                new PersoonAdresHistorie(adres, FunctieAdres.BRIEFADRES, landOfGebied, new RedenWijzigingVerblijf('I', "Iets"));
+                new PersoonAdresHistorie(adres, SoortAdres.BRIEFADRES, landOfGebied, new RedenWijzigingVerblijf('I', "Iets"));
         adresHistorie.setActieInhoud(actie1);
         final PersoonAdresHistorie adresHistorie1 =
-                new PersoonAdresHistorie(adres, FunctieAdres.BRIEFADRES, landOfGebied, new RedenWijzigingVerblijf('I', "Iets"));
+                new PersoonAdresHistorie(adres, SoortAdres.BRIEFADRES, landOfGebied, new RedenWijzigingVerblijf('I', "Iets"));
         adresHistorie1.setActieInhoud(actie2);
 
         adres.addPersoonAdresHistorie(adresHistorie);
@@ -240,9 +237,9 @@ public class ActieConsolidatieDataTest {
     }
 
     private Set<PersoonOverlijdenHistorie> maakOverlijdenHistorie(final BRPActie actie1, final BRPActie actie2) {
-        final PersoonOverlijdenHistorie migratieHistorie = new PersoonOverlijdenHistorie(persoon, 20150101, landOfGebied);
+        final PersoonOverlijdenHistorie migratieHistorie = new PersoonOverlijdenHistorie(persoon, 2015_01_01, landOfGebied);
         migratieHistorie.setActieInhoud(actie1);
-        final PersoonOverlijdenHistorie migratieHistorie1 = new PersoonOverlijdenHistorie(persoon, 20150101, new LandOfGebied((short) 1, "Land"));
+        final PersoonOverlijdenHistorie migratieHistorie1 = new PersoonOverlijdenHistorie(persoon, 2015_01_01, new LandOfGebied("0001", "Land"));
         migratieHistorie1.setActieInhoud(actie2);
 
         data.koppelActieMetVoorkomen(actie1, migratieHistorie);

@@ -7,10 +7,35 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.sql.Timestamp;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ActieBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Document;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBuitenlandsPersoonsnummer;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponent;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaam;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActieBron;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
@@ -22,6 +47,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpIndicatieGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBuitenlandsPersoonsnummerInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstGezagsVerhoudingGroepInhoud;
@@ -34,29 +60,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.ActieBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Document;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponent;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaam;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.SyncParameters;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
@@ -74,19 +77,14 @@ public final class PersoonMapper {
 
     /**
      * Maakt een nieuw PersoonMapper object.
-     *
-     * @param repositoryDynamischeStamtabel
-     *            de repository voor het bevragen van stamtabellen
-     * @param synchronisatieParameters
-     *            de synchronisatie parameters
-     * @param mapperOnderzoek
-     *            de mapper voor onderzoeken
+     * @param repositoryDynamischeStamtabel de repository voor het bevragen van stamtabellen
+     * @param synchronisatieParameters de synchronisatie parameters
+     * @param mapperOnderzoek de mapper voor onderzoeken
      */
     public PersoonMapper(
-        final DynamischeStamtabelRepository repositoryDynamischeStamtabel,
-        final SyncParameters synchronisatieParameters,
-        final OnderzoekMapper mapperOnderzoek)
-    {
+            final DynamischeStamtabelRepository repositoryDynamischeStamtabel,
+            final SyncParameters synchronisatieParameters,
+            final OnderzoekMapper mapperOnderzoek) {
         dynamischeStamtabelRepository = repositoryDynamischeStamtabel;
         syncParameters = synchronisatieParameters;
         onderzoekMapper = mapperOnderzoek;
@@ -94,23 +92,18 @@ public final class PersoonMapper {
 
     /**
      * Mapped de BRP persoonslijst op de persoon entiteit.
-     *
-     * @param brpPersoonslijst
-     *            De persoonslijst uit het migratiemodel.
-     * @param persoon
-     *            de persoon entiteit waarop de gegevens uit de BRP persoonslijst moeten worden gemapped.
-     * @param lo3Bericht
-     *            het bericht waaruit de persoonslijst is gekomen
+     * @param brpPersoonslijst De persoonslijst uit het migratiemodel.
+     * @param persoon de persoon entiteit waarop de gegevens uit de BRP persoonslijst moeten worden gemapped.
+     * @param lo3Bericht het bericht waaruit de persoonslijst is gekomen
      */
     public void mapVanMigratie(final BrpPersoonslijst brpPersoonslijst, final Persoon persoon, final Lo3Bericht lo3Bericht) {
-        brpActieFactory =
-                new PersoonMapper.BRPActieFactoryImpl(maakAdministratieveHandeling(), lo3Bericht, dynamischeStamtabelRepository, onderzoekMapper);
+        brpActieFactory = new PersoonMapper.BRPActieFactoryImpl(maakAdministratieveHandeling(), lo3Bericht, dynamischeStamtabelRepository, onderzoekMapper);
 
         persoon.setSoortPersoon(SoortPersoon.INGESCHREVENE);
-        persoon.setAdministratienummer(brpPersoonslijst.getActueelAdministratienummer());
 
         mapPersoonGroepen(brpPersoonslijst, persoon);
         mapNationaliteitGroepen(brpPersoonslijst, persoon);
+        mapBuitenlandsPersoonsnummerGroepen(brpPersoonslijst, persoon);
         mapGeslachtsnaamcomponentGroepen(brpPersoonslijst, persoon);
         mapIndicatieGroepen(brpPersoonslijst, persoon);
         mapReisdocumentGroepen(brpPersoonslijst, persoon);
@@ -129,10 +122,9 @@ public final class PersoonMapper {
     }
 
     private void mapRelatieGroepen(
-        final BrpPersoonslijst brpPersoonslijst,
-        final Persoon persoon,
-        final Map<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie)
-    {
+            final BrpPersoonslijst brpPersoonslijst,
+            final Persoon persoon,
+            final Map<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie) {
         final List<BrpRelatie> brpRelaties = brpPersoonslijst.getRelaties();
         for (final BrpRelatie brpRelatie : brpRelaties) {
             final Relatie relatie = new Relatie(SoortRelatie.parseCode(brpRelatie.getSoortRelatieCode().getWaarde()));
@@ -144,9 +136,8 @@ public final class PersoonMapper {
     private void mapVoornaamGroepen(final BrpPersoonslijst brpPersoonslijst, final Persoon persoon) {
         final List<BrpStapel<BrpVoornaamInhoud>> voornaamStapels = brpPersoonslijst.getVoornaamStapels();
         for (final BrpStapel<BrpVoornaamInhoud> brpStapel : voornaamStapels) {
-            final PersoonVoornaam persoonVoornaam =
-                    new PersoonVoornaam(persoon, BrpInteger.unwrap(brpStapel.getLaatsteElement().getInhoud().getVolgnummer()));
-            new PersoonVoornaamMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper).mapVanMigratie(brpStapel, persoonVoornaam);
+            final PersoonVoornaam persoonVoornaam = new PersoonVoornaam(persoon, BrpInteger.unwrap(brpStapel.getLaatsteElement().getInhoud().getVolgnummer()));
+            new PersoonVoornaamMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper).mapVanMigratie(brpStapel, persoonVoornaam, null);
             persoon.addPersoonVoornaam(persoonVoornaam);
         }
     }
@@ -155,17 +146,20 @@ public final class PersoonMapper {
         final List<BrpStapel<BrpVerificatieInhoud>> verificatieStapels = brpPersoonslijst.getVerificatieStapels();
         for (final BrpStapel<BrpVerificatieInhoud> brpStapel : verificatieStapels) {
             final Partij partij = dynamischeStamtabelRepository.getPartijByCode(brpStapel.getLaatsteElement().getInhoud().getPartij().getWaarde());
-            final PersoonVerificatie persoonVerificatie = new PersoonVerificatie(persoon, partij);
-            new PersoonVerificatieMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper).mapVanMigratie(brpStapel, persoonVerificatie);
+            final PersoonVerificatie persoonVerificatie =
+                    new PersoonVerificatie(persoon, partij, brpStapel.getLaatsteElement().getInhoud().getSoort().getWaarde());
+            new PersoonVerificatieMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper).mapVanMigratie(brpStapel, persoonVerificatie, null);
             persoon.addPersoonVerificatie(persoonVerificatie);
         }
     }
 
     private void mapAdresGroepen(final BrpPersoonslijst brpPersoonslijst, final Persoon persoon) {
         final BrpStapel<BrpAdresInhoud> adresStapel = brpPersoonslijst.getAdresStapel();
-        final PersoonAdres persoonAdres = new PersoonAdres(persoon);
-        new AdresMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper).mapVanMigratie(adresStapel, persoonAdres);
-        persoon.addPersoonAdres(persoonAdres);
+        if (adresStapel != null) {
+            final PersoonAdres persoonAdres = new PersoonAdres(persoon);
+            new AdresMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper).mapVanMigratie(adresStapel, persoonAdres, null);
+            persoon.addPersoonAdres(persoonAdres);
+        }
     }
 
     private void mapReisdocumentGroepen(final BrpPersoonslijst brpPersoonslijst, final Persoon persoon) {
@@ -173,10 +167,9 @@ public final class PersoonMapper {
         for (final BrpStapel<BrpReisdocumentInhoud> stapel : reisdocumentStapels) {
             final PersoonReisdocumentMapper mapper = new PersoonReisdocumentMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
             final PersoonReisdocument persoonReisdocument =
-                    new PersoonReisdocument(
-                        persoon,
-                        mapper.getStamtabelMapping().findSoortNederlandsReisdocumentByCode(stapel.getLaatsteElement().getInhoud().getSoort()));
-            mapper.mapVanMigratie(stapel, persoonReisdocument);
+                    new PersoonReisdocument(persoon, mapper.getStamtabelMapping().findSoortNederlandsReisdocumentByCode(
+                            stapel.getLaatsteElement().getInhoud().getSoort()));
+            mapper.mapVanMigratie(stapel, persoonReisdocument, null);
             persoon.addPersoonReisdocument(persoonReisdocument);
         }
     }
@@ -190,13 +183,14 @@ public final class PersoonMapper {
         mapIndicatieGroep(persoon, brpPersoonslijst.getVerstrekkingsbeperkingIndicatieStapel());
         mapIndicatieGroep(persoon, brpPersoonslijst.getVastgesteldNietNederlanderIndicatieStapel());
         mapIndicatieGroep(persoon, brpPersoonslijst.getBijzondereVerblijfsrechtelijkePositieIndicatieStapel());
+        mapIndicatieGroep(persoon, brpPersoonslijst.getOnverwerktDocumentAanwezigIndicatieStapel());
     }
 
     private <T extends AbstractBrpIndicatieGroepInhoud> void mapIndicatieGroep(final Persoon persoon, final BrpStapel<T> stapel) {
         if (stapel != null) {
             final PersoonIndicatie persoonIndicatie =
                     new PersoonIndicatie(persoon, PersoonIndicatieMapper.mapBrpClassOpIndicatie(stapel.getLaatsteElement().getInhoud().getClass()));
-            new PersoonIndicatieMapper<T>(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper).mapVanMigratie(stapel, persoonIndicatie);
+            new PersoonIndicatieMapper<T>(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper).mapVanMigratie(stapel, persoonIndicatie, null);
             persoon.addPersoonIndicatie(persoonIndicatie);
         }
     }
@@ -205,10 +199,11 @@ public final class PersoonMapper {
         final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> stapels = brpPersoonslijst.getGeslachtsnaamcomponentStapels();
         int volgnummer = 1;
         for (final BrpStapel<BrpGeslachtsnaamcomponentInhoud> stapel : stapels) {
-            final PersoonGeslachtsnaamcomponent persoonGeslachtsnaamcomponent = new PersoonGeslachtsnaamcomponent(persoon, volgnummer++);
+            final PersoonGeslachtsnaamcomponent persoonGeslachtsnaamcomponent = new PersoonGeslachtsnaamcomponent(persoon, volgnummer);
+            volgnummer++;
             final PersoonGeslachtsnaamcomponentMapper persoonGeslachtsnaamcomponentMapper;
             persoonGeslachtsnaamcomponentMapper = new PersoonGeslachtsnaamcomponentMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-            persoonGeslachtsnaamcomponentMapper.mapVanMigratie(stapel, persoonGeslachtsnaamcomponent);
+            persoonGeslachtsnaamcomponentMapper.mapVanMigratie(stapel, persoonGeslachtsnaamcomponent, null);
             persoon.addPersoonGeslachtsnaamcomponent(persoonGeslachtsnaamcomponent);
         }
     }
@@ -218,7 +213,7 @@ public final class PersoonMapper {
         final IstRelatieMapper istRelatieMapper = new IstRelatieMapper(dynamischeStamtabelRepository, administratieveHandeling);
         final IstHuwelijkOfGpMapper istHuwelijkOfGpMapper = new IstHuwelijkOfGpMapper(dynamischeStamtabelRepository, administratieveHandeling);
         final IstGezagsverhoudingMapper istGezagsverhoudingMapper = new IstGezagsverhoudingMapper(dynamischeStamtabelRepository, administratieveHandeling);
-        final Map<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie = new HashMap<>();
+        final EnumMap<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie = new EnumMap<>(Lo3CategorieEnum.class);
 
         // Ouder 1
         final BrpStapel<BrpIstRelatieGroepInhoud> ouder1Stapel = brpPersoonslijst.getIstOuder1Stapel();
@@ -258,59 +253,70 @@ public final class PersoonMapper {
         for (final BrpStapel<BrpNationaliteitInhoud> stapel : stapels) {
             final NationaliteitMapper mapper = new NationaliteitMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
             final PersoonNationaliteit persoonNationaliteit =
-                    new PersoonNationaliteit(
-                        persoon,
-                        mapper.getStamtabelMapping().findNationaliteitByCode(stapel.getLaatsteElement().getInhoud().getNationaliteitCode()));
+                    new PersoonNationaliteit(persoon, mapper.getStamtabelMapping().findNationaliteitByCode(
+                            stapel.getLaatsteElement().getInhoud().getNationaliteitCode()));
 
-            mapper.mapVanMigratie(stapel, persoonNationaliteit);
+            mapper.mapVanMigratie(stapel, persoonNationaliteit, null);
             persoon.addPersoonNationaliteit(persoonNationaliteit);
+        }
+    }
+
+    private void mapBuitenlandsPersoonsnummerGroepen(final BrpPersoonslijst brpPersoonslijst, final Persoon persoon) {
+        final List<BrpStapel<BrpBuitenlandsPersoonsnummerInhoud>> stapels = brpPersoonslijst.getBuitenlandsPersoonsnummerStapels();
+        for (final BrpStapel<BrpBuitenlandsPersoonsnummerInhoud> stapel : stapels) {
+            final BuitenlandsPersoonsnummerMapper mapper = new BuitenlandsPersoonsnummerMapper(dynamischeStamtabelRepository, brpActieFactory,
+                    onderzoekMapper);
+            final BrpBuitenlandsPersoonsnummerInhoud inhoud = stapel.getLaatsteElement().getInhoud();
+            final PersoonBuitenlandsPersoonsnummer persoonBuitenlandsPersoonsnummer =
+                    new PersoonBuitenlandsPersoonsnummer(persoon, mapper.getStamtabelMapping().findAutoriteitVanAfgifteBuitenlandsPersoonsnummer(
+                            inhoud.getAutoriteitVanAfgifte()), inhoud.getNummer().getWaarde());
+
+            mapper.mapVanMigratie(stapel, persoonBuitenlandsPersoonsnummer, null);
+            persoon.addPersoonBuitenlandsPersoonsnummer(persoonBuitenlandsPersoonsnummer);
         }
     }
 
     private void mapPersoonGroepen(final BrpPersoonslijst brpPersoonslijst, final Persoon persoon) {
         final PersoonAfgeleidAdministratiefMapper persoonAfgeleidAdministratiefMapper =
                 new PersoonAfgeleidAdministratiefMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonAfgeleidAdministratiefMapper.mapVanMigratie(brpPersoonslijst.getPersoonAfgeleidAdministratiefStapel(), persoon);
+        persoonAfgeleidAdministratiefMapper.mapVanMigratie(brpPersoonslijst.getPersoonAfgeleidAdministratiefStapel(), persoon, null);
         final PersoonInschrijvingMapper persoonInschrijvingMapper =
                 new PersoonInschrijvingMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonInschrijvingMapper.mapVanMigratie(brpPersoonslijst.getInschrijvingStapel(), persoon);
+        persoonInschrijvingMapper.mapVanMigratie(brpPersoonslijst.getInschrijvingStapel(), persoon, null);
 
         final PersoonNummerverwijzingMapper persoonNummerverwijzingMapper =
                 new PersoonNummerverwijzingMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonNummerverwijzingMapper.mapVanMigratie(brpPersoonslijst.getNummerverwijzingStapel(), persoon);
+        persoonNummerverwijzingMapper.mapVanMigratie(brpPersoonslijst.getNummerverwijzingStapel(), persoon, null);
         final PersoonSamengesteldeNaamMapper persoonSamengesteldeNaamMapper =
                 new PersoonSamengesteldeNaamMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonSamengesteldeNaamMapper.mapVanMigratie(brpPersoonslijst.getSamengesteldeNaamStapel(), persoon);
+        persoonSamengesteldeNaamMapper.mapVanMigratie(brpPersoonslijst.getSamengesteldeNaamStapel(), persoon, null);
         final PersoonGeslachtsaanduidingMapper persoonGeslachtsaanduidingMapper =
                 new PersoonGeslachtsaanduidingMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonGeslachtsaanduidingMapper.mapVanMigratie(brpPersoonslijst.getGeslachtsaanduidingStapel(), persoon);
-        final PersoonNaamgebruikMapper persoonNaamgebruikMapper =
-                new PersoonNaamgebruikMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonNaamgebruikMapper.mapVanMigratie(brpPersoonslijst.getNaamgebruikStapel(), persoon);
+        persoonGeslachtsaanduidingMapper.mapVanMigratie(brpPersoonslijst.getGeslachtsaanduidingStapel(), persoon, null);
+        final PersoonNaamgebruikMapper persoonNaamgebruikMapper = new PersoonNaamgebruikMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
+        persoonNaamgebruikMapper.mapVanMigratie(brpPersoonslijst.getNaamgebruikStapel(), persoon, null);
         final PersoonGeboorteMapper persoonGeboorteMapper = new PersoonGeboorteMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonGeboorteMapper.mapVanMigratie(brpPersoonslijst.getGeboorteStapel(), persoon);
-        final PersoonOverlijdenMapper persoonOverlijdenMapper =
-                new PersoonOverlijdenMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonOverlijdenMapper.mapVanMigratie(brpPersoonslijst.getOverlijdenStapel(), persoon);
+        persoonGeboorteMapper.mapVanMigratie(brpPersoonslijst.getGeboorteStapel(), persoon, null);
+        final PersoonOverlijdenMapper persoonOverlijdenMapper = new PersoonOverlijdenMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
+        persoonOverlijdenMapper.mapVanMigratie(brpPersoonslijst.getOverlijdenStapel(), persoon, null);
         final PersoonIDMapper persoonIDMapper = new PersoonIDMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonIDMapper.mapVanMigratie(brpPersoonslijst.getIdentificatienummerStapel(), persoon);
-        final PersoonBijhoudingMapper persoonBijhoudingMapper =
-                new PersoonBijhoudingMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonBijhoudingMapper.mapVanMigratie(brpPersoonslijst.getBijhoudingStapel(), persoon);
+        persoonIDMapper.mapVanMigratie(brpPersoonslijst.getIdentificatienummerStapel(), persoon, null);
+        final PersoonBijhoudingMapper persoonBijhoudingMapper = new PersoonBijhoudingMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
+        persoonBijhoudingMapper.mapVanMigratie(brpPersoonslijst.getBijhoudingStapel(), persoon, null);
         final PersoonUitsluitingKiesrechtMapper persoonUitsluitingKiesrechtMapper =
                 new PersoonUitsluitingKiesrechtMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonUitsluitingKiesrechtMapper.mapVanMigratie(brpPersoonslijst.getUitsluitingKiesrechtStapel(), persoon);
+        persoonUitsluitingKiesrechtMapper.mapVanMigratie(brpPersoonslijst.getUitsluitingKiesrechtStapel(), persoon, null);
         final PersoonDeelnameEuVerkiezingenMapper persoonDeelnameEuVerkiezingenMapper =
                 new PersoonDeelnameEuVerkiezingenMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonDeelnameEuVerkiezingenMapper.mapVanMigratie(brpPersoonslijst.getDeelnameEuVerkiezingenStapel(), persoon);
+        persoonDeelnameEuVerkiezingenMapper.mapVanMigratie(brpPersoonslijst.getDeelnameEuVerkiezingenStapel(), persoon, null);
         final PersoonMigratieMapper persoonMigratieMapper = new PersoonMigratieMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonMigratieMapper.mapVanMigratie(brpPersoonslijst.getMigratieStapel(), persoon);
+        persoonMigratieMapper.mapVanMigratie(brpPersoonslijst.getMigratieStapel(), persoon, null);
         final PersoonVerblijfsrechtHistorieMapper persoonVerblijfsrechtHistorieMapper =
                 new PersoonVerblijfsrechtHistorieMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonVerblijfsrechtHistorieMapper.mapVanMigratie(brpPersoonslijst.getVerblijfsrechtStapel(), persoon);
+        persoonVerblijfsrechtHistorieMapper.mapVanMigratie(brpPersoonslijst.getVerblijfsrechtStapel(), persoon, null);
         final PersoonPersoonskaartMapper persoonPersoonskaartMapper =
                 new PersoonPersoonskaartMapper(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
-        persoonPersoonskaartMapper.mapVanMigratie(brpPersoonslijst.getPersoonskaartStapel(), persoon);
+        persoonPersoonskaartMapper.mapVanMigratie(brpPersoonslijst.getPersoonskaartStapel(), persoon, null);
     }
 
     private AdministratieveHandeling maakAdministratieveHandeling() {
@@ -322,10 +328,7 @@ public final class PersoonMapper {
         }
 
         final Partij partij = dynamischeStamtabelRepository.getPartijByCode(BrpPartijCode.MIGRATIEVOORZIENING.getWaarde());
-        final AdministratieveHandeling result = new AdministratieveHandeling(partij, soortAdministratieveHandeling);
-        result.setDatumTijdRegistratie(new Timestamp(System.currentTimeMillis()));
-
-        return result;
+        return new AdministratieveHandeling(partij, soortAdministratieveHandeling, new Timestamp(System.currentTimeMillis()));
     }
 
     /**
@@ -341,22 +344,16 @@ public final class PersoonMapper {
 
         /**
          * Constructor implementatie van BrpActieFactory.
-         *
-         * @param administratievehandeling
-         *            De administatieve handeling.
-         * @param berichtLo3
-         *            het lo3bericht waaraan de lo3voorkomens worden toegevoegd
-         * @param repositoryDynamischeStamtabel
-         *            De dynamische stamtabel repository.
-         * @param mapperOnderzoek
-         *            de mapper voor onderzoeken
+         * @param administratievehandeling De administatieve handeling.
+         * @param berichtLo3 het lo3bericht waaraan de lo3voorkomens worden toegevoegd
+         * @param repositoryDynamischeStamtabel De dynamische stamtabel repository.
+         * @param mapperOnderzoek de mapper voor onderzoeken
          */
         public BRPActieFactoryImpl(
-            final AdministratieveHandeling administratievehandeling,
-            final Lo3Bericht berichtLo3,
-            final DynamischeStamtabelRepository repositoryDynamischeStamtabel,
-            final OnderzoekMapper mapperOnderzoek)
-        {
+                final AdministratieveHandeling administratievehandeling,
+                final Lo3Bericht berichtLo3,
+                final DynamischeStamtabelRepository repositoryDynamischeStamtabel,
+                final OnderzoekMapper mapperOnderzoek) {
             administratieveHandeling = administratievehandeling;
             lo3Bericht = berichtLo3;
             dynamischeStamtabelRepository = repositoryDynamischeStamtabel;
@@ -385,7 +382,7 @@ public final class PersoonMapper {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory#
          * getAdministratieveHandeling ()
          */
@@ -396,7 +393,7 @@ public final class PersoonMapper {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory#getLo3Bericht()
          */
         @Override
@@ -412,9 +409,7 @@ public final class PersoonMapper {
 
         /**
          * Mapped een BrpActie naar een BRPActie (entity).
-         *
-         * @param brpActie
-         *            de brpActie die gemapped moet worden, mag null zijn
+         * @param brpActie de brpActie die gemapped moet worden, mag null zijn
          * @return de BrpActie als BRPActie of null als BrpActie null is
          */
         private BRPActie mapBrpActieToBRPActie(final BrpActie brpActie) {
@@ -428,10 +423,10 @@ public final class PersoonMapper {
 
             final BRPActie result =
                     new BRPActie(
-                        mapSoortActie(brpActie.getSoortActieCode()),
-                        administratieveHandeling,
-                        partij,
-                        MapperUtil.mapBrpDatumTijdToTimestamp(brpActie.getDatumTijdRegistratie()));
+                            mapSoortActie(brpActie.getSoortActieCode()),
+                            administratieveHandeling,
+                            partij,
+                            MapperUtil.mapBrpDatumTijdToTimestamp(brpActie.getDatumTijdRegistratie()));
 
             result.setDatumOntlening(MapperUtil.mapBrpDatumToInteger(brpActie.getDatumOntlening()));
 
@@ -456,7 +451,7 @@ public final class PersoonMapper {
             if (BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE.equals(soortActieCode)) {
                 result = SoortActie.CONVERSIE_GBA_MATERIELE_HISTORIE;
             } else if (BrpSoortActieCode.CONVERSIE_GBA_LEEG_CATEGORIE_ONJUIST.equals(soortActieCode)) {
-                result = SoortActie.CONVERSIE_GBA_LEGE_ONJUIST_CATEGORIE;
+                result = SoortActie.CONVERSIE_GBA_LEGE_ONJUISTE_CATEGORIE;
             } else {
                 result = SoortActie.CONVERSIE_GBA;
             }
@@ -468,8 +463,7 @@ public final class PersoonMapper {
             if (herkomst == null || bericht == null) {
                 return null;
             }
-            final Lo3Voorkomen lo3Voorkomen =
-                    bericht.addVoorkomen(herkomst.getCategorie().toString(), herkomst.getStapel(), herkomst.getVoorkomen(), null);
+            final Lo3Voorkomen lo3Voorkomen = bericht.addVoorkomen(herkomst.getCategorie().toString(), herkomst.getStapel(), herkomst.getVoorkomen(), null);
             lo3Voorkomen.setConversieSortering(herkomst.getConversieSortering());
             return lo3Voorkomen;
         }
@@ -482,10 +476,12 @@ public final class PersoonMapper {
                 final ActieBron actieBron = new ActieBron(result);
 
                 if (brpActieBron.getDocumentStapel() != null) {
-                    final DocumentMapper mapper = new DocumentMapper(dynamischeStamtabelRepository, this, onderzoekMapper);
+                    final DocumentMapper mapper = new DocumentMapper(dynamischeStamtabelRepository, onderzoekMapper);
                     final BrpDocumentInhoud inhoud = brpActieBron.getDocumentStapel().getLaatsteElement().getInhoud();
-                    final Document document = new Document(mapper.getStamtabelMapping().findSoortDocumentByCode(inhoud.getSoortDocumentCode()));
-                    mapper.mapVanMigratie(brpActieBron.getDocumentStapel(), document);
+                    final Partij partij = mapper.getStamtabelMapping().findPartijByCode(inhoud.getPartijCode());
+                    final SoortDocument soortDocument = mapper.getStamtabelMapping().findSoortDocumentByCode(inhoud.getSoortDocumentCode());
+                    final Document document = new Document(soortDocument, partij);
+                    mapper.mapVanMigratie(brpActieBron.getDocumentStapel(), document, null);
                     actieBron.setDocument(document);
                 }
 

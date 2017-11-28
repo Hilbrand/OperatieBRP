@@ -28,10 +28,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class AfnemersIndicatieConversieTest extends AbstractComponentTest {
-    private static final Long ADMINISTRATIENUMMER = 123456789L;
+    private static final String ADMINISTRATIENUMMER = "123456789";
     private static final long DATUMTIJD_REGISTRATIE = 19920101145000L;
-    private static final int DATUM_EINDE_GELDIGHEID = 19930101;
-    private static final int PARTIJ_CODE = 800007;
+    private static final int DATUM_EINDE_GELDIGHEID = 1993_01_01;
+    private static final String PARTIJ_CODE = "800007";
 
     @Inject
     private AfnemersIndicatieConversie afnemersIndicatieConversie;
@@ -50,7 +50,7 @@ public class AfnemersIndicatieConversieTest extends AbstractComponentTest {
         Assert.assertNotNull(brpAfnemerIndicatiesMetAfgeleideGegevens);
 
         Assert.assertNull(
-            brpAfnemerIndicatiesMetAfgeleideGegevens.getAfnemersindicaties().get(0).getAfnemersindicatieStapel().get(0).getInhoud().getDatumEindeVolgen());
+                brpAfnemerIndicatiesMetAfgeleideGegevens.getAfnemersindicaties().get(0).getAfnemersindicatieStapel().get(0).getInhoud().getDatumEindeVolgen());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class AfnemersIndicatieConversieTest extends AbstractComponentTest {
         Assert.assertNotNull(brpAfnemerIndicatiesMetAfgeleideGegevens);
 
         Assert.assertNull(
-            brpAfnemerIndicatiesMetAfgeleideGegevens.getAfnemersindicaties().get(0).getAfnemersindicatieStapel().get(0).getInhoud().getDatumEindeVolgen());
+                brpAfnemerIndicatiesMetAfgeleideGegevens.getAfnemersindicaties().get(0).getAfnemersindicatieStapel().get(0).getInhoud().getDatumEindeVolgen());
     }
 
     private BrpAfnemersindicaties maakBrpAfnemersindicaties(final BrpDatum datumEindeGeldigheid) {
@@ -70,22 +70,22 @@ public class AfnemersIndicatieConversieTest extends AbstractComponentTest {
         final BrpHistorie historie = new BrpHistorie(null, datumEindeGeldigheid, BrpDatumTijd.fromDatumTijd(DATUMTIJD_REGISTRATIE, null), null, null);
         final BrpActie actieInhoud =
                 new BrpActie(
-                    1L,
-                    BrpSoortActieCode.CONVERSIE_GBA,
-                    BrpPartijCode.MIGRATIEVOORZIENING,
-                    BrpDatumTijd.fromDatumTijd(DATUMTIJD_REGISTRATIE, null),
-                    null,
-                    null,
-                    1,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0));
+                        1L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        BrpPartijCode.MIGRATIEVOORZIENING,
+                        BrpDatumTijd.fromDatumTijd(DATUMTIJD_REGISTRATIE, null),
+                        null,
+                        null,
+                        1,
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0));
 
         final BrpGroep<BrpAfnemersindicatieInhoud> categorie = new BrpGroep<>(inhoud, historie, actieInhoud, null, null);
 
         final BrpStapel<BrpAfnemersindicatieInhoud> stapel = new BrpStapel<>(Collections.singletonList(categorie));
 
         return new BrpAfnemersindicaties(
-            ADMINISTRATIENUMMER,
-            Collections.singletonList(new BrpAfnemersindicatie(new BrpPartijCode(PARTIJ_CODE), stapel, null)));
+                ADMINISTRATIENUMMER,
+                Collections.singletonList(new BrpAfnemersindicatie(new BrpPartijCode(PARTIJ_CODE), stapel, null)));
     }
 
 }

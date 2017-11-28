@@ -8,15 +8,11 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 /**
  * Deze class is een abtract basis class voor de IST gegevens.
- * 
  */
 public abstract class AbstractBrpIstGroepInhoud extends AbstractBrpGroepInhoud implements BrpIstGroepInhoud {
 
-    /**
-     * Geef de leeg.
-     *
-     * @return Er wordt een IllegalStateException gegooid, omdat er geen historie conversie plaats vindt op een
-     *         IST-stapel.
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public final boolean isLeeg() {

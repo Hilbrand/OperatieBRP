@@ -9,36 +9,60 @@ package nl.bzk.migratiebrp.conversie.model.lo3.codes;
 import java.util.HashMap;
 import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AangifteAdreshouding;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Deze enum type representeert de LO3 waarde voor omschrijving van de aangifte adreshouding.
  */
 public enum Lo3AangifteAdreshoudingEnum {
 
-    /** ambtshalve. */
+    /**
+     * ambtshalve.
+     */
     AMBSTHALVE("A", "Ambtshalve"),
-    /** ministrieel besluit. */
+    /**
+     * ministrieel besluit.
+     */
     MINISTRIEEL_BESLUIT("B", "Ministerieel besluit"),
-    /** gezaghouder. */
+    /**
+     * gezaghouder.
+     */
     GEZAGHOUDER("G", "Gezaghouder"),
-    /** hoofd instelling. */
+    /**
+     * hoofd instelling.
+     */
     HOOFD_INSTELLING("H", "Hoofd instelling"),
-    /** ingeschrevene. */
+    /**
+     * ingeschrevene.
+     */
     INGESCHREVENE("I", "Ingeschrevene"),
-    /** meerderjarig inwonend kind voor ouder. */
+    /**
+     * meerderjarig inwonend kind voor ouder.
+     */
     KIND("K", "Kind"),
-    /** meerderjarige gemachtigde. */
+    /**
+     * meerderjarige gemachtigde.
+     */
     GEMACHTIGDE("M", "Meerderjarige gemachtigde"),
-    /** inwonende ouder voor meerderjarig kind. */
+    /**
+     * inwonende ouder voor meerderjarig kind.
+     */
     OUDER("O", "Ouder"),
-    /** echtgenoot/geregistreerd partner. */
+    /**
+     * echtgenoot/geregistreerd partner.
+     */
     PARTNER("P", "Partner"),
-    /** technische wijziging i.v.m. BAG. */
+    /**
+     * technische wijziging i.v.m. BAG.
+     */
     TECHNISCHE_WIJZIGING("T", "Technische wijziging"),
-    /** infrastructurele wijziging. */
+    /**
+     * infrastructurele wijziging.
+     */
     INFRASTRUCTURELE_WIJZIGING("W", "Infrastructurele wijziging"),
-    /** Standaardwaarde indien onbekend. */
+    /**
+     * Standaardwaarde indien onbekend.
+     */
     ONBEKEND(".", "Onbekend");
 
     /* ************************************************************************************************************* */
@@ -47,14 +71,13 @@ public enum Lo3AangifteAdreshoudingEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private static final Map<String, Lo3AangifteAdreshoudingEnum> CODE_MAP = new HashMap<String, Lo3AangifteAdreshoudingEnum>() {
-        private static final long serialVersionUID = 1L;
-        {
-            for (final Lo3AangifteAdreshoudingEnum value : Lo3AangifteAdreshoudingEnum.values()) {
-                put(value.getCode(), value);
-            }
+    private static final Map<String, Lo3AangifteAdreshoudingEnum> CODE_MAP = new HashMap<>();
+
+    static {
+        for (final Lo3AangifteAdreshoudingEnum value : Lo3AangifteAdreshoudingEnum.values()) {
+            CODE_MAP.put(value.getCode(), value);
         }
-    };
+    }
 
     private final String code;
     private final String label;
@@ -65,7 +88,7 @@ public enum Lo3AangifteAdreshoudingEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private Lo3AangifteAdreshoudingEnum(final String code, final String label) {
+    Lo3AangifteAdreshoudingEnum(final String code, final String label) {
         this.code = code;
         this.label = label;
     }
@@ -78,9 +101,7 @@ public enum Lo3AangifteAdreshoudingEnum {
 
     /**
      * Bestaat de gegeven code in de enumeratie.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return true, als de code bestaat, anders false
      */
     public static boolean containsCode(final String code) {
@@ -89,9 +110,7 @@ public enum Lo3AangifteAdreshoudingEnum {
 
     /**
      * Geef de enumeratie waarde voor de gegeven code.
-     * 
-     * @param code
-     *            code
+     * @param code code
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3AangifteAdreshoudingEnum getByCode(final String code) {
@@ -100,9 +119,7 @@ public enum Lo3AangifteAdreshoudingEnum {
 
     /**
      * Geef de enumeratie waarde voor (de code van) het gegeven element.
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3AangifteAdreshoudingEnum getByElement(final Lo3AangifteAdreshouding element) {
@@ -117,7 +134,6 @@ public enum Lo3AangifteAdreshoudingEnum {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {
@@ -126,7 +142,6 @@ public enum Lo3AangifteAdreshoudingEnum {
 
     /**
      * Geef de enumeratie als element.
-     * 
      * @return element
      */
     public Lo3AangifteAdreshouding asElement() {
@@ -135,18 +150,15 @@ public enum Lo3AangifteAdreshoudingEnum {
 
     /**
      * Is de enumeratie waarde gelijk aan (de code van) het element?
-     * 
-     * @param element
-     *            element
+     * @param element element
      * @return true, als de waarde gelijk is, anders false
      */
     public boolean equalsElement(final Lo3AangifteAdreshouding element) {
-        return Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
+        return Lo3Validatie.isElementGevuld(element) && code.equals(element.getWaarde());
     }
 
     /**
      * Geef de waarde van label.
-     *
      * @return the label
      */
     public String getLabel() {

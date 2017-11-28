@@ -22,11 +22,8 @@ public final class JbpmStartTaakCommand implements Command<Void> {
 
     /**
      * Default constructor.
-     *
-     * @param taakId
-     *            Het taak Id van het foutafhandelingsproces.
-     * @param actorId
-     *            Het Id van de actor.
+     * @param taakId Het taak Id van het foutafhandelingsproces.
+     * @param actorId Het Id van de actor.
      */
     public JbpmStartTaakCommand(final Long taakId, final String actorId) {
         this.taakId = taakId;

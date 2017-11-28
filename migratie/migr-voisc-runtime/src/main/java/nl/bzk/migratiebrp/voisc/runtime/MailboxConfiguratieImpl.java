@@ -9,17 +9,14 @@ package nl.bzk.migratiebrp.voisc.runtime;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import nl.bzk.migratiebrp.bericht.model.sync.register.Gemeente;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegister;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
 import nl.bzk.migratiebrp.bericht.model.sync.register.Stelsel;
 import nl.bzk.migratiebrp.register.client.RegisterService;
 import nl.bzk.migratiebrp.voisc.database.entities.Mailbox;
 import nl.bzk.migratiebrp.voisc.database.repository.MailboxRepository;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,17 +27,28 @@ public final class MailboxConfiguratieImpl implements MailboxConfiguratie {
 
     private static final String NOT = "-";
 
-    @Inject
-    private RegisterService<GemeenteRegister> gemeenteService;
-    @Inject
+    private RegisterService<PartijRegister> partijService;
     private MailboxRepository mailboxRepository;
-    @Inject
-    @Named("teBedienenMailboxen")
     private String teBedienenMailboxen;
 
     /**
+     * Constructor.
+     * @param partijService partij service
+     * @param mailboxRepository mailbox repository
+     * @param teBedienenMailboxen te bedienen mailboxen
+     */
+    @Inject
+    public MailboxConfiguratieImpl(final RegisterService<PartijRegister> partijService,
+                                   final MailboxRepository mailboxRepository,
+                                   @Named("teBedienenMailboxen") final String teBedienenMailboxen) {
+        this.partijService = partijService;
+        this.mailboxRepository = mailboxRepository;
+        this.teBedienenMailboxen = teBedienenMailboxen;
+    }
+
+
+    /**
      * Bepaal mailboxen obv configuratie.
-     * 
      * @return set aan mailboxen
      */
     @Override
@@ -49,35 +57,23 @@ public final class MailboxConfiguratieImpl implements MailboxConfiguratie {
         final Set<Mailbox> mailboxen = new TreeSet<>();
 
         bepaalMailboxenObvTeBedienenMailboxen(mailboxen);
-        filterMailBoxenOpvGemeenteRegister(mailboxen);
+        filterMailboxenOpvRegister(mailboxen);
 
         return mailboxen;
     }
 
     private void bepaalMailboxenObvTeBedienenMailboxen(final Set<Mailbox> mailboxen) {
         final String[] mailboxNummers =
-                teBedienenMailboxen == null || teBedienenMailboxen.trim().isEmpty() ? new String[] {} : teBedienenMailboxen.trim().split(
-                    ",");
+                teBedienenMailboxen == null || teBedienenMailboxen.trim().isEmpty() ? new String[]{} : teBedienenMailboxen.trim().split(",");
         for (int i = 0; i < mailboxNummers.length; i++) {
             mailboxNummers[i] = mailboxNummers[i].trim();
         }
 
-        final boolean initieelVullen;
-        if (mailboxNummers.length == 0) {
-            // Als we geen configuratie hebben dan doen we alle mailboxen
-            initieelVullen = true;
-        } else {
-            if (mailboxNummers[0].startsWith(NOT)) {
-                // Als we een '-' hebben dan doen we alle mailboxen minus degene die geconfigureerd zijn
-                initieelVullen = true;
-            } else {
-                // Als we niet een '-' hebben dan doen we alleen de mailboxen die geconfigureerd zijn
-                initieelVullen = false;
-            }
-        }
-
-        if (initieelVullen) {
-            vulMetAlleMailboxen(mailboxen);
+        // Als we geen configuratie hebben dan doen we alle mailboxen
+        // Als we een '-' hebben dan doen we alle mailboxen minus degene die geconfigureerd zijn
+        // Als we niet een '-' hebben dan doen we alleen de mailboxen die geconfigureerd zijn
+        if (mailboxNummers.length == 0 || mailboxNummers[0].startsWith(NOT)) {
+            mailboxen.addAll(mailboxRepository.getAllMailboxen());
         }
 
         for (final String mailboxNummer : mailboxNummers) {
@@ -106,33 +102,33 @@ public final class MailboxConfiguratieImpl implements MailboxConfiguratie {
         }
     }
 
-    private void vulMetAlleMailboxen(final Set<Mailbox> mailboxen) {
-        mailboxen.addAll(mailboxRepository.getCentraleMailboxes());
-        mailboxen.addAll(mailboxRepository.getGemeenteMailboxes());
+    /**
+     * Verwijder alle partijen die zich niet in het BRP stelsel bevinden.
+     * @param ongefiltererdeMailboxen mailbox verzameling
+     */
+    private void filterMailboxenOpvRegister(final Set<Mailbox> ongefiltererdeMailboxen) {
+        ongefiltererdeMailboxen.removeIf(mailbox -> {
+            Partij registerPartij = partijService.geefRegister().zoekPartijOpPartijCode(mailbox.getPartijcode());
+            return registerPartij == null || registerPartij.getStelsel() != Stelsel.BRP;
+        });
+
     }
 
-    /**
-     * Verwijder alle gemeentes die zich niet in het BRP stelsel bevinden.
-     * 
-     * @param mailBoxen
-     *            mailbox verzameling (wordt aangepast)
-     * @param gemeenteService
-     *            gemeente service om het gemeente register op te halen
-     */
-    private void filterMailBoxenOpvGemeenteRegister(final Set<Mailbox> mailboxen) {
-        final GemeenteRegister gemeenteRegister = gemeenteService.geefRegister();
+    @Override
+    public String toonMailboxen() {
+        final Set<Mailbox> mailboxen = bepaalMailboxen();
+        final StringBuilder result = new StringBuilder();
+        result.append("Mailboxen (" + mailboxen.size() + "): ");
 
-        final Iterator<Mailbox> mailboxIterator = mailboxen.iterator();
-        while (mailboxIterator.hasNext()) {
-            final Mailbox mailbox = mailboxIterator.next();
-            if (Mailbox.INSTANTIETYPE_GEMEENTE.equals(mailbox.getInstantietype())) {
-                final Gemeente gemeente = gemeenteRegister.zoekGemeenteOpGemeenteCode(mailbox.getFormattedInstantiecode());
-
-                if (gemeente == null || gemeente.getStelsel() != Stelsel.BRP) {
-                    mailboxIterator.remove();
-                }
+        for (final Mailbox mailbox : mailboxen) {
+            if (result.length() > 0) {
+                result.append(", ");
             }
+            result.append(mailbox.getMailboxnr());
         }
+        result.append("\n");
+
+        return result.toString();
     }
 
 }

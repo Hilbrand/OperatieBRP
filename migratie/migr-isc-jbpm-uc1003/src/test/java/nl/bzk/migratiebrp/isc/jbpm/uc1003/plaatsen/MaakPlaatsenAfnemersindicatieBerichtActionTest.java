@@ -14,29 +14,21 @@ import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.AfnemersIndicatieJbpmConstants;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakPlaatsenAfnemersindicatieBerichtActionTest {
 
-    private MaakPlaatsenAfnemersindicatieBerichtAction subject;
-    private BerichtenDao berichtenDao;
+    private static final String AFNEMER = "059901";
+    private static final String BSN = "123456789";
 
-    @Before
-    public void setup() {
-        subject = new MaakPlaatsenAfnemersindicatieBerichtAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakPlaatsenAfnemersindicatieBerichtAction subject = new MaakPlaatsenAfnemersindicatieBerichtAction(berichtenDao);
 
     @Test
     public void test() {
         final Map<String, Object> parameters = new HashMap<>();
-        parameters.put(AfnemersIndicatieJbpmConstants.TOEGANGLEVERINGSAUTORISATIEID_KEY, Integer.valueOf(5555));
-        parameters.put(AfnemersIndicatieJbpmConstants.PLAATSEN_DIENSTID_KEY, Integer.valueOf(10));
-        parameters.put(AfnemersIndicatieJbpmConstants.PERSOONID_KEY, Integer.valueOf(20));
-        final Ap01Bericht ap01Bericht = PlaatsenAfnIndTestUtil.maakAp01Bericht("518010");
+        parameters.put(AfnemersIndicatieJbpmConstants.PERSOON_BSN, BSN);
+        final Ap01Bericht ap01Bericht = PlaatsenAfnIndTestUtil.maakAp01Bericht(AFNEMER);
         parameters.put("input", berichtenDao.bewaarBericht(ap01Bericht));
 
         final Map<String, Object> result = subject.execute(parameters);
@@ -46,9 +38,8 @@ public class MaakPlaatsenAfnemersindicatieBerichtActionTest {
                 (PlaatsAfnemersindicatieVerzoekBericht) berichtenDao.leesBericht((Long) result.get("plaatsenAfnIndBericht"));
 
         Assert.assertNotNull(plaatsAfnemersindicatieVerzoekBericht);
-        Assert.assertEquals(Integer.valueOf(5555), plaatsAfnemersindicatieVerzoekBericht.getToegangLeveringsautorisatieId());
-        Assert.assertEquals(Integer.valueOf(10), plaatsAfnemersindicatieVerzoekBericht.getDienstId());
-        Assert.assertEquals(Integer.valueOf(20), plaatsAfnemersindicatieVerzoekBericht.getPersoonId());
+        Assert.assertEquals(AFNEMER, plaatsAfnemersindicatieVerzoekBericht.getPartijCode());
+        Assert.assertEquals(BSN, plaatsAfnemersindicatieVerzoekBericht.getBsn());
         Assert.assertEquals(ap01Bericht.getMessageId(), plaatsAfnemersindicatieVerzoekBericht.getReferentie());
     }
 }

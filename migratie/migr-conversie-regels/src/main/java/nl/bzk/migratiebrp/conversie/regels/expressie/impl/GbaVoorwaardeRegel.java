@@ -6,9 +6,10 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl;
 
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
+
 /**
  * Interface voor gba voorwaarde regels.
- * 
  */
 public interface GbaVoorwaardeRegel {
 
@@ -18,19 +19,17 @@ public interface GbaVoorwaardeRegel {
      * @return de BRP expressie
      * @throws GbaVoorwaardeOnvertaalbaarExceptie Indien de regel niet te vertalen is
      */
-    String getBrpExpressie(String voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie;
+    Expressie getBrpExpressie(RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie;
 
     /**
-     * Geeft de volgorde aan waarin deze regel moet worden uitgevoerd. Hoe hoger hoe later. De standaard
-     * voorwaardeRegel heeft een volgorde van 999.
-     * 
+     * Geeft de volgorde aan waarin deze regel moet worden uitgevoerd. Hoe hoger hoe later. De standaard voorwaardeRegel
+     * heeft een volgorde van 999.
      * @return de volgorde
      */
     int volgorde();
 
     /**
      * Het filter om te bepalen of een voorwaarderegel door de implementatie moet worden verwerkt.
-     * 
      * @param voorwaarde de voorwaarde die verwerkt moet worden.
      * @return true indien het een geschikte implementatie is
      */

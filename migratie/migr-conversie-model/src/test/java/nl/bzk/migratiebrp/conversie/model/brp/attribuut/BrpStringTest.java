@@ -13,17 +13,16 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Test;
 
 public class BrpStringTest {
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testVerwijderOnderzoek() throws Exception {
         BrpString code = new BrpString("iets", onderzoek);
         assertNotNull(code.getOnderzoek());
-        BrpString newCode = code.verwijderOnderzoek();
+        final BrpString newCode = code.verwijderOnderzoek();
         assertNotNull(code.getOnderzoek());
         assertNull(newCode.getOnderzoek());
         code = new BrpString(null, onderzoek);
@@ -33,14 +32,14 @@ public class BrpStringTest {
 
     @Test(expected = NullPointerException.class)
     public void testCompareToNull() {
-        BrpString result = BrpString.wrap(null, onderzoek);
+        final BrpString result = BrpString.wrap(null, onderzoek);
         result.compareTo(null);
     }
 
     @Test
     public void testCompareTo() {
-        BrpString result = BrpString.wrap("1", onderzoek);
-        BrpString result2 = BrpString.wrap("1", null);
+        final BrpString result = BrpString.wrap("1", onderzoek);
+        final BrpString result2 = BrpString.wrap("1", null);
         assertEquals(0, result.compareTo(result2));
     }
 

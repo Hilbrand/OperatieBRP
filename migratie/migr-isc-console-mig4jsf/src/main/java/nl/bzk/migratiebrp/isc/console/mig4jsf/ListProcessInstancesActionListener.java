@@ -34,22 +34,16 @@ public final class ListProcessInstancesActionListener extends AbstractActionList
 
     /**
      * Constructor met expressie variabelen.
-     *
-     * @param processIdExpression
-     *            Expressie waarin het id van de proces definitie staat.
-     * @param pagerExpression
-     *            Expressie waarin de {@link PagerBean pager bean} staat.
-     * @param filterExpression
-     *            Expressie waarin een {@link Filter filter} staat.
-     * @param targetExpression
-     *            Expressie waarin het resultaat komt te staan.
+     * @param processIdExpression Expressie waarin het id van de proces definitie staat.
+     * @param pagerExpression Expressie waarin de {@link PagerBean pager bean} staat.
+     * @param filterExpression Expressie waarin een {@link Filter filter} staat.
+     * @param targetExpression Expressie waarin het resultaat komt te staan.
      */
     public ListProcessInstancesActionListener(
-        final ValueExpression processIdExpression,
-        final ValueExpression pagerExpression,
-        final ValueExpression targetExpression,
-        final ValueExpression filterExpression)
-    {
+            final ValueExpression processIdExpression,
+            final ValueExpression pagerExpression,
+            final ValueExpression targetExpression,
+            final ValueExpression filterExpression) {
         super("listProcessInstances");
         this.processIdExpression = processIdExpression;
         this.pagerExpression = pagerExpression;

@@ -20,18 +20,16 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "loadProcessInstanceForTask", description = "Read the root process instance for a task.",
         attributes = {@TldAttribute(name = "taskId", description = "The ID of the task to load the root process instance for.", required = true,
-                              deferredType = long.class),
-                      @TldAttribute(name = "target", description = "An EL expression into which the process instance should be stored.", required = true,
-                              deferredType = ProcessInstance.class) })
+                deferredType = long.class),
+                @TldAttribute(name = "target", description = "An EL expression into which the process instance should be stored.", required = true,
+                        deferredType = ProcessInstance.class)})
 public final class LoadRootProcessInstanceForTaskHandler extends AbstractHandler {
     private final TagAttribute taskIdTagAttribute;
     private final TagAttribute targetTagAttribute;
 
     /**
      * Constructor.
-     *
-     * @param config
-     *            config
+     * @param config config
      */
     public LoadRootProcessInstanceForTaskHandler(final TagConfig config) {
         super(config);
@@ -42,8 +40,8 @@ public final class LoadRootProcessInstanceForTaskHandler extends AbstractHandler
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new LoadRootProcessInstanceForTaskActionListener(getValueExpression(taskIdTagAttribute, ctx, Long.class), getValueExpression(
-            targetTagAttribute,
-            ctx,
-            ProcessInstance.class));
+                targetTagAttribute,
+                ctx,
+                ProcessInstance.class));
     }
 }

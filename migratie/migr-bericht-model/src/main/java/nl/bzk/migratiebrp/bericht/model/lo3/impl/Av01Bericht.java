@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.lo3.AbstractParsedLo3Bericht;
@@ -14,6 +15,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3CategorieWaardeFormatter;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
@@ -32,21 +34,21 @@ public final class Av01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
      * Constructor.
      */
     public Av01Bericht() {
-        super(HEADER, "Av01", "uc1003-verwijderen");
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Av01", "uc1003-verwijderen");
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3Bericht#getGerelateerdeAnummers()
      */
     @Override
     protected List<String> getGerelateerdeAnummers() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
-    protected void parseInhoud(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
+    protected void parseCategorieen(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
 
         // rubriek 01.01.10 A-nummer
         for (final Lo3CategorieWaarde categorie : categorieen) {
@@ -61,17 +63,8 @@ public final class Av01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
         }
     }
 
-    @Override
-    protected List<Lo3CategorieWaarde> formatInhoud() {
-        final Lo3CategorieWaardeFormatter formatter = new Lo3CategorieWaardeFormatter();
-        formatter.categorie(Lo3CategorieEnum.CATEGORIE_01);
-        formatter.element(Lo3ElementEnum.ELEMENT_0110, aNummer);
-        return formatter.getList();
-    }
-
     /**
      * Geef de waarde van a nummer.
-     *
      * @return a nummer
      */
     public String getANummer() {
@@ -80,11 +73,18 @@ public final class Av01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Zet de waarde van a nummer.
-     *
-     * @param administratienummer
-     *            a nummer
+     * @param administratienummer a nummer
      */
     public void setANummer(final String administratienummer) {
         aNummer = administratienummer;
     }
+
+    @Override
+    protected List<Lo3CategorieWaarde> formatInhoud() {
+        final Lo3CategorieWaardeFormatter formatter = new Lo3CategorieWaardeFormatter();
+        formatter.categorie(Lo3CategorieEnum.CATEGORIE_01);
+        formatter.element(Lo3ElementEnum.ELEMENT_0110, aNummer);
+        return formatter.getList();
+    }
+
 }

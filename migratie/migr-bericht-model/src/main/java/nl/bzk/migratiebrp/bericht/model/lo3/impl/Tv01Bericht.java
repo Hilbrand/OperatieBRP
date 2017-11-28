@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
@@ -16,6 +16,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.AbstractParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
@@ -35,14 +36,12 @@ public final class Tv01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
      * Constructor.
      */
     public Tv01Bericht() {
-        super(HEADER, "Tv01", null);
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Tv01", null);
     }
 
     /**
      * Convenient constructor.
-     *
-     * @param categorieen
-     *            De categorieën voor op het Tv01 bericht.
+     * @param categorieen De categorieën voor op het Tv01 bericht.
      */
     public Tv01Bericht(final List<Lo3CategorieWaarde> categorieen) {
         this();
@@ -51,7 +50,7 @@ public final class Tv01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3Bericht#getGerelateerdeAnummers()
      */
     @Override
@@ -60,18 +59,20 @@ public final class Tv01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
     }
 
     @Override
-    protected void parseInhoud(final List<Lo3CategorieWaarde> lo3Categorieen) throws BerichtInhoudException {
-        // 01 Identificatienummers, 02 Naam, 03 Geboorte, 09 Gemeente, 70 Geheim, 83 Procedure, 85 Geldigheid
+    protected void parseCategorieen(final List<Lo3CategorieWaarde> lo3Categorieen) throws BerichtInhoudException {
+        // 01 Identificatienummers, 02 Naam, 03 Geboorte, 09 Gemeente, 70 Geheim, 83 Procedure, 85
+        // Geldigheid
 
         categorieen = new ArrayList<>();
         for (final Lo3CategorieWaarde lo3CategorieWaarde : lo3Categorieen) {
             if (Lo3CategorieEnum.CATEGORIE_21.equals(lo3CategorieWaarde.getCategorie())) {
 
                 // alleen de volgende elementen:
-                // 01 Identificatienummers, 02 Naam, 03 Geboorte, 09 Gemeente, 70 Geheim, 83 Procedure, 85 Geldigheid
+                // 01 Identificatienummers, 02 Naam, 03 Geboorte, 09 Gemeente, 70 Geheim, 83
+                // Procedure, 85 Geldigheid
                 final Map<Lo3ElementEnum, String> elementen = lo3CategorieWaarde.getElementen();
 
-                final Map<Lo3ElementEnum, String> filtered = new HashMap<>();
+                final Map<Lo3ElementEnum, String> filtered = new EnumMap<>(Lo3ElementEnum.class);
                 filtered.put(Lo3ElementEnum.ELEMENT_0110, elementen.get(Lo3ElementEnum.ELEMENT_0110));
                 filtered.put(Lo3ElementEnum.ELEMENT_0120, elementen.get(Lo3ElementEnum.ELEMENT_0120));
 
@@ -110,7 +111,6 @@ public final class Tv01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geeft de categoriewaarden terug.
-     *
      * @return De lijst met categoriewaarden
      */
     public List<Lo3CategorieWaarde> getCategorieen() {

@@ -6,60 +6,66 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ActieBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Document;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.MaterieleHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpActie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoStapel;
 import nl.bzk.migratiebrp.ggo.viewer.util.ViewerDateUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.ActieBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.MaterieleHistorie;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 /**
  * De builder die de BrpPersoonslijst omzet naar het viewer model.
  */
 
 @Component
-public final class GgoBrpActieBuilder {
+final class GgoBrpActieBuilder {
+    private final GgoBrpGegevensgroepenBuilder gegevensgroepenBuilder;
+    private final GgoBrpValueConvert valueConvert;
+
+    /**
+     * Constructor.
+     * @param gegevensgroepenBuilder een {@link GgoBrpGegevensgroepenBuilder} instantie
+     * @param valueConvert een {@link GgoBrpValueConvert} instantie
+     */
     @Inject
-    private GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder;
-    @Inject
-    private GgoBrpValueConvert ggoBrpValueConvert;
+    public GgoBrpActieBuilder(final GgoBrpGegevensgroepenBuilder gegevensgroepenBuilder, final GgoBrpValueConvert valueConvert) {
+        this.gegevensgroepenBuilder = gegevensgroepenBuilder;
+        this.valueConvert = valueConvert;
+    }
 
     /**
      * Maak acties bij de brp groep.
-     *
-     * @param voorkomen
-     *            Het aan te vullen GGO BRP voorkomen.
-     * @param brpGroep
-     *            De brp groep inhoud.
-     * @param brpGroepEnum
-     *            De naam van de groep waarbij de acties horen.
-     * @param aNummer
-     *            Het anummer.
-     * @param ahs
-     *            Map met administratieve handelingen tbv de losse weergaven van AH's.
+     * @param voorkomen Het aan te vullen GGO BRP voorkomen.
+     * @param brpGroep De brp groep inhoud.
+     * @param brpGroepEnum De naam van de groep waarbij de acties horen.
+     * @param aNummer Het anummer.
+     * @param ahs Map met administratieve handelingen tbv de losse weergaven van AH's.
      */
-    public void createActies(
-        final GgoBrpVoorkomen voorkomen,
-        final FormeleHistorie brpGroep,
-        final GgoBrpGroepEnum brpGroepEnum,
-        final Long aNummer,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-    {
+    void createActies(
+            final GgoBrpVoorkomen voorkomen,
+            final FormeleHistorie brpGroep,
+            final GgoBrpGroepEnum brpGroepEnum,
+            final String aNummer,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
         voorkomen.setActieInhoud(createActie(brpGroep, brpGroep.getActieInhoud(), brpGroepEnum, aNummer, ahs));
         voorkomen.setActieVerval(createActie(brpGroep, brpGroep.getActieVerval(), brpGroepEnum, aNummer, ahs));
 
@@ -69,127 +75,109 @@ public final class GgoBrpActieBuilder {
     }
 
     private GgoBrpActie createActie(
-        final FormeleHistorie brpGroep,
-        final BRPActie brpActie,
-        final GgoBrpGroepEnum brpGroepEnum,
-        final Long aNummer,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-    {
+            final FormeleHistorie brpGroep,
+            final BRPActie brpActie,
+            final GgoBrpGroepEnum brpGroepEnum,
+            final String aNummer,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
         GgoBrpActie ggoBrpActie = null;
         if (brpActie != null) {
             ggoBrpActie = new GgoBrpActie();
             final Map<String, String> actieMap = new LinkedHashMap<>();
-            addActie(actieMap, brpActie, brpGroepEnum);
+            addActie(actieMap, brpActie);
 
             ggoBrpActie.setInhoud(actieMap);
-            ggoBrpActie.setAdministratieveHandeling(createAdministratieveHandeling(brpActie.getAdministratieveHandeling()));
+            final AdministratieveHandeling administratieveHandeling = brpActie.getAdministratieveHandeling();
+            ggoBrpActie.setAdministratieveHandeling(createAdministratieveHandeling(administratieveHandeling));
             ggoBrpActie.setActieBronnen(createActieBronnen(brpActie));
-            ggoBrpActie.setDocumenten(createDocumenten(brpActie, aNummer, brpGroepEnum));
+            ggoBrpActie.setDocumenten(createDocumenten(brpActie, aNummer));
 
-            if (ahs.get(brpActie.getAdministratieveHandeling()) == null) {
-                ahs.put(brpActie.getAdministratieveHandeling(), new LinkedHashSet<String>());
-            }
+            ahs.computeIfAbsent(administratieveHandeling, k -> new LinkedHashSet<>());
 
-            ahs.get(brpActie.getAdministratieveHandeling()).add(
-                brpGroepEnum.getLabel() + " - " + ViewerDateUtil.formatDatumTijdUtc(brpGroep.getDatumTijdRegistratie()));
+            ahs.get(administratieveHandeling).add(brpGroepEnum.getLabel() + " - " + ViewerDateUtil.formatDatumTijdUtc(brpGroep.getDatumTijdRegistratie()));
         }
         return ggoBrpActie;
     }
 
     /**
      * Voeg BrpActie elementen toe aan het voorkomen.
-     *
-     * @param actieMap
-     *            De inhoud vande actie die gevuld moet worden.
-     * @param brpActie
-     *            Element die eventueel toegevoegd moet worden aan voorkomen.
-     * @param brpGroepEnum
-     *            De naam van de groep waartoe de actie behoort.
+     * @param actieMap De inhoud vande actie die gevuld moet worden.
+     * @param brpActie Element die eventueel toegevoegd moet worden aan voorkomen.
      */
-    protected void addActie(final Map<String, String> actieMap, final BRPActie brpActie, final GgoBrpGroepEnum brpGroepEnum) {
+    void addActie(final Map<String, String> actieMap, final BRPActie brpActie) {
         if (brpActie != null) {
-            ggoBrpValueConvert.verwerkElement(actieMap, GgoBrpGroepEnum.ACTIE_INHOUD, GgoBrpElementEnum.ID, brpActie.getId());
-            ggoBrpValueConvert.verwerkElement(actieMap, GgoBrpGroepEnum.ACTIE_INHOUD, GgoBrpElementEnum.SOORT_ACTIE, brpActie.getSoortActie());
-            ggoBrpValueConvert.verwerkElement(actieMap, GgoBrpGroepEnum.ACTIE_INHOUD, GgoBrpElementEnum.PARTIJ, brpActie.getPartij());
-            ggoBrpValueConvert.verwerkElement(
-                actieMap,
-                GgoBrpGroepEnum.ACTIE_INHOUD,
-                GgoBrpElementEnum.TIJDSTIP_REGISTRATIE,
-                brpActie.getDatumTijdRegistratie());
-            ggoBrpValueConvert.verwerkElement(actieMap, GgoBrpGroepEnum.ACTIE_INHOUD, GgoBrpElementEnum.DATUM_ONTLENING, brpActie.getDatumOntlening());
+            valueConvert.verwerkElement(actieMap, GgoBrpElementEnum.ID, brpActie.getId());
+            valueConvert.verwerkElement(actieMap, GgoBrpElementEnum.SOORT_ACTIE, brpActie.getSoortActie());
+            valueConvert.verwerkElement(actieMap, GgoBrpElementEnum.PARTIJ, brpActie.getPartij());
+            valueConvert.verwerkElement(
+                    actieMap,
+                    GgoBrpElementEnum.TIJDSTIP_REGISTRATIE,
+                    brpActie.getDatumTijdRegistratie());
+            valueConvert.verwerkElement(actieMap, GgoBrpElementEnum.DATUM_ONTLENING, brpActie.getDatumOntlening());
         }
     }
 
     /**
      * Maak admin handeling inhoud.
-     *
-     * @param ah
-     *            De Administratieve handeling
+     * @param ah De Administratieve handeling
      * @return De inhoud
      */
-    public Map<String, String> createAdministratieveHandeling(final AdministratieveHandeling ah) {
+    Map<String, String> createAdministratieveHandeling(final AdministratieveHandeling ah) {
         final Map<String, String> ahMap = new LinkedHashMap<>();
 
-        ggoBrpValueConvert.verwerkElement(ahMap, GgoBrpGroepEnum.ADMINISTRATIEVE_HANDELING, GgoBrpElementEnum.ID, ah.getId());
-        ggoBrpValueConvert.verwerkElement(
-            ahMap,
-            GgoBrpGroepEnum.ADMINISTRATIEVE_HANDELING,
-            GgoBrpElementEnum.SOORT_ADMINISTRATIEVE_HANDELING,
-            ah.getSoort());
-        ggoBrpValueConvert.verwerkElement(ahMap, GgoBrpGroepEnum.ADMINISTRATIEVE_HANDELING, GgoBrpElementEnum.PARTIJ, ah.getPartij());
-        ggoBrpValueConvert.verwerkElement(
-            ahMap,
-            GgoBrpGroepEnum.ADMINISTRATIEVE_HANDELING,
-            GgoBrpElementEnum.TOELICHTING_ONTLENING,
-            ah.getToelichtingOntlening());
-        ggoBrpValueConvert.verwerkElement(
-            ahMap,
-            GgoBrpGroepEnum.ADMINISTRATIEVE_HANDELING,
-            GgoBrpElementEnum.TIJDSTIP_REGISTRATIE,
-            ah.getDatumTijdRegistratie());
-        ggoBrpValueConvert.verwerkElement(ahMap, GgoBrpGroepEnum.ADMINISTRATIEVE_HANDELING, GgoBrpElementEnum.TIJDSTIP_LEVERING, ah.getDatumTijdLevering());
+        valueConvert.verwerkElement(ahMap, GgoBrpElementEnum.ID, ah.getId());
+        valueConvert.verwerkElement(ahMap, GgoBrpElementEnum.SOORT_ADMINISTRATIEVE_HANDELING, ah.getSoort());
+        valueConvert.verwerkElement(ahMap, GgoBrpElementEnum.PARTIJ, ah.getPartij());
+        valueConvert.verwerkElement(
+                ahMap,
+                GgoBrpElementEnum.TOELICHTING_ONTLENING,
+                ah.getToelichtingOntlening());
+        valueConvert.verwerkElement(
+                ahMap,
+                GgoBrpElementEnum.TIJDSTIP_REGISTRATIE,
+                ah.getDatumTijdRegistratie());
+        valueConvert.verwerkElement(ahMap, GgoBrpElementEnum.TIJDSTIP_LEVERING, ah.getDatumTijdLevering());
 
         return ahMap;
     }
 
     private List<Map<String, String>> createActieBronnen(final BRPActie brpActie) {
+        if (brpActie == null) {
+            return Collections.emptyList();
+        }
 
-        List<Map<String, String>> actieBronnen = null;
-        if (brpActie != null) {
-            actieBronnen = new ArrayList<>();
-            if (brpActie.getActieBronSet() != null) {
-                for (final ActieBron actieBron : brpActie.getActieBronSet()) {
-                    if (!StringUtils.isEmpty(actieBron.getRechtsgrondOmschrijving())) {
-                        final Map<String, String> actieBronMap = new LinkedHashMap<>();
-                        actieBronMap.put(GgoBrpElementEnum.RECHTSGRONDOMSCHRIJVING.getLabel(), actieBron.getRechtsgrondOmschrijving());
-                        actieBronnen.add(actieBronMap);
-                    }
+        final List<Map<String, String>> actieBronnen = new ArrayList<>();
+        if (brpActie.getActieBronSet() != null) {
+            for (final ActieBron actieBron : brpActie.getActieBronSet()) {
+                if (!StringUtils.isEmpty(actieBron.getRechtsgrondOmschrijving())) {
+                    final Map<String, String> actieBronMap = new LinkedHashMap<>();
+                    actieBronMap.put(GgoBrpElementEnum.RECHTSGRONDOMSCHRIJVING.getLabel(), actieBron.getRechtsgrondOmschrijving());
+                    actieBronnen.add(actieBronMap);
                 }
             }
         }
         return actieBronnen;
     }
 
-    private List<GgoStapel> createDocumenten(final BRPActie brpActie, final Long aNummer, final GgoBrpGroepEnum gerelateerdeGroep) {
-        List<GgoStapel> actieDocumenten = null;
-        if (brpActie != null) {
-            actieDocumenten = new ArrayList<>();
-            if (brpActie.getActieBronSet() != null) {
-                int brpStapelNr = 0;
-                for (final ActieBron actieBron : brpActie.getActieBronSet()) {
-                    if (actieBron.getDocument() != null) {
-                        final GgoStapel stapel = new GgoStapel(GgoBrpGroepEnum.DOCUMENT.getLabel());
-                        for (final DocumentHistorie brpDocumentInhoud : actieBron.getDocument().getDocumentHistorieSet()) {
-                            final GgoBrpVoorkomen voorkomen =
-                                    ggoBrpValueConvert.createGgoBrpVoorkomen(brpDocumentInhoud, aNummer, GgoBrpGroepEnum.DOCUMENT, brpStapelNr);
-                            ggoBrpGegevensgroepenBuilder.addGroepDocument(voorkomen.getInhoud(), brpDocumentInhoud, gerelateerdeGroep);
-                            ggoBrpGegevensgroepenBuilder.addHistorie(voorkomen, brpDocumentInhoud, gerelateerdeGroep);
+    private List<GgoStapel> createDocumenten(final BRPActie brpActie, final String aNummer) {
+        if (brpActie == null) {
+            return Collections.emptyList();
+        }
 
-                            stapel.addVoorkomen(voorkomen);
-                        }
-                        actieDocumenten.add(stapel);
-                        brpStapelNr++;
-                    }
+        final List<GgoStapel> actieDocumenten = new ArrayList<>();
+        if (brpActie.getActieBronSet() != null) {
+            for (final ActieBron actieBron : brpActie.getActieBronSet()) {
+                final Document document = actieBron.getDocument();
+                if (document != null) {
+                    final GgoStapel stapel = new GgoStapel(GgoBrpGroepEnum.DOCUMENT.getLabel());
+                    final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
+                    voorkomen.setInhoud(new LinkedHashMap<>());
+                    voorkomen.setaNummer(aNummer);
+                    voorkomen.setLabel(GgoBrpGroepEnum.DOCUMENT.getLabel());
+                    gegevensgroepenBuilder.addGroepDocument(voorkomen.getInhoud(), document);
+
+                    stapel.addVoorkomen(voorkomen);
+                    actieDocumenten.add(stapel);
                 }
             }
         }

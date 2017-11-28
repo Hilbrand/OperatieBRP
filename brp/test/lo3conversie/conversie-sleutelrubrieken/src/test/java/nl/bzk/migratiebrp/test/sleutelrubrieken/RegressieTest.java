@@ -7,9 +7,7 @@
 package nl.bzk.migratiebrp.test.sleutelrubrieken;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import nl.bzk.migratiebrp.test.common.util.FilterType;
-import nl.bzk.migratiebrp.test.common.util.NotEndsWithFilter;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 
 public class RegressieTest extends ConversieTestConfiguratie {
 
@@ -24,8 +22,7 @@ public class RegressieTest extends ConversieTestConfiguratie {
     }
 
     @Override
-    public FilenameFilter getCasusFilter() {
-        // return new BaseFilter(FilterType.DIRECTORY);
-        return new NotEndsWithFilter("NOK", FilterType.DIRECTORY);
+    public TestSkipper getTestSkipper() {
+        return TestSkipper.regressie();
     }
 }

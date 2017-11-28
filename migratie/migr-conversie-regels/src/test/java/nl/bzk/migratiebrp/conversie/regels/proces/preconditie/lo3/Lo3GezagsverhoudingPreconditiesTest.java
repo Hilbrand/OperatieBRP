@@ -21,6 +21,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.PartijConversietabel;
 
 import org.junit.Test;
@@ -37,8 +38,7 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     private static final Lo3Herkomst LO3_HERKOMST_GEZAGSVERHOUDING_1 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_61, 0, 1);
     private static final Lo3Herkomst LO3_HERKOMST_GEZAGSVERHOUDING_2 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_61, 0, 2);
 
-    @Inject
-    private Lo3GezagsverhoudingPrecondities precondities;
+    private Lo3GezagsverhoudingPrecondities precondities = new Lo3GezagsverhoudingPrecondities(new ConversietabelFactoryImpl());
 
     private Lo3GezagsverhoudingInhoud.Builder minderjarigBuilder() {
         final Lo3GezagsverhoudingInhoud.Builder builder = new Lo3GezagsverhoudingInhoud.Builder();
@@ -60,10 +60,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testHappyMinderjarige() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    minderjarigBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        minderjarigBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -74,10 +74,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testHappyCuratele() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        curateleBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -94,14 +94,14 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr101() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapelCorrectieOk =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
- DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING_1), Lo3StapelHelper.lo3Cat(
-                    new Lo3GezagsverhoudingInhoud.Builder().build(),
-                    Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20010101, DOC),
-                    Lo3StapelHelper.lo3His(20010101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        curateleBuilder().build(),
+                        DOCUMENTATIE,
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING_1), Lo3StapelHelper.lo3Cat(
+                        new Lo3GezagsverhoudingInhoud.Builder().build(),
+                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20010101, DOC),
+                        Lo3StapelHelper.lo3His(20010101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapelCorrectieOk);
 
@@ -109,10 +109,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
 
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapelNok =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    new Lo3GezagsverhoudingInhoud.Builder().build(),
+                        new Lo3GezagsverhoudingInhoud.Builder().build(),
                         DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapelNok);
 
@@ -125,22 +125,22 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr104() {
         Lo3Categorie<Lo3GezagsverhoudingInhoud> onjuist1 =
                 Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING_2);
+                        curateleBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING_2);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    minderjarigBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 19990101, DOC),
-                    Lo3StapelHelper.lo3His("O", 19990101, 20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING_1);
+                        minderjarigBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 19990101, DOC),
+                        Lo3StapelHelper.lo3His("O", 19990101, 20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING_1);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> juist3 =
                 Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(3L, GEM_CODE, 19990101, DOC),
-                    Lo3StapelHelper.lo3His(null, 19990101, 20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING);
+                        curateleBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(3L, GEM_CODE, 19990101, DOC),
+                        Lo3StapelHelper.lo3His(null, 19990101, 20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING);
 
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapelOk = Lo3StapelHelper.lo3Stapel(onjuist1, onjuist2, juist3);
 
@@ -149,10 +149,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
 
         onjuist1 =
                 Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING);
+                        curateleBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 19990101, DOC),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING);
 
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapelNok = Lo3StapelHelper.lo3Stapel(onjuist1, onjuist2);
 
@@ -164,10 +164,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr110() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
+                        curateleBuilder().build(),
                         DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(null, 20000101, 20000100),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        Lo3StapelHelper.lo3His(null, 20000101, 20000100),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -179,10 +179,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr112() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel2 =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 00000000, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        curateleBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 0, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel2);
 
@@ -190,10 +190,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
 
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        curateleBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -211,10 +211,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr261() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    minderjarigBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
-                    Lo3StapelHelper.lo3His(null, null, 20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        minderjarigBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
+                        Lo3StapelHelper.lo3His(null, null, 20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -226,10 +226,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr262() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    minderjarigBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
-                    Lo3StapelHelper.lo3His(null, 20000101, null),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        minderjarigBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
+                        Lo3StapelHelper.lo3His(null, 20000101, null),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -241,10 +241,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr264() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    minderjarigBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        minderjarigBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20040101, DOC),
+                        Lo3StapelHelper.lo3His("O", 20000101, 20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -262,10 +262,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr40121() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    minderjarigBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        minderjarigBuilder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -276,10 +276,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr40124() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    minderjarigBuilder().build(),
+                        minderjarigBuilder().build(),
                         DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(null, 20040141, 20010101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        Lo3StapelHelper.lo3His(null, 20040141, 20010101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -290,10 +290,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr40125() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    minderjarigBuilder().build(),
+                        minderjarigBuilder().build(),
                         DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(null, 20010101, 20040141),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        Lo3StapelHelper.lo3His(null, 20010101, 20040141),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -304,10 +304,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testContr4064() {
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    minderjarigBuilder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, PartijConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        minderjarigBuilder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, null, null, PartijConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -328,10 +328,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
 
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
- DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        builder.build(),
+                        DOCUMENTATIE,
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -346,10 +346,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
 
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
- DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING));
+                        builder.build(),
+                        DOCUMENTATIE,
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING));
 
         precondities.controleerStapel(stapel);
 
@@ -379,10 +379,10 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testPreconditie112GeenOnjuistVoorkomens() {
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> categorieLeeg =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3GezagsverhoudingInhoud.Builder().build(),
-                    DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(20000102),
-                    LO3_HERKOMST_GEZAGSVERHOUDING);
+                        new Lo3GezagsverhoudingInhoud.Builder().build(),
+                        DOCUMENTATIE,
+                        Lo3StapelHelper.lo3His(20000102),
+                        LO3_HERKOMST_GEZAGSVERHOUDING);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> categorieGevuld =
                 Lo3StapelHelper.lo3Cat(curateleBuilder().build(), DOCUMENTATIE, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_GEZAGSVERHOUDING_1);
 
@@ -396,16 +396,16 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testPreconditie112OnjuistVoorkomensLegeRij() {
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> categorieLeeg =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3GezagsverhoudingInhoud.Builder().build(),
-                    DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_GEZAGSVERHOUDING);
+                        new Lo3GezagsverhoudingInhoud.Builder().build(),
+                        DOCUMENTATIE,
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_GEZAGSVERHOUDING);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> categorieGevuld =
                 Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
-                    DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000102),
-                    LO3_HERKOMST_GEZAGSVERHOUDING_1);
+                        curateleBuilder().build(),
+                        DOCUMENTATIE,
+                        Lo3StapelHelper.lo3His("O", 20000101, 20000102),
+                        LO3_HERKOMST_GEZAGSVERHOUDING_1);
 
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel = Lo3StapelHelper.lo3Stapel(categorieLeeg, categorieGevuld);
         precondities.controleerStapel(stapel);
@@ -417,16 +417,16 @@ public class Lo3GezagsverhoudingPreconditiesTest extends AbstractPreconditieTest
     public void testPreconditie112OnjuistVoorkomensLegeRijAndereDatum() {
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> categorieLeeg =
                 Lo3StapelHelper.lo3Cat(
-                    new Lo3GezagsverhoudingInhoud.Builder().build(),
-                    DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His(20000102),
-                    LO3_HERKOMST_GEZAGSVERHOUDING);
+                        new Lo3GezagsverhoudingInhoud.Builder().build(),
+                        DOCUMENTATIE,
+                        Lo3StapelHelper.lo3His(20000102),
+                        LO3_HERKOMST_GEZAGSVERHOUDING);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> categorieGevuld =
                 Lo3StapelHelper.lo3Cat(
-                    curateleBuilder().build(),
-                    DOCUMENTATIE,
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000102),
-                    LO3_HERKOMST_GEZAGSVERHOUDING_1);
+                        curateleBuilder().build(),
+                        DOCUMENTATIE,
+                        Lo3StapelHelper.lo3His("O", 20000101, 20000102),
+                        LO3_HERKOMST_GEZAGSVERHOUDING_1);
 
         final Lo3Stapel<Lo3GezagsverhoudingInhoud> stapel = Lo3StapelHelper.lo3Stapel(categorieLeeg, categorieGevuld);
         precondities.controleerStapel(stapel);

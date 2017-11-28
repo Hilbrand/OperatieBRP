@@ -11,22 +11,17 @@ import nl.bzk.migratiebrp.tools.levering.vergelijker.entity.LeveringsVergelijkin
 
 /**
  * DAO interface voor de berichten voor de leveringvergelijking.
- *
  */
 public interface LeveringsVergelijkingBerichtCorrelatieBrpRepository {
 
     /**
      * Haal de berichten voor de leveringvergelijkingen uit BRP op.
-     *
-     * @param bijhoudingBerichtMessageId
-     *            Het message_id van het bijhoudingsbericht dat geleid heeft tot de leveringsberichten.
-     * @param afnemerCode
-     *            De code van de afnemer.
-     *
+     * @param bijhoudingBerichtMessageId Het message_id van het bijhoudingsbericht dat geleid heeft tot de leveringsberichten.
+     * @param afnemerCode De code van de afnemer.
      * @return Lijst met de berichten voor de leveringvergelijkingen.
      */
     List<LeveringsVergelijkingBerichtCorrelatieBrp> haalLeveringsVergelijkingBerichtCorrelatiesBrpOp(
-        final Long bijhoudingBerichtMessageId,
-        final String afnemerCode);
+            final Long bijhoudingBerichtMessageId,
+            final String afnemerCode);
 
 }

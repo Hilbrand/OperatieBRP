@@ -1,2 +1,0 @@
-truncate kern.admhnd cascade;
-truncate kern.doc cascade;

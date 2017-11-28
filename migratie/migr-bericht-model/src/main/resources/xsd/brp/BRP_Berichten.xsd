@@ -5,5 +5,5 @@
 
     <!-- Vanwege een bug in de schema validatie van Xerces moeten we alle XSD's van 1 namespace samenvoegen -->
 
-    <include schemaLocation="brp0200_iscMigratievoorziening_Berichten.xsd"/>
+    <include schemaLocation="xsd/BRP0200/brp0200_iscMigratievoorziening_Berichten.xsd"/>
 </schema>

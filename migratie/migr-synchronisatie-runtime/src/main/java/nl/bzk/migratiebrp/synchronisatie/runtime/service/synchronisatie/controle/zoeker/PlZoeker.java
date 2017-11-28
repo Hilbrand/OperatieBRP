@@ -17,9 +17,7 @@ public interface PlZoeker {
 
     /**
      * Zoek.
-     *
-     * @param context
-     *            verwerkings context
+     * @param context verwerkings context
      * @return lijst van gevonden persoonslijsten
      */
     List<BrpPersoonslijst> zoek(VerwerkingsContext context);

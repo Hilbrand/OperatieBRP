@@ -10,21 +10,29 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class BrpInschrijvingInhoudTest {
+    @Test
+    public void test(){
+        final BrpInschrijvingInhoud inhoud = BrpInschrijvingInhoudTest.createInhoud();
+        Assert.assertEquals(20050101,inhoud.getDatumInschrijving().getWaarde().intValue());
+    }
+
     public static BrpInschrijvingInhoud createInhoud() {
         return new BrpInschrijvingInhoud(new BrpDatum(new Integer(20050101), null), new BrpLong(1L), new BrpDatumTijd(Calendar.getInstance().getTime()));
     }
 
     public static BrpInschrijvingInhoud createInhoud(int datumInschrijving, int versienummer, Date datumTijd) {
-        return new BrpInschrijvingInhoud(new BrpDatum(Integer.valueOf(datumInschrijving),null),new BrpLong(Long.valueOf(versienummer)),new BrpDatumTijd(datumTijd, null));
+        return new BrpInschrijvingInhoud(new BrpDatum(Integer.valueOf(datumInschrijving), null), new BrpLong(Long.valueOf(versienummer)),
+                new BrpDatumTijd(datumTijd, null));
     }
 
     public static BrpStapel<BrpInschrijvingInhoud> createStapel() {

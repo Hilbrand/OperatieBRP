@@ -18,9 +18,7 @@ public interface OpschonerJMX {
 
     /**
      * JMX service voor het opschonen van tellingen.
-     *
-     * @param aantalUren
-     *            aantal uren
+     * @param aantalUren aantal uren
      */
     void opschonen(final int aantalUren);
 }

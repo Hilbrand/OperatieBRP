@@ -12,7 +12,6 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 
 /**
  * Utility class om foutmeldingen uniform weer te geven.
- * 
  */
 public final class FoutmeldingUtil {
 
@@ -22,13 +21,9 @@ public final class FoutmeldingUtil {
 
     /**
      * Gooi een {@link PreconditieException} omdat een validatie niet is geslaagd.
-     * 
-     * @param soortMeldingCode
-     *            de soort melding die wordt geschonden
-     * @param groepInhoud
-     *            groep waar de preconditie wordt geschonden
-     * @throws PreconditieException
-     *             omdat een validatie niet geslaagd is.
+     * @param soortMeldingCode de soort melding die wordt geschonden
+     * @param groepInhoud groep waar de preconditie wordt geschonden
+     * @throws PreconditieException omdat een validatie niet geslaagd is.
      */
     public static void gooiValidatieExceptie(final SoortMeldingCode soortMeldingCode, final BrpGroepInhoud... groepInhoud) {
         final String[] groepNamen = new String[groepInhoud.length];
@@ -40,13 +35,9 @@ public final class FoutmeldingUtil {
 
     /**
      * Gooi een {@link PreconditieException} omdat een validatie niet is geslaagd.
-     * 
-     * @param soortMeldingCode
-     *            de soort melding die wordt geschonden
-     * @param clazz
-     *            Klasse van de inhoud waar de preconditie van geschonden is
-     * @throws PreconditieException
-     *             omdat een validatie niet geslaagd is.
+     * @param soortMeldingCode de soort melding die wordt geschonden
+     * @param clazz Klasse van de inhoud waar de preconditie van geschonden is
+     * @throws PreconditieException omdat een validatie niet geslaagd is.
      */
     public static void gooiValidatieExceptie(final SoortMeldingCode soortMeldingCode, final Class<? extends BrpGroepInhoud> clazz) {
         throw new PreconditieException(soortMeldingCode, clazz.getName());
@@ -54,13 +45,9 @@ public final class FoutmeldingUtil {
 
     /**
      * Returned een {@link IllegalArgumentException} omdat een validatie niet is geslaagd.
-     * 
-     * @param foutmelding
-     *            de specifieke foutmelding van de validatie
-     * @param soortMeldingCode
-     *            de soort melding die wordt geschonden
-     * @param cause
-     *            oorspronkelijke cause, mag null zijn.
+     * @param foutmelding de specifieke foutmelding van de validatie
+     * @param soortMeldingCode de soort melding die wordt geschonden
+     * @param cause oorspronkelijke cause, mag null zijn.
      * @return exception
      */
     public static IllegalArgumentException getValidatieExceptie(final String foutmelding, final SoortMeldingCode soortMeldingCode, final Throwable cause) {

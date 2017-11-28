@@ -1,4 +1,4 @@
-﻿--
+--
 -- GBA-V lo3 truncate database
 --
 -- IMPORTANT NOTICE!

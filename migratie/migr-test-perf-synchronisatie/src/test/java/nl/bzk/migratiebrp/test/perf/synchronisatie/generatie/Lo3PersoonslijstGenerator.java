@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.test.perf.synchronisatie.generatie;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -36,7 +35,7 @@ import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
 
 /**
  * Persoonslijst generator.
- * 
+ *
  * Huidig versie is erg basis en genereert enkel een actuele categorie voor categorieen 01, 02, 03, 04, 07 en 08.
  */
 public class Lo3PersoonslijstGenerator {
@@ -60,13 +59,8 @@ public class Lo3PersoonslijstGenerator {
     private static class Helper {
         final Lo3Datum geboorteDatum = DATUM_GENERATOR.genereer();
         final Lo3GemeenteCode geboorteGemeente = GEMEENTE_GENERATOR.genereer();
-        final Lo3Documentatie documentatie = Lo3StapelHelper.lo3Documentatie(
-            1L,
-            null,
-            null,
-            geboorteGemeente.getWaarde(),
-            geboorteDatum.getIntegerWaarde(),
-            "Geboorteakte");
+        final Lo3Documentatie documentatie =
+                Lo3StapelHelper.lo3Documentatie(1L, null, null, geboorteGemeente.getWaarde(), geboorteDatum.getIntegerWaarde(), "Geboorteakte");
         final Lo3Historie historie = Lo3StapelHelper.lo3His(geboorteDatum.getIntegerWaarde());
 
         public Lo3Persoonslijst genereer() {
@@ -91,19 +85,19 @@ public class Lo3PersoonslijstGenerator {
         private Lo3Stapel<Lo3PersoonInhoud> genereerPersoonStapel() {
             final Lo3PersoonInhoud inhoud =
                     Lo3StapelHelper.lo3Persoon(
-                        ANUMMER_GENERATOR.genereer(),
-                        BSN_GENERATOR.genereer(),
-                        VOORNAAM_GENERATOR.genereer(),
-                        null,
-                        null,
-                        GESLACHTSNAAM_GENERATOR.genereer(),
-                        geboorteDatum.getIntegerWaarde(),
-                        geboorteGemeente.getWaarde(),
-                        Lo3LandCode.NEDERLAND.getWaarde(),
-                        GESLACHT_GENERATOR.genereer().getWaarde(),
-                        null,
-                        null,
-                        "E");
+                            ANUMMER_GENERATOR.genereer(),
+                            BSN_GENERATOR.genereer(),
+                            VOORNAAM_GENERATOR.genereer(),
+                            null,
+                            null,
+                            GESLACHTSNAAM_GENERATOR.genereer(),
+                            geboorteDatum.getIntegerWaarde(),
+                            geboorteGemeente.getWaarde(),
+                            Lo3LandCode.NEDERLAND.getWaarde(),
+                            GESLACHT_GENERATOR.genereer().getWaarde(),
+                            null,
+                            null,
+                            "E");
 
             return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(inhoud, documentatie, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0)));
         }
@@ -111,23 +105,23 @@ public class Lo3PersoonslijstGenerator {
         private Lo3Stapel<Lo3OuderInhoud> genereerOuderStapel(final Lo3CategorieEnum categorie) {
             final Lo3OuderInhoud inhoud =
                     Lo3StapelHelper.lo3Ouder(
-                        ANUMMER_GENERATOR.genereer(),
-                        BSN_GENERATOR.genereer(),
-                        VOORNAAM_GENERATOR.genereer(),
-                        null,
-                        null,
-                        GESLACHTSNAAM_GENERATOR.genereer(),
-                        DATUM_GENERATOR.genereer().getIntegerWaarde(),
-                        GEMEENTE_GENERATOR.genereer().getWaarde(),
-                        Lo3LandCode.NEDERLAND.getWaarde(),
-                        GESLACHT_GENERATOR.genereer().getWaarde(),
-                        geboorteDatum.getIntegerWaarde());
+                            ANUMMER_GENERATOR.genereer(),
+                            BSN_GENERATOR.genereer(),
+                            VOORNAAM_GENERATOR.genereer(),
+                            null,
+                            null,
+                            GESLACHTSNAAM_GENERATOR.genereer(),
+                            DATUM_GENERATOR.genereer().getIntegerWaarde(),
+                            GEMEENTE_GENERATOR.genereer().getWaarde(),
+                            Lo3LandCode.NEDERLAND.getWaarde(),
+                            GESLACHT_GENERATOR.genereer().getWaarde(),
+                            geboorteDatum.getIntegerWaarde());
 
             return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(inhoud, documentatie, historie, new Lo3Herkomst(categorie, 0, 0)));
         }
 
         private Lo3Stapel<Lo3NationaliteitInhoud> genereerNationaliteitStapel() {
-            final Lo3NationaliteitInhoud inhoud = Lo3StapelHelper.lo3Nationaliteit("0001", "001", null, null);
+            final Lo3NationaliteitInhoud inhoud = Lo3StapelHelper.lo3Nationaliteit("0001", "001", null, null, null);
 
             return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(inhoud, documentatie, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 0)));
         }
@@ -135,24 +129,24 @@ public class Lo3PersoonslijstGenerator {
         private Lo3Stapel<Lo3HuwelijkOfGpInhoud> genereerHuwelijkStapel() {
             final Lo3HuwelijkOfGpInhoud inhoud =
                     Lo3StapelHelper.lo3HuwelijkOfGp(
-                        ANUMMER_GENERATOR.genereer(),
-                        BSN_GENERATOR.genereer(),
-                        VOORNAAM_GENERATOR.genereer(),
-                        null,
-                        null,
-                        GESLACHT_GENERATOR.genereer().getWaarde(),
-                        DATUM_GENERATOR.genereer().getIntegerWaarde(),
-                        GEMEENTE_GENERATOR.genereer().getWaarde(),
-                        Lo3LandCode.NEDERLAND.getWaarde(),
-                        GESLACHT_GENERATOR.genereer().getWaarde(),
-                        DATUM_GENERATOR.genereer().getIntegerWaarde(),
-                        GEMEENTE_GENERATOR.genereer().getWaarde(),
-                        Lo3LandCode.NEDERLAND.getWaarde(),
-                        null,
-                        null,
-                        null,
-                        null,
-                        Lo3SoortVerbintenisEnum.HUWELIJK.getCode());
+                            ANUMMER_GENERATOR.genereer(),
+                            BSN_GENERATOR.genereer(),
+                            VOORNAAM_GENERATOR.genereer(),
+                            null,
+                            null,
+                            GESLACHT_GENERATOR.genereer().getWaarde(),
+                            DATUM_GENERATOR.genereer().getIntegerWaarde(),
+                            GEMEENTE_GENERATOR.genereer().getWaarde(),
+                            Lo3LandCode.NEDERLAND.getWaarde(),
+                            GESLACHT_GENERATOR.genereer().getWaarde(),
+                            DATUM_GENERATOR.genereer().getIntegerWaarde(),
+                            GEMEENTE_GENERATOR.genereer().getWaarde(),
+                            Lo3LandCode.NEDERLAND.getWaarde(),
+                            null,
+                            null,
+                            null,
+                            null,
+                            Lo3SoortVerbintenisEnum.HUWELIJK.getCode());
 
             return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(inhoud, null, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_05, 0, 0)));
         }
@@ -160,32 +154,30 @@ public class Lo3PersoonslijstGenerator {
         private Lo3Stapel<Lo3InschrijvingInhoud> genereerInschrijvingStapel() {
             final Lo3InschrijvingInhoud inhoud =
                     Lo3StapelHelper.lo3Inschrijving(
-                        null,
-                        null,
-                        null,
-                        geboorteDatum.getIntegerWaarde(),
-                        geboorteGemeente.getWaarde(),
-                        0,
-                        1,
-                        geboorteDatum.getIntegerWaarde() * 1000000000L,
-                        true);
+                            null,
+                            null,
+                            null,
+                            geboorteDatum.getIntegerWaarde(),
+                            geboorteGemeente.getWaarde(),
+                            0,
+                            1,
+                            geboorteDatum.getIntegerWaarde() * 1000000000L,
+                            true);
 
-            return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(inhoud, null, Lo3Historie.NULL_HISTORIE, new Lo3Herkomst(
-                Lo3CategorieEnum.CATEGORIE_07,
-                0,
-                0)));
+            return Lo3StapelHelper.lo3Stapel(
+                    Lo3StapelHelper.lo3Cat(inhoud, null, new Lo3Historie(null, null, null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         }
 
         private Lo3Stapel<Lo3VerblijfplaatsInhoud> genereerVerblijfplaatsStapel() {
             final Lo3VerblijfplaatsInhoud inhoud =
                     Lo3StapelHelper.lo3Verblijfplaats(
-                        geboorteGemeente.getWaarde(),
-                        geboorteDatum.getIntegerWaarde(),
-                        geboorteDatum.getIntegerWaarde(),
-                        STRAAT_GENERATOR.genereer(),
-                        HUISNUMMER_GENERATOR.genereer().getIntegerWaarde(),
-                        "9999AA",
-                        Lo3AangifteAdreshoudingEnum.OUDER.getCode());
+                            geboorteGemeente.getWaarde(),
+                            geboorteDatum.getIntegerWaarde(),
+                            geboorteDatum.getIntegerWaarde(),
+                            STRAAT_GENERATOR.genereer(),
+                            HUISNUMMER_GENERATOR.genereer().getIntegerWaarde(),
+                            "9999AA",
+                            Lo3AangifteAdreshoudingEnum.OUDER.getCode());
 
             return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(inhoud, null, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 0)));
         }
@@ -200,15 +192,15 @@ public class Lo3PersoonslijstGenerator {
         private Lo3Stapel<Lo3KindInhoud> genereerKindStapel() {
             final Lo3KindInhoud inhoud =
                     Lo3StapelHelper.lo3Kind(
-                        ANUMMER_GENERATOR.genereer(),
-                        BSN_GENERATOR.genereer(),
-                        VOORNAAM_GENERATOR.genereer(),
-                        null,
-                        null,
-                        GESLACHT_GENERATOR.genereer().getWaarde(),
-                        DATUM_GENERATOR.genereer().getIntegerWaarde(),
-                        GEMEENTE_GENERATOR.genereer().getWaarde(),
-                        Lo3LandCode.NEDERLAND.getWaarde());
+                            ANUMMER_GENERATOR.genereer(),
+                            BSN_GENERATOR.genereer(),
+                            VOORNAAM_GENERATOR.genereer(),
+                            null,
+                            null,
+                            GESLACHT_GENERATOR.genereer().getWaarde(),
+                            DATUM_GENERATOR.genereer().getIntegerWaarde(),
+                            GEMEENTE_GENERATOR.genereer().getWaarde(),
+                            Lo3LandCode.NEDERLAND.getWaarde());
 
             return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(inhoud, null, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_09, 0, 0)));
         }
@@ -235,15 +227,15 @@ public class Lo3PersoonslijstGenerator {
         private Lo3Stapel<Lo3ReisdocumentInhoud> genereerReisdocumentStapel() {
             final Lo3ReisdocumentInhoud inhoud =
                     Lo3StapelHelper.lo3Reisdocument(
-                        REISDOCUMENT_GENERATOR.genereerSoort().getWaarde(),
-                        REISDOCUMENT_GENERATOR.genereerNummer(),
-                        DATUM_GENERATOR.genereer().getIntegerWaarde(),
-                        REISDOCUMENT_GENERATOR.genereerAutoriteit().getWaarde(),
-                        DATUM_GENERATOR.genereer().getIntegerWaarde(),
-                        null,
-                        null,
-                        null,
-                        null);
+                            REISDOCUMENT_GENERATOR.genereerSoort().getWaarde(),
+                            REISDOCUMENT_GENERATOR.genereerNummer(),
+                            DATUM_GENERATOR.genereer().getIntegerWaarde(),
+                            REISDOCUMENT_GENERATOR.genereerAutoriteit().getWaarde(),
+                            DATUM_GENERATOR.genereer().getIntegerWaarde(),
+                            null,
+                            null,
+                            null
+                    );
 
             return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(inhoud, null, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_12, 0, 0)));
         }
@@ -254,16 +246,14 @@ public class Lo3PersoonslijstGenerator {
 
             final Lo3KiesrechtInhoud inhoud =
                     Lo3StapelHelper.lo3Kiesrecht(
-                        BOOLEAN_GENERATOR.genereer(),
-                        DATUM_GENERATOR.genereer().getIntegerWaarde(),
-                        DATUM_GENERATOR.genereer().getIntegerWaarde(),
-                        indicatieUitsluitingNl,
-                        datumEindeUitSluitingNl);
+                            BOOLEAN_GENERATOR.genereer(),
+                            DATUM_GENERATOR.genereer().getIntegerWaarde(),
+                            DATUM_GENERATOR.genereer().getIntegerWaarde(),
+                            indicatieUitsluitingNl,
+                            datumEindeUitSluitingNl);
 
-            return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(inhoud, null, Lo3Historie.NULL_HISTORIE, new Lo3Herkomst(
-                Lo3CategorieEnum.CATEGORIE_13,
-                0,
-                0)));
+            return Lo3StapelHelper.lo3Stapel(
+                    Lo3StapelHelper.lo3Cat(inhoud, null, new Lo3Historie(null, null, null), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_13, 0, 0)));
         }
     }
 

@@ -20,13 +20,14 @@ public class RNIDeelnemerConversietabel implements Conversietabel<Lo3RNIDeelneme
                 private static final long serialVersionUID = 1L;
 
                 {
-                    put(new Lo3RNIDeelnemerCode("0000"), new BrpPartijCode(0));
-                    put(new Lo3RNIDeelnemerCode("0101"), new BrpPartijCode(250001));
-                    put(new Lo3RNIDeelnemerCode("9999"), new BrpPartijCode(999999));
+                    put(new Lo3RNIDeelnemerCode("0000"), new BrpPartijCode("000000"));
+                    put(new Lo3RNIDeelnemerCode("0101"), new BrpPartijCode("250001"));
+                    put(new Lo3RNIDeelnemerCode("9999"), new BrpPartijCode("999999"));
                 }
             });
 
     private static final Map<BrpPartijCode, Lo3RNIDeelnemerCode> RNI_DEELNEMER_MAP_INVERSE;
+
     static {
         final Map<BrpPartijCode, Lo3RNIDeelnemerCode> buildingMap = new HashMap<>();
         for (final Map.Entry<Lo3RNIDeelnemerCode, BrpPartijCode> entry : RNI_DEELNEMER_MAP.entrySet()) {

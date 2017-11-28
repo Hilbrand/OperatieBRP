@@ -10,10 +10,16 @@ package nl.bzk.migratiebrp.test.common.util;
  * File type to accept.
  */
 public enum FilterType {
-    /** Accept only directories. */
+    /**
+     * Accept only directories.
+     */
     DIRECTORY,
-    /** Accept only files. */
+    /**
+     * Accept only files.
+     */
     FILE,
-    /** Accept anything. */
+    /**
+     * Accept anything.
+     */
     ANY;
 }

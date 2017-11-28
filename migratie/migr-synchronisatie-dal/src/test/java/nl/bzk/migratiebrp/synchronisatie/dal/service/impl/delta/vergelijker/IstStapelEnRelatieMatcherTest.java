@@ -18,10 +18,14 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import org.junit.Before;
+import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaRootEntiteitMatch;
@@ -30,9 +34,6 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.TestPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.decorators.PersoonDecorator;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.decorators.StapelDecorator;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
-
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Unittest voor {@link IstStapelEnRelatieMatcher}.
@@ -49,14 +50,20 @@ public class IstStapelEnRelatieMatcherTest extends AbstractDeltaTest {
         matcher = new IstStapelEnRelatieMatcher();
         nieuwePersoon =
                 new TestPersoon(
-                    SoortPersoon.INGESCHREVENE,
-                    Timestamp.valueOf("2014-01-01 00:00:00.0"),
-                    "Vermeer",
-                    2L,
-                    SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
+                        SoortPersoon.INGESCHREVENE,
+                        Timestamp.valueOf("2014-01-01 00:00:00.0"),
+                        "Vermeer",
+                        2L,
+                        SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
         bestaandePersoon = new TestPersoon(SoortPersoon.INGESCHREVENE);
-        bestaandePersoon.setAdministratienummer(200L);
-        nieuwePersoon.setAdministratienummer(200L);
+        final PersoonIDHistorie bestaandeIdHistorie = new PersoonIDHistorie(bestaandePersoon);
+        final String anummer = "1234567890";
+        bestaandeIdHistorie.setAdministratienummer(anummer);
+        bestaandePersoon.addPersoonIDHistorie(bestaandeIdHistorie);
+
+        final PersoonIDHistorie nieuweIdHistorie = new PersoonIDHistorie(nieuwePersoon);
+        nieuweIdHistorie.setAdministratienummer(anummer);
+        nieuwePersoon.addPersoonIDHistorie(nieuweIdHistorie);
 
         context = new DeltaBepalingContext(nieuwePersoon, bestaandePersoon, null, false);
         SynchronisatieLogging.init();
@@ -91,10 +98,10 @@ public class IstStapelEnRelatieMatcherTest extends AbstractDeltaTest {
         testMatchResultaat(matches, aantalVerwachtGewijzigd, aantalVerwachtVerwijderd, aantalVerwachtToegevoegd);
 
         final DeltaRootEntiteitMatch match = matches.iterator().next();
-        assertEquals(bestaandeStapel, match.getBestaandeDeltaRootEntiteit());
-        assertEquals(nieuwStapel, match.getNieuweDeltaRootEntiteit());
+        assertEquals(bestaandeStapel, match.getBestaandeRootEntiteit());
+        assertEquals(nieuwStapel, match.getNieuweRootEntiteit());
         assertEquals(bestaandePersoon, match.getEigenaarEntiteit());
-        assertEquals(Persoon.STAPELS, match.getEigenaarEntiteitVeldnaam());
+        assertEquals(Persoon.STAPELS_SET, match.getEigenaarEntiteitVeldnaam());
     }
 
     /**
@@ -310,10 +317,10 @@ public class IstStapelEnRelatieMatcherTest extends AbstractDeltaTest {
         testMatchResultaat(matches, aantalVerwachtGewijzigd, aantalVerwachtVerwijderd, aantalVerwachtToegevoegd);
 
         final DeltaRootEntiteitMatch match = matches.iterator().next();
-        assertNull(match.getBestaandeDeltaRootEntiteit());
-        assertEquals(stapel, match.getNieuweDeltaRootEntiteit());
+        assertNull(match.getBestaandeRootEntiteit());
+        assertEquals(stapel, match.getNieuweRootEntiteit());
         assertEquals(bestaandePersoon, match.getEigenaarEntiteit());
-        assertEquals(Persoon.STAPELS, match.getEigenaarEntiteitVeldnaam());
+        assertEquals(Persoon.STAPELS_SET, match.getEigenaarEntiteitVeldnaam());
         assertFalse(context.isBijhoudingOverig());
     }
 
@@ -343,10 +350,10 @@ public class IstStapelEnRelatieMatcherTest extends AbstractDeltaTest {
         testMatchResultaat(matches, aantalVerwachtGewijzigd, aantalVerwachtVerwijderd, aantalVerwachtToegevoegd);
 
         final DeltaRootEntiteitMatch match = matches.iterator().next();
-        assertNull(match.getBestaandeDeltaRootEntiteit());
-        assertEquals(stapel, match.getNieuweDeltaRootEntiteit());
+        assertNull(match.getBestaandeRootEntiteit());
+        assertEquals(stapel, match.getNieuweRootEntiteit());
         assertEquals(bestaandePersoon, match.getEigenaarEntiteit());
-        assertEquals(Persoon.STAPELS, match.getEigenaarEntiteitVeldnaam());
+        assertEquals(Persoon.STAPELS_SET, match.getEigenaarEntiteitVeldnaam());
         assertTrue(context.isBijhoudingOverig());
     }
 
@@ -373,10 +380,10 @@ public class IstStapelEnRelatieMatcherTest extends AbstractDeltaTest {
         testMatchResultaat(matches, aantalVerwachtGewijzigd, aantalVerwachtVerwijderd, aantalVerwachtToegevoegd);
 
         final DeltaRootEntiteitMatch match = matches.iterator().next();
-        assertEquals(stapel, match.getBestaandeDeltaRootEntiteit());
-        assertNull(match.getNieuweDeltaRootEntiteit());
+        assertEquals(stapel, match.getBestaandeRootEntiteit());
+        assertNull(match.getNieuweRootEntiteit());
         assertEquals(bestaandePersoon, match.getEigenaarEntiteit());
-        assertEquals(Persoon.STAPELS, match.getEigenaarEntiteitVeldnaam());
+        assertEquals(Persoon.STAPELS_SET, match.getEigenaarEntiteitVeldnaam());
     }
 
     @Test
@@ -625,7 +632,6 @@ public class IstStapelEnRelatieMatcherTest extends AbstractDeltaTest {
         bestaandePersoon.voegHuwelijkToe(datumAanvang, null);
         nieuwePersoon.voegHuwelijkToe(datumAanvang, null);
 
-
         final Set<DeltaRootEntiteitMatch> matches = matcher.matchIstGegevens(context);
         assertNotNull(matches);
         assertFalse(matches.isEmpty());
@@ -690,22 +696,20 @@ public class IstStapelEnRelatieMatcherTest extends AbstractDeltaTest {
             final PersoonDecorator decoratedNieuwePersoon = PersoonDecorator.decorate(nieuwePersoon);
             return (Set<?>) method.invoke(matcher, decoratedBestaandePersoon.getKindStapels(), decoratedNieuwePersoon.getKindStapels());
         } catch (
-            NoSuchMethodException
-            | SecurityException
-            | IllegalAccessException
-            | IllegalArgumentException
-            | InvocationTargetException e)
-        {
+                NoSuchMethodException
+                        | SecurityException
+                        | IllegalAccessException
+                        | IllegalArgumentException
+                        | InvocationTargetException e) {
             throw new IllegalStateException("Onverwachte fout tijdens uitvoeren vegelijken personen.", e);
         }
     }
 
     private void testMatchResultaat(
-        final Set<DeltaRootEntiteitMatch> resultaat,
-        final int aantalVerwachtGewijzigd,
-        final int aantalVerwachtVerwijderd,
-        final int aantalVerwachtToegevoegd)
-    {
+            final Set<DeltaRootEntiteitMatch> resultaat,
+            final int aantalVerwachtGewijzigd,
+            final int aantalVerwachtVerwijderd,
+            final int aantalVerwachtToegevoegd) {
         int aantalGewijzigd = 0;
         int aantalVerwijderd = 0;
         int aantalToegevoegd = 0;
@@ -729,34 +733,32 @@ public class IstStapelEnRelatieMatcherTest extends AbstractDeltaTest {
         try {
             method =
                     IstStapelEnRelatieMatcher.class.getDeclaredMethod(
-                        "matchOuderStapel",
-                        DeltaBepalingContext.class,
-                        PersoonDecorator.class,
-                        PersoonDecorator.class,
-                        boolean.class);
+                            "matchOuderStapel",
+                            DeltaBepalingContext.class,
+                            PersoonDecorator.class,
+                            PersoonDecorator.class,
+                            boolean.class);
             method.setAccessible(true);
             final PersoonDecorator decoratedBestaandePersoon = PersoonDecorator.decorate(bestaandePersoon);
             final PersoonDecorator decoratedKluizenaar = PersoonDecorator.decorate(nieuwePersoon);
             return (IstStapelMatch) method.invoke(matcher, context, decoratedBestaandePersoon, decoratedKluizenaar, false);
         } catch (
-            NoSuchMethodException
-            | SecurityException
-            | IllegalAccessException
-            | IllegalArgumentException
-            | InvocationTargetException e)
-        {
+                NoSuchMethodException
+                        | SecurityException
+                        | IllegalAccessException
+                        | IllegalArgumentException
+                        | InvocationTargetException e) {
             throw new IllegalStateException("Onverwachte fout tijdens uitvoeren vergelijken ouder.", e);
         }
     }
 
     private void controleerIstStapelMatches(
-        final Set<?> stapelMatchSet,
-        final int aantalStapelMatches,
-        final int verwachtAantalMatches,
-        final int verwachtAantalNonUnique,
-        final int verwachtAantalNieuw,
-        final int verwachtAantalStapelVerwijderd)
-    {
+            final Set<?> stapelMatchSet,
+            final int aantalStapelMatches,
+            final int verwachtAantalMatches,
+            final int verwachtAantalNonUnique,
+            final int verwachtAantalNieuw,
+            final int verwachtAantalStapelVerwijderd) {
         assertEquals(aantalStapelMatches, stapelMatchSet.size());
         int aantalMatches = 0;
         int aantalNonUnique = 0;

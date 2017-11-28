@@ -8,9 +8,7 @@ package nl.bzk.migratiebrp.isc.console.mig4jsf.pretty;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
-
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -22,12 +20,10 @@ import org.w3c.dom.NodeList;
 public final class PrettySync extends PrettyXml {
 
     private static final String FOUTMELDING_PARSEN_BERICHT = "Fout opgetreden bij parsen bericht: ";
-    private static final String XPATH_LO3_BERICHT_ALS_TELETEX = "//lo3BerichtAsTeletexString/text()";
-    private static final String XPATH_SELECT_LO3_CONVERTEERNAARBRPVERZOEK = XPATH_LO3_BERICHT_ALS_TELETEX;
+    private static final String XPATH_LO3_BERICHT_ALS_TELETEX = "//lo3PersoonslijstAlsTeletexString/text()";
     private static final String XPATH_SELECT_LO3_SYNCHRONISEERNAARBRPVERZOEK = XPATH_LO3_BERICHT_ALS_TELETEX;
 
     private static final String XPATH_LO3PL_TEXT = "//lo3Pl/text()";
-    private static final String XPATH_SELECT_LO3_CONVERTEERNAARLO3ANTWOORD = XPATH_LO3PL_TEXT;
     private static final String XPATH_SELECT_LO3_LEESUITBRPANTWOORD = XPATH_LO3PL_TEXT;
     private static final String XPATH_SELECT_LO3_SYNCHRONISEERNAARLO3ANTWOORD = XPATH_LO3PL_TEXT;
 
@@ -52,12 +48,6 @@ public final class PrettySync extends PrettyXml {
     private void outputAdditional(final StringBuilder sb, final Document document) {
         final String baseElementName = stripNamespace(document.getDocumentElement().getNodeName());
         switch (baseElementName) {
-            case "converteerNaarBrpVerzoek":
-                outputForConverteerNaarBrpVerzoek(sb, document);
-                break;
-            case "converteerNaarLo3Antwoord":
-                outputForConverteerNaarLo3Antwoord(sb, document);
-                break;
             case "leesUitBrpAntwoord":
                 outputForLeesUitBrpAntwoord(sb, document);
                 break;
@@ -92,14 +82,6 @@ public final class PrettySync extends PrettyXml {
         }
         sb.append(DIV_END);
 
-    }
-
-    private void outputForConverteerNaarBrpVerzoek(final StringBuilder sb, final Document document) {
-        outputSynchronisatieOfConversieBericht(sb, evaluateXPath(XPATH_SELECT_LO3_CONVERTEERNAARBRPVERZOEK, document));
-    }
-
-    private void outputForConverteerNaarLo3Antwoord(final StringBuilder sb, final Document document) {
-        outputSynchronisatieOfConversieBericht(sb, evaluateXPath(XPATH_SELECT_LO3_CONVERTEERNAARLO3ANTWOORD, document));
     }
 
     private void outputForLeesUitBrpAntwoord(final StringBuilder sb, final Document document) {
@@ -137,8 +119,7 @@ public final class PrettySync extends PrettyXml {
                     prettyLo3.appendInhoud(sb, node.getNodeValue());
                 } catch (
                         DOMException
-                        | BerichtSyntaxException e)
-                {
+                                | BerichtSyntaxException e) {
                     sb.append(FOUTMELDING_PARSEN_BERICHT + e);
                 }
                 sb.append(DIV_END);

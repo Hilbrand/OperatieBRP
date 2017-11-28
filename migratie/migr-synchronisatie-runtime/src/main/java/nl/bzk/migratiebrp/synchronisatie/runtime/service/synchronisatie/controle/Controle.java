@@ -14,9 +14,7 @@ import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerke
 public interface Controle {
     /**
      * Controleer.
-     *
-     * @param context
-     *            context
+     * @param context context
      * @return true, als alle controles voldoen, anders false
      */
     boolean controleer(VerwerkingsContext context);

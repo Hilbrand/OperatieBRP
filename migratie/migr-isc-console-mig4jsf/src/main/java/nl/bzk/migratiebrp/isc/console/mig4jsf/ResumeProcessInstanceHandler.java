@@ -19,15 +19,13 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  * Resume proces instance handler.
  */
 @TldTag(name = "resumeProcessInstance", description = "Resume a process instance.", attributes = {@TldAttribute(name = "processInstance",
-        description = "The process instance to resume.", required = true, deferredType = ProcessInstance.class) })
+        description = "The process instance to resume.", required = true, deferredType = ProcessInstance.class)})
 public final class ResumeProcessInstanceHandler extends AbstractHandler {
     private final TagAttribute processInstanceTagAttribute;
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public ResumeProcessInstanceHandler(final TagConfig config) {
         super(config);

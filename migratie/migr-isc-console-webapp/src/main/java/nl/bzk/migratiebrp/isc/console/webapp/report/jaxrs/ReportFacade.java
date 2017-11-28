@@ -14,6 +14,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.console.webapp.report.ReportException;
 import nl.bzk.migratiebrp.isc.console.webapp.report.ReportService;
 import nl.bzk.migratiebrp.isc.console.webapp.report.birt.BirtReportService;
@@ -26,14 +28,14 @@ import nl.bzk.migratiebrp.isc.console.webapp.report.config.ReportConfig;
 @Path("report")
 public final class ReportFacade {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private ReportConfig reportConfig = new DefaultReportConfig();
     private ReportService reportService = new BirtReportService(reportConfig);
 
     /**
      * Zet de waarde van report config.
-     *
-     * @param reportConfig
-     *            report config
+     * @param reportConfig report config
      */
     public void setReportConfig(final ReportConfig reportConfig) {
         this.reportConfig = reportConfig;
@@ -41,9 +43,7 @@ public final class ReportFacade {
 
     /**
      * Zet de waarde van report service.
-     *
-     * @param reportService
-     *            report service
+     * @param reportService report service
      */
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
@@ -51,11 +51,8 @@ public final class ReportFacade {
 
     /**
      * Execute a report and return the HTML.
-     *
-     * @param fileName
-     *            report
-     * @param request
-     *            http request
+     * @param fileName report
+     * @param request http request
      * @return response
      */
     @GET
@@ -70,17 +67,15 @@ public final class ReportFacade {
             final File reportFile = new File(reportFilename);
             return Response.ok(reportFile).type("text/html").build();
         } catch (final ReportException e) {
+            LOGGER.info("Fout opgetreden bij genereren van het rapport", e);
             return Response.serverError().build();
         }
     }
 
     /**
      * Return an image used in a report.
-     *
-     * @param fileName
-     *            image
-     * @param request
-     *            http request
+     * @param fileName image
+     * @param request http request
      * @return response
      */
     @GET

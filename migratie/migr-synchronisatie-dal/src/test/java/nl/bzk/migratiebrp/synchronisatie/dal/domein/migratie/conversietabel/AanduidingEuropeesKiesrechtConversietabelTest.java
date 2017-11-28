@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.AanduidingEuropeesKiesrechtConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingEuropeesKiesrechtEnum;
+
 import org.junit.Test;
 
 public class AanduidingEuropeesKiesrechtConversietabelTest {
@@ -31,10 +32,10 @@ public class AanduidingEuropeesKiesrechtConversietabelTest {
         final AanduidingEuropeesKiesrechtConversietabel tabel = new AanduidingEuropeesKiesrechtConversietabel();
         assertNull(tabel.converteerNaarLo3(null));
         assertEquals(
-            Lo3AanduidingEuropeesKiesrechtEnum.ONTVANGT_OPROEP.asElement(),
-            tabel.converteerNaarLo3(new BrpBoolean(Boolean.TRUE, null)));
+                Lo3AanduidingEuropeesKiesrechtEnum.ONTVANGT_OPROEP.asElement(),
+                tabel.converteerNaarLo3(new BrpBoolean(Boolean.TRUE, null)));
         assertEquals(
-            Lo3AanduidingEuropeesKiesrechtEnum.UITGESLOTEN.asElement(),
-            tabel.converteerNaarLo3(new BrpBoolean(Boolean.FALSE, null)));
+                Lo3AanduidingEuropeesKiesrechtEnum.UITGESLOTEN.asElement(),
+                tabel.converteerNaarLo3(new BrpBoolean(Boolean.FALSE, null)));
     }
 }

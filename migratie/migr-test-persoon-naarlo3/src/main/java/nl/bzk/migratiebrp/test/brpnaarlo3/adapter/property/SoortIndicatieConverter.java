@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.PropertyConverter;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ public final class SoortIndicatieConverter implements PropertyConverter<SoortInd
 
     @Override
     public SoortIndicatie convert(final String value) {
-        return value == null ? null : SoortIndicatie.parseId(Short.valueOf(value));
+        return value == null ? null : SoortIndicatie.parseId(Integer.valueOf(value));
     }
 
 }

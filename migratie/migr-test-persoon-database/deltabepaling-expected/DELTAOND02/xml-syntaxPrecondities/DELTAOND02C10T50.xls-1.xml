@@ -2,12 +2,8 @@
    <inschrijvingStapel>
       <lo3Categorie>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <inhoud class="nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3InschrijvingInhoud">
             <datumEersteInschrijving>
@@ -358,12 +354,8 @@
    <kiesrechtStapel>
       <lo3Categorie>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <inhoud class="nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KiesrechtInhoud">
             <aanduidingUitgeslotenKiesrecht>

@@ -1,15 +1,15 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.mapper;
 
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.ElementEnum;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.HisPersoonAfgeleidAdministratiefModel;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
 import org.springframework.stereotype.Component;
 
@@ -17,36 +17,36 @@ import org.springframework.stereotype.Component;
  * Mapt de afgeleid administratieve gegevens.
  */
 @Component
-public final class PersoonAfgeleidAdministratiefMapper
-        extends AbstractFormeelMapper<PersoonHisVolledig, HisPersoonAfgeleidAdministratiefModel, BrpPersoonAfgeleidAdministratiefInhoud>
-{
+public final class PersoonAfgeleidAdministratiefMapper extends AbstractMapper<BrpPersoonAfgeleidAdministratiefInhoud> {
+
+    /**
+     * Groep element voor deze mapper.
+     */
+    public static final GroepElement GROEP_ELEMENT = ElementHelper.getGroepElement(Element.PERSOON_AFGELEIDADMINISTRATIEF.getId());
+
     /**
      * Constructor.
      */
     public PersoonAfgeleidAdministratiefMapper() {
-        super(ElementEnum.PERSOON_AFGELEIDADMINISTRATIEF_TIJDSTIPREGISTRATIE, ElementEnum.PERSOON_AFGELEIDADMINISTRATIEF_TIJDSTIPVERVAL);
-    }
-
-    @Override
-    protected Iterable<HisPersoonAfgeleidAdministratiefModel> getHistorieIterable(final PersoonHisVolledig persoonHisVolledig) {
-        return persoonHisVolledig.getPersoonAfgeleidAdministratiefHistorie();
+        super(ElementHelper.getGroepElement(Element.PERSOON_IDENTITEIT.getId()),
+                GROEP_ELEMENT,
+                null,
+                null,
+                ElementHelper.getAttribuutElement(Element.PERSOON_AFGELEIDADMINISTRATIEF_TIJDSTIPREGISTRATIE.getId()),
+                ElementHelper.getAttribuutElement(Element.PERSOON_AFGELEIDADMINISTRATIEF_TIJDSTIPVERVAL.getId()));
     }
 
     /**
      * Map inhoud.
-     *
-     * @param historie de historie die gemapt moet worden.
+     * @param identiteitRecord identiteit record
+     * @param record BRP record
      * @param onderzoekMapper onderzoek mapper
-     * @return de afgeleidAdministratief.
      */
     @Override
-    public BrpPersoonAfgeleidAdministratiefInhoud mapInhoud(final HisPersoonAfgeleidAdministratiefModel historie, final OnderzoekMapper onderzoekMapper) {
-        final BrpBoolean indicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig =
-                BrpMapperUtil.mapBrpBoolean(historie.getIndicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig(), onderzoekMapper.bepaalOnderzoek(
-                    historie.getID(),
-                    ElementEnum.PERSOON_AFGELEIDADMINISTRATIEF_INDICATIEONVERWERKTBIJHOUDINGSVOORSTELNIETINGEZETENEAANWEZIG,
-                    true));
-
-        return new BrpPersoonAfgeleidAdministratiefInhoud(indicatieOnverwerktBijhoudingsvoorstelNietIngezeteneAanwezig);
+    public BrpPersoonAfgeleidAdministratiefInhoud mapInhoud(
+            final MetaRecord identiteitRecord,
+            final MetaRecord record,
+            final OnderzoekMapper onderzoekMapper) {
+        return new BrpPersoonAfgeleidAdministratiefInhoud();
     }
 }

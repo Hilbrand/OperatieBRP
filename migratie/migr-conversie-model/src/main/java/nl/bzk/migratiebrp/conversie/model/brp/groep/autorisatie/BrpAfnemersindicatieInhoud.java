@@ -6,13 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP Afnemersindicatie.
@@ -32,46 +32,39 @@ public final class BrpAfnemersindicatieInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maak een nieuw BrpAfnemersIndicatieInhoud object.
-     *
-     * @param datumAanvangMaterielePeriode
-     *            datum aanvang materieel periode
-     * @param datumEindeVolgen
-     *            datum einde volgen
-     * @param leeg
-     *            moet deze inhoud worden behandeld als leeg?
+     * @param datumAanvangMaterielePeriode datum aanvang materieel periode
+     * @param datumEindeVolgen datum einde volgen
+     * @param leeg moet deze inhoud worden behandeld als leeg?
      */
     public BrpAfnemersindicatieInhoud(
-        @Element(name = "datumAanvangMaterielePeriode", required = false) final BrpDatum datumAanvangMaterielePeriode,
-        @Element(name = "datumEindeVolgen", required = false) final BrpDatum datumEindeVolgen,
-        @Element(name = "isLeeg", required = false) final boolean leeg)
-    {
+            @Element(name = "datumAanvangMaterielePeriode", required = false) final BrpDatum datumAanvangMaterielePeriode,
+            @Element(name = "datumEindeVolgen", required = false) final BrpDatum datumEindeVolgen,
+            @Element(name = "isLeeg", required = false) final boolean leeg) {
         this.datumAanvangMaterielePeriode = datumAanvangMaterielePeriode;
         this.datumEindeVolgen = datumEindeVolgen;
         this.leeg = leeg;
     }
 
     /**
-     * Geef de waarde van datum aanvang materiele periode.
-     *
-     * @return datum aanvang materiele periode
+     * Geef de waarde van datum aanvang materiele periode van BrpAfnemersindicatieInhoud.
+     * @return de waarde van datum aanvang materiele periode van BrpAfnemersindicatieInhoud
      */
     public BrpDatum getDatumAanvangMaterielePeriode() {
         return datumAanvangMaterielePeriode;
     }
 
     /**
-     * Geef de waarde van datum tijd einde volgen.
-     *
-     * @return datum tijd einde volgen
+     * Geef de waarde van datum einde volgen van BrpAfnemersindicatieInhoud.
+     * @return de waarde van datum einde volgen van BrpAfnemersindicatieInhoud
      */
     public BrpDatum getDatumEindeVolgen() {
         return datumEindeVolgen;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -88,9 +81,9 @@ public final class BrpAfnemersindicatieInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpAfnemersindicatieInhoud castOther = (BrpAfnemersindicatieInhoud) other;
         return new EqualsBuilder().append(datumAanvangMaterielePeriode, castOther.datumAanvangMaterielePeriode)
-                                  .append(datumEindeVolgen, castOther.datumEindeVolgen)
-                                  .append(leeg, castOther.leeg)
-                                  .isEquals();
+                .append(datumEindeVolgen, castOther.datumEindeVolgen)
+                .append(leeg, castOther.leeg)
+                .isEquals();
     }
 
     @Override
@@ -101,8 +94,8 @@ public final class BrpAfnemersindicatieInhoud extends AbstractBrpGroepInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("datumAanvangMaterielePeriode", datumAanvangMaterielePeriode)
-                                                                          .append("datumEindeVolgen", datumEindeVolgen)
-                                                                          .append("leeg", leeg)
-                                                                          .toString();
+                .append("datumEindeVolgen", datumEindeVolgen)
+                .append("leeg", leeg)
+                .toString();
     }
 }

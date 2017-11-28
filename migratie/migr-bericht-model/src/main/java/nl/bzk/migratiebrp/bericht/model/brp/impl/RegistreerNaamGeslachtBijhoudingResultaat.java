@@ -8,14 +8,14 @@ package nl.bzk.migratiebrp.bericht.model.brp.impl;
 
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.brp.AbstractBrpBericht;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerNaamGeslachtBijhoudingResultaat;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingResultaatRegistreerNaamGeslachtMigVrz;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjectFactory;
 import nl.bzk.migratiebrp.bericht.model.brp.xml.BrpXml;
 
 /**
  * Resultaat van een naam/geslacht bijhouding.
  */
-public final class RegistreerNaamGeslachtBijhoudingResultaat extends AbstractBrpBericht<MigratievoorzieningRegistreerNaamGeslachtBijhoudingResultaat> {
+public final class RegistreerNaamGeslachtBijhoudingResultaat extends AbstractBrpBericht<BijhoudingResultaatRegistreerNaamGeslachtMigVrz> {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,16 +25,14 @@ public final class RegistreerNaamGeslachtBijhoudingResultaat extends AbstractBrp
      * Default constructor.
      */
     public RegistreerNaamGeslachtBijhoudingResultaat() {
-        this(new MigratievoorzieningRegistreerNaamGeslachtBijhoudingResultaat());
+        this(new BijhoudingResultaatRegistreerNaamGeslachtMigVrz());
     }
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param resultaat
-     *            het resultaat type
+     * @param resultaat het resultaat type
      */
-    public RegistreerNaamGeslachtBijhoudingResultaat(final MigratievoorzieningRegistreerNaamGeslachtBijhoudingResultaat resultaat) {
+    public RegistreerNaamGeslachtBijhoudingResultaat(final BijhoudingResultaatRegistreerNaamGeslachtMigVrz resultaat) {
         super("RegistreerNaamGeslachtBijhoudingResultaat", resultaat);
     }
 
@@ -42,6 +40,6 @@ public final class RegistreerNaamGeslachtBijhoudingResultaat extends AbstractBrp
 
     @Override
     public String format() throws BerichtInhoudException {
-        return BrpXml.SINGLETON.elementToString(new ObjectFactory().createIscMigRegistreerNamGeslachtR(getInhoud()));
+        return BrpXml.SINGLETON.elementToString(new ObjectFactory().createIscMigRegistreerNaamGeslachtR(getInhoud()));
     }
 }

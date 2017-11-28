@@ -24,11 +24,8 @@ public final class PrettyPrintBerichtActionListener extends AbstractActionListen
 
     /**
      * Constructor.
-     *
-     * @param berichtExpression
-     *            bericht expression
-     * @param targetExpression
-     *            target expression
+     * @param berichtExpression bericht expression
+     * @param targetExpression target expression
      */
     public PrettyPrintBerichtActionListener(final ValueExpression berichtExpression, final ValueExpression targetExpression) {
         super("prettyPrintBericht");

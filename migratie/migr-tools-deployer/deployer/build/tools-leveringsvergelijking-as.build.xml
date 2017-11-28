@@ -1,4 +1,4 @@
-<project name="migr-init-naarlo3" basedir="." default="fail">
+<project name="Leveringsvergelijking" basedir="." default="fail">
 
     <!--
      | Algemene properties

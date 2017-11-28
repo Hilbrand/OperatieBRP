@@ -15,9 +15,7 @@ public final class JbpmHelperException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
+     * @param message melding
      */
     public JbpmHelperException(final String message) {
         super(message);
@@ -25,11 +23,8 @@ public final class JbpmHelperException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
-     * @param cause
-     *            oorzaak
+     * @param message melding
+     * @param cause oorzaak
      */
     public JbpmHelperException(final String message, final Throwable cause) {
         super(message, cause);

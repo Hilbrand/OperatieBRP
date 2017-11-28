@@ -6,14 +6,13 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractPersoonHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
@@ -26,19 +25,14 @@ public final class PersoonBijhoudingMapper extends AbstractPersoonHistorieMapper
 
     /**
      * Maakt een PersoonBijhoudingMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonBijhoudingMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -54,33 +48,17 @@ public final class PersoonBijhoudingMapper extends AbstractPersoonHistorieMapper
      * {@inheritDoc}
      */
     @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonBijhoudingHistorie historie, final Persoon persoon) {
-        persoon.setBijhoudingsaard(historie.getBijhoudingsaard());
-        persoon.setNadereBijhoudingsaard(historie.getNadereBijhoudingsaard());
-        persoon.setIndicatieOnverwerktDocumentAanwezig(historie.getIndicatieOnverwerktDocumentAanwezig());
-        persoon.setBijhoudingspartij(historie.getPartij());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected PersoonBijhoudingHistorie mapHistorischeGroep(final BrpBijhoudingInhoud groepInhoud, final Persoon persoon) {
         final PersoonBijhoudingHistorie result =
                 new PersoonBijhoudingHistorie(
-                    persoon,
-                    getStamtabelMapping().findPartijByCode(groepInhoud.getBijhoudingspartijCode()),
-                    Bijhoudingsaard.parseCode(groepInhoud.getBijhoudingsaardCode().getWaarde()),
-                    NadereBijhoudingsaard.parseCode(groepInhoud.getNadereBijhoudingsaardCode().getWaarde()),
-                    BrpBoolean.unwrap(groepInhoud.getIndicatieOnverwerktDocumentAanwezig()));
+                        persoon,
+                        getStamtabelMapping().findPartijByCode(groepInhoud.getBijhoudingspartijCode()),
+                        Bijhoudingsaard.parseCode(groepInhoud.getBijhoudingsaardCode().getWaarde()),
+                        NadereBijhoudingsaard.parseCode(groepInhoud.getNadereBijhoudingsaardCode().getWaarde()));
 
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getBijhoudingspartijCode(), Element.PERSOON_BIJHOUDING_PARTIJCODE);
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getBijhoudingsaardCode(), Element.PERSOON_BIJHOUDING_BIJHOUDINGSAARDCODE);
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getNadereBijhoudingsaardCode(), Element.PERSOON_BIJHOUDING_NADEREBIJHOUDINGSAARDCODE);
-        getOnderzoekMapper().mapOnderzoek(
-            result,
-            groepInhoud.getIndicatieOnverwerktDocumentAanwezig(),
-            Element.PERSOON_BIJHOUDING_INDICATIEONVERWERKTDOCUMENTAANWEZIG);
 
         return result;
     }

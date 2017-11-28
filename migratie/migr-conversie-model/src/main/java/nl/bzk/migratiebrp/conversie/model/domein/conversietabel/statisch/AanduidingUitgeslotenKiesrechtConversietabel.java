@@ -7,10 +7,11 @@
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingUitgeslotenKiesrechtEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingUitgeslotenKiesrecht;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Dit is een statische conversie (er wordt geen tabel gebruikt) tussen de LO3 en BRP aanduiding uitgesloten kiesrecht.
@@ -20,23 +21,22 @@ public final class AanduidingUitgeslotenKiesrechtConversietabel implements Conve
 
     @Override
     public BrpBoolean converteerNaarBrp(final Lo3AanduidingUitgeslotenKiesrecht input) {
-        if (!Validatie.isElementGevuld(input)) {
+        if (!Lo3Validatie.isElementGevuld(input)) {
             return null;
         }
 
         final Lo3AanduidingUitgeslotenKiesrechtEnum code = Lo3AanduidingUitgeslotenKiesrechtEnum.getByCode(input.getWaarde());
 
-        switch (code) {
-            case UITGESLOTEN_KIESRECHT:
-                return new BrpBoolean(Boolean.TRUE);
-            default:
-                throw new IllegalArgumentException("Ongeldige waarde voor lo3 aanduiding uitgelosten kiesrecht: " + input);
+        if (Lo3AanduidingUitgeslotenKiesrechtEnum.UITGESLOTEN_KIESRECHT == code) {
+            return new BrpBoolean(Boolean.TRUE);
+        } else {
+            throw new IllegalArgumentException("Ongeldige waarde voor lo3 aanduiding uitgelosten kiesrecht: " + input);
         }
     }
 
     @Override
     public Lo3AanduidingUitgeslotenKiesrecht converteerNaarLo3(final BrpBoolean input) {
-        if (nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie.isAttribuutGevuld(input) && Boolean.TRUE.equals(input.getWaarde())) {
+        if (BrpValidatie.isAttribuutGevuld(input) && Boolean.TRUE.equals(input.getWaarde())) {
             return new Lo3AanduidingUitgeslotenKiesrecht(Lo3AanduidingUitgeslotenKiesrechtEnum.UITGESLOTEN_KIESRECHT.getCode());
         }
         return null;
@@ -44,7 +44,7 @@ public final class AanduidingUitgeslotenKiesrechtConversietabel implements Conve
 
     @Override
     public boolean valideerLo3(final Lo3AanduidingUitgeslotenKiesrecht input) {
-        return !Validatie.isElementGevuld(input) || Lo3AanduidingUitgeslotenKiesrechtEnum.getByCode(input.getWaarde()) != null;
+        return !Lo3Validatie.isElementGevuld(input) || Lo3AanduidingUitgeslotenKiesrechtEnum.getByCode(input.getWaarde()) != null;
     }
 
     @Override

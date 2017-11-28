@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,10 +22,10 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.test.perf.isc.bericht.TestBericht;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jms.core.JmsTemplate;
@@ -58,8 +59,8 @@ public final class TestEnvironment {
     private JmsTemplate jmsTemplate;
 
     @Inject
-    @Named("vospgOntvangstQueue")
-    private Destination vospgOntvangst;
+    @Named("voiscOntvangstQueue")
+    private Destination voiscOntvangst;
 
     @Inject
     private JdbcTemplate jdbcTemplate;
@@ -68,7 +69,6 @@ public final class TestEnvironment {
 
     /**
      * Genereer (max lengte 12) ID. Let op: enkel uniek binnen JVM (implementatie dmv AtomicInteger).
-     *
      * @return id
      */
     public String generateId() {
@@ -77,12 +77,10 @@ public final class TestEnvironment {
 
     /**
      * Verzend een bericht.
-     *
-     * @param testBericht
-     *            testBericht
+     * @param testBericht testBericht
      */
     public void verzendBericht(final TestBericht testBericht) {
-        jmsTemplate.send(vospgOntvangst, new MessageCreator() {
+        jmsTemplate.send(voiscOntvangst, new MessageCreator() {
             @Override
             public Message createMessage(final Session session) throws JMSException {
                 final Message message = session.createTextMessage(testBericht.getInhoud());
@@ -100,7 +98,7 @@ public final class TestEnvironment {
      */
     public void beforeTestCase() {
         // Clear queues
-        clearQueue(vospgOntvangst);
+        clearQueue(voiscOntvangst);
 
         initEndedProcessCount = getEndedProcessCount();
     }
@@ -119,25 +117,19 @@ public final class TestEnvironment {
     }
 
     /**
-     * Dump vospg.ontvangst queue naar outputDirectory.
-     *
-     * @param outputDirectory
-     *            De outputDirectory waarheen gedumpt wordt.
+     * Dump voisc.ontvangst queue naar outputDirectory.
+     * @param outputDirectory De outputDirectory waarheen gedumpt wordt.
      * @return true als er iets gedumpt is.
      */
     public boolean dumpQueues(final File outputDirectory) {
-        return !dumpQueue(vospgOntvangst, outputDirectory, "9999-uit-vospg-");
+        return !dumpQueue(voiscOntvangst, outputDirectory, "9999-uit-voisc-");
     }
 
     /**
      * Dump queue naar file.
-     *
-     * @param destination
-     *            De JMX Destination waarvan we berichten lezen
-     * @param outputDirectory
-     *            De outputDirectory waarheen gedumpt wordt.
-     * @param prefix
-     *            De file prefix voor de dump.
+     * @param destination De JMX Destination waarvan we berichten lezen
+     * @param outputDirectory De outputDirectory waarheen gedumpt wordt.
+     * @param prefix De file prefix voor de dump.
      * @return true als er niets te dumpen viel.
      */
     private boolean dumpQueue(final Destination destination, final File outputDirectory, final String prefix) {
@@ -173,13 +165,9 @@ public final class TestEnvironment {
 
     /**
      * Voer stappen na de testcase uit.
-     *
-     * @param wanted
-     *            Aantal verwachte berichten.
-     * @param started
-     *            Starttijd.
-     * @throws InterruptedException
-     *             kan worden gegooid bij aanroepen van Thread.sleep().
+     * @param wanted Aantal verwachte berichten.
+     * @param started Starttijd.
+     * @throws InterruptedException kan worden gegooid bij aanroepen van TimeUnit.MILLISECONDS.sleep().
      */
     public void afterTestCase(final long wanted, final Date started) throws InterruptedException {
         // Wanted number of messages
@@ -208,7 +196,7 @@ public final class TestEnvironment {
             }
 
             // Check each 10 seconds
-            Thread.sleep(LOOP_WACHTTIJD_IN_MILLIS);
+            TimeUnit.MILLISECONDS.sleep(LOOP_WACHTTIJD_IN_MILLIS);
         }
 
         LOG.info(new Date() + "; Ending with: " + current);
@@ -216,7 +204,6 @@ public final class TestEnvironment {
 
     /**
      * Geef de waarde van ended process count.
-     *
      * @return Het aantal beeindigde processen.
      */
     public Long getEndedProcessCount() {
@@ -230,9 +217,7 @@ public final class TestEnvironment {
 
     /**
      * Controleer of het aantal beeindigde processen gelijk is aan het verwachte aantal.
-     *
-     * @param expectedAmount
-     *            Het verwachte aantal.
+     * @param expectedAmount Het verwachte aantal.
      * @return of het aantal beeindigde processen gelijk is aan het verwachte aantal.
      */
     public boolean verifyEndedProcesses(final long expectedAmount) {

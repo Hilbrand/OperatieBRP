@@ -18,7 +18,7 @@ public final class BerichtMapper {
      * De kolommen gemapped door deze mapper.
      */
     public static final String COLUMNS = "id, tijdstip, kanaal, richting, message_id, correlation_id, bericht, naam, process_instance_id, "
-                                         + "verzendende_partij, ontvangende_partij, ms_sequence_number";
+            + "verzendende_partij, ontvangende_partij, ms_sequence_number";
 
     private static final int COLUMN_1 = 1;
     private static final int COLUMN_2 = 2;
@@ -35,12 +35,9 @@ public final class BerichtMapper {
 
     /**
      * Map een results et naar een bericht.
-     *
-     * @param rs
-     *            result set
+     * @param rs result set
      * @return bericht
-     * @throws SQLException
-     *             bij sql fouten
+     * @throws SQLException bij sql fouten
      */
     public Bericht map(final ResultSet rs) throws SQLException {
         final Bericht bericht = new Bericht();
@@ -57,8 +54,8 @@ public final class BerichtMapper {
         if (rs.wasNull()) {
             bericht.setProcessInstanceId(null);
         }
-        bericht.setBronGemeente(rs.getString(COLUMN_10));
-        bericht.setDoelGemeente(rs.getString(COLUMN_11));
+        bericht.setBronPartijCode(rs.getString(COLUMN_10));
+        bericht.setDoelPartijCode(rs.getString(COLUMN_11));
         bericht.setMsSequenceNumber(rs.getString(COLUMN_12));
 
         return bericht;

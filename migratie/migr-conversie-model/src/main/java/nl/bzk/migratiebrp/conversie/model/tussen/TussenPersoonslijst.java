@@ -8,13 +8,13 @@ package nl.bzk.migratiebrp.conversie.model.tussen;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.Persoonslijst;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBehandeldAlsNederlanderIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBuitenlandsPersoonsnummerInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDeelnameEuVerkiezingenInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDerdeHeeftGezagIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
@@ -29,6 +29,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNaamgebruikInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNationaliteitInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNummerverwijzingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnderCurateleIndicatieInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnverwerktDocumentAanwezigIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoud;
@@ -52,6 +53,7 @@ public final class TussenPersoonslijst implements Persoonslijst {
     private final TussenStapel<BrpAdresInhoud> adresStapel;
     private final TussenStapel<BrpPersoonAfgeleidAdministratiefInhoud> persoonAfgeleidAdministratiefStapel;
     private final TussenStapel<BrpBehandeldAlsNederlanderIndicatieInhoud> behandeldAlsNederlanderIndicatieStapel;
+    private final TussenStapel<BrpOnverwerktDocumentAanwezigIndicatieInhoud> onverwerktDocumentAanwezigIndicatieStapel;
     private final TussenStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel;
     private final TussenStapel<BrpBijhoudingInhoud> bijhoudingStapel;
     private final TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud> derdeHeeftGezagIndicatieStapel;
@@ -63,6 +65,7 @@ public final class TussenPersoonslijst implements Persoonslijst {
     private final TussenStapel<BrpInschrijvingInhoud> inschrijvingStapel;
     private final TussenStapel<BrpNummerverwijzingInhoud> nummerverwijzingStapel;
     private final List<TussenStapel<BrpNationaliteitInhoud>> nationaliteitStapels;
+    private final List<TussenStapel<BrpBuitenlandsPersoonsnummerInhoud>> buitenlandsPersoonsnummerStapels;
     private final TussenStapel<BrpOnderCurateleIndicatieInhoud> onderCurateleIndicatieStapel;
     private final TussenStapel<BrpOverlijdenInhoud> overlijdenStapel;
     private final TussenStapel<BrpPersoonskaartInhoud> persoonskaartStapel;
@@ -90,81 +93,50 @@ public final class TussenPersoonslijst implements Persoonslijst {
      * Maakt een TussenPersoonslijst object.
      * <p/>
      * Note: default access modifier, de persoonslijst kan alleen worden aangemaakt via de builder.
-     *
-     * @param naamgebruikStapel
-     *            De naamgebruik stapel.
-     * @param adresStapel
-     *            De adres stapel.
-     * @param persoonAfgeleidAdministratiefStapel
-     *            De persoon afgeleid administratief stapel.
-     * @param behandeldAlsNederlanderIndicatieStapel
-     *            De behandeld als Nederlander stapel.
-     * @param signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel
-     *            De signalering met betrekking tot verstrekken reisdocument stapel.
-     * @param bijhoudingStapel
-     *            De bijhouding stapel.
-     * @param derdeHeeftGezagIndicatieStapel
-     *            De derede heeft gezag stapel.
-     * @param deelnameEuVerkiezingenStapel
-     *            De deelname EU verkiezingen stapel.
-     * @param geboorteStapel
-     *            De geboorte stapel.
-     * @param geslachtsaanduidingStapel
-     *            De geslachtsaanduiding stapel.
-     * @param identificatienummerStapel
-     *            De identificatienummer stapel.
-     * @param migratieStapel
-     *            De migratie stapel.
-     * @param inschrijvingStapel
-     *            De inschrijving stapel.
-     * @param nationaliteitStapels
-     *            De nationaliteit stapel.
-     * @param nummerverwijzingStapel
-     *            De nummerverwijzing stapel.
-     * @param onderCurateleIndicatieStapel
-     *            De onder curatele stapel.
-     * @param overlijdenStapel
-     *            De overlijden stapel.
-     * @param persoonskaartStapel
-     *            De persoonskaart stapel.
-     * @param reisdocumentStapels
-     *            De reisdocument stapel.
-     * @param relaties
-     *            De relaties stapel.
-     * @param samengesteldeNaamStapel
-     *            De samengestelde naam stapel.
-     * @param staatloosIndicatieStapel
-     *            De staatloos stapel.
-     * @param uitsluitingKiesrechtStapel
-     *            De uitsluiting kiesrecht stapel.
-     * @param vastgesteldNietNederlanderIndicatieStapel
-     *            De vastgesteld niet-Nederlander stapel.
-     * @param verblijfsrechtStapel
-     *            De verblijfsrecht stapel.
-     * @param verstrekkingsbeperkingIndicatieStapel
-     *            De verstrekkingsbeperking stapel.
-     * @param bijzondereVerblijfsrechtelijkePositieIndicatieStapel
-     *            De bijzondere verblijfsrechtelijke positie stapel.
-     * @param verificatieStapels
-     *            De verificatie stapel.
-     * @param istOuder1Stapel
-     *            De IST ouder 1 stapel.
-     * @param istOuder2Stapel
-     *            De IST ouder 2 stapel.
-     * @param istHuwelijkOfGpStapels
-     *            De huwelijk of geregistreerdpartnerschap stapel.
-     * @param istKindStapels
-     *            De kind stapel.
-     * @param istGezagsverhoudingStapel
-     *            De gezagsverhouding stapel.
+     * @param naamgebruikStapel De naamgebruik stapel.
+     * @param adresStapel De adres stapel.
+     * @param persoonAfgeleidAdministratiefStapel De persoon afgeleid administratief stapel.
+     * @param behandeldAlsNederlanderIndicatieStapel De behandeld als Nederlander stapel.
+     * @param onverwerktDocumentAanwezigIndicatieStapel De onverwerkt document aanwezig stapel.
+     * @param signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel De signalering met betrekking tot verstrekken reisdocument stapel.
+     * @param bijhoudingStapel De bijhouding stapel.
+     * @param derdeHeeftGezagIndicatieStapel De derede heeft gezag stapel.
+     * @param deelnameEuVerkiezingenStapel De deelname EU verkiezingen stapel.
+     * @param geboorteStapel De geboorte stapel.
+     * @param geslachtsaanduidingStapel De geslachtsaanduiding stapel.
+     * @param identificatienummerStapel De identificatienummer stapel.
+     * @param migratieStapel De migratie stapel.
+     * @param inschrijvingStapel De inschrijving stapel.
+     * @param nationaliteitStapels De nationaliteit stapels.
+     * @param buitenlandsPersoonsnummerStapels De buitenlands persoonsnummer stapels.
+     * @param nummerverwijzingStapel De nummerverwijzing stapel.
+     * @param onderCurateleIndicatieStapel De onder curatele stapel.
+     * @param overlijdenStapel De overlijden stapel.
+     * @param persoonskaartStapel De persoonskaart stapel.
+     * @param reisdocumentStapels De reisdocument stapel.
+     * @param relaties De relaties stapel.
+     * @param samengesteldeNaamStapel De samengestelde naam stapel.
+     * @param staatloosIndicatieStapel De staatloos stapel.
+     * @param uitsluitingKiesrechtStapel De uitsluiting kiesrecht stapel.
+     * @param vastgesteldNietNederlanderIndicatieStapel De vastgesteld niet-Nederlander stapel.
+     * @param verblijfsrechtStapel De verblijfsrecht stapel.
+     * @param verstrekkingsbeperkingIndicatieStapel De verstrekkingsbeperking stapel.
+     * @param bijzondereVerblijfsrechtelijkePositieIndicatieStapel De bijzondere verblijfsrechtelijke positie stapel.
+     * @param verificatieStapels De verificatie stapel.
+     * @param istOuder1Stapel De IST ouder 1 stapel.
+     * @param istOuder2Stapel De IST ouder 2 stapel.
+     * @param istHuwelijkOfGpStapels De huwelijk of geregistreerdpartnerschap stapel.
+     * @param istKindStapels De kind stapel.
+     * @param istGezagsverhoudingStapel De gezagsverhouding stapel.
      */
-    @SuppressWarnings("checkstyle:parameternumber")
+
     TussenPersoonslijst(
         /* Meer dan 7 parameters is in constructors van immutable model klassen getolereerd. */
         final TussenStapel<BrpNaamgebruikInhoud> naamgebruikStapel,
         final TussenStapel<BrpAdresInhoud> adresStapel,
         final TussenStapel<BrpPersoonAfgeleidAdministratiefInhoud> persoonAfgeleidAdministratiefStapel,
         final TussenStapel<BrpBehandeldAlsNederlanderIndicatieInhoud> behandeldAlsNederlanderIndicatieStapel,
+        final TussenStapel<BrpOnverwerktDocumentAanwezigIndicatieInhoud> onverwerktDocumentAanwezigIndicatieStapel,
         final TussenStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel,
         final TussenStapel<BrpBijhoudingInhoud> bijhoudingStapel,
         final TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud> derdeHeeftGezagIndicatieStapel,
@@ -175,6 +147,7 @@ public final class TussenPersoonslijst implements Persoonslijst {
         final TussenStapel<BrpMigratieInhoud> migratieStapel,
         final TussenStapel<BrpInschrijvingInhoud> inschrijvingStapel,
         final List<TussenStapel<BrpNationaliteitInhoud>> nationaliteitStapels,
+        final List<TussenStapel<BrpBuitenlandsPersoonsnummerInhoud>> buitenlandsPersoonsnummerStapels,
         final TussenStapel<BrpNummerverwijzingInhoud> nummerverwijzingStapel,
         final TussenStapel<BrpOnderCurateleIndicatieInhoud> onderCurateleIndicatieStapel,
         final TussenStapel<BrpOverlijdenInhoud> overlijdenStapel,
@@ -193,12 +166,12 @@ public final class TussenPersoonslijst implements Persoonslijst {
         final TussenStapel<BrpIstRelatieGroepInhoud> istOuder2Stapel,
         final List<TussenStapel<BrpIstHuwelijkOfGpGroepInhoud>> istHuwelijkOfGpStapels,
         final List<TussenStapel<BrpIstRelatieGroepInhoud>> istKindStapels,
-        final TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> istGezagsverhoudingStapel)
-    {
+        final TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> istGezagsverhoudingStapel) {
         this.naamgebruikStapel = naamgebruikStapel;
         this.adresStapel = adresStapel;
         this.persoonAfgeleidAdministratiefStapel = persoonAfgeleidAdministratiefStapel;
         this.behandeldAlsNederlanderIndicatieStapel = behandeldAlsNederlanderIndicatieStapel;
+        this.onverwerktDocumentAanwezigIndicatieStapel = onverwerktDocumentAanwezigIndicatieStapel;
         this.signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel = signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel;
         this.bijhoudingStapel = bijhoudingStapel;
         this.derdeHeeftGezagIndicatieStapel = derdeHeeftGezagIndicatieStapel;
@@ -209,6 +182,7 @@ public final class TussenPersoonslijst implements Persoonslijst {
         this.migratieStapel = migratieStapel;
         this.inschrijvingStapel = inschrijvingStapel;
         this.nationaliteitStapels = nationaliteitStapels;
+        this.buitenlandsPersoonsnummerStapels = buitenlandsPersoonsnummerStapels;
         this.nummerverwijzingStapel = nummerverwijzingStapel;
         this.onderCurateleIndicatieStapel = onderCurateleIndicatieStapel;
         this.overlijdenStapel = overlijdenStapel;
@@ -235,37 +209,37 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van naamgebruik stapel.
-     *
-     * @return de naamgebruik stapel voor deze persoonslijst
+     * Geef de waarde van naamgebruik stapel van TussenPersoonslijst.
+     * @return de waarde van naamgebruik stapel van TussenPersoonslijst
      */
     public TussenStapel<BrpNaamgebruikInhoud> getNaamgebruikStapel() {
         return naamgebruikStapel;
     }
 
-    /**
-     * Geef de waarde van actueel administratienummer.
-     *
-     * @return het actuele a-nummer van deze persoonslijst
+    /* (non-Javadoc)
+     * @see nl.bzk.migratiebrp.conversie.model.Persoonslijst#getActueelAdministratienummer()
      */
     @Override
-    public Long getActueelAdministratienummer() {
-        return BrpLong.unwrap(getIdentificatienummerStapel().getLaatsteElement().getInhoud().getAdministratienummer());
+    public String getActueelAdministratienummer() {
+        return BrpString.unwrap(getIdentificatienummerStapel().getLaatsteElement().getInhoud().getAdministratienummer());
+    }
+
+    @Override
+    public String getActueelBurgerservicenummer() {
+        return BrpString.unwrap(getIdentificatienummerStapel().getLaatsteElement().getInhoud().getBurgerservicenummer());
     }
 
     /**
-     * Geef de waarde van adres stapel.
-     *
-     * @return de adres stapel voor deze persoonslijst, of null
+     * Geef de waarde van adres stapel van TussenPersoonslijst.
+     * @return de waarde van adres stapel van TussenPersoonslijst
      */
     public TussenStapel<BrpAdresInhoud> getAdresStapel() {
         return adresStapel;
     }
 
     /**
-     * Geef de waarde van persoon afgeleid administratief stapel.
-     *
-     * @return de Behandeld als Nederlander stapel voor deze persoonslijst
+     * Geef de waarde van persoon afgeleid administratief stapel van TussenPersoonslijst.
+     * @return de waarde van persoon afgeleid administratief stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpPersoonAfgeleidAdministratiefInhoud> getPersoonAfgeleidAdministratiefStapel() {
@@ -273,9 +247,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van behandeld als nederlander indicatie stapel.
-     *
-     * @return de Behandeld als Nederlander stapel voor deze persoonslijst
+     * Geef de waarde van behandeld als nederlander indicatie stapel van TussenPersoonslijst.
+     * @return de waarde van behandeld als nederlander indicatie stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpBehandeldAlsNederlanderIndicatieInhoud> getBehandeldAlsNederlanderIndicatieStapel() {
@@ -283,9 +256,17 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van signalering met betrekking tot verstrekken reisdocument stapel.
-     *
-     * @return de signaleringMetBetrekkingTotVerstrekkenReisdocument stapel voor deze persoonslijst
+     * Geef de waarde van onverwerkt document aanwezig indicatie stapel van TussenPersoonslijst.
+     * @return de waarde van onverwerkt document aanwezig indicatie stapel van TussenPersoonslijst
+     */
+
+    public TussenStapel<BrpOnverwerktDocumentAanwezigIndicatieInhoud> getOnverwerktDocumentAanwezigIndicatieStapel() {
+        return onverwerktDocumentAanwezigIndicatieStapel;
+    }
+
+    /**
+     * Geef de waarde van signalering met betrekking tot verstrekken reisdocument stapel van TussenPersoonslijst.
+     * @return de waarde van signalering met betrekking tot verstrekken reisdocument stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> getSignaleringMetBetrekkingTotVerstrekkenReisdocumentStapel() {
@@ -293,9 +274,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van bijhouding stapel.
-     *
-     * @return de bijhouding stapel voor deze persoonslijst, of null
+     * Geef de waarde van bijhouding stapel van TussenPersoonslijst.
+     * @return de waarde van bijhouding stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpBijhoudingInhoud> getBijhoudingStapel() {
@@ -304,9 +284,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van derde heeft gezag indicatie stapel.
-     *
-     * @return de 'derde heeft gezag'-indicatie stapel voor deze persoonslijst, of null
+     * Geef de waarde van derde heeft gezag indicatie stapel van TussenPersoonslijst.
+     * @return de waarde van derde heeft gezag indicatie stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud> getDerdeHeeftGezagIndicatieStapel() {
@@ -315,9 +294,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van deelname eu verkiezingen stapel.
-     *
-     * @return de europese verkiezingen stapel voor deze persoonslijst, of null
+     * Geef de waarde van deelname eu verkiezingen stapel van TussenPersoonslijst.
+     * @return de waarde van deelname eu verkiezingen stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpDeelnameEuVerkiezingenInhoud> getDeelnameEuVerkiezingenStapel() {
@@ -326,9 +304,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van geboorte stapel.
-     *
-     * @return de geboorte stapel voor deze persoonslijst
+     * Geef de waarde van geboorte stapel van TussenPersoonslijst.
+     * @return de waarde van geboorte stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpGeboorteInhoud> getGeboorteStapel() {
@@ -336,9 +313,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van geslachtsaanduiding stapel.
-     *
-     * @return de geslachtsaanduiding stapel voor deze persoonslijst
+     * Geef de waarde van geslachtsaanduiding stapel van TussenPersoonslijst.
+     * @return de waarde van geslachtsaanduiding stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpGeslachtsaanduidingInhoud> getGeslachtsaanduidingStapel() {
@@ -346,9 +322,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van identificatienummer stapel.
-     *
-     * @return de identificatienummer stapel voor deze persoonslijst
+     * Geef de waarde van identificatienummer stapel van TussenPersoonslijst.
+     * @return de waarde van identificatienummer stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpIdentificatienummersInhoud> getIdentificatienummerStapel() {
@@ -356,9 +331,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van migratie stapel.
-     *
-     * @return de migratie stapel voor deze persoonslijst, of null
+     * Geef de waarde van migratie stapel van TussenPersoonslijst.
+     * @return de waarde van migratie stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpMigratieInhoud> getMigratieStapel() {
@@ -366,9 +340,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van inschrijving stapel.
-     *
-     * @return de inschrijving stapel voor deze persoonslijst
+     * Geef de waarde van inschrijving stapel van TussenPersoonslijst.
+     * @return de waarde van inschrijving stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpInschrijvingInhoud> getInschrijvingStapel() {
@@ -376,18 +349,24 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van nationaliteit stapels.
-     *
-     * @return de lijst met nationaliteit stapels voor deze persoonslijst
+     * Geef de waarde van nationaliteit stapels van TussenPersoonslijst.
+     * @return de waarde van nationaliteit stapels van TussenPersoonslijst
      */
     public List<TussenStapel<BrpNationaliteitInhoud>> getNationaliteitStapels() {
         return TussenPersoonslijst.copyOf(nationaliteitStapels);
     }
 
     /**
-     * Geef de waarde van nummerverwijzing stapel.
-     *
-     * @return de nummerverwijzing stapel voor deze persoonslijst, of null
+     * Geef de waarde van buitenlands persoonsnummer stapels van TussenPersoonslijst.
+     * @return de waarde van buitenlands persoonsnummer stapels van TussenPersoonslijst
+     */
+    public List<TussenStapel<BrpBuitenlandsPersoonsnummerInhoud>> getBuitenlandsPersoonsnummerStapels() {
+        return TussenPersoonslijst.copyOf(buitenlandsPersoonsnummerStapels);
+    }
+
+    /**
+     * Geef de waarde van nummerverwijzing stapel van TussenPersoonslijst.
+     * @return de waarde van nummerverwijzing stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpNummerverwijzingInhoud> getNummerverwijzingStapel() {
@@ -395,9 +374,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van onder curatele indicatie stapel.
-     *
-     * @return de 'onder curatele'-indicatie stapel voor deze persoonslijst, of null
+     * Geef de waarde van onder curatele indicatie stapel van TussenPersoonslijst.
+     * @return de waarde van onder curatele indicatie stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpOnderCurateleIndicatieInhoud> getOnderCurateleIndicatieStapel() {
@@ -406,9 +384,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van overlijden stapel.
-     *
-     * @return de overlijden stapel voor deze persoonslijst, of null
+     * Geef de waarde van overlijden stapel van TussenPersoonslijst.
+     * @return de waarde van overlijden stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpOverlijdenInhoud> getOverlijdenStapel() {
@@ -417,9 +394,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van persoonskaart stapel.
-     *
-     * @return de persoonskaart stapel voor deze persoonslijst, of null
+     * Geef de waarde van persoonskaart stapel van TussenPersoonslijst.
+     * @return de waarde van persoonskaart stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpPersoonskaartInhoud> getPersoonskaartStapel() {
@@ -428,27 +404,24 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van reisdocument stapels.
-     *
-     * @return de reisdocument stapels voor deze persoonslijst
+     * Geef de waarde van reisdocument stapels van TussenPersoonslijst.
+     * @return de waarde van reisdocument stapels van TussenPersoonslijst
      */
     public List<TussenStapel<BrpReisdocumentInhoud>> getReisdocumentStapels() {
         return TussenPersoonslijst.copyOf(reisdocumentStapels);
     }
 
     /**
-     * Geef de waarde van relaties.
-     *
-     * @return de lijst met BrpRelatie stapels of null
+     * Geef de waarde van relaties van TussenPersoonslijst.
+     * @return de waarde van relaties van TussenPersoonslijst
      */
     public List<TussenRelatie> getRelaties() {
         return TussenPersoonslijst.copyOf(relaties);
     }
 
     /**
-     * Geef de waarde van samengestelde naam stapel.
-     *
-     * @return de samengestelde naam stapel voor deze persoonslijst, of null
+     * Geef de waarde van samengestelde naam stapel van TussenPersoonslijst.
+     * @return de waarde van samengestelde naam stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpSamengesteldeNaamInhoud> getSamengesteldeNaamStapel() {
@@ -457,9 +430,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van staatloos indicatie stapel.
-     *
-     * @return de Staatloos indicatie stapel voor deze persoonslijst
+     * Geef de waarde van staatloos indicatie stapel van TussenPersoonslijst.
+     * @return de waarde van staatloos indicatie stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpStaatloosIndicatieInhoud> getStaatloosIndicatieStapel() {
@@ -467,9 +439,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van uitsluiting kiesrecht stapel.
-     *
-     * @return de uitsluiting Nederlands kiesrecht stapel voor deze persoonslijst, of null
+     * Geef de waarde van uitsluiting kiesrecht stapel van TussenPersoonslijst.
+     * @return de waarde van uitsluiting kiesrecht stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpUitsluitingKiesrechtInhoud> getUitsluitingKiesrechtStapel() {
@@ -477,9 +448,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van vastgesteld niet nederlander indicatie stapel.
-     *
-     * @return de Vastgesteld Niet Nederlander indicatie stapel voor deze persoonslijst
+     * Geef de waarde van vastgesteld niet nederlander indicatie stapel van TussenPersoonslijst.
+     * @return de waarde van vastgesteld niet nederlander indicatie stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpVastgesteldNietNederlanderIndicatieInhoud> getVastgesteldNietNederlanderIndicatieStapel() {
@@ -487,9 +457,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van verblijfsrecht stapel.
-     *
-     * @return de verblijfsrecht stapel voor deze persoonslijst, of null
+     * Geef de waarde van verblijfsrecht stapel van TussenPersoonslijst.
+     * @return de waarde van verblijfsrecht stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpVerblijfsrechtInhoud> getVerblijfsrechtStapel() {
@@ -497,9 +466,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van verstrekkingsbeperking indicatie stapel.
-     *
-     * @return de verstrekkingsbeperkingIndicatie stapel voor deze persoonslijst, of null
+     * Geef de waarde van verstrekkingsbeperking indicatie stapel van TussenPersoonslijst.
+     * @return de waarde van verstrekkingsbeperking indicatie stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpVerstrekkingsbeperkingIndicatieInhoud> getVerstrekkingsbeperkingIndicatieStapel() {
@@ -507,9 +475,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van bijzondere verblijfsrechtelijke positie indicatie stapel.
-     *
-     * @return de bijzondereVerblijfsrechtelijkePositieIndicatie stapel voor deze persoonslijst, of null
+     * Geef de waarde van bijzondere verblijfsrechtelijke positie indicatie stapel van TussenPersoonslijst.
+     * @return de waarde van bijzondere verblijfsrechtelijke positie indicatie stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud> getBijzondereVerblijfsrechtelijkePositieIndicatieStapel() {
@@ -517,18 +484,16 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van verificatie stapels.
-     *
-     * @return de verificatie stapels voor deze persoonslijst
+     * Geef de waarde van verificatie stapels van TussenPersoonslijst.
+     * @return de waarde van verificatie stapels van TussenPersoonslijst
      */
     public List<TussenStapel<BrpVerificatieInhoud>> getVerificatieStapels() {
         return TussenPersoonslijst.copyOf(verificatieStapels);
     }
 
     /**
-     * Geef de waarde van ist ouder1 stapel.
-     *
-     * @return de ist stapel voor ouder1
+     * Geef de waarde van ist ouder1 stapel van TussenPersoonslijst.
+     * @return de waarde van ist ouder1 stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpIstRelatieGroepInhoud> getIstOuder1Stapel() {
@@ -536,9 +501,8 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van ist ouder2 stapel.
-     *
-     * @return de ist stapel voor ouder2
+     * Geef de waarde van ist ouder2 stapel van TussenPersoonslijst.
+     * @return de waarde van ist ouder2 stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpIstRelatieGroepInhoud> getIstOuder2Stapel() {
@@ -546,27 +510,24 @@ public final class TussenPersoonslijst implements Persoonslijst {
     }
 
     /**
-     * Geef de waarde van ist huwelijk of gp stapels.
-     *
-     * @return de ist stapels voor huwelijk of geregistreerd partnerschap
+     * Geef de waarde van ist huwelijk of gp stapels van TussenPersoonslijst.
+     * @return de waarde van ist huwelijk of gp stapels van TussenPersoonslijst
      */
     public List<TussenStapel<BrpIstHuwelijkOfGpGroepInhoud>> getIstHuwelijkOfGpStapels() {
         return istHuwelijkOfGpStapels;
     }
 
     /**
-     * Geef de waarde van ist kind stapels.
-     *
-     * @return de ist stapels voor kind
+     * Geef de waarde van ist kind stapels van TussenPersoonslijst.
+     * @return de waarde van ist kind stapels van TussenPersoonslijst
      */
     public List<TussenStapel<BrpIstRelatieGroepInhoud>> getIstKindStapels() {
         return istKindStapels;
     }
 
     /**
-     * Geef de waarde van ist gezagsverhouding stapel.
-     *
-     * @return de ist stapel voor gezagsverhouding
+     * Geef de waarde van ist gezagsverhouding stapel van TussenPersoonslijst.
+     * @return de waarde van ist gezagsverhouding stapel van TussenPersoonslijst
      */
 
     public TussenStapel<BrpIstGezagsVerhoudingGroepInhoud> getIstGezagsverhoudingStapel() {

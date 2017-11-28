@@ -7,26 +7,25 @@
 package nl.bzk.migratiebrp.conversie.model.lo3;
 
 import java.util.regex.Pattern;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Definitie;
 import nl.bzk.migratiebrp.conversie.model.Definities;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RNIDeelnemerCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de LO3 categorieen document, akte en RNI-deelnemer.
  *
  * Deze class is immutable en threadsafe.
- *
  */
 public final class Lo3Documentatie {
 
@@ -66,24 +65,14 @@ public final class Lo3Documentatie {
 
     /**
      * Maakt een Lo3Document object.
-     *
-     * @param id
-     *            technisch id
-     * @param gemeenteAkte
-     *            81.10 gemeente akte
-     * @param nummerAkte
-     *            81.20 nummer akte
-     * @param gemeenteDocument
-     *            82.10 gemeente document
-     * @param datumDocument
-     *            82.20 datum document
-     * @param beschrijvingDocument
-     *            82.30 beschrijving document indicatie of hier voor de conversie een extra document aan toegevoegd moet
-     *            worden
-     * @param rniDeelnemerCode
-     *            88.10 RNI deelnemer code
-     * @param omschrijvingVerdrag
-     *            88.20 omschrijving verdrag
+     * @param id technisch id
+     * @param gemeenteAkte 81.10 gemeente akte
+     * @param nummerAkte 81.20 nummer akte
+     * @param gemeenteDocument 82.10 gemeente document
+     * @param datumDocument 82.20 datum document
+     * @param beschrijvingDocument 82.30 beschrijving document indicatie of hier voor de conversie een extra document aan toegevoegd moet worden
+     * @param rniDeelnemerCode 88.10 RNI deelnemer code
+     * @param omschrijvingVerdrag 88.20 omschrijving verdrag
      */
     public Lo3Documentatie(
         /* Meer dan 7 parameters is in constructors van immutable model klassen getolereerd. */
@@ -94,8 +83,7 @@ public final class Lo3Documentatie {
         @Element(name = "datumDocument", required = false) final Lo3Datum datumDocument,
         @Element(name = "beschrijvingDocument", required = false) final Lo3String beschrijvingDocument,
         @Element(name = "rniDeelnemerCode", required = false) final Lo3RNIDeelnemerCode rniDeelnemerCode,
-        @Element(name = "omschrijvingVerdrag", required = false) final Lo3String omschrijvingVerdrag)
-    {
+        @Element(name = "omschrijvingVerdrag", required = false) final Lo3String omschrijvingVerdrag) {
         this.id = id;
         this.gemeenteAkte = gemeenteAkte;
         this.nummerAkte = nummerAkte;
@@ -108,51 +96,40 @@ public final class Lo3Documentatie {
 
     /**
      * Maak een Lo3Document, indien nodig.
-     *
-     * @param gemeenteAkte
-     *            81.10 gemeente akte
-     * @param nummerAkte
-     *            81.20 nummer akte
-     * @param gemeenteDocument
-     *            82.10 gemeente document
-     * @param datumDocument
-     *            82.20 datum document
-     * @param beschrijvingDocument
-     *            83.30 beschrijving document
-     * @param rniDeelnemerCode
-     *            88.10 RNI deelnemer code
-     * @param omschrijvingVerdrag
-     *            88.20 omschrijving verdrag
-     *
+     * @param gemeenteAkte 81.10 gemeente akte
+     * @param nummerAkte 81.20 nummer akte
+     * @param gemeenteDocument 82.10 gemeente document
+     * @param datumDocument 82.20 datum document
+     * @param beschrijvingDocument 83.30 beschrijving document
+     * @param rniDeelnemerCode 88.10 RNI deelnemer code
+     * @param omschrijvingVerdrag 88.20 omschrijving verdrag
      * @return een nieuwe Lo3Document, null als alle velden leeg zijn
      */
     public static Lo3Documentatie build(
-        final Lo3GemeenteCode gemeenteAkte,
-        final Lo3String nummerAkte,
-        final Lo3GemeenteCode gemeenteDocument,
-        final Lo3Datum datumDocument,
-        final Lo3String beschrijvingDocument,
-        final Lo3RNIDeelnemerCode rniDeelnemerCode,
-        final Lo3String omschrijvingVerdrag)
-    {
-        if (Validatie.isEenParameterNietNull(
-            gemeenteAkte,
-            nummerAkte,
-            gemeenteDocument,
-            datumDocument,
-            beschrijvingDocument,
-            rniDeelnemerCode,
-            omschrijvingVerdrag))
-        {
-            return new Lo3Documentatie(
-                UniqueSequence.next(),
+            final Lo3GemeenteCode gemeenteAkte,
+            final Lo3String nummerAkte,
+            final Lo3GemeenteCode gemeenteDocument,
+            final Lo3Datum datumDocument,
+            final Lo3String beschrijvingDocument,
+            final Lo3RNIDeelnemerCode rniDeelnemerCode,
+            final Lo3String omschrijvingVerdrag) {
+        if (Lo3Validatie.isEenParameterNietNull(
                 gemeenteAkte,
                 nummerAkte,
                 gemeenteDocument,
                 datumDocument,
                 beschrijvingDocument,
                 rniDeelnemerCode,
-                omschrijvingVerdrag);
+                omschrijvingVerdrag)) {
+            return new Lo3Documentatie(
+                    UniqueSequence.next(),
+                    gemeenteAkte,
+                    nummerAkte,
+                    gemeenteDocument,
+                    datumDocument,
+                    beschrijvingDocument,
+                    rniDeelnemerCode,
+                    omschrijvingVerdrag);
         } else {
             return null;
         }
@@ -168,7 +145,6 @@ public final class Lo3Documentatie {
 
     /**
      * Geef de waarde van id.
-     *
      * @return the id
      */
     public long getId() {
@@ -177,7 +153,6 @@ public final class Lo3Documentatie {
 
     /**
      * Geef de waarde van gemeente akte.
-     *
      * @return the gemeenteAkte
      */
     public Lo3GemeenteCode getGemeenteAkte() {
@@ -186,7 +161,6 @@ public final class Lo3Documentatie {
 
     /**
      * Geef de waarde van nummer akte.
-     *
      * @return the aktenummer
      */
     public Lo3String getNummerAkte() {
@@ -195,7 +169,6 @@ public final class Lo3Documentatie {
 
     /**
      * Geef de waarde van gemeente document.
-     *
      * @return the gemeenteDocument
      */
     public Lo3GemeenteCode getGemeenteDocument() {
@@ -204,7 +177,6 @@ public final class Lo3Documentatie {
 
     /**
      * Geef de waarde van datum document.
-     *
      * @return the datumDocument
      */
     public Lo3Datum getDatumDocument() {
@@ -213,7 +185,6 @@ public final class Lo3Documentatie {
 
     /**
      * Geef de waarde van beschrijving document.
-     *
      * @return the beschrijvingDocument
      */
     public Lo3String getBeschrijvingDocument() {
@@ -222,7 +193,6 @@ public final class Lo3Documentatie {
 
     /**
      * Geef de waarde van rni deelnemer code.
-     *
      * @return the rniDeelnemerCode
      */
     public Lo3RNIDeelnemerCode getRniDeelnemerCode() {
@@ -231,7 +201,6 @@ public final class Lo3Documentatie {
 
     /**
      * Geef de waarde van omschrijving verdrag.
-     *
      * @return the omschrijvingVerdrag
      */
     public Lo3String getOmschrijvingVerdrag() {
@@ -240,7 +209,6 @@ public final class Lo3Documentatie {
 
     /**
      * Heeft deze documentatie akte gegevens?.
-     *
      * @return true, als gemeente akte of nummer akte gevuld is; anders false
      */
     @Definitie(Definities.DEF043)
@@ -250,7 +218,6 @@ public final class Lo3Documentatie {
 
     /**
      * Heeft deze documentatie document gegevens?.
-     *
      * @return true, als document akte of datum document of beschrijving document gevuld is; anders false
      */
     @Definitie(Definities.DEF042)
@@ -263,15 +230,12 @@ public final class Lo3Documentatie {
 
     /**
      * Heeft deze documentatie RNI-deelnemer gegevens?.
-     *
      * @return true, als rniDeelnemerCode of omschrijvingVerdrag gevuld is; anders false
      */
-    @Definitie({Definities.DEF081, Definities.DEF082 })
+    @Definitie({Definities.DEF081, Definities.DEF082})
     public boolean isRniDeelnemer() {
-        return rniDeelnemerCode != null
-               && rniDeelnemerCode.isInhoudelijkGevuld()
-               || omschrijvingVerdrag != null
-               && omschrijvingVerdrag.isInhoudelijkGevuld();
+        return rniDeelnemerCode != null && rniDeelnemerCode.isInhoudelijkGevuld()
+                || omschrijvingVerdrag != null && omschrijvingVerdrag.isInhoudelijkGevuld();
     }
 
     @Override
@@ -284,36 +248,36 @@ public final class Lo3Documentatie {
         }
         final Lo3Documentatie castOther = (Lo3Documentatie) other;
         return new EqualsBuilder().append(gemeenteAkte, castOther.gemeenteAkte)
-                                  .append(nummerAkte, castOther.nummerAkte)
-                                  .append(gemeenteDocument, castOther.gemeenteDocument)
-                                  .append(datumDocument, castOther.datumDocument)
-                                  .append(beschrijvingDocument, castOther.beschrijvingDocument)
-                                  .append(rniDeelnemerCode, castOther.rniDeelnemerCode)
-                                  .append(omschrijvingVerdrag, castOther.omschrijvingVerdrag)
-                                  .isEquals();
+                .append(nummerAkte, castOther.nummerAkte)
+                .append(gemeenteDocument, castOther.gemeenteDocument)
+                .append(datumDocument, castOther.datumDocument)
+                .append(beschrijvingDocument, castOther.beschrijvingDocument)
+                .append(rniDeelnemerCode, castOther.rniDeelnemerCode)
+                .append(omschrijvingVerdrag, castOther.omschrijvingVerdrag)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(gemeenteAkte)
-                                    .append(nummerAkte)
-                                    .append(gemeenteDocument)
-                                    .append(datumDocument)
-                                    .append(beschrijvingDocument)
-                                    .append(rniDeelnemerCode)
-                                    .append(omschrijvingVerdrag)
-                                    .toHashCode();
+                .append(nummerAkte)
+                .append(gemeenteDocument)
+                .append(datumDocument)
+                .append(beschrijvingDocument)
+                .append(rniDeelnemerCode)
+                .append(omschrijvingVerdrag)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("gemeenteAkte", gemeenteAkte)
-                                                                          .append("nummerAkte", nummerAkte)
-                                                                          .append("gemeenteDocument", gemeenteDocument)
-                                                                          .append("datumDocument", datumDocument)
-                                                                          .append("beschrijvingDocument", beschrijvingDocument)
-                                                                          .append("rniDeelnemerCode", rniDeelnemerCode)
-                                                                          .append("omschrijvingVerdrag", omschrijvingVerdrag)
-                                                                          .toString();
+                .append("nummerAkte", nummerAkte)
+                .append("gemeenteDocument", gemeenteDocument)
+                .append("datumDocument", datumDocument)
+                .append("beschrijvingDocument", beschrijvingDocument)
+                .append("rniDeelnemerCode", rniDeelnemerCode)
+                .append("omschrijvingVerdrag", omschrijvingVerdrag)
+                .toString();
     }
 }

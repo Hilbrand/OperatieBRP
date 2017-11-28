@@ -11,13 +11,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * Kanaal om een GBAV leveringsbericht in de GBAV database op te nemen.
@@ -46,7 +47,7 @@ public class GbavBerichtKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -57,43 +58,67 @@ public class GbavBerichtKanaal extends LazyLoadingKanaal {
         @Override
         public void verwerkUitgaand(final TestCasusContext testCasus, final Bericht bericht) throws KanaalException {
             LOG.info("Verwerk bericht: {}", bericht.getInhoud());
+
+            final Integer plId = gbavHelper.getPlIdObvReferentiePersoon(bericht.getCorrelatieReferentie());
             final Integer cyclusActiviteitId = gbavHelper.getCyclusActiviteitIdObvReferentiePersoon(bericht.getCorrelatieReferentie());
             if (cyclusActiviteitId == null) {
                 throw new KanaalException("Kan gecorreleerde persoon niet vinden om spontaan cyclus aan te koppelen");
             }
 
             try {
-                Integer spontaanActiviteitId =
-                        gbavRepository.findActiviteit(
-                            cyclusActiviteitId,
-                            GbavRepository.ACTIVITEIT_TYPE_SPONTAAN,
-                            GbavRepository.ACTIVITEIT_SUBTYPE_SPONTAAN,
-                            GbavRepository.TOESTAND_VERWERKT);
+                final Integer moederActiviteitType = bericht.getMoederActiviteitType();
+                if(moederActiviteitType == null) {
+                    throw new KanaalException("Property 'moederActiviteitType' is verplicht voor kanaal 'gbavBericht'.");
+                }
+                final Integer moederActiviteitSubtype = 9999;
 
-                if (spontaanActiviteitId == null) {
-                    spontaanActiviteitId =
+                Integer moederActiviteitId =
+                        gbavRepository.findActiviteit(cyclusActiviteitId, moederActiviteitType, moederActiviteitSubtype, GbavRepository.TOESTAND_VERWERKT);
+
+                if (moederActiviteitId == null) {
+                    moederActiviteitId =
                             gbavRepository.insertActiviteit(
-                                cyclusActiviteitId,
-                                GbavRepository.ACTIVITEIT_TYPE_SPONTAAN,
-                                GbavRepository.ACTIVITEIT_SUBTYPE_SPONTAAN,
-                                GbavRepository.TOESTAND_VERWERKT);
+                                    cyclusActiviteitId,
+                                    moederActiviteitType,
+                                    moederActiviteitSubtype,
+                                    GbavRepository.TOESTAND_VERWERKT,
+                                    plId,
+                                    bericht.getOntvangendePartij(),
+                                    bericht.getActiviteitDatum());
                 }
 
-                final Integer berichtActiviteitId =
-                        gbavRepository.insertActiviteit(
-                            spontaanActiviteitId,
-                            GbavRepository.ACTIVITEIT_TYPE_LEVERING_BERICHT,
-                            GbavRepository.ACTIVITEIT_SUBTYPE_LEVERING_BERICHT,
-                            GbavRepository.TOESTAND_VERWERKT);
+                final Integer berichtActiviteitId = registreerActiviteit(bericht, moederActiviteitId, plId);
 
                 final Date tijdstipVerzendingOntvangst = toDate(bericht.getTestBericht().getTestBerichtProperty("tijdstipVerzendingOntvangst"));
                 gbavRepository.insertBericht(bericht.getInhoud(), bericht.getOntvangendePartij(), berichtActiviteitId, tijdstipVerzendingOntvangst);
             } catch (final
-                SQLException
-                | ParseException e)
-            {
+            SQLException
+                    | ParseException
+                    | BerichtSyntaxException e) {
                 throw new KanaalException("Onverwacht probleem bij opvoeren bericht", e);
             }
+        }
+
+        private Integer registreerActiviteit(final Bericht bericht, final Integer moederActiviteitId, final Integer plId)
+                throws SQLException, BerichtSyntaxException, KanaalException {
+            final Integer activiteitType = bericht.getActiviteitType();
+            if(activiteitType == null) {
+                throw new KanaalException("Property 'activiteitType' is verplicht voor kanaal 'gbavBericht'.");
+            }
+            final Integer activiteitSubtype = bericht.getActiviteitSubtype();
+            if(activiteitSubtype == null) {
+                throw new KanaalException("Property 'activiteitSubtype' is verplicht voor kanaal 'gbavBericht'.");
+            }
+            final int toestand = bericht.getActiviteitToestand() == null ? GbavRepository.TOESTAND_VERWERKT : bericht.getActiviteitToestand();
+
+            return gbavRepository.insertActiviteit(
+                    moederActiviteitId,
+                    activiteitType,
+                    activiteitSubtype,
+                    toestand,
+                    plId,
+                    bericht.getOntvangendePartij(),
+                    bericht.getActiviteitDatum());
         }
 
         private Date toDate(final String value) throws ParseException {

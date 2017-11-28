@@ -7,7 +7,10 @@
 package nl.bzk.migratiebrp.bericht.model.lo3;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import nl.bzk.migratiebrp.bericht.model.AbstractBericht;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
@@ -25,20 +28,16 @@ public abstract class AbstractUnparsedLo3Bericht extends AbstractBericht impleme
     private final String startCyclus;
 
     private String inhoud = "";
-    private String bronGemeente;
-    private String doelGemeente;
+    private String bronPartijCode;
+    private String doelPartijCode;
 
-    private String[] headers;
+    private List<String> headers;
 
     /**
      * Constructor.
-     *
-     * @param header
-     *            header velden van dit bericht
-     * @param berichtType
-     *            berichtnummer van dit bericht
-     * @param startCyclus
-     *            cyclus die dit bericht kan starten
+     * @param header header velden van dit bericht
+     * @param berichtType berichtnummer van dit bericht
+     * @param startCyclus cyclus die dit bericht kan starten
      */
     protected AbstractUnparsedLo3Bericht(final Lo3Header header, final String berichtType, final String startCyclus) {
         this.header = header;
@@ -47,22 +46,16 @@ public abstract class AbstractUnparsedLo3Bericht extends AbstractBericht impleme
         headers = initHeaderValues(header);
     }
 
-    private String[] initHeaderValues(final Lo3Header lo3Header) {
-        final String[] headerValues = new String[lo3Header.getNumberOfHeaders()];
-
-        final Lo3HeaderVeld[] headerVelden = lo3Header.getHeaderVelden();
-        for (int i = 0; i < headerVelden.length; i++) {
-            final Lo3HeaderVeld headerVeld = headerVelden[i];
-            if (Lo3HeaderVeld.BERICHTNUMMER.equals(headerVeld)) {
-                headerValues[i] = headerVeld.format(getBerichtType());
-            } else if (Lo3HeaderVeld.BERICHT.equals(headerVeld)) {
-                headerValues[i] = "";
+    private List<String> initHeaderValues(final Lo3Header lo3Header) {
+        return Arrays.stream(lo3Header.getHeaderVelden()).map(veld -> {
+            if (Lo3HeaderVeld.BERICHTNUMMER.equals(veld)) {
+                return veld.format(getBerichtType());
+            } else if (Lo3HeaderVeld.BERICHT.equals(veld)) {
+                return "";
             } else {
-                headerValues[i] = headerVeld.format(null);
+                return veld.format(null);
             }
-        }
-
-        return headerValues;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -77,68 +70,65 @@ public abstract class AbstractUnparsedLo3Bericht extends AbstractBericht impleme
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getBronGemeente()
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getBronPartijCode()
      */
     @Override
-    public final String getBronGemeente() {
-        return bronGemeente;
+    public final String getBronPartijCode() {
+        return bronPartijCode;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setBronGemeente(java.lang.String)
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setBronPartijCode(java.lang.String)
      */
     @Override
-    public final void setBronGemeente(final String bronGemeente) {
-        this.bronGemeente = bronGemeente;
+    public final void setBronPartijCode(final String bronPartijCode) {
+        this.bronPartijCode = bronPartijCode;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getDoelGemeente()
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getDoelPartijCode()
      */
     @Override
-    public final String getDoelGemeente() {
-        return doelGemeente;
+    public final String getDoelPartijCode() {
+        return doelPartijCode;
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setDoelGemeente(java.lang.String)
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#setDoelPartijCode(java.lang.String)
      */
     @Override
-    public final void setDoelGemeente(final String doelGemeente) {
-        this.doelGemeente = doelGemeente;
+    public final void setDoelPartijCode(final String doelPartijCode) {
+        this.doelPartijCode = doelPartijCode;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.Bericht#getGerelateerdeInformatie()
      */
     @Override
-    public final GerelateerdeInformatie getGerelateerdeInformatie() {
-        return new GerelateerdeInformatie(null, Arrays.asList(bronGemeente, doelGemeente), null);
+    public GerelateerdeInformatie getGerelateerdeInformatie() {
+        return new GerelateerdeInformatie(null, Arrays.asList(bronPartijCode, doelPartijCode), null);
     }
 
-    /* ************************************************************************************************************* */
-    @Override
-    public final void parse(final String lo3Bericht) throws BerichtSyntaxException, BerichtInhoudException {
-        headers = header.parseHeaders(lo3Bericht);
-        inhoud = lo3Bericht.substring(getTotalHeaderSize());
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
-    }
 
     /**
      * Geef de waarde van total header size.
-     *
      * @return total header size
      */
-    private int getTotalHeaderSize() {
+    protected int getTotalHeaderSize() {
         int totalHeaderSize = 0;
         for (final String header2 : headers) {
             totalHeaderSize += header2.length();
@@ -147,35 +137,71 @@ public abstract class AbstractUnparsedLo3Bericht extends AbstractBericht impleme
     }
 
     @Override
+    public final void parse(final String lo3Bericht) throws BerichtSyntaxException, BerichtInhoudException {
+        headers = Arrays.asList(header.parseHeaders(lo3Bericht));
+        parseInhoud(lo3Bericht.substring(getTotalHeaderSize()));
+    }
+
+    /**
+     * Parse de string representatie van de inhoud van het LO3 bericht.
+     * @param inhoud De inhoud van het LO3 bericht
+     * @throws BerichtSyntaxException In het geval dat het bericht syntactisch niet correct is
+     * @throws BerichtInhoudException In het geval dat het bericht ongeldige inhoud heeft
+     */
+    public void parseInhoud(final String inhoud) throws BerichtSyntaxException, BerichtInhoudException {
+        this.inhoud = inhoud;
+    }
+
+    protected String getFormattedInhoud() {
+        return inhoud == null ? "" : inhoud;
+    }
+
+    @Override
     public final String format() {
         setHeader(Lo3HeaderVeld.BERICHTNUMMER, getBerichtType());
 
-        return header.formatHeaders(headers) + (inhoud == null ? "" : inhoud);
+        return header.formatHeaders(headers.toArray(new String[headers.size()])) + getFormattedInhoud();
     }
 
     @Override
     public final void setHeader(final Lo3HeaderVeld veld, final String waarde) {
         if (!Lo3HeaderVeld.BERICHT.equals(veld)) {
-            headers[header.getIndexOfHeader(veld)] = veld.format(waarde);
+            headers.set(header.getIndexOfHeader(veld), veld.format(waarde));
         } else {
-            headers[header.getIndexOfHeader(veld)] = waarde;
+            headers.set(header.getIndexOfHeader(veld), waarde);
         }
     }
 
     @Override
-    public final String getHeader(final Lo3HeaderVeld veld) {
+    public final String getHeaderWaarde(final Lo3HeaderVeld veld) {
         final int indexOfHeaderVeld = header.getIndexOfHeader(veld);
         if (indexOfHeaderVeld == -1) {
             return "";
         } else {
-            return headers[indexOfHeaderVeld];
+            return headers.get(indexOfHeaderVeld);
+        }
+    }
+
+    @Override
+    public final List<String> getHeaderWaarden(final Lo3HeaderVeld veld) {
+        if (veld.getLengteType() == Lo3HeaderVeld.LengteType.VARIABEL_GEDEFINIEERDE_LENGTE) {
+            String headerWaarde = getHeaderWaarde(veld);
+            List<String> waarden = new ArrayList<>();
+            int index = 0;
+            while (index < headerWaarde.length()) {
+                waarden.add(headerWaarde.substring(index, index + veld.getElementLengte()));
+                index += veld.getElementLengte();
+            }
+            return waarden;
+        } else {
+            throw new IllegalArgumentException(String.format("Veld %s heeft geen variabele lengte", veld));
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getHeader()
+     *
+     * @see nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht#getHeaderWaarde()
      */
     @Override
     public final Lo3Header getHeader() {
@@ -184,10 +210,9 @@ public abstract class AbstractUnparsedLo3Bericht extends AbstractBericht impleme
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return inhoud
      */
-    public final String getInhoud() {
+    public String getInhoud() {
         return inhoud;
     }
 

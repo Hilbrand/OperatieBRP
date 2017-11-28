@@ -11,13 +11,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie.Builder;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.BrpStapelHelper;
-
 import org.junit.Test;
 
 public class BrpHistorieTest {

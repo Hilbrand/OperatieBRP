@@ -18,11 +18,10 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 /**
  * De excel adapter transformeert een XLS bestand in een LO3 model.
- *
  */
 public final class ExcelAdapterImpl implements ExcelAdapter {
 
@@ -49,6 +48,7 @@ public final class ExcelAdapterImpl implements ExcelAdapter {
      * De maximale lengte van het elementnummer.
      */
     private static final int ELEMENT_LENGTE = 4;
+    public static final int START_ROW_INDEX = 2;
 
     @Override
     public List<ExcelData> leesExcelBestand(final InputStream excelBestand) throws ExcelAdapterException, Lo3SyntaxException {
@@ -109,30 +109,30 @@ public final class ExcelAdapterImpl implements ExcelAdapter {
 
         // parse all headers into headerLijst; headers are the first rows of a sheet that have no value in the second
         // column
-        while (row != null && (row.getCell(ELEM_INDEX) == null || row.getCell(ELEM_INDEX).getCellType() == Cell.CELL_TYPE_BLANK)) {
+        while (row != null && isLegeCell(row.getCell(ELEM_INDEX))) {
 
             final String plCellWaarde = parseCellWaarde(row.getCell(column));
 
             // the first header must have value "00000000" (fixed value for 'Random key'); if this value does not exist
             // in the first row, the sheet is assumed to contain no headers at all
-            if (headerLijst.size() == 0 && (plCellWaarde == null || !"00000000".equals(plCellWaarde))) {
+            if (headerLijst.isEmpty() && (plCellWaarde == null || !"00000000".equals(plCellWaarde))) {
                 // start at row 3, i.e. rowIndex 2
-                rowIndex = 2;
+                rowIndex = START_ROW_INDEX;
                 sheet.getRow(rowIndex);
 
                 break;
             }
 
             headerLijst.add(plCellWaarde);
-            row = sheet.getRow(++rowIndex);
+            rowIndex++;
+            row = sheet.getRow(rowIndex);
         }
 
         return rowIndex;
     }
 
     private static int parseContent(final HSSFSheet sheet, final int column, final List<Lo3CategorieWaarde> categorieLijst, final int startRowIndex)
-        throws Lo3SyntaxException, ExcelAdapterException
-    {
+            throws Lo3SyntaxException, ExcelAdapterException {
         int rowIndex = startRowIndex;
         HSSFRow row = sheet.getRow(rowIndex);
         Lo3CategorieWaarde categorieWaarde = null;
@@ -148,20 +148,19 @@ public final class ExcelAdapterImpl implements ExcelAdapter {
         // parse the contents into categorieLijst
         while (row != null) {
             final HSSFCell cell = row.getCell(ELEM_INDEX);
-            if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-                row = sheet.getRow(++rowIndex);
+            if (isLegeCell(cell)) {
+                rowIndex++;
+                row = sheet.getRow(rowIndex);
                 // sla lege rij over, ga door met volgende rij
                 continue;
             }
 
-            String elemNr = parseElementNummer(cell);
+            StringBuilder elemNr = new StringBuilder(parseElementNummer(cell));
 
             // Als elemNr groters is dan 2, dan is het een waarde veld.
             if (elemNr.length() <= CATEGORIE_LENGTE) {
                 // elemNr is een categorie, nu aanvullen met voorloopnullen als deze nog niet op lengte is.
-                while (elemNr.length() < CATEGORIE_LENGTE) {
-                    elemNr = LEADING_ZERO + elemNr;
-                }
+                normaliseerCategorie(elemNr);
 
                 // CategorieWaarde opslaan als deze gevuld is.
                 final boolean isCategorieWaardeGevuld = categorieWaarde != null && !categorieWaarde.isEmpty();
@@ -178,10 +177,8 @@ public final class ExcelAdapterImpl implements ExcelAdapter {
                 vorigeVoorkomen = voorkomen;
 
                 // Als Cat hetzelfde is, dan volgende stapel, tenzij het cat historisch is, dan volgend voorkomen.
-                final int verwerkendeCat = Integer.parseInt(elemNr);
-                if (verwerkendeCat < HISTORIE_CATEGORIE_OFFSET
-                    && (verwerkendeCat == huidigeCat || verwerkendeCat == huidigeCat - HISTORIE_CATEGORIE_OFFSET))
-                {
+                final int verwerkendeCat = Integer.parseInt(elemNr.toString());
+                if (isVolgendeStapel(huidigeCat, verwerkendeCat)) {
                     stapel = stapel + 1;
                     voorkomen = 0;
                 } else if (verwerkendeCat < HISTORIE_CATEGORIE_OFFSET) {
@@ -192,18 +189,14 @@ public final class ExcelAdapterImpl implements ExcelAdapter {
                     voorkomen = voorkomen + 1;
                 }
 
-                categorieWaarde = new Lo3CategorieWaarde(Lo3CategorieEnum.getLO3Categorie(elemNr), stapel, voorkomen);
+                categorieWaarde = new Lo3CategorieWaarde(Lo3CategorieEnum.getLO3Categorie(elemNr.toString()), stapel, voorkomen);
             } else {
-                // Element regel
-                if (categorieWaarde == null) {
-                    throw new ExcelAdapterException(getColumnLetter(column), AANDUIDING_VOOR_EEN_NIEUWE_CATEGORIE_ONTBREEKT_VERWACHT_OP_REGEL
-                                                                             + (rowIndex + 1));
-                }
+                parseCategorieRij(column, categorieWaarde, row, elemNr.toString(), rowIndex);
 
-                parseCategorieRij(column, categorieWaarde, row, elemNr);
             }
 
-            row = sheet.getRow(++rowIndex);
+            rowIndex++;
+            row = sheet.getRow(rowIndex);
         }
         if (categorieWaarde != null && !categorieWaarde.isEmpty()) {
             categorieLijst.add(categorieWaarde);
@@ -211,14 +204,19 @@ public final class ExcelAdapterImpl implements ExcelAdapter {
         return rowIndex;
     }
 
-    private static void parseCategorieRij(final int column, final Lo3CategorieWaarde huidigeCategorie, final HSSFRow row, final String elemNrParam)
-        throws Lo3SyntaxException
-    {
-        String elemNr = elemNrParam;
-        while (elemNr.length() < ELEMENT_LENGTE) {
-            elemNr = LEADING_ZERO + elemNr;
+    private static void parseCategorieRij(final int column, final Lo3CategorieWaarde huidigeCategorie, final HSSFRow row, final String elemNrParam,
+                                          final int rowIndex)
+            throws Lo3SyntaxException, ExcelAdapterException {
+        // Element regel
+        if (huidigeCategorie == null) {
+            throw new ExcelAdapterException(getColumnLetter(column), AANDUIDING_VOOR_EEN_NIEUWE_CATEGORIE_ONTBREEKT_VERWACHT_OP_REGEL
+                    + (rowIndex + 1));
         }
-        final Lo3ElementEnum element = Lo3ElementEnum.getLO3Element(elemNr);
+        StringBuilder elemNr = new StringBuilder(elemNrParam);
+        while (elemNr.length() < ELEMENT_LENGTE) {
+            elemNr.insert(0, LEADING_ZERO);
+        }
+        final Lo3ElementEnum element = Lo3ElementEnum.getLO3Element(elemNr.toString());
         final String waarde = parseCellWaarde(row.getCell(column));
 
         if (waarde != null && waarde.length() > 0) {
@@ -228,8 +226,8 @@ public final class ExcelAdapterImpl implements ExcelAdapter {
 
     private static String parseElementNummer(final HSSFCell cell) {
         final String elemNr;
-        if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-            elemNr = "" + (int) cell.getNumericCellValue();
+        if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+            elemNr = Integer.toString((int) cell.getNumericCellValue());
         } else {
             elemNr = cell.toString();
         }
@@ -240,8 +238,8 @@ public final class ExcelAdapterImpl implements ExcelAdapter {
         final String waarde;
         if (waardeCell == null) {
             waarde = null;
-        } else if (waardeCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-            waarde = "" + (long) waardeCell.getNumericCellValue();
+        } else if (waardeCell.getCellTypeEnum() == CellType.NUMERIC) {
+            waarde = Long.toString((long) waardeCell.getNumericCellValue());
         } else {
             waarde = waardeCell.toString();
         }
@@ -250,13 +248,41 @@ public final class ExcelAdapterImpl implements ExcelAdapter {
 
     /**
      * Geef op basis van het kolom nummer de bijbehorende letter terug.
-     *
-     * @param column
-     *            de om te zetten kolom
+     * @param column de om te zetten kolom
      * @return de kolom letter
      */
     private static String getColumnLetter(final int column) {
         return Character.toString((char) ('A' + column));
+    }
+
+    /**
+     * Bepaalt of een cel leeg is.
+     * @param cell De te controleren cel.
+     * @return True indien de cel leeg is, false in andere gevallen.
+     */
+    private static boolean isLegeCell(HSSFCell cell) {
+        return cell == null || cell.getCellTypeEnum() == CellType.BLANK;
+    }
+
+    /**
+     * Controleert of de verwerkende categorie gelijk is aan de huidige categorie en dat de verwerkende niet historisch is
+     * @param huidigeCat De huidige categorie
+     * @param verwerkendeCat De verwerkende categorie
+     * @return True als aan de conditie is voldaan
+     */
+    private static boolean isVolgendeStapel(int huidigeCat, int verwerkendeCat) {
+        return verwerkendeCat < HISTORIE_CATEGORIE_OFFSET
+                && (verwerkendeCat == huidigeCat || verwerkendeCat == huidigeCat - HISTORIE_CATEGORIE_OFFSET);
+    }
+
+    /**
+     * Normaliseert de categorie zodat deze wordt voorafgegaan door voorloopnullen indien de lengte kleiner is dan twee.
+     * @param categorie De te normaliseren categorie
+     */
+    private static void normaliseerCategorie(StringBuilder categorie) {
+        while (categorie.length() < CATEGORIE_LENGTE) {
+            categorie.insert(0, LEADING_ZERO);
+        }
     }
 
 }

@@ -7,25 +7,32 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.ArrayList;
+
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpAfnemersindicatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.PersoonAfnemerindicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Leveringsautorisatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfnemerindicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfnemerindicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Stelsel;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import nl.bzk.algemeenbrp.test.dal.TimestampUtil;
 
-public class BrpAfnemersindicatieMapperTest extends AbstractEntityNaarBrpMapperTest {
+import org.junit.Assert;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+public class BrpAfnemersindicatieMapperTest extends AbstractEntityNaarBrpMapperTestBasis {
 
     private final BrpOnderzoekMapper brpOnderzoekMapper = new BrpOnderzoekMapperImpl(new ArrayList<Onderzoek>());
 
     private final BrpAfnemersindicatieMapper subject = new BrpAfnemersindicatieMapper();
 
     @Test
-    @Ignore("BMR44")
     public void test() {
         final PersoonAfnemerindicatie input = maak();
         final BrpStapel<BrpAfnemersindicatieInhoud> stapel = subject.map(input.getPersoonAfnemerindicatieHistorieSet(), brpOnderzoekMapper);
@@ -38,26 +45,17 @@ public class BrpAfnemersindicatieMapperTest extends AbstractEntityNaarBrpMapperT
     }
 
     public static PersoonAfnemerindicatie maak() {
-//        final Partij testPartij = new Partij("naam", 0);
-//        final Abonnement testAbonnement = new Abonnement("test");
-//        final ToegangAbonnement toegangAbonnement = new ToegangAbonnement(testPartij, testAbonnement);
-//        final Afleverwijze afleverwijze = new Afleverwijze(toegangAbonnement, Kanaal.BRP);
-//        testAbonnement.setToegangAbonnementen(Collections.singleton(toegangAbonnement));
-//        toegangAbonnement.setAfleverwijzeSet(Collections.singleton(afleverwijze));
-//        final PersoonAfnemerindicatie entiteit = new PersoonAfnemerindicatie(testPartij, Mockito.mock(Persoon.class), testAbonnement);
-//
-//        final PersoonAfnemerindicatieHistorie historie =
-//                new PersoonAfnemerindicatieHistorie(entiteit, new Dienst(testAbonnement, CatalogusOptie.OPTIE_1));
-//        historie.setDatumAanvangMaterielePeriode(19000101);
-//        historie.setDatumEindeVolgen(19900102);
-//        vulFormeleHistorie(historie);
-//
-//        entiteit.getPersoonAfnemerindicatieHistorieSet().add(historie);
-//
-//        return entiteit;
+        final Partij testPartij = new Partij("naam", "000000");
+        final Leveringsautorisatie testLeveringsautorisatie = new Leveringsautorisatie(Stelsel.GBA, false);
+        final PersoonAfnemerindicatie entiteit = new PersoonAfnemerindicatie(Mockito.mock(Persoon.class), testPartij, testLeveringsautorisatie);
 
-        //TODO BRM44
-        return null;
+        final PersoonAfnemerindicatieHistorie historie = new PersoonAfnemerindicatieHistorie(entiteit);
+        historie.setDatumAanvangMaterielePeriode(19000101);
+        historie.setDatumEindeVolgen(19900102);
+        historie.setDatumTijdRegistratie(TimestampUtil.maakTimestamp(1990, 0, 2, 0, 0, 0));
+        entiteit.getPersoonAfnemerindicatieHistorieSet().add(historie);
+
+        return entiteit;
     }
 
 }

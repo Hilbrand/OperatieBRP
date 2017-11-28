@@ -7,7 +7,7 @@
 package nl.bzk.brp.levering.lo3.mapper;
 
 import java.util.HashSet;
-import nl.bzk.brp.model.logisch.ist.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstGezagsVerhoudingGroepInhoud;
 import org.junit.Assert;

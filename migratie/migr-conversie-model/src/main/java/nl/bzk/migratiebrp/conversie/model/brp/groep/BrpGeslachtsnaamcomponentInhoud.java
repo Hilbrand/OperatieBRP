@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
@@ -17,13 +18,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de BRP geslachtsnaamcomponent inhoud.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpGeslachtsnaamcomponentInhoud extends AbstractBrpGroepInhoud {
 
@@ -42,32 +41,22 @@ public final class BrpGeslachtsnaamcomponentInhoud extends AbstractBrpGroepInhou
 
     /**
      * Maakt een BrpGeslachtsnaamcomponentInhoud object.
-     * 
-     * @param voorvoegsel
-     *            het voorvoegsel, mag null zijn
-     * @param scheidingsteken
-     *            het scheidingsteken, mag null zijn
-     * @param stam
-     *            de stam (geslachtsnaam), mag niet null zijn en de lengte minimaal 1 karakter
-     * @param predicaatCode
-     *            de predikaat code, mag null zijn
-     * @param adellijkeTitelCode
-     *            de adellijke titel code, mag null zijn
-     * @param volgnummer
-     *            het volgnummer
-     * @throws IllegalArgumentException
-     *             als de lengte van stam kleiner is dan 1
-     * @throws NullPointerException
-     *             als stam null is
+     * @param voorvoegsel het voorvoegsel, mag null zijn
+     * @param scheidingsteken het scheidingsteken, mag null zijn
+     * @param stam de stam (geslachtsnaam), mag niet null zijn en de lengte minimaal 1 karakter
+     * @param predicaatCode de predikaat code, mag null zijn
+     * @param adellijkeTitelCode de adellijke titel code, mag null zijn
+     * @param volgnummer het volgnummer
+     * @throws IllegalArgumentException als de lengte van stam kleiner is dan 1
+     * @throws NullPointerException als stam null is
      */
     public BrpGeslachtsnaamcomponentInhoud(
-        @Element(name = "voorvoegsel", required = false) final BrpString voorvoegsel,
-        @Element(name = "scheidingsteken", required = false) final BrpCharacter scheidingsteken,
-        @Element(name = "stam", required = false) final BrpString stam,
-        @Element(name = "predicaatCode", required = false) final BrpPredicaatCode predicaatCode,
-        @Element(name = "adellijkeTitelCode", required = false) final BrpAdellijkeTitelCode adellijkeTitelCode,
-        @Element(name = "volgnummer", required = false) final BrpInteger volgnummer)
-    {
+            @Element(name = "voorvoegsel", required = false) final BrpString voorvoegsel,
+            @Element(name = "scheidingsteken", required = false) final BrpCharacter scheidingsteken,
+            @Element(name = "stam", required = false) final BrpString stam,
+            @Element(name = "predicaatCode", required = false) final BrpPredicaatCode predicaatCode,
+            @Element(name = "adellijkeTitelCode", required = false) final BrpAdellijkeTitelCode adellijkeTitelCode,
+            @Element(name = "volgnummer", required = false) final BrpInteger volgnummer) {
         final String stamAsString = BrpString.unwrap(stam);
         if (stamAsString == null) {
             throw new NullPointerException("stam mag niet null zijn");
@@ -90,54 +79,48 @@ public final class BrpGeslachtsnaamcomponentInhoud extends AbstractBrpGroepInhou
     }
 
     /**
-     * Geef de waarde van voorvoegsel.
-     *
-     * @return the voorvoegsel, of null
+     * Geef de waarde van voorvoegsel van BrpGeslachtsnaamcomponentInhoud.
+     * @return de waarde van voorvoegsel van BrpGeslachtsnaamcomponentInhoud
      */
     public BrpString getVoorvoegsel() {
         return voorvoegsel;
     }
 
     /**
-     * Geef de waarde van scheidingsteken.
-     *
-     * @return the scheidingsteken, of null
+     * Geef de waarde van scheidingsteken van BrpGeslachtsnaamcomponentInhoud.
+     * @return de waarde van scheidingsteken van BrpGeslachtsnaamcomponentInhoud
      */
     public BrpCharacter getScheidingsteken() {
         return scheidingsteken;
     }
 
     /**
-     * Geef de waarde van stam.
-     *
-     * @return the stam
+     * Geef de waarde van stam van BrpGeslachtsnaamcomponentInhoud.
+     * @return de waarde van stam van BrpGeslachtsnaamcomponentInhoud
      */
     public BrpString getStam() {
         return stam;
     }
 
     /**
-     * Geef de waarde van predicaat code.
-     *
-     * @return the predicaatCode, of null
+     * Geef de waarde van predicaat code van BrpGeslachtsnaamcomponentInhoud.
+     * @return de waarde van predicaat code van BrpGeslachtsnaamcomponentInhoud
      */
     public BrpPredicaatCode getPredicaatCode() {
         return predicaatCode;
     }
 
     /**
-     * Geef de waarde van adellijke titel code.
-     *
-     * @return the adellijkeTitelCode, of null
+     * Geef de waarde van adellijke titel code van BrpGeslachtsnaamcomponentInhoud.
+     * @return de waarde van adellijke titel code van BrpGeslachtsnaamcomponentInhoud
      */
     public BrpAdellijkeTitelCode getAdellijkeTitelCode() {
         return adellijkeTitelCode;
     }
 
     /**
-     * Geef de waarde van volgnummer.
-     *
-     * @return the volgnummer
+     * Geef de waarde van volgnummer van BrpGeslachtsnaamcomponentInhoud.
+     * @return de waarde van volgnummer van BrpGeslachtsnaamcomponentInhoud
      */
     public BrpInteger getVolgnummer() {
         return volgnummer;
@@ -145,7 +128,7 @@ public final class BrpGeslachtsnaamcomponentInhoud extends AbstractBrpGroepInhou
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
@@ -164,34 +147,34 @@ public final class BrpGeslachtsnaamcomponentInhoud extends AbstractBrpGroepInhou
         }
         final BrpGeslachtsnaamcomponentInhoud castOther = (BrpGeslachtsnaamcomponentInhoud) other;
         return new EqualsBuilder().append(voorvoegsel, castOther.voorvoegsel)
-                                  .append(scheidingsteken, castOther.scheidingsteken)
-                                  .append(stam, castOther.stam)
-                                  .append(predicaatCode, castOther.predicaatCode)
-                                  .append(adellijkeTitelCode, castOther.adellijkeTitelCode)
-                                  .append(volgnummer, castOther.volgnummer)
-                                  .isEquals();
+                .append(scheidingsteken, castOther.scheidingsteken)
+                .append(stam, castOther.stam)
+                .append(predicaatCode, castOther.predicaatCode)
+                .append(adellijkeTitelCode, castOther.adellijkeTitelCode)
+                .append(volgnummer, castOther.volgnummer)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(voorvoegsel)
-                                    .append(scheidingsteken)
-                                    .append(stam)
-                                    .append(predicaatCode)
-                                    .append(adellijkeTitelCode)
-                                    .append(volgnummer)
-                                    .toHashCode();
+                .append(scheidingsteken)
+                .append(stam)
+                .append(predicaatCode)
+                .append(adellijkeTitelCode)
+                .append(volgnummer)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("voorvoegsel", voorvoegsel)
-                                                                          .append("scheidingsteken", scheidingsteken)
-                                                                          .append("stam", stam)
-                                                                          .append("predicaatCode", predicaatCode)
-                                                                          .append("adellijkeTitelCode", adellijkeTitelCode)
-                                                                          .append("volgnummer", volgnummer)
-                                                                          .toString();
+                .append("voorvoegsel", voorvoegsel)
+                .append("scheidingsteken", scheidingsteken)
+                .append("stam", stam)
+                .append("predicaatCode", predicaatCode)
+                .append("adellijkeTitelCode", adellijkeTitelCode)
+                .append("volgnummer", volgnummer)
+                .toString();
     }
 }

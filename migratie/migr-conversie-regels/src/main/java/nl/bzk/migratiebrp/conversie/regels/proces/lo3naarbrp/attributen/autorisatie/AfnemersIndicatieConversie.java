@@ -27,12 +27,11 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3CategorieInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3.Foutmelding;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 import org.springframework.stereotype.Component;
 
 /**
  * Converteert een LO3 Autorisatie naar de corresponderende BRP groepen.
- *
  */
 @Component
 public final class AfnemersIndicatieConversie {
@@ -41,9 +40,7 @@ public final class AfnemersIndicatieConversie {
      * Nabewerking: vul afgeleide gegevens.
      *
      * BRP Stapel<Afnemersindicatie>:
-     *
-     * @param brpAfnemersindicaties
-     *            BRP afnemersindicaties
+     * @param brpAfnemersindicaties BRP afnemersindicaties
      * @return bewerkte BRP afnemersindicaties
      */
     public BrpAfnemersindicaties vulAfgeleideGegevens(final BrpAfnemersindicaties brpAfnemersindicaties) {
@@ -57,15 +54,15 @@ public final class AfnemersIndicatieConversie {
 
                     final BrpAfnemersindicatieInhoud inhoud =
                             new BrpAfnemersindicatieInhoud(
-                                groep.getInhoud().getDatumAanvangMaterielePeriode(),
-                                groep.getInhoud().getDatumEindeVolgen(),
-                                groep.getInhoud().isLeeg());
+                                    groep.getInhoud().getDatumAanvangMaterielePeriode(),
+                                    groep.getInhoud().getDatumEindeVolgen(),
+                                    groep.getInhoud().isLeeg());
 
                     final BrpHistorie historie =
                             new BrpHistorie(
-                                groep.getHistorie().getDatumTijdRegistratie(),
-                                groep.getHistorie().getDatumTijdVerval(),
-                                groep.getHistorie().getNadereAanduidingVerval());
+                                    groep.getHistorie().getDatumTijdRegistratie(),
+                                    groep.getHistorie().getDatumTijdVerval(),
+                                    groep.getHistorie().getNadereAanduidingVerval());
 
                     groepen.add(new BrpGroep<>(inhoud, historie, groep.getActieInhoud(), groep.getActieVerval(), null));
                 }
@@ -87,17 +84,15 @@ public final class AfnemersIndicatieConversie {
 
     /**
      * Samenvoegen van stapel met dezelfde afnemersindicatie.
-     *
-     * @param lo3Afnemersindicatie
-     *            lo3 afnemersindicaties
+     * @param lo3Afnemersindicatie lo3 afnemersindicaties
      * @return lo3 afnemersindicaties
      */
     public Lo3Afnemersindicatie filterStapels(final Lo3Afnemersindicatie lo3Afnemersindicatie) {
-        final Map<Integer, Lo3Stapel<Lo3AfnemersindicatieInhoud>> perPartij = new HashMap<>();
+        final Map<String, Lo3Stapel<Lo3AfnemersindicatieInhoud>> perPartij = new HashMap<>();
 
         // Stapels verzamelen per afnemer
         for (final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatie : lo3Afnemersindicatie.getAfnemersindicatieStapels()) {
-            final Integer partij = getAfnemer(afnemersindicatie);
+            final String partij = getAfnemer(afnemersindicatie);
             if (partij == null) {
                 Foutmelding.logMeldingFout(maakHerkomstVoorStapel(afnemersindicatie), LogSeverity.ERROR, SoortMeldingCode.AFN002, null);
                 continue;
@@ -129,17 +124,13 @@ public final class AfnemersIndicatieConversie {
 
     /**
      * Vergelijk afnemersindicaties.
-     *
-     * @param afnemersindicatie1
-     *            stapel 1
-     * @param afnemersindicatie2
-     *            stapel 2
+     * @param afnemersindicatie1 stapel 1
+     * @param afnemersindicatie2 stapel 2
      * @return true, als afnemersindicatie1 relevanter (of even relevant) is dan afnemersindicatie2
      */
     private boolean vergelijkAfnemersindicaties(
-        final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatie1,
-        final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatie2)
-    {
+            final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatie1,
+            final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatie2) {
         final boolean actueel1 = bepaalActueel(afnemersindicatie1);
         final boolean actueel2 = bepaalActueel(afnemersindicatie2);
 
@@ -178,9 +169,7 @@ public final class AfnemersIndicatieConversie {
 
     /**
      * Controleer datums binnen stapel
-     *
-     * @param afnemersindicatie
-     *            stapel
+     * @param afnemersindicatie stapel
      * @return stapel, of null als de hele stapel is verwijderd
      */
     private Lo3Stapel<Lo3AfnemersindicatieInhoud> controleerDatumsBinnenStapel(final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatie) {
@@ -214,9 +203,9 @@ public final class AfnemersIndicatieConversie {
         return result;
     }
 
-    private Integer getAfnemer(final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatieStapel) {
+    private String getAfnemer(final Lo3Stapel<Lo3AfnemersindicatieInhoud> afnemersindicatieStapel) {
         for (final Lo3Categorie<Lo3AfnemersindicatieInhoud> categorie : afnemersindicatieStapel) {
-            final Integer afnemersindicatie = categorie.getInhoud().getAfnemersindicatie();
+            final String afnemersindicatie = categorie.getInhoud().getAfnemersindicatie();
             if (afnemersindicatie != null) {
                 return afnemersindicatie;
             }

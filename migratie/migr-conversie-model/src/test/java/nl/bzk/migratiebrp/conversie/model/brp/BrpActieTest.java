@@ -14,57 +14,55 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie.Builder;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortPartijCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortDocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoudTest;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDocumentInhoudTestUtil;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-
 import org.junit.Test;
 
 public class BrpActieTest {
     public static BrpActie actie = new BrpActie(
-        1000l,
-        BrpSoortActieCode.CONVERSIE_GBA,
-        BrpPartijCode.MINISTER,
+            1000L,
+            BrpSoortActieCode.CONVERSIE_GBA,
+            BrpPartijCode.MINISTER,
             null,
-        null,
-        Collections.<BrpActieBron>emptyList(),
-        1,
-        null);
+            null,
+            Collections.emptyList(),
+            1,
+            null);
     public static BrpActie actie2 = new BrpActie(
-        1001l,
-        BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE,
-        BrpPartijCode.MINISTER,
+            1001L,
+            BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE,
+            BrpPartijCode.MINISTER,
             null,
-        null,
-        Collections.<BrpActieBron>emptyList(),
-        1,
-        null);
+            null,
+            Collections.emptyList(),
+            1,
+            null);
 
     @Test(expected = NullPointerException.class)
     public void testConstructorIdentificatieNull() {
         new BrpActie(
-            null,
-            BrpSoortActieCode.CONVERSIE_GBA,
-            BrpPartijCode.MINISTER,
                 null,
-            null,
-            Collections.<BrpActieBron>emptyList(),
-            1,
-            null);
+                BrpSoortActieCode.CONVERSIE_GBA,
+                BrpPartijCode.MINISTER,
+                null,
+                null,
+                Collections.emptyList(),
+                1,
+                null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testConstructorPartijNull() {
-        new BrpActie(1000l, null, null, null, null, Collections.<BrpActieBron>emptyList(), 1, null);
+        new BrpActie(1000L, null, null, null, null, Collections.emptyList(), 1, null);
     }
 
     @Test
@@ -85,47 +83,47 @@ public class BrpActieTest {
     public void testIsConversieActie() throws Exception {
         BrpActie ac =
                 new BrpActie(
-                    1000l,
-                    BrpSoortActieCode.CORRECTIE_ADRES,
-                    BrpPartijCode.MINISTER,
+                        1000L,
+                        BrpSoortActieCode.CORRECTIE_ADRES,
+                        BrpPartijCode.MINISTER,
                         null,
-                    null,
-                    Collections.<BrpActieBron>emptyList(),
-                    1,
-                    null);
+                        null,
+                        Collections.emptyList(),
+                        1,
+                        null);
         assertFalse(ac.isConversieActie());
         ac =
                 new BrpActie(
-                    1000l,
-                    BrpSoortActieCode.CONVERSIE_GBA,
-                    BrpPartijCode.MINISTER,
+                        1000L,
+                        BrpSoortActieCode.CONVERSIE_GBA,
+                        BrpPartijCode.MINISTER,
                         null,
-                    null,
-                    Collections.<BrpActieBron>emptyList(),
-                    1,
-                    null);
+                        null,
+                        Collections.emptyList(),
+                        1,
+                        null);
         assertTrue(ac.isConversieActie());
         ac =
                 new BrpActie(
-                    1000l,
-                    BrpSoortActieCode.CONVERSIE_GBA_LEEG_CATEGORIE_ONJUIST,
-                    BrpPartijCode.MINISTER,
+                        1000L,
+                        BrpSoortActieCode.CONVERSIE_GBA_LEEG_CATEGORIE_ONJUIST,
+                        BrpPartijCode.MINISTER,
                         null,
-                    null,
-                    Collections.<BrpActieBron>emptyList(),
-                    1,
-                    null);
+                        null,
+                        Collections.emptyList(),
+                        1,
+                        null);
         assertTrue(ac.isConversieActie());
         ac =
                 new BrpActie(
-                    1000l,
-                    BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE,
-                    BrpPartijCode.MINISTER,
+                        1000L,
+                        BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE,
+                        BrpPartijCode.MINISTER,
                         null,
-                    null,
-                    Collections.<BrpActieBron>emptyList(),
-                    1,
-                    null);
+                        null,
+                        Collections.emptyList(),
+                        1,
+                        null);
         assertTrue(ac.isConversieActie());
     }
 
@@ -155,7 +153,47 @@ public class BrpActieTest {
         assertEquals(registratie.getWaarde(), result.getDatumTijdRegistratie().getWaarde());
         assertEquals(1002, result.getId().intValue());
         assertEquals(3, result.getSortering());
-        assertEquals(199901, result.getPartijCode().getWaarde().intValue());
+        assertEquals("199901", result.getPartijCode().getWaarde());
+    }
+
+    @Test
+    public void testSortFunctie() {
+        final BrpPartijCode partij = new BrpPartijCode("051901");
+        final BrpDatumTijd tsReg = BrpDatumTijd.fromDatumTijd(20160101010000L, null);
+
+        final BrpActie actieZonderActieBronnen = new BrpActie(1L, BrpSoortActieCode.CONVERSIE_GBA, partij, tsReg, null, null, 0, null);
+        actieZonderActieBronnen.sorteer();
+        final BrpActie actieLegeLijstActieBronnen = new BrpActie(1L, BrpSoortActieCode.CONVERSIE_GBA, partij, tsReg, null, Collections.emptyList(), 0, null);
+        actieLegeLijstActieBronnen.sorteer();
+
+        final BrpActieBron actieBronRechtsgrond = new BrpActieBron(null, new BrpString("Text-1"));
+        final BrpActieBron actieBronRechtsgrond2 = new BrpActieBron(null, new BrpString("Text-2"));
+
+        final BrpDocumentInhoud
+                inhoud =
+                new BrpDocumentInhoud(BrpSoortDocumentCode.HISTORIE_CONVERSIE, new BrpString("akte"), new BrpString("omschrijving"), partij);
+        final BrpGroep<BrpDocumentInhoud> groep = new BrpGroep<>(inhoud, null, null, null, null);
+
+        final BrpStapel<BrpDocumentInhoud> documentStapel = new BrpStapel<>(Collections.singletonList(groep));
+        final BrpActieBron actieBronDocumentatie = new BrpActieBron(documentStapel, null);
+
+        final List<BrpActieBron> actieBronnenLijst = new ArrayList<>();
+        actieBronnenLijst.add(actieBronRechtsgrond);
+        actieBronnenLijst.add(actieBronDocumentatie);
+        actieBronnenLijst.add(actieBronRechtsgrond2);
+
+        final BrpActie actieMetActieBronnen = new BrpActie(1L, BrpSoortActieCode.CONVERSIE_GBA, partij, tsReg, null, actieBronnenLijst, 0, null);
+
+        actieMetActieBronnen.sorteer();
+        assertEquals(actieBronRechtsgrond, actieBronnenLijst.get(0));
+        assertEquals(actieBronDocumentatie, actieBronnenLijst.get(1));
+        assertEquals(actieBronRechtsgrond2, actieBronnenLijst.get(2));
+
+        final List<BrpActieBron> gesorteerdeActieBronnen = actieMetActieBronnen.getActieBronnen();
+        assertEquals(actieBronDocumentatie, gesorteerdeActieBronnen.get(0));
+        assertEquals(actieBronRechtsgrond, gesorteerdeActieBronnen.get(1));
+        assertEquals(actieBronRechtsgrond2, gesorteerdeActieBronnen.get(2));
+
     }
 
     private BrpActie getActie(boolean returnNull) {
@@ -167,7 +205,7 @@ public class BrpActieTest {
 
     private BrpActie createBrpActieMet2Bronnen() {
         List<BrpActieBron> bronnen = getBrpActieBronnen();
-        return new BrpActie(1000l, null, BrpPartijCode.MINISTER, null, null, bronnen, 1, null);
+        return new BrpActie(1000L, null, BrpPartijCode.MINISTER, null, null, bronnen, 1, null);
     }
 
     private List<BrpActieBron> getBrpActieBronnen() {
@@ -175,7 +213,7 @@ public class BrpActieTest {
         List<BrpGroep<BrpDocumentInhoud>> groepen = new ArrayList<>();
 
         BrpHistorie historie = new BrpHistorie(new BrpDatumTijd(Calendar.getInstance().getTime(), null), null, null);
-        BrpDocumentInhoud docInhoud = BrpDocumentInhoudTest.createInhoud();
+        BrpDocumentInhoud docInhoud = BrpDocumentInhoudTestUtil.createInhoud();
         groepen.add(new BrpGroep<>(docInhoud, historie, null, null, null));
         BrpStapel<BrpDocumentInhoud> docStapel = new BrpStapel<>(groepen);
         bronnen.add(new BrpActieBron(docStapel, new BrpString("een")));

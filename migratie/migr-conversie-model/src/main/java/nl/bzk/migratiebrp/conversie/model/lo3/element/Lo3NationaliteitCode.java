@@ -6,20 +6,19 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Deze class representeert de LO3 nationaliteit code. Deze code verwijst binnen LO3 naar een nationaliteit in Tabel 32
  * (zie LO3.7).
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
- * 
- * 
  */
 public final class Lo3NationaliteitCode extends AbstractLo3Element {
 
-    /** Nationaliteit code voor de Nederlandse nationaliteit. */
+    /**
+     * Nationaliteit code voor de Nederlandse nationaliteit.
+     */
     public static final Lo3NationaliteitCode NATIONALITEIT_CODE_NEDERLANDSE = new Lo3NationaliteitCode("0001");
     /**
      * Nationaliteit code voor de indicatie Staatloos (was Statenloos).
@@ -30,9 +29,7 @@ public final class Lo3NationaliteitCode extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3NationaliteitCode object.
-     * 
-     * @param waarde
-     *            de LO3 code
+     * @param waarde de LO3 code
      */
     public Lo3NationaliteitCode(final String waarde) {
         this(waarde, null);
@@ -40,23 +37,17 @@ public final class Lo3NationaliteitCode extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3NationaliteitCode object met onderzoek.
-     * 
-     * @param waarde
-     *            de LO3 code
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde de LO3 code
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
     public Lo3NationaliteitCode(@Element(name = "waarde", required = false) final String waarde, @Element(name = "onderzoek",
-            required = false) final Lo3Onderzoek onderzoek)
-    {
+            required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Geeft de nationaliteit code terug zonder onderzoek.
-     * 
-     * @param nationaliteitCode
-     *            de nationaliteitcode waarbij het onderzoek verwijderd wordt.
+     * @param nationaliteitCode de nationaliteitcode waarbij het onderzoek verwijderd wordt.
      * @return nationaliteitcode zonder onderzoek
      */
     public static Lo3NationaliteitCode zonderOnderzoek(final Lo3NationaliteitCode nationaliteitCode) {

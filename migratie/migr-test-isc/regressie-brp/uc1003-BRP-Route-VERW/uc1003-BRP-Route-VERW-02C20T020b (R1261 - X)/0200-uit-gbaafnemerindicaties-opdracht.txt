@@ -1,1 +1,0 @@
-{"effectAfnemerindicatie":"PLAATSING","persoonId":$$persoonid$$,"toegangLeveringsautorisatieId":$$toegangleveringid$$,"referentienummer":"REFERENTIE-NR-100","dienstId":$$dienstid$$}

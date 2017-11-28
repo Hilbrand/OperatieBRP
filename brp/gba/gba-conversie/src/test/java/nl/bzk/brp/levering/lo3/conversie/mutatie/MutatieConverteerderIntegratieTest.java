@@ -6,82 +6,81 @@
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.logMetaObject;
+import static nl.bzk.brp.levering.lo3.support.TestHelper.assertElementen;
+
+import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
-import nl.bzk.brp.levering.lo3.mapper.OnderzoekMapper;
-import nl.bzk.brp.model.MaterieleHistorieSet;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.AktenummerAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.DocumentOmschrijvingAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.NaamEnumeratiewaardeLangAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.NadereAanduidingVerval;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.NadereAanduidingVervalAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.OmschrijvingEnumeratiewaardeAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.PartijCodeAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.SleutelwaardeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Element;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.ElementEnum;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Partij;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.PartijAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortActie;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortAdministratieveHandeling;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortDocument;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortDocumentAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPartij;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPartijAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoonOnderzoek;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.StatusOnderzoek;
-import nl.bzk.brp.model.bericht.kern.AdministratieveHandelingBericht;
-import nl.bzk.brp.model.hisvolledig.impl.kern.OnderzoekHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.ActieBronModel;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
-import nl.bzk.brp.model.operationeel.kern.DocumentModel;
-import nl.bzk.brp.model.operationeel.kern.DocumentStandaardGroepModel;
-import nl.bzk.brp.model.operationeel.kern.HisPersoonIdentificatienummersModel;
-import nl.bzk.brp.util.hisvolledig.kern.GegevenInOnderzoekHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.OnderzoekHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonOnderzoekHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonVerstrekkingsbeperkingHisVolledigImplBuilder;
+import java.util.Set;
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.util.common.DatumUtil;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.domain.leveringmodel.TestVerantwoording;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
+import nl.bzk.brp.levering.lo3.builder.MetaObjectAdder;
+import nl.bzk.brp.levering.lo3.conversie.ConversieCache;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-import support.PersoonHisVolledigUtil;
 
 public class MutatieConverteerderIntegratieTest extends AbstractMutatieConverteerderIntegratieTest {
-    // private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    @Inject
+    private MutatieConverteerder subject;
 
     @Test
     public void testGeenWijzigingen() {
-        final ActieModel actie =
-            PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final PersoonVerstrekkingsbeperkingHisVolledigImplBuilder beperkingBuilder =
-            new PersoonVerstrekkingsbeperkingHisVolledigImplBuilder(partij, null, null);
-        builder.voegPersoonVerstrekkingsbeperkingToe(beperkingBuilder.build());
+        final Persoonslijst persoon = new Persoonslijst(maakBasisPersoonBuilder(idTeller.getAndIncrement()).build(), 0L);
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
         Assert.assertEquals(0, resultaat.size());
     }
 
     @Test
     public void testGroep81Akte() {
-        final ActieModel actie =
-            PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final ZonedDateTime tsReg = ZonedDateTime.of(1940, 1, 2, 0, 0, 0,
+            0, DatumUtil.BRP_ZONE_ID);
+        final AdministratieveHandeling administratieveHandeling = AdministratieveHandeling.converter().converteer(
+            TestVerantwoording.maakAdministratieveHandeling(idTeller.getAndIncrement(), "000034", tsReg,
+                SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL)
+            .metObject(TestVerantwoording.maakActieBuilder(idTeller.getAndIncrement(), SoortActie.CONVERSIE_GBA, tsReg, "000001", 19470307)
+            .metObject(TestVerantwoording.maakActiebronBuilder(1, null, null)
+            .metObject(TestVerantwoording.maakDocumentBuilder(1, "1", "TBX0001", null, "043301")))
+            ).build());
 
-        final Partij documentPartij = new Partij(null, new SoortPartijAttribuut(SoortPartij.GEMEENTE), new PartijCodeAttribuut(43301), null, null, null,
-            null, null, null);
-        final DocumentStandaardGroepModel documentStandaard =
-            new DocumentStandaardGroepModel(null, new AktenummerAttribuut("TBX0001"), null, new PartijAttribuut(documentPartij));
-        final DocumentModel document = new DocumentModel(new SoortDocumentAttribuut(new SoortDocument(null, null, null)));
-        document.setStandaard(documentStandaard);
-        final ActieBronModel bron = new ActieBronModel(actie, document, null, null);
-        actie.getBronnen().add(bron);
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoonBuilder(100).build());
+        final MetaObject.Builder builder =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON.getId()))
+                          .metId(100);
+        voegIdentificatieNummersToe(builder, administratieveHandeling.getActies().iterator().next(), 19400101, "1234567890", "123123123");
+        final MetaRecord mutatieRecord =
+                builder.build()
+                       .getGroep(ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON_IDENTIFICATIENUMMERS.getId()))
+                       .getRecords()
+                       .iterator()
+                       .next();
 
-        builder.nieuwIdentificatienummersRecord(actie).administratienummer(1234567890L).burgerservicenummer(123123123).eindeRecord();
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final Persoonslijst persoon =
+                new Persoonslijst(
+                    persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(),
+                        0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -116,20 +115,33 @@ public class MutatieConverteerderIntegratieTest extends AbstractMutatieConvertee
 
     @Test
     public void testGroep82Document() {
-        final ActieModel actie =
-            PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
 
-        final Partij documentPartij = new Partij(null, new SoortPartijAttribuut(SoortPartij.GEMEENTE), new PartijCodeAttribuut(43301), null, null, null,
-            null, null, null);
-        final DocumentStandaardGroepModel documentStandaard =
-            new DocumentStandaardGroepModel(null, null, new DocumentOmschrijvingAttribuut("Documentomschrijving"), new PartijAttribuut(documentPartij));
-        final DocumentModel document = new DocumentModel(new SoortDocumentAttribuut(new SoortDocument(null, null, null)));
-        document.setStandaard(documentStandaard);
-        final ActieBronModel bron = new ActieBronModel(actie, document, null, null);
-        actie.getBronnen().add(bron);
+        final ZonedDateTime tsReg = ZonedDateTime.of(1940, 1, 2, 0, 0, 0, 0, DatumUtil.BRP_ZONE_ID);
+        final AdministratieveHandeling administratieveHandeling = AdministratieveHandeling.converter().converteer(TestVerantwoording
+            .maakAdministratieveHandeling(idTeller.getAndIncrement(), "000034", tsReg, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL)
+            .metObject(TestVerantwoording.maakActieBuilder(idTeller.getAndIncrement(), SoortActie.CONVERSIE_GBA, tsReg, "000001", 19400101)
+            .metObject(TestVerantwoording.maakActiebronBuilder(1, null, null)
+            .metObject(TestVerantwoording.maakDocumentBuilder(1, "1", null, "Documentomschrijving", "043301")
+        ))).build());
 
-        builder.nieuwIdentificatienummersRecord(actie).administratienummer(1234567890L).burgerservicenummer(123123123).eindeRecord();
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoonBuilder(100).build());
+        final MetaObject.Builder builder =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON.getId()))
+                          .metId(100);
+        voegIdentificatieNummersToe(builder, administratieveHandeling.getActies().iterator().next(), 19400101, "1234567890", "123123123");
+        final MetaRecord mutatieRecord =
+                builder.build()
+                       .getGroep(ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON_IDENTIFICATIENUMMERS.getId()))
+                       .getRecords()
+                       .iterator()
+                       .next();
+        final Persoonslijst persoon =
+                new Persoonslijst(
+                    persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(),
+                        0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,
@@ -168,74 +180,113 @@ public class MutatieConverteerderIntegratieTest extends AbstractMutatieConvertee
 
     @Test
     public void testGroep83Onderzoek() {
-        final ActieModel actie =
-            PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
 
-        // Onderzoek
-        final OnderzoekHisVolledigImplBuilder onderzoekBuilder = new OnderzoekHisVolledigImplBuilder();
-        onderzoekBuilder.nieuwStandaardRecord(actie)
-            .datumAanvang(19340505)
-            .omschrijving(OnderzoekMapper.LO3_ONDERZOEK_OMSCHRIJVING_PREFIX + "010120")
-            .status(StatusOnderzoek.IN_UITVOERING)
-            .eindeRecord(2001);
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoonBuilder(100).build());
 
-        final AdministratieveHandelingBericht administratieveHandelingBericht =
-            new AdministratieveHandelingBericht(actie.getAdministratieveHandeling().getSoort()) {
-            };
+        final MetaRecord mutatieRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON.getId()))
+                          .metId(100)
+                          .metGroep()
+                          .metGroepElement(ElementHelper.getGroepElement(Element.PERSOON_IDENTIFICATIENUMMERS.getId()))
+                          .metRecord()
+                          .metId(333455L)
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metDatumAanvangGeldigheid(19400101)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_IDENTIFICATIENUMMERS_ADMINISTRATIENUMMER.getId()), "1234567890")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER.getId()), "123123123")
+                          .eindeRecord()
+                          .eindeGroep()
+                          .build()
+                          .getGroep(ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON_IDENTIFICATIENUMMERS.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
 
-        onderzoekBuilder.nieuwAfgeleidAdministratiefRecord(actie).administratieveHandeling(administratieveHandelingBericht).eindeRecord(2002);
-        final OnderzoekHisVolledigImpl onderzoek = onderzoekBuilder.build();
+        final MetaObject.Builder gegevenInOnderzoekBuilder =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.GEGEVENINONDERZOEK.getId()))
+                          .metId(idTeller.getAndIncrement())
+                          .metGroep()
+                          .metGroepElement(
+                              ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.GEGEVENINONDERZOEK_IDENTITEIT.getId()))
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(
+                              ElementHelper.getAttribuutElement(Element.GEGEVENINONDERZOEK_ELEMENTNAAM.getId()),
+                              "Persoon.Identificatienummers.Burgerservicenummer")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.GEGEVENINONDERZOEK_OBJECTSLEUTELGEGEVEN.getId()), 4587348L)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.GEGEVENINONDERZOEK_VOORKOMENSLEUTELGEGEVEN.getId()), 333455L)
+                          .eindeRecord()
+                          .eindeGroep();
+        final MetaRecord gegevenInOnderzoekRecord =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.ONDERZOEK.getId()))
+                          .metId(20)
+                          .metObject(gegevenInOnderzoekBuilder)
+                          .build()
+                          .getObjecten(ElementHelper.getObjectElement(Element.GEGEVENINONDERZOEK.getId()))
+                          .iterator()
+                          .next()
+                          .getGroep(ElementHelper.getGroepElement(Element.GEGEVENINONDERZOEK_IDENTITEIT.getId()))
+                          .getRecords()
+                          .iterator()
+                          .next();
 
-        // PersoonOnderzoek
-        final PersoonOnderzoekHisVolledigImplBuilder persoonOnderzoekBuilder = new PersoonOnderzoekHisVolledigImplBuilder(null, onderzoek);
-        persoonOnderzoekBuilder.nieuwStandaardRecord(actie).rol(SoortPersoonOnderzoek.DIRECT).eindeRecord();
-        builder.voegPersoonOnderzoekToe(persoonOnderzoekBuilder.build());
+        final MetaObject.Builder onderzoekIdentiteitBuilder =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.ONDERZOEK.getId()))
+                          .metId(20)
+                          .metGroep()
+                          .metGroepElement(ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.ONDERZOEK_IDENTITEIT.getId()))
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .eindeRecord()
+                          .eindeGroep();
+        final MetaRecord onderzoekIdentiteitRecord =
+                onderzoekIdentiteitBuilder.build()
+                                          .getGroep(
+                                              ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.ONDERZOEK_IDENTITEIT.getId()))
+                                          .getRecords()
+                                          .iterator()
+                                          .next();
 
-        builder.nieuwIdentificatienummersRecord(actie).administratienummer(1234567890L).burgerservicenummer(123123123).eindeRecord(333455);
+        final MetaObject.Builder onderzoekStandaardBuilder =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.ONDERZOEK.getId()))
+                          .metId(20)
+                          .metGroep()
+                          .metGroepElement(ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.ONDERZOEK_STANDAARD.getId()))
+                          .metRecord()
+                          .metId(idTeller.getAndIncrement())
+                          .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.ONDERZOEK_DATUMAANVANG.getId()), 19340505)
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.ONDERZOEK_OMSCHRIJVING.getId()), "Conversie GBA: 010120")
+                          .metAttribuut(ElementHelper.getAttribuutElement(Element.ONDERZOEK_STATUSNAAM.getId()), "In uitvoering")
+                          .eindeRecord()
+                          .eindeGroep();
 
-        // Gegeven in onderzoek
-        final Element element =
-            new Element(
-                new NaamEnumeratiewaardeLangAttribuut("PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER"),
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null)
-            {
-            };
-        ReflectionTestUtils.setField(element, "iD", ElementEnum.PERSOON_IDENTIFICATIENUMMERS_BURGERSERVICENUMMER.getId());
+        final MetaRecord onderzoekStandaardRecord =
+                onderzoekStandaardBuilder.build()
+                                         .getGroep(
+                                             (ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.ONDERZOEK_STANDAARD.getId())))
+                                         .getRecords()
+                                         .iterator()
+                                         .next();
 
-        final SleutelwaardeAttribuut objectSleutel = new SleutelwaardeAttribuut(4587348L);
-        final SleutelwaardeAttribuut voorkomenSleutel = new SleutelwaardeAttribuut(333455L);
+        final Persoonslijst persoon =
+                new Persoonslijst(
+                    persoonAdder.voegPersoonMutatieToe(onderzoekIdentiteitRecord)
+                                .voegPersoonMutatieToe(onderzoekStandaardRecord)
+                                .voegPersoonMutatieToe(gegevenInOnderzoekRecord)
+                                .voegPersoonMutatieToe(mutatieRecord)
+                                .build(),
+                        0L);
 
-        final GegevenInOnderzoekHisVolledigImplBuilder gegevensBuilder =
-            new GegevenInOnderzoekHisVolledigImplBuilder(element, objectSleutel, voorkomenSleutel);
-        onderzoek.getGegevensInOnderzoek().add(gegevensBuilder.build());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
-        // Door het opnemen van een nieuw identificatie record, vervalt het oorspronkelijke, hier wordt echter geen ID
-        // voor gegenereerd, hierdoor krijg je een NPE.
-        final PersoonHisVolledig persoon = builder.build();
-        for (final HisPersoonIdentificatienummersModel id : persoon.getPersoonIdentificatienummersHistorie()) {
-            if (id.getID() == null) {
-                ReflectionTestUtils.setField(id, "iD", 5006);
-            }
-        }
-        PersoonHisVolledigUtil.maakVerantwoording(persoon, actieGeboorte, actie);
-
-        debugHistorieSet(persoon.getPersoonIdentificatienummersHistorie());
-
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(persoon, actie);
         assertElementen(
             resultaat,
             Lo3CategorieEnum.CATEGORIE_01,
@@ -269,28 +320,31 @@ public class MutatieConverteerderIntegratieTest extends AbstractMutatieConvertee
 
     @Test
     public void testGroep84Onjuist() {
-        final ActieModel actieCorrectie =
-            PersoonHisVolledigUtil.maakActie(
-                2L,
-                SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL,
-                SoortActie.CONVERSIE_G_B_A,
-                19600102,
-                19200101,
-                null,
-                partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling(1960, 1, 2);
 
-        builder.nieuwIdentificatienummersRecord(actieCorrectie).administratienummer(1234567890L).burgerservicenummer(123123123).eindeRecord();
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoonBuilder(100).build());
 
-        final PersoonHisVolledigImpl persoon = builder.build();
+        final MetaObject.Builder builder =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON.getId()))
+                          .metId(100);
+        voegIdentificatieNummersToe(builder, administratieveHandeling.getActies().iterator().next(), 19200101, "1234567890", "123123123");
+        final MetaRecord mutatieRecord =
+                builder.build()
+                       .getGroep(ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON_IDENTIFICATIENUMMERS.getId()))
+                       .getRecords()
+                       .iterator()
+                       .next();
 
-        final MaterieleHistorieSet<HisPersoonIdentificatienummersModel> idSet = persoon.getPersoonIdentificatienummersHistorie();
-        idSet.getVervallenHistorie().iterator().next().setNadereAanduidingVerval(new NadereAanduidingVervalAttribuut(NadereAanduidingVerval.O));
+        final Persoonslijst persoon =
+                new Persoonslijst(
+                    persoonAdder.voegPersoonCorrectieToe(mutatieRecord, "O").build(),
+                        0L);
 
-        PersoonHisVolledigUtil.maakVerantwoording(persoon, actieGeboorte, actieCorrectie);
+        logMetaObject(persoon.getMetaObject());
 
-        debugHistorieSet(persoon.getPersoonIdentificatienummersHistorie());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(persoon, actieCorrectie);
         assertElementen(
             resultaat,
             Lo3CategorieEnum.CATEGORIE_01,
@@ -316,21 +370,33 @@ public class MutatieConverteerderIntegratieTest extends AbstractMutatieConvertee
 
     @Test
     public void testGroep88RniDeelnemer() {
-        final Partij rniPartij = new Partij(null, new SoortPartijAttribuut(SoortPartij.OVERHEIDSORGAAN), new PartijCodeAttribuut(891401), null, null,
-            null, null, null, null);
-        final ActieModel actie =
-            PersoonHisVolledigUtil.maakActie(
-                2L,
-                SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL,
-                SoortActie.CONVERSIE_G_B_A,
-                19400101,
-                rniPartij);
 
-        final ActieBronModel bron = new ActieBronModel(actie, null, null, new OmschrijvingEnumeratiewaardeAttribuut("rechtsgrondomschrijving"));
-        actie.getBronnen().add(bron);
+        final ZonedDateTime tsReg = ZonedDateTime.of(1940, 1, 2, 0, 0, 0, 0, DatumUtil.BRP_ZONE_ID);
+        final AdministratieveHandeling administratieveHandeling = AdministratieveHandeling.converter().converteer(TestVerantwoording
+            .maakAdministratieveHandeling(idTeller.getAndIncrement(), "891401", tsReg, SoortAdministratieveHandeling
+                .GBA_BIJHOUDING_ACTUEEL)
+            .metObject(TestVerantwoording.maakActieBuilder(idTeller.getAndIncrement(), SoortActie.CONVERSIE_GBA, tsReg, "891401", 19400101)
+            .metObject(TestVerantwoording.maakActiebronBuilder(1, null, "rechtsgrondomschrijving")))
+        .build());
 
-        builder.nieuwIdentificatienummersRecord(actie).administratienummer(1234567890L).burgerservicenummer(123123123).eindeRecord();
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoonBuilder(100).build());
+        final MetaObject.Builder builder =
+                MetaObject.maakBuilder()
+                          .metObjectElement(ElementHelper.getObjectElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON.getId()))
+                          .metId(100);
+        voegIdentificatieNummersToe(builder, administratieveHandeling.getActies().iterator().next(), 19400101, "1234567890", "123123123");
+        final MetaRecord mutatieRecord =
+                builder.build()
+                       .getGroep(ElementHelper.getGroepElement(nl.bzk.algemeenbrp.dal.domein.brp.enums.Element.PERSOON_IDENTIFICATIENUMMERS.getId()))
+                       .getRecords()
+                       .iterator()
+                       .next();
+        final Persoonslijst persoon =
+                new Persoonslijst(
+                    persoonAdder.voegPersoonMutatieToe(mutatieRecord).build(),
+                        0L);
+
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
             resultaat,

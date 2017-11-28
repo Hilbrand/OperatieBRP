@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstException;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
@@ -24,7 +23,6 @@ import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.util.gbav.GBACharacterSet;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,12 +37,9 @@ public class Lo3SyntaxControle {
 
     /**
      * Controleert de syntax van alle categorieen van een LO3-PL.
-     *
-     * @param categorieWaarden
-     *            lijst van de categorieen op de PL
+     * @param categorieWaarden lijst van de categorieen op de PL
      * @return de lijst met gecontroleerde en correcte categorieen
-     * @throws OngeldigePersoonslijstException
-     *             wordt gegooid als er een fout op de PL zit waardoor de PL niet geconverteerd kan worden
+     * @throws OngeldigePersoonslijstException wordt gegooid als er een fout op de PL zit waardoor de PL niet geconverteerd kan worden
      */
     public List<Lo3CategorieWaarde> controleer(final List<Lo3CategorieWaarde> categorieWaarden) throws OngeldigePersoonslijstException {
         final List<Lo3CategorieWaarde> result = new ArrayList<>(categorieWaarden.size());
@@ -88,11 +83,8 @@ public class Lo3SyntaxControle {
     /**
      * Controleert of de opgegeven categorie het element 84.10 (indicatie onjuist) bevat en of de inhoud gevuld is. Als
      * het logniveau "CRITICAL" (kritiek) is, dan wordt er niet gekeken naar de indicatie onjuist
-     *
-     * @param categorieWaarde
-     *            categorie
+     * @param categorieWaarde categorie
      * @return true als de categoriewaarde een waarde bevat voor element 84.10
-     *
      */
     private boolean isOnjuist(final Lo3CategorieWaarde categorieWaarde) {
         final String waardeVoorOnjuist = categorieWaarde.getElementen().get(Lo3ElementEnum.ELEMENT_8410);
@@ -114,12 +106,11 @@ public class Lo3SyntaxControle {
     }
 
     private void logFoutregel(
-        final Set<LogRegel> logging,
-        final Lo3Herkomst herkomst,
-        final Lo3ElementEnum definitie,
-        final LogSeverity critical,
-        final SoortMeldingCode element)
-    {
+            final Set<LogRegel> logging,
+            final Lo3Herkomst herkomst,
+            final Lo3ElementEnum definitie,
+            final LogSeverity critical,
+            final SoortMeldingCode element) {
         final LogRegel log = new LogRegel(herkomst, critical, element, definitie);
         logging.add(log);
         Logging.log(log);
@@ -155,23 +146,28 @@ public class Lo3SyntaxControle {
             }
 
         } else {
-            if (elementValue.length() < definitie.getMinimumLengte()) {
-                logFoutregel(logging, herkomst, definitie, LogSeverity.INFO, SoortMeldingCode.LENGTE);
-            }
+            controleerElementWaarde(logging, herkomst, element, elementValue, definitie);
+        }
+    }
 
-            if (elementValue.length() > definitie.getMaximumLengte()) {
-                if (definitie.getAfkappen()) {
-                    element.setValue(elementValue.substring(0, definitie.getMaximumLengte()));
-                    logFoutregel(logging, herkomst, definitie, LogSeverity.WARNING, SoortMeldingCode.LENGTE);
-                } else {
-                    logFoutregel(logging, herkomst, definitie, LogSeverity.ERROR, SoortMeldingCode.LENGTE);
-                }
+    private void controleerElementWaarde(final Set<LogRegel> logging, final Lo3Herkomst herkomst, final Entry<Lo3ElementEnum, String> element,
+                                         final String elementValue, final Lo3ElementEnum definitie) {
+        if (elementValue.length() < definitie.getMinimumLengte()) {
+            logFoutregel(logging, herkomst, definitie, LogSeverity.INFO, SoortMeldingCode.LENGTE);
+        }
+
+        if (elementValue.length() > definitie.getMaximumLengte()) {
+            if (definitie.getAfkappen()) {
+                element.setValue(elementValue.substring(0, definitie.getMaximumLengte()));
+                logFoutregel(logging, herkomst, definitie, LogSeverity.WARNING, SoortMeldingCode.LENGTE);
+            } else {
+                logFoutregel(logging, herkomst, definitie, LogSeverity.ERROR, SoortMeldingCode.LENGTE);
             }
         }
     }
 
     private boolean bevatCorrecteTeletex(final String elementValue) {
         return GBACharacterSet.isValideUnicode(elementValue)
-               && !(elementValue.contains("\n") || elementValue.contains("\r") || elementValue.contains("\f"));
+                && !(elementValue.contains("\n") || elementValue.contains("\r") || elementValue.contains("\f"));
     }
 }

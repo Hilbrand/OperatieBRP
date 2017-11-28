@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie;
@@ -9,7 +9,6 @@ package nl.bzk.brp.levering.lo3.conversie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 
 /**
@@ -19,6 +18,7 @@ public final class ConversieCache {
 
     private List<Lo3CategorieWaarde> volledigCategorien;
     private List<Lo3CategorieWaarde> mutatieCategorien;
+    private List<Lo3CategorieWaarde> anummerwijzigingCategorien;
 
     /**
      * @return volledige persoon categorieen
@@ -49,8 +49,21 @@ public final class ConversieCache {
     }
 
     /**
+     * @return a-nummer wijziging categorieen
+     */
+    public List<Lo3CategorieWaarde> getAnummerwijzigingCategorien() {
+        return copy(anummerwijzigingCategorien);
+    }
+
+    /**
+     * @param anummerwijzigingCategorien a-nummer wijziging categorieen
+     */
+    public void setAnummerwijzigingCategorien(final List<Lo3CategorieWaarde> anummerwijzigingCategorien) {
+        this.anummerwijzigingCategorien = copy(anummerwijzigingCategorien);
+    }
+
+    /**
      * Deep-copy categorieen lijst.
-     *
      * @param categorieen categorieen
      * @return mutable copy van de lijst van categorieen
      */
@@ -62,8 +75,12 @@ public final class ConversieCache {
         final List<Lo3CategorieWaarde> resultaat = new ArrayList<>(categorieen.size());
 
         for (final Lo3CategorieWaarde categorie : categorieen) {
-            resultaat.add(new Lo3CategorieWaarde(categorie.getCategorie(), categorie.getStapel(), categorie.getVoorkomen(), new HashMap<>(
-                categorie.getElementen())));
+            resultaat.add(
+                    new Lo3CategorieWaarde(
+                            categorie.getCategorie(),
+                            categorie.getStapel(),
+                            categorie.getVoorkomen(),
+                            new HashMap<>(categorie.getElementen())));
         }
 
         return resultaat;

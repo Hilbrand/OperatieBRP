@@ -12,8 +12,10 @@ import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.lo3.AbstractParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3EindBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
@@ -21,7 +23,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 /**
  * Tf11.
  */
-public final class Tf11Bericht extends AbstractParsedLo3Bericht implements Lo3Bericht, Serializable {
+public final class Tf11Bericht extends AbstractParsedLo3Bericht implements Lo3Bericht, Lo3EindBericht, Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Lo3Header HEADER = new Lo3Header(Lo3HeaderVeld.RANDOM_KEY, Lo3HeaderVeld.BERICHTNUMMER);
@@ -32,21 +34,21 @@ public final class Tf11Bericht extends AbstractParsedLo3Bericht implements Lo3Be
      * Constructor.
      */
     public Tf11Bericht() {
-        super(HEADER, "Tf11", null);
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Tf11", null);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3Bericht#getGerelateerdeAnummers()
      */
     @Override
     protected List<String> getGerelateerdeAnummers() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
-    protected void parseInhoud(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
+    protected void parseCategorieen(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
         final Lo3CategorieWaarde categorie01 = getCategorie(categorieen, Lo3CategorieEnum.CATEGORIE_01);
 
         if (categorie01 != null) {
@@ -64,9 +66,7 @@ public final class Tf11Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Zet de waarde van a nummer.
-     *
-     * @param administratienummer
-     *            a nummer
+     * @param administratienummer a nummer
      */
     public void setANummer(final String administratienummer) {
         aNummer = administratienummer;
@@ -74,7 +74,6 @@ public final class Tf11Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de waarde van a nummer.
-     *
      * @return a nummer
      */
     public String getANummer() {

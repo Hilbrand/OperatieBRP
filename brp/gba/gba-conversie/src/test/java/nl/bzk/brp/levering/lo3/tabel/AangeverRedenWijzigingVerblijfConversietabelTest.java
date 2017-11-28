@@ -8,69 +8,64 @@ package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.conv.LO3OmschrijvingVanDeAangifteAdreshoudingAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.AangeverCodeAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.RedenWijzigingVerblijfCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieAangifteAdreshouding;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Aangever;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AangifteAdreshouding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblijfCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AangeverRedenWijzigingVerblijfPaar;
 import org.junit.Assert;
 import org.junit.Test;
-import support.ReflectionUtils;
 
 /**
  * Test voor {@link AangeverRedenWijzigingVerblijfConversietabel}.
  */
 public class AangeverRedenWijzigingVerblijfConversietabelTest {
 
-    private static final String X1 = "X1";
-    private static final String X2 = "X2";
-    private static final String X3 = "X3";
+    private static final char X1 = '1';
+    private static final char X2 = '2';
+    private static final char X3 = '3';
 
     @Test
-    public void test() throws ReflectiveOperationException {
-        final List<ConversieAangifteAdreshouding> list = new ArrayList<>();
-        list.add(maakConversietabelRegel(X1, "Y", "Z"));
-        list.add(maakConversietabelRegel(X2, "A", null));
-        list.add(maakConversietabelRegel(X3, null, "B"));
+    public void test() {
+        final List<AangifteAdreshouding> list = new ArrayList<>();
+        list.add(maakConversietabelRegel(X1, 'Y', 'Z'));
+        list.add(maakConversietabelRegel(X2, 'A', null));
+        list.add(maakConversietabelRegel(X3, null, 'B'));
 
         final AangeverRedenWijzigingVerblijfConversietabel subject = new AangeverRedenWijzigingVerblijfConversietabel(list);
 
         Assert.assertEquals(
-            X1,
+            "1",
             subject.converteerNaarLo3(new AangeverRedenWijzigingVerblijfPaar(new BrpAangeverCode('Y'), new BrpRedenWijzigingVerblijfCode('Z')))
                    .getWaarde());
 
-        Assert.assertEquals(X2, subject.converteerNaarLo3(new AangeverRedenWijzigingVerblijfPaar(new BrpAangeverCode('A'), null)).getWaarde());
+        Assert.assertEquals("2", subject.converteerNaarLo3(new AangeverRedenWijzigingVerblijfPaar(new BrpAangeverCode('A'), null)).getWaarde());
 
-        Assert.assertEquals(X3, subject.converteerNaarLo3(new AangeverRedenWijzigingVerblijfPaar(null, new BrpRedenWijzigingVerblijfCode('B')))
-                                         .getWaarde());
+        Assert.assertEquals(
+            "3",
+            subject.converteerNaarLo3(new AangeverRedenWijzigingVerblijfPaar(null, new BrpRedenWijzigingVerblijfCode('B'))).getWaarde());
     }
 
-    private ConversieAangifteAdreshouding maakConversietabelRegel(final String lo3, final String brpAangever, final String brpReden)
-        throws ReflectiveOperationException
-    {
+    private AangifteAdreshouding maakConversietabelRegel(final char lo3, final Character brpAangever, final Character brpReden) {
         final Aangever aangeverAdreshouding;
         if (brpAangever == null) {
             aangeverAdreshouding = null;
         } else {
-            aangeverAdreshouding = ReflectionUtils.instantiate(Aangever.class, new AangeverCodeAttribuut(brpAangever), null, null);
+            aangeverAdreshouding = new Aangever(brpAangever, "Naam", "Omschrijving");
         }
 
         final RedenWijzigingVerblijf redenWijzigingAdres;
         if (brpReden == null) {
             redenWijzigingAdres = null;
         } else {
-            redenWijzigingAdres = new RedenWijzigingVerblijf(new RedenWijzigingVerblijfCodeAttribuut(brpReden), null);
+            redenWijzigingAdres = new RedenWijzigingVerblijf(brpReden, "Naam");
         }
 
-        return ReflectionUtils.instantiate(
-            ConversieAangifteAdreshouding.class,
-            new LO3OmschrijvingVanDeAangifteAdreshoudingAttribuut(lo3),
-            aangeverAdreshouding,
-            redenWijzigingAdres);
+        final AangifteAdreshouding result = new AangifteAdreshouding(lo3);
+        result.setAangever(aangeverAdreshouding);
+        result.setRedenWijzigingVerblijf(redenWijzigingAdres);
+
+        return result;
     }
 }

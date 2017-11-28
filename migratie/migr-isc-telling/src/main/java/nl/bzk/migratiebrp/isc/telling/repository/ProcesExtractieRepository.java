@@ -17,9 +17,7 @@ public interface ProcesExtractieRepository {
 
     /**
      * Slaat de meegegeven proces extractie op in de database.
-     * 
-     * @param procesExtractie
-     *            de procesExtractie entiteit die moet worden opgeslagen in de database
+     * @param procesExtractie de procesExtractie entiteit die moet worden opgeslagen in de database
      * @return de procesExtractie entiteit die opgeslagen is in de database
      */
     ProcesExtractie save(ProcesExtractie procesExtractie);
@@ -27,11 +25,8 @@ public interface ProcesExtractieRepository {
     /**
      * Haalt alle procesExtracties op waarvan het proces is beëindigd, maar die nog niet eerder zijn meegenomen in een
      * telling op 'beëindigd'.
-     * 
-     * @param datumTot
-     *            De datum tot wanneer er wordt gekeken.
-     * @param limit
-     *            Maximaal aantal op te halen proces extracties.
+     * @param datumTot De datum tot wanneer er wordt gekeken.
+     * @param limit Maximaal aantal op te halen proces extracties.
      * @return De lijst met opgehaalde procesExtracties.
      */
     List<ProcesExtractie> selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(Timestamp datumTot, Integer limit);
@@ -39,47 +34,36 @@ public interface ProcesExtractieRepository {
     /**
      * Haalt alle procesExtracties op waarvan het proces is beëindigd, maar die nog niet eerder zijn meegenomen in een
      * telling op 'gestart'.
-     * 
-     * @param datumTot
-     *            De datum tot wanneer er wordt gekeken.
-     * @param limit
-     *            Maximaal aantal op te halen proces extracties.
+     * @param datumTot De datum tot wanneer er wordt gekeken.
+     * @param limit Maximaal aantal op te halen proces extracties.
      * @return De lijst met opgehaalde procesExtracties.
      */
     List<ProcesExtractie> selecteerInTellingTeVerwerkenGestarteProcesInstanties(Timestamp datumTot, Integer limit);
 
     /**
      * Markeert de meegegeven proces extracties als zijnde geteld voor de 'gestart' telling.
-     * 
-     * @param teUpdatenIds
-     *            De ID's van de te markeren proces extracties.
+     * @param teUpdatenIds De ID's van de te markeren proces extracties.
      * @return True indien alle meegegeven proces extracties gemarkeerd konden worden, false in alle andere gevallen.
      */
     boolean updateIndicatieGestartGeteldProcesExtracties(List<Long> teUpdatenIds);
 
     /**
      * Markeert de meegegeven proces extracties als zijnde geteld voor de 'beëindigd' telling.
-     * 
-     * @param teUpdatenIds
-     *            De ID's van de te markeren proces extracties.
+     * @param teUpdatenIds De ID's van de te markeren proces extracties.
      * @return True indien alle meegegeven proces extracties gemarkeerd konden worden, false in alle andere gevallen.
      */
     boolean updateIndicatieBeeindigdGeteldProcesExtracties(List<Long> teUpdatenIds);
 
     /**
      * Telt het aantal te verwerken proces extracties voor 'gestart'.
-     * 
-     * @param datumTot
-     *            De datum tot wanneer er wordt geteld.
+     * @param datumTot De datum tot wanneer er wordt geteld.
      * @return Het aantal te verwerken proces extracties.
      */
     Long telInTellingTeVerwerkenGestarteProcessen(Timestamp datumTot);
 
     /**
      * Telt het aantal te verwerken proces extracties voor 'beeindigd'.
-     * 
-     * @param datumTot
-     *            De datum tot wanneer er wordt geteld.
+     * @param datumTot De datum tot wanneer er wordt geteld.
      * @return Het aantal te verwerken proces extracties.
      */
     Long telInTellingTeVerwerkenBeeindigdeProcessen(Timestamp datumTot);

@@ -6,20 +6,19 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Root;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
 
 /**
  * This class represents an LO3 autorisatielijst.
  *
  * Deze class is immutable en threadsafe.
- *
  */
 @Root
 public final class Lo3Autorisatie {
@@ -28,53 +27,39 @@ public final class Lo3Autorisatie {
 
     /**
      * Maak een Lo3 autorisatielijst.
-     *
-     * @param autorisatieStapel
-     *            de lijst met autorisatieStapel, mag null of leeg zijn
-     *
-     * @throws NullPointerException
-     *             als de stapel null zijn
-     *
+     * @param autorisatieStapel de lijst met autorisatieStapel, mag null of leeg zijn
+     * @throws NullPointerException als de stapel null zijn
      */
     public Lo3Autorisatie(
-        @Element(name = "autorisatieStapel", type = Lo3Stapel.class, required = false) final Lo3Stapel<Lo3AutorisatieInhoud> autorisatieStapel)
-    {
+            @Element(name = "autorisatieStapel", type = Lo3Stapel.class) final Lo3Stapel<Lo3AutorisatieInhoud> autorisatieStapel) {
         this.autorisatieStapel = autorisatieStapel;
     }
 
     /**
      * Geef de waarde van autorisatie stapel.
-     *
      * @return de lijst met autorisatiestapels.
      */
-    @Element(name = "autorisatieStapel", type = Lo3Stapel.class, required = false)
+    @Element(name = "autorisatieStapel", type = Lo3Stapel.class)
     public Lo3Stapel<Lo3AutorisatieInhoud> getAutorisatieStapel() {
         return autorisatieStapel;
     }
 
     /**
      * Geeft de afnemersindicatie terug voor deze Lo3 autorisatie.
-     *
      * @return de afnemersindicatie.
      */
-    public Integer getAfnemersindicatie() {
+    public String getAfnemersindicatie() {
 
         if (autorisatieStapel == null || autorisatieStapel.isEmpty()) {
             return null;
         } else {
-
-            Integer afnemersIndicatie = null;
-
+            String afnemersIndicatie = null;
             for (final Lo3Categorie<Lo3AutorisatieInhoud> categorie : autorisatieStapel.getCategorieen()) {
-
                 if (categorie.getInhoud() != null && categorie.getInhoud().getAfnemersindicatie() != null) {
-
                     afnemersIndicatie = categorie.getInhoud().getAfnemersindicatie();
                     break;
                 }
-
             }
-
             return afnemersIndicatie;
         }
     }

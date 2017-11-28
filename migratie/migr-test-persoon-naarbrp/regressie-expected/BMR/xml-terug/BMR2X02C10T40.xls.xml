@@ -44,7 +44,7 @@
                <waarde>V</waarde>
             </geslachtsaanduiding>
             <aanduidingNaamgebruikCode>
-               <waarde>V</waarde>
+               <waarde>E</waarde>
             </aanduidingNaamgebruikCode>
          </inhoud>
          <historie>
@@ -103,12 +103,8 @@
             </indicatiePKVolledigGeconverteerdCode>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
       </lo3Categorie>
    </inschrijvingStapel>

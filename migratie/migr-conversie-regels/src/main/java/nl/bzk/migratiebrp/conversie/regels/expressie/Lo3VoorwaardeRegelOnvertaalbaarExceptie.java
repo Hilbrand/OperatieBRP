@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.conversie.regels.expressie;
 
 /**
  * Wordt gegeven indien een LO3 voorwaarde regel niet te vertalen is.
- *
  */
 public final class Lo3VoorwaardeRegelOnvertaalbaarExceptie extends RuntimeException {
 
@@ -18,13 +17,9 @@ public final class Lo3VoorwaardeRegelOnvertaalbaarExceptie extends RuntimeExcept
 
     /**
      * Maakt een nieuwe exceptie aan op basis van regel en reden van het niet kunnen vertalen.
-     *
-     * @param regel
-     *            de niet te vertalen regel
-     * @param geconverteerdDeel
-     *            het deel van de te vertalen regel dat wel geconverteerd kon worden
-     * @param reden
-     *            onderliggende reden van het niet kunnen vertalen
+     * @param regel de niet te vertalen regel
+     * @param geconverteerdDeel het deel van de te vertalen regel dat wel geconverteerd kon worden
+     * @param reden onderliggende reden van het niet kunnen vertalen
      */
     public Lo3VoorwaardeRegelOnvertaalbaarExceptie(final String regel, final String geconverteerdDeel, final Throwable reden) {
         super(regel, reden);
@@ -33,7 +28,6 @@ public final class Lo3VoorwaardeRegelOnvertaalbaarExceptie extends RuntimeExcept
 
     /**
      * Geeft het deel terug dat wel geconverteerd kon worden.
-     *
      * @return Het geconverteerde deel.
      */
     public String getGeconverteerdDeel() {

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lo3Persoonslijst>
    <persoonStapel>
       <lo3Categorie>
@@ -6,7 +7,7 @@
                <waarde>1702407698</waarde>
             </aNummer>
             <burgerservicenummer>
-               <waarde>411738665</waarde>
+               <waarde>135999601</waarde>
             </burgerservicenummer>
             <voornamen>
                <waarde>Johan</waarde>
@@ -333,12 +334,8 @@
             </datumtijdstempel>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <documentatie>
             <id>26</id>

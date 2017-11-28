@@ -8,4 +8,3 @@
  * De implementatie van de logging services.
  */
 package nl.bzk.migratiebrp.init.logging.runtime.service.impl;
-

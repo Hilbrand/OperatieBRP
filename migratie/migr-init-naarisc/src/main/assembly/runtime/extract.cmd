@@ -1,1 +1,0 @@
-psql -q -d gbav -U migratie -W -f extract-isc-verzender.sql > isc-verzender.sql

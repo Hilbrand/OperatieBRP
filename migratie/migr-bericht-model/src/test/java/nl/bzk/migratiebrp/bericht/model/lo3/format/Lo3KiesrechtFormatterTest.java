@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.bericht.model.lo3.format;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KiesrechtInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingEuropeesKiesrechtEnum;
@@ -41,11 +41,11 @@ public class Lo3KiesrechtFormatterTest {
 
         final Lo3KiesrechtInhoud lo3KiesrechtInhoud =
                 new Lo3KiesrechtInhoud(
-                    aanduidingEuropeesKiesrecht,
-                    datumEuropeesKiesrecht,
-                    einddatumUitsluitingEuropeesKiesrecht,
-                    aanduidingUitgeslotenKiesrecht,
-                    einddatumUitsluitingKiesrecht);
+                        aanduidingEuropeesKiesrecht,
+                        datumEuropeesKiesrecht,
+                        einddatumUitsluitingEuropeesKiesrecht,
+                        aanduidingUitgeslotenKiesrecht,
+                        einddatumUitsluitingKiesrecht);
         return lo3KiesrechtInhoud;
     }
 }

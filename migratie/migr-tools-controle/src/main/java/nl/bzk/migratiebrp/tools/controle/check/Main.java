@@ -6,25 +6,23 @@
 
 package nl.bzk.migratiebrp.tools.controle.check;
 
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Executable.
  */
 public final class Main {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger();
-    
+
     private Main() {
         // Niet instantieerbaar.
     }
 
     /**
      * Run.
-     * 
-     * @param args
-     *            commandline arguments
+     * @param args commandline arguments
      */
     public static void main(final String[] args) {
         final CheckFactory factory = new CheckFactory();

@@ -6,13 +6,15 @@
 
 package nl.bzk.migratiebrp.voisc.spd.exception;
 
+import static java.lang.Math.toIntExact;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * MessageUtil for constructing/composing (exception)messages for logging to Log4J and/or Gebeurtenissen purposes
@@ -20,9 +22,6 @@ import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
  * Remarks: While logging numbers (doubles,longs & integers) the default message formatting is used. This will be
  * overruled by the pattern placed between the placeholders of texts in the messages.propperties file: Example: Dit is
  * getal {0,number,#). Produces: Dit is getal 1000000. Instead of the default formatting: Dit is getal 1,000,000
- *
- *
- *
  */
 public final class MessageUtil {
     private static final String NEW_LINE = "\n";
@@ -39,11 +38,8 @@ public final class MessageUtil {
     }
 
     /**
-     *
-     * @param code
-     *            String the key used for finding the corresponding exception message
-     * @param parameters
-     *            Object[];
+     * @param code String the key used for finding the corresponding exception message
+     * @param parameters Object[];
      * @return String composed error message
      */
     public static String composeMessage(final String code, final Object[] parameters) {
@@ -53,19 +49,15 @@ public final class MessageUtil {
     /**
      * An assumption is that the key exists in the file. If not, an exception will be thrown and the message will make
      * clear what's wroong but we do not provide handling of this exception.
-     *
-     * @param code
-     *            String the key used for finding the corresponding exception message
-     * @param parameters
-     *            Object[]
-     * @param cause
-     *            Throwable
+     * @param code String the key used for finding the corresponding exception message
+     * @param parameters Object[]
+     * @param cause Throwable
      * @return string
      */
     public static String composeMessage(final String code, final Object[] parameters, final Throwable cause) {
         final StringBuilder messageBuffer = new StringBuilder();
 
-        String messageFromBundle = null;
+        String messageFromBundle;
         try {
             messageFromBundle = MESSAGES_BUNDLE.getString(code);
         } catch (final MissingResourceException mrex) {
@@ -84,64 +76,17 @@ public final class MessageUtil {
     }
 
     /**
-     * Method to be used.
-     *
-     * @param resourceBundle
-     *            ResourceBundle to find messages in.
-     * @param key
-     *            The key used for finding the corresponding message. If none is found the key is repeated with
-     *            embracing "???".
-     * @param parameters
-     *            Parameters to be substitued into the message string found.
-     * @param cause
-     *            Causing exception (if any).
-     * @return Human readable message.
-     */
-    public static String composeMessage(final ResourceBundle resourceBundle, final String key, final Object[] parameters, final Throwable cause) {
-        String messageFromBundle;
-        try {
-            messageFromBundle = resourceBundle.getString(key);
-        } catch (final MissingResourceException mrex) {
-            messageFromBundle = MESSAGE_BUNDLE_REPLACEMENT + key + "???: {0}; {1}; {2}; {3}; {4}; {5}; {6}; {7}.";
-        }
-
-        Object[] params = null;
-        if (parameters != null) {
-            params = new String[parameters.length];
-            for (int i = 0; i < parameters.length; i++) {
-                params[i] = parameters[i] == null ? "null" : String.valueOf(parameters[i]);
-            }
-        }
-
-        String message = "[MELDING-" + key + "]: " + MessageFormat.format(messageFromBundle, params);
-        if (cause != null) {
-            message += NEW_LINE + getExceptionDetails(cause);
-        }
-        return message;
-    }
-
-    /**
      * util method to append extra information given in the Object[] parameters. If a message from the
      * message.properties only expects 3 parameters and the Object[] contains 4 parameters, we need to append the fourth
      * parameter. to be used as part of the message but only as substition indication for parameters
-     *
-     * @param messageBuffer
-     *            StringBuffer
-     * @param messageFromBundle
-     *            String
-     * @param parameters
-     *            Object[]
+     * @param messageBuffer StringBuffer
+     * @param messageFromBundle String
+     * @param parameters Object[]
      */
     private static void appendExtraParametersIfPresent(final StringBuilder messageBuffer, final String messageFromBundle, final Object[] parameters) {
-        final char[] characters = messageFromBundle.toCharArray();
-        final int nrOfParameters = parameters != null ? parameters.length : 0;
-        int nrOfParametersNeeded = 0;
-        if (nrOfParameters > 0) {
-            for (int i = 0; i < characters.length; i++) {
-                if (characters[i] == '{') {
-                    nrOfParametersNeeded++;
-                }
-            }
+        if (parameters != null && parameters.length > 0) {
+            final int nrOfParameters = parameters.length;
+            int nrOfParametersNeeded = toIntExact(messageFromBundle.chars().filter(c -> c == '{').count());
             if (nrOfParameters > nrOfParametersNeeded) {
                 int aantalExtra = nrOfParameters - nrOfParametersNeeded;
                 while (aantalExtra > 0) {
@@ -153,68 +98,18 @@ public final class MessageUtil {
     }
 
     /**
-     *
-     * @param code
-     *            String
-     * @param parameters
-     *            Object[]
-     * @return String
-     */
-    public static String composeLogMessage(final String code, final Object[] parameters) {
-        return composeLogMessage(code, parameters, null);
-    }
-
-    /**
-     *
-     * @param code
-     *            String
-     * @return String
-     */
-    public static String composeLogMessage(final String code) {
-        return composeLogMessage(code, null, null);
-    }
-
-    /**
-     *
-     * @param code
-     *            De code van de melding.
-     * @param cause
-     *            De opgetreden exceptie.
-     * @return String
-     */
-    public static String composeLogMessage(final String code, final Throwable cause) {
-        return composeLogMessage(code, null, cause);
-    }
-
-    /**
-     *
-     * @param code
-     *            String
-     * @param parameters
-     *            Object[]
-     * @param cause
-     *            Throwable
-     * @return String
-     */
-    public static String composeLogMessage(final String code, final Object[] parameters, final Throwable cause) {
-        return composeMessage(code, parameters, cause);
-    }
-
-    /**
-     *
-     * @param e
-     *            De opgetreden exceptie.
+     * @param e De opgetreden exceptie.
      * @return String errorMessage
      */
     private static String getExceptionDetails(final Throwable e) {
         final StringWriter buffer = new StringWriter();
         final PrintWriter errorMessage = new PrintWriter(buffer);
         Throwable throwable = e;
-        while (throwable != null && throwable.getCause() != null) {
+        while (throwable.getCause() != null) {
             throwable = throwable.getCause();
         }
 
-        if (throwable != null && throwable.getMessage() != null && !"".equals(throwable.getMessage())) {
+        if (throwable.getMessage() != null && !"".equals(throwable.getMessage())) {
             errorMessage.write(throwable.getMessage() + NEW_LINE);
         }
 
@@ -226,7 +121,7 @@ public final class MessageUtil {
             }
         }
 
-        if (throwable != null && !(throwable instanceof VoaRuntimeException)) {
+        if (!(throwable instanceof VoaRuntimeException)) {
             // append the stacktrace to support defect resolution
             throwable.printStackTrace(errorMessage);
         }

@@ -8,14 +8,15 @@ package nl.bzk.migratiebrp.bericht.model.brp.impl;
 
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.brp.AbstractBrpBericht;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhouding;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingRegistreerHuwelijkGeregistreerdPartnerschapMigVrz;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjectFactory;
 import nl.bzk.migratiebrp.bericht.model.brp.xml.BrpXml;
 
 /**
  * Huwelijk/gp bijhouding.
  */
-public final class RegistreerHuwelijkGeregistreerdPartnerschapBijhouding extends AbstractBrpBericht<MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhouding> {
+public final class RegistreerHuwelijkGeregistreerdPartnerschapBijhouding
+        extends AbstractBrpBericht<BijhoudingRegistreerHuwelijkGeregistreerdPartnerschapMigVrz> {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,16 +26,14 @@ public final class RegistreerHuwelijkGeregistreerdPartnerschapBijhouding extends
      * Default constructor.
      */
     public RegistreerHuwelijkGeregistreerdPartnerschapBijhouding() {
-        this(new MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhouding());
+        this(new BijhoudingRegistreerHuwelijkGeregistreerdPartnerschapMigVrz());
     }
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param bijhouding
-     *            het bijhouding type
+     * @param bijhouding het bijhouding type
      */
-    public RegistreerHuwelijkGeregistreerdPartnerschapBijhouding(final MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhouding bijhouding) {
+    public RegistreerHuwelijkGeregistreerdPartnerschapBijhouding(final BijhoudingRegistreerHuwelijkGeregistreerdPartnerschapMigVrz bijhouding) {
         super("RegistreerHuwelijkGeregistreerdPartnerschapBericht", bijhouding);
     }
 

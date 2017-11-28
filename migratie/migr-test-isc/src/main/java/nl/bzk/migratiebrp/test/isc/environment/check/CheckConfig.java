@@ -16,11 +16,8 @@ public final class CheckConfig {
 
     /**
      * Constructor.
-     *
-     * @param type
-     *            type
-     * @param config
-     *            config
+     * @param type type
+     * @param config config
      */
     public CheckConfig(final String type, final String config) {
         this.type = type;
@@ -29,7 +26,6 @@ public final class CheckConfig {
 
     /**
      * Geef de waarde van type.
-     *
      * @return type
      */
     public String getType() {
@@ -38,7 +34,6 @@ public final class CheckConfig {
 
     /**
      * Geef de waarde van config.
-     *
      * @return config
      */
     public String getConfig() {

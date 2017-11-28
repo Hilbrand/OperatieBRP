@@ -5,9 +5,6 @@
  */
 
 /**
- * Bevat de classes die de modellen kan transformeren naar XML en HTML.
- * 
- * @since 1.0
+ * Package voor serialisatie van Migratie objectens.
  */
 package nl.bzk.migratiebrp.conversie.model.serialize;
-

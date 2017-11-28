@@ -7,12 +7,10 @@
 package nl.bzk.migratiebrp.routering.runtime;
 
 import org.apache.activemq.store.jdbc.Statements;
-import org.junit.Test;
 
 public class CreateActivemqStatements {
 
-    @Test
-    public void createStatements() {
+    public static final void main(String[] args) {
         final Statements statements = new Statements();
         System.out.println("activemq-create.sql");
         for (final String statement : statements.getCreateSchemaStatements()) {

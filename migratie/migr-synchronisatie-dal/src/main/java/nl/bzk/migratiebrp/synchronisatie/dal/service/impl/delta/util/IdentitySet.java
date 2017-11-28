@@ -14,9 +14,7 @@ import java.util.Set;
 
 /**
  * Set implementatie van een IdentityHashMap.
- *
- * @param <E>
- *            object waar de inhoud van de set uit bestaat
+ * @param <E> object waar de inhoud van de set uit bestaat
  */
 final class IdentitySet<E> implements Set<E> {
 
@@ -25,7 +23,7 @@ final class IdentitySet<E> implements Set<E> {
     /**
      * Default constructor.
      */
-    public IdentitySet() {
+    IdentitySet() {
         super();
     }
 
@@ -109,7 +107,7 @@ final class IdentitySet<E> implements Set<E> {
     @Override
     public boolean retainAll(final Collection<?> c) {
         boolean changed = false;
-        for (final Iterator<Map.Entry<E, Void>> iterator = identityMap.entrySet().iterator(); iterator.hasNext();) {
+        for (final Iterator<Map.Entry<E, Void>> iterator = identityMap.entrySet().iterator(); iterator.hasNext(); ) {
             final Map.Entry<E, Void> entry = iterator.next();
             if (!c.contains(entry.getKey())) {
                 iterator.remove();

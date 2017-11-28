@@ -23,6 +23,11 @@
                 <property name="brokerURL">
                     <value>${isc.queue.url:service:tcp://localhost:61616}</value>
                 </property>
+                <property name="redeliveryPolicy">
+                    <bean class="org.apache.activemq.RedeliveryPolicy">
+                        <property name="maximumRedeliveries" value="0" />
+                    </bean>
+                </property>
             </bean>
         </property>
     </bean>

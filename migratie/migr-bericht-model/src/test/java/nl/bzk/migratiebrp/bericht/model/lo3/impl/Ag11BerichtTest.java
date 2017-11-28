@@ -9,10 +9,10 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 import java.io.IOException;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
-import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTest;
+import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTestBasis;
 import org.junit.Test;
 
-public class Ag11BerichtTest extends AbstractLo3BerichtTest {
+public class Ag11BerichtTest extends AbstractLo3BerichtTestBasis {
 
     private static final String BRON_GEMEENTE = "0599";
     private static final String DOEL_GEMEENTE = "0600";
@@ -28,8 +28,8 @@ public class Ag11BerichtTest extends AbstractLo3BerichtTest {
     public void test() throws ClassNotFoundException, BerichtInhoudException, IOException {
         final Ag11Bericht bericht = new Ag11Bericht();
         bericht.setMessageId(MessageIdGenerator.generateId());
-        bericht.setBronGemeente(DOEL_GEMEENTE);
-        bericht.setDoelGemeente(BRON_GEMEENTE);
+        bericht.setBronPartijCode(DOEL_GEMEENTE);
+        bericht.setDoelPartijCode(BRON_GEMEENTE);
 
         testFormatAndParseBericht(bericht);
     }

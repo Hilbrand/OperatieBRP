@@ -12,25 +12,45 @@ import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
  * ALle mogelijke LO3 rubriekvolgnummers.
  */
 public enum Lo3RubriekVolgnummerEnum {
-    /** Volgnummer 10. */
+    /**
+     * Volgnummer 10.
+     */
     VOLGNR_10,
-    /** Volgnummer 15. */
+    /**
+     * Volgnummer 15.
+     */
     VOLGNR_15,
-    /** Volgnummer 20. */
+    /**
+     * Volgnummer 20.
+     */
     VOLGNR_20,
-    /** Volgnummer 30. */
+    /**
+     * Volgnummer 30.
+     */
     VOLGNR_30,
-    /** Volgnummer 40. */
+    /**
+     * Volgnummer 40.
+     */
     VOLGNR_40,
-    /** Volgnummer 50. */
+    /**
+     * Volgnummer 50.
+     */
     VOLGNR_50,
-    /** Volgnummer 60. */
+    /**
+     * Volgnummer 60.
+     */
     VOLGNR_60,
-    /** Volgnummer 70. */
+    /**
+     * Volgnummer 70.
+     */
     VOLGNR_70,
-    /** Volgnummer 80. */
+    /**
+     * Volgnummer 80.
+     */
     VOLGNR_80,
-    /** Volgnummer 90. */
+    /**
+     * Volgnummer 90.
+     */
     VOLGNR_90;
 
     private static final String VOLGNR_PREFIX = "VOLGNR_";
@@ -43,7 +63,6 @@ public enum Lo3RubriekVolgnummerEnum {
 
     /**
      * Geef de waarde van rubriek as int.
-     *
      * @return het rubrieknummer als int.
      */
     public int getRubriekAsInt() {
@@ -52,11 +71,9 @@ public enum Lo3RubriekVolgnummerEnum {
     }
 
     /**
-     * @param rubriekVolgnummer
-     *            de rubriekvolgnummer naam
+     * @param rubriekVolgnummer de rubriekvolgnummer naam
      * @return het corresponderende LO3 rubriekvolgnummer
-     * @throws nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException
-     *             Wordt gegooid als de gevraagde waarde niet voorkomt binnen de enumeratie
+     * @throws nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException Wordt gegooid als de gevraagde waarde niet voorkomt binnen de enumeratie
      */
     public static Lo3RubriekVolgnummerEnum getLo3RubriekVolgnummer(final String rubriekVolgnummer) throws Lo3SyntaxException {
         try {

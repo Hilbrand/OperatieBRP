@@ -16,18 +16,14 @@ public interface GbaBerichtRepository {
 
     /**
      * Haalt het GBA bijhoudingsbericht op.
-     *
-     * @param leveringsVergelijkingBerichtCorrelatieGbav
-     *            Het leveringBericht met de id van het op te halen bericht.
+     * @param leveringsVergelijkingBerichtCorrelatieGbav Het leveringBericht met de id van het op te halen bericht.
      * @return Het opgehaalde bericht.
      */
     GbaBericht haalGbaBijhoudingsBerichtOp(LeveringsVergelijkingBerichtCorrelatieGbav leveringsVergelijkingBerichtCorrelatieGbav);
 
     /**
      * Haalt het GBA leveringbericht op.
-     *
-     * @param leveringsVergelijkingBerichtCorrelatieGbav
-     *            Het leveringBericht met de id van het op te halen bericht.
+     * @param leveringsVergelijkingBerichtCorrelatieGbav Het leveringBericht met de id van het op te halen bericht.
      * @return Het opgehaalde bericht.
      */
     GbaBericht haalGbaLeveringBerichtOp(LeveringsVergelijkingBerichtCorrelatieGbav leveringsVergelijkingBerichtCorrelatieGbav);

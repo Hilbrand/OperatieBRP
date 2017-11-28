@@ -24,8 +24,8 @@ import org.junit.Test;
 
 public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
 
-    protected static final Lo3Historie GEBOORTE_HISTORIE = Lo3StapelHelper.lo3His(19770101);
-    protected static final Lo3Documentatie GEBOORTE_AKTE = Lo3StapelHelper.lo3Akt(1);
+    private static final Lo3Historie GEBOORTE_HISTORIE = Lo3StapelHelper.lo3His(19770101);
+    private static final Lo3Documentatie GEBOORTE_AKTE = Lo3StapelHelper.lo3Akt(1);
     private static final String GEM_CODE = "0518";
 
     @Inject
@@ -74,11 +74,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre065MetRNIEnRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "R", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "R", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder1Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -90,11 +91,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre065MetFoutEnRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "F", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "F", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder1Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -106,11 +108,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre065MetOverledenEnRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "O", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "O", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder1Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -122,11 +125,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre065MetMinistrieelEnRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "M", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "M", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder1Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -139,11 +143,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre065MetRNIZonderRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "R", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "R", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder1Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -177,11 +182,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre066MetRNIEnRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "R", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "R", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder2Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -193,11 +199,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre066MetFoutEnRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "F", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "F", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder2Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -209,11 +216,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre066MetOverledenEnRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "O", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "O", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder2Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -225,11 +233,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre066MetMinistrieelEnRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "M", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "M", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder2Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -242,11 +251,12 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre066MetRNIZonderRNIGemeente() {
         final Lo3Stapel<Lo3InschrijvingInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    Lo3StapelHelper.lo3Inschrijving(null, 20120101, "R", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
-                    null,
-                    Lo3Historie.NULL_HISTORIE,
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                Lo3StapelHelper.lo3Inschrijving(null, 20120101, "R", 19770202, GEM_CODE, 0, 1, 20120101123014000L, true),
+                                null,
+                                new Lo3Historie(null, null, null),
+                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
         final Lo3PersoonslijstBuilder builder = builder();
         builder.ouder2Stapel(null);
         builder.inschrijvingStapel(stapel);
@@ -295,84 +305,84 @@ public class Lo3PersoonslijstPreconditiesTest extends AbstractPreconditieTest {
     }
 
     private Lo3Stapel<Lo3PersoonInhoud> buildPersoonstapel(final String landcode) {
-        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Persoon(2450924321L,
-                                                                                           "Scarlet",
-                                                                                           "Simpspoon",
-                                                                                           19770101,
-                                                                                           GEM_CODE,
-                                                                                           landcode,
-                                                                                           "V"),
-                                                                GEBOORTE_AKTE,
-                                                                GEBOORTE_HISTORIE,
-                                                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0)));
+        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Persoon("2450924321",
+                "Scarlet",
+                "Simpspoon",
+                19770101,
+                GEM_CODE,
+                landcode,
+                "V"),
+                GEBOORTE_AKTE,
+                GEBOORTE_HISTORIE,
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0)));
     }
 
     private Lo3Stapel<Lo3OuderInhoud> buildOuder1Stapel() {
-        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Ouder(3450924321L,
-                                                                                         "Jessica",
-                                                                                         "Geller",
-                                                                                         19170101,
-                                                                                         GEM_CODE,
-                                                                                         "6030",
-                                                                                         "V",
-                                                                                         19770101),
-                                                                GEBOORTE_AKTE,
-                                                                GEBOORTE_HISTORIE,
-                                                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_02, 0, 0)));
+        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Ouder("3450924321",
+                "Jessica",
+                "Geller",
+                19170101,
+                GEM_CODE,
+                "6030",
+                "V",
+                19770101),
+                GEBOORTE_AKTE,
+                GEBOORTE_HISTORIE,
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_02, 0, 0)));
     }
 
     private Lo3Stapel<Lo3OuderInhoud> buildOuder2Stapel() {
-        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Ouder(3450924321L,
-                                                                                         "Jaap",
-                                                                                         "Jansen",
-                                                                                         19160101,
-                                                                                         GEM_CODE,
-                                                                                         "6030",
-                                                                                         "M",
-                                                                                         19770101),
-                                                                GEBOORTE_AKTE,
-                                                                GEBOORTE_HISTORIE,
-                                                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_02, 0, 0)));
+        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Ouder("3450924321",
+                "Jaap",
+                "Jansen",
+                19160101,
+                GEM_CODE,
+                "6030",
+                "M",
+                19770101),
+                GEBOORTE_AKTE,
+                GEBOORTE_HISTORIE,
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_02, 0, 0)));
     }
 
     private Lo3Stapel<Lo3InschrijvingInhoud> buildInschrijvingStapel() {
         return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Inschrijving(null,
-                                                                                                null,
-                                                                                                null,
-                                                                                                19770202,
-                                                                                                GEM_CODE,
-                                                                                                0,
-                                                                                                1,
-                                                                                                19770102123014000L,
-                                                                                                true),
-                                                                null,
-                                                                Lo3Historie.NULL_HISTORIE,
-                                                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+                null,
+                null,
+                19770202,
+                GEM_CODE,
+                0,
+                1,
+                19770102123014000L,
+                true),
+                null,
+                new Lo3Historie(null, null, null),
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
     }
 
     private Lo3Stapel<Lo3VerblijfplaatsInhoud> buildVerblijfplaatsStapel() {
         return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Verblijfplaats(GEM_CODE,
-                                                                                                  19770101,
-                                                                                                  19770101,
-                                                                                                  "Straat",
-                                                                                                  14,
-                                                                                                  "9654AA",
-                                                                                                  "O"),
-                                                                null,
-                                                                GEBOORTE_HISTORIE,
-                                                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 0)));
+                19770101,
+                19770101,
+                "Straat",
+                14,
+                "9654AA",
+                "O"),
+                null,
+                GEBOORTE_HISTORIE,
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 0)));
     }
 
     private Lo3Stapel<Lo3VerblijfplaatsInhoud> buildRNIVerblijfplaatsStapel() {
         return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(Lo3StapelHelper.lo3Verblijfplaats("1999",
-                                                                                                  19770101,
-                                                                                                  19770101,
-                                                                                                  "Straat",
-                                                                                                  14,
-                                                                                                  "9654AA",
-                                                                                                  "O"),
-                                                                null,
-                                                                GEBOORTE_HISTORIE,
-                                                                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 0)));
+                19770101,
+                19770101,
+                "Straat",
+                14,
+                "9654AA",
+                "O"),
+                null,
+                GEBOORTE_HISTORIE,
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 0)));
     }
 }

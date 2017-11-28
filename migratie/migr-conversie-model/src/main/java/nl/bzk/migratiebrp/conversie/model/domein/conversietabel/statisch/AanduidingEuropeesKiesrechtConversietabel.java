@@ -10,7 +10,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingEuropeesKiesrechtEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingEuropeesKiesrecht;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Dit is een statische conversie (er wordt geen tabel gebruikt) tussen de LO3 en BRP aanduiding europees kiesrecht.
@@ -20,7 +20,7 @@ public final class AanduidingEuropeesKiesrechtConversietabel implements Conversi
 
     @Override
     public BrpBoolean converteerNaarBrp(final Lo3AanduidingEuropeesKiesrecht input) {
-        if (!Validatie.isElementGevuld(input)) {
+        if (!Lo3Validatie.isElementGevuld(input)) {
             return null;
         }
 
@@ -55,7 +55,7 @@ public final class AanduidingEuropeesKiesrechtConversietabel implements Conversi
 
     @Override
     public boolean valideerLo3(final Lo3AanduidingEuropeesKiesrecht input) {
-        return !Validatie.isElementGevuld(input) || Lo3AanduidingEuropeesKiesrechtEnum.getByCode(input.getIntegerWaarde()) != null;
+        return !Lo3Validatie.isElementGevuld(input) || Lo3AanduidingEuropeesKiesrechtEnum.getByCode(input.getIntegerWaarde()) != null;
     }
 
     @Override

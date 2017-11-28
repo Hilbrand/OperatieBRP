@@ -1,5 +1,0 @@
-<tr>
-	<td>click</td>
-	<td>//input[@id='Verstrekkingsbeperking mogelijk?']</td>
-	<td></td>
-</tr>

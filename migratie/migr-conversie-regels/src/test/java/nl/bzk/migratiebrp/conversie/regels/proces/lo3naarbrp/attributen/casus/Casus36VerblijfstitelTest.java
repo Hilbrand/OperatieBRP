@@ -6,6 +6,9 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.casus;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
@@ -24,8 +27,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.testutils.StapelUtils;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 public class Casus36VerblijfstitelTest extends AbstractCasusTest {
@@ -33,12 +34,12 @@ public class Casus36VerblijfstitelTest extends AbstractCasusTest {
     private final List<Lo3Categorie<Lo3VerblijfstitelInhoud>> categorieen = new ArrayList<>();
 
     private final BrpVerblijfsrechtInhoud brpVerblijfstitel21 =
-            new BrpVerblijfsrechtInhoud(new BrpVerblijfsrechtCode((short) 21), new BrpDatum(20000101, null), new BrpDatum(20040101, null),null);
+            new BrpVerblijfsrechtInhoud(new BrpVerblijfsrechtCode("21"), new BrpDatum(20000101, null), new BrpDatum(20040101, null), null);
     private final BrpVerblijfsrechtInhoud brpVerblijfstitel98 =
-            new BrpVerblijfsrechtInhoud(new BrpVerblijfsrechtCode((short) 98), new BrpDatum(20040101, null), null,null);
+            new BrpVerblijfsrechtInhoud(new BrpVerblijfsrechtCode("98"), new BrpDatum(20040101, null), null, null);
 
     private final Lo3VerblijfstitelInhoud lo3Verblijfstitel21 =
-            new Lo3VerblijfstitelInhoud(new Lo3AanduidingVerblijfstitelCode("21"), new Lo3Datum(20040101),  new Lo3Datum(20000101));
+            new Lo3VerblijfstitelInhoud(new Lo3AanduidingVerblijfstitelCode("21"), new Lo3Datum(20040101), new Lo3Datum(20000101));
     private final Lo3VerblijfstitelInhoud lo3Verblijfstitel98 =
             new Lo3VerblijfstitelInhoud(new Lo3AanduidingVerblijfstitelCode("98"), null, new Lo3Datum(20040101));
 

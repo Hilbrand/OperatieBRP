@@ -20,11 +20,8 @@ public class JbpmDao {
 
     /**
      * Execute sql.
-     *
-     * @param sql
-     *            sql
-     * @param <T>
-     *            result type
+     * @param sql sql
+     * @param <T> result type
      * @return result
      */
     protected final <T> T execute(final Sql<T> sql) {
@@ -33,13 +30,9 @@ public class JbpmDao {
 
     /**
      * Execute sql.
-     *
-     * @param sql
-     *            sql
-     * @param <T>
-     *            result type
-     * @param useSeparateTransaction
-     *            Worker SQL in aparte transactie uitvoeren
+     * @param sql sql
+     * @param <T> result type
+     * @param useSeparateTransaction Worker SQL in aparte transactie uitvoeren
      * @return result
      */
     protected final <T> T execute(final Sql<T> sql, final boolean useSeparateTransaction) {
@@ -70,31 +63,26 @@ public class JbpmDao {
 
     /**
      * Sql interface.
-     *
-     * @param <T>
-     *            result type
+     * @param <T> result type
      */
     protected interface Sql<T> {
         /**
          * Use to given connection to execute sql.
-         *
-         * @param connection
-         *            connection
+         * @param connection connection
          * @return result
-         * @throws SQLException
-         *             on sql errors
+         * @throws SQLException on sql errors
          */
         T execute(final Connection connection) throws SQLException;
     }
 
     /**
      * Worker.
-     *
-     * @param <T>
-     *            result type
+     * @param <T> result type
      */
     private static final class Worker<T> implements Work {
-        /** result. */
+        /**
+         * result.
+         */
         private T result;
         private final Sql<T> sql;
 
@@ -109,7 +97,6 @@ public class JbpmDao {
 
         /**
          * Gets the result.
-         *
          * @return the result
          */
         T getResult() {

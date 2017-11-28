@@ -11,7 +11,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,66 +21,66 @@ public class Lo3OnderzoekTest {
     public void testOmvatElementInCategorie() {
         Assert.assertFalse(new Lo3Onderzoek(null, null, null).omvatElementInCategorie(Lo3ElementEnum.ELEMENT_0120, Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10000), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10020), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10080), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10100), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10120), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertFalse(new Lo3Onderzoek(Lo3Integer.wrap(10130), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertFalse(new Lo3Onderzoek(Lo3Integer.wrap(510120), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertFalse(new Lo3Onderzoek(Lo3Integer.wrap(110000), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertFalse(new Lo3Onderzoek(Lo3Integer.wrap(10220), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_01));
         Assert.assertFalse(new Lo3Onderzoek(Lo3Integer.wrap(10000), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_8610,
-            Lo3CategorieEnum.CATEGORIE_01));
+                Lo3ElementEnum.ELEMENT_8610,
+                Lo3CategorieEnum.CATEGORIE_01));
 
         Assert.assertFalse(new Lo3Onderzoek(null, null, null).omvatElementInCategorie(Lo3ElementEnum.ELEMENT_0120, Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10000), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10020), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10080), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10100), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(10120), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertFalse(new Lo3Onderzoek(Lo3Integer.wrap(10130), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertTrue(new Lo3Onderzoek(Lo3Integer.wrap(510120), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertFalse(new Lo3Onderzoek(Lo3Integer.wrap(110000), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertFalse(new Lo3Onderzoek(Lo3Integer.wrap(10220), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_0120,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_0120,
+                Lo3CategorieEnum.CATEGORIE_51));
         Assert.assertFalse(new Lo3Onderzoek(Lo3Integer.wrap(10000), DATUM, null).omvatElementInCategorie(
-            Lo3ElementEnum.ELEMENT_8610,
-            Lo3CategorieEnum.CATEGORIE_51));
+                Lo3ElementEnum.ELEMENT_8610,
+                Lo3CategorieEnum.CATEGORIE_51));
     }
 }

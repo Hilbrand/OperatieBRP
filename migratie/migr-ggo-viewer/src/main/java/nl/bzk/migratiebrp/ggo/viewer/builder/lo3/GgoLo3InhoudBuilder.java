@@ -24,6 +24,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3ReisdocumentInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerblijfplaatsInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerblijfstitelInhoud;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import org.springframework.stereotype.Component;
@@ -40,32 +41,26 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een persoonvoorkomen van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek
      * @return Map met de keys en values.
      */
     public final Map<String, String> createPersoonInhoud(
-        final Lo3PersoonInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3PersoonInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> persoon = new LinkedHashMap<>();
         if (inhoud != null) {
             gegevensgroepenBuilder.addGroep01(persoon, inhoud.getANummer(), inhoud.getBurgerservicenummer());
             gegevensgroepenBuilder.addGroep02(
-                persoon,
-                inhoud.getVoornamen(),
-                inhoud.getAdellijkeTitelPredikaatCode(),
-                inhoud.getVoorvoegselGeslachtsnaam(),
-                inhoud.getGeslachtsnaam());
+                    persoon,
+                    inhoud.getVoornamen(),
+                    inhoud.getAdellijkeTitelPredikaatCode(),
+                    inhoud.getVoorvoegselGeslachtsnaam(),
+                    inhoud.getGeslachtsnaam());
             gegevensgroepenBuilder.addGroep03(persoon, inhoud.getGeboortedatum(), inhoud.getGeboorteGemeenteCode(), inhoud.getGeboorteLandCode());
             gegevensgroepenBuilder.addGroep04(persoon, inhoud.getGeslachtsaanduiding());
             if (inhoud.getVorigANummer() != null) {
@@ -87,32 +82,26 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een oudervoorkomen van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek
      * @return Map met de keys en values.
      */
     public final Map<String, String> createOuderInhoud(
-        final Lo3OuderInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3OuderInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> ouder = new LinkedHashMap<>();
         if (inhoud != null) {
             gegevensgroepenBuilder.addGroep01(ouder, inhoud.getaNummer(), inhoud.getBurgerservicenummer());
             gegevensgroepenBuilder.addGroep02(
-                ouder,
-                inhoud.getVoornamen(),
-                inhoud.getAdellijkeTitelPredikaatCode(),
-                inhoud.getVoorvoegselGeslachtsnaam(),
-                inhoud.getGeslachtsnaam());
+                    ouder,
+                    inhoud.getVoornamen(),
+                    inhoud.getAdellijkeTitelPredikaatCode(),
+                    inhoud.getVoorvoegselGeslachtsnaam(),
+                    inhoud.getGeslachtsnaam());
             gegevensgroepenBuilder.addGroep03(ouder, inhoud.getGeboortedatum(), inhoud.getGeboorteGemeenteCode(), inhoud.getGeboorteLandCode());
             gegevensgroepenBuilder.addGroep04(ouder, inhoud.getGeslachtsaanduiding());
             if (inhoud.getFamilierechtelijkeBetrekking() != null) {
@@ -128,36 +117,33 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een nationaliteitvoorkomen van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek.
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek.
      * @return Map met de keys en values.
      */
     public final Map<String, String> createNationaliteitInhoud(
-        final Lo3NationaliteitInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3NationaliteitInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> nationaliteit = new LinkedHashMap<>();
         if (inhoud != null) {
-            if (inhoud.getNationaliteitCode() != null && inhoud.getNationaliteitCode().getWaarde() != null) {
+            if (heeftWaarde(inhoud.getNationaliteitCode())) {
                 lo3ValueConvert.addElement(nationaliteit, Lo3ElementEnum.ELEMENT_0510, inhoud.getNationaliteitCode());
             }
-            if (inhoud.getRedenVerkrijgingNederlandschapCode() != null && inhoud.getRedenVerkrijgingNederlandschapCode().getWaarde() != null) {
+            if (heeftWaarde(inhoud.getRedenVerkrijgingNederlandschapCode())) {
                 lo3ValueConvert.addElement(nationaliteit, Lo3ElementEnum.ELEMENT_6310, inhoud.getRedenVerkrijgingNederlandschapCode());
             }
-            if (inhoud.getRedenVerliesNederlandschapCode() != null && inhoud.getRedenVerliesNederlandschapCode().getWaarde() != null) {
+            if (heeftWaarde(inhoud.getRedenVerliesNederlandschapCode())) {
                 lo3ValueConvert.addElement(nationaliteit, Lo3ElementEnum.ELEMENT_6410, inhoud.getRedenVerliesNederlandschapCode());
             }
-            if (inhoud.getAanduidingBijzonderNederlandschap() != null && inhoud.getAanduidingBijzonderNederlandschap().getWaarde() != null) {
+            if (heeftWaarde(inhoud.getAanduidingBijzonderNederlandschap())) {
                 lo3ValueConvert.addElement(nationaliteit, Lo3ElementEnum.ELEMENT_6510, inhoud.getAanduidingBijzonderNederlandschap());
+            }
+            if (heeftWaarde(inhoud.getBuitenlandsPersoonsnummer())) {
+                lo3ValueConvert.addElement(nationaliteit, Lo3ElementEnum.ELEMENT_7310, inhoud.getBuitenlandsPersoonsnummer());
             }
 
             gegevensgroepenBuilder.addDocumentatie(nationaliteit, documentatie);
@@ -168,47 +154,45 @@ public class GgoLo3InhoudBuilder {
         return nationaliteit;
     }
 
+    private boolean heeftWaarde(final Lo3Element lo3Element) {
+        return lo3Element != null && lo3Element.getWaarde() != null;
+    }
+
     /**
      * Maak een huwelijkinhoud van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek
      * @return Map met de keys en values.
      */
     public final Map<String, String> createHuwelijkInhoud(
-        final Lo3HuwelijkOfGpInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3HuwelijkOfGpInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> huwelijk = new LinkedHashMap<>();
         if (inhoud != null) {
             gegevensgroepenBuilder.addGroep01(huwelijk, inhoud.getaNummer(), inhoud.getBurgerservicenummer());
             gegevensgroepenBuilder.addGroep02(
-                huwelijk,
-                inhoud.getVoornamen(),
-                inhoud.getAdellijkeTitelPredikaatCode(),
-                inhoud.getVoorvoegselGeslachtsnaam(),
-                inhoud.getGeslachtsnaam());
+                    huwelijk,
+                    inhoud.getVoornamen(),
+                    inhoud.getAdellijkeTitelPredikaatCode(),
+                    inhoud.getVoorvoegselGeslachtsnaam(),
+                    inhoud.getGeslachtsnaam());
             gegevensgroepenBuilder.addGroep03(huwelijk, inhoud.getGeboortedatum(), inhoud.getGeboorteGemeenteCode(), inhoud.getGeboorteLandCode());
             gegevensgroepenBuilder.addGroep04(huwelijk, inhoud.getGeslachtsaanduiding());
             gegevensgroepenBuilder.addGroep06(
-                huwelijk,
-                inhoud.getDatumSluitingHuwelijkOfAangaanGp(),
-                inhoud.getGemeenteCodeSluitingHuwelijkOfAangaanGp(),
-                inhoud.getLandCodeSluitingHuwelijkOfAangaanGp());
+                    huwelijk,
+                    inhoud.getDatumSluitingHuwelijkOfAangaanGp(),
+                    inhoud.getGemeenteCodeSluitingHuwelijkOfAangaanGp(),
+                    inhoud.getLandCodeSluitingHuwelijkOfAangaanGp());
             gegevensgroepenBuilder.addGroep07(
-                huwelijk,
-                inhoud.getDatumOntbindingHuwelijkOfGp(),
-                inhoud.getGemeenteCodeOntbindingHuwelijkOfGp(),
-                inhoud.getLandCodeOntbindingHuwelijkOfGp(),
-                inhoud.getRedenOntbindingHuwelijkOfGpCode());
+                    huwelijk,
+                    inhoud.getDatumOntbindingHuwelijkOfGp(),
+                    inhoud.getGemeenteCodeOntbindingHuwelijkOfGp(),
+                    inhoud.getLandCodeOntbindingHuwelijkOfGp(),
+                    inhoud.getRedenOntbindingHuwelijkOfGpCode());
 
             if (inhoud.getSoortVerbintenis() != null) {
                 lo3ValueConvert.addElement(huwelijk, Lo3ElementEnum.ELEMENT_1510, inhoud.getSoortVerbintenis());
@@ -223,23 +207,17 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een overlijdeninhoud van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek
      * @return Map met de keys en values.
      */
     public final Map<String, String> createOverlijdenInhoud(
-        final Lo3OverlijdenInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3OverlijdenInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> overlijden = new LinkedHashMap<>();
         if (inhoud != null) {
             if (inhoud.getDatum() != null) {
@@ -262,20 +240,15 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een inschrijvinginhoud van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
      * @return Map met de keys en values.
      */
     public final Map<String, String> createInschrijvingInhoud(
-        final Lo3InschrijvingInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie)
-    {
+            final Lo3InschrijvingInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie) {
         final Map<String, String> inschrijving = new LinkedHashMap<>();
         if (inhoud != null) {
             if (inhoud.getDatumIngangBlokkering() != null) {
@@ -304,23 +277,17 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een verblijfinhoud van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek
      * @return Map met de keys en values.
      */
     public final Map<String, String> createVerblijfplaatsInhoud(
-        final Lo3VerblijfplaatsInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3VerblijfplaatsInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> verblijfplaats = new LinkedHashMap<>();
         if (inhoud != null) {
             gegevensgroepenBuilder.addGroep09(verblijfplaats, inhoud.getGemeenteInschrijving(), inhoud.getDatumInschrijving());
@@ -331,12 +298,12 @@ public class GgoLo3InhoudBuilder {
                 lo3ValueConvert.addElement(verblijfplaats, Lo3ElementEnum.ELEMENT_1210, inhoud.getLocatieBeschrijving());
             }
             gegevensgroepenBuilder.addGroep13(
-                verblijfplaats,
-                inhoud.getLandAdresBuitenland(),
-                inhoud.getDatumVertrekUitNederland(),
-                inhoud.getAdresBuitenland1(),
-                inhoud.getAdresBuitenland2(),
-                inhoud.getAdresBuitenland3());
+                    verblijfplaats,
+                    inhoud.getLandAdresBuitenland(),
+                    inhoud.getDatumVertrekUitNederland(),
+                    inhoud.getAdresBuitenland1(),
+                    inhoud.getAdresBuitenland2(),
+                    inhoud.getAdresBuitenland3());
             gegevensgroepenBuilder.addGroep14(verblijfplaats, inhoud.getLandVanwaarIngeschreven(), inhoud.getVestigingInNederland());
             if (inhoud.getAangifteAdreshouding() != null && inhoud.getAangifteAdreshouding().getWaarde() != null) {
                 lo3ValueConvert.addElement(verblijfplaats, Lo3ElementEnum.ELEMENT_7210, inhoud.getAangifteAdreshouding());
@@ -355,32 +322,26 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een kindinhoud van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek
      * @return Map met de keys en values.
      */
     public final Map<String, String> createKindInhoud(
-        final Lo3KindInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3KindInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> kind = new LinkedHashMap<>();
         if (inhoud != null) {
             gegevensgroepenBuilder.addGroep01(kind, inhoud.getaNummer(), inhoud.getBurgerservicenummer());
             gegevensgroepenBuilder.addGroep02(
-                kind,
-                inhoud.getVoornamen(),
-                inhoud.getAdellijkeTitelPredikaatCode(),
-                inhoud.getVoorvoegselGeslachtsnaam(),
-                inhoud.getGeslachtsnaam());
+                    kind,
+                    inhoud.getVoornamen(),
+                    inhoud.getAdellijkeTitelPredikaatCode(),
+                    inhoud.getVoorvoegselGeslachtsnaam(),
+                    inhoud.getGeslachtsnaam());
             gegevensgroepenBuilder.addGroep03(kind, inhoud.getGeboortedatum(), inhoud.getGeboorteGemeenteCode(), inhoud.getGeboorteLandCode());
 
             gegevensgroepenBuilder.addDocumentatie(kind, documentatie);
@@ -392,23 +353,17 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een verblijfstitelinhoud van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek
      * @return Map met de keys en values.
      */
     public final Map<String, String> createVerblijfstitelInhoud(
-        final Lo3VerblijfstitelInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3VerblijfstitelInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> verblijfstitel = new LinkedHashMap<>();
         if (inhoud != null) {
             if (inhoud.getAanduidingVerblijfstitelCode() != null && inhoud.getAanduidingVerblijfstitelCode().getWaarde() != null) {
@@ -429,23 +384,17 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een gezagsverhoudinginhoud van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek
      * @return Map met de keys en values.
      */
     public final Map<String, String> createGezagsverhoudingInhoud(
-        final Lo3GezagsverhoudingInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3GezagsverhoudingInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> gezagsverhouding = new LinkedHashMap<>();
         if (inhoud != null) {
             if (inhoud.getIndicatieGezagMinderjarige() != null && inhoud.getIndicatieGezagMinderjarige().getWaarde() != null) {
@@ -464,23 +413,17 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een reisdocumentinhoud van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
-     * @param onderzoek
-     *            Lo3 onderzoek
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
+     * @param onderzoek Lo3 onderzoek
      * @return Map met de keys en values.
      */
     public final Map<String, String> createReisdocumentInhoud(
-        final Lo3ReisdocumentInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek)
-    {
+            final Lo3ReisdocumentInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek) {
         final Map<String, String> reisdocument = new LinkedHashMap<>();
         if (inhoud != null) {
             gegevensgroepenBuilder.addGroep35(reisdocument, inhoud);
@@ -496,20 +439,15 @@ public class GgoLo3InhoudBuilder {
 
     /**
      * Maak een kiesrechtinhoud van de meegegeven gegevens.
-     * 
-     * @param inhoud
-     *            Lo3 categorie inhoud.
-     * @param historie
-     *            Lo3 historie.
-     * @param documentatie
-     *            Lo3 documentatie.
+     * @param inhoud Lo3 categorie inhoud.
+     * @param historie Lo3 historie.
+     * @param documentatie Lo3 documentatie.
      * @return Map met de keys en values.
      */
     public final Map<String, String> createKiesrechtInhoud(
-        final Lo3KiesrechtInhoud inhoud,
-        final Lo3Historie historie,
-        final Lo3Documentatie documentatie)
-    {
+            final Lo3KiesrechtInhoud inhoud,
+            final Lo3Historie historie,
+            final Lo3Documentatie documentatie) {
         final Map<String, String> kiesrecht = new LinkedHashMap<>();
         if (inhoud != null) {
             if (inhoud.getAanduidingEuropeesKiesrecht() != null) {

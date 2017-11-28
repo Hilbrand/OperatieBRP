@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.voisc.spd.exception;
 
 /**
  * exception used by the VOSPGService and VOSPGController.
- * 
  */
 public class VoaException extends Exception {
     private static final long serialVersionUID = 1;
@@ -20,11 +19,8 @@ public class VoaException extends Exception {
 
     /**
      * keep code.
-     * 
-     * @param code
-     *            String the key used for finding the corresponding exception message
-     * @param parameters
-     *            Object[] array of Objects that will be put in the corresponding message can be null
+     * @param code String the key used for finding the corresponding exception message
+     * @param parameters Object[] array of Objects that will be put in the corresponding message can be null
      */
     public VoaException(final String code, final Object[] parameters) {
         this(code, parameters, null);
@@ -32,13 +28,9 @@ public class VoaException extends Exception {
 
     /**
      * Protected Constructor to force the developer to create a specific subclass of SpgRuntimeException.
-     * 
-     * @param code
-     *            String the key used for finding the corresponding exception message
-     * @param parameters
-     *            Object[] array of Objects that will be put in the corresponding message, can be null
-     * @param cause
-     *            Throwable the original cause can be null
+     * @param code String the key used for finding the corresponding exception message
+     * @param parameters Object[] array of Objects that will be put in the corresponding message, can be null
+     * @param cause Throwable the original cause can be null
      */
     public VoaException(final String code, final Object[] parameters, final Throwable cause) {
         super(MessageUtil.composeMessage(code, parameters, cause), cause);
@@ -47,7 +39,6 @@ public class VoaException extends Exception {
 
     /**
      * getter for code.
-     * 
      * @return code the code for this exception
      */
     public final String getCode() {

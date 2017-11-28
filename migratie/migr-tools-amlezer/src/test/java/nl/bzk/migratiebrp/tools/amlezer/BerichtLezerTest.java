@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"/voisc-mailbox-simulator.xml", "/lezer.xml" })
+@ContextConfiguration({"/voisc-mailbox-simulator.xml", "/lezer.xml"})
 public class BerichtLezerTest {
 
     @Inject

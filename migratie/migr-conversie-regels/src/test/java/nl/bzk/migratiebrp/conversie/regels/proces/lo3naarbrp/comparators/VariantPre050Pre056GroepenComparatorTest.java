@@ -24,32 +24,32 @@ public class VariantPre050Pre056GroepenComparatorTest {
 
     private final VariantPre050Pre056GroepenComparator comparator = new VariantPre050Pre056GroepenComparator();
     private final BrpSamengesteldeNaamInhoud inhoud = new BrpSamengesteldeNaamInhoud(
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        new BrpBoolean(false, null),
-        new BrpBoolean(false, null));
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            new BrpBoolean(false, null),
+            new BrpBoolean(false, null));
 
     @Test
     public void testOudereJuistVoorNieuwereJuist() {
         final TussenGroep<?> groepNieuwereJuist =
                 new TussenGroep<BrpGroepInhoud>(inhoud, new Lo3Historie(null, new Lo3Datum(19950202), new Lo3Datum(19950204)), null, new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_01,
-                    0,
-                    0));
+                        Lo3CategorieEnum.CATEGORIE_01,
+                        0,
+                        0));
         final TussenGroep<?> groepOudereJuist =
                 new TussenGroep<BrpGroepInhoud>(inhoud, new Lo3Historie(null, new Lo3Datum(19920401), new Lo3Datum(19920508)), null, new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_01,
-                    0,
-                    1));
+                        Lo3CategorieEnum.CATEGORIE_01,
+                        0,
+                        1));
         final TussenGroep<?> groepOuderVoorkomen =
                 new TussenGroep<BrpGroepInhoud>(inhoud, new Lo3Historie(null, new Lo3Datum(19920401), new Lo3Datum(19920508)), null, new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_01,
-                    0,
-                    2));
+                        Lo3CategorieEnum.CATEGORIE_01,
+                        0,
+                        2));
 
         Assert.assertTrue(comparator.compare(groepNieuwereJuist, groepOudereJuist) > 0);
         Assert.assertTrue(comparator.compare(groepOudereJuist, groepNieuwereJuist) < 0);

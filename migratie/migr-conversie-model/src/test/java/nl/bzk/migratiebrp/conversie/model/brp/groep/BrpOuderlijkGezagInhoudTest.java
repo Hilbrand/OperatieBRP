@@ -6,15 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import java.util.ArrayList;
+import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
-
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BrpOuderlijkGezagInhoudTest {
 

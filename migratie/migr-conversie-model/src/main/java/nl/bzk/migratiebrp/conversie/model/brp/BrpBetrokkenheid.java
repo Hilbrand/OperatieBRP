@@ -6,9 +6,12 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.migratiebrp.conversie.model.Sortable;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentiteitInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud;
@@ -18,7 +21,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een BRP betrokkenheid. Een betrokkenheid heeft een rol en stapels met gegevens
@@ -26,7 +28,7 @@ import org.simpleframework.xml.Element;
  *
  * Deze class is immutable en threadsafe.
  */
-public final class BrpBetrokkenheid {
+public final class BrpBetrokkenheid implements Sortable {
 
     private final BrpSoortBetrokkenheidCode rol;
     private final BrpStapel<BrpIdentificatienummersInhoud> identificatienummersStapel;
@@ -39,34 +41,24 @@ public final class BrpBetrokkenheid {
 
     /**
      * Maak een BrpBetrokkenheid.
-     *
-     * @param rol
-     *            rol
-     * @param identificatienummersStapel
-     *            identificatienummer stapel
-     * @param geslachtsaanduidingStapel
-     *            geslachtsaanduiding stapel
-     * @param geboorteStapel
-     *            geboortestapel
-     * @param ouderlijkGezagStapel
-     *            ouderlijkgezag stapel
-     * @param samengesteldeNaamStapel
-     *            samengestelde naam stapel
-     * @param ouderStapel
-     *            ouder stapel
-     * @param identiteitStapel
-     *            de identiteit stapel van deze betrokkenheid
+     * @param rol rol
+     * @param identificatienummersStapel identificatienummer stapel
+     * @param geslachtsaanduidingStapel geslachtsaanduiding stapel
+     * @param geboorteStapel geboortestapel
+     * @param ouderlijkGezagStapel ouderlijkgezag stapel
+     * @param samengesteldeNaamStapel samengestelde naam stapel
+     * @param ouderStapel ouder stapel
+     * @param identiteitStapel de identiteit stapel van deze betrokkenheid
      */
     public BrpBetrokkenheid(
-        @Element(name = "rol", required = false) final BrpSoortBetrokkenheidCode rol,
-        @Element(name = "identificatienummerStapel", required = false) final BrpStapel<BrpIdentificatienummersInhoud> identificatienummersStapel,
-        @Element(name = "geslachtsaanduidingStapel", required = false) final BrpStapel<BrpGeslachtsaanduidingInhoud> geslachtsaanduidingStapel,
-        @Element(name = "geboorteStapel", required = false) final BrpStapel<BrpGeboorteInhoud> geboorteStapel,
-        @Element(name = "ouderlijkGezagStapel", required = false) final BrpStapel<BrpOuderlijkGezagInhoud> ouderlijkGezagStapel,
-        @Element(name = "samengesteldeNaamStapel", required = false) final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaamStapel,
-        @Element(name = "ouderStapel", required = false) final BrpStapel<BrpOuderInhoud> ouderStapel,
-        @Element(name = "identiteitStapel", required = false) final BrpStapel<BrpIdentiteitInhoud> identiteitStapel)
-    {
+            @Element(name = "rol") final BrpSoortBetrokkenheidCode rol,
+            @Element(name = "identificatienummerStapel") final BrpStapel<BrpIdentificatienummersInhoud> identificatienummersStapel,
+            @Element(name = "geslachtsaanduidingStapel") final BrpStapel<BrpGeslachtsaanduidingInhoud> geslachtsaanduidingStapel,
+            @Element(name = "geboorteStapel") final BrpStapel<BrpGeboorteInhoud> geboorteStapel,
+            @Element(name = "ouderlijkGezagStapel") final BrpStapel<BrpOuderlijkGezagInhoud> ouderlijkGezagStapel,
+            @Element(name = "samengesteldeNaamStapel") final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaamStapel,
+            @Element(name = "ouderStapel") final BrpStapel<BrpOuderInhoud> ouderStapel,
+            @Element(name = "identiteitStapel") final BrpStapel<BrpIdentiteitInhoud> identiteitStapel) {
         this.rol = rol;
         this.identificatienummersStapel = identificatienummersStapel;
         this.geslachtsaanduidingStapel = geslachtsaanduidingStapel;
@@ -79,80 +71,72 @@ public final class BrpBetrokkenheid {
 
     /**
      * Geef de waarde van rol.
-     *
      * @return the rol
      */
-    @Element(name = "rol", required = false)
+    @Element(name = "rol")
     public BrpSoortBetrokkenheidCode getRol() {
         return rol;
     }
 
     /**
      * Geef de waarde van identificatienummers stapel.
-     *
      * @return the identificatienummersStapel
      */
-    @Element(name = "identificatienummerStapel", required = false)
+    @Element(name = "identificatienummerStapel")
     public BrpStapel<BrpIdentificatienummersInhoud> getIdentificatienummersStapel() {
         return identificatienummersStapel;
     }
 
     /**
      * Geef de waarde van geslachtsaanduiding stapel.
-     *
      * @return the geslachtsaanduidingStapel
      */
-    @Element(name = "geslachtsaanduidingStapel", required = false)
+    @Element(name = "geslachtsaanduidingStapel")
     public BrpStapel<BrpGeslachtsaanduidingInhoud> getGeslachtsaanduidingStapel() {
         return geslachtsaanduidingStapel;
     }
 
     /**
      * Geef de waarde van geboorte stapel.
-     *
      * @return the geboorteStapel
      */
-    @Element(name = "geboorteStapel", required = false)
+    @Element(name = "geboorteStapel")
     public BrpStapel<BrpGeboorteInhoud> getGeboorteStapel() {
         return geboorteStapel;
     }
 
     /**
      * Geef de waarde van samengestelde naam stapel.
-     *
      * @return the samengesteldeNaamStapel
      */
-    @Element(name = "samengesteldeNaamStapel", required = false)
+    @Element(name = "samengesteldeNaamStapel")
     public BrpStapel<BrpSamengesteldeNaamInhoud> getSamengesteldeNaamStapel() {
         return samengesteldeNaamStapel;
     }
 
     /**
      * Geef de waarde van ouderlijk gezag stapel.
-     *
      * @return the ouderlijkGezagStapel
      */
-    @Element(name = "ouderlijkGezagStapel", required = false)
+    @Element(name = "ouderlijkGezagStapel")
     public BrpStapel<BrpOuderlijkGezagInhoud> getOuderlijkGezagStapel() {
         return ouderlijkGezagStapel;
     }
 
     /**
      * Geef de waarde van ouder stapel.
-     *
      * @return the ouderStapel
      */
-    @Element(name = "ouderStapel", required = false)
+    @Element(name = "ouderStapel")
     public BrpStapel<BrpOuderInhoud> getOuderStapel() {
         return ouderStapel;
     }
 
     /**
      * Geef de waarde van identiteit stapel.
-     *
      * @return the identiteitStapel
      */
-    @Element(name = "identiteitStapel", required = false)
+    @Element(name = "identiteitStapel")
     public BrpStapel<BrpIdentiteitInhoud> getIdentiteitStapel() {
         return identiteitStapel;
     }
@@ -167,40 +151,57 @@ public final class BrpBetrokkenheid {
         }
         final BrpBetrokkenheid castOther = (BrpBetrokkenheid) other;
         return new EqualsBuilder().append(rol, castOther.rol)
-                                  .append(identificatienummersStapel, castOther.identificatienummersStapel)
-                                  .append(geslachtsaanduidingStapel, castOther.geslachtsaanduidingStapel)
-                                  .append(geboorteStapel, castOther.geboorteStapel)
-                                  .append(samengesteldeNaamStapel, castOther.samengesteldeNaamStapel)
-                                  .append(ouderlijkGezagStapel, castOther.ouderlijkGezagStapel)
-                                  .append(ouderStapel, castOther.ouderStapel)
-                                  .append(identiteitStapel, castOther.identiteitStapel)
-                                  .isEquals();
+                .append(identificatienummersStapel, castOther.identificatienummersStapel)
+                .append(geslachtsaanduidingStapel, castOther.geslachtsaanduidingStapel)
+                .append(geboorteStapel, castOther.geboorteStapel)
+                .append(samengesteldeNaamStapel, castOther.samengesteldeNaamStapel)
+                .append(ouderlijkGezagStapel, castOther.ouderlijkGezagStapel)
+                .append(ouderStapel, castOther.ouderStapel)
+                .append(identiteitStapel, castOther.identiteitStapel)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(rol)
-                                    .append(identificatienummersStapel)
-                                    .append(geslachtsaanduidingStapel)
-                                    .append(geboorteStapel)
-                                    .append(samengesteldeNaamStapel)
-                                    .append(ouderlijkGezagStapel)
-                                    .append(ouderStapel)
-                                    .append(identiteitStapel)
-                                    .toHashCode();
+                .append(identificatienummersStapel)
+                .append(geslachtsaanduidingStapel)
+                .append(geboorteStapel)
+                .append(samengesteldeNaamStapel)
+                .append(ouderlijkGezagStapel)
+                .append(ouderStapel)
+                .append(identiteitStapel)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("rol", rol)
-                                                                          .append("identificatienummersStapel", identificatienummersStapel)
-                                                                          .append("geslachtsaanduidingStapel", geslachtsaanduidingStapel)
-                                                                          .append("geboorteStapel", geboorteStapel)
-                                                                          .append("samengesteldeNaamStapel", samengesteldeNaamStapel)
-                                                                          .append("ouderlijkGezagStapel", ouderlijkGezagStapel)
-                                                                          .append("ouderStapel", ouderStapel)
-                                                                          .append("identiteitStapel", identiteitStapel)
-                                                                          .toString();
+                .append("identificatienummersStapel", identificatienummersStapel)
+                .append("geslachtsaanduidingStapel", geslachtsaanduidingStapel)
+                .append("geboorteStapel", geboorteStapel)
+                .append("samengesteldeNaamStapel", samengesteldeNaamStapel)
+                .append("ouderlijkGezagStapel", ouderlijkGezagStapel)
+                .append("ouderStapel", ouderStapel)
+                .append("identiteitStapel", identiteitStapel)
+                .toString();
+    }
+
+    @Override
+    public void sorteer() {
+        sorteerStapel(identificatienummersStapel);
+        sorteerStapel(geslachtsaanduidingStapel);
+        sorteerStapel(geboorteStapel);
+        sorteerStapel(samengesteldeNaamStapel);
+        sorteerStapel(ouderlijkGezagStapel);
+        sorteerStapel(ouderStapel);
+        sorteerStapel(identiteitStapel);
+    }
+
+    private <T extends BrpGroepInhoud> void sorteerStapel(BrpStapel<T> stapel){
+        if (stapel != null) {
+            stapel.sorteer();
+        }
     }
 
     /**
@@ -220,13 +221,12 @@ public final class BrpBetrokkenheid {
          * Constructor voor lege Builder.
          */
         public Builder() {
+            /* just empty builder */
         }
 
         /**
          * Maakt en vul een Builder op basis van een bestaande BrpBetrokkenheid.
-         *
-         * @param betrokkenheid
-         *            BrpBetrokkenheid die gebruikt wordt om de waarden van de Builder te vullen
+         * @param betrokkenheid BrpBetrokkenheid die gebruikt wordt om de waarden van de Builder te vullen
          */
         public Builder(final BrpBetrokkenheid betrokkenheid) {
             rol = betrokkenheid.rol;
@@ -241,9 +241,7 @@ public final class BrpBetrokkenheid {
 
         /**
          * zet de rol.
-         *
-         * @param param
-         *            de rol van de betrokkenheid
+         * @param param de rol van de betrokkenheid
          * @return de builder
          */
         public final Builder rol(final BrpSoortBetrokkenheidCode param) {
@@ -253,9 +251,7 @@ public final class BrpBetrokkenheid {
 
         /**
          * zet de identificatienummersStapel.
-         *
-         * @param param
-         *            identificatienummersStapel
+         * @param param identificatienummersStapel
          * @return de builder
          */
         public final Builder identificatienummersStapel(final BrpStapel<BrpIdentificatienummersInhoud> param) {
@@ -265,9 +261,7 @@ public final class BrpBetrokkenheid {
 
         /**
          * zet de geslachtsaanduidingStapel.
-         *
-         * @param param
-         *            geslachtsaanduidingStapel
+         * @param param geslachtsaanduidingStapel
          * @return de builder
          */
         public final Builder geslachtsaanduidingStapel(final BrpStapel<BrpGeslachtsaanduidingInhoud> param) {
@@ -277,9 +271,7 @@ public final class BrpBetrokkenheid {
 
         /**
          * zet de geboorteStapel.
-         *
-         * @param param
-         *            geboorteStapel
+         * @param param geboorteStapel
          * @return de builder
          */
         public final Builder geboorteStapel(final BrpStapel<BrpGeboorteInhoud> param) {
@@ -289,9 +281,7 @@ public final class BrpBetrokkenheid {
 
         /**
          * zet de samengesteldeNaamStapel.
-         *
-         * @param param
-         *            samengesteldeNaamStapel
+         * @param param samengesteldeNaamStapel
          * @return de builder
          */
         public final Builder samengesteldeNaamStapel(final BrpStapel<BrpSamengesteldeNaamInhoud> param) {
@@ -301,9 +291,7 @@ public final class BrpBetrokkenheid {
 
         /**
          * zet de ouderlijkGezagStapel.
-         *
-         * @param param
-         *            ouderlijkGezagStapel
+         * @param param ouderlijkGezagStapel
          * @return de builder
          */
         public final Builder ouderlijkGezagStapel(final BrpStapel<BrpOuderlijkGezagInhoud> param) {
@@ -313,9 +301,7 @@ public final class BrpBetrokkenheid {
 
         /**
          * zet de ouderStapel.
-         *
-         * @param param
-         *            ouderStapel
+         * @param param ouderStapel
          * @return de builder
          */
         public final Builder ouderStapel(final BrpStapel<BrpOuderInhoud> param) {
@@ -325,9 +311,7 @@ public final class BrpBetrokkenheid {
 
         /**
          * zet de identiteitStapel.
-         *
-         * @param param
-         *            identiteitStapel
+         * @param param identiteitStapel
          * @return de builder
          */
         public final Builder identiteitStapel(final BrpStapel<BrpIdentiteitInhoud> param) {
@@ -337,19 +321,18 @@ public final class BrpBetrokkenheid {
 
         /**
          * Maakt een nieuwe {@link BrpBetrokkenheid} object aan met de opgegeven gegevens.
-         *
          * @return een nieuwe {@link BrpBetrokkenheid}
          */
         public final BrpBetrokkenheid build() {
             return new BrpBetrokkenheid(
-                rol,
-                identificatienummersStapel,
-                geslachtsaanduidingStapel,
-                geboorteStapel,
-                ouderlijkGezagStapel,
-                samengesteldeNaamStapel,
-                ouderStapel,
-                identiteitStapel);
+                    rol,
+                    identificatienummersStapel,
+                    geslachtsaanduidingStapel,
+                    geboorteStapel,
+                    ouderlijkGezagStapel,
+                    samengesteldeNaamStapel,
+                    ouderStapel,
+                    identiteitStapel);
         }
     }
 }

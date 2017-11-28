@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.routering.runtime;
 
+import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,9 +21,9 @@ public class KeepAliveTest {
 
         Assert.assertTrue(keepAliveThread.isAlive());
 
-        Thread.sleep(1000);
+        TimeUnit.MILLISECONDS.sleep(1000);
         keepAlive.stop();
-        Thread.sleep(1000);
+        TimeUnit.MILLISECONDS.sleep(1000);
 
         Assert.assertFalse(keepAliveThread.isAlive());
     }
@@ -34,9 +35,9 @@ public class KeepAliveTest {
         final Thread keepAliveThread = new Thread(keepAlive);
         keepAliveThread.start();
 
-        Thread.sleep(1000);
+        TimeUnit.MILLISECONDS.sleep(1000);
         keepAliveThread.interrupt();
-        Thread.sleep(1000);
+        TimeUnit.MILLISECONDS.sleep(1000);
 
         Assert.assertFalse(keepAliveThread.isAlive());
     }

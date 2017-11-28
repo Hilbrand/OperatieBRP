@@ -22,5 +22,6 @@ public final class MigratieLoggingServiceFactory implements ServiceFactory {
 
     @Override
     public void close() {
+        // Interface methode, hoeft niks te sluiten
     }
 }

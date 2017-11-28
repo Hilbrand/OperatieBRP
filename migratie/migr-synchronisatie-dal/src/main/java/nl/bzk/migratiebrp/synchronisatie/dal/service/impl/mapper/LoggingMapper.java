@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3Severity;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3SoortMelding;
 import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Severity;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3SoortMelding;
 
 /**
  * Mapper voor logging.
@@ -20,11 +20,8 @@ public final class LoggingMapper {
 
     /**
      * Map de gegeven logging naar het bericht en de persoon.
-     * 
-     * @param logging
-     *            logging
-     * @param bericht
-     *            het lo3 bericht
+     * @param logging logging
+     * @param bericht het lo3 bericht
      */
     public void mapLogging(final Logging logging, final Lo3Bericht bericht) {
         if (logging != null && bericht != null) {

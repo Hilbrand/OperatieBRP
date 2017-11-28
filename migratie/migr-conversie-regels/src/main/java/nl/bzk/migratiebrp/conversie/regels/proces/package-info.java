@@ -6,9 +6,8 @@
 
 /**
  * Levert de classes die de verschillende processtappen uitvoerd voor de conversie.
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.model
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.regels.proces;
 

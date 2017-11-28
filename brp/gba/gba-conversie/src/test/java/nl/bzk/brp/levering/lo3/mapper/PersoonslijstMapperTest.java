@@ -6,16 +6,17 @@
 
 package nl.bzk.brp.levering.lo3.mapper;
 
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.actie;
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.logMetaObject;
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.maakIngeschrevene;
+
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
 import javax.inject.Inject;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.predikaatview.kern.PersoonHisVolledigView;
-import nl.bzk.brp.model.logisch.ist.Stapel;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
+import nl.bzk.brp.levering.lo3.support.MetaObjectUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,26 +25,87 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import support.PersoonHisVolledigUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @ContextConfiguration("/test-mapper-beans.xml")
-public class PersoonslijstMapperTest {
+public class PersoonslijstMapperTest extends AbstractMapperTestBasis {
 
     @Inject
     private PersoonslijstMapper mapper;
 
     @Test
     public void testSucces() throws ReflectiveOperationException {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigImpl persoonHisVolledig = maak(builder).build();
-        final ActieModel[] alleActies = PersoonHisVolledigUtil.geefAlleActies(persoonHisVolledig);
-        System.out.println(Arrays.asList(alleActies));
-        PersoonHisVolledigUtil.maakVerantwoording(persoonHisVolledig, alleActies);
-        final PersoonHisVolledigView persoonHisVolledigView = new PersoonHisVolledigView(persoonHisVolledig, null);
+        final MetaObject.Builder builder =
+                maakIngeschrevene(
+                        Arrays.asList(
+                                () -> MetaObjectUtil.maakPersoonAdres(actie),
+                                () -> MetaObjectUtil.maakPersoonGeslachtsnaamcomponent(1, "Bastaard"),
+                                () -> MetaObjectUtil.maakPersoonGeslachtsnaamcomponent(2, "Pekela"),
+                                () -> MetaObjectUtil.maakPersoonNationaliteit(actie, "0001", "016", null),
+                                () -> MetaObjectUtil.maakPersoonReisdocument("P", "V", "autoriteitVanAfgifte", 20140101, 20130111, 20140101, 20131010, "1234"),
+                                MetaObjectUtil::maakPersoonIndicatieSignaleringMetBetrekkingTotVerstrekkenReisdocument,
+                                MetaObjectUtil::maakPersoonIndicatieOnderCuratele,
+                                MetaObjectUtil::maakPersoonIndicatieStaatloos,
+                                MetaObjectUtil::maakPersoonIndicatieVastgesteldNietNederlander,
+                                MetaObjectUtil::maakPersoonIndicatieBijzondereVerblijfsrechtelijkePositie,
+                                MetaObjectUtil::maakPersoonIndicatieVerstrekkingsbeperking,
+                                MetaObjectUtil::maakPersoonIndicatieBehandeldAlsNederlander,
+                                MetaObjectUtil::maakPersoonIndicatieDerdeHeeftGezag,
+                                () -> MetaObjectUtil.maakPersoonVerificatie(MetaObjectUtil.actie, "998556", "Verificatie1", 20130513),
+                                () -> MetaObjectUtil.maakPersoonVoornaam(1, "voornaam")),
+                        Arrays.asList(
+                                MetaObjectUtil::voegPersoonBijhoudingGroepToe,
+                                MetaObjectUtil::voegPersoonDeelnameEUVerkiezingenGroepToe,
+                                b -> MetaObjectUtil.voegPersoonGeboorteGroepToe(b, actie, 20130101, "0518", "6030"),
+                                b -> MetaObjectUtil.voegPersoonIdentificatienummersGroepToe(b, "1234567890", "123456789"),
+                                b -> MetaObjectUtil.voegPersoonInschrijvingGroepToe(b, 20131212, new Date(123), 1L),
+                                b -> MetaObjectUtil.voegPersoonMigratieGroepToe(
+                                        b,
+                                        "I",
+                                        "regel1",
+                                        "regel2",
+                                        "regel3",
+                                        "regel4",
+                                        "regel5",
+                                        "regel6",
+                                        "0542",
+                                        "R",
+                                        "E"),
+                                b -> MetaObjectUtil.voegPersoonNaamgebruikGroepToe(b, "B", "E", "Baronnetje", false, "J", "-", "Piet", "van der"),
+                                MetaObjectUtil::voegPersoonGeslachtsAanduidingGroepToe,
+                                b -> MetaObjectUtil.voegPersoonNummerverwijzingGroepToe(b, "1234567890", "9876543210"),
+                                b -> MetaObjectUtil.voegPersoonOverlijdenGroepToe(
+                                        b,
+                                        actie,
+                                        "BuitenlandsePlaats",
+                                        "BuitenlandseRegio",
+                                        20131212,
+                                        "0518",
+                                        "6030",
+                                        "Achter de bosjes",
+                                        "Rotterdam"),
+                                MetaObjectUtil::voegPersoonAfgeleidAdministratiefGroepToe,
+                                b -> MetaObjectUtil.voegPersoonPersoonskaartGroepToe(b, true, "051801"),
+                                b -> MetaObjectUtil.voegPersoonSamengesteldeNaamGroepToe(
+                                        b,
+                                        "H",
+                                        "geslachtsnaam",
+                                        false,
+                                        true,
+                                        "H",
+                                        " ",
+                                        "Voornaam1 Voornaam2",
+                                        "de"),
+                                b -> MetaObjectUtil.voegPersoonUitsluitingKiesrechtGroepToe(b, 20131212, true),
+                                b -> MetaObjectUtil.voegPersoonVerblijfsrechtGroepToe(b, "01", 20131211, 20141211)));
 
-        final BrpPersoonslijst brpPersoon = mapper.map(persoonHisVolledigView, BrpIstTestUtils.maakSimpeleStapelAlleCategorien());
+        final MetaObject persoon = builder.build();
+
+        logMetaObject(persoon);
+
+        final BrpPersoonslijst brpPersoon =
+                mapper.map(new Persoonslijst(persoon, 0L), BrpIstTestUtils.maakSimpeleStapelAlleCategorien());
 
         Assert.assertNotNull(brpPersoon);
         Assert.assertNotNull(brpPersoon.getActueelAdministratienummer());
@@ -91,11 +153,8 @@ public class PersoonslijstMapperTest {
 
     @Test
     public void testLeeg() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final Set<Stapel> istStapels = new HashSet<>();
-
-        final BrpPersoonslijst brpPersoon = mapper.map(persoonHisVolledig, istStapels);
+        final MetaObject persoon = maakIngeschrevene().build();
+        final BrpPersoonslijst brpPersoon = mapper.map(new Persoonslijst(persoon, 0L), new HashSet<>());
 
         Assert.assertNotNull(brpPersoon);
         Assert.assertNull(brpPersoon.getActueelAdministratienummer());
@@ -135,38 +194,5 @@ public class PersoonslijstMapperTest {
         Assert.assertTrue(brpPersoon.getVerificatieStapels().isEmpty());
         Assert.assertNull(brpPersoon.getVerstrekkingsbeperkingIndicatieStapel());
         Assert.assertTrue(brpPersoon.getVoornaamStapels().isEmpty());
-    }
-
-    public PersoonHisVolledigImplBuilder maak(final PersoonHisVolledigImplBuilder builder) throws ReflectiveOperationException {
-        AdresMapperTest.maak(builder);
-        BehandeldAlsNederlanderIndicatieMapperTest.maak(builder);
-        BijhoudingMapperTest.maak(builder);
-        BijzondereVerblijfsrechtelijkePositieIndicatieMapperTest.maak(builder);
-        DeelnameEuVerkiezingenMapperTest.maak(builder);
-        DerdeHeeftGezagIndicatieMapperTest.maak(builder);
-        PersoonGeboorteMapperTest.maak(builder);
-        PersoonGeslachtsaanduidingMapperTest.maak(builder);
-        GeslachtsnaamcomponentenMapperTest.maak(builder);
-        PersoonIdentificatieNummersMapperTest.maak(builder);
-        InschrijvingMapperTest.maak(builder);
-        MigratieMapperTest.maak(builder);
-        NaamgebruikMapperTest.maak(builder);
-        NationaliteitenMapperTest.maak(builder);
-        NummerverwijzingMapperTest.maak(builder);
-        OnderCurateleIndicatieMapperTest.maak(builder);
-        OverlijdenMapperTest.maak(builder);
-        PersoonAfgeleidAdministratiefMapperTest.maak(builder);
-        PersoonskaartMapperTest.maak(builder);
-        ReisdocumentenMapperTest.maak(builder);
-        PersoonSamengesteldeNaamMapperTest.maak(builder);
-        SignaleringMetBetrekkingTotVerstrekkenReisdocumentMapperTest.maak(builder);
-        StaatloosIndicatieMapperTest.maak(builder);
-        UitsluitingKiesrechtMapperTest.maak(builder);
-        VastgesteldNietNederlanderIndicatieMapperTest.maak(builder);
-        VerblijfsrechtMapperTest.maak(builder);
-        VerificatiesMapperTest.maak(builder);
-        VerstrekkingsbeperkingIndicatieMapperTest.maak(builder);
-        VoornamenMapperTest.maak(builder);
-        return builder;
     }
 }

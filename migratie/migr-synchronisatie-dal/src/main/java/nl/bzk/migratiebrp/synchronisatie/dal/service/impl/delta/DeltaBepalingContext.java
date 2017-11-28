@@ -17,15 +17,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteitPaar;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
 
 /**
  * Cache met daarin de gegevens die nodig zijn voor de verschillende processen (
@@ -43,33 +45,30 @@ public final class DeltaBepalingContext {
     private final Collection<DeltaEntiteitPaar> deltaEntiteitPaarSet = new LinkedHashSet<>();
     private AdministratieveHandeling administratieveHandelingVoorAnummerWijziging;
     private ConsolidatieData actieConsolidatieData;
-    private boolean isAnummerWijziging;
+    private final boolean isAnummerWijziging;
 
     /**
      * Constructor voor de cache.
-     *
-     * @param nieuwPersoon
-     *            nieuwe versie van persoon in-memory
-     * @param bestaandPersoon
-     *            huidige versie van persoon uit de database
-     * @param lo3Bericht
-     *            lo3 bericht waarop de nieuwePersoon persoonslijst is gebaseerd
-     * @param isAnummerWijziging
-     *            boolean waarmee aangegeven wordt of het een a-nummer wijziging betreft
+     * @param nieuwPersoon nieuwe versie van persoon in-memory
+     * @param bestaandPersoon huidige versie van persoon uit de database
+     * @param lo3Bericht lo3 bericht waarop de nieuwePersoon persoonslijst is gebaseerd
+     * @param isAnummerWijziging boolean waarmee aangegeven wordt of het een a-nummer wijziging betreft
      */
     public DeltaBepalingContext(final Persoon nieuwPersoon, final Persoon bestaandPersoon, final Lo3Bericht lo3Bericht, final boolean isAnummerWijziging) {
-        this.nieuwePersoon = nieuwPersoon;
-        this.bestaandePersoon = bestaandPersoon;
+        nieuwePersoon = nieuwPersoon;
+        bestaandePersoon = bestaandPersoon;
         this.lo3Bericht = lo3Bericht;
         this.isAnummerWijziging = isAnummerWijziging;
 
-        administratieveHandelingGekoppeldAanActies = nieuwPersoon.getAdministratieveHandeling();
+        final PersoonAfgeleidAdministratiefHistorie actueleAfgeleidAdministratieveHistorie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(nieuwePersoon.getPersoonAfgeleidAdministratiefHistorieSet());
+        administratieveHandelingGekoppeldAanActies = actueleAfgeleidAdministratieveHistorie.getAdministratieveHandeling();
         actieVervalTbvLeveringMuts =
                 new BRPActie(
-                    SoortActie.CONVERSIE_GBA,
-                    administratieveHandelingGekoppeldAanActies,
-                    administratieveHandelingGekoppeldAanActies.getPartij(),
-                    administratieveHandelingGekoppeldAanActies.getDatumTijdRegistratie());
+                        SoortActie.CONVERSIE_GBA,
+                        administratieveHandelingGekoppeldAanActies,
+                        administratieveHandelingGekoppeldAanActies.getPartij(),
+                        administratieveHandelingGekoppeldAanActies.getDatumTijdRegistratie());
     }
 
     /**
@@ -89,7 +88,7 @@ public final class DeltaBepalingContext {
      */
     public String getAdministratieveHandelingenAlsString() {
         final StringBuilder builder = new StringBuilder("");
-        for (AdministratieveHandeling handeling : getAdministratieveHandelingen()) {
+        for (final AdministratieveHandeling handeling : getAdministratieveHandelingen()) {
             builder.append(builder.length() > 0 ? ", " : "");
             builder.append(handeling.getSoort().getNaam());
         }
@@ -156,28 +155,25 @@ public final class DeltaBepalingContext {
 
     private boolean magBijhoudingAanpassen() {
         return !administratieveHandelingGekoppeldAanActies.getSoort().equals(SoortAdministratieveHandeling.GBA_AFVOEREN_PL)
-               && !administratieveHandelingGekoppeldAanActies.getSoort().equals(SoortAdministratieveHandeling.GBA_BIJHOUDING_OVERIG);
+                && !administratieveHandelingGekoppeldAanActies.getSoort().equals(SoortAdministratieveHandeling.GBA_BIJHOUDING_OVERIG);
     }
 
     /**
-     * @return true als de administratieve handeling die aan de acties gekoppeld wordt het soort
-     *         {@link SoortAdministratieveHandeling#GBA_BIJHOUDING_OVERIG} is
+     * @return true als de administratieve handeling die aan de acties gekoppeld wordt het soort {@link SoortAdministratieveHandeling#GBA_BIJHOUDING_OVERIG} is
      */
     public boolean isBijhoudingOverig() {
         return SoortAdministratieveHandeling.GBA_BIJHOUDING_OVERIG.equals(administratieveHandelingGekoppeldAanActies.getSoort());
     }
 
     /**
-     * @return true als de administratieve handeling die aan de acties gekoppeld wordt het soort
-     *         {@link SoortAdministratieveHandeling#GBA_BIJHOUDING_ACTUEEL} is
+     * @return true als de administratieve handeling die aan de acties gekoppeld wordt het soort {@link SoortAdministratieveHandeling#GBA_BIJHOUDING_ACTUEEL} is
      */
     public boolean isBijhoudingActueel() {
         return SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL.equals(administratieveHandelingGekoppeldAanActies.getSoort());
     }
 
     /**
-     * @return true als de administratieve handeling die aan de acties gekoppeld wordt het soort
-     *         {@link SoortAdministratieveHandeling#GBA_A_NUMMER_WIJZIGING} is
+     * @return true als de administratieve handeling die aan de acties gekoppeld wordt het soort {@link SoortAdministratieveHandeling#GBA_A_NUMMER_WIJZIGING} is
      */
     private boolean isBijhoudingAnummerWijziging() {
         return SoortAdministratieveHandeling.GBA_A_NUMMER_WIJZIGING.equals(administratieveHandelingGekoppeldAanActies.getSoort());
@@ -185,15 +181,15 @@ public final class DeltaBepalingContext {
 
     /**
      * @return true als de administratieve handeling die aan de acties gekoppeld wordt het soort
-     *         {@link SoortAdministratieveHandeling#GBA_INFRASTRUCTURELE_WIJZIGING} is
+     * {@link SoortAdministratieveHandeling#GBA_INFRASTRUCTURELE_WIJZIGING}
+     * is
      */
     private boolean isBijhoudingInfrastructureleWijziging() {
         return SoortAdministratieveHandeling.GBA_INFRASTRUCTURELE_WIJZIGING.equals(administratieveHandelingGekoppeldAanActies.getSoort());
     }
 
     /**
-     * @return true als de administratieve handeling die aan de acties gekoppeld wordt het soort
-     *         {@link SoortAdministratieveHandeling#GBA_AFVOEREN_PL} is
+     * @return true als de administratieve handeling die aan de acties gekoppeld wordt het soort {@link SoortAdministratieveHandeling#GBA_AFVOEREN_PL} is
      */
     private boolean isBijhoudingAfvoerenPersoonslijstWijziging() {
         return SoortAdministratieveHandeling.GBA_AFVOEREN_PL.equals(administratieveHandelingGekoppeldAanActies.getSoort());
@@ -201,7 +197,6 @@ public final class DeltaBepalingContext {
 
     /**
      * Geef de waarde van nieuwe persoon.
-     *
      * @return nieuwe persoon
      */
     public Persoon getNieuwePersoon() {
@@ -210,7 +205,6 @@ public final class DeltaBepalingContext {
 
     /**
      * Geef de waarde van bestaande persoon.
-     *
      * @return bestaande persoon
      */
     public Persoon getBestaandePersoon() {
@@ -219,7 +213,6 @@ public final class DeltaBepalingContext {
 
     /**
      * Geef de waarde van lo3 bericht.
-     *
      * @return lo3 bericht
      */
     public Lo3Bericht getLo3Bericht() {
@@ -228,7 +221,6 @@ public final class DeltaBepalingContext {
 
     /**
      * Geef de waarde van actie herkomst map.
-     *
      * @return actie herkomst map
      */
     public Map<BRPActie, Lo3Voorkomen> getActieHerkomstMap() {
@@ -237,9 +229,7 @@ public final class DeltaBepalingContext {
 
     /**
      * Voegt de actie/herkomst map inhoud toe aan de bestaande map actie/herkomst.
-     *
-     * @param actieHerkomstMapInhoud
-     *            de inhoud van de actie/herkomst map
+     * @param actieHerkomstMapInhoud de inhoud van de actie/herkomst map
      */
     public void addActieHerkomstMapInhoud(final Map<BRPActie, Lo3Voorkomen> actieHerkomstMapInhoud) {
         actieHerkomstMap.putAll(actieHerkomstMapInhoud);
@@ -247,7 +237,6 @@ public final class DeltaBepalingContext {
 
     /**
      * Geeft de {@link BRPActie} voor actie verval tbv levering mutaties terug.
-     *
      * @return een BRPActie op basis van de administratieve handeling van de nieuwe persoon.
      */
     public BRPActie getActieVervalTbvLeveringMuts() {
@@ -257,9 +246,7 @@ public final class DeltaBepalingContext {
     /**
      * Voegt de verzamelde data om acties te consilideren toe aan de bestaande data. Als er nog geen verzamelde data is,
      * dan wordt de aangeboden data opgeslagen.
-     *
-     * @param data
-     *            de nieuwe verzamelde data.
+     * @param data de nieuwe verzamelde data.
      */
     public void addAllActieConsolidatieData(final ConsolidatieData data) {
         if (actieConsolidatieData == null) {
@@ -271,7 +258,6 @@ public final class DeltaBepalingContext {
 
     /**
      * Geeft de consolidatie actie data.
-     *
      * @return de consolidatie actie data
      */
     public ConsolidatieData getActieConsolidatieData() {
@@ -280,7 +266,6 @@ public final class DeltaBepalingContext {
 
     /**
      * Geef de verzameling van delta root entiteit overeenkomsten.
-     *
      * @return de verzameling van delta root entiteit overeenkomsten
      */
     public Collection<DeltaRootEntiteitMatch> getDeltaRootEntiteitMatches() {
@@ -290,9 +275,7 @@ public final class DeltaBepalingContext {
     /**
      * Voegt de {@link DeltaRootEntiteitMatch} objecten die zijn gevonden toe aan de context. Als er al bestaande
      * matches zijn, dan worden deze overschreven.
-     *
-     * @param deltaRootEntiteitMatch
-     *            de set van {@link DeltaRootEntiteitMatch}
+     * @param deltaRootEntiteitMatch de set van {@link DeltaRootEntiteitMatch}
      */
     public void setDeltaRootEntiteitMatches(final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatch) {
         deltaRootEntiteitMatches.clear();
@@ -302,9 +285,7 @@ public final class DeltaBepalingContext {
     /**
      * Voegt de inhoud van de collectie van {@link DeltaEntiteitPaar} toe aan de bestaande collectie van
      * {@link DeltaEntiteitPaar}.
-     *
-     * @param deltaEntiteitPaarSetInhoud
-     *            de inhoud van de collectie
+     * @param deltaEntiteitPaarSetInhoud de inhoud van de collectie
      */
     public void addDeltaEntiteitPaarSetInhoud(final Collection<DeltaEntiteitPaar> deltaEntiteitPaarSetInhoud) {
         deltaEntiteitPaarSet.addAll(deltaEntiteitPaarSetInhoud);
@@ -319,12 +300,10 @@ public final class DeltaBepalingContext {
 
     /**
      * Verbreek de {@link DeltaEntiteitPaar} voor de meegegeven {@link FormeleHistorie}.
-     *
-     * @param historie
-     *            de waar het {@link DeltaEntiteitPaar} verbroken moet worden
+     * @param historie de waar het {@link DeltaEntiteitPaar} verbroken moet worden
      */
     public void verbreekDeltaEntiteitPaar(final FormeleHistorie historie) {
-        for (final Iterator<DeltaEntiteitPaar> deltaEntiteitPaarIterator = deltaEntiteitPaarSet.iterator(); deltaEntiteitPaarIterator.hasNext();) {
+        for (final Iterator<DeltaEntiteitPaar> deltaEntiteitPaarIterator = deltaEntiteitPaarSet.iterator(); deltaEntiteitPaarIterator.hasNext(); ) {
             final DeltaEntiteitPaar paar = deltaEntiteitPaarIterator.next();
             if (paar.getBestaand() == historie) {
                 deltaEntiteitPaarIterator.remove();
@@ -334,9 +313,7 @@ public final class DeltaBepalingContext {
 
     /**
      * Markeer de bestaande delta entiteit binnen een {@link DeltaEntiteitPaar} dat deze een M-rij gaat worden.
-     * 
-     * @param bestaandeRij
-     *            de bestaande entiteit wat een M-rij gaat worden
+     * @param bestaandeRij de bestaande entiteit wat een M-rij gaat worden
      */
     public void markeerBestaandeRijAlsMRij(final FormeleHistorie bestaandeRij) {
         for (final DeltaEntiteitPaar entiteitPaar : deltaEntiteitPaarSet) {
@@ -347,8 +324,19 @@ public final class DeltaBepalingContext {
     }
 
     /**
-     * @return true als er alleen wijzigingen zijn geconstateerd op de eigen persoon. false als er bv ook wijzigingen
-     *         zijn op de relatie gegevens.
+     * Demarkeert de bestaande delta entiteit binnen een {@link DeltaEntiteitPaar} dat deze geen M-rij moet worden.
+     * @param rij de entiteit waarvoor de opgeslagen {@link DeltaEntiteitPaar} gezocht wordt, om dit paar aan te merken als geen M-rij
+     */
+    public void demarkeerBestaandeRijAlsMRij(final FormeleHistorie rij) {
+        for (final DeltaEntiteitPaar entiteitPaar : deltaEntiteitPaarSet) {
+            if (entiteitPaar.getBestaand() == rij || entiteitPaar.getNieuw() == rij) {
+                entiteitPaar.demarkeerBestaandAlsMRij();
+            }
+        }
+    }
+
+    /**
+     * @return true als er alleen wijzigingen zijn geconstateerd op de eigen persoon. false als er bv ook wijzigingen zijn op de relatie gegevens.
      */
     public boolean heeftAlleenPersoonsWijzigingen() {
         boolean result = true;
@@ -389,14 +377,13 @@ public final class DeltaBepalingContext {
      */
     private void maakExtraAdministratieveHandelingVoorAnummerWijziging() {
         if (administratieveHandelingVoorAnummerWijziging == null) {
+            // Om de tsReg uniek te maken, tel er 1ms bij op
+            final Timestamp datumTijdRegistratie = new Timestamp(administratieveHandelingGekoppeldAanActies.getDatumTijdRegistratie().getTime() - 1);
             administratieveHandelingVoorAnummerWijziging =
                     new AdministratieveHandeling(
-                        administratieveHandelingGekoppeldAanActies.getPartij(),
-                        SoortAdministratieveHandeling.GBA_A_NUMMER_WIJZIGING);
-            final Timestamp datumTijdRegistratie = administratieveHandelingGekoppeldAanActies.getDatumTijdRegistratie();
-
-            // Om de tsReg uniek te maken, tel er 1ms bij op
-            administratieveHandelingVoorAnummerWijziging.setDatumTijdRegistratie(new Timestamp(datumTijdRegistratie.getTime() - 1));
+                            administratieveHandelingGekoppeldAanActies.getPartij(),
+                            SoortAdministratieveHandeling.GBA_A_NUMMER_WIJZIGING,
+                            datumTijdRegistratie);
         }
     }
 
@@ -405,5 +392,18 @@ public final class DeltaBepalingContext {
      */
     public AdministratieveHandeling getAdministratieveHandelingGekoppeldAanActies() {
         return administratieveHandelingGekoppeldAanActies;
+    }
+
+    /**
+     * Heeft persoon wijzigingen. deltaRootEntiteitMatch.getVergelijkerResultaat.isLeeg()
+     * @return true als deze niet leeg is.
+     */
+    public boolean heeftPersoonWijzigingen() {
+        for (DeltaRootEntiteitMatch deltaRootEntiteitMatch : deltaRootEntiteitMatches) {
+            if (!deltaRootEntiteitMatch.getVergelijkerResultaat().isLeeg()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

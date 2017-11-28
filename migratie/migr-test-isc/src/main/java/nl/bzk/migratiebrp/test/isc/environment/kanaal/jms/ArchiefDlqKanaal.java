@@ -9,12 +9,18 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
+
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
+/**
+ * Archief DLQ.
+ */
 public class ArchiefDlqKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "archief_dlq";
 
     /**
@@ -22,11 +28,11 @@ public class ArchiefDlqKanaal extends LazyLoadingKanaal {
      */
     public ArchiefDlqKanaal() {
         super(new Worker(),
-              new Configuration(
-                  "classpath:configuratie.xml",
-                  "classpath:infra-jms-isc.xml",
-                  "classpath:infra-queues-isc-archief.xml",
-                  "classpath:infra-jmx-routering.xml"));
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-jms-isc.xml",
+                        "classpath:infra-queues-isc-archief.xml",
+                        "classpath:infra-jmx-routering.xml"));
     }
 
     /**

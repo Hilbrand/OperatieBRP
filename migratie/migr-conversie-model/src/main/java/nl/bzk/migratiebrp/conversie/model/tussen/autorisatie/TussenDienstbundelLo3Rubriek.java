@@ -6,15 +6,14 @@
 
 package nl.bzk.migratiebrp.conversie.model.tussen.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpDienstbundelLo3RubriekInhoud;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP Dienstbundel Lo3Rubriek.
@@ -32,29 +31,25 @@ public final class TussenDienstbundelLo3Rubriek extends AbstractBrpGroepInhoud {
 
     /**
      * Maak een nieuw TussenLo3Rubriek object.
-     *
-     * @param conversieRubriek
-     *            Id van de bijbehorende conversie LO3 rubriek
-     * @param actief
-     *            actief
-     * @param dienstbundelLo3RubriekStapel
-     *            dienstbundelLo3RubriekStapel
+     * @param conversieRubriek Id van de bijbehorende conversie LO3 rubriek
+     * @param actief actief
+     * @param dienstbundelLo3RubriekStapel dienstbundelLo3RubriekStapel
      */
     public TussenDienstbundelLo3Rubriek(
-        @Element(name = "conversieRubriek", required = false) final String conversieRubriek,
-        @Element(name = "actief", required = false) final Boolean actief,
-        @Element(name = "dienstbundelLo3RubriekStapel", required = false) final TussenStapel<BrpDienstbundelLo3RubriekInhoud> dienstbundelLo3RubriekStapel)
-    {
+            @Element(name = "conversieRubriek", required = false) final String conversieRubriek,
+            @Element(name = "actief", required = false) final Boolean actief,
+            @Element(name = "dienstbundelLo3RubriekStapel",
+                    required = false) final TussenStapel<BrpDienstbundelLo3RubriekInhoud> dienstbundelLo3RubriekStapel) {
         super();
         this.conversieRubriek = conversieRubriek;
         this.actief = actief;
         this.dienstbundelLo3RubriekStapel = dienstbundelLo3RubriekStapel;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
@@ -62,27 +57,24 @@ public final class TussenDienstbundelLo3Rubriek extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van actief.
-     *
-     * @return the actief
+     * Geef de waarde van actief van TussenDienstbundelLo3Rubriek.
+     * @return de waarde van actief van TussenDienstbundelLo3Rubriek
      */
     public Boolean getActief() {
         return actief;
     }
 
     /**
-     * Geef de waarde van conversieRubriek.
-     *
-     * @return het conversieRubriek
+     * Geef de waarde van conversie rubriek van TussenDienstbundelLo3Rubriek.
+     * @return de waarde van conversie rubriek van TussenDienstbundelLo3Rubriek
      */
     public String getConversieRubriek() {
         return conversieRubriek;
     }
 
     /**
-     * Geef de waarde van de stapel van dienstbundelLo3Rubrieken.
-     *
-     * @return de stapel van dienstbundelLo3Rubriek
+     * Geef de waarde van dienstbundel lo3 rubriek stapel van TussenDienstbundelLo3Rubriek.
+     * @return de waarde van dienstbundel lo3 rubriek stapel van TussenDienstbundelLo3Rubriek
      */
     public TussenStapel<BrpDienstbundelLo3RubriekInhoud> getDienstbundelLo3RubriekStapel() {
         return dienstbundelLo3RubriekStapel;

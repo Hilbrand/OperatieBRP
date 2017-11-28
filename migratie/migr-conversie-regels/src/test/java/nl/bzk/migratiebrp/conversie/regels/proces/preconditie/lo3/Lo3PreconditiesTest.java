@@ -10,7 +10,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
@@ -20,7 +19,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RNIDeelnemerCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
@@ -33,6 +31,7 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
 import nl.bzk.migratiebrp.conversie.regels.proces.AbstractLoggingTest;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,8 +42,7 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
     private static final Lo3Datum DATUM_NA_20071126 = new Lo3Datum(20071127);
     private static final Lo3Datum DATUM_VOOR_20071126 = new Lo3Datum(20071125);
 
-    @Inject
-    private Lo3PreconditiesTester tester;
+    private Lo3PreconditiesTester tester = new Lo3PreconditiesTester(new ConversietabelFactoryImpl());
 
     @Before
     public void setup() {
@@ -72,14 +70,14 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
 
     @Test
     public void testControleerGroep01IdentificatienummersIncorrectAnummer() {
-        tester.controleerGroep01Identificatienummers(Lo3Long.wrap(1L), null, DATUM_NA_20071126, HERKOMST, true);
+        tester.controleerGroep01Identificatienummers(Lo3String.wrap("1"), null, DATUM_NA_20071126, HERKOMST, true);
         assertStructuurRegelBSNAanwezig(Logging.getLogging());
         assertStructuurRegelANummerInCorrect(Logging.getLogging());
     }
 
     @Test
     public void testControleerGroep01IdentificatienummersInCorrectBsn() {
-        tester.controleerGroep01Identificatienummers(Lo3Long.wrap(1L), Lo3Integer.wrap(1), DATUM_NA_20071126, HERKOMST, true);
+        tester.controleerGroep01Identificatienummers(Lo3String.wrap("1"), Lo3String.wrap("1"), DATUM_NA_20071126, HERKOMST, true);
         assertStructuurRegelANummerInCorrect(Logging.getLogging());
         assertStructuurRegelBSNInCorrect(Logging.getLogging());
     }
@@ -223,9 +221,9 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
 
         final Lo3Categorie<Lo3PersoonInhoud> cat51 =
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His("S", 20120101, 20120101), new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_51,
-                    0,
-                    1));
+                        Lo3CategorieEnum.CATEGORIE_51,
+                        0,
+                        1));
         final Lo3Categorie<Lo3PersoonInhoud> cat01 =
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(2), Lo3StapelHelper.lo3His(20120102), HERKOMST);
 
@@ -241,9 +239,9 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
 
         final Lo3Categorie<Lo3PersoonInhoud> cat51 =
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His("O", 20120101, 20120101), new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_51,
-                    0,
-                    1));
+                        Lo3CategorieEnum.CATEGORIE_51,
+                        0,
+                        1));
         final Lo3Categorie<Lo3PersoonInhoud> cat01 =
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(2), Lo3StapelHelper.lo3His(20120102), HERKOMST);
 
@@ -259,9 +257,9 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
 
         final Lo3Categorie<Lo3PersoonInhoud> cat51 =
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His("O", 20120101, 20120101), new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_51,
-                    0,
-                    1));
+                        Lo3CategorieEnum.CATEGORIE_51,
+                        0,
+                        1));
         final Lo3Categorie<Lo3PersoonInhoud> cat01 =
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(2), Lo3StapelHelper.lo3His(20120102), HERKOMST);
 
@@ -277,9 +275,9 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
 
         final Lo3Categorie<Lo3PersoonInhoud> cat51 =
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His("X", 20120101, 20120101), new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_51,
-                    0,
-                    1));
+                        Lo3CategorieEnum.CATEGORIE_51,
+                        0,
+                        1));
         final Lo3Categorie<Lo3PersoonInhoud> cat01 =
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(2), Lo3StapelHelper.lo3His(20120102), HERKOMST);
 
@@ -351,9 +349,9 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(2), Lo3StapelHelper.lo3His(actueelIngang), HERKOMST);
         final Lo3Categorie<Lo3PersoonInhoud> cat51 =
                 Lo3StapelHelper.lo3Cat(builder.build(), Lo3StapelHelper.lo3Akt(1), Lo3StapelHelper.lo3His(historieIngang), new Lo3Herkomst(
-                    Lo3CategorieEnum.CATEGORIE_51,
-                    0,
-                    1));
+                        Lo3CategorieEnum.CATEGORIE_51,
+                        0,
+                        1));
 
         return Lo3StapelHelper.lo3Stapel(cat51, cat01);
     }
@@ -394,8 +392,7 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
     private void assertStructuurRegelANummerAanwezig(final Logging logging) {
         for (final LogRegel logRegel : logging.getRegels()) {
             if (Lo3ElementEnum.ELEMENT_0110.equals(logRegel.getLo3ElementNummer())
-                && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode()))
-            {
+                    && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode())) {
                 assertTrue(logRegel.getSoortMeldingCode().isStructuurFout());
                 assertEquals(LogSeverity.INFO, logRegel.getSeverity());
                 return;
@@ -407,8 +404,7 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
     private void assertStructuurRegelANummerInCorrect(final Logging logging) {
         for (final LogRegel logRegel : logging.getRegels()) {
             if (Lo3ElementEnum.ELEMENT_0110.equals(logRegel.getLo3ElementNummer())
-                && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode()))
-            {
+                    && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode())) {
                 assertTrue(logRegel.getSoortMeldingCode().isStructuurFout());
                 assertEquals(LogSeverity.WARNING, logRegel.getSeverity());
                 return;
@@ -420,8 +416,7 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
     private void assertStructuurRegelBSNAanwezig(final Logging logging) {
         for (final LogRegel logRegel : logging.getRegels()) {
             if (Lo3ElementEnum.ELEMENT_0120.equals(logRegel.getLo3ElementNummer())
-                && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode()))
-            {
+                    && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode())) {
                 assertTrue(logRegel.getSoortMeldingCode().isStructuurFout());
                 assertEquals(LogSeverity.INFO, logRegel.getSeverity());
                 return;
@@ -433,8 +428,7 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
     private void assertStructuurRegelBSNAfwezig(final Logging logging) {
         for (final LogRegel logRegel : logging.getRegels()) {
             if (Lo3ElementEnum.ELEMENT_0120.equals(logRegel.getLo3ElementNummer())
-                && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode()))
-            {
+                    && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode())) {
                 fail("Structuurregel in geval van afwezig bsn is gelogd.");
             }
         }
@@ -443,8 +437,7 @@ public class Lo3PreconditiesTest extends AbstractLoggingTest {
     private void assertStructuurRegelBSNInCorrect(final Logging logging) {
         for (final LogRegel logRegel : logging.getRegels()) {
             if (Lo3ElementEnum.ELEMENT_0120.equals(logRegel.getLo3ElementNummer())
-                && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode()))
-            {
+                    && SoortMeldingCode.STRUC_IDENTIFICATIE.equals(logRegel.getSoortMeldingCode())) {
                 assertTrue(logRegel.getSoortMeldingCode().isStructuurFout());
                 assertEquals(LogSeverity.WARNING, logRegel.getSeverity());
                 return;

@@ -8,7 +8,9 @@ package nl.bzk.migratiebrp.init.naarbrp.repository;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
-import nl.bzk.migratiebrp.init.naarbrp.repository.AutorisatieRepository;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.AutorisatieBericht;
+import nl.bzk.migratiebrp.init.naarbrp.domein.ConversieResultaat;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:runtime-test-beans.xml")
+@ContextConfiguration(locations = "classpath:runtime-test-beans.xml", initializers = PortInitializer.class)
 public class AutorisatieRepositoryTest {
 
     @Inject
@@ -34,7 +36,9 @@ public class AutorisatieRepositoryTest {
 
     @Test
     public void test() {
-        // TODO: MAAK TEST
-    }
+        final BerichtTeller<AutorisatieBericht> verwerker = new BerichtTeller<>();
+        Assert.assertFalse(autorisatieRepository.verwerkAutorisatie(ConversieResultaat.TE_VERZENDEN, verwerker, 100));
 
+        Assert.assertEquals("Verkeerd aantal berichten gevonden", 0, verwerker.aantalBerichten());
+    }
 }

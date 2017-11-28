@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition  xmlns=""  name="foutafhandeling">
+<process-definition xmlns="" name="foutafhandeling">
 
     <!--  -->
     <!--  -->
@@ -26,7 +26,8 @@
             <bean>
                 foutafhandelingRegistreerFoutAction
             </bean>
-        </action><transition to="controleer input"></transition>
+        </action>
+        <transition to="controleer input"></transition>
     </node>
 
     <node name="controleer input">
@@ -91,7 +92,7 @@
                 foutafhandelingRegistreerResolutieAction
             </bean>
         </action>
-        <transition to="fork5"></transition>
+        <transition to="bepaal versturen pf"></transition>
     </node>
 
     <!--  -->
@@ -100,21 +101,15 @@
     <!--  -->
     <!--  -->
 
-
-    <fork name="fork5">
-        <transition to="bepaal versturen pf" name="pf"></transition>
-        <transition to="bepaal versturen blokkering" name="deblokkering"></transition>
-    </fork>
-
     <!--  -->
     <!-- PF01 -->
     <!--  -->
 
     <decision name="bepaal versturen pf">
-        <transition to="join5" name="nee"></transition>
         <transition to="maak pf" name="ja">
-            <condition expression="#{indicatiePf}"></condition>
+            <condition expression="#{indicatiePf}"/>
         </transition>
+        <transition to="bepaal versturen vb" name="nee"/>
     </decision>
 
     <node name="maak pf">
@@ -123,56 +118,60 @@
                 foutafhandelingMaakPfAction
             </bean>
         </action>
-        <transition to="bepaal versturen vb01" name="VOSPG: pf (notify)">
+        <transition to="bepaal versturen vb" name="VOISC: pf (notify)">
             <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler" config-type="bean">
                 <bean>registreerGerelateerdeInformatieAction</bean>
                 <parameters>
-                    <entry><key>berichtIdVariabele</key><value>pfBericht</value></entry>
+                    <entry>
+                        <key>berichtIdVariabele</key>
+                        <value>pfBericht</value>
+                    </entry>
                 </parameters>
             </action>
             <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    VOISC-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
-                    <mapping bpm="pfBericht" esb="BODY_CONTENT"></mapping>
+                    <mapping bpm="pfBericht" esb="BODY_CONTENT"/>
                 </bpmToEsbVars>
             </action>
         </transition>
     </node>
 
-    <decision name="bepaal versturen vb01">
-        <transition to="join5" name="nee"></transition>
-        <transition to="maak vb01" name="ja">
-            <condition expression="#{indicatieVb01}"></condition>
+    <!--  -->
+    <!-- VrijBericht -->
+    <!--  -->
+
+    <decision name="bepaal versturen vb">
+        <transition to="maak vb" name="ja">
+            <condition expression="#{indicatieVb}"/>
         </transition>
+        <transition to="Loggen einde proces" name="nee"/>
     </decision>
 
-    <node name="maak vb01">
+    <node name="maak vb">
         <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler">
             <bean>
-                foutafhandelingMaakVb01Action
+                foutafhandelingMaakVbAction
             </bean>
         </action>
-        <transition to="join5" name="VOSPG: vb01 (notify)">
+        <transition to="Loggen einde proces" name="SYNC: vb (notify)">
             <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler" config-type="bean">
                 <bean>registreerGerelateerdeInformatieAction</bean>
                 <parameters>
-                    <entry><key>berichtIdVariabele</key><value>vb01Bericht</value></entry>
+                    <entry>
+                        <key>berichtIdVariabele</key>
+                        <value>vbBericht</value>
+                    </entry>
                 </parameters>
             </action>
             <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    Sync-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
-                    <mapping bpm="vb01Bericht" esb="BODY_CONTENT"></mapping>
+                    <mapping bpm="vbBericht" esb="BODY_CONTENT"/>
                 </bpmToEsbVars>
             </action>
         </transition>
@@ -181,151 +180,6 @@
     <!--  -->
     <!-- DEBLOKKEREN -->
     <!--  -->
-
-    <decision name="bepaal versturen blokkering">
-        <transition to="join5" name="nee"></transition>
-        <transition to="maak deblokkering" name="ja">
-            <condition expression="#{indicatieDeblokkering}"></condition>
-            <script>
-                <expression>
-                    deblokkerenFunctioneleStap="foutafhandeling.deblokkeren.stap";
-                </expression>
-                <variable name='deblokkerenFunctioneleStap' access='write' />
-            </script>
-        </transition>
-    </decision>
-
-    <node name="maak deblokkering">
-        <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler">
-            <bean>
-                foutafhandelingMaakDeblokkeringAction
-            </bean>
-        </action>
-        <transition to="BRP: deblokkeren">
-            <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler" config-type="bean">
-                <bean>registreerGerelateerdeInformatieAction</bean>
-                <parameters>
-                    <entry><key>berichtIdVariabele</key><value>deblokkeringVerzoekBericht</value></entry>
-                </parameters>
-            </action>
-        </transition>
-    </node>
-
-    <node name="BRP: deblokkeren">
-        <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
-            <esbServiceName>
-                Sync-Outbound
-            </esbServiceName>
-            <esbCategoryName>
-                ISC
-            </esbCategoryName>
-            <bpmToEsbVars>
-                <mapping bpm="deblokkeringVerzoekBericht" esb="BODY_CONTENT"></mapping>
-            </bpmToEsbVars>
-            <esbToBpmVars>
-                <mapping bpm="deblokkeringAntwoordBericht" esb="BODY_CONTENT"></mapping>
-            </esbToBpmVars>
-        </action>
-        <transition to="bepaal deblokkeren antwoord">
-            <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler" config-type="bean">
-                <bean>registreerGerelateerdeInformatieAction</bean>
-                <parameters>
-                    <entry><key>berichtIdVariabele</key><value>deblokkeringAntwoordBericht</value></entry>
-                </parameters>
-            </action>
-        </transition>
-        <transition to="foutafhandeling deblokkeren" name="afbreken">
-            <script>
-                <expression>
-                    deblokkerenFoutafhandelingFout="foutafhandeling.deblokkeren.afgebroken";
-                    deblokkerenFoutafhandelingFoutmelding=null;
-
-                    deblokkerenFoutafhandelingIndicatieBeheerder=true;
-                    deblokkerenFoutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    deblokkerenFoutafhandelingPaden.put("end", "Deblokkeren negeren", false, false, false);
-                    deblokkerenFoutafhandelingPaden.put("restart", "Opnieuw proberen te deblokkeren", false, false,
-                    false);
-                </expression>
-                <variable name='deblokkerenFoutafhandelingFout' access='write' />
-                <variable name='deblokkerenFoutafhandelingFoutmelding' access='write' />
-                <variable name='deblokkerenFoutafhandelingIndicatieBeheerder' access='write' />
-                <variable name='deblokkerenFoutafhandelingPaden' access='write' />
-            </script>
-        </transition>
-    </node>
-
-    <decision name="bepaal deblokkeren antwoord">
-        <transition to="Controleer deblokkeren antwoord">
-            <condition expression="#{deblokkeringAntwoordBericht.berichtType == 'DeblokkeringAntwoord'}"></condition>
-        </transition>
-        <transition to="foutafhandeling deblokkeren" name="onverwacht bericht">
-            <script>
-                <expression>
-                    deblokkerenFoutafhandelingFout="foutafhandeling.deblokkeren.onverwachtbericht";
-                    deblokkerenFoutafhandelingFoutmelding=nl.bzk.migratiebrp.isc.jbpm.common.FoutUtil.beperkFoutmelding(deblokkeringAntwoordBericht.toString());
-
-                    deblokkerenFoutafhandelingIndicatieBeheerder=true;
-                    deblokkerenFoutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    deblokkerenFoutafhandelingPaden.put("end", "Deblokkeren negeren", false, false, false);
-                    deblokkerenFoutafhandelingPaden.put("restart", "Opnieuw proberen te deblokkeren", false, false,
-                    false);
-                </expression>
-                <variable name='deblokkerenFoutafhandelingFout' access='write' />
-                <variable name='deblokkerenFoutafhandelingFoutmelding' access='write' />
-                <variable name='deblokkeringAntwoordBericht' access='read' />
-                <variable name='deblokkerenFoutafhandelingIndicatieBeheerder' access='write' />
-                <variable name='deblokkerenFoutafhandelingPaden' access='write' />
-            </script>
-        </transition>
-    </decision>
-
-    <decision name="Controleer deblokkeren antwoord">
-        <handler class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringDecisionHandler" config-type="bean">
-           <bean>
-              foutafhandelingControleerDeblokkeringAntwoordDecision
-           </bean>
-        </handler>
-        <transition to="join5"></transition>
-        <transition to="foutafhandeling deblokkeren" name="fout">
-            <script>
-                <expression>
-                    deblokkerenFoutafhandelingFout="foutafhandeling.deblokkeren.fout";
-                    deblokkerenFoutafhandelingFoutmelding=nl.bzk.migratiebrp.isc.jbpm.common.FoutUtil.beperkFoutmelding(deblokkeringAntwoordBericht.getToelichting());
-
-                    deblokkerenFoutafhandelingIndicatieBeheerder=true;
-                    deblokkerenFoutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    deblokkerenFoutafhandelingPaden.put("end", "Deblokkeren negeren", false, false, false);
-                    deblokkerenFoutafhandelingPaden.put("restart", "Opnieuw proberen te deblokkeren", false, false,
-                    false);
-                </expression>
-                <variable name='deblokkerenFoutafhandelingFout' access='write' />
-                <variable name='deblokkerenFoutafhandelingFoutmelding' access='write' />
-                <variable name='deblokkeringAntwoordBericht' access='read' />
-                <variable name='deblokkerenFoutafhandelingIndicatieBeheerder' access='write' />
-                <variable name='deblokkerenFoutafhandelingPaden' access='write' />
-            </script>
-        </transition>
-    </decision>
-
-    <process-state name="foutafhandeling deblokkeren">
-        <sub-process name="foutafhandeling" binding="late"></sub-process>
-        <variable access="read" mapped-name="functioneleStap" name="deblokkerenFunctioneleStap"></variable>
-        <variable access="read" mapped-name="fout" name="deblokkerenFoutafhandelingFout" ></variable>
-        <variable access="read" mapped-name="foutmelding" name="deblokkerenFoutafhandelingFoutmelding"></variable>
-        <variable access="read" mapped-name="indicatieBeheerder" name="deblokkerenFoutafhandelingIndicatieBeheerder"></variable>
-        <variable access="write" mapped-name="restart" name="deblokkerenRestart"></variable>
-        <variable access="read" mapped-name="foutafhandelingPaden" name="deblokkerenFoutafhandelingPaden"></variable>
-        <transition to="restart deblokkeren"></transition>
-    </process-state>
-
-    <decision name="restart deblokkeren">
-        <transition to="join5">
-            <condition expression="#{deblokkerenRestart == 'end'}"></condition>
-        </transition>
-        <transition to="maak deblokkering" name="opnieuw">
-            <condition expression="#{deblokkerenRestart == 'restart'}"></condition>
-        </transition>
-    </decision>
 
     <!--  -->
     <!-- ANTWOORD -->
@@ -337,34 +191,35 @@
     <!--  -->
     <!--  -->
 
-    <join name="join5">
-        <transition to="Loggen einde proces"></transition>
-    </join>
-
     <node name="Loggen einde proces">
         <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler">
             <bean>
                 beeindigProcesInstantieAction
             </bean>
         </action>
-        <transition to="end" name="log einde foutafhandeling"></transition>
+        <transition to="end" name="log einde foutafhandeling"/>
     </node>
 
     <decision name="Bepaal soort actie">
         <transition to="Uc808 actie" name="uc808">
-            <condition expression="#{afhandelingType == 'uc808'}" />
+            <condition expression="#{afhandelingType == 'uc808'}"/>
         </transition>
-        <transition to="Standaard actie"></transition>
+        <transition to="Standaard actie"/>
     </decision>
 
     <task-node name="Uc808 actie">
         <task name="uc808">
-            <assignment pooled-actors="beheer"></assignment>
+            <assignment pooled-actors="beheer"/>
         </task>
-        <transition to="Loggen einde wacht beheerderskeuze" name="ok"></transition>
+        <event type="task-create">
+            <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler">
+                <bean>registreerGerelateerdeAnummersTaak</bean>
+            </action>
+        </event>
+        <transition to="Loggen einde wacht beheerderskeuze" name="ok"/>
     </task-node>
 
-    <end-state name="end"></end-state>
+    <end-state name="end"/>
 
     <exception-handler>
         <action name="exception-handler" class="nl.bzk.migratiebrp.isc.jbpm.common.ExceptionLogger"/>

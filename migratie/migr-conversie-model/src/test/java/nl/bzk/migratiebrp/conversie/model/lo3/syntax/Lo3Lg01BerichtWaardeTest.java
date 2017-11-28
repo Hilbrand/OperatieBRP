@@ -8,9 +8,7 @@ package nl.bzk.migratiebrp.conversie.model.lo3.syntax;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-
 import org.junit.Assert;
 import org.junit.Test;
 

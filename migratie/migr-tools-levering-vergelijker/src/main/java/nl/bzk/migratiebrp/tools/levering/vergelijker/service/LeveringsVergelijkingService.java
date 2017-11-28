@@ -18,11 +18,8 @@ public interface LeveringsVergelijkingService {
      * Controleert of de meegegeven berichten inhoudelijk gelijk zijn aan elkaar. Indien de berichten inhoudelijk niet
      * gelijk zijn aan elkaar, wordt er per categorie aangegeven wat de verschillen zijn. Zijn beide berichten
      * inhoudelijk gelijk aan elkaar, dan wordt er een lege lijst teruggegeven.
-     *
-     * @param gbaBericht
-     *            Het leveringbericht uit GBA-V.
-     * @param brpBericht
-     *            Het corresponderende leveringbericht uit BRP.
+     * @param gbaBericht Het leveringbericht uit GBA-V.
+     * @param brpBericht Het corresponderende leveringbericht uit BRP.
      * @return Lijst met daarin vergelijkingresultaten met per categorie de gevonden afwijkingen.
      */
     List<LeveringsVergelijkingResultaatInhoud> vergelijkInhoudLeveringsBerichten(String gbaBericht, String brpBericht);
@@ -31,11 +28,8 @@ public interface LeveringsVergelijkingService {
      * Controleert of de koppen van de meegegeven berichten inhoudelijk gelijk zijn aan elkaar. Indien de koppen
      * inhoudelijk niet gelijk zijn aan elkaar, wordt er per header aangegeven wat de verschillen zijn. Zijn beide
      * berichten inhoudelijk gelijk aan elkaar, dan wordt er een lege lijst teruggegeven.
-     *
-     * @param gbaBericht
-     *            Het leveringbericht uit GBA-V.
-     * @param brpBericht
-     *            Het corresponderende leveringbericht uit BRP.
+     * @param gbaBericht Het leveringbericht uit GBA-V.
+     * @param brpBericht Het corresponderende leveringbericht uit BRP.
      * @return Komma gescheiden lijst van de gevonden afwijkende koppen.
      */
     String vergelijkKopLeveringsBerichten(String gbaBericht, String brpBericht);

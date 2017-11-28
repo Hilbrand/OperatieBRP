@@ -6,20 +6,20 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.samengesteld;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.Controle;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControle;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControleBevatDatumIngangBlokkering;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.verzoek.VerzoekControle;
+import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.verzoek.VerzoekControleBerichtVanSoortLg01;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-
 import org.springframework.stereotype.Component;
 
 /**
+ * <p>
  * Samengestelde controle 'Aangeboden persoonslijst bevat blokkeringsinformatie'.
- * <p/>
+ * </p>
  * Een aangeboden persoonslijst die blokkeringsinformatie bevat kan genegeerd worden als:
  * <ol>
  * <li>de aangeboden persoonslijst een gevulde datum ingang blokkering PL bevat</li>
@@ -28,20 +28,26 @@ import org.springframework.stereotype.Component;
 @Component(value = "controleBevatBlokkeringsinformatie")
 public final class ControleBevatBlokkeringsinformatie implements Controle {
 
-    @Inject
-    @Named(value = "plControleBevatDatumIngangBlokkering")
-    private PlControle plControleBevatDatumIngangBlokkering;
+    private final VerzoekControle verzoekControleBerichtVanSoortLg01;
+    private final PlControle plControleBevatDatumIngangBlokkering;
+
+
+    /**
+     * Constructor voor deze implementatie van een {@link Controle}.
+     */
+    ControleBevatBlokkeringsinformatie() {
+        this.verzoekControleBerichtVanSoortLg01 = new VerzoekControleBerichtVanSoortLg01();
+        this.plControleBevatDatumIngangBlokkering = new PlControleBevatDatumIngangBlokkering();
+    }
 
     @Override
     public boolean controleer(final VerwerkingsContext context) {
         final ControleLogging logging = new ControleLogging(ControleMelding.CONTROLE_PL_IS_GEBLOKKEERD);
 
-        if (plControleBevatDatumIngangBlokkering.controleer(context, null)) {
-            logging.logResultaat(true);
-            return true;
-        }
+        boolean result = verzoekControleBerichtVanSoortLg01.controleer(context.getVerzoek());
+        result = result && plControleBevatDatumIngangBlokkering.controleer(context, null);
 
-        logging.logResultaat(false);
-        return false;
+        logging.logResultaat(result, true);
+        return result;
     }
 }

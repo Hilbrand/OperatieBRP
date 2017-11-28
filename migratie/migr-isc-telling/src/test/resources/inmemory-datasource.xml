@@ -14,19 +14,17 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreUnresolvablePlaceholders" value="true"/>
     </bean>
+    
 
-	<bean id="embeddedH2DatabaseServer" class="org.h2.tools.Server" factory-method="createTcpServer" init-method="start" destroy-method="stop" >
-    	<constructor-arg value="-tcp,-tcpAllowOthers,-tcpPort,9143,-baseDir,target/h2"/>
-	</bean>
-
-	<bean id="tellingDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" depends-on="embeddedH2DatabaseServer">
-		<property name="driverClassName" value="org.h2.Driver" />
-		<property name="url" value="jdbc:h2:tcp://localhost:9143/isc" />
+	<bean id="tellingDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+		<property name="driverClassName" value="org.hsqldb.jdbc.JDBCDriver" />
+		<property name="url" value="jdbc:hsqldb:mem:activemq" />	
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 	</bean>
 
     <jdbc:initialize-database ignore-failures="ALL" data-source="tellingDataSource">
+    	<jdbc:script location="classpath:sql/hsqldb4postgres.sql"  />
         <jdbc:script location="classpath:sql/mig-drop.sql"  />
         <jdbc:script location="classpath:sql/jbpm-drop.sql"  />
         <jdbc:script location="classpath:sql/qrtz-drop.sql" />
@@ -63,7 +61,7 @@
 	            <prop key="com.atomikos.icatch.max_timeout">${atomikos.max.timeout:300}000</prop>
 	            <prop key="com.atomikos.icatch.default_jta_timeout">${atomikos.default.timeout:10}000</prop>
 	            <prop key="com.atomikos.icatch.max_actives">${atomikos.max.actives:50}</prop>
-	            <prop key="com.atomikos.icatch.enable_logging">true</prop>
+	            <prop key="com.atomikos.icatch.enable_logging">${atomikos.enable_logging:true}</prop>
 	            <prop key="com.atomikos.icatch.tm_unique_name">${atomikos.unique.name:isc-runtime}-</prop>
 	            <prop key="com.atomikos.icatch.serial_jta_transactions">true</prop>
 	            <prop key="com.atomikos.icatch.force_shutdown_on_vm_exit">false</prop>

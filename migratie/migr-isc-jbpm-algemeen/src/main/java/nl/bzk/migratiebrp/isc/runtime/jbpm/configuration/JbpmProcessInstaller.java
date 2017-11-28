@@ -15,9 +15,7 @@ public interface JbpmProcessInstaller {
 
     /**
      * Deploy jbpm processes.
-     *
-     * @param jbpmConfiguration
-     *            jbpm configuratie om de deployment mee te doen
+     * @param jbpmConfiguration jbpm configuratie om de deployment mee te doen
      */
     void deployJbpmProcesses(JbpmConfiguration jbpmConfiguration);
 

@@ -37,10 +37,8 @@ public final class ReaderFactory extends AbstractIOFactory {
 
     /**
      * Constructor. Maakt een {@link ReaderFactory} waarmee readers uitgezet kan worden.
-     * 
-     * @param configuratie
-     *            een {@link Properties} object waarin geconfigureerd staat welke reader aan dan wel uit gezet moet
-     *            worden (bv xls=false is {@link ExcelReader} uit gezet).
+     * @param configuratie een {@link Properties} object waarin geconfigureerd staat welke reader aan dan wel uit gezet moet worden (bv xls=false is {@link
+     * ExcelReader} uit gezet).
      */
     public ReaderFactory(final Properties configuratie) {
         if (!isDisabled(configuratie, INPUT_EXTENSIE_CSV)) {
@@ -66,9 +64,7 @@ public final class ReaderFactory extends AbstractIOFactory {
 
     /**
      * Geef reader voor het bestand.
-     * 
-     * @param file
-     *            bestand
+     * @param file bestand
      * @return reader
      */
     public Reader getReader(final File file) {
@@ -81,15 +77,14 @@ public final class ReaderFactory extends AbstractIOFactory {
         }
 
         final Class<? extends Reader> readerClazz = READERS.containsKey(extensie) ? READERS.get(extensie) : DEFAULT_READER;
-        LOG.info("Using reader (file: {}, extensie {}): {} ", new Object[] {file.getName(), extensie, readerClazz.getName() });
+        LOG.info("Using reader (file: {}, extensie {}): {} ", new Object[]{file.getName(), extensie, readerClazz.getName()});
 
         final Reader reader;
         try {
             reader = readerClazz.newInstance();
         } catch (
-            InstantiationException
-            | IllegalAccessException e)
-        {
+                InstantiationException
+                        | IllegalAccessException e) {
             throw new RuntimeException("Kan reader niet instantieren.", e);
         }
         return reader;

@@ -16,7 +16,6 @@ public final class GerelateerdGegeven {
 
     /**
      * Geef de waarde van soort.
-     *
      * @return soort
      */
     public String getSoort() {
@@ -25,9 +24,7 @@ public final class GerelateerdGegeven {
 
     /**
      * Zet de waarde van soort.
-     *
-     * @param soort
-     *            soort
+     * @param soort soort
      */
     public void setSoort(final String soort) {
         this.soort = soort;
@@ -35,7 +32,6 @@ public final class GerelateerdGegeven {
 
     /**
      * Geef de waarde van gegeven.
-     *
      * @return gegeven
      */
     public String getGegeven() {
@@ -44,9 +40,7 @@ public final class GerelateerdGegeven {
 
     /**
      * Zet de waarde van gegeven.
-     *
-     * @param gegeven
-     *            gegeven
+     * @param gegeven gegeven
      */
     public void setGegeven(final String gegeven) {
         this.gegeven = gegeven;

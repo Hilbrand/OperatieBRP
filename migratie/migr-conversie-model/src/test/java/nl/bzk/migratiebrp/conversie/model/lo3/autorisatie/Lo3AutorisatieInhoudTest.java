@@ -7,9 +7,7 @@
 package nl.bzk.migratiebrp.conversie.model.lo3.autorisatie;
 
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGeheimCode;
 import nl.bzk.migratiebrp.conversie.model.testutils.EqualsAndHashcodeTester;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,7 +23,7 @@ public class Lo3AutorisatieInhoudTest {
         // autorisatie.setConditioneleVerstrekking(Integer.valueOf(0));
         Assert.assertTrue(autorisatie.isLeeg());
         autorisatie = new Lo3AutorisatieInhoud();
-        autorisatie.setAfnemersindicatie(7);
+        autorisatie.setAfnemersindicatie("000007");
         Assert.assertTrue(!autorisatie.isLeeg());
     }
 
@@ -42,10 +40,10 @@ public class Lo3AutorisatieInhoudTest {
         final Lo3AutorisatieInhoud lo3Autorisatie = new Lo3AutorisatieInhoud();
         // lo3Autorisatie.setVersie(versie);
         lo3Autorisatie.setAfnemernaam(afnemerNaam);
-        lo3Autorisatie.setIndicatieGeheimhouding(new Lo3IndicatieGeheimCode(0));
+        lo3Autorisatie.setIndicatieGeheimhouding(0);
         lo3Autorisatie.setVerstrekkingsbeperking(0);
         lo3Autorisatie.setAdresvraagBevoegdheid(0);
-        lo3Autorisatie.setAfnemersindicatie(100220);
+        lo3Autorisatie.setAfnemersindicatie("100220");
         lo3Autorisatie.setAfnemersverstrekking("852018 852102");
         lo3Autorisatie.setBerichtaanduiding(0);
         lo3Autorisatie.setConditioneleVerstrekking(0);

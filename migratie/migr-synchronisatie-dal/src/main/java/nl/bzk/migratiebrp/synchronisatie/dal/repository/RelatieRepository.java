@@ -6,11 +6,10 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.repository;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
 
 /**
  * CRUD functionaliteit voor Relatie entities.
- * 
  */
 public interface RelatieRepository {
 
@@ -20,9 +19,7 @@ public interface RelatieRepository {
      * <p/>
      * Het is mogelijk om niet-gemanagde entities mee te geven. Wanneer de id van een entity null is worden wel de
      * associaties verwijderd maar wordt er geen echte delete uitgevoerd.
-     * 
-     * @param relatie
-     *            de te verwijderen Relatie entiteit
+     * @param relatie de te verwijderen Relatie entiteit
      */
     void removeRelatie(Relatie relatie);
 }

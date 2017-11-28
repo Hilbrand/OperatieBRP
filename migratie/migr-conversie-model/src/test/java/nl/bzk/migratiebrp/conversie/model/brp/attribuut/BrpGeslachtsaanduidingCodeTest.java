@@ -13,18 +13,17 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Test;
 
 public class BrpGeslachtsaanduidingCodeTest {
 
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testVerwijderOnderzoek() throws Exception {
         BrpGeslachtsaanduidingCode code = new BrpGeslachtsaanduidingCode("M", onderzoek);
         assertNotNull(code.getOnderzoek());
-        BrpGeslachtsaanduidingCode newCode = code.verwijderOnderzoek();
+        final BrpGeslachtsaanduidingCode newCode = code.verwijderOnderzoek();
         assertNotNull(code.getOnderzoek());
         assertNull(newCode.getOnderzoek());
         code = new BrpGeslachtsaanduidingCode(null, onderzoek);
@@ -39,14 +38,14 @@ public class BrpGeslachtsaanduidingCodeTest {
 
     @Test
     public void testWrapMetWaardeEnZonderOnderzoek() throws Exception {
-        BrpGeslachtsaanduidingCode result = BrpGeslachtsaanduidingCode.wrap("M", null);
+        final BrpGeslachtsaanduidingCode result = BrpGeslachtsaanduidingCode.wrap("M", null);
         assertNull(result.getOnderzoek());
         assertEquals("M", result.getWaarde());
     }
 
     @Test
     public void testWrapZonderWaardeEnMetOnderzoek() throws Exception {
-        BrpGeslachtsaanduidingCode result = BrpGeslachtsaanduidingCode.wrap(null, onderzoek);
+        final BrpGeslachtsaanduidingCode result = BrpGeslachtsaanduidingCode.wrap(null, onderzoek);
         assertNotNull(result.getOnderzoek());
         assertNull(result.getWaarde());
     }

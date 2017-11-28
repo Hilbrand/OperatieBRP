@@ -8,4 +8,3 @@
  * Bericht verwerkers.
  */
 package nl.bzk.migratiebrp.init.naarbrp.verwerker;
-

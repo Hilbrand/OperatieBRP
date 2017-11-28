@@ -33,9 +33,9 @@ public class AfnemersindicatiesBerichtTest {
 
         final boolean result =
                 Lo3AfnemersindicatiesVergelijker.vergelijk(
-                    verschillenLog,
-                    afnemersindicatie,
-                    Lo3AfnemersindicatieSorter.sorteer(bericht.getAfnemersindicaties()));
+                        verschillenLog,
+                        afnemersindicatie,
+                        Lo3AfnemersindicatieSorter.sorteer(bericht.getAfnemersindicaties()));
 
         Assert.assertTrue(result);
 
@@ -51,30 +51,30 @@ public class AfnemersindicatiesBerichtTest {
         final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersIndicatieStapels = new ArrayList<>();
 
         // @formatter:off
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(maakAfnemersindicatieInhoud(7),
-                                                                                      null,
-                                                                                      Lo3StapelHelper.lo3His(null, 19920101, 19920101),
-                                                                                      Lo3StapelHelper.lo3Her(14, 0, 0))));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(maakAfnemersindicatieInhoud("000007"),
+                null,
+                Lo3StapelHelper.lo3His(null, 19920101, 19920101),
+                Lo3StapelHelper.lo3Her(14, 0, 0))));
 
         afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(maakAfnemersindicatieInhoud(null),
-                                                                                      null,
-                                                                                      Lo3StapelHelper.lo3His(null, 19960101, 19960101),
-                                                                                      Lo3StapelHelper.lo3Her(14, 1, 0)),
-                                                               Lo3StapelHelper.lo3Cat(maakAfnemersindicatieInhoud(8),
-                                                                                      null,
-                                                                                      Lo3StapelHelper.lo3His(null, 19920601, 19920601),
-                                                                                      Lo3StapelHelper.lo3Her(14, 1, 1))));
+                null,
+                Lo3StapelHelper.lo3His(null, 19960101, 19960101),
+                Lo3StapelHelper.lo3Her(14, 1, 0)),
+                Lo3StapelHelper.lo3Cat(maakAfnemersindicatieInhoud("000008"),
+                        null,
+                        Lo3StapelHelper.lo3His(null, 19920601, 19920601),
+                        Lo3StapelHelper.lo3Her(14, 1, 1))));
 
-        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(maakAfnemersindicatieInhoud(9),
-                                                                                      null,
-                                                                                      Lo3StapelHelper.lo3His(null, 19920501, 19920501),
-                                                                                      Lo3StapelHelper.lo3Her(14, 2, 0))));
+        afnemersIndicatieStapels.add(Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(maakAfnemersindicatieInhoud("000009"),
+                null,
+                Lo3StapelHelper.lo3His(null, 19920501, 19920501),
+                Lo3StapelHelper.lo3Her(14, 2, 0))));
         // @formatter:on
 
-        return new Lo3Afnemersindicatie(9734838049L, afnemersIndicatieStapels);
+        return new Lo3Afnemersindicatie("9734838049", afnemersIndicatieStapels);
     }
 
-    private Lo3AfnemersindicatieInhoud maakAfnemersindicatieInhoud(final Integer afnemersindicatie) {
+    private Lo3AfnemersindicatieInhoud maakAfnemersindicatieInhoud(final String afnemersindicatie) {
         return new Lo3AfnemersindicatieInhoud(afnemersindicatie);
     }
 }

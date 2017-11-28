@@ -6,21 +6,17 @@
 
 package nl.bzk.migratiebrp.tools.mailbox.impl;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.EncodingConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -40,9 +36,7 @@ public final class FileMailboxFactory implements MailboxFactory {
 
     /**
      * Constructor.
-     *
-     * @throws MailboxException
-     *             wordt gegooid als de benodigde directory niet bestaat of aangemaakt kan worden.
+     * @throws MailboxException wordt gegooid als de benodigde directory niet bestaat of aangemaakt kan worden.
      */
     public FileMailboxFactory() throws MailboxException {
         this(DEFAULT_DATA_LOCATION);
@@ -51,11 +45,8 @@ public final class FileMailboxFactory implements MailboxFactory {
 
     /**
      * Constructor.
-     *
-     * @param dataLocation
-     *            data files locatie
-     * @throws MailboxException
-     *             wordt gegooid als de benodigde directory niet bestaat of aangemaakt kan worden.
+     * @param dataLocation data files locatie
+     * @throws MailboxException wordt gegooid als de benodigde directory niet bestaat of aangemaakt kan worden.
      */
     public FileMailboxFactory(final String dataLocation) throws MailboxException {
         LOG.info("Starting FILE mailbox factory...");
@@ -77,6 +68,7 @@ public final class FileMailboxFactory implements MailboxFactory {
         try {
             return directory.getCanonicalPath();
         } catch (final IOException e) {
+            LOG.debug("Canonical path opvragen mislukt", e);
             return directory.getPath();
         }
     }
@@ -99,7 +91,7 @@ public final class FileMailboxFactory implements MailboxFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.tools.mailbox.impl.MailboxFactory#getNextMsSequenceNr()
      */
     @Override
@@ -116,11 +108,9 @@ public final class FileMailboxFactory implements MailboxFactory {
     private void readConfig() {
         if (configFile.exists()) {
             final Properties properties = new Properties();
-            try (Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile), EncodingConstants.CHARSET))) {
-                properties.load(reader);
-
+            try (InputStream inputStream = new FileInputStream(configFile)) {
+                properties.load(inputStream);
                 msSequenceNumber = new AtomicInteger(Integer.parseInt(properties.getProperty(PROPERTY_MS_SEQUENCE_NUMBER)));
-
             } catch (final IOException e) {
                 LOGGER.error("Fout tijdens lezen configuratie", e);
             }
@@ -135,7 +125,7 @@ public final class FileMailboxFactory implements MailboxFactory {
         final Properties properties = new Properties();
         properties.setProperty(PROPERTY_MS_SEQUENCE_NUMBER, Integer.toString(msSequenceNumber.get()));
 
-        try (final Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(configFile), EncodingConstants.CHARSET))) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(configFile), EncodingConstants.CHARSET)) {
             properties.store(writer, "Factory configuratie");
             writer.flush();
         } catch (final IOException e) {

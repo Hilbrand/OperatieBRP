@@ -13,7 +13,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Tb02Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Tf21Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.FoutredenType;
@@ -22,10 +21,7 @@ import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkToevalligeGebeurtenisAn
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  *
@@ -33,20 +29,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class MaakTf21AntwoordBerichtActionTest {
 
     private final Tb02Factory tb02Factory = new Tb02Factory();
-    private MaakTf21AntwoordBerichtAction subject;
-    private BerichtenDao berichtenDao;
 
-    @Before
-    public void setUp() throws Exception {
-        subject = new MaakTf21AntwoordBerichtAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakTf21AntwoordBerichtAction subject = new MaakTf21AntwoordBerichtAction(berichtenDao);
 
     @Test
     public void testMaakTf21Bericht() throws Exception {
-        final Tb02Bericht bericht = tb02Factory.maakTb02Bericht(Tb02Factory.Soort.SLUITING);
-        bericht.setDoelGemeente("2222");
+        final Tb02Bericht bericht = tb02Factory.maakSluitingTb02Bericht();
+        bericht.setDoelPartijCode("2222");
         bericht.setMessageId("12345");
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("input", berichtenDao.bewaarBericht(bericht));
@@ -60,18 +50,18 @@ public class MaakTf21AntwoordBerichtActionTest {
         assertFalse("Resultaat mag niet leeg zijn", result.isEmpty());
         final Tf21Bericht tf21Bericht = (Tf21Bericht) berichtenDao.leesBericht((Long) result.get("tf21Bericht"));
         assertEquals(
-            "Doelgemeente dient gelijk te zijn aan de brongemeente van het tb02 bericht",
-            bericht.getBronGemeente(),
-            tf21Bericht.getDoelGemeente());
+                "DoelPartijCode dient gelijk te zijn aan de bronPartijCode van het tb02 bericht",
+                bericht.getBronPartijCode(),
+                tf21Bericht.getDoelPartijCode());
         assertEquals(
-                "Brongemeente dient gelijk te zijn aan de doelgemeente van het tb02 bericht",
-                bericht.getDoelGemeente(),
-                tf21Bericht.getBronGemeente());
+                "BronPartijCode dient gelijk te zijn aan de doelPartijCode van het tb02 bericht",
+                bericht.getDoelPartijCode(),
+                tf21Bericht.getBronPartijCode());
         assertEquals("Het correlatieId moet gelijk zijn aan het messageId van het tb02 bericht", bericht.getMessageId(), tf21Bericht.getCorrelationId());
 
         final Method formatInhoud = tf21Bericht.getClass().getDeclaredMethod("formatInhoud");
         formatInhoud.setAccessible(true);
-        List<Lo3CategorieWaarde> waarden = (List<Lo3CategorieWaarde>) formatInhoud.invoke(tf21Bericht);
+        final List<Lo3CategorieWaarde> waarden = (List<Lo3CategorieWaarde>) formatInhoud.invoke(tf21Bericht);
         assertEquals("Aantal categoriewaarden moet 2 zijn bij sluiting", 2, waarden.size());
     }
 }

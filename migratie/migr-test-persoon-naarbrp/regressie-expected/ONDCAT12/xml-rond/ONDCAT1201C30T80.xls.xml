@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lo3Persoonslijst>
    <nationaliteitStapels class="java.util.ArrayList">
       <nationaliteitStapel>
@@ -45,7 +46,7 @@
                <waarde>5642515745</waarde>
             </aNummer>
             <burgerservicenummer>
-               <waarde>422531881</waarde>
+               <waarde>995112265</waarde>
             </burgerservicenummer>
             <voornamen>
                <waarde>Libby</waarde>
@@ -66,7 +67,7 @@
                <waarde>V</waarde>
             </geslachtsaanduiding>
             <aanduidingNaamgebruikCode>
-               <waarde>V</waarde>
+               <waarde>E</waarde>
             </aanduidingNaamgebruikCode>
          </inhoud>
          <historie>
@@ -591,12 +592,8 @@
             </indicatiePKVolledigGeconverteerdCode>
          </inhoud>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <lo3Herkomst>
             <categorie>CATEGORIE_07</categorie>

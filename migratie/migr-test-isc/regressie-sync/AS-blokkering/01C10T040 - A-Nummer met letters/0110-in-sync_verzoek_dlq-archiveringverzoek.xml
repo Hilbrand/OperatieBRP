@@ -3,6 +3,6 @@
   <sync:aNummer>abcdefghij</sync:aNummer>
   <sync:persoonsaanduiding>Verhuizend van LO3 naar BRP</sync:persoonsaanduiding>
   <sync:processId>1234567890</sync:processId>
-  <sync:gemeenteNaar>1904</sync:gemeenteNaar>
-  <sync:gemeenteRegistratie>1905</sync:gemeenteRegistratie>
+  <sync:gemeenteNaar>190401</sync:gemeenteNaar>
+  <sync:gemeenteRegistratie>190501</sync:gemeenteRegistratie>
 </sync:blokkeringVerzoek>

@@ -12,11 +12,11 @@
         <transition to="II01">
             <script>
                 <expression>
-                    bronGemeente = nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(input).getBronGemeente();
-                    doelGemeente = nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(input).getDoelGemeente();
+                    bronPartijCode = nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(input).getBronPartijCode();
+                    doelPartijCode = nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(input).getDoelPartijCode();
                 </expression>
-                <variable name='bronGemeente' access='write' />
-                <variable name='doelGemeente' access='write' />
+                <variable name='bronPartijCode' access='write' />
+                <variable name='doelPartijCode' access='write' />
             </script>
             <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler" config-type="bean">
                 <bean>registreerGerelateerdeInformatieAction</bean>
@@ -60,10 +60,9 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
-                    foutafhandelingPaden.put("endZonder", "Proces beeindigen zonder reactie naar initiaor", false,
-                    false, false);
-                    foutafhandelingPaden.put("restartAtIi01", "Opnieuw controleren", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("endZonder", "Proces beeindigen zonder reactie naar initiator", false, false);
+                    foutafhandelingPaden.put("restartAtIi01", "Opnieuw controleren", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -80,7 +79,7 @@
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -129,9 +128,6 @@
             <esbServiceName>
                 Sync-Outbound
             </esbServiceName>
-            <esbCategoryName>
-                ISC
-            </esbCategoryName>
             <bpmToEsbVars>
                 <mapping bpm="zoekPersoonBinnenGemeenteBericht" esb="BODY_CONTENT"></mapping>
             </bpmToEsbVars>
@@ -156,10 +152,9 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
-                    foutafhandelingPaden.put("afbrekenIf01G", "Proces beeindigen met If01 ('G')", false, false, false);
-                    foutafhandelingPaden.put("restartAtZoek", "Opnieuw zoeken binnen bijhoudingsgemeente", false, false,
-                    false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("afbrekenIf01G", "Proces beeindigen met If01 ('G')", false, false);
+                    foutafhandelingPaden.put("restartAtZoek", "Opnieuw zoeken binnen bijhoudingsgemeente", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -188,10 +183,9 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
-                    foutafhandelingPaden.put("afbrekenIf01G", "Proces beeindigen met If01 ('G')", false, false, false);
-                    foutafhandelingPaden.put("restartAtZoek", "Opnieuw zoeken binnen bijhoudingsgemeente", false, false,
-                    false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("afbrekenIf01G", "Proces beeindigen met If01 ('G')", false, false);
+                    foutafhandelingPaden.put("restartAtZoek", "Opnieuw zoeken binnen bijhoudingsgemeente", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -220,9 +214,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
-                    foutafhandelingPaden.put("restartAtZoek", "Opnieuw zoeken binnen bijhoudingsgemeente", false, false,
-                    false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("restartAtZoek", "Opnieuw zoeken binnen bijhoudingsgemeente", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -248,11 +241,8 @@
             </action>
              <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    VOISC-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
                     <mapping bpm="if01Bericht" esb="BODY_CONTENT"></mapping>
                 </bpmToEsbVars>
@@ -265,7 +255,7 @@
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces beeindigen", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces beeindigen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -314,9 +304,6 @@
             <esbServiceName>
                 Sync-Outbound
             </esbServiceName>
-            <esbCategoryName>
-                ISC
-            </esbCategoryName>
             <bpmToEsbVars>
                 <mapping bpm="zoekPersoonBuitenGemeenteBericht" esb="BODY_CONTENT"></mapping>
             </bpmToEsbVars>
@@ -341,10 +328,9 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
-                    foutafhandelingPaden.put("afbrekenIf01G", "Proces beeindigen met If01 ('G')", false, false, false);
-                    foutafhandelingPaden.put("restartAtZoekBuitenGemeente", "Opnieuw zoeken buiten bijhoudingsgemeente",
-                    false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("afbrekenIf01G", "Proces beeindigen met If01 ('G')", false, false);
+                    foutafhandelingPaden.put("restartAtZoekBuitenGemeente", "Opnieuw zoeken buiten bijhoudingsgemeente", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -374,9 +360,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
-                    foutafhandelingPaden.put("restartAtZoekBuitenGemeente", "Opnieuw zoeken buiten bijhoudingsgemeente",
-                    false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("restartAtZoekBuitenGemeente", "Opnieuw zoeken buiten bijhoudingsgemeente", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -404,10 +389,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("afbrekenIf01G", "Proces afbreken, persoon niet gevonden", false, false,
-                    false);
-                    foutafhandelingPaden.put("restartAtZoekBuitenGemeente", "Opnieuw zoeken buiten bijhoudingsgemeente",
-                    false, false, false);
+                    foutafhandelingPaden.put("afbrekenIf01G", "Proces afbreken, persoon niet gevonden", false, false);
+                    foutafhandelingPaden.put("restartAtZoekBuitenGemeente", "Opnieuw zoeken buiten bijhoudingsgemeente", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='zoekPersoonBuitenGemeenteAntwoordBericht' access='read' />
@@ -433,11 +416,8 @@
             </action>
              <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    VOISC-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
                     <mapping bpm="if01Bericht" esb="BODY_CONTENT"></mapping>
                 </bpmToEsbVars>
@@ -449,7 +429,7 @@
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces beeindigen", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces beeindigen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingIndicatieBeheerder' access='write' />
@@ -497,9 +477,6 @@
             <esbServiceName>
                 Sync-Outbound
             </esbServiceName>
-            <esbCategoryName>
-                ISC
-            </esbCategoryName>
             <bpmToEsbVars>
                 <mapping bpm="blokkeringBericht" esb="BODY_CONTENT"></mapping>
             </bpmToEsbVars>
@@ -524,8 +501,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
-                    foutafhandelingPaden.put("restartAtBlokkeren", "Opnieuw PL blokkeren", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("restartAtBlokkeren", "Opnieuw PL blokkeren", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -554,8 +531,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
-                    foutafhandelingPaden.put("restartAtBlokkeren", "Opnieuw PL blokkeren", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("restartAtBlokkeren", "Opnieuw PL blokkeren", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -584,8 +561,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false, false);
-                    foutafhandelingPaden.put("restartAtBlokkeren", "Opnieuw PL blokkeren", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("restartAtBlokkeren", "Opnieuw PL blokkeren", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -610,11 +587,8 @@
             </action>
              <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    VOISC-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
                     <mapping bpm="if01Bericht" esb="BODY_CONTENT"></mapping>
                 </bpmToEsbVars>
@@ -626,7 +600,7 @@
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='restart' access='write' />
@@ -674,9 +648,6 @@
             <esbServiceName>
                 Sync-Outbound
             </esbServiceName>
-            <esbCategoryName>
-                ISC
-            </esbCategoryName>
             <bpmToEsbVars>
                 <mapping bpm="leesUitBrpVerzoekBericht" esb="BODY_CONTENT"></mapping>
             </bpmToEsbVars>
@@ -701,8 +672,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, true, false);
-                    foutafhandelingPaden.put("restartAtOpvragen", "Opnieuw PL opvragen", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("restartAtOpvragen", "Opnieuw PL opvragen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -731,8 +702,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, true, false);
-                    foutafhandelingPaden.put("restartAtOpvragen", "Opnieuw PL opvragen", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("restartAtOpvragen", "Opnieuw PL opvragen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='syncBerichtType' access='read' />
@@ -759,8 +730,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, true, false);
-                    foutafhandelingPaden.put("restartAtOpvragen", "Opnieuw PL opvragen", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("restartAtOpvragen", "Opnieuw PL opvragen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='leesUitBrpAntwoordBericht' access='read' />
@@ -796,11 +767,8 @@
             </action>
              <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    VOISC-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
                     <mapping bpm="if01Bericht" esb="BODY_CONTENT"></mapping>
                 </bpmToEsbVars>
@@ -813,7 +781,7 @@
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", false, true, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -835,8 +803,8 @@
             <script>
                 <expression>
                     functioneleStap="uc301.ib01.stap";
-                    ib01HerhalingTimeout=nl.bzk.migratiebrp.isc.jbpm.common.configuratie.JbpmConfiguratieDao.INSTANCE.getConfiguratieAsDuration("vospg.timeout");
-                    ib01HerhalingMaxHerhalingen=nl.bzk.migratiebrp.isc.jbpm.common.configuratie.JbpmConfiguratieDao.INSTANCE.getConfiguratieAsInteger("vospg.herhalingen");
+                    ib01HerhalingTimeout=nl.bzk.migratiebrp.isc.jbpm.common.configuratie.JbpmConfiguratieDao.INSTANCE.getConfiguratieAsDuration("voisc.timeout");
+                    ib01HerhalingMaxHerhalingen=nl.bzk.migratiebrp.isc.jbpm.common.configuratie.JbpmConfiguratieDao.INSTANCE.getConfiguratieAsInteger("voisc.herhalingen");
                 </expression>
                 <variable name='functioneleStap' access='write' />
                 <variable name='ib01HerhalingTimeout' access='write' />
@@ -872,27 +840,22 @@
     <node name="12-2. Ib01-bericht">
         <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
             <esbServiceName>
-                VOSPG-Outbound
+                VOISC-Outbound
             </esbServiceName>
-            <esbCategoryName>
-                ISC
-            </esbCategoryName>
             <bpmToEsbVars>
                 <mapping bpm="ib01Bericht" esb="BODY_CONTENT"></mapping>
             </bpmToEsbVars>
             <esbToBpmVars>
-                <mapping bpm="vospgBericht" esb="iscBerichtId"></mapping>
-                <mapping bpm="vospgBerichtType" esb="iscBerichtType"></mapping>
+                <mapping bpm="voiscBericht" esb="iscBerichtId"></mapping>
+                <mapping bpm="voiscBerichtType" esb="iscBerichtType"></mapping>
             </esbToBpmVars>
         </action>
-        <timer name="herhaalbericht" transition="timeout" duedate="#{ib01DueDate}">
-            <action></action>
-        </timer>
+        <timer name="herhaalbericht" transition="timeout" duedate="#{ib01DueDate}"></timer>
         <transition to="13-2. Bepaal antwoord op Ib01">
             <action class="nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler" config-type="bean">
                 <bean>registreerGerelateerdeInformatieAction</bean>
                 <parameters>
-                    <entry><key>berichtIdVariabele</key><value>vospgBericht</value></entry>
+                    <entry><key>berichtIdVariabele</key><value>voiscBericht</value></entry>
                 </parameters>
             </action>
         </transition>
@@ -921,8 +884,8 @@
 
                     foutafhandelingIndicatieBeheerder=true;
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, true, false);
-                    foutafhandelingPaden.put("restartAtIb01", "Opnieuw Ib01 versturen", false, false, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
+                    foutafhandelingPaden.put("restartAtIb01", "Opnieuw Ib01 versturen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -934,17 +897,17 @@
 
     <decision name="13-2. Bepaal antwoord op Ib01">
         <transition to="NULL">
-            <condition expression="#{vospgBerichtType == 'Iv01'}"></condition>
+            <condition expression="#{voiscBerichtType == 'Iv01'}"></condition>
             <script>
                 <expression >
-                    iv01Bericht=vospgBericht;
+                    iv01Bericht=voiscBericht;
                 </expression>
                 <variable name='iv01Bericht' access='write' />
-                <variable name='vospgBericht' access='read' />
+                <variable name='voiscBericht' access='read' />
             </script>
         </transition>
         <transition to="Foutafhandeling" name="13b. If21">
-            <condition expression="#{vospgBerichtType == 'If21'}"></condition>
+            <condition expression="#{voiscBerichtType == 'If21'}"></condition>
             <script>
                 <expression>
                     foutafhandelingFout="uc301.ib01.if21";
@@ -953,7 +916,7 @@
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, true, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -963,7 +926,7 @@
             </script>
         </transition>
         <transition to="Foutafhandeling" name="13b. Protocol fout">
-            <condition expression="#{vospgBerichtType == 'Pf01' || vospgBerichtType == 'Pf02' || vospgBerichtType == 'Pf03'}"></condition>
+            <condition expression="#{voiscBerichtType == 'Pf01' || voiscBerichtType == 'Pf02' || voiscBerichtType == 'Pf03'}"></condition>
             <script>
                 <expression>
                     foutafhandelingFout="uc301.ib01.protocolfout";
@@ -972,7 +935,7 @@
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", false, true, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", false, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
@@ -985,19 +948,19 @@
             <script>
                 <expression>
                     foutafhandelingFout="uc301.ib01.technischefout";
-                    indicatieCyclusFout=nl.bzk.migratiebrp.isc.jbpm.common.FoutUtil.bepaalIndicatieCyclusFout(nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(vospgBericht));
+                    indicatieCyclusFout=nl.bzk.migratiebrp.isc.jbpm.common.FoutUtil.bepaalIndicatieCyclusFout(nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(voiscBericht));
                     foutafhandelingFoutmelding=nl.bzk.migratiebrp.isc.jbpm.common.FoutUtil.beperkFoutmelding(
-                    nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(vospgBericht)));
+                    nl.bzk.migratiebrp.isc.jbpm.common.berichten.JbpmBerichtenDao.INSTANCE.leesBericht(voiscBericht)));
 
                     foutafhandelingIndicatieBeheerder=false;
                     restart="end";
                     foutafhandelingPaden=new nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden();
-                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, true, false);
+                    foutafhandelingPaden.put("end", "Proces (foutief) beeindigen", true, false);
                 </expression>
                 <variable name='foutafhandelingFout' access='write' />
                 <variable name='foutafhandelingFoutmelding' access='write' />
-                <variable name='vospgBericht' access='read' />
-                <variable name='vospgBerichtType' access='read' />
+                <variable name='voiscBericht' access='read' />
+                <variable name='voiscBerichtType' access='read' />
                 <variable name='foutafhandelingIndicatieBeheerder' access='write' />
                 <variable name='restart' access='write' />
                 <variable name='foutafhandelingPaden' access='write' />
@@ -1037,11 +1000,8 @@
             </action>
              <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    VOISC-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
                     <mapping bpm="nullBericht" esb="BODY_CONTENT"></mapping>
                 </bpmToEsbVars>
@@ -1057,8 +1017,8 @@
 
     <process-state name="Foutafhandeling">
         <sub-process name="foutafhandeling" binding="late"></sub-process>
-        <variable access="read" mapped-name="bronGemeente" name="bronGemeente"></variable>
-        <variable access="read" mapped-name="doelGemeente" name="doelGemeente"></variable>
+        <variable access="read" mapped-name="bronPartijCode" name="bronPartijCode"></variable>
+        <variable access="read" mapped-name="doelPartijCode" name="doelPartijCode"></variable>
         <variable access="read" mapped-name="functioneleStap" name="functioneleStap"></variable>
         <variable access="read" mapped-name="fout" name="foutafhandelingFout" ></variable>
         <variable access="read" mapped-name="foutmelding" name="foutafhandelingFoutmelding"></variable>
@@ -1113,11 +1073,8 @@
             </action>
              <action class="nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler">
                 <esbServiceName>
-                    VOSPG-Outbound
+                    VOISC-Outbound
                 </esbServiceName>
-                <esbCategoryName>
-                    ISC
-                </esbCategoryName>
                 <bpmToEsbVars>
                     <mapping bpm="if01Bericht" esb="BODY_CONTENT"></mapping>
                 </bpmToEsbVars>

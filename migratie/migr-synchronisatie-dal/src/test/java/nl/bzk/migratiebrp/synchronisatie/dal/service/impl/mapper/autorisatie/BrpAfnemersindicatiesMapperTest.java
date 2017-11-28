@@ -7,28 +7,27 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.Collections;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpAfnemersindicaties;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import org.junit.Ignore;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+
 import org.junit.Test;
 
 public class BrpAfnemersindicatiesMapperTest {
 
     private final BrpAfnemersindicatiesMapper subject = new BrpAfnemersindicatiesMapper();
 
-    @Ignore("BMR44")
     @Test
     public void test() {
         final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        persoon.setAdministratienummer(8887776665L);
+        persoon.setAdministratienummer("8887776665");
 
-        final BrpAfnemersindicaties result =
-                subject.mapNaarMigratie(persoon, Collections.singletonList(BrpAfnemersindicatieMapperTest.maak()));
+        final BrpAfnemersindicaties result = subject.mapNaarMigratie(persoon, Collections.singletonList(BrpAfnemersindicatieMapperTest.maak()));
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(Long.valueOf(8887776665L), result.getAdministratienummer());
+        Assert.assertEquals("8887776665", result.getAdministratienummer());
         Assert.assertEquals(1, result.getAfnemersindicaties().size());
     }
 }

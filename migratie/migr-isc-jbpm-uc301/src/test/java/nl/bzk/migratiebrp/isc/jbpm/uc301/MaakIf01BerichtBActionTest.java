@@ -24,9 +24,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakIf01BerichtBActionTest {
 
@@ -34,21 +32,14 @@ public class MaakIf01BerichtBActionTest {
     private static final String BRON_GEMEENTE = "1234";
     private static final String DOEL_GEMEENTE = "5678";
 
-    private MaakIf01BerichtBAction subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new MaakIf01BerichtBAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakIf01BerichtBAction subject = new MaakIf01BerichtBAction(berichtenDao);
 
     @Test
     public void test() {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente(BRON_GEMEENTE);
-        ii01Bericht.setDoelGemeente(DOEL_GEMEENTE);
+        ii01Bericht.setBronPartijCode(BRON_GEMEENTE);
+        ii01Bericht.setDoelPartijCode(DOEL_GEMEENTE);
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.ANUMMER, "1234567891");
 
         final Map<String, Object> parameters = new HashMap<>();
@@ -79,12 +70,12 @@ public class MaakIf01BerichtBActionTest {
         final If01Bericht if01Bericht = (If01Bericht) berichtenDao.leesBericht((Long) result.get("if01Bericht"));
         Assert.assertNotNull(if01Bericht);
 
-        Assert.assertEquals(DOEL_GEMEENTE, if01Bericht.getHeader(Lo3HeaderVeld.GEMEENTE));
-        Assert.assertEquals("1234", if01Bericht.getDoelGemeente());
-        Assert.assertEquals("5678", if01Bericht.getBronGemeente());
+        Assert.assertEquals(DOEL_GEMEENTE, if01Bericht.getHeaderWaarde(Lo3HeaderVeld.GEMEENTE));
+        Assert.assertEquals("1234", if01Bericht.getDoelPartijCode());
+        Assert.assertEquals("5678", if01Bericht.getBronPartijCode());
         Assert.assertEquals(ii01Bericht.getCategorieen(), if01Bericht.getCategorieen());
-        Assert.assertEquals("B", if01Bericht.getHeader(Lo3HeaderVeld.FOUTREDEN));
-        Assert.assertEquals(DOEL_GEMEENTE, if01Bericht.getHeader(Lo3HeaderVeld.GEMEENTE));
-        Assert.assertEquals(TECHNISCHE_SLEUTEL, if01Bericht.getHeader(Lo3HeaderVeld.A_NUMMER));
+        Assert.assertEquals("B", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
+        Assert.assertEquals(DOEL_GEMEENTE, if01Bericht.getHeaderWaarde(Lo3HeaderVeld.GEMEENTE));
+        Assert.assertEquals(TECHNISCHE_SLEUTEL, if01Bericht.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
     }
 }

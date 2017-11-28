@@ -8,57 +8,46 @@ package nl.bzk.migratiebrp.init.naarbrp.verwerker.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBerichtType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.AfnemersindicatiesBericht;
 import nl.bzk.migratiebrp.init.naarbrp.domein.ConversieResultaat;
 import nl.bzk.migratiebrp.init.naarbrp.repository.AfnemersIndicatieRepository;
-import nl.bzk.migratiebrp.init.naarbrp.verwerker.AfnemersindicatieBerichtVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.init.naarbrp.verwerker.BerichtVerwerker;
+import nl.bzk.migratiebrp.util.common.logging.InitieleVullingVeld;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.ProducerCallback;
 
 /**
  * Verstuurt AfnemersindicatiesBerichten.
  */
-public class VerzendAfnemersIndicatieBerichtVerwerker implements AfnemersindicatieBerichtVerwerker {
+public class VerzendAfnemersIndicatieBerichtVerwerker implements BerichtVerwerker<AfnemersindicatiesBericht> {
 
+    private static final String BERICHTEN_ZIJN_AL_VERZONDEN = "Berichten zijn al verzonden";
     private static final Logger LOG = LoggerFactory.getLogger();
     private static final String MSG_ID_FORMAT = "%s-%s";
 
     private final AfnemersIndicatieRepository afnemersIndicatieRepository;
     private final List<AfnemersindicatiesBericht> afnemersIndicatieBerichten;
-    private final ConversieResultaat verwerktStatus;
     private final Destination destination;
     private final JmsTemplate jmsTemplate;
-    private boolean verzonden = false;
+    private final AtomicLong aantalVerzonden = new AtomicLong(0);
+    private boolean verzonden;
 
     /**
      * Constructor.
-     *
-     * @param destination
-     *            {@link Destination} queue waarop berichten geplaatst moeten worden.
-     * @param jmsTemplate
-     *            {@link JmsTemplate}
-     * @param afnemersIndicatieRepository
-     *            De AfnemersIndicatieRepository waaruit de afnemersindicaties moeten worden gelezen
-     * @param verwerktStatus
-     *            {@link ConversieResultaat} status die na afloop gezet moet worden.
+     * @param destination {@link Destination} queue waarop berichten geplaatst moeten worden.
+     * @param jmsTemplate {@link JmsTemplate}
+     * @param afnemersIndicatieRepository De AfnemersIndicatieRepository waaruit de afnemersindicaties moeten worden gelezen
      */
-    public VerzendAfnemersIndicatieBerichtVerwerker(
-        final Destination destination,
-        final JmsTemplate jmsTemplate,
-        final AfnemersIndicatieRepository afnemersIndicatieRepository,
-        final ConversieResultaat verwerktStatus)
-    {
+    public VerzendAfnemersIndicatieBerichtVerwerker(final Destination destination, final JmsTemplate jmsTemplate,
+                                                    final AfnemersIndicatieRepository afnemersIndicatieRepository) {
         afnemersIndicatieBerichten = new ArrayList<>();
-        this.verwerktStatus = verwerktStatus;
         this.destination = destination;
         this.jmsTemplate = jmsTemplate;
         this.afnemersIndicatieRepository = afnemersIndicatieRepository;
@@ -67,7 +56,7 @@ public class VerzendAfnemersIndicatieBerichtVerwerker implements Afnemersindicat
     @Override
     public final void voegBerichtToe(final AfnemersindicatiesBericht afnemersIndicatieBericht) {
         if (verzonden) {
-            throw new IllegalStateException("Berichten zijn al verzonden");
+            throw new IllegalStateException(BERICHTEN_ZIJN_AL_VERZONDEN);
         }
         afnemersIndicatieBerichten.add(afnemersIndicatieBericht);
     }
@@ -78,40 +67,45 @@ public class VerzendAfnemersIndicatieBerichtVerwerker implements Afnemersindicat
     }
 
     @Override
+    public final long aantalVerzonden() {
+        return aantalVerzonden.get();
+    }
+
+    @Override
     public final void verwerkBerichten() {
         if (verzonden) {
-            throw new IllegalStateException("Berichten zijn al verzonden");
+            throw new IllegalStateException(BERICHTEN_ZIJN_AL_VERZONDEN);
         }
         verzonden = true;
 
         LOG.debug("Aantal te verwerken afnemersindicaties berichten: {}", afnemersIndicatieBerichten.size());
+
         if (!afnemersIndicatieBerichten.isEmpty()) {
             LOG.info("Versturen berichten");
-            verstuurAfnemersIndicatieBericht(afnemersIndicatieBerichten);
+            final List<String> aNummers = new ArrayList<>(afnemersIndicatieBerichten.size());
+            verstuurAfnemersIndicatieBericht(aNummers, afnemersIndicatieBerichten);
 
-            LOG.info("Update status naar {}", verwerktStatus);
-            final List<Long> aNummers = new ArrayList<>(afnemersIndicatieBerichten.size());
-            for (final AfnemersindicatiesBericht autorisatieBericht : afnemersIndicatieBerichten) {
-                aNummers.add(autorisatieBericht.getAfnemersindicaties().getANummer());
-            }
-            afnemersIndicatieRepository.updateAfnemersIndicatiesBerichtStatus(aNummers, verwerktStatus);
+            LOG.info("Update status naar verzonden");
+            afnemersIndicatieRepository.updateAfnemersIndicatiesBerichtStatus(aNummers, ConversieResultaat.VERZONDEN);
         }
         LOG.info("Berichten verwerkt");
     }
 
-    private void verstuurAfnemersIndicatieBericht(final List<AfnemersindicatiesBericht> afnemersIndicatiesBerichten) {
-        jmsTemplate.execute(destination, new ProducerCallback<Object>() {
-            @Override
-            public Object doInJms(final Session session, final MessageProducer producer) throws JMSException {
-                for (final AfnemersindicatiesBericht afnIndBericht : afnemersIndicatiesBerichten) {
+    private void verstuurAfnemersIndicatieBericht(final List<String> aNummers, final List<AfnemersindicatiesBericht> afnemersIndicatiesBerichten) {
+        jmsTemplate.execute(destination, (session, producer) -> {
+            for (final AfnemersindicatiesBericht afnIndBericht : afnemersIndicatiesBerichten) {
+                final String aNummer = afnIndBericht.getAfnemersindicaties().getANummer();
+                MDCProcessor.startVerwerking().metVeld(InitieleVullingVeld.MDC_ADMINISTRATIE_NUMMER, aNummer).run(() -> {
                     final Message message = session.createTextMessage(afnIndBericht.format());
-                    message.setStringProperty(
-                        JMSConstants.BERICHT_REFERENTIE,
-                        String.format(MSG_ID_FORMAT, SyncBerichtType.AFNEMERINDICATIE.getType(), afnIndBericht.getAfnemersindicaties().getANummer()));
+                    MDCProcessor.registreerVerwerkingsCode(message);
+                    message.setStringProperty(JMSConstants.BERICHT_REFERENTIE,
+                            String.format(MSG_ID_FORMAT, SyncBerichtType.AFNEMERINDICATIE.getType(), aNummer));
                     producer.send(message);
-                }
-                return null;
+                    aNummers.add(aNummer);
+                    aantalVerzonden.getAndIncrement();
+                });
             }
+            return null;
         });
     }
 }

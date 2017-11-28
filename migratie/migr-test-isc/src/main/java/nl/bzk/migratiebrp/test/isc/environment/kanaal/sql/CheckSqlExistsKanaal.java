@@ -19,7 +19,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
  */
 public final class CheckSqlExistsKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "check_sql_exists";
 
     /**
@@ -27,12 +29,7 @@ public final class CheckSqlExistsKanaal extends LazyLoadingKanaal {
      */
     public CheckSqlExistsKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-db-gbav.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:infra-db-voisc.xml",
+                "classpath:configuratie.xml",
                 "classpath:infra-sql.xml"));
     }
 
@@ -40,6 +37,7 @@ public final class CheckSqlExistsKanaal extends LazyLoadingKanaal {
      * Verwerker.
      */
     public static final class Worker extends AbstractKanaal {
+
         @Inject
         private SqlHelper sqlHelper;
 

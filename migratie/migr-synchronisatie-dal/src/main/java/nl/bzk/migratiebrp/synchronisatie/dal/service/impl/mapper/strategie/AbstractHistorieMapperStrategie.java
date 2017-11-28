@@ -6,137 +6,104 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.MaterieleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.MaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 
 /**
  * Deze abstracte class geeft invulling aan de te volgen strategie voor het mappen van historische BrpGroepen uit het
  * migratie model op de entiteiten uit het operationele BRP gegevensmodel.
- *
- * @param <T>
- *            het type inhoud van de BrpGroep
- * @param <H>
- *            Het type van de BrpDatabaseGroep
- * @param <E>
- *            Het type van de top level entiteit (bijv. Persoon of PersoonNationaliteit)
+ * @param <T> het type inhoud van de BrpGroep
+ * @param <H> Het type van de BrpDatabaseGroep
+ * @param <E> Het type van de top level entiteit (bijv. Persoon of PersoonNationaliteit)
  */
 // @formatter:off
-public abstract class AbstractHistorieMapperStrategie<T extends BrpGroepInhoud, H extends FormeleHistorie, E>
-    extends AbstractMapperStrategie<T, E>
-{
+public abstract class AbstractHistorieMapperStrategie<T extends BrpGroepInhoud, H extends FormeleHistorieZonderVerantwoording, E>
+        extends AbstractMapperStrategie<T, E> {
     // @formatter:on
 
     private final BRPActieFactory brpActieFactory;
 
     /**
      * Maakt een AbstractHistorieMapperStrategie object.
-     *
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public AbstractHistorieMapperStrategie(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, onderzoekMapper);
         this.brpActieFactory = brpActieFactory;
     }
 
     @Override
-    @SuppressWarnings("PMD.CompareObjectsWithEquals" /* Vergelijking op specifiek object voorkomen. */)
-    protected final void mapHistorischeGegevens(final BrpStapel<T> brpStapel, final E entiteit) {
-        final BrpGroep<T> brpGroepActueel = brpStapel.bevatActueel() ? brpStapel.getActueel() : null;
-
+    
+    protected final void mapHistorischeGegevens(final BrpStapel<T> brpStapel, final E entiteit, final Element objecttype) {
         // map historische groepen
         for (final BrpGroep<T> brpGroep : brpStapel) {
             final H historie = mapHistorischeGroep(brpGroep.getInhoud(), entiteit);
-            mapActieEnHistorie(brpGroep, historie);
+            mapActieEnHistorie(brpGroep, historie, objecttype);
             voegHistorieToeAanEntiteit(historie, entiteit);
-
-            // map actuele groep als deze bestaat
-            if (brpGroep == brpGroepActueel) {
-                kopieerActueleGroepNaarEntiteit(historie, entiteit);
-            }
         }
     }
 
-    private void mapActieEnHistorie(final BrpGroep<T> teMappenGroep, final H historie) {
+    private void mapActieEnHistorie(final BrpGroep<T> teMappenGroep, final H historie, final Element objecttype) {
         if (historie instanceof MaterieleHistorie) {
-            mapActieEnHistorieVanMigratie(teMappenGroep, (MaterieleHistorie) historie);
+            mapActieEnHistorieVanMigratie(teMappenGroep, (MaterieleHistorie) historie, objecttype);
         } else {
-            mapActieEnFormeleHistorieVanMigratie(teMappenGroep, historie);
+            mapActieEnFormeleHistorieVanMigratie(teMappenGroep, historie, objecttype);
         }
     }
 
     /**
      * Mapped de actie en materiële historie attributen van het BRP migratie model op de BRP entiteiten.
-     *
-     * @param brpGroep
-     *            de BrpGroep uit het migratie model
-     * @param historie
-     *            de materiële historie als BRP entiteit
+     * @param brpGroep de BrpGroep uit het migratie model
+     * @param historie de materiële historie als BRP entiteit
+     * @param objecttype het objecttype van de gerelateerde persoon. Null als het om de 'eigen' persoon gaat.
      */
-    private void mapActieEnHistorieVanMigratie(final BrpGroep<?> brpGroep, final MaterieleHistorie historie) {
+    private void mapActieEnHistorieVanMigratie(final BrpGroep<?> brpGroep, final MaterieleHistorie historie, final Element objecttype) {
         historie.setActieAanpassingGeldigheid(brpActieFactory.getBRPActie(brpGroep.getActieGeldigheid()));
         historie.setActieInhoud(brpActieFactory.getBRPActie(brpGroep.getActieInhoud()));
         historie.setActieVerval(brpActieFactory.getBRPActie(brpGroep.getActieVerval()));
 
-        MapperUtil.mapHistorieVanMigratie(brpGroep.getHistorie(), historie, getOnderzoekMapper());
+        MapperUtil.mapHistorieVanMigratie(brpGroep.getHistorie(), historie, getOnderzoekMapper(), objecttype);
     }
 
     /**
      * Mapped de actie en materiële historie attributen van het BRP migratie model op de BRP entiteiten.
-     *
-     * @param brpGroep
-     *            de BrpGroep uit het migratie model
-     * @param historie
-     *            de formele historie als BRP entiteit
+     * @param brpGroep de BrpGroep uit het migratie model
+     * @param historie de formele historie als BRP entiteit
+     * @param objecttype het objecttype van de gerelateerde persoon. Null als het om de 'eigen' persoon gaat.
      */
-    private void mapActieEnFormeleHistorieVanMigratie(final BrpGroep<?> brpGroep, final FormeleHistorie historie) {
-        historie.setActieInhoud(brpActieFactory.getBRPActie(brpGroep.getActieInhoud()));
-        historie.setActieVerval(brpActieFactory.getBRPActie(brpGroep.getActieVerval()));
+    private void mapActieEnFormeleHistorieVanMigratie(final BrpGroep<?> brpGroep, final FormeleHistorieZonderVerantwoording historie,
+                                                      final Element objecttype) {
+        if (historie instanceof FormeleHistorie) {
+            ((FormeleHistorie) historie).setActieInhoud(brpActieFactory.getBRPActie(brpGroep.getActieInhoud()));
+            ((FormeleHistorie) historie).setActieVerval(brpActieFactory.getBRPActie(brpGroep.getActieVerval()));
+        }
 
-        MapperUtil.mapFormeleHistorieVanMigratie(brpGroep.getHistorie(), historie, getOnderzoekMapper());
+        MapperUtil.mapFormeleHistorieVanMigratie(brpGroep.getHistorie(), historie, getOnderzoekMapper(), objecttype);
     }
 
     /**
      * Voegt de historie toe aan de meegegeven persoon door de concrete methode aanroep op persoon uit te voeren.
-     *
-     * @param historie
-     *            de historie entiteit
-     * @param entiteit
-     *            de entiteit
+     * @param historie de historie entiteit
+     * @param entiteit de entiteit
      */
-    protected abstract void voegHistorieToeAanEntiteit(final H historie, final E entiteit);
-
-    /**
-     * Kopieert de waarden uit de actuele historische groep naar de entiteit. Note: mogelijk wordt deze functionaliteit
-     * overbodig door het gebruik van triggers in de BRP database.
-     *
-     * @param historie
-     *            de historie waarvan de gegevens naar de persoon moeten worden gekopieerd, mag niet null zijn
-     * @param entiteit
-     *            de entiteit waarvan de acutele gegevens worden gevuld, mag geen null zijn
-     */
-    protected abstract void kopieerActueleGroepNaarEntiteit(final H historie, final E entiteit);
+    protected abstract void voegHistorieToeAanEntiteit(H historie, E entiteit);
 
     /**
      * Mapped de meegegeven BrpGroep inhoud uit het migratie model naar de BRP entiteit.
-     *
-     * @param groepInhoud
-     *            de BrpGroep-inhoud uit het migratie model, mag niet null zijn
-     * @param entiteit
-     *            de entiteit met actuele gegevens waaraan de historische groep wordt gekoppeld, mag geen null zijn
+     * @param groepInhoud de BrpGroep-inhoud uit het migratie model, mag niet null zijn
+     * @param entiteit de entiteit met actuele gegevens waaraan de historische groep wordt gekoppeld, mag geen null zijn
      * @return de BRP entiteit, mag geen null teruggeven
      */
-    protected abstract H mapHistorischeGroep(final T groepInhoud, final E entiteit);
+    protected abstract H mapHistorischeGroep(T groepInhoud, E entiteit);
 }

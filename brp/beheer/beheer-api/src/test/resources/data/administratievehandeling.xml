@@ -1,14 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-    <kern.admhnd id="1000" srt="38" partij="2000" tsreg="2015-05-15 09:38:44.086"/>
-    <kern.admhnd id="2" srt="90" partij="2000" tsreg="2015-05-15 09:38:47.742"/>
-    <kern.admhnd id="3" srt="38" partij="2000" tsreg="2015-05-15 09:38:47.742"/>
-    <kern.admhnd id="4" srt="38" partij="2000" tsreg="2015-05-15 09:39:57.11"/>
-    <kern.admhnd id="5" srt="90" partij="2000" tsreg="2015-05-15 09:39:58.332" tslev="2015-05-15 09:39:58.332"/>
-    <kern.admhnd id="6" srt="38" partij="2000" tsreg="2015-05-15 09:39:58.332" tslev="2015-05-15 09:39:58.332"/>
-    <kern.regel/>
-    <kern.gedeblokkeerdemelding/>
-    <kern.admhndgedeblokkeerdemelding/>
+    <kern.admhnd id="1000" srt="38" partij="2000" tsreg="2015-05-15 09:38:44.086" statuslev="1"/>
+    <kern.admhnd id="2" srt="90" partij="2000" tsreg="2015-05-15 09:38:47.742" statuslev="1"/>
+    <kern.admhnd id="3" srt="38" partij="2000" tsreg="2015-05-15 09:38:47.742" statuslev="1"/>
+    <kern.admhnd id="4" srt="38" partij="2000" tsreg="2015-05-15 09:39:57.11" statuslev="1"/>
+    <kern.admhnd id="5" srt="90" partij="2000" tsreg="2015-05-15 09:39:58.332" tslev="2015-05-15 09:39:58.332" statuslev="4"/>
+    <kern.admhnd id="6" srt="38" partij="2000" tsreg="2015-05-15 09:39:58.332" tslev="2015-05-15 09:39:58.332" statuslev="4"/>
+
+	<kern.regel id="4" code="R1261" srtmelding="5" melding="De opgegeven leveringsautorisatie is niet geldig."/>
+	<kern.regel id="5" code="R1262" srtmelding="5" melding="De gevraagde dienst is niet geldig."/>
+	<kern.regel id="6" code="R1263" srtmelding="5" melding="De opgegeven leveringsautorisatie is geblokkeerd door de beheerder."/>
+
+	<kern.admhndgedeblokkeerderegel id="1" admhnd="1000" regel="4"/>
+	<kern.admhndgedeblokkeerderegel id="2" admhnd="1000" regel="5"/>
+	<kern.admhndgedeblokkeerderegel id="3" admhnd="1000" regel="6"/>
+	<kern.admhndgedeblokkeerderegel id="4" admhnd="2" regel="4"/>
+	<kern.admhndgedeblokkeerderegel id="5" admhnd="3" regel="5"/>
+	<kern.admhndgedeblokkeerderegel id="6" admhnd="3" regel="6"/>
+
+
     <kern.actie id="1" srt="7" admhnd="1000" partij="2000" tsreg="1994-09-30 02:00:00.0" datontlening="19940930"/>
     <kern.actie id="2" srt="7" admhnd="1000" partij="2000" tsreg="1994-09-30 02:00:00.0" datontlening="19940930"/>
     <kern.actie id="3" srt="7" admhnd="1000" partij="2000" tsreg="2012-07-01 03:00:00.0"/>
@@ -49,7 +59,6 @@
     <kern.doc id="10" srt="39" oms="PK" partij="521"/>
     <kern.doc id="11" srt="39" oms="PK" partij="521"/>
     <kern.doc id="12" srt="39" oms="PK" partij="521"/>
-    <kern.srtrechtsgrond/>
     <kern.rechtsgrond/>
     <kern.actiebron id="1" actie="1" doc="1"/>
     <kern.actiebron id="2" actie="2" doc="2"/>
@@ -63,24 +72,24 @@
     <kern.actiebron id="10" actie="23" doc="10"/>
     <kern.actiebron id="11" actie="27" doc="11"/>
     <kern.actiebron id="12" actie="28" doc="12"/>
-    <kern.pers id="4" srt="3" sorteervolgorde="1" indafgeleid="false" indnreeks="false" voornamen="Sarah" geslnaamstam="Zomer" datgeboorte="19420831"
+    <kern.pers id="4" srt="2" sorteervolgorde="1" indafgeleid="false" indnreeks="false" voornamen="Sarah" geslnaamstam="Zomer" datgeboorte="19420831"
                gemgeboorte="16" landgebiedgeboorte="229" geslachtsaand="2"/>
-    <kern.pers id="5" srt="3" sorteervolgorde="1" indafgeleid="false" indnreeks="false" voornamen="Simon" voorvoegsel="de" scheidingsteken=" "
+    <kern.pers id="5" srt="2" sorteervolgorde="1" indafgeleid="false" indnreeks="false" voornamen="Simon" voorvoegsel="de" scheidingsteken=" "
                geslnaamstam="Vries" datgeboorte="19381118" gemgeboorte="16" landgebiedgeboorte="229" geslachtsaand="1"/>
     <kern.pers id="1" srt="1" admhnd="2" tslaatstewijz="2015-05-15 09:38:47.742" sorteervolgorde="1" tslaatstewijzgbasystematiek="2015-05-15 09:38:47.742"
                bsn="334801977" anr="7568727841" indafgeleid="true" indnreeks="false" voornamen="Cindy" voorvoegsel="de" scheidingsteken=" " geslnaamstam="Vries"
                datgeboorte="19660821" gemgeboorte="17" landgebiedgeboorte="229" geslachtsaand="2" datinschr="19940930" versienr="5"
-               dattijdstempel="2014-01-01 15:35:01.0" bijhpartij="602" bijhaard="1" naderebijhaard="1" indonverwdocaanw="false" naamgebruik="1"
+               dattijdstempel="2014-01-01 15:35:01.0" bijhpartij="602" bijhaard="1" naderebijhaard="1" naamgebruik="1"
                indnaamgebruikafgeleid="true" voornamennaamgebruik="Cindy" voorvoegselnaamgebruik="de" scheidingstekennaamgebruik=" "
                geslnaamstamnaamgebruik="Vries" gempk="521" indpkvollediggeconv="true"/>
-    <kern.pers id="9" srt="3" sorteervolgorde="1" indafgeleid="false" indnreeks="false" voornamen="Sarah" geslnaamstam="Zomer" datgeboorte="19420831"
+    <kern.pers id="9" srt="2" sorteervolgorde="1" indafgeleid="false" indnreeks="false" voornamen="Sarah" geslnaamstam="Zomer" datgeboorte="19420831"
                gemgeboorte="16" landgebiedgeboorte="229" geslachtsaand="2"/>
-    <kern.pers id="10" srt="3" sorteervolgorde="1" indafgeleid="false" indnreeks="false" voornamen="Simon" voorvoegsel="de" scheidingsteken=" "
+    <kern.pers id="10" srt="2" sorteervolgorde="1" indafgeleid="false" indnreeks="false" voornamen="Simon" voorvoegsel="de" scheidingsteken=" "
                geslnaamstam="Vries" datgeboorte="19381118" gemgeboorte="16" landgebiedgeboorte="229" geslachtsaand="1"/>
     <kern.pers id="6" srt="1" admhnd="5" tslaatstewijz="2015-05-15 09:39:58.332" sorteervolgorde="1" tslaatstewijzgbasystematiek="2015-05-15 09:39:58.332"
                bsn="652298825" anr="8409813281" indafgeleid="true" indnreeks="false" voornamen="Lina" voorvoegsel="de" scheidingsteken=" " geslnaamstam="Vries"
                datgeboorte="19660821" gemgeboorte="17" landgebiedgeboorte="229" geslachtsaand="2" datinschr="19940930" versienr="4"
-               dattijdstempel="2013-07-01 16:35:01.0" bijhpartij="629" bijhaard="1" naderebijhaard="1" indonverwdocaanw="false" naamgebruik="1"
+               dattijdstempel="2013-07-01 16:35:01.0" bijhpartij="629" bijhaard="1" naderebijhaard="1" naamgebruik="1"
                indnaamgebruikafgeleid="true" voornamennaamgebruik="Lina" voorvoegselnaamgebruik="de" scheidingstekennaamgebruik=" "
                geslnaamstamnaamgebruik="Vries" gempk="521" indpkvollediggeconv="true"/>
     <kern.persadres id="1" pers="1" srt="1" rdnwijz="1" aangadresh="3" dataanvadresh="20140101" identcodeadresseerbaarobject="0726010010016001"
@@ -97,19 +106,17 @@
     <kern.persvoornaam id="2" pers="6" volgnr="1" naam="Lina"/>
     <kern.onderzoek/>
     <kern.gegeveninonderzoek/>
-    <kern.personderzoek/>
-    <kern.partijonderzoek/>
     <kern.persverstrbeperking/>
     <kern.persindicatie/>
     <kern.persreisdoc/>
     <kern.persverificatie/>
     <kern.relatie id="2" srt="3"/>
     <kern.relatie id="4" srt="3"/>
-    <kern.betr id="4" relatie="2" rol="2" pers="4" indouder="true"/>
-    <kern.betr id="5" relatie="2" rol="2" pers="5" indouder="true"/>
+    <kern.betr id="4" relatie="2" rol="2" pers="4" />
+    <kern.betr id="5" relatie="2" rol="2" pers="5" />
     <kern.betr id="6" relatie="2" rol="1" pers="1"/>
-    <kern.betr id="10" relatie="4" rol="2" pers="9" indouder="true"/>
-    <kern.betr id="11" relatie="4" rol="2" pers="10" indouder="true"/>
+    <kern.betr id="10" relatie="4" rol="2" pers="9" />
+    <kern.betr id="11" relatie="4" rol="2" pers="10" />
     <kern.betr id="12" relatie="4" rol="1" pers="6"/>
     <verconv.lo3aandouder/>
     <kern.his_betr id="4" betr="4" tsreg="1994-09-30 02:00:00.0" actieinh="13"/>
@@ -118,26 +125,12 @@
     <kern.his_betr id="10" betr="10" tsreg="1994-09-30 02:00:00.0" actieinh="27"/>
     <kern.his_betr id="11" betr="11" tsreg="1994-09-30 02:00:00.0" actieinh="28"/>
     <kern.his_betr id="12" betr="12" tsreg="1994-09-30 02:00:00.0" actieinh="27"/>
-    <kern.his_doc id="1" doc="1" tsreg="1994-09-30 02:00:00.0" actieinh="1" oms="PK" partij="521"/>
-    <kern.his_doc id="2" doc="2" tsreg="1994-09-30 02:00:00.0" actieinh="2" oms="PK" partij="521"/>
-    <kern.his_doc id="3" doc="3" tsreg="1994-09-30 02:00:00.0" actieinh="4" oms="PKA" partij="521"/>
-    <kern.his_doc id="4" doc="4" tsreg="1994-09-30 02:00:00.0" actieinh="9" oms="PK" partij="521"/>
-    <kern.his_doc id="5" doc="5" tsreg="1994-09-30 02:00:00.0" actieinh="13" oms="PK" partij="521"/>
-    <kern.his_doc id="6" doc="6" tsreg="1994-09-30 02:00:00.0" actieinh="14" oms="PK" partij="521"/>
-    <kern.his_doc id="7" doc="7" tsreg="1994-09-30 02:00:00.0" actieinh="15" oms="PK" partij="521"/>
-    <kern.his_doc id="8" doc="8" tsreg="1994-09-30 02:00:00.0" actieinh="16" oms="PK" partij="521"/>
-    <kern.his_doc id="9" doc="9" tsreg="1994-09-30 02:00:00.0" actieinh="18" oms="PKA" partij="521"/>
-    <kern.his_doc id="10" doc="10" tsreg="1994-09-30 02:00:00.0" actieinh="23" oms="PK" partij="521"/>
-    <kern.his_doc id="11" doc="11" tsreg="1994-09-30 02:00:00.0" actieinh="27" oms="PK" partij="521"/>
-    <kern.his_doc id="12" doc="12" tsreg="1994-09-30 02:00:00.0" actieinh="28" oms="PK" partij="521"/>
     <kern.his_onderzoek/>
-    <kern.his_onderzoekafgeleidadminis/>
     <kern.his_ouderouderlijkgezag/>
-    <kern.his_partijonderzoek/>
-    <kern.his_ouderouderschap id="3" betr="4" dataanvgel="19660821" tsreg="1994-09-30 02:00:00.0" actieinh="13" indouder="true"/>
-    <kern.his_ouderouderschap id="4" betr="5" dataanvgel="19660821" tsreg="1994-09-30 02:00:00.0" actieinh="14" indouder="true"/>
-    <kern.his_ouderouderschap id="7" betr="10" dataanvgel="19660821" tsreg="1994-09-30 02:00:00.0" actieinh="27" indouder="true"/>
-    <kern.his_ouderouderschap id="8" betr="11" dataanvgel="19660821" tsreg="1994-09-30 02:00:00.0" actieinh="28" indouder="true"/>
+    <kern.his_ouderouderschap id="3" betr="4" dataanvgel="19660821" tsreg="1994-09-30 02:00:00.0" actieinh="13" />
+    <kern.his_ouderouderschap id="4" betr="5" dataanvgel="19660821" tsreg="1994-09-30 02:00:00.0" actieinh="14" />
+    <kern.his_ouderouderschap id="7" betr="10" dataanvgel="19660821" tsreg="1994-09-30 02:00:00.0" actieinh="27" />
+    <kern.his_ouderouderschap id="8" betr="11" dataanvgel="19660821" tsreg="1994-09-30 02:00:00.0" actieinh="28" />
     <kern.his_persadres id="1" persadres="1" dataanvgel="19901002" dateindegel="19951213" tsreg="1994-09-30 02:00:00.0" actieinh="5" actieaanpgel="7" srt="1"
                         rdnwijz="2" dataanvadresh="19901002" gem="521" afgekortenor="Van Swietenstraat" huisnr="20" postcode="2518EH" landgebied="229"/>
     <kern.his_persadres id="2" persadres="1" dataanvgel="19951213" dateindegel="19980622" tsreg="1995-12-14 02:00:00.0" actieinh="7" actieaanpgel="8" srt="1"
@@ -178,44 +171,44 @@
                         nor="Baron Schimmelpenninck van der Oyelaan" afgekortenor="S vd Oyeln" huisnr="16" postcode="2252EB" wplnaam="Voorschoten"
                         landgebied="229"/>
     <kern.his_persafgeleidadministrati id="2" pers="1" tsreg="2015-05-15 09:38:47.742" actieinh="12" admhnd="2" tslaatstewijz="2015-05-15 09:38:47.742"
-                                       sorteervolgorde="1" indonverwbijhvoorstelnieting="false" tslaatstewijzgbasystematiek="2015-05-15 09:38:47.742"/>
+                                       sorteervolgorde="1" tslaatstewijzgbasystematiek="2015-05-15 09:38:47.742"/>
     <kern.his_persafgeleidadministrati id="1" pers="1" tsreg="2012-07-01 03:00:00.0" tsverval="2015-05-15 09:38:47.742" actieinh="3" actieverval="12"
-                                       admhnd="1000" tslaatstewijz="2015-05-15 09:38:44.086" sorteervolgorde="1" indonverwbijhvoorstelnieting="false"
+                                       admhnd="1000" tslaatstewijz="2015-05-15 09:38:44.086" sorteervolgorde="1"
                                        tslaatstewijzgbasystematiek="2015-05-15 09:38:44.086"/>
     <kern.his_persafgeleidadministrati id="4" pers="6" tsreg="2015-05-15 09:39:58.332" actieinh="26" admhnd="5" tslaatstewijz="2015-05-15 09:39:58.332"
-                                       sorteervolgorde="1" indonverwbijhvoorstelnieting="false" tslaatstewijzgbasystematiek="2015-05-15 09:39:58.332"/>
+                                       sorteervolgorde="1" tslaatstewijzgbasystematiek="2015-05-15 09:39:58.332"/>
     <kern.his_persafgeleidadministrati id="3" pers="6" tsreg="2012-07-01 03:00:00.0" tsverval="2015-05-15 09:39:58.332" actieinh="17" actieverval="26"
-                                       admhnd="4" tslaatstewijz="2015-05-15 09:39:57.11" sorteervolgorde="1" indonverwbijhvoorstelnieting="false"
+                                       admhnd="4" tslaatstewijz="2015-05-15 09:39:57.11" sorteervolgorde="1"
                                        tslaatstewijzgbasystematiek="2015-05-15 09:39:57.11"/>
     <kern.his_persbijhouding id="1" pers="1" dataanvgel="19901002" tsreg="1994-09-30 02:00:00.0" tsverval="1994-09-30 02:00:00.0" actieinh="5" actieverval="5"
-                             bijhpartij="521" bijhaard="3" naderebijhaard="8" indonverwdocaanw="false"/>
+                             bijhpartij="521" bijhaard="3" naderebijhaard="8" />
     <kern.his_persbijhouding id="2" pers="1" dataanvgel="19901002" dateindegel="19980622" tsreg="1995-12-14 02:00:00.0" actieinh="7" actieaanpgel="6"
-                             bijhpartij="521" bijhaard="3" naderebijhaard="8" indonverwdocaanw="false"/>
+                             bijhpartij="521" bijhaard="3" naderebijhaard="8" />
     <kern.his_persbijhouding id="3" pers="1" dataanvgel="19980622" tsreg="1998-06-24 03:00:00.0" tsverval="1998-06-24 03:00:00.0" actieinh="8" actieverval="8"
-                             bijhpartij="629" bijhaard="3" naderebijhaard="8" indonverwdocaanw="false"/>
+                             bijhpartij="629" bijhaard="3" naderebijhaard="8" />
     <kern.his_persbijhouding id="5" pers="1" dataanvgel="20140101" tsreg="2014-01-01 02:00:00.0" actieinh="10" bijhpartij="602" bijhaard="1" naderebijhaard="1"
-                             indonverwdocaanw="false"/>
+                             />
     <kern.his_persbijhouding id="6" pers="1" dataanvgel="19980622" dateindegel="20140101" tsreg="2011-03-17 02:00:00.001" actieinh="6" actieaanpgel="10"
-                             bijhpartij="629" bijhaard="3" naderebijhaard="8" indonverwdocaanw="false"/>
+                             bijhpartij="629" bijhaard="3" naderebijhaard="8" />
     <kern.his_persbijhouding id="4" pers="1" dataanvgel="19980622" tsreg="2011-03-17 02:00:00.0" tsverval="2011-03-17 02:00:00.0" actieinh="6" actieverval="6"
                              actievervaltbvlevmuts="11" indvoorkomentbvlevmuts="true" bijhpartij="629" bijhaard="1" naderebijhaard="1"
-                             indonverwdocaanw="false"/>
+                             />
     <kern.his_persbijhouding id="7" pers="6" dataanvgel="19901002" tsreg="1994-09-30 02:00:00.0" tsverval="1994-09-30 02:00:00.0" actieinh="19" actieverval="19"
-                             bijhpartij="521" bijhaard="3" naderebijhaard="8" indonverwdocaanw="false"/>
+                             bijhpartij="521" bijhaard="3" naderebijhaard="8" />
     <kern.his_persbijhouding id="9" pers="6" dataanvgel="19980622" tsreg="1998-06-24 03:00:00.0" tsverval="1998-06-24 03:00:00.0" actieinh="22" actieverval="22"
-                             bijhpartij="629" bijhaard="3" naderebijhaard="8" indonverwdocaanw="false"/>
+                             bijhpartij="629" bijhaard="3" naderebijhaard="8" />
     <kern.his_persbijhouding id="11" pers="6" dataanvgel="19901002" dateindegel="19980622" tsreg="1995-12-14 02:00:00.001" actieinh="21" actieaanpgel="24"
-                             bijhpartij="521" bijhaard="3" naderebijhaard="8" indonverwdocaanw="false"/>
+                             bijhpartij="521" bijhaard="3" naderebijhaard="8" />
     <kern.his_persbijhouding id="12" pers="6" dataanvgel="19980622" tsreg="2011-03-17 02:00:00.001" tsverval="2011-03-17 02:00:00.001" actieinh="20"
-                             actieverval="20" actievervaltbvlevmuts="25" bijhpartij="629" bijhaard="3" naderebijhaard="8" indonverwdocaanw="false"/>
+                             actieverval="20" actievervaltbvlevmuts="25" bijhpartij="629" bijhaard="3" naderebijhaard="8" />
     <kern.his_persbijhouding id="13" pers="6" dataanvgel="19980622" tsreg="2013-07-02 03:00:00.0" actieinh="24" bijhpartij="629" bijhaard="1" naderebijhaard="1"
-                             indonverwdocaanw="false"/>
+                             />
     <kern.his_persbijhouding id="8" pers="6" dataanvgel="19901002" dateindegel="19980622" tsreg="1995-12-14 02:00:00.0" tsverval="1995-12-14 02:00:00.0"
                              actieinh="21" actieverval="21" actieaanpgel="20" actievervaltbvlevmuts="25" indvoorkomentbvlevmuts="true" bijhpartij="521"
-                             bijhaard="3" naderebijhaard="8" indonverwdocaanw="false"/>
+                             bijhaard="3" naderebijhaard="8" />
     <kern.his_persbijhouding id="10" pers="6" dataanvgel="19980622" tsreg="2011-03-17 02:00:00.0" tsverval="2011-03-17 02:00:00.0" actieinh="20"
                              actieverval="20" actievervaltbvlevmuts="25" indvoorkomentbvlevmuts="true" bijhpartij="629" bijhaard="1" naderebijhaard="1"
-                             indonverwdocaanw="false"/>
+                             />
     <kern.his_persgeboorte id="3" pers="1" tsreg="1994-09-30 02:00:00.0" actieinh="4" datgeboorte="19660821" gemgeboorte="17" landgebiedgeboorte="229"/>
     <kern.his_persgeboorte id="4" pers="4" tsreg="1994-09-30 02:00:00.0" actieinh="13" datgeboorte="19420831" gemgeboorte="16" landgebiedgeboorte="229"/>
     <kern.his_persgeboorte id="5" pers="5" tsreg="1994-09-30 02:00:00.0" actieinh="14" datgeboorte="19381118" gemgeboorte="16" landgebiedgeboorte="229"/>
@@ -261,7 +254,6 @@
     <kern.his_persvoornaam id="1" persvoornaam="1" dataanvgel="19920808" tsreg="1994-09-30 02:00:00.0" actieinh="4" naam="Cindy"/>
     <kern.his_persvoornaam id="2" persvoornaam="2" dataanvgel="19920808" tsreg="1994-09-30 02:00:00.0" actieinh="18" naam="Lina"/>
     <kern.his_persindicatie/>
-    <kern.his_personderzoek/>
     <kern.his_persverstrbeperking/>
     <kern.his_persoverlijden/>
     <kern.his_persreisdoc/>

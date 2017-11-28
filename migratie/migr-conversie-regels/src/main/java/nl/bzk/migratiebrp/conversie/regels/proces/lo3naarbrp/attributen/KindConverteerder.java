@@ -9,10 +9,8 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
@@ -33,22 +31,24 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenRelatie;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Deze class bevat de logica om een LO3 Kind te converteren naar BRP relaties, betrokkenen en gerelateerde personen.
  */
-@Component
-@Requirement({Requirements.CRP001, Requirements.CRP001_LB01, Requirements.CR001 })
+@Requirement({Requirements.CRP001, Requirements.CRP001_LB01, Requirements.CR001})
 public class KindConverteerder extends AbstractRelatieConverteerder {
 
     /**
+     * Constructor.
+     * @param lo3AttribuutConverteerder Lo3AttribuutConverteerder
+     */
+    public KindConverteerder(final Lo3AttribuutConverteerder lo3AttribuutConverteerder) {
+        super(lo3AttribuutConverteerder);
+    }
+
+    /**
      * Converteert de LO3 Kinder stapels naar de corresponderende BRP groepen en vult hiermee de migratie builder aan.
-     * 
-     * @param kindStapels
-     *            de lijst met stapels voor Kind, mag niet null zijn, maar wel leeg
-     * @param tussenPersoonslijstBuilder
-     *            de migratie persoonslijst builder
+     * @param kindStapels de lijst met stapels voor Kind, mag niet null zijn, maar wel leeg
+     * @param tussenPersoonslijstBuilder de migratie persoonslijst builder
      */
     public final void converteer(final List<Lo3Stapel<Lo3KindInhoud>> kindStapels, final TussenPersoonslijstBuilder tussenPersoonslijstBuilder) {
 
@@ -136,15 +136,14 @@ public class KindConverteerder extends AbstractRelatieConverteerder {
         }
 
         // Sorteren op 85.10 nieuw naar oud
-        Collections.sort(result, Lo3Categorie.DATUM_GELDIGHEID);
+        result.sort(Lo3Categorie.DATUM_GELDIGHEID);
         // Actueel voorkomen als eerste in de lijst toevoegen
         result.add(0, actueelVoorkomen);
 
         return result;
     }
 
-    private TussenRelatie maakMigratieRelatie(final TussenStapel<BrpIstRelatieGroepInhoud> istStapel, final List<TussenBetrokkenheid> betrokkenheidStapels)
-    {
+    private TussenRelatie maakMigratieRelatie(final TussenStapel<BrpIstRelatieGroepInhoud> istStapel, final List<TussenBetrokkenheid> betrokkenheidStapels) {
         final TussenRelatie.Builder relatieBuilder =
                 new TussenRelatie.Builder(BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, BrpSoortBetrokkenheidCode.OUDER);
         relatieBuilder.betrokkenheden(betrokkenheidStapels);
@@ -160,11 +159,10 @@ public class KindConverteerder extends AbstractRelatieConverteerder {
     }
 
     private List<TussenBetrokkenheid> maakBetrokkenheidStapels(
-        final List<TussenGroep<BrpIdentificatienummersInhoud>> persoonIdentificatienummersGroepen,
-        final List<TussenGroep<BrpGeboorteInhoud>> geboorteGroepen,
-        final List<TussenGroep<BrpSamengesteldeNaamInhoud>> samengesteldeNaamGroepen,
-        final List<TussenGroep<BrpOuderInhoud>> ouderGroepen)
-    {
+            final List<TussenGroep<BrpIdentificatienummersInhoud>> persoonIdentificatienummersGroepen,
+            final List<TussenGroep<BrpGeboorteInhoud>> geboorteGroepen,
+            final List<TussenGroep<BrpSamengesteldeNaamInhoud>> samengesteldeNaamGroepen,
+            final List<TussenGroep<BrpOuderInhoud>> ouderGroepen) {
 
         // STAPELS
         final TussenStapel<BrpIdentificatienummersInhoud> identificatienummersStapel;
@@ -184,13 +182,13 @@ public class KindConverteerder extends AbstractRelatieConverteerder {
 
         final TussenBetrokkenheid betrokkenheidStapelKind =
                 new TussenBetrokkenheid(
-                    BrpSoortBetrokkenheidCode.KIND,
-                    identificatienummersStapel,
-                    null,
-                    geboorteStapel,
-                    null,
-                    samengesteldeNaamStapel,
-                    ouderStapel);
+                        BrpSoortBetrokkenheidCode.KIND,
+                        identificatienummersStapel,
+                        null,
+                        geboorteStapel,
+                        null,
+                        samengesteldeNaamStapel,
+                        ouderStapel);
 
         return Collections.singletonList(betrokkenheidStapelKind);
     }
@@ -205,21 +203,21 @@ public class KindConverteerder extends AbstractRelatieConverteerder {
 
         final BrpIstRelatieGroepInhoud istKindGroepInhoud =
                 maakIstRelatieGroepInhoud(
-                    lo3Inhoud.getAdellijkeTitelPredikaatCode(),
-                    lo3Inhoud.getVoornamen(),
-                    lo3Inhoud.getVoorvoegselGeslachtsnaam(),
-                    lo3Inhoud.getGeslachtsnaam(),
-                    lo3Inhoud.getGeboorteGemeenteCode(),
-                    lo3Inhoud.getGeboorteLandCode(),
-                    lo3Inhoud.getGeboortedatum(),
-                    null,
-                    lo3Inhoud.getaNummer(),
-                    lo3Inhoud.getBurgerservicenummer(),
-                    null,
-                    lo3Documentatie,
-                    lo3Onderzoek,
-                    lo3Historie,
-                    lo3Herkomst);
+                        lo3Inhoud.getAdellijkeTitelPredikaatCode(),
+                        lo3Inhoud.getVoornamen(),
+                        lo3Inhoud.getVoorvoegselGeslachtsnaam(),
+                        lo3Inhoud.getGeslachtsnaam(),
+                        lo3Inhoud.getGeboorteGemeenteCode(),
+                        lo3Inhoud.getGeboorteLandCode(),
+                        lo3Inhoud.getGeboortedatum(),
+                        null,
+                        lo3Inhoud.getaNummer(),
+                        lo3Inhoud.getBurgerservicenummer(),
+                        null,
+                        lo3Documentatie,
+                        lo3Onderzoek,
+                        lo3Historie,
+                        lo3Herkomst);
         istTussenGroepen.add(maakMigratieGroep(istKindGroepInhoud));
     }
 
@@ -291,16 +289,14 @@ public class KindConverteerder extends AbstractRelatieConverteerder {
     /**
      * Eerste rij is altijd gevuld als actueel gevuld is. De volgende rij is dus een lege rij. index altijd +2 omdat er
      * koppeltjes gevormd worden leeg, gevuld.
-     * 
-     * @param rijen
-     *            kind rijen
-     * @param actueelDatum
-     *            actueel datum
+     * @param rijen kind rijen
+     * @param actueelDatum actueel datum
      */
     final void contoleLeegGevuld(final List<Lo3Categorie<Lo3KindInhoud>> rijen, final Integer actueelDatum) {
         boolean rijenVerwijderd = false;
-        for (int legeRijIndex = 1; legeRijIndex < rijen.size(); legeRijIndex += 2) {
-            int gevuldeRijIndex;
+        final int aantalRijenOverslaan = 2;
+        for (int legeRijIndex = 1; legeRijIndex < rijen.size(); legeRijIndex += aantalRijenOverslaan) {
+            final int gevuldeRijIndex;
             if (!rijenVerwijderd) {
                 gevuldeRijIndex = legeRijIndex + 1;
             } else {
@@ -329,44 +325,46 @@ public class KindConverteerder extends AbstractRelatieConverteerder {
     private TussenGroep<BrpIdentificatienummersInhoud> migreerIdentificatienummers(final Lo3Categorie<Lo3KindInhoud> kind) {
         final Lo3KindInhoud inhoud = kind.getInhoud();
         return getUtils().maakIdentificatieGroep(
-            inhoud.getaNummer(),
-            inhoud.getBurgerservicenummer(),
-            kind.getHistorie(),
-            kind.getDocumentatie(),
-            kind.getLo3Herkomst());
+                inhoud.getaNummer(),
+                inhoud.getBurgerservicenummer(),
+                kind.getHistorie(),
+                kind.getDocumentatie(),
+                kind.getLo3Herkomst());
     }
 
     private TussenGroep<BrpGeboorteInhoud> migreerGeboorte(final Lo3Categorie<Lo3KindInhoud> kind) {
         final Lo3KindInhoud inhoud = kind.getInhoud();
         return getUtils().maakGeboorteGroep(
-            inhoud.getGeboorteGemeenteCode(),
-            inhoud.getGeboorteLandCode(),
-            inhoud.getGeboortedatum(),
-            kind.getHistorie(),
-            kind.getDocumentatie(),
-            kind.getLo3Herkomst());
+                inhoud.getGeboorteGemeenteCode(),
+                inhoud.getGeboorteLandCode(),
+                inhoud.getGeboortedatum(),
+                kind.getHistorie(),
+                kind.getDocumentatie(),
+                kind.getLo3Herkomst());
     }
 
     private TussenGroep<BrpSamengesteldeNaamInhoud> migreerNaam(final Lo3Categorie<Lo3KindInhoud> kind) {
         final Lo3KindInhoud inhoud = kind.getInhoud();
         return getUtils().maakSamengesteldeNaamGroep(
-            inhoud.getAdellijkeTitelPredikaatCode(),
-            inhoud.getVoornamen(),
-            inhoud.getVoorvoegselGeslachtsnaam(),
-            inhoud.getGeslachtsnaam(),
-            kind.getHistorie(),
-            kind.getDocumentatie(),
-            kind.getLo3Herkomst());
+                inhoud.getAdellijkeTitelPredikaatCode(),
+                inhoud.getVoornamen(),
+                inhoud.getVoorvoegselGeslachtsnaam(),
+                inhoud.getGeslachtsnaam(),
+                kind.getHistorie(),
+                kind.getDocumentatie(),
+                kind.getLo3Herkomst());
     }
 
     private TussenGroep<BrpOuderInhoud> migreerOuder(final Lo3Categorie<Lo3KindInhoud> kind) {
         final Lo3KindInhoud inhoud = kind.getInhoud();
 
-        final Boolean indicatieKind = !inhoud.isLeeg();
-        BrpOuderInhoud ouderInhoud = new BrpOuderInhoud(null, null);
-        if (indicatieKind) {
-            ouderInhoud = new BrpOuderInhoud(new BrpBoolean(true, null), null);
+        final BrpOuderInhoud ouderInhoud;
+        if (inhoud.isLeeg()) {
+            ouderInhoud = BrpOuderInhoud.maakLegeInhoud();
+        } else {
+            ouderInhoud = new BrpOuderInhoud(null);
         }
+
         return new TussenGroep<>(ouderInhoud, kind.getHistorie(), kind.getDocumentatie(), kind.getLo3Herkomst());
     }
 }

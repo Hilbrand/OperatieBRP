@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.test.perf.isc;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
-import org.simpleframework.xml.Element;
 
 /**
  * Test resultaat: processen.
@@ -26,17 +26,16 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Constructor.
-     * 
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
+     * @param thema thema
+     * @param naam naam
      */
     protected ProcessenTestResultaat(final String thema, final String naam) {
         super(thema, naam);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.test.common.resultaat.TestResultaat#isSucces()
      */
     @Override
@@ -46,7 +45,6 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van duration.
-     *
      * @return duration
      */
     public Long getDuration() {
@@ -55,9 +53,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van duration.
-     *
-     * @param duration
-     *            duration
+     * @param duration duration
      */
     public void setDuration(final Long duration) {
         this.duration = duration;
@@ -65,7 +61,6 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van aantal.
-     *
      * @return aantal
      */
     public Long getAantal() {
@@ -74,9 +69,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van aantal.
-     *
-     * @param aantal
-     *            aantal
+     * @param aantal aantal
      */
     public void setAantal(final Long aantal) {
         this.aantal = aantal;
@@ -84,7 +77,6 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van resultaat.
-     *
      * @return resultaat
      */
     public TestStap getResultaat() {
@@ -93,9 +85,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van resultaat.
-     *
-     * @param resultaat
-     *            resultaat
+     * @param resultaat resultaat
      */
     public void setResultaat(final TestStap resultaat) {
         this.resultaat = resultaat;

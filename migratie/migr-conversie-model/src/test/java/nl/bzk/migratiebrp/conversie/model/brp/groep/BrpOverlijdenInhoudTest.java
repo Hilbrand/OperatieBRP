@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotSame;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -20,47 +19,46 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-
 import org.junit.Test;
 
 public class BrpOverlijdenInhoudTest {
 
-    private static final String STRING_123 = "123";
+    private static final String STRING_1234 = "1234";
     private static final String STRING_6030 = "6030";
     private static final String OMSCHRIJVING = "omschrijving";
 
     private final BrpOverlijdenInhoud inhoud1 = new BrpOverlijdenInhoud(
-        new BrpDatum(20080102, null),
-        new BrpGemeenteCode(Short.parseShort(STRING_123)),
-        new BrpString("WP"),
-        new BrpString("BP"),
-        new BrpString("BR"),
-        new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-        new BrpString(OMSCHRIJVING));
+            new BrpDatum(20080102, null),
+            new BrpGemeenteCode(STRING_1234),
+            new BrpString("WP"),
+            new BrpString("BP"),
+            new BrpString("BR"),
+            new BrpLandOfGebiedCode(STRING_6030),
+            new BrpString(OMSCHRIJVING));
     private final BrpOverlijdenInhoud inhoud2gelijkAan1 = new BrpOverlijdenInhoud(new BrpDatum(20080102, null), new BrpGemeenteCode(
-        Short.parseShort(STRING_123)), new BrpString("WP"), new BrpString("BP"), new BrpString("BR"), new BrpLandOfGebiedCode(
-        Short.parseShort(STRING_6030)), new BrpString(OMSCHRIJVING));
+            STRING_1234), new BrpString("WP"), new BrpString("BP"), new BrpString("BR"), new BrpLandOfGebiedCode(
+            STRING_6030), new BrpString(OMSCHRIJVING));
     private final BrpOverlijdenInhoud inhoud3ongelijkAan1 = new BrpOverlijdenInhoud(
-        new BrpDatum(20080102, null),
-        new BrpGemeenteCode(Short.parseShort("333")),
-        new BrpString("WP"),
-        new BrpString("BP"),
-        new BrpString("BR"),
-        new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-        new BrpString(OMSCHRIJVING));
+            new BrpDatum(20080102, null),
+            new BrpGemeenteCode("3333"),
+            new BrpString("WP"),
+            new BrpString("BP"),
+            new BrpString("BR"),
+            new BrpLandOfGebiedCode(STRING_6030),
+            new BrpString(OMSCHRIJVING));
     private final BrpOverlijdenInhoud inhoud4ongelijkAan1 = new BrpOverlijdenInhoud(new BrpDatum(20080202, null), new BrpGemeenteCode(
-        Short.parseShort(STRING_123)), new BrpString("WP"), new BrpString("BP"), new BrpString("BR"), new BrpLandOfGebiedCode(
-        Short.parseShort(STRING_6030)), new BrpString(OMSCHRIJVING));
+            STRING_1234), new BrpString("WP"), new BrpString("BP"), new BrpString("BR"), new BrpLandOfGebiedCode(
+            STRING_6030), new BrpString(OMSCHRIJVING));
 
     public static BrpOverlijdenInhoud createInhoud() {
         return new BrpOverlijdenInhoud(
-            new BrpDatum(20080102, null),
-            new BrpGemeenteCode(Short.parseShort(STRING_123)),
-            new BrpString("WP"),
-            null,
-            null,
-            BrpLandOfGebiedCode.NEDERLAND,
-            new BrpString(OMSCHRIJVING));
+                new BrpDatum(20080102, null),
+                new BrpGemeenteCode(STRING_1234),
+                new BrpString("WP"),
+                null,
+                null,
+                BrpLandOfGebiedCode.NEDERLAND,
+                new BrpString(OMSCHRIJVING));
     }
 
     public static BrpStapel<BrpOverlijdenInhoud> createStapel() {
@@ -78,25 +76,25 @@ public class BrpOverlijdenInhoudTest {
     @Test(expected = NullPointerException.class)
     public void testBrpOverlijdenInhoudDatumNull() {
         new BrpOverlijdenInhoud(
-            null,
-            new BrpGemeenteCode(Short.parseShort(STRING_123)),
-            new BrpString("WP"),
-            new BrpString("BP"),
-            new BrpString("BR"),
-            new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-            new BrpString(OMSCHRIJVING));
+                null,
+                new BrpGemeenteCode(STRING_1234),
+                new BrpString("WP"),
+                new BrpString("BP"),
+                new BrpString("BR"),
+                new BrpLandOfGebiedCode(STRING_6030),
+                new BrpString(OMSCHRIJVING));
     }
 
     @Test(expected = NullPointerException.class)
     public void testBrpOverlijdenInhoudLandCodeNull() {
         new BrpOverlijdenInhoud(
-            new BrpDatum(20080102, null),
-            new BrpGemeenteCode(Short.parseShort(STRING_123)),
-            new BrpString("WP"),
-            new BrpString("BP"),
-            new BrpString("BR"),
-            null,
-            new BrpString(OMSCHRIJVING));
+                new BrpDatum(20080102, null),
+                new BrpGemeenteCode(STRING_1234),
+                new BrpString("WP"),
+                new BrpString("BP"),
+                new BrpString("BR"),
+                null,
+                new BrpString(OMSCHRIJVING));
     }
 
     @Test
@@ -106,7 +104,7 @@ public class BrpOverlijdenInhoudTest {
 
     @Test
     public void testGetGemeenteCode() {
-        assertEquals(new BrpGemeenteCode(Short.parseShort(STRING_123)), inhoud1.getGemeenteCode());
+        assertEquals(new BrpGemeenteCode(STRING_1234), inhoud1.getGemeenteCode());
     }
 
     @Test
@@ -126,7 +124,7 @@ public class BrpOverlijdenInhoudTest {
 
     @Test
     public void testGetLandCode() {
-        assertEquals(new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)), inhoud1.getLandOfGebiedCode());
+        assertEquals(new BrpLandOfGebiedCode(STRING_6030), inhoud1.getLandOfGebiedCode());
     }
 
     @Test
@@ -138,13 +136,13 @@ public class BrpOverlijdenInhoudTest {
     public void testIsLeeg() {
         assertFalse(inhoud1.isLeeg());
         assertFalse(new BrpOverlijdenInhoud(
-            new BrpDatum(20090102, null),
-            null,
-            null,
-            null,
-            null,
-            new BrpLandOfGebiedCode(Short.parseShort(STRING_6030)),
-            null).isLeeg());
+                new BrpDatum(20090102, null),
+                null,
+                null,
+                null,
+                null,
+                new BrpLandOfGebiedCode(STRING_6030),
+                null).isLeeg());
     }
 
     @Test

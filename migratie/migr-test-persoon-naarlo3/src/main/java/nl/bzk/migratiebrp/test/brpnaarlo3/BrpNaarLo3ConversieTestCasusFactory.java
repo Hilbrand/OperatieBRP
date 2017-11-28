@@ -11,15 +11,18 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.BrpExcelAdapter;
 import nl.bzk.migratiebrp.test.dal.AbstractTestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -37,9 +40,7 @@ public final class BrpNaarLo3ConversieTestCasusFactory extends AbstractTestCasus
 
     /**
      * Constructor.
-     *
-     * @param context
-     *            de Spring Application context
+     * @param context de Spring Application context
      */
     protected BrpNaarLo3ConversieTestCasusFactory(final GenericXmlApplicationContext context) {
         super(context);
@@ -92,6 +93,7 @@ public final class BrpNaarLo3ConversieTestCasusFactory extends AbstractTestCasus
         }
 
         @Override
+        
         public List<TestCasus> doInTransaction(final TransactionStatus status) {
             final List<TestCasus> result = new ArrayList<>();
 
@@ -104,11 +106,11 @@ public final class BrpNaarLo3ConversieTestCasusFactory extends AbstractTestCasus
                     if (persoon.getAdministratienummer() != null) {
                         final TestCasus testCasus =
                                 new BrpNaarLo3ConversieTestCasus(
-                                    getThema(),
-                                    maakNaam(file.getName(), i),
-                                    getOutputFolder(),
-                                    getExpectedFolder(),
-                                    persoon.getAdministratienummer());
+                                        getThema(),
+                                        maakNaam(file.getName(), i),
+                                        getOutputFolder(),
+                                        getExpectedFolder(),
+                                        persoon.getAdministratienummer());
 
                         autowireBeanFactory.autowireBean(testCasus);
                         result.add(testCasus);

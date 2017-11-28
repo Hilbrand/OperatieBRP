@@ -6,32 +6,33 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta;
 
-import java.util.List;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractDeltaEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
 import java.util.Collections;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
 
 /**
  * Unittest voor {@link VerschilGroep}.
@@ -45,8 +46,8 @@ public class VerschilGroepTest {
     @Before
     public void setUp() {
         persoon = new Persoon(SoortPersoon.INGESCHREVENE);
-        partij = new Partij("naam", 1);
-        historie = new PersoonBijhoudingHistorie(persoon, partij, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL, false);
+        partij = new Partij("naam", "000001");
+        historie = new PersoonBijhoudingHistorie(persoon, partij, Bijhoudingsaard.INGEZETENE, NadereBijhoudingsaard.ACTUEEL);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -128,7 +129,7 @@ public class VerschilGroepTest {
         final Sleutel sleutel = new EntiteitSleutel(PersoonBijhoudingHistorie.class, "actieInhoud");
         final Verschil verschil = Verschil.maakVerschil(sleutel, historie, null, historie, null);
         verschilGroep.addVerschil(verschil);
-        assertEquals("nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie, actieInhoud", verschilGroep.toString());
+        assertEquals("nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie, actieInhoud", verschilGroep.toString());
     }
 
     @Test
@@ -147,7 +148,7 @@ public class VerschilGroepTest {
     public void testToStringIstSleutelVoorStapelVoorkomen() {
         final Stapel stapel = new Stapel(persoon, "01", 0);
         final StapelVoorkomen stapelVoorkomen = new StapelVoorkomen(stapel, 0, new AdministratieveHandeling(partij,
-                SoortAdministratieveHandeling.GBA_INITIELE_VULLING));
+                SoortAdministratieveHandeling.GBA_INITIELE_VULLING, new Timestamp(System.currentTimeMillis())));
 
         final VerschilGroep verschilGroep = VerschilGroep.maakVerschilGroepZonderHistorie();
         assertEquals("", verschilGroep.toString());
@@ -159,8 +160,8 @@ public class VerschilGroepTest {
     }
 
     @Test
-    public void testFilterOnderzoekVerschillen () {
-        final Sleutel sleutel = new EntiteitSleutel(PersoonBijhoudingHistorie.class, AbstractDeltaEntiteit.GEGEVEN_IN_ONDERZOEK);
+    public void testFilterOnderzoekVerschillen() {
+        final Sleutel sleutel = new EntiteitSleutel(PersoonBijhoudingHistorie.class, AbstractEntiteit.GEGEVEN_IN_ONDERZOEK);
         final Verschil verschil = Verschil.maakVerschil(sleutel, historie, null, historie, null);
 
         final VerschilGroep verschilGroep = VerschilGroep.maakVerschilGroepMetHistorie(historie);

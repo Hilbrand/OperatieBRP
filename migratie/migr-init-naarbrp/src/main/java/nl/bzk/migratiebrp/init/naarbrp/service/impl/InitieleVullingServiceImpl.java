@@ -6,90 +6,128 @@
 
 package nl.bzk.migratiebrp.init.naarbrp.service.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import javax.inject.Inject;
 import javax.jms.Destination;
-import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lg01Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
-import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
-import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.init.naarbrp.domein.ConversieResultaat;
 import nl.bzk.migratiebrp.init.naarbrp.repository.AfnemersIndicatieRepository;
 import nl.bzk.migratiebrp.init.naarbrp.repository.AutorisatieRepository;
-import nl.bzk.migratiebrp.init.naarbrp.repository.GbavRepository;
+import nl.bzk.migratiebrp.init.naarbrp.repository.PersoonRepository;
+import nl.bzk.migratiebrp.init.naarbrp.repository.ProtocolleringRepository;
+import nl.bzk.migratiebrp.init.naarbrp.repository.jdbc.RemoteBrpDatabase;
 import nl.bzk.migratiebrp.init.naarbrp.service.InitieleVullingService;
 import nl.bzk.migratiebrp.init.naarbrp.verwerker.impl.VerzendAfnemersIndicatieBerichtVerwerker;
 import nl.bzk.migratiebrp.init.naarbrp.verwerker.impl.VerzendAutorisatieBerichtVerwerker;
-import nl.bzk.migratiebrp.init.naarbrp.verwerker.impl.VerzendSynchronisatieBerichtVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.excel.ExcelAdapter;
-import nl.bzk.migratiebrp.util.excel.ExcelAdapterException;
-import nl.bzk.migratiebrp.util.excel.ExcelData;
-import org.apache.commons.io.FileUtils;
+import nl.bzk.migratiebrp.init.naarbrp.verwerker.impl.VerzendPersoonBerichtVerwerker;
+import nl.bzk.migratiebrp.init.naarbrp.verwerker.impl.VerzendProtocolleringBerichtVerwerker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 /**
- * Deze service wordt gebruikt voor de acties van initiele vulling. In dit geval: - Het lezen en zetten van berichten op
- * de queue. - Het aanmaken van een initiele vulling tabel adhv de gbav database
+ * Deze service wordt gebruikt voor de acties van initiele vulling. In dit geval: - Het lezen en
+ * zetten van berichten op de queue. - Het aanmaken van een initiele vulling tabel adhv de gbav
+ * database
  */
-// TODO: refactoring. Door de anonymous classes in VerzendXXXBerichtVerwerker te vervangen door toplevel classes, die
-// door Spring van de juiste dependencies worden voorzien, kan hier de Fan-out complexity omlaag.
 @Service("initieleVullingService")
 public final class InitieleVullingServiceImpl implements InitieleVullingService {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
     private static final String TOTAAL_VERWERKTE_BERICHTEN = "Totaal verwerkte berichten: {}";
+    private static final String TOTAAL_VERWERKTE_PROTOCOLLERINGEN = "Totaal verwerkte protocolleringen: {}";
 
+    private final PersoonRepository persoonRepository;
+    private final AutorisatieRepository autorisatieRepository;
+    private final AfnemersIndicatieRepository afnemersIndicatieRepository;
+    private final ProtocolleringRepository protocolleringRepository;
+    private final RemoteBrpDatabase remoteBrpDatabase;
+    private final JmsTemplate jmsTemplate;
+    private final Destination destination;
+    private final ExcelBerichtenService excelBerichtenService;
+
+    private Integer batchPersoon;
+    private Integer batchAutorisatie;
+    private Integer batchAfnemersindicatie;
+    private Integer batchProtocollering;
+
+    private Integer aantalProtocollering;
+
+    /**
+     * Constructor.
+     * @param persoonRepository persoonRepository
+     * @param autorisatieRepository autorisatieRepository
+     * @param afnemersIndicatieRepository afnemersIndicatieRepository
+     * @param protocolleringRepository protocolleringRepository
+     * @param remoteBrpDatabase remoteBrpDatabase
+     * @param jmsTemplate jmsTemplate
+     * @param destination destination
+     * @param excelBerichtenService excelBerichtenService
+     */
     @Inject
-    private GbavRepository gbavRepository;
-
-    @Inject
-    private AutorisatieRepository autorisatieRepository;
-
-    @Inject
-    private AfnemersIndicatieRepository afnemersIndicatieRepository;
-
-    @Inject
-    private JmsTemplate jmsTemplate;
-
-    @Inject
-    private Destination destination;
-
-    @Inject
-    private ExcelAdapter excelAdapter;
-
-    private final Lo3PersoonslijstParser parser = new Lo3PersoonslijstParser();
-
-    private Integer batchSize;
-
-    @Override
-    @Value("${batch.aantal:100}")
-    public void setBatchSize(final Integer batchSize) {
-        this.batchSize = batchSize;
+    public InitieleVullingServiceImpl(final PersoonRepository persoonRepository,
+                                      final AutorisatieRepository autorisatieRepository,
+                                      final AfnemersIndicatieRepository afnemersIndicatieRepository,
+                                      final ProtocolleringRepository protocolleringRepository,
+                                      final RemoteBrpDatabase remoteBrpDatabase,
+                                      final JmsTemplate jmsTemplate,
+                                      final Destination destination,
+                                      final ExcelBerichtenService excelBerichtenService) {
+        this.persoonRepository = persoonRepository;
+        this.autorisatieRepository = autorisatieRepository;
+        this.afnemersIndicatieRepository = afnemersIndicatieRepository;
+        this.protocolleringRepository = protocolleringRepository;
+        this.remoteBrpDatabase = remoteBrpDatabase;
+        this.jmsTemplate = jmsTemplate;
+        this.destination = destination;
+        this.excelBerichtenService = excelBerichtenService;
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* *** INITIELE VULLING PERSONEN ******************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    @Override
+    @Value("${batch.persoon:100}")
+    public void setBatchPersoon(final Integer batchPersoon) {
+        this.batchPersoon = batchPersoon;
+    }
+
+    @Override
+    @Value("${batch.autorisatie:100}")
+    public void setBatchAutorisatie(final Integer batchAutorisatie) {
+        this.batchAutorisatie = batchAutorisatie;
+    }
+
+    @Override
+    @Value("${batch.afnemersindicatie:100}")
+    public void setBatchAfnemersindicatie(final Integer batchAfnemersindicatie) {
+        this.batchAfnemersindicatie = batchAfnemersindicatie;
+    }
+
+    @Override
+    @Value("${batch.protocollering:10}")
+    public void setBatchProtocollering(final Integer batchProtocollering) {
+        this.batchProtocollering = batchProtocollering;
+    }
+
+    @Override
+    @Value("${aantal.protocollering:1000}")
+    public void setAantalProtocollering(final Integer aantalProtocollering) {
+        this.aantalProtocollering = aantalProtocollering;
+    }
+
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* *** INITIELE VULLING PERSONEN ************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
     @Override
     public void laadInitieleVullingTable() {
         LOG.info("De initiele vulling tabel wordt nu gevuld, dit kan even duren!");
-        gbavRepository.laadInitVullingTable();
+        persoonRepository.laadInitVullingTable();
         LOG.info("De initiele vulling tabel is gevuld.");
     }
 
@@ -97,89 +135,29 @@ public final class InitieleVullingServiceImpl implements InitieleVullingService 
     public void vulBerichtenTabelExcel(final String excelFolder) {
         LOG.info("Lees de Excel bestanden in en maak op basis hiervan een initiele vulling tabel");
         LOG.info("Aanmaken tabel als deze nog niet bestaat");
-        gbavRepository.createInitVullingTable();
-
-        final List<File> files = bepaalExcelBestanden(excelFolder);
-        LOG.info("Aantal gevonden excel files: " + files.size());
-        verwerkExcelBestanden(files);
+        persoonRepository.createInitVullingTable();
+        excelBerichtenService.verwerkFolder(excelFolder);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean synchroniseerPersonen() throws ParseException {
         LOG.info("Start lezen en versturen (van set) LO3 synchronisatie berichten.");
+        final Instant t1 = Instant.now();
+        final boolean doorgaan;
+        final VerzendPersoonBerichtVerwerker verwerker =
+                new VerzendPersoonBerichtVerwerker(destination, jmsTemplate, persoonRepository);
+        doorgaan = persoonRepository.verwerkLo3Berichten(ConversieResultaat.TE_VERZENDEN, verwerker, batchPersoon);
 
-        boolean doorgaan;
-        final VerzendSynchronisatieBerichtVerwerker verwerker =
-                new VerzendSynchronisatieBerichtVerwerker(destination, jmsTemplate, gbavRepository, ConversieResultaat.VERZONDEN);
-        doorgaan = gbavRepository.verwerkLo3Berichten(ConversieResultaat.TE_VERZENDEN, verwerker, batchSize);
-
-        LOG.info("Klaar met versturen (van set) van Lo3Berichten.");
+        LOG.info("Klaar met versturen (van set) van Lo3Berichten. totale tijd (sec):" + Duration.between(t1, Instant.now()).getSeconds());
         LOG.info(TOTAAL_VERWERKTE_BERICHTEN, verwerker.aantalBerichten());
         return doorgaan;
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* *** INITIELE VULLING PERSONEN (EXCEL) *********************************************************************** */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    @SuppressWarnings("checkstyle:illegalcatch")
-    private void verwerkExcelBestanden(final List<File> files) {
-        for (final File file : files) {
-            try {
-                // Lees excel
-                final List<ExcelData> excelDatas = excelAdapter.leesExcelBestand(new FileInputStream(file));
-
-                // Parsen input *ZONDER* syntax en precondite controles
-                final List<Lo3Persoonslijst> lo3Persoonslijsten = new ArrayList<>();
-                for (final ExcelData excelData : excelDatas) {
-                    lo3Persoonslijsten.add(parser.parse(excelData.getCategorieLijst()));
-                }
-
-                for (final Lo3Persoonslijst pl : lo3Persoonslijsten) {
-                    final String lg01 = formateerAlsLg01(pl);
-                    final Lo3GemeenteCode gemeenteVanInschrijving = pl.getVerblijfplaatsStapel().getLaatsteElement().getInhoud().getGemeenteInschrijving();
-                    final Integer gemeenteVanInschrijvingCode;
-                    if (gemeenteVanInschrijving.isValideNederlandseGemeenteCode()) {
-                        gemeenteVanInschrijvingCode = Integer.parseInt(gemeenteVanInschrijving.getWaarde());
-                    } else {
-                        gemeenteVanInschrijvingCode = null;
-                    }
-                    gbavRepository.saveLg01(lg01, pl.getActueelAdministratienummer(), gemeenteVanInschrijvingCode, ConversieResultaat.TE_VERZENDEN);
-                }
-            } catch (final
-                FileNotFoundException
-                | ExcelAdapterException
-                | Lo3SyntaxException
-                | NumberFormatException e)
-            {
-                LOG.error("Probleem bij het inlezen van van de persoonslijst in file: " + file + ". Inlezen wordt voortgezet.", e);
-            }
-        }
-    }
-
-    private List<File> bepaalExcelBestanden(final String excelFolder) {
-        final File inputFolder = new File(excelFolder);
-        LOG.info(String.format("Input folder %s %s gevonden", inputFolder, inputFolder.exists() ? "is" : "niet"));
-        final List<File> files = new ArrayList<>(FileUtils.listFiles(inputFolder, new String[] {"xls" }, true));
-        Collections.sort(files);
-        return files;
-    }
-
-    private String formateerAlsLg01(final Lo3Persoonslijst lo3) {
-        final Lg01Bericht lg01 = new Lg01Bericht();
-        lg01.setLo3Persoonslijst(lo3);
-        return Lo3Inhoud.formatInhoud(lg01.formatInhoud());
-    }
-
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* *** INITIELE AUTORISATIES *********************************************************************************** */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* *** INITIELE AUTORISATIES ***************************************************************** */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
     @Override
     public void laadInitAutorisatieRegelTabel() {
@@ -192,8 +170,8 @@ public final class InitieleVullingServiceImpl implements InitieleVullingService 
     public boolean synchroniseerAutorisaties() {
         LOG.info("Start lezen en versturen (van set) autorisatie berichten.");
         final VerzendAutorisatieBerichtVerwerker verwerker =
-                new VerzendAutorisatieBerichtVerwerker(destination, jmsTemplate, autorisatieRepository, ConversieResultaat.VERZONDEN);
-        final boolean doorgaan = autorisatieRepository.verwerkAutorisatie(ConversieResultaat.TE_VERZENDEN, verwerker, batchSize);
+                new VerzendAutorisatieBerichtVerwerker(destination, jmsTemplate, autorisatieRepository);
+        final boolean doorgaan = autorisatieRepository.verwerkAutorisatie(ConversieResultaat.TE_VERZENDEN, verwerker, batchAutorisatie);
 
         LOG.info("Klaar met versturen (van set) van AutorisatieBerichten.");
         LOG.info(TOTAAL_VERWERKTE_BERICHTEN, verwerker.aantalBerichten());
@@ -201,11 +179,11 @@ public final class InitieleVullingServiceImpl implements InitieleVullingService 
         return doorgaan;
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* *** INITIELE AFNEMERSINDICATIES ***************************************************************************** */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* *** INITIELE AFNEMERSINDICATIES *********************************************************** */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
     @Override
     public void laadInitAfnemersIndicatieTabel() {
@@ -218,11 +196,47 @@ public final class InitieleVullingServiceImpl implements InitieleVullingService 
     public boolean synchroniseerAfnemerIndicaties() {
         LOG.info("Start lezen en versturen (van set) afnemersindicaties berichten.");
         final VerzendAfnemersIndicatieBerichtVerwerker verwerker =
-                new VerzendAfnemersIndicatieBerichtVerwerker(destination, jmsTemplate, afnemersIndicatieRepository, ConversieResultaat.VERZONDEN);
-        final boolean doorgaan = afnemersIndicatieRepository.verwerkAfnemerindicaties(ConversieResultaat.TE_VERZENDEN, verwerker, batchSize);
+                new VerzendAfnemersIndicatieBerichtVerwerker(destination, jmsTemplate, afnemersIndicatieRepository);
+        final boolean doorgaan = afnemersIndicatieRepository.verwerkAfnemerindicaties(ConversieResultaat.TE_VERZENDEN, verwerker, batchAfnemersindicatie);
 
         LOG.info("Klaar met versturen (van set) van AfnemersindicatiesBerichten.");
-        LOG.info(TOTAAL_VERWERKTE_BERICHTEN, verwerker.aantalBerichten());
+        LOG.info(TOTAAL_VERWERKTE_BERICHTEN, verwerker.aantalVerzonden());
+        return doorgaan;
+    }
+
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* *** INITIELE PROTOCOLLERING *************************************************************** */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+
+    @Override
+    public void laadInitProtocolleringTabel() {
+        initProtocolleringTabel(protocolleringRepository::laadInitVullingTable);
+    }
+
+    @Override
+    public void laadInitProtocolleringTabel(final LocalDateTime vanafDatum) {
+        initProtocolleringTabel(() -> protocolleringRepository.laadInitVullingTable(vanafDatum));
+    }
+
+    private void initProtocolleringTabel(final Runnable r) {
+        LOG.info("De initiele vulling tabel voor de protocollering wordt nu gevuld.");
+        remoteBrpDatabase.initialize();
+        r.run();
+        LOG.info("De initiele vulling tabel voor de protocollering is gevuld.");
+    }
+
+    @Override
+    public boolean synchroniseerProtocollering() {
+        LOG.info("Start lezen en versturen (van set) protocollering berichten. Batch size: " + batchProtocollering + ", aantal protocoleringen per bericht: "
+                + aantalProtocollering);
+        final VerzendProtocolleringBerichtVerwerker verwerker =
+                new VerzendProtocolleringBerichtVerwerker(destination, jmsTemplate, protocolleringRepository);
+        final boolean doorgaan = protocolleringRepository.verwerk(ConversieResultaat.TE_VERZENDEN, verwerker, batchProtocollering, aantalProtocollering);
+
+        LOG.info("Klaar met versturen (van set) van ProtocolleringBerichten.");
+        LOG.info(TOTAAL_VERWERKTE_PROTOCOLLERINGEN, verwerker.aantalVerzonden());
         return doorgaan;
     }
 

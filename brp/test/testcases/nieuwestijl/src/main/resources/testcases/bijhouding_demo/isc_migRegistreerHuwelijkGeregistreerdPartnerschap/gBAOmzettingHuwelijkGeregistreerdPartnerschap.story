@@ -2,7 +2,6 @@ Meta:
 @sprintnummer           89
 @epic                   POC Bijhouding
 @auteur                 dihoe
-@jiraIssue              TEAMBRP-4513
 @status                 Onderhanden
 
 Narrative:

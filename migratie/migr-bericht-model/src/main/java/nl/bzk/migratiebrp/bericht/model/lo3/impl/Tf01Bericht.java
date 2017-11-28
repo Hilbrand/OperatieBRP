@@ -12,57 +12,79 @@ import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.lo3.AbstractParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3EindBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3CategorieWaardeFormatter;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 
 /**
- * Tf01. Fout: persoon niet in te schrijven. Indien de persoon niet in te schrijven is, gaat dit bericht terug naar de
- * gemeente van de 'toevallige geboorte'. Te verzenden door: gemeente van eerste inschrijving Te verzenden aan:
- * geboortegemeente
+ * Tf01. Fout: persoon niet in te schrijven. Indien de persoon niet in te schrijven is, gaat dit
+ * bericht terug naar de gemeente van de 'toevallige geboorte'. Te verzenden door: gemeente van
+ * eerste inschrijving Te verzenden aan: geboortegemeente
  */
-public final class Tf01Bericht extends AbstractParsedLo3Bericht implements Lo3Bericht, Serializable {
+public final class Tf01Bericht extends AbstractParsedLo3Bericht implements Lo3Bericht, Lo3EindBericht, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final Lo3Header HEADER = new Lo3Header(
-        Lo3HeaderVeld.RANDOM_KEY,
-        Lo3HeaderVeld.BERICHTNUMMER,
-        Lo3HeaderVeld.FOUTREDEN,
-        Lo3HeaderVeld.GEMEENTE,
-        Lo3HeaderVeld.A_NUMMER);
+    private static final Lo3Header HEADER =
+            new Lo3Header(Lo3HeaderVeld.RANDOM_KEY, Lo3HeaderVeld.BERICHTNUMMER, Lo3HeaderVeld.FOUTREDEN, Lo3HeaderVeld.GEMEENTE, Lo3HeaderVeld.A_NUMMER);
 
     private String akteNummer;
 
     /**
      * Enum met de mogelijke foutredenen.
      */
-    public static enum Foutreden {
-        /** Emigratie. */
+    public enum Foutreden {
+
+        /**
+         * Emigratie.
+         */
         E,
-        /** Ministrieel besluit. */
+
+        /**
+         * Ministrieel besluit.
+         */
         M,
-        /** Overleden. */
+
+        /**
+         * Overleden.
+         */
         O,
-        /** Verhuisd. */
+
+        /**
+         * Verhuisd.
+         */
         V,
-        /** Reeds aanwezig. */
+
+        /**
+         * Reeds aanwezig.
+         */
         A,
-        /** Geblokkeerd. */
+
+        /**
+         * Geblokkeerd.
+         */
         B,
-        /** Niet gevonden. */
+
+        /**
+         * Niet gevonden.
+         */
         G,
-        /** Niet uniek. */
+
+        /**
+         * Niet uniek.
+         */
         U
-    };
+    }
 
     /**
      * Constructor.
      */
     public Tf01Bericht() {
-        super(HEADER, "Tf01", null);
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Tf01", null);
 
         setHeader(Lo3HeaderVeld.RANDOM_KEY, null);
         setHeader(Lo3HeaderVeld.BERICHTNUMMER, getBerichtType());
@@ -73,46 +95,45 @@ public final class Tf01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Convenience constructor.
-     *
-     * @param tb01Bericht
-     *            Het gerelateerde Tb01Bericht, waar dit Tf01Bericht het antwoord op is.
-     * @param foutreden
-     *            De foutreden
+     * @param tb01Bericht Het gerelateerde Tb01Bericht, waar dit Tf01Bericht het antwoord op is.
+     * @param foutreden De foutreden
      */
     public Tf01Bericht(final Tb01Bericht tb01Bericht, final Foutreden foutreden) {
         this();
 
-        akteNummer = tb01Bericht.getHeader(Lo3HeaderVeld.AKTENUMMER);
-        setBronGemeente(tb01Bericht.getDoelGemeente());
-        setDoelGemeente(tb01Bericht.getBronGemeente());
+        akteNummer = tb01Bericht.getHeaderWaarde(Lo3HeaderVeld.AKTENUMMER);
+        setBronPartijCode(tb01Bericht.getDoelPartijCode());
+        setDoelPartijCode(tb01Bericht.getBronPartijCode());
         setHeader(Lo3HeaderVeld.FOUTREDEN, foutreden.toString());
-        setHeader(Lo3HeaderVeld.GEMEENTE, tb01Bericht.getDoelGemeente());
-        setHeader(Lo3HeaderVeld.A_NUMMER, tb01Bericht.getHeader(Lo3HeaderVeld.A_NUMMER));
+        setHeader(Lo3HeaderVeld.GEMEENTE, tb01Bericht.getDoelPartijCode());
+        setHeader(Lo3HeaderVeld.A_NUMMER, tb01Bericht.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
         setCorrelationId(tb01Bericht.getMessageId());
     }
 
     /**
      * Geeft de foutreden terug.
-     *
      * @return De foutreden.
      */
     public Foutreden getFoutreden() {
-        return Foutreden.valueOf(getHeader(Lo3HeaderVeld.FOUTREDEN));
+        return Foutreden.valueOf(getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3Bericht#getGerelateerdeAnummers()
      */
     @Override
     protected List<String> getGerelateerdeAnummers() {
-        return Arrays.asList(getHeader(Lo3HeaderVeld.A_NUMMER));
+        return Arrays.asList(getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
     }
 
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
     @Override
-    protected void parseInhoud(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
+    protected void parseCategorieen(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
         // rubriek 01.81.20 Aktenummer uit het Tb01-bericht
         for (final Lo3CategorieWaarde catWaarde : categorieen) {
             if (Lo3CategorieEnum.CATEGORIE_01.equals(catWaarde.getCategorie())) {
@@ -130,11 +151,13 @@ public final class Tf01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
         return formatter.getList();
     }
 
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
     /**
      * Geef de waarde van aktenummer.
-     *
      * @return aktenummer
      */
     public String getAktenummer() {

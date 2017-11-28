@@ -6,14 +6,23 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.sql.SQLException;
+import java.util.Properties;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.SystemException;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit;
+import nl.bzk.algemeenbrp.test.dal.DBUnit;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.spring.PropertiesPropertySource;
+import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest.PortInitializer;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
 import org.hibernate.Session;
@@ -21,6 +30,8 @@ import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -33,25 +44,25 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
- * Abstract supertype voor alle testen die een Spring-context nodig hebben. Hierdoor staat de verwijzing naar de
- * spring-test-context xml-configuratie op een plek.
- *
- *
+ * Abstract supertype voor alle testen die een Spring-context nodig hebben. Hierdoor staat de
+ * verwijzing naar de spring-test-context xml-configuratie op een plek.
  */
 @Rollback(value = false)
 @Transactional(transactionManager = "syncDalTransactionManager")
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class })
-@ContextConfiguration(locations = {"classpath:synchronisatie-beans-test.xml" })
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DBUnit.TestExecutionListener.class, TransactionalTestExecutionListener.class})
+@ContextConfiguration(locations = {"classpath:synchronisatie-beans-test.xml"}, initializers = {PortInitializer.class})
 public abstract class AbstractDatabaseTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger();
 
     @PersistenceContext(name = "syncDalEntityManagerFactory", unitName = "BrpEntities")
     protected EntityManager em;
 
     /**
-     * De DBUnit verify() dient maar een keer uitgevoerd te worden. Of tijdens de {@linkplain @After}, of tijdens de
-     * {@linkplain @AfterTransaction}. Dit laatste is nodig omdat dan zeker is dat de transactie is gecommit.
+     * De DBUnit verify() dient maar een keer uitgevoerd te worden. Of tijdens de
+     * {@linkplain @After}, of tijdens de {@linkplain @AfterTransaction}. Dit laatste is nodig omdat
+     * dan zeker is dat de transactie is gecommit.
      */
     private boolean transactional;
     private boolean rolledback;
@@ -80,7 +91,8 @@ public abstract class AbstractDatabaseTest {
             DBUnit.verify();
         } else {
             if (syncDalTransactionManager.getTransaction(null).isRollbackOnly()) {
-                // stop het uitvoeren van AfterTransaction zodat de foutmelding die tot de rollback heeft geleid niet
+                // stop het uitvoeren van AfterTransaction zodat de foutmelding die tot de rollback
+                // heeft geleid niet
                 // wordt ingeslikt
                 rolledback = true;
             }
@@ -98,5 +110,23 @@ public abstract class AbstractDatabaseTest {
             DBUnit.verify();
         }
         transactional = false;
+    }
+
+    /**
+     * Dynamisch poorten voor resources bepalen.
+     */
+    public static final class PortInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @Override
+        public void initialize(final ConfigurableApplicationContext applicationContext) {
+            final Properties properties = new Properties();
+            try (ServerSocket socket = new ServerSocket(0)) {
+                final int port = socket.getLocalPort();
+                LOG.info("Configuring database to port: {}", port);
+                properties.setProperty("test.database.port", Integer.toString(port));
+            } catch (final IOException e) {
+                throw new IllegalStateException("Kon geen port voor de database bepalen", e);
+            }
+            applicationContext.getEnvironment().getPropertySources().addLast(new PropertiesPropertySource("ports", properties));
+        }
     }
 }

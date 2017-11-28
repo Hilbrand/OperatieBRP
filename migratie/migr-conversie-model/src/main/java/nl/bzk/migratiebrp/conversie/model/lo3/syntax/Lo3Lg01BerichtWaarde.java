@@ -23,10 +23,8 @@ public final class Lo3Lg01BerichtWaarde {
 
     /**
      * Constructor waarin alleen de categoriewaarden wordt ingevuld.
-     * 
-     * @param lo3CategorieWaardeList
-     *            lijst met daar in de waarden per categorie.
-    */
+     * @param lo3CategorieWaardeList lijst met daar in de waarden per categorie.
+     */
     public Lo3Lg01BerichtWaarde(final List<Lo3CategorieWaarde> lo3CategorieWaardeList) {
         this(lo3CategorieWaardeList, null, null);
     }
@@ -34,19 +32,14 @@ public final class Lo3Lg01BerichtWaarde {
     /**
      * Constructor waarin niet alleen categorie waarden wordt ingevuld, maar ook de header informatie van een Lg01
      * bericht.
-     * 
-     * @param lo3CategorieWaardeList
-     *            lijst met daar in de waarden per categorie.
-     * @param anummer
-     *            het anummer van de persoonslijst
-     * @param oudAnummer
-     *            het oude anummer bij een anummer wijziging.
+     * @param lo3CategorieWaardeList lijst met daar in de waarden per categorie.
+     * @param anummer het anummer van de persoonslijst
+     * @param oudAnummer het oude anummer bij een anummer wijziging.
      */
     public Lo3Lg01BerichtWaarde(
-        final List<Lo3CategorieWaarde> lo3CategorieWaardeList,
-        final String anummer,
-        final String oudAnummer)
-    {
+            final List<Lo3CategorieWaarde> lo3CategorieWaardeList,
+            final String anummer,
+            final String oudAnummer) {
         this.lo3CategorieWaardeList = lo3CategorieWaardeList;
         this.anummer = anummer;
         this.oudAnummer = oudAnummer;
@@ -54,7 +47,6 @@ public final class Lo3Lg01BerichtWaarde {
 
     /**
      * Geef de waarde van lo3 categorie waarde list.
-     *
      * @return lo3 categorie waarde list
      */
     public List<Lo3CategorieWaarde> getLo3CategorieWaardeList() {
@@ -63,7 +55,6 @@ public final class Lo3Lg01BerichtWaarde {
 
     /**
      * Geef de waarde van anummer.
-     *
      * @return anummer
      */
     public String getAnummer() {
@@ -72,7 +63,6 @@ public final class Lo3Lg01BerichtWaarde {
 
     /**
      * Geef de waarde van oud anummer.
-     *
      * @return oud anummer
      */
     public String getOudAnummer() {
@@ -81,7 +71,6 @@ public final class Lo3Lg01BerichtWaarde {
 
     /**
      * Geef de anummer wijziging.
-     *
      * @return anummer wijziging
      */
     public boolean isAnummerWijziging() {

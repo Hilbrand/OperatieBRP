@@ -13,13 +13,13 @@ import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieRecordType;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieRecordsType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieType;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3Autorisatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3AutorisatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGeheimCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,13 +30,11 @@ public class AutorisatieBerichtTest {
 
     /**
      * Test voor autorisatie bericht met alleen een actueel voorkomen, zonder einddatum.
-     *
-     * @throws Exception
      */
     @Test
     public void testAutorisatieBerichtActueel() {
-        final Integer afnemerCode = 123456;
-        final Integer datumIngang = 20120101;
+        final String afnemerCode = "123456";
+        final Integer datumIngang = 2012_01_01;
         final AutorisatieBericht bericht = maakAutorisatieBericht(afnemerCode, datumIngang, null);
         bericht.setMessageId(MessageIdGenerator.generateId());
         final Lo3Autorisatie lo3Autorisatie = maakLo3Autorisatie(afnemerCode, datumIngang, null);
@@ -46,14 +44,12 @@ public class AutorisatieBerichtTest {
 
     /**
      * Test voor autorisatie bericht met afgesloten autorisatie.
-     *
-     * @throws Exception
      */
     @Test
     public void testAutorisatieBerichtMetHistorie() {
-        final Integer afnemerCode = 2244;
-        final Integer datumIngang = 19920201;
-        final Integer datumEinde = 19940201;
+        final String afnemerCode = "002244";
+        final Integer datumIngang = 1992_02_01;
+        final Integer datumEinde = 1994_02_01;
         final AutorisatieBericht bericht = maakAutorisatieBericht(afnemerCode, datumIngang, datumEinde);
         bericht.setMessageId(MessageIdGenerator.generateId());
         final Lo3Autorisatie lo3Autorisatie = maakLo3Autorisatie(afnemerCode, datumIngang, datumEinde);
@@ -63,10 +59,6 @@ public class AutorisatieBerichtTest {
 
     /**
      * Vergelijkt de twee autorisaties
-     *
-     * @param lo3Autorisatie
-     * @param bericht
-     * @throws Exception
      */
     private void assertBericht(final Lo3Autorisatie lo3Autorisatie, final AutorisatieBericht bericht) {
         final StringBuilder verschillenLog = new StringBuilder();
@@ -84,20 +76,18 @@ public class AutorisatieBerichtTest {
 
     /**
      * Maak een AutorisatieBericht aan voor gegeven afnemer.
-     *
-     * @param afnemerCode
      * @return AutorisatieBericht
      */
-    private AutorisatieBericht maakAutorisatieBericht(final Integer afnemerCode, final Integer datumIngang, final Integer datumEinde) {
+    private AutorisatieBericht maakAutorisatieBericht(final String afnemerCode, final Integer datumIngang, final Integer datumEinde) {
         final AutorisatieType type = new AutorisatieType();
-        type.setAfnemerCode(String.valueOf(afnemerCode));
-        type.getAutorisatieTabelRegels().add(maakBerichtInhoud(datumIngang, datumEinde));
+        type.setAfnemerCode(afnemerCode);
+        type.setAutorisatieTabelRegels(new AutorisatieRecordsType());
+        type.getAutorisatieTabelRegels().getAutorisatieTabelRegel().add(maakBerichtInhoud(datumIngang, datumEinde));
         return new AutorisatieBericht(type);
     }
 
     /**
      * Maak een AutorisatieRecordType aan met verplichte velden en een startdatum en evt einddatum.
-     *
      * @return AutorisatieRecordType
      */
     private AutorisatieRecordType maakBerichtInhoud(final Integer datumIngang, final Integer datumEinde) {
@@ -111,19 +101,17 @@ public class AutorisatieBerichtTest {
 
     /**
      * Maak een Lo3Autorisatie aan met verplichte velden en een startdatum en evt einddatum.
-     *
-     * @param afnemerCode
      * @return Lo3Autorisatie
      */
-    private Lo3Autorisatie maakLo3Autorisatie(final Integer afnemerCode, final Integer datumIngang, final Integer datumEinde) {
+    private Lo3Autorisatie maakLo3Autorisatie(final String afnemerCode, final Integer datumIngang, final Integer datumEinde) {
         final List<Lo3Categorie<Lo3AutorisatieInhoud>> groepen = new ArrayList<>();
 
         groepen.add(
-            Lo3StapelHelper.lo3Cat(
-                maakInhoud(afnemerCode, datumIngang, datumEinde),
-                null,
-                Lo3StapelHelper.lo3His(null, datumIngang, datumIngang),
-                Lo3StapelHelper.lo3Her(35, 0, 0)));
+                Lo3StapelHelper.lo3Cat(
+                        maakInhoud(afnemerCode, datumIngang, datumEinde),
+                        null,
+                        Lo3StapelHelper.lo3His(null, datumIngang, datumIngang),
+                        Lo3StapelHelper.lo3Her(35, 0, 0)));
 
         return new Lo3Autorisatie(new Lo3Stapel<>(groepen));
 
@@ -131,14 +119,12 @@ public class AutorisatieBerichtTest {
 
     /**
      * Maak een Lo3AutorisatieInhoud aan met verplichte velden.
-     *
-     * @param afnemerCode
      * @return Lo3AutorisatieInhoud
      */
-    private Lo3AutorisatieInhoud maakInhoud(final Integer afnemerCode, final Integer datumIngang, final Integer datumEinde) {
+    private Lo3AutorisatieInhoud maakInhoud(final String afnemerCode, final Integer datumIngang, final Integer datumEinde) {
         final Lo3AutorisatieInhoud inhoud = new Lo3AutorisatieInhoud();
         inhoud.setAfnemersindicatie(afnemerCode);
-        inhoud.setIndicatieGeheimhouding(new Lo3IndicatieGeheimCode(0));
+        inhoud.setIndicatieGeheimhouding(0);
         inhoud.setVerstrekkingsbeperking(0);
         inhoud.setDatumIngang(new Lo3Datum(datumIngang));
         inhoud.setDatumEinde(datumEinde == null ? null : new Lo3Datum(datumEinde));

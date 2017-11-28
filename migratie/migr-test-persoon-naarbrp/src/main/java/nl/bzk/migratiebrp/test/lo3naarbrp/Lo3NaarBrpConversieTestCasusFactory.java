@@ -10,14 +10,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3Lg01BerichtWaarde;
 import nl.bzk.migratiebrp.test.common.reader.Reader;
 import nl.bzk.migratiebrp.test.common.reader.ReaderFactory;
 import nl.bzk.migratiebrp.test.dal.AbstractTestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
@@ -30,9 +32,7 @@ public final class Lo3NaarBrpConversieTestCasusFactory extends AbstractTestCasus
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            application context.
+     * @param context application context.
      */
     protected Lo3NaarBrpConversieTestCasusFactory(final GenericXmlApplicationContext context) {
         super(context);
@@ -60,11 +60,11 @@ public final class Lo3NaarBrpConversieTestCasusFactory extends AbstractTestCasus
                     final Lo3Lg01BerichtWaarde berichtWaarde = lo3BerichtWaardenLijst.get(i);
                     final TestCasus testCasus =
                             new Lo3NaarBrpConversieTestCasus(
-                                getThema(),
-                                maakNaam(input.getName(), i),
-                                getOutputFolder(),
-                                getExpectedFolder(),
-                                berichtWaarde);
+                                    getThema(),
+                                    maakNaam(input.getName(), i),
+                                    getOutputFolder(),
+                                    getExpectedFolder(),
+                                    berichtWaarde);
                     autowireBeanFactory.autowireBean(testCasus);
                     result.add(testCasus);
                 }

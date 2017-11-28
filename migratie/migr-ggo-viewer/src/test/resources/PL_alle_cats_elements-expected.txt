@@ -2,7 +2,7 @@
   "label" : "01 Persoon",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 1,
     "categorieNr" : 1,
     "stapelNr" : 0,
@@ -23,7 +23,7 @@
       "04.10 Geslachtsaanduiding" : "V (Vrouw)",
       "20.10 Vorig A-nummer" : "1653648352",
       "20.20 Volgend A-nummer" : "1653648351",
-      "61.10 Aanduiding naamgebruik" : "V (Partner, Eigen)",
+      "61.10 Aanduiding naamgebruik" : "V (Partner, eigen)",
       "82.10 Gemeente document" : "0518 ('s-Gravenhage)",
       "82.20 Datum document" : "30-09-1994",
       "82.30 Beschrijving document" : "PKA",
@@ -38,7 +38,7 @@
   "label" : "02 Ouder1",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 2,
     "categorieNr" : 2,
     "stapelNr" : 0,
@@ -65,7 +65,7 @@
   "label" : "03 Ouder2",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 3,
     "categorieNr" : 3,
     "stapelNr" : 0,
@@ -92,7 +92,7 @@
   "label" : "04 Nationaliteit",
   "omschrijving" : "0001 (Nederlandse)",
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 4,
     "categorieNr" : 4,
     "stapelNr" : 0,
@@ -116,7 +116,7 @@
   "label" : "05 Huwelijk / GP",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 5,
     "categorieNr" : 5,
     "stapelNr" : 0,
@@ -152,7 +152,7 @@
   "label" : "06 Overlijden",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 6,
     "categorieNr" : 6,
     "stapelNr" : 0,
@@ -174,7 +174,7 @@
   "label" : "07 Inschrijving",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 7,
     "categorieNr" : 7,
     "stapelNr" : 0,
@@ -198,7 +198,7 @@
   "label" : "08 Verblijfplaats",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 8,
     "categorieNr" : 8,
     "stapelNr" : 0,
@@ -240,7 +240,7 @@
   "label" : "09 Kind",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 9,
     "categorieNr" : 9,
     "stapelNr" : 0,
@@ -266,7 +266,7 @@
   "label" : "10 Verblijfstitel",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 10,
     "categorieNr" : 10,
     "stapelNr" : 0,
@@ -275,7 +275,7 @@
     "datumAanvangGeldigheid" : "21-08-1966",
     "vervallen" : false,
     "inhoud" : {
-      "39.10 Aanduiding verblijfstitel" : "0 (Onbekend)",
+      "39.10 Aanduiding verblijfstitel" : "00 (Onbekend)",
       "39.20 Datum einde verblijfstitel" : "00-00-0000",
       "39.30 Ingangsdatum verblijfstitel" : "21-08-1966",
       "85.10 Ingangsdatum geldigheid" : "21-08-1966",
@@ -286,7 +286,7 @@
   "label" : "11 Gezagsverhouding",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 11,
     "categorieNr" : 11,
     "stapelNr" : 0,
@@ -304,7 +304,7 @@
       "86.10 Datum van opneming" : "30-09-1994"
     }
   }, {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 61,
     "categorieNr" : 61,
     "stapelNr" : 0,
@@ -327,7 +327,7 @@
   "label" : "12 Reisdocument",
   "omschrijving" : "PN",
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 12,
     "categorieNr" : 12,
     "stapelNr" : 1,
@@ -355,13 +355,13 @@
   "label" : "13 Kiesrecht",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : "1653648353",
     "categorieLabelNr" : 13,
     "categorieNr" : 13,
     "stapelNr" : 0,
     "voorkomenNr" : 0,
     "label" : "Kiesrecht",
-    "datumAanvangGeldigheid" : "00-00-0000",
+    "datumAanvangGeldigheid" : null,
     "vervallen" : false,
     "inhoud" : {
       "31.10 Aanduiding Europees kiesrecht" : "1 (Uitgesloten)",

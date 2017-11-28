@@ -18,11 +18,8 @@ public final class VergelijkingContext {
 
     /**
      * Controleer constante variabele.
-     * 
-     * @param name
-     *            naam
-     * @param value
-     *            waarde
+     * @param name naam
+     * @param value waarde
      * @return true als ok, anders false
      */
     boolean checkConstantVariable(final String name, final String value) {
@@ -36,9 +33,7 @@ public final class VergelijkingContext {
 
     /**
      * Geef de waarde voor een constante variabele.
-     * 
-     * @param name
-     *            naam
+     * @param name naam
      * @return waarde
      */
     public String getConstantVariable(final String name) {

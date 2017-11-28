@@ -27,11 +27,10 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3PersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerBrpNaarLo3Service;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerLo3NaarBrpService;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -39,25 +38,26 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class LeesUitBrpServiceTest {
 
     private static final String TEST_DATABASE_FOUT = "Test Database Fout";
-    private static final long ANUMMER = 14L;
+    private static final String ANUMMER = "14";
     private static final BrpPersoonslijst DUMMY_BRP_PL = new BrpPersoonslijstBuilder().build();
     private static final Lo3Persoonslijst DUMMY_LO3_PL = new Lo3PersoonslijstBuilder().build();
 
     @Mock
-    private BrpDalService brpDalService;
+    private BrpPersoonslijstService persoonslijstService;
     @Mock
     private ConverteerLo3NaarBrpService converteerLo3NaarBrpService;
     @Mock
     private ConverteerBrpNaarLo3Service converteerBrpNaarLo3Service;
-    @InjectMocks
-    private final LeesUitBrpService leesUitBrpService = new LeesUitBrpService();
+
+    private LeesUitBrpService leesUitBrpService;
 
     @Before
     public void setup() throws OngeldigePersoonslijstException {
-        when(brpDalService.bevraagPersoonslijst(ANUMMER)).thenReturn(DUMMY_BRP_PL);
+        when(persoonslijstService.bevraagPersoonslijst(ANUMMER)).thenReturn(DUMMY_BRP_PL);
 
         when(converteerBrpNaarLo3Service.converteerBrpPersoonslijst(DUMMY_BRP_PL)).thenReturn(DUMMY_LO3_PL);
         when(converteerLo3NaarBrpService.converteerLo3Persoonslijst(DUMMY_LO3_PL)).thenReturn(DUMMY_BRP_PL);
+        leesUitBrpService = new LeesUitBrpService(converteerBrpNaarLo3Service,persoonslijstService);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class LeesUitBrpServiceTest {
         final LeesUitBrpAntwoordBericht leesUitBrpAntwoord = leesUitBrpService.verwerkBericht(leesUitBrpVerzoek);
 
         verify(converteerBrpNaarLo3Service, times(1)).converteerBrpPersoonslijst(DUMMY_BRP_PL);
-        verify(brpDalService, times(1)).bevraagPersoonslijst(ANUMMER);
+        verify(persoonslijstService, times(1)).bevraagPersoonslijst(ANUMMER);
 
         assertEquals(leesUitBrpVerzoek.getMessageId(), leesUitBrpAntwoord.getCorrelationId());
         assertNull(leesUitBrpAntwoord.getStartCyclus());
@@ -84,7 +84,7 @@ public class LeesUitBrpServiceTest {
         final LeesUitBrpAntwoordBericht leesUitBrpAntwoord = leesUitBrpService.verwerkBericht(leesUitBrpVerzoek);
 
         verify(converteerBrpNaarLo3Service, times(0)).converteerBrpPersoonslijst(DUMMY_BRP_PL);
-        verify(brpDalService, times(1)).bevraagPersoonslijst(ANUMMER);
+        verify(persoonslijstService, times(1)).bevraagPersoonslijst(ANUMMER);
 
         assertEquals(leesUitBrpVerzoek.getMessageId(), leesUitBrpAntwoord.getCorrelationId());
         assertNull(leesUitBrpAntwoord.getStartCyclus());
@@ -94,7 +94,7 @@ public class LeesUitBrpServiceTest {
 
     @Test
     public void testVerwerkLeesUitBrpVerzoekFout() {
-        when(brpDalService.bevraagPersoonslijst(ANUMMER)).thenThrow(new RuntimeException(TEST_DATABASE_FOUT));
+        when(persoonslijstService.bevraagPersoonslijst(ANUMMER)).thenThrow(new RuntimeException(TEST_DATABASE_FOUT));
 
         final LeesUitBrpVerzoekBericht leesUitBrpVerzoekBericht = new LeesUitBrpVerzoekBericht(ANUMMER);
         leesUitBrpVerzoekBericht.setMessageId(UUID.randomUUID().toString());
@@ -106,7 +106,7 @@ public class LeesUitBrpServiceTest {
             assertNotNull("Er zou een fout op moeten treden.", e);
         }
         verify(converteerBrpNaarLo3Service, never()).converteerBrpPersoonslijst(DUMMY_BRP_PL);
-        verify(brpDalService, times(1)).bevraagPersoonslijst(ANUMMER);
+        verify(persoonslijstService, times(1)).bevraagPersoonslijst(ANUMMER);
 
     }
 }

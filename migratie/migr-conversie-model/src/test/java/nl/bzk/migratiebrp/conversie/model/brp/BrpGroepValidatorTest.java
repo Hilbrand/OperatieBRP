@@ -18,7 +18,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepValidator;
 import nl.bzk.migratiebrp.conversie.model.exceptions.PreconditieException;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-
 import org.junit.Test;
 
 public final class BrpGroepValidatorTest {
@@ -63,7 +62,7 @@ public final class BrpGroepValidatorTest {
 
     @Test
     public void testValideerBuitenlandsePlaatsNietNederland() {
-        final short landOfGebiedId = 1234;
+        final String landOfGebiedId = "1234";
         BrpGroepValidator.valideerBuitenlandsePlaatsNietNederland(null, BrpLandOfGebiedCode.NEDERLAND, GROEP_INHOUD);
         BrpGroepValidator.valideerBuitenlandsePlaatsNietNederland(null, new BrpLandOfGebiedCode(landOfGebiedId), GROEP_INHOUD);
         BrpGroepValidator.valideerBuitenlandsePlaatsNietNederland(new BrpString("plaats"), new BrpLandOfGebiedCode(landOfGebiedId), GROEP_INHOUD);
@@ -80,7 +79,7 @@ public final class BrpGroepValidatorTest {
     public void testValideerGemeenteInNederland() {
         BrpGroepValidator.valideerGemeenteInNederland(null, null, GROEP_INHOUD);
         BrpGroepValidator.valideerGemeenteInNederland(null, BrpLandOfGebiedCode.NEDERLAND, GROEP_INHOUD);
-        final BrpGemeenteCode gemeente = new BrpGemeenteCode(Short.parseShort("1234"));
+        final BrpGemeenteCode gemeente = new BrpGemeenteCode("1234");
         BrpGroepValidator.valideerGemeenteInNederland(gemeente, BrpLandOfGebiedCode.NEDERLAND, GROEP_INHOUD);
         try {
             BrpGroepValidator.valideerGemeenteInNederland(gemeente, null, GROEP_INHOUD);
@@ -90,7 +89,7 @@ public final class BrpGroepValidatorTest {
             assertTrue(e.getGroepen().contains(GROEP_NAAM));
         }
         try {
-            BrpGroepValidator.valideerGemeenteInNederland(gemeente, new BrpLandOfGebiedCode(Short.parseShort("4321")), GROEP_INHOUD);
+            BrpGroepValidator.valideerGemeenteInNederland(gemeente, new BrpLandOfGebiedCode("4321"), GROEP_INHOUD);
             fail("Exceptie verwacht omdat land niet Nederland is");
         } catch (final PreconditieException e) {
             assertTrue(e.getMessage().contains(SoortMeldingCode.PRE003.name()));

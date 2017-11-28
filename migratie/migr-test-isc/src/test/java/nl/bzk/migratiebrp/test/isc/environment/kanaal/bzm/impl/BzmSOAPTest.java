@@ -25,12 +25,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 /**
  * Test case voor de BRP Service SOAP connectie. Wordt niet gerund tijdens de build omdat het een integratietest is.
  * (Zie surefire config in pom.xml)
- *
  */
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
-@ContextConfiguration(locations = {"classpath:bzm-test-config.xml", "classpath:bzm-soap.xml" })
+@ContextConfiguration(locations = {"classpath:bzm-test-config.xml", "classpath:bzm-soap.xml"})
 public class BzmSOAPTest {
     @Inject
     private BzmBrpService bzmService;
@@ -58,7 +57,7 @@ public class BzmSOAPTest {
     public void registreerIntergemeentelijkeVerhuizingSuccesTest() throws IOException {
         final String xmlBody =
                 FileUtils.readFileToString(FileUtils.toFile(this.getClass()
-                                                                .getResource("/mig_RegistratieIntergemeentelijkeVerhuizing_Bijhouding_v1.3.xml")));
+                        .getResource("/mig_RegistratieIntergemeentelijkeVerhuizing_Bijhouding_v1.3.xml")));
         final String resultaat = bzmService.verstuurBzmBericht(xmlBody, oinTransporteur, oinOndertekenaar);
         assertNotNull("Mag niet null zijn", resultaat);
         assertTrue("Resultaat begint niet zoals een RegistreerVerhuizing Response", resultaat.startsWith("<brp:MIG_RegistreerVerhuizing_BR"));

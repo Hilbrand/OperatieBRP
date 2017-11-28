@@ -15,7 +15,7 @@
 
     <!-- BRP: JMS -->
 
-	<!-- 
+	<!--
     <bean id="brpConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
         <property name="connectionFactory">
             <bean class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -26,10 +26,15 @@
         </property>
     </bean>
     -->
-    
+
     <bean id="brpConnectionFactory"  class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL">
             <value>${routeringcentrale.broker.url:tcp://localhost:61616}</value>
+        </property>
+        <property name="redeliveryPolicy">
+            <bean class="org.apache.activemq.RedeliveryPolicy">
+                <property name="maximumRedeliveries" value="0" />
+            </bean>
         </property>
     </bean>
 

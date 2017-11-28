@@ -1,1 +1,1 @@
-IS_NULL(ALS(migratie.soort="I",migratie.datum_aanvang_geldigheid,NULL))
+NIET(MAP(FILTER(Persoon.Migratie, x, x.SoortCode E= "I"), y, y.DatumAanvangGeldigheid) E<> NULL)

@@ -16,11 +16,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * Object waarin voorkomens met dezelfde herkomst van zowel de oorspronkelijke LO3 als de teruggeconverteerde BRP
- * persoonslijsten worden opgeslagen.
- * 
- * @param <T>
- *            moet een implementatie zijn van {@link Lo3CategorieInhoud}
+ * Object waarin voorkomens met dezelfde herkomst van zowel de oorspronkelijke LO3 als de
+ * teruggeconverteerde BRP persoonslijsten worden opgeslagen.
+ * @param <T> moet een implementatie zijn van {@link Lo3CategorieInhoud}
  */
 public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
@@ -33,9 +31,7 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Constructor.
-     * 
-     * @param herkomst
-     *            herkomst waarmee een match wordt gemaakt
+     * @param herkomst herkomst waarmee een match wordt gemaakt
      */
     public VoorkomenMatch(final Lo3Herkomst herkomst) {
         this.herkomst = herkomst;
@@ -45,9 +41,7 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Voegt een LO3 voorkomen toe aan de match.
-     * 
-     * @param voorkomen
-     *            LO3 voorkomen
+     * @param voorkomen LO3 voorkomen
      */
     public void addLo3Voorkomen(final Lo3Categorie<T> voorkomen) {
         lo3Voorkomens.add(voorkomen);
@@ -55,9 +49,7 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Voegt een BRP/LO3 voorkomen toe aan de match.
-     * 
-     * @param voorkomen
-     *            BRP/LO3 voorkomen
+     * @param voorkomen BRP/LO3 voorkomen
      */
     public void addBrpLo3Voorkomen(final Lo3Categorie<T> voorkomen) {
         brpLo3Voorkomens.add(voorkomen);
@@ -66,13 +58,17 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
     /**
      * Geeft de volgende mogelijke waarden terug.<br>
      * <ul>
-     * <li>{@link VerschilType#ADDED} - als er geen voorkomen is gevonden in LO3, maar wel in BRP</li>
-     * <li>{@link VerschilType#MATCHED} - als er precies 1 voorkomen is gevonden in zowel LO3 als BRP</li>
-     * <li>{@link VerschilType#NON_UNIQUE_MATCHED} - als er meer dan 1 voorkomen is gevonden in of LO3 of BRP</li>
-     * <li>{@link VerschilType#REMOVED} - als er een voorkomen is gevonden in LO3, maar niet in BRP</li>
-     * <li>{@link VerschilType#NOT_ACTUAL} - als er het voorkomen in LO3 actueel is, maar in BRP niet actueel is</li>
+     * <li>{@link VerschilType#ADDED} - als er geen voorkomen is gevonden in LO3, maar wel in
+     * BRP</li>
+     * <li>{@link VerschilType#MATCHED} - als er precies 1 voorkomen is gevonden in zowel LO3 als
+     * BRP</li>
+     * <li>{@link VerschilType#NON_UNIQUE_MATCHED} - als er meer dan 1 voorkomen is gevonden in of
+     * LO3 of BRP</li>
+     * <li>{@link VerschilType#REMOVED} - als er een voorkomen is gevonden in LO3, maar niet in
+     * BRP</li>
+     * <li>{@link VerschilType#NOT_ACTUAL} - als er het voorkomen in LO3 actueel is, maar in BRP
+     * niet actueel is</li>
      * </ul>
-     * 
      * @return de {@link VerschilType} zoals beschreven
      */
     public VerschilType getVerschilType() {
@@ -99,7 +95,6 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de unique matched.
-     *
      * @return true als er precies 1 is van zowel LO3 als BRP/LO3 voorkomens.
      */
     public boolean isUniqueMatched() {
@@ -108,7 +103,6 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van herkomst.
-     *
      * @return de herkomst van deze match.
      */
     public Lo3Herkomst getHerkomst() {
@@ -117,7 +111,6 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van lo3 voorkomens.
-     *
      * @return de LO3 voorkomens
      */
     public List<Lo3Categorie<T>> getLo3Voorkomens() {
@@ -126,7 +119,6 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de waarde van brp lo3 voorkomens.
-     *
      * @return de BRP/LO3 voorkomens
      */
     public List<Lo3Categorie<T>> getBrpLo3Voorkomens() {
@@ -136,7 +128,7 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
     @Override
     public boolean equals(final Object o) {
         boolean result = false;
-        if (o instanceof VoorkomenMatch<?>) {
+        if (o instanceof VoorkomenMatch) {
             final VoorkomenMatch<?> o2 = (VoorkomenMatch<?>) o;
             result = herkomst.equals(o2.herkomst);
         }
@@ -150,7 +142,6 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de lo3 actueel.
-     *
      * @return true als het voorkomen in LO3 actueel is.
      */
     public boolean isLo3Actueel() {
@@ -159,9 +150,7 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Zet de waarde van checks if is lo3 actueel.
-     *
-     * @param isLo3Actueel
-     *            checks if is lo3 actueel
+     * @param isLo3Actueel checks if is lo3 actueel
      */
     public void setIsLo3Actueel(final boolean isLo3Actueel) {
         this.isLo3Actueel = isLo3Actueel;
@@ -169,7 +158,6 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Geef de brp lo3 actueel.
-     *
      * @return true als het voorkomen in BRP/LO3 actueel is.
      */
     public boolean isBrpLo3Actueel() {
@@ -178,9 +166,7 @@ public final class VoorkomenMatch<T extends Lo3CategorieInhoud> {
 
     /**
      * Zet de waarde van checks if is brp lo3 actueel.
-     *
-     * @param isBrpLo3Actueel
-     *            checks if is brp lo3 actueel
+     * @param isBrpLo3Actueel checks if is brp lo3 actueel
      */
     public void setIsBrpLo3Actueel(final boolean isBrpLo3Actueel) {
         this.isBrpLo3Actueel = isBrpLo3Actueel;

@@ -6,11 +6,10 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfnemerindicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfnemerindicatieHistorie;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpAfnemersindicatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.PersoonAfnemerindicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.PersoonAfnemerindicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieZonderVerantwoordingMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
 
@@ -18,14 +17,11 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Mappe
  * Mapper verantwoordelijk voor het mappen van het BRP model naar een PersoonAfnemerindicatie entiteit.
  */
 public final class PersoonAfnemerindicatieMapper
-        extends AbstractHistorieZonderVerantwoordingMapperStrategie<BrpAfnemersindicatieInhoud, PersoonAfnemerindicatieHistorie, PersoonAfnemerindicatie>
-{
+        extends AbstractHistorieZonderVerantwoordingMapperStrategie<BrpAfnemersindicatieInhoud, PersoonAfnemerindicatieHistorie, PersoonAfnemerindicatie> {
 
     /**
      * Constructor.
-     *
-     * @param dynamischeStamtabelRepository
-     *            dynamische stamtabel repository om oa partijen te bevragen
+     * @param dynamischeStamtabelRepository dynamische stamtabel repository om oa partijen te bevragen
      */
     public PersoonAfnemerindicatieMapper(final DynamischeStamtabelRepository dynamischeStamtabelRepository) {
         super(dynamischeStamtabelRepository, null);
@@ -56,10 +52,4 @@ public final class PersoonAfnemerindicatieMapper
 
         return result;
     }
-
-    @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpAfnemersindicatieInhoud> brpStapel, final PersoonAfnemerindicatie entiteit) {
-        // Geen gegevens die uit de BRP stapel enkel op de A-laag staan
-    }
-
 }

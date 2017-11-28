@@ -21,6 +21,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.GemeenteConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.LandConversietabel;
 import org.junit.Ignore;
@@ -36,8 +37,7 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     private static final Lo3Herkomst LO3_HERKOMST_OVERLIJDEN = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 0);
     private static final Lo3Herkomst LO3_HERKOMST_OVERLIJDEN_1 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 1);
     private static final Lo3Herkomst LO3_HERKOMST_OVERLIJDEN_2 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 2);
-    @Inject
-    private Lo3OverlijdenPrecondities precondities;
+    private Lo3OverlijdenPrecondities precondities = new Lo3OverlijdenPrecondities(new ConversietabelFactoryImpl());
 
     private Lo3OverlijdenInhoud.Builder builder() {
         final Lo3OverlijdenInhoud.Builder builder = new Lo3OverlijdenInhoud.Builder();
@@ -53,84 +53,37 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testHappy() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
         assertAantalErrors(0);
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-
-    @Ignore("Volgens mij zou je niet puur een overlijden moeten kunnen beeidingen")
-    @Test
-    public void testContr101() {
-        final Lo3Categorie<Lo3OverlijdenInhoud> onjuistGevuld =
-                Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3StapelHelper.lo3His("O", 20000601, 20000101),
-                    LO3_HERKOMST_OVERLIJDEN);
-        final Lo3Categorie<Lo3OverlijdenInhoud> juistGevuld =
-                Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000601, DOC),
-                    Lo3StapelHelper.lo3His(null, 20000901, 20000601),
-                    LO3_HERKOMST_OVERLIJDEN);
-        final Lo3Categorie<Lo3OverlijdenInhoud> correctie =
-                Lo3StapelHelper.lo3Cat(
-                    new Lo3OverlijdenInhoud.Builder().build(),
-                    Lo3StapelHelper.lo3Doc(3L, GEM_CODE, 20010101, DOC),
-                    Lo3StapelHelper.lo3His(null, 20000601, 20010101),
-                    LO3_HERKOMST_OVERLIJDEN);
-
-        final Lo3Stapel<Lo3OverlijdenInhoud> stapelBeeindigingOk = Lo3StapelHelper.lo3Stapel(onjuistGevuld, juistGevuld, correctie);
-
-        precondities.controleerStapel(stapelBeeindigingOk);
-
-        assertAantalErrors(0);
-
-        final Lo3Stapel<Lo3OverlijdenInhoud> stapelNok =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    new Lo3OverlijdenInhoud.Builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
-
-        precondities.controleerStapel(stapelNok);
-
-        assertAantalErrors(1);
-        assertSoortMeldingCode(SoortMeldingCode.PRE050, 1);
-    }
-
     @Test
     public void testContr105() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapelCorrectieOk =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "Doc A"),
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000101),
-                    LO3_HERKOMST_OVERLIJDEN), Lo3StapelHelper.lo3Cat(
-                    new Lo3OverlijdenInhoud.Builder().build(),
-                    Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000101, "Doc B"),
-                    Lo3StapelHelper.lo3His(null, 20000101, 20010101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, "Doc A"),
+                        Lo3StapelHelper.lo3His("O", 20000101, 20000101),
+                        LO3_HERKOMST_OVERLIJDEN), Lo3StapelHelper.lo3Cat(
+                        new Lo3OverlijdenInhoud.Builder().build(),
+                        Lo3StapelHelper.lo3Doc(2L, GEM_CODE, 20000101, "Doc B"),
+                        Lo3StapelHelper.lo3His(null, 20000101, 20010101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapelCorrectieOk);
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapelNok =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    new Lo3OverlijdenInhoud.Builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        new Lo3OverlijdenInhoud.Builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapelNok);
 
@@ -142,22 +95,22 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr104() {
         Lo3Categorie<Lo3OverlijdenInhoud> onjuist1 =
                 Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_OVERLIJDEN_2);
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_OVERLIJDEN_2);
         final Lo3Categorie<Lo3OverlijdenInhoud> onjuist2 =
                 Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", 19990101, 20000101),
-                    LO3_HERKOMST_OVERLIJDEN_1);
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", 19990101, 20000101),
+                        LO3_HERKOMST_OVERLIJDEN_1);
         final Lo3Categorie<Lo3OverlijdenInhoud> juist3 =
                 Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(3),
-                    Lo3StapelHelper.lo3His(null, 19990101, 20000101),
-                    LO3_HERKOMST_OVERLIJDEN);
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990101, 20000101),
+                        LO3_HERKOMST_OVERLIJDEN);
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapelOk = Lo3StapelHelper.lo3Stapel(onjuist1, onjuist2, juist3);
 
@@ -166,10 +119,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         onjuist1 =
                 Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 19990101, 19990101),
-                    LO3_HERKOMST_OVERLIJDEN);
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 19990101, 19990101),
+                        LO3_HERKOMST_OVERLIJDEN);
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapelNok = Lo3StapelHelper.lo3Stapel(onjuist1, onjuist2);
 
@@ -185,10 +138,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapelBuitenlandsOk =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapelBuitenlandsOk);
 
@@ -198,10 +151,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapelNok =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapelNok);
 
@@ -213,10 +166,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr110() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20000101, 20000100),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 20000101, 20000100),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -228,10 +181,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr112() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel2 =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 0, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 0, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel2);
 
@@ -239,10 +192,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000100, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -260,10 +213,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr237() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, GEM_CODE, "9-x0001", "5014", 20010101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, GEM_CODE, "9-x0001", "5014", 20010101, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -274,10 +227,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr238() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, null, 20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, null, 20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -288,10 +241,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr239() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20000101, null),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 20000101, null),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -302,10 +255,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr240() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His("O", 20000101, 20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -325,10 +278,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -342,10 +295,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -365,10 +318,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -379,10 +332,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40121() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20050155, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -393,10 +346,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40124() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20040141, 20010101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 20040141, 20010101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -407,10 +360,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr40125() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(null, 20010101, 20040141),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(null, 20010101, 20040141),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -424,10 +377,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -442,10 +395,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -457,10 +410,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr4063() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), "1-x0001", null, null, null),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), "1-x0001", null, null, null),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -472,10 +425,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testContr4064() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Documentatie(1L, null, null, LandConversietabel.LO3_NIET_VALIDE_UITZONDERING.getWaarde(), 20010101, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -496,10 +449,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
         builder.setLandCode(new Lo3LandCode("0000"));
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -515,10 +468,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
         builder.setLandCode(new Lo3LandCode("9999"));
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(1),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(1),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 
@@ -542,10 +495,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
 
         final Lo3Categorie<Lo3OverlijdenInhoud> juist =
                 Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(3),
-                    Lo3StapelHelper.lo3His(null, 19990101, 20000101),
-                    LO3_HERKOMST_OVERLIJDEN);
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(3),
+                        Lo3StapelHelper.lo3His(null, 19990101, 20000101),
+                        LO3_HERKOMST_OVERLIJDEN);
 
         final Lo3Stapel<Lo3OverlijdenInhoud> stapelOk = Lo3StapelHelper.lo3Stapel(juist);
 
@@ -559,10 +512,10 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
     public void testPreconditie098GroepNietAanwezig() {
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
         precondities.controleerStapel(stapel);
         assertAantalErrors(0);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 0);
@@ -594,11 +547,11 @@ public class Lo3OverlijdenPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Onderzoek lo3Onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10110), null, null);
         final Lo3Stapel<Lo3OverlijdenInhoud> stapel =
                 Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    builder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
-                    lo3Onderzoek,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_OVERLIJDEN));
+                        builder().build(),
+                        Lo3StapelHelper.lo3Doc(1L, GEM_CODE, 20000101, DOC),
+                        lo3Onderzoek,
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_OVERLIJDEN));
 
         precondities.controleerStapel(stapel);
 

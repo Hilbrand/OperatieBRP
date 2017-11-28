@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoud;
@@ -30,16 +29,15 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 import nl.bzk.migratiebrp.conversie.regels.proces.AbstractLoggingTest;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import org.junit.Test;
 
 /**
  * Test het contract van OverlijdenConverteerder.
- * 
  */
 public final class OverlijdenConverteerderTest extends AbstractLoggingTest {
 
-    @Inject
-    private OverlijdenConverteerder overlijdenConverteerder;
+    private final OverlijdenConverteerder overlijdenConverteerder = new OverlijdenConverteerder(new Lo3AttribuutConverteerder(new ConversietabelFactoryImpl()));
 
     @Test
     public void testConverteer() {
@@ -47,14 +45,14 @@ public final class OverlijdenConverteerderTest extends AbstractLoggingTest {
         final List<Lo3Categorie<Lo3OverlijdenInhoud>> overlijdenCategorieen = new ArrayList<>();
 
         overlijdenCategorieen.add(new Lo3Categorie<>(
-            new Lo3OverlijdenInhoud(new Lo3Datum(20100101), new Lo3GemeenteCode("1234"), new Lo3LandCode("6030")),
-            null,
-            new Lo3Historie(Lo3IndicatieOnjuistEnum.ONJUIST.asElement(), new Lo3Datum(20100101), new Lo3Datum(20100101)),
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 1)));
+                new Lo3OverlijdenInhoud(new Lo3Datum(20100101), new Lo3GemeenteCode("1234"), new Lo3LandCode("6030")),
+                null,
+                new Lo3Historie(Lo3IndicatieOnjuistEnum.ONJUIST.asElement(), new Lo3Datum(20100101), new Lo3Datum(20100101)),
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 1)));
         overlijdenCategorieen.add(new Lo3Categorie<>(new Lo3OverlijdenInhoud(null, null, null), null, new Lo3Historie(
-            null,
-            new Lo3Datum(20100101),
-            new Lo3Datum(20100201)), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 0)));
+                null,
+                new Lo3Datum(20100101),
+                new Lo3Datum(20100201)), new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 0)));
 
         final Lo3Stapel<Lo3OverlijdenInhoud> lo3OverlijdenStapel = new Lo3Stapel<>(overlijdenCategorieen);
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();
@@ -74,10 +72,10 @@ public final class OverlijdenConverteerderTest extends AbstractLoggingTest {
         final List<Lo3Categorie<Lo3OverlijdenInhoud>> overlijdenCategorieen = new ArrayList<>();
 
         overlijdenCategorieen.add(new Lo3Categorie<>(
-            new Lo3OverlijdenInhoud(new Lo3Datum(20100101), new Lo3GemeenteCode("1234"), new Lo3LandCode("6030")),
-            null,
-            new Lo3Historie(null, new Lo3Datum(20100102), new Lo3Datum(20100102)),
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 0)));
+                new Lo3OverlijdenInhoud(new Lo3Datum(20100101), new Lo3GemeenteCode("1234"), new Lo3LandCode("6030")),
+                null,
+                new Lo3Historie(null, new Lo3Datum(20100102), new Lo3Datum(20100102)),
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_06, 0, 0)));
 
         final Lo3Stapel<Lo3OverlijdenInhoud> lo3OverlijdenStapel = new Lo3Stapel<>(overlijdenCategorieen);
         final TussenPersoonslijstBuilder builder = new TussenPersoonslijstBuilder();

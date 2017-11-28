@@ -16,7 +16,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBijhoudingsaardCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
@@ -84,24 +83,22 @@ public class Lo3HistorieConversieVariantLB21BijhoudingTest extends AbstractLo3Hi
     }
 
     protected void maakBijhoudingGroep(final int categorie, final int voorkomen, final int ingang, final int opneming) {
-        invoerLb21.add(new TussenGroep<>(
-            new BrpBijhoudingInhoud(BrpPartijCode.ONBEKEND, BrpBijhoudingsaardCode.INGEZETENE, BrpNadereBijhoudingsaardCode.ACTUEEL, new BrpBoolean(
-                false,
-                null)), Lo3StapelHelper.lo3His(null, ingang, opneming), Lo3StapelHelper.lo3Doc((long) voorkomen, null, null, null), new Lo3Herkomst(
-                Lo3CategorieEnum.getLO3Categorie(categorie),
-                0,
-                voorkomen)));
+        invoerLb21.add(
+                new TussenGroep<>(
+                        new BrpBijhoudingInhoud(BrpPartijCode.ONBEKEND, BrpBijhoudingsaardCode.INGEZETENE, BrpNadereBijhoudingsaardCode.ACTUEEL),
+                        Lo3StapelHelper.lo3His(null, ingang, opneming),
+                        Lo3StapelHelper.lo3Doc((long) (categorie + voorkomen), null, null, null),
+                        new Lo3Herkomst(Lo3CategorieEnum.getLO3Categorie(categorie), 0, voorkomen)));
     }
 
     protected void valideerBrpBijhoudingGroep(
-        final int brpVoorkomen,
-        final int lo3Categorie,
-        final int lo3Voorkomen,
-        final Integer aanvangGeldigheid,
-        final Integer eindeGeldigheid,
-        final long tsReg,
-        final Long tsVerval)
-    {
+            final int brpVoorkomen,
+            final int lo3Categorie,
+            final int lo3Voorkomen,
+            final Integer aanvangGeldigheid,
+            final Integer eindeGeldigheid,
+            final long tsReg,
+            final Long tsVerval) {
         final BrpGroep<BrpBijhoudingInhoud> brpRij = resultaatLb21.get(brpVoorkomen);
         final BrpHistorie brpHistorie = brpRij.getHistorie();
 

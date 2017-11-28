@@ -24,14 +24,10 @@ public final class BirtReportParameters {
 
     /**
      * Converteer een rapport parameter.
-     *
-     * @param definition
-     *            parameter definitie
-     * @param parameterValue
-     *            parameter waarde
+     * @param definition parameter definitie
+     * @param parameterValue parameter waarde
      * @return rapport parameter in de vorm zoals aangegeven in data type
-     * @throws ReportException
-     *             bij conversie fouten
+     * @throws ReportException bij conversie fouten
      */
     public static Object convertTo(final IScalarParameterDefn definition, final Object parameterValue) throws ReportException {
         final Object result;

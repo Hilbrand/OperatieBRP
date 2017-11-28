@@ -9,7 +9,7 @@ Scenario: 1. R1636 - In een H/P-relatie zijn twee partners betrokken
 Meta:
 @regels                 BRAL2111,R1636
 
-Given bijhoudingautorisatie uit /bijhoudingsautorisaties/Gemeente_Tiel.txt
+Gemeente BRP 1
 Given bijhoudingsverzoek voor partij 'Gemeente Tiel'
 
 Given de personen 826933129,526521673,141901317,631512457,140678177,698938057 zijn verwijderd

@@ -8,22 +8,25 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
+
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.AangeverAdreshoudingConverter;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.GemeenteConverter;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.LandOfGebiedConverter;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.property.RedenWijzigingAdresConverter;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -93,7 +96,7 @@ public final class PersoonAdresHistorieConverter extends AbstractEntityHistorieC
     private BRPActie actieInhoud;
     private BRPActie actieVerval;
     private BRPActie actieAanpassingGeldigheid;
-    private FunctieAdres soortAdres;
+    private SoortAdres soortAdres;
     private LandOfGebied landOfGebied;
     private Gemeente gemeente;
     private String woonplaatsnaam;
@@ -191,7 +194,7 @@ public final class PersoonAdresHistorieConverter extends AbstractEntityHistorieC
                 persoon = context.getPersoon(Integer.parseInt(value));
                 break;
             case HEADER_SOORT:
-                soortAdres = FunctieAdres.parseId(Short.valueOf(value));
+                soortAdres = SoortAdres.parseId(Integer.valueOf(value));
                 break;
             case HEADER_REDEN_WIJZIGING:
                 redenWijzigingAdres = redenWijzigingAdresConverter.convert(value);

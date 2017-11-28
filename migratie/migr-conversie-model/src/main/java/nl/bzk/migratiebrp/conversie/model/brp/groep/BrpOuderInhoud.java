@@ -6,58 +6,45 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de BRP indicatie 'Ouder'.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpOuderInhoud extends AbstractBrpGroepInhoud {
-
-    @Element(name = "indicatieOuder", required = false)
-    private final BrpBoolean indicatieOuder;
 
     @Element(name = "indicatieOuderUitWieKindIsGeboren", required = false)
     private final BrpBoolean indicatieOuderUitWieKindIsGeboren;
 
+    private boolean isLeeg;
+
     /**
      * Maakt een BrpOuderInhoud object.
-     * 
-     * @param indicatieOuder
-     *            true als de indicatie bestaat, anders null, mag niet false zijn
-     * @param indicatieOuderUitWieKindIsGeboren
-     *            true als de indicatie bestaat, anders null, mag niet false zijn
-     * @throws IllegalArgumentException
-     *             als heeftIndicatie false is
      */
-    public BrpOuderInhoud(@Element(name = "indicatieOuder", required = false) final BrpBoolean indicatieOuder, @Element(
-            name = "indicatieOuderUitWieKindIsGeboren", required = false) final BrpBoolean indicatieOuderUitWieKindIsGeboren)
-    {
-        this.indicatieOuder = indicatieOuder;
+    public BrpOuderInhoud() {
+        this(null);
+    }
+
+    /**
+     * Maakt een BrpOuderInhoud object.
+     * @param indicatieOuderUitWieKindIsGeboren true als de indicatie bestaat, anders null, mag niet false zijn
+     * @throws IllegalArgumentException als heeftIndicatie false is
+     */
+    public BrpOuderInhoud(@Element(name = "indicatieOuderUitWieKindIsGeboren", required = false) final BrpBoolean indicatieOuderUitWieKindIsGeboren) {
+        isLeeg = false;
         this.indicatieOuderUitWieKindIsGeboren = indicatieOuderUitWieKindIsGeboren;
     }
 
     /**
-     * Geef de waarde van indicatie ouder.
-     *
-     * @return true als er sprake is van een indicatie, anders null
-     */
-    public BrpBoolean getIndicatieOuder() {
-        return indicatieOuder;
-    }
-
-    /**
-     * Geef de waarde van indicatie adresgevende ouder.
-     *
-     * @return true als er sprake is van een indicatie, anders null
+     * Geef de waarde van indicatie ouder uit wie kind is geboren van BrpOuderInhoud.
+     * @return de waarde van indicatie ouder uit wie kind is geboren van BrpOuderInhoud
      */
     public BrpBoolean getIndicatieOuderUitWieKindIsGeboren() {
         return indicatieOuderUitWieKindIsGeboren;
@@ -65,12 +52,12 @@ public final class BrpOuderInhoud extends AbstractBrpGroepInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isAttribuutGevuld(indicatieOuder);
+        return isLeeg;
     }
 
     @Override
@@ -82,21 +69,28 @@ public final class BrpOuderInhoud extends AbstractBrpGroepInhoud {
             return false;
         }
         final BrpOuderInhoud castOther = (BrpOuderInhoud) other;
-        return new EqualsBuilder().append(indicatieOuder, castOther.indicatieOuder)
-                                  .append(indicatieOuderUitWieKindIsGeboren, castOther.indicatieOuderUitWieKindIsGeboren)
-                                  .isEquals();
+        return new EqualsBuilder().append(indicatieOuderUitWieKindIsGeboren, castOther.indicatieOuderUitWieKindIsGeboren).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(indicatieOuder).append(indicatieOuderUitWieKindIsGeboren).toHashCode();
+        return new HashCodeBuilder().append(indicatieOuderUitWieKindIsGeboren).toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("indicatieOuder", indicatieOuder)
-                                                                          .append("indicatieOuderUitWieKindIsGeboren", indicatieOuderUitWieKindIsGeboren)
-                                                                          .toString();
+                .append("indicatieOuderUitWieKindIsGeboren", indicatieOuderUitWieKindIsGeboren)
+                .toString();
+    }
+
+    /**
+     * Maakt een expliciet lege inhoud.
+     * @return een lege inhoud
+     */
+    public static BrpOuderInhoud maakLegeInhoud() {
+        final BrpOuderInhoud result = new BrpOuderInhoud(null);
+        result.isLeeg = true;
+        return result;
     }
 }

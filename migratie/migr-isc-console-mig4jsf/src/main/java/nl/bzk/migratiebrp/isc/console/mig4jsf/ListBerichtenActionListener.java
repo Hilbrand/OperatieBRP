@@ -6,10 +6,8 @@
 
 package nl.bzk.migratiebrp.isc.console.mig4jsf;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.el.ELContext;
@@ -32,9 +30,10 @@ import org.jbpm.jsf.JbpmJsfContext;
 public final class ListBerichtenActionListener extends AbstractActionListener {
 
     private static final String FIND_ALL_BERICHTEN_SQL = "select " + BerichtMapper.COLUMNS + " from mig_bericht";
+    private static final String COUNT_ALL_BERICHTEN_SQL = "select count(*) from mig_bericht";
     private static final String SPACE = " ";
     private static final String ORDER_BERICHTEN = "order by tijdstip desc, id desc";
-    private static final String COUNT_ALL_BERICHTEN_SQL = "select count(*) from mig_bericht";
+
 
     private static final BerichtMapper BERICHT_MAPPER = new BerichtMapper();
 
@@ -44,19 +43,14 @@ public final class ListBerichtenActionListener extends AbstractActionListener {
 
     /**
      * Constructor met expressie variabelen.
-     *
-     * @param pagerExpression
-     *            Expressie waarin de {@link PagerBean pager bean} staat.
-     * @param filterExpression
-     *            Expressie waarin een {@link Filter filter} staat.
-     * @param targetExpression
-     *            Expressie waarin het resultaat komt te staan.
+     * @param pagerExpression Expressie waarin de {@link PagerBean pager bean} staat.
+     * @param filterExpression Expressie waarin een {@link Filter filter} staat.
+     * @param targetExpression Expressie waarin het resultaat komt te staan.
      */
     public ListBerichtenActionListener(
-        final ValueExpression targetExpression,
-        final ValueExpression pagerExpression,
-        final ValueExpression filterExpression)
-    {
+            final ValueExpression targetExpression,
+            final ValueExpression pagerExpression,
+            final ValueExpression filterExpression) {
         super("listBerichten");
         this.targetExpression = targetExpression;
         this.pagerExpression = pagerExpression;
@@ -83,16 +77,14 @@ public final class ListBerichtenActionListener extends AbstractActionListener {
         final String limitClause = bepaalLimit(pager);
 
         // Count total number of results
-        final Number count = JbpmSqlHelper.execute(jbpmContext, new Sql<Number>() {
-            @Override
-            public Number execute(final Connection connection) throws SQLException {
-                try (final PreparedStatement statement = connection.prepareStatement(COUNT_ALL_BERICHTEN_SQL + SPACE + whereClause)) {
-                    filter.setWhereClause(statement, JdbcConstants.COLUMN_1);
-                    statement.execute();
-                    try (final ResultSet rs = statement.getResultSet()) {
-                        rs.next();
-                        return rs.getLong(1);
-                    }
+        final Number count = JbpmSqlHelper.execute(jbpmContext, (Sql<Number>) connection -> {
+            final String sql = COUNT_ALL_BERICHTEN_SQL + SPACE + whereClause;
+            try (final PreparedStatement statement = connection.prepareStatement(sql)) {
+                filter.setWhereClause(statement, JdbcConstants.COLUMN_1);
+                statement.execute();
+                try (final ResultSet rs = statement.getResultSet()) {
+                    rs.next();
+                    return rs.getLong(1);
                 }
             }
         });
@@ -100,21 +92,18 @@ public final class ListBerichtenActionListener extends AbstractActionListener {
         pager.setNumberOfResults(count.intValue());
 
         // List
-        final List<Bericht> berichtenList = JbpmSqlHelper.execute(jbpmContext, new Sql<List<Bericht>>() {
-            @Override
-            public List<Bericht> execute(final Connection connection) throws SQLException {
-                final String sql = FIND_ALL_BERICHTEN_SQL + SPACE + whereClause + SPACE + ORDER_BERICHTEN + SPACE + limitClause;
-                try (final PreparedStatement statement = connection.prepareStatement(sql)) {
-                    filter.setWhereClause(statement, JdbcConstants.COLUMN_1);
-                    statement.execute();
-                    final List<Bericht> berichten = new ArrayList<>();
-                    try (final ResultSet rs = statement.getResultSet()) {
-                        while (rs.next()) {
-                            berichten.add(BERICHT_MAPPER.map(rs));
-                        }
+        final List<Bericht> berichtenList = JbpmSqlHelper.execute(jbpmContext, connection -> {
+            final String sql = FIND_ALL_BERICHTEN_SQL + SPACE + whereClause + SPACE + ORDER_BERICHTEN + SPACE + limitClause;
+            try (final PreparedStatement statement = connection.prepareStatement(sql)) {
+                filter.setWhereClause(statement, JdbcConstants.COLUMN_1);
+                statement.execute();
+                final List<Bericht> berichten = new ArrayList<>();
+                try (final ResultSet rs = statement.getResultSet()) {
+                    while (rs.next()) {
+                        berichten.add(BERICHT_MAPPER.map(rs));
                     }
-                    return berichten;
                 }
+                return berichten;
             }
         });
 

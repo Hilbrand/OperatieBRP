@@ -13,8 +13,18 @@
         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
     ">
 
-    <bean id="voiscJmxConnector" class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean">
-        <property name="serviceUrl" value="${voisc.jmx.service.url:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi}"/>
-    </bean>
+	<bean id="voiscJmxConnectorCredentials" class="nl.bzk.algemeenbrp.util.jmx.client.CredentialsFactory">
+		<property name="username" value="${voisc.jmx.service.username:admin}" />
+		<property name="password" value="${voisc.jmx.service.password:admin}" />
+	</bean>
 
+    <bean id="voiscJmxConnector" class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean">
+    	<property name="environment">
+			<map>
+				<entry key="jmx.remote.credentials" value-ref="voiscJmxConnectorCredentials" />
+				<entry key="jmx.remote.requesttimeout" value="60" />
+			</map>
+    	</property>
+        <property name="serviceUrl" value="service:jmx:simple://${voisc.jmx.service.host:localhost}:${voisc.jmx.service.port:3481}"/>
+    </bean>
 </beans>

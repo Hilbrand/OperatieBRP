@@ -9,12 +9,12 @@ package nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 
 /**
  * De conversietabel voor de converie van 'LO3 Adellijke Titel/Predikaat'-code naar 'BRP Adellijke Titel,
  * Predikaat'-paar en vice versa.
- * 
  */
 public final class WoonplaatsnaamConversietabel implements Conversietabel<String, String> {
 
@@ -22,9 +22,7 @@ public final class WoonplaatsnaamConversietabel implements Conversietabel<String
 
     /**
      * Maakt een AdellijkeTitelPredikaatConversietabel object.
-     * 
-     * @param woonplaatsnamen
-     *            de lijst met titel conversies
+     * @param woonplaatsnamen de lijst met titel conversies
      */
     public WoonplaatsnaamConversietabel(final Collection<String> woonplaatsnamen) {
         this.woonplaatsnamen.addAll(woonplaatsnamen);

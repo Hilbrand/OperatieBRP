@@ -28,9 +28,7 @@ public final class VerwijderAfnemersindicatieVerzoekBericht extends AbstractSync
 
     /**
      * JAXB constructor.
-     *
-     * @param verwerkAfnemersindicatieVerzoekType
-     *            Het verwerk afnemersindicatie verzoek type {@link VerwerkAfnemersindicatieVerzoekType}
+     * @param verwerkAfnemersindicatieVerzoekType Het verwerk afnemersindicatie verzoek type {@link VerwerkAfnemersindicatieVerzoekType}
      */
     public VerwijderAfnemersindicatieVerzoekBericht(final VerwerkAfnemersindicatieVerzoekType verwerkAfnemersindicatieVerzoekType) {
         super("VerwijderAfnemersindicatieVerzoek");
@@ -47,60 +45,34 @@ public final class VerwijderAfnemersindicatieVerzoekBericht extends AbstractSync
     /* ************************************************************************************************************* */
 
     /**
-     * Geef de waarde van persoon id.
-     *
-     * @return persoon id
+     * Geef de waarde van BSN.
+     * @return BSN
      */
-    public Integer getPersoonId() {
-        return verwerkAfnemersindicatieVerzoekType.getPersoonId();
+    public String getBsn() {
+        return verwerkAfnemersindicatieVerzoekType.getBsn();
     }
 
     /**
-     * Geef de waarde van toegang leveringsautorisatie id.
-     *
-     * @return toegang leveringsautorisatie id
+     * Geeft de partijCode op het bericht terug.
+     * @return De partijCode op het bericht.
      */
-    public Integer getToegangLeveringsautorisatieId() {
-        return verwerkAfnemersindicatieVerzoekType.getToegangLeveringsautorisatieId();
+    public String getPartijCode() {
+        return verwerkAfnemersindicatieVerzoekType.getPartijCode();
     }
 
     /**
-     * Geef de waarde van dienst id.
-     *
-     * @return dienst id
+     * Zet de waarde van BSN.
+     * @param bsn BSN
      */
-    public Integer getDienstId() {
-        return verwerkAfnemersindicatieVerzoekType.getDienstId();
+    public void setBsn(final String bsn) {
+        verwerkAfnemersindicatieVerzoekType.setBsn(bsn);
     }
 
     /**
-     * Zet de waarde van persoon id.
-     *
-     * @param persoonId
-     *            persoon id
+     * Zet de partijCode op het bericht.
+     * @param partijCode De te zetten partijCode.
      */
-    public void setPersoonId(final Integer persoonId) {
-        verwerkAfnemersindicatieVerzoekType.setPersoonId(persoonId);
+    public void setPartijCode(final String partijCode) {
+        verwerkAfnemersindicatieVerzoekType.setPartijCode(partijCode);
     }
-
-    /**
-     * Zet de waarde van toegang leveringsautorisatie id.
-     *
-     * @param toegangleveringsautorisatieId
-     *            toegang leveringsautorisatie id
-     */
-    public void setToegangLeveringsautorisatieId(final int toegangleveringsautorisatieId) {
-        verwerkAfnemersindicatieVerzoekType.setToegangLeveringsautorisatieId(toegangleveringsautorisatieId);
-    }
-
-    /**
-     * Zet de waarde van dienst id.
-     *
-     * @param dienstId
-     *            dienst id
-     */
-    public void setDienstId(final Integer dienstId) {
-        verwerkAfnemersindicatieVerzoekType.setDienstId(dienstId);
-    }
-
 }

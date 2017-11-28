@@ -23,13 +23,9 @@ import org.springframework.stereotype.Component;
 public final class TxtWriter implements Writer {
     /**
      * Schrijft de inhoud van de meegegeven lijst per regel weg.
-     * 
-     * @param file
-     *            het betsand waar toe weg geschreven moet worden
-     * @param contents
-     *            de content die weg geschreven moet worden
-     * @throws IOException
-     *             als de onderliggende writer een exceptie geeft.
+     * @param file het betsand waar toe weg geschreven moet worden
+     * @param contents de content die weg geschreven moet worden
+     * @throws IOException als de onderliggende writer een exceptie geeft.
      */
     @Override
     public void writeToFile(final File file, final List<String> contents) throws IOException {

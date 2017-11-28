@@ -7,8 +7,8 @@
 package nl.bzk.migratiebrp.isc.jbpm.common;
 
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.AbstractOngeldigLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.OnbekendBericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.OngeldigBericht;
 
 /**
  * Utility methoden voor gebruik bij de foutafhandeling.
@@ -29,28 +29,24 @@ public final class FoutUtil {
 
     /**
      * Bepaalt of er sprake is van een cyclusfout.
-     * 
-     * @param bericht
-     *            Het binnengekomen bericht.
+     * @param bericht Het binnengekomen bericht.
      * @return True indien het bericht een cyclusfout veroorzaakt, false in alle andere gevallen.
      */
     public static Boolean bepaalIndicatieCyclusFout(final Lo3Bericht bericht) {
-        return !(bericht instanceof OnbekendBericht) && !(bericht instanceof OngeldigBericht);
+        return !(bericht instanceof OnbekendBericht) && !(bericht instanceof AbstractOngeldigLo3Bericht);
     }
 
     /**
      * Bepaalt op basis van het bericht welke foutmelding er getoond wordt.
-     * 
-     * @param bericht
-     *            Het binnengekomen bericht.
+     * @param bericht Het binnengekomen bericht.
      * @return De foutmelding.
      */
     public static String bepaalFoutmelding(final Lo3Bericht bericht) {
         final String result;
         if (bericht instanceof OnbekendBericht) {
             result = ((OnbekendBericht) bericht).getMelding();
-        } else if (bericht instanceof OngeldigBericht) {
-            result = ((OngeldigBericht) bericht).getMelding();
+        } else if (bericht instanceof AbstractOngeldigLo3Bericht) {
+            result = ((AbstractOngeldigLo3Bericht) bericht).getMelding();
         } else {
             result = ONVERWACHT_BERICHT_MELDING;
         }
@@ -59,9 +55,7 @@ public final class FoutUtil {
 
     /**
      * Beperk de gegeven foutmelding tot een lengte die JBPM accepteert.
-     * 
-     * @param foutmelding
-     *            foutmelding
+     * @param foutmelding foutmelding
      * @return eventueel afgekapte foutmelding
      */
     public static String beperkFoutmelding(final String foutmelding) {

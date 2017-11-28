@@ -21,12 +21,8 @@ public final class StartsNotWithListFilter implements FilenameFilter {
 
     /**
      * Constructor.
-     *
-     * @param accept
-     *            waarmee lijst van bestandsnamen waarmee de test (hoofdletter ongevoelig) moet beginnen, null
-     *            accepteert alles
-     * @param type
-     *            type of files to accept
+     * @param accept waarmee lijst van bestandsnamen waarmee de test (hoofdletter ongevoelig) moet beginnen, null accepteert alles
+     * @param type type of files to accept
      */
     public StartsNotWithListFilter(final List<String> accept, final FilterType type) {
         if (accept != null) {

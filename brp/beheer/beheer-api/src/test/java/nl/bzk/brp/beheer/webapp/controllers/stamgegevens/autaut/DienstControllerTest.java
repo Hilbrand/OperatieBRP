@@ -6,51 +6,61 @@
 
 package nl.bzk.brp.beheer.webapp.controllers.stamgegevens.autaut;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Dienst;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Dienstbundel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Leveringsautorisatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.EffectAfnemerindicaties;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortDienst;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Stelsel;
 import nl.bzk.brp.beheer.webapp.controllers.ErrorHandler.NotFoundException;
 import nl.bzk.brp.beheer.webapp.controllers.HistorieVerwerker;
-import nl.bzk.brp.beheer.webapp.repository.stamgegevens.autaut.LeveringsautorisatieRepository;
+import nl.bzk.brp.beheer.webapp.repository.ReadonlyRepository;
 import nl.bzk.brp.beheer.webapp.repository.stamgegevens.autaut.DienstRepository;
-import nl.bzk.brp.model.beheer.autaut.Dienstbundel;
-import nl.bzk.brp.model.beheer.autaut.Dienst;
-import nl.bzk.brp.model.beheer.autaut.HisDienst;
-import nl.bzk.brp.model.beheer.autaut.Leveringsautorisatie;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore
 public class DienstControllerTest {
+
+    private static final Leveringsautorisatie LEVERINGSAUTORISATIE = new Leveringsautorisatie(Stelsel.GBA, Boolean.FALSE);
+    private static final Dienstbundel DIENSTBUNDEL = new Dienstbundel(LEVERINGSAUTORISATIE);
 
     @Mock
     private DienstRepository dienstRepository;
     @Mock
-    private LeveringsautorisatieRepository leveringsautorisatieRepository;
+    private ReadonlyRepository<Dienstbundel, Integer> dienstbundelRepository;
     @Mock
-    private HistorieVerwerker<Dienst, HisDienst> historieVerwerker;
+    private HistorieVerwerker<Dienst> historieVerwerker;
     @Mock
     private PlatformTransactionManager transactionManager;
-
+    @InjectMocks
     private DienstController subject;
 
     @Before
     public void setup() {
-        subject = new DienstController(dienstRepository);
+        subject = new DienstController(dienstRepository, dienstbundelRepository);
+        DIENSTBUNDEL.setId(1);
+        ReflectionTestUtils.setField(subject, "dienstbundelRepository", dienstbundelRepository);
         subject.setTransactionManagerReadWrite(transactionManager);
+        subject.setTransactionManagerReadonly(transactionManager);
     }
 
     @Test
-    public void wijzigObjectVoorOpslagZonderAbo() throws NotFoundException {
+    public void wijzigObjectVoorOpslagZonderDienstbundel() throws NotFoundException {
         // Setup
-        final Dienst item = new Dienst();
-        final Dienst managedItem = new Dienst();
+        final Dienst item = new Dienst(DIENSTBUNDEL, SoortDienst.ATTENDERING);
+        item.setDatumIngang(20120101);
+        final Dienst managedItem = new Dienst(DIENSTBUNDEL, SoortDienst.ATTENDERING);
+        managedItem.setDatumIngang(20120101);
         Mockito.when(dienstRepository.findOrPersist(item)).thenReturn(managedItem);
+        Mockito.when(dienstbundelRepository.findOne(DIENSTBUNDEL.getId())).thenReturn(DIENSTBUNDEL);
 
         // Execute
         subject.save(item);
@@ -58,32 +68,77 @@ public class DienstControllerTest {
         // Verify
         Mockito.verify(dienstRepository).findOrPersist(item);
         Mockito.verify(dienstRepository).save(managedItem);
-        Mockito.verifyNoMoreInteractions(dienstRepository, leveringsautorisatieRepository);
+        Mockito.verifyNoMoreInteractions(dienstRepository);
     }
 
     @Test
-    public void wijzigObjectVoorOpslagMetAbo() throws NotFoundException {
+    public void wijzigObjectVoorOpslagMetHistorie() throws NotFoundException {
         // Setup
-        final Dienst item = new Dienst();
-        item.setDienstbundel(new Dienstbundel());
-        item.getDienstbundel().setID(3333);
-        final Dienst managedItem = new Dienst();
-        final Leveringsautorisatie leveringsautorisatie = new Leveringsautorisatie();
-        leveringsautorisatie.setID(3334);
-        leveringsautorisatie.getDienstbundels().add(item.getDienstbundel());
+        final Dienst item = new Dienst(DIENSTBUNDEL, SoortDienst.ATTENDERING);
+        item.setAttenderingscriterium("1");
+        item.setDatumEinde(20110101);
+        item.setDatumIngang(20010101);
+        item.setEersteSelectieDatum(20100101);
+        item.setEffectAfnemerindicaties(EffectAfnemerindicaties.PLAATSING);
+        item.setIndicatieGeblokkeerd(Boolean.TRUE);
+        final Dienst managedItem = new Dienst(DIENSTBUNDEL, SoortDienst.ATTENDERING);
+        managedItem.setAttenderingscriterium("1");
+        managedItem.setDatumEinde(20110101);
+        managedItem.setDatumIngang(20010101);
+        managedItem.setEersteSelectieDatum(20100101);
+        managedItem.setEffectAfnemerindicaties(EffectAfnemerindicaties.PLAATSING);
+        managedItem.setIndicatieGeblokkeerd(Boolean.TRUE);
 
-        Mockito.when(leveringsautorisatieRepository.getOne(3334)).thenReturn(leveringsautorisatie);
         Mockito.when(dienstRepository.findOrPersist(item)).thenReturn(managedItem);
+        Mockito.when(dienstbundelRepository.findOne(DIENSTBUNDEL.getId())).thenReturn(DIENSTBUNDEL);
+
+        // Execute
+        subject.save(item);
+        subject.save(item);
+
+        // Verify
+        Mockito.verify(dienstRepository, Mockito.times(2)).findOrPersist(item);
+        Mockito.verify(dienstRepository, Mockito.times(2)).save(managedItem);
+        Mockito.verifyNoMoreInteractions(dienstRepository);
+    }
+
+    @Test
+    public void wijzigObjectVoorOpslagHistorie() throws NotFoundException {
+        // Setup
+        final Dienst item = new Dienst(DIENSTBUNDEL, SoortDienst.ATTENDERING);
+        item.setDatumIngang(20010101);
+        final Dienst managedItem = new Dienst(DIENSTBUNDEL, SoortDienst.ATTENDERING);
+        managedItem.setDatumIngang(20010101);
+
+        Mockito.when(dienstRepository.findOrPersist(item)).thenReturn(managedItem);
+        Mockito.when(dienstbundelRepository.findOne(DIENSTBUNDEL.getId())).thenReturn(DIENSTBUNDEL);
 
         // Execute
         subject.save(item);
 
+        item.setAttenderingscriterium("1");
+
+        subject.save(item);
+
         // Verify
-        Mockito.verify(leveringsautorisatieRepository).getOne(3334);
-        Mockito.verify(dienstRepository).findOrPersist(item);
-        Mockito.verify(dienstRepository).save(managedItem);
-        Mockito.verifyNoMoreInteractions(dienstRepository, leveringsautorisatieRepository);
-        Assert.assertEquals(managedItem, item.getDienstbundel());
+        Mockito.verify(dienstRepository, Mockito.times(2)).findOrPersist(item);
+        Mockito.verify(dienstRepository, Mockito.times(2)).save(managedItem);
+        Mockito.verifyNoMoreInteractions(dienstRepository);
+    }
+
+    @Test
+    public void wijzigObjectVoorOpslagHistorieNullChecks() throws NotFoundException {
+        // Setup
+        final Dienst item = new Dienst(DIENSTBUNDEL, SoortDienst.ATTENDERING);
+        final Dienst managedItem = new Dienst(DIENSTBUNDEL, SoortDienst.ATTENDERING);
+        managedItem.setDatumIngang(20010101);
+
+        Mockito.when(dienstRepository.findOrPersist(item)).thenReturn(managedItem);
+        Mockito.when(dienstbundelRepository.findOne(DIENSTBUNDEL.getId())).thenReturn(DIENSTBUNDEL);
+
+        // Execute
+        subject.save(item);
+
     }
 
 }

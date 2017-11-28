@@ -14,9 +14,13 @@ import java.util.Map;
  */
 public enum Lo3AanduidingMediumEnum {
 
-    /** Alternatief. */
+    /**
+     * Alternatief.
+     */
     ALTERNATIEF("A"),
-    /** Netwerk. */
+    /**
+     * Netwerk.
+     */
     NETWERK("N");
 
     /* ************************************************************************************************************* */
@@ -25,14 +29,13 @@ public enum Lo3AanduidingMediumEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private static final Map<String, Lo3AanduidingMediumEnum> CODE_MAP = new HashMap<String, Lo3AanduidingMediumEnum>() {
-        private static final long serialVersionUID = 1L;
-        {
-            for (final Lo3AanduidingMediumEnum value : Lo3AanduidingMediumEnum.values()) {
-                put(value.getCode(), value);
-            }
+    private static final Map<String, Lo3AanduidingMediumEnum> CODE_MAP = new HashMap<>();
+
+    static {
+        for (final Lo3AanduidingMediumEnum value : Lo3AanduidingMediumEnum.values()) {
+            CODE_MAP.put(value.getCode(), value);
         }
-    };
+    }
 
     private final String code;
 
@@ -42,7 +45,7 @@ public enum Lo3AanduidingMediumEnum {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
 
-    private Lo3AanduidingMediumEnum(final String code) {
+    Lo3AanduidingMediumEnum(final String code) {
         this.code = code;
     }
 
@@ -54,9 +57,7 @@ public enum Lo3AanduidingMediumEnum {
 
     /**
      * Bestaat de gegeven code in de enumeratie.
-     *
-     * @param code
-     *            code
+     * @param code code
      * @return true, als de code bestaat, anders false
      */
     public static boolean containsCode(final String code) {
@@ -65,9 +66,7 @@ public enum Lo3AanduidingMediumEnum {
 
     /**
      * Geef de enumeratie waarde voor de gegeven code.
-     *
-     * @param code
-     *            code
+     * @param code code
      * @return de enumeratie waarde, null als de code niet gevonden kan worden
      */
     public static Lo3AanduidingMediumEnum getByCode(final String code) {
@@ -82,7 +81,6 @@ public enum Lo3AanduidingMediumEnum {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {

@@ -6,25 +6,23 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Preconditie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de BRP groep Overlijden.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpOverlijdenInhoud extends AbstractBrpGroepInhoud {
 
@@ -45,42 +43,31 @@ public final class BrpOverlijdenInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een nieuw BrpOverlijdenInhoud object.
-     * 
-     * @param datum
-     *            de datum van overlijden, mag niet null zijn
-     * @param gemeenteCode
-     *            de gemeente van overlijden, mag null zijn
-     * @param woonplaatsnaamOverlijden
-     *            de plaats van overlijden, mag null zijn
-     * @param buitenlandsePlaats
-     *            de buitenlandse plaats van overlijden, mag null zijn
-     * @param buitenlandseRegio
-     *            de buitenlandse regio van overlijden, mag null zijn
-     * @param landOfGebiedCode
-     *            het land van overlijden, mag niet null zijn
-     * @param omschrijvingLocatie
-     *            de omschrijving van de locatie van overlijden, mag null zijn
-     * @throws NullPointerException
-     *             als datum of landOfGebiedCode null is
+     * @param datum de datum van overlijden, mag niet null zijn
+     * @param gemeenteCode de gemeente van overlijden, mag null zijn
+     * @param woonplaatsnaamOverlijden de plaats van overlijden, mag null zijn
+     * @param buitenlandsePlaats de buitenlandse plaats van overlijden, mag null zijn
+     * @param buitenlandseRegio de buitenlandse regio van overlijden, mag null zijn
+     * @param landOfGebiedCode het land van overlijden, mag niet null zijn
+     * @param omschrijvingLocatie de omschrijving van de locatie van overlijden, mag null zijn
+     * @throws NullPointerException als datum of landOfGebiedCode null is
      */
     public BrpOverlijdenInhoud(
-        @Element(name = "datum", required = false) final BrpDatum datum,
-        @Element(name = "gemeenteCode", required = false) final BrpGemeenteCode gemeenteCode,
-        @Element(name = "woonplaatsnaamOverlijden", required = false) final BrpString woonplaatsnaamOverlijden,
-        @Element(name = "buitenlandsePlaats", required = false) final BrpString buitenlandsePlaats,
-        @Element(name = "buitenlandseRegio", required = false) final BrpString buitenlandseRegio,
-        @Element(name = "landOfGebiedCode", required = false) final BrpLandOfGebiedCode landOfGebiedCode,
-        @Element(name = "omschrijvingLocatie", required = false) final BrpString omschrijvingLocatie)
-    {
-        if (Validatie.isEenParameterGevuld(
-            datum,
-            gemeenteCode,
-            woonplaatsnaamOverlijden,
-            buitenlandsePlaats,
-            buitenlandseRegio,
-            landOfGebiedCode,
-            omschrijvingLocatie))
-        {
+            @Element(name = "datum", required = false) final BrpDatum datum,
+            @Element(name = "gemeenteCode", required = false) final BrpGemeenteCode gemeenteCode,
+            @Element(name = "woonplaatsnaamOverlijden", required = false) final BrpString woonplaatsnaamOverlijden,
+            @Element(name = "buitenlandsePlaats", required = false) final BrpString buitenlandsePlaats,
+            @Element(name = "buitenlandseRegio", required = false) final BrpString buitenlandseRegio,
+            @Element(name = "landOfGebiedCode", required = false) final BrpLandOfGebiedCode landOfGebiedCode,
+            @Element(name = "omschrijvingLocatie", required = false) final BrpString omschrijvingLocatie) {
+        if (BrpValidatie.isEenParameterGevuld(
+                datum,
+                gemeenteCode,
+                woonplaatsnaamOverlijden,
+                buitenlandsePlaats,
+                buitenlandseRegio,
+                landOfGebiedCode,
+                omschrijvingLocatie)) {
             if (datum == null) {
                 throw new NullPointerException("als één van de attributen van BRP Overlijden is gevuld dan mag de datum niet null zijn");
             }
@@ -98,83 +85,76 @@ public final class BrpOverlijdenInhoud extends AbstractBrpGroepInhoud {
     }
 
     @Override
-    @Preconditie({SoortMeldingCode.PRE003, SoortMeldingCode.PRE004 })
+    @Preconditie({SoortMeldingCode.PRE003, SoortMeldingCode.PRE004})
     public void valideer() {
         BrpGroepValidator.valideerGemeenteInNederland(gemeenteCode, landOfGebiedCode, this);
         BrpGroepValidator.valideerBuitenlandsePlaatsNietNederland(buitenlandsePlaats, landOfGebiedCode, this);
     }
 
     /**
-     * Geef de waarde van datum.
-     *
-     * @return the datum, of null
+     * Geef de waarde van datum van BrpOverlijdenInhoud.
+     * @return de waarde van datum van BrpOverlijdenInhoud
      */
     public BrpDatum getDatum() {
         return datum;
     }
 
     /**
-     * Geef de waarde van gemeente code.
-     *
-     * @return the gemeenteCode, of null
+     * Geef de waarde van gemeente code van BrpOverlijdenInhoud.
+     * @return de waarde van gemeente code van BrpOverlijdenInhoud
      */
     public BrpGemeenteCode getGemeenteCode() {
         return gemeenteCode;
     }
 
     /**
-     * Geef de waarde van woonplaatsnaam overlijden.
-     *
-     * @return the woonplaatsnaamOverlijden, of null
+     * Geef de waarde van woonplaatsnaam overlijden van BrpOverlijdenInhoud.
+     * @return de waarde van woonplaatsnaam overlijden van BrpOverlijdenInhoud
      */
     public BrpString getWoonplaatsnaamOverlijden() {
         return woonplaatsnaamOverlijden;
     }
 
     /**
-     * Geef de waarde van buitenlandse plaats.
-     *
-     * @return the buitenlandsePlaats, of null
+     * Geef de waarde van buitenlandse plaats van BrpOverlijdenInhoud.
+     * @return de waarde van buitenlandse plaats van BrpOverlijdenInhoud
      */
     public BrpString getBuitenlandsePlaats() {
         return buitenlandsePlaats;
     }
 
     /**
-     * Geef de waarde van buitenlandse regio.
-     *
-     * @return the buitenlandseRegio, of null
+     * Geef de waarde van buitenlandse regio van BrpOverlijdenInhoud.
+     * @return de waarde van buitenlandse regio van BrpOverlijdenInhoud
      */
     public BrpString getBuitenlandseRegio() {
         return buitenlandseRegio;
     }
 
     /**
-     * Geef de waarde van land of gebied code.
-     *
-     * @return the landOfGebiedCode, of null
+     * Geef de waarde van land of gebied code van BrpOverlijdenInhoud.
+     * @return de waarde van land of gebied code van BrpOverlijdenInhoud
      */
     public BrpLandOfGebiedCode getLandOfGebiedCode() {
         return landOfGebiedCode;
     }
 
     /**
-     * Geef de waarde van omschrijving locatie.
-     *
-     * @return the omschrijvingLocatie, of null
+     * Geef de waarde van omschrijving locatie van BrpOverlijdenInhoud.
+     * @return de waarde van omschrijving locatie van BrpOverlijdenInhoud
      */
     public BrpString getOmschrijvingLocatie() {
         return omschrijvingLocatie;
     }
 
-    /**
-     * Geef de leeg.
-     *
-     * @return true als deze groep als leeg moet worden beschouwd, anders false
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(datum, landOfGebiedCode);
+        return !BrpValidatie.isEenParameterGevuld(datum, landOfGebiedCode);
     }
 
     @Override
@@ -187,37 +167,37 @@ public final class BrpOverlijdenInhoud extends AbstractBrpGroepInhoud {
         }
         final BrpOverlijdenInhoud castOther = (BrpOverlijdenInhoud) other;
         return new EqualsBuilder().append(datum, castOther.datum)
-                                  .append(gemeenteCode, castOther.gemeenteCode)
-                                  .append(woonplaatsnaamOverlijden, castOther.woonplaatsnaamOverlijden)
-                                  .append(buitenlandsePlaats, castOther.buitenlandsePlaats)
-                                  .append(buitenlandseRegio, castOther.buitenlandseRegio)
-                                  .append(landOfGebiedCode, castOther.landOfGebiedCode)
-                                  .append(omschrijvingLocatie, castOther.omschrijvingLocatie)
-                                  .isEquals();
+                .append(gemeenteCode, castOther.gemeenteCode)
+                .append(woonplaatsnaamOverlijden, castOther.woonplaatsnaamOverlijden)
+                .append(buitenlandsePlaats, castOther.buitenlandsePlaats)
+                .append(buitenlandseRegio, castOther.buitenlandseRegio)
+                .append(landOfGebiedCode, castOther.landOfGebiedCode)
+                .append(omschrijvingLocatie, castOther.omschrijvingLocatie)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(datum)
-                                    .append(gemeenteCode)
-                                    .append(woonplaatsnaamOverlijden)
-                                    .append(buitenlandsePlaats)
-                                    .append(buitenlandseRegio)
-                                    .append(landOfGebiedCode)
-                                    .append(omschrijvingLocatie)
-                                    .toHashCode();
+                .append(gemeenteCode)
+                .append(woonplaatsnaamOverlijden)
+                .append(buitenlandsePlaats)
+                .append(buitenlandseRegio)
+                .append(landOfGebiedCode)
+                .append(omschrijvingLocatie)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("datum", datum)
-                                                                          .append("gemeenteCode", gemeenteCode)
-                                                                          .append("woonplaatsnaamOverlijden", woonplaatsnaamOverlijden)
-                                                                          .append("buitenlandsePlaats", buitenlandsePlaats)
-                                                                          .append("buitenlandseRegio", buitenlandseRegio)
-                                                                          .append("landOfGebiedCode", landOfGebiedCode)
-                                                                          .append("omschrijvingLocatie", omschrijvingLocatie)
-                                                                          .toString();
+                .append("datum", datum)
+                .append("gemeenteCode", gemeenteCode)
+                .append("woonplaatsnaamOverlijden", woonplaatsnaamOverlijden)
+                .append("buitenlandsePlaats", buitenlandsePlaats)
+                .append("buitenlandseRegio", buitenlandseRegio)
+                .append("landOfGebiedCode", landOfGebiedCode)
+                .append("omschrijvingLocatie", omschrijvingLocatie)
+                .toString();
     }
 }

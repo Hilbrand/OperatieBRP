@@ -6,6 +6,8 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.migratiebrp.conversie.model.Sortable;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpAfnemersindicatieInhoud;
@@ -13,14 +15,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert het BRP objecttype Afnemers indicatie.
  *
  * Deze class is immutable en thread-safe.
  */
-public final class BrpAfnemersindicatie {
+public final class BrpAfnemersindicatie implements Sortable {
 
     @Element(name = "partijCode", required = false)
     private final BrpPartijCode partijCode;
@@ -33,19 +34,14 @@ public final class BrpAfnemersindicatie {
 
     /**
      * Maak een nieuw BrpAfnemersindicatie object.
-     *
-     * @param partijCode
-     *            de partijCode van de partij (afnemer)
-     * @param afnemersindicatieStapel
-     *            de afnemersindicatie stapel
-     * @param leveringautorisatie
-     *            levering autorisatie (alleen bij lezen uit database voor controle)
+     * @param partijCode de partijCode van de partij (afnemer)
+     * @param afnemersindicatieStapel de afnemersindicatie stapel
+     * @param leveringautorisatie levering autorisatie (alleen bij lezen uit database voor controle)
      */
     public BrpAfnemersindicatie(
-        @Element(name = "partijCode", required = false) final BrpPartijCode partijCode,
-        @Element(name = "afnemersindicatieStapel", required = false) final BrpStapel<BrpAfnemersindicatieInhoud> afnemersindicatieStapel,
-        @Element(name = "leveringautorisatie", required = false) final String leveringautorisatie)
-    {
+            @Element(name = "partijCode", required = false) final BrpPartijCode partijCode,
+            @Element(name = "afnemersindicatieStapel", required = false) final BrpStapel<BrpAfnemersindicatieInhoud> afnemersindicatieStapel,
+            @Element(name = "leveringautorisatie", required = false) final String leveringautorisatie) {
         super();
         this.partijCode = partijCode;
         this.afnemersindicatieStapel = afnemersindicatieStapel;
@@ -54,7 +50,6 @@ public final class BrpAfnemersindicatie {
 
     /**
      * Geef de waarde van partij code.
-     *
      * @return partij code
      */
     public BrpPartijCode getPartijCode() {
@@ -63,7 +58,6 @@ public final class BrpAfnemersindicatie {
 
     /**
      * Geef de waarde van afnemersindicatie stapel.
-     *
      * @return afnemersindicatie stapel
      */
     public BrpStapel<BrpAfnemersindicatieInhoud> getAfnemersindicatieStapel() {
@@ -72,7 +66,6 @@ public final class BrpAfnemersindicatie {
 
     /**
      * Geef de waarde van leveringautorisatie (alleen gevuld na lezen afnemersindicatie tbv test).
-     *
      * @return leveringautorisatie
      */
     public String getLeveringautorisatie() {
@@ -99,9 +92,13 @@ public final class BrpAfnemersindicatie {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("partijCode", partijCode)
-                                                                          .append("afnemersindicatieStapel", afnemersindicatieStapel)
-                                                                          .append("leveringautorisatie", leveringautorisatie)
-                                                                          .toString();
+                .append("afnemersindicatieStapel", afnemersindicatieStapel)
+                .append("leveringautorisatie", leveringautorisatie)
+                .toString();
     }
 
+    @Override
+    public void sorteer() {
+        afnemersindicatieStapel.sorteer();
+    }
 }

@@ -11,8 +11,8 @@ import nl.bzk.migratiebrp.init.logging.model.domein.entities.VerschilAnalyseRege
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Genereert een vingerafdruk ('fingerprint') op basis van de VerschilAnalyse. De vingerafdruk wordt als volgt
- * opgebouwd:
+ * Genereert een vingerafdruk ('fingerprint') op basis van de VerschilAnalyse. De vingerafdruk wordt
+ * als volgt opgebouwd:
  * <ul>
  * <li>Cxx - waarbij xx het categorie nummer is</li>
  * <li>Sxx - waarbij xx het stapel nummer is (optioneel)</li>
@@ -31,9 +31,8 @@ import org.apache.commons.lang3.StringUtils;
  * <br>
  * Een voorbeeld van een vingerafdruk is:<br>
  * <code>C01S00V000110A0120A</code><br>
- * In dit voorbeeld zijn in Categorie 1 (C01), Stapel 0 (S00), Voorkomen 0 (V00) de elementnummers 01.10 (0110A) en
- * 01.20 (0120A) toegevoegd.<br>
- * 
+ * In dit voorbeeld zijn in Categorie 1 (C01), Stapel 0 (S00), Voorkomen 0 (V00) de elementnummers
+ * 01.10 (0110A) en 01.20 (0120A) toegevoegd.<br>
  */
 public final class VingerafdrukGenerator {
     private static final int DEFAULT_PADDING = 2;
@@ -46,9 +45,7 @@ public final class VingerafdrukGenerator {
 
     /**
      * Genereert de vingerafdruk aan de hand van de meegegeven verschilAnalyse regels.
-     * 
-     * @param verschilAnalyse
-     *            De verschilAnalyseRegels behorende bij een enkele gebeurtenis
+     * @param verschilAnalyse De verschilAnalyseRegels behorende bij een enkele gebeurtenis
      * @return de gegenereerde vingerafdruk
      */
     public static String maakVingerafdruk(final List<VerschilAnalyseRegel> verschilAnalyse) {
@@ -56,7 +53,7 @@ public final class VingerafdrukGenerator {
             return null;
         }
 
-        final StringBuffer vingerafdruk = new StringBuffer();
+        final StringBuilder vingerafdruk = new StringBuilder();
         appendHeader(vingerafdruk, verschilAnalyse.get(0));
 
         for (final VerschilAnalyseRegel regel : verschilAnalyse) {
@@ -66,7 +63,7 @@ public final class VingerafdrukGenerator {
         return vingerafdruk.toString();
     }
 
-    private static void appendHeader(final StringBuffer vingerafdruk, final VerschilAnalyseRegel regel) {
+    private static void appendHeader(final StringBuilder vingerafdruk, final VerschilAnalyseRegel regel) {
         // Categorie en Stapel zijn altijd ingevuld.
         vingerafdruk.append(CAT_PREFIX).append(zeroPadLengte(regel.getCategorie()));
         vingerafdruk.append(STAPEL_PREFIX).append(zeroPadLengte(regel.getStapel()));
@@ -76,7 +73,7 @@ public final class VingerafdrukGenerator {
         }
     }
 
-    private static void appendInhoud(final StringBuffer vingerafdruk, final VerschilAnalyseRegel regel) {
+    private static void appendInhoud(final StringBuilder vingerafdruk, final VerschilAnalyseRegel regel) {
         if (regel.getElement() != null) {
             vingerafdruk.append(regel.getElement());
         }
@@ -84,13 +81,12 @@ public final class VingerafdrukGenerator {
     }
 
     /**
-     * Voegt voorloopnullen toe, totdat waarde de opgegeven standaard lengte {@link #DEFAULT_PADDING} heeft.
-     * 
-     * @param waarde
-     *            een integer waarde waaraan voorloopnullen wordt toegevoegd
+     * Voegt voorloopnullen toe, totdat waarde de opgegeven standaard lengte
+     * {@link #DEFAULT_PADDING} heeft.
+     * @param waarde een integer waarde waaraan voorloopnullen wordt toegevoegd
      * @return een {@link String} met daar in de waarde, aangevuld met voorloopnullen
      */
     private static String zeroPadLengte(final int waarde) {
-        return StringUtils.leftPad("" + waarde, DEFAULT_PADDING, "0");
+        return StringUtils.leftPad(Integer.toString(waarde), DEFAULT_PADDING, "0");
     }
 }

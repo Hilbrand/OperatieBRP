@@ -6,34 +6,47 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import java.util.Set;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponentHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie;
-import org.springframework.stereotype.Component;
+
+import java.util.Set;
+
+import javax.inject.Inject;
 
 /**
  * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
  */
-@Component
 public class GgoBrpGeslachtsnaamcomponentMapper extends AbstractGgoBrpMapper<PersoonGeslachtsnaamcomponentHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpGeslachtsnaamcomponentMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+                                              final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(
-        final GgoBrpVoorkomen voorkomen,
-        final PersoonGeslachtsnaamcomponentHistorie brpInhoud,
-        final GgoBrpGroepEnum brpGroepEnum)
-    {
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.VOORVOEGSEL, brpInhoud.getVoorvoegsel());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.SCHEIDINGSTEKEN, brpInhoud.getScheidingsteken());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.STAM, brpInhoud.getStam());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.PREDICAAT, brpInhoud.getPredicaat());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.ADELLIJKE_TITEL, brpInhoud.getAdellijkeTitel());
+            final GgoBrpVoorkomen voorkomen,
+            final PersoonGeslachtsnaamcomponentHistorie brpInhoud,
+            final GgoBrpGroepEnum brpGroepEnum) {
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.VOORVOEGSEL, brpInhoud.getVoorvoegsel());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.SCHEIDINGSTEKEN, brpInhoud.getScheidingsteken());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.STAM, brpInhoud.getStam());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.PREDICAAT, brpInhoud.getPredicaat());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.ADELLIJKE_TITEL, brpInhoud.getAdellijkeTitel());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.VOLGNUMMER,
-            brpInhoud.getPersoonGeslachtsnaamcomponent().getVolgnummer());
+                voorkomen,
+                GgoBrpElementEnum.VOLGNUMMER,
+                brpInhoud.getPersoonGeslachtsnaamcomponent().getVolgnummer());
     }
 
     @Override

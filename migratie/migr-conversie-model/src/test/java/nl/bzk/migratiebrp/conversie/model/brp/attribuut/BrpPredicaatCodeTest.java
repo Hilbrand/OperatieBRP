@@ -13,17 +13,16 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Test;
 
 public class BrpPredicaatCodeTest {
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testVerwijderOnderzoek() throws Exception {
         BrpPredicaatCode code = new BrpPredicaatCode("209", onderzoek);
         assertNotNull(code.getOnderzoek());
-        BrpPredicaatCode newCode = code.verwijderOnderzoek();
+        final BrpPredicaatCode newCode = code.verwijderOnderzoek();
         assertNotNull(code.getOnderzoek());
         assertNull(newCode.getOnderzoek());
         code = new BrpPredicaatCode(null, onderzoek);
@@ -38,21 +37,21 @@ public class BrpPredicaatCodeTest {
 
     @Test
     public void testWrapMetWaardeEnZonderOnderzoek() throws Exception {
-        BrpPredicaatCode result = BrpPredicaatCode.wrap("207", null);
+        final BrpPredicaatCode result = BrpPredicaatCode.wrap("207", null);
         assertNull(result.getOnderzoek());
         assertEquals("207", result.getWaarde());
     }
 
     @Test
     public void testWrapZonderWaardeEnMetOnderzoek() throws Exception {
-        BrpPredicaatCode result = BrpPredicaatCode.wrap(null, onderzoek);
+        final BrpPredicaatCode result = BrpPredicaatCode.wrap(null, onderzoek);
         assertNotNull(result.getOnderzoek());
         assertNull(result.getWaarde());
     }
 
     @Test
     public void testGeslachtsAanduiding() {
-        BrpPredicaatCode result = BrpPredicaatCode.wrap("207", null);
+        final BrpPredicaatCode result = BrpPredicaatCode.wrap("207", null);
         result.setGeslachtsaanduiding(BrpGeslachtsaanduidingCode.MAN);
         assertEquals("M", result.getGeslachtsaanduiding().getWaarde());
     }

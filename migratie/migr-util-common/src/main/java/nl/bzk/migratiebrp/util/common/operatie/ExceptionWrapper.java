@@ -16,9 +16,7 @@ public class ExceptionWrapper extends RuntimeException {
 
     /**
      * Constructor.
-     * 
-     * @param wrapped
-     *            the checked exception
+     * @param wrapped the checked exception
      */
     public ExceptionWrapper(final Exception wrapped) {
         super(wrapped);
@@ -27,7 +25,6 @@ public class ExceptionWrapper extends RuntimeException {
 
     /**
      * Geef de waarde van wrapped.
-     *
      * @return wrapped
      */
     public final Exception getWrapped() {

@@ -1,62 +1,62 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
-  	<parent>
-        <groupId>nl.bzk</groupId>
-        <artifactId>migratiebrp</artifactId>
-		<version>3.2.108-SNAPSHOT</version>
+
+    <parent>
+        <groupId>nl.bzk.migratiebrp</groupId>
+        <artifactId>migr</artifactId>
+        <version>145.3</version>
         <relativePath>../migr</relativePath>
     </parent>
-    <groupId>nl.bzk.migratiebrp.isc</groupId>
+
     <artifactId>migr-isc-database</artifactId>
-    <name>Migr - ISC - Database</name>
     <packaging>jar</packaging>
+    <name>Migr - ISC - Database</name>
 
-	<dependencies>
-		<!-- PROJECT -->
+    <dependencies>
+        <!-- PROJECT -->
         <dependency>
-        	<groupId>nl.bzk.migratiebrp.util</groupId>
-        	<artifactId>migr-util-common</artifactId>
-		</dependency>
+            <groupId>nl.bzk.migratiebrp</groupId>
+            <artifactId>migr-util-common</artifactId>
+        </dependency>
 
-		<!-- SPRING -->
+        <!-- SPRING -->
         <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
         </dependency>
         <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
         </dependency>
         <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
         </dependency>
 
         <!-- HIBERNATE -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
 
-		<!-- ATOMIKOS -->
+        <!-- ATOMIKOS -->
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-hibernate3</artifactId>
@@ -66,5 +66,5 @@
             <artifactId>transactions-jdbc</artifactId>
         </dependency>
 
-	</dependencies>
+    </dependencies>
 </project>

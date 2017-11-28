@@ -14,7 +14,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.BrpStapelHelper;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
@@ -33,18 +33,18 @@ public class PlControleAnummerHistorischGelijkTest {
 
     @Test
     public void test() {
-        Assert.assertTrue(subject.controleer(new VerwerkingsContext(null, null, null, maakPl(1)), null));
-        Assert.assertTrue(subject.controleer(new VerwerkingsContext(null, null, null, maakPl(1, 1, 1)), null));
-        Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, maakPl(1, 2)), null));
-        Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, maakPl(1, 2, 1, 1)), null));
-        Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, maakPl(1, 1, 1, 2)), null));
+        Assert.assertTrue(subject.controleer(new VerwerkingsContext(null, null, null, maakPl("1")), null));
+        Assert.assertTrue(subject.controleer(new VerwerkingsContext(null, null, null, maakPl("1", "1", "1")), null));
+        Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, maakPl("1", "2")), null));
+        Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, maakPl("1", "2", "1", "1")), null));
+        Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, maakPl("1", "1", "1", "2")), null));
     }
 
-    private BrpPersoonslijst maakPl(final int... anummers) {
+    private BrpPersoonslijst maakPl(final String... anummers) {
         final BrpPersoonslijstBuilder builder = new BrpPersoonslijstBuilder();
         final List<BrpGroep<BrpIdentificatienummersInhoud>> groepen = new ArrayList<>();
         for (int i = 0; i < anummers.length; i++) {
-            final BrpIdentificatienummersInhoud inhoud = new BrpIdentificatienummersInhoud(new BrpLong((long) anummers[i]), null);
+            final BrpIdentificatienummersInhoud inhoud = new BrpIdentificatienummersInhoud(new BrpString(anummers[i]), null);
             final Integer datumAanvang = (2010 - i) * 10000 + 101;
             final Integer datumEinde = i == 0 ? null : (2011 - i) * 10000 + 101;
             final BrpHistorie historie = BrpStapelHelper.his(datumAanvang, datumEinde, datumAanvang, datumEinde);

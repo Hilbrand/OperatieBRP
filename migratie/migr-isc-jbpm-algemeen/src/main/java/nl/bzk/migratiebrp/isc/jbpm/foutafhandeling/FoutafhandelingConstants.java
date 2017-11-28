@@ -12,87 +12,129 @@ package nl.bzk.migratiebrp.isc.jbpm.foutafhandeling;
 public final class FoutafhandelingConstants {
 
     // Indicatie variabelen
-    /** Variabele 'indicatieBeheerder'. */
+    /**
+     * Variabele 'indicatieBeheerder'.
+     */
     public static final String INDICATIE_BEHEERDER = "indicatieBeheerder";
-    /** Variabele 'indicatieCyclusFout'. */
+    /**
+     * Variabele 'indicatieCyclusFout'.
+     */
     public static final String INDICATIE_CYCLUS_FOUT = "indicatieCyclusFout";
-    /** Variabele 'indicatiePf'. */
+    /**
+     * Variabele 'indicatiePf'.
+     */
     public static final String INDICATIE_PF = "indicatiePf";
-    /** Variabele 'indicatieVb01'. */
-    public static final String INDICATIE_VB01 = "indicatieVb01";
-    /** Variabele 'indicatieDeblokkering'. */
-    public static final String INDICATIE_DEBLOKKERING = "indicatieDeblokkering";
-    /** Variabele 'indicatieFoutnotificatie'. */
-    public static final String INDICATIE_ANTWOORD = "indicatieAntwoord";
+    /**
+     * Variabele 'indicatieVb'.
+     */
+    public static final String INDICATIE_VB = "indicatieVb";
 
     // Bericht variabelen
-    /** Variabele 'lo3Bericht'. */
+    /**
+     * Variabele 'lo3Bericht'.
+     */
     public static final String BERICHT_LO3 = "lo3Bericht";
-    /** Variabele 'blokkeringBericht'. */
+    /**
+     * Variabele 'blokkeringBericht'.
+     */
     public static final String BERICHT_BLOKKERING = "blokkeringBericht";
-    /** Variabele 'brpBericht'. */
+    /**
+     * Variabele 'brpBericht'.
+     */
     public static final String BERICHT_BRP = "brpBericht";
 
-    /** Variable 'deblokkeringVerzoekBericht'. */
+    /**
+     * Variable 'deblokkeringVerzoekBericht'.
+     */
     public static final String BERICHT_VERZOEK_DEBLOKKERING = "deblokkeringVerzoekBericht";
-    /** Variable 'deblokkeringAntwoordBericht'. */
+    /**
+     * Variable 'deblokkeringAntwoordBericht'.
+     */
     public static final String BERICHT_ANTWOORD_DEBLOKKERING = "deblokkeringAntwoordBericht";
 
-    /** Variable 'brpAntwoordBericht'. */
+    /**
+     * Variable 'brpAntwoordBericht'.
+     */
     public static final String BERICHT_BRP_ANTWOORD = "brpAntwoordBericht";
 
-    /** Variable 'pfBericht'. */
+    /**
+     * Variable 'pfBericht'.
+     */
     public static final String BERICHT_PF = "pfBericht";
-    /** Variable 'vb01Bericht'. */
-    public static final String BERICHT_VB01 = "vb01Bericht";
-    /** Variabele 'overigBericht'. */
+    /**
+     * Variable 'vb01Bericht'.
+     */
+    public static final String BERICHT_VB = "vbBericht";
+    /**
+     * Variabele 'overigBericht'.
+     */
     public static final String BERICHT_OVERIG = "overigBericht";
 
     // Foutafhandeling variabelen
-    /** Variabele 'fout'. */
+    /**
+     * Variabele 'fout'.
+     */
     public static final String FOUT = "fout";
-    /** Variabele 'foutmelding'. */
+    /**
+     * Variabele 'foutmelding'.
+     */
     public static final String FOUTMELDING = "foutmelding";
-    /** Constante ':'. */
+    /**
+     * Constante ':'.
+     */
     public static final String FOUTMELDING_SCHEIDINGSTEKEN = ":";
-    /** Variabele 'functioneleStap'. */
+    /**
+     * Variabele 'functioneleStap'.
+     */
     public static final String STAP = "functioneleStap";
 
     // Paden
-    /** Variabele 'foutafhandelingPaden'. */
+    /**
+     * Variabele 'foutafhandelingPaden'.
+     */
     public static final String PADEN = "foutafhandelingPaden";
 
     // Restart
-    /** Variabele 'restart'. */
+    /**
+     * Variabele 'restart'.
+     */
     public static final String RESTART = "restart";
 
     // Fout registratie
-    /** Variabele 'registratieId'. */
+    /**
+     * Variabele 'registratieId'.
+     */
     public static final String REGISTRATIE_ID = "foutId";
-    /** Variabele 'bronGemeente'. */
-    public static final String BRON_GEMEENTE = "bronGemeente";
-    /** Variabele 'doelGemeente'. */
-    public static final String DOEL_GEMEENTE = "doelGemeente";
+    /**
+     * Variabele 'bronPartijCode'.
+     */
+    public static final String BRON_PARTIJ_CODE = "bronPartijCode";
+    /**
+     * Variabele 'doelPartijCode'.
+     */
+    public static final String DOEL_PARTIJ_CODE = "doelPartijCode";
 
     // Afhandeling type
-    /** Variabele 'afhandelingType'. */
+    /**
+     * Variabele 'afhandelingType'.
+     */
     public static final String AFHANDELING_TYPE = "afhandelingType";
 
     // Overzicht met persoonslijsten
-    /** Variabele 'persoonslijstOverzicht'. */
+    /**
+     * Variabele 'persoonslijstOverzicht'.
+     */
     public static final String PERSOONSLIJSTOVERZICHT = "persoonslijstOverzicht";
 
     /**
      * Static melding met betrekking tot de execution context.
      */
-    public static final String FOUTMELDING_GEEN_EXECUTION_CONTEXT =
-            "JbpmRapportageDao moet binnen een geldige execution context worden gebruikt.";
+    public static final String FOUTMELDING_GEEN_EXECUTION_CONTEXT = "JbpmRapportageDao moet binnen een geldige execution context worden gebruikt.";
 
     /**
      * Static melding met betrekking tot het ontbreken van een procesinstantie.
      */
-    public static final String FOUTMELDING_GEEN_GESTARTE_PROCES_INSTANTIE =
-            "JbpmRapportageDao moet binnen een gestart proces worden gebruikt.";
+    public static final String FOUTMELDING_GEEN_GESTARTE_PROCES_INSTANTIE = "JbpmRapportageDao moet binnen een gestart proces worden gebruikt.";
 
     private FoutafhandelingConstants() {
         throw new AssertionError("Niet instantieerbaar");

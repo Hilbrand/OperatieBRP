@@ -20,8 +20,8 @@ public class GemeenteConversietabelTest {
 
     @Test
     public void test() {
-        final List<Short> list = new ArrayList<>();
-        list.add((short) 1);
+        final List<String> list = new ArrayList<>();
+        list.add("0001");
         final GemeenteConversietabel subject = new GemeenteConversietabel(list);
 
         Assert.assertTrue(subject.valideerLo3(null));
@@ -29,7 +29,7 @@ public class GemeenteConversietabelTest {
         Assert.assertFalse(subject.valideerLo3(new Lo3GemeenteCode("0002")));
 
         Assert.assertTrue(subject.valideerBrp(null));
-        Assert.assertTrue(subject.valideerBrp(new BrpGemeenteCode((short) 1)));
-        Assert.assertFalse(subject.valideerBrp(new BrpGemeenteCode((short) 2)));
+        Assert.assertTrue(subject.valideerBrp(new BrpGemeenteCode("0001")));
+        Assert.assertFalse(subject.valideerBrp(new BrpGemeenteCode("0002")));
     }
 }

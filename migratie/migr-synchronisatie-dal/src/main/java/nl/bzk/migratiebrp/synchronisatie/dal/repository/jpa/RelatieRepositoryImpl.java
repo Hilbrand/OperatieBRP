@@ -12,17 +12,16 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.RelatieRepository;
 
 import org.springframework.stereotype.Repository;
 
 /**
  * Data-access-punt voor alles omtrent BRP-relaties.
- *
  */
 @Repository
 public final class RelatieRepositoryImpl implements RelatieRepository {
@@ -55,7 +54,9 @@ public final class RelatieRepositoryImpl implements RelatieRepository {
             if (teVerwijderenBetrokkenheid.getId() != null) {
                 em.remove(teVerwijderenBetrokkenheid);
             }
-            if (gerelateerdePersoon != null && gerelateerdePersoon.getId() != null && SoortPersoon.ONBEKEND.equals(gerelateerdePersoon.getSoortPersoon())) {
+            if (gerelateerdePersoon != null
+                    && gerelateerdePersoon.getId() != null
+                    && SoortPersoon.PSEUDO_PERSOON.equals(gerelateerdePersoon.getSoortPersoon())) {
                 em.remove(gerelateerdePersoon);
             }
         }

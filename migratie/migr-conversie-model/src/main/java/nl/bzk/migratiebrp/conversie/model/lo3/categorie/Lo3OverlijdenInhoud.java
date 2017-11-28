@@ -6,23 +6,22 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de LO3 categorie Overlijden.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class Lo3OverlijdenInhoud implements Lo3CategorieInhoud {
 
@@ -47,19 +46,14 @@ public final class Lo3OverlijdenInhoud implements Lo3CategorieInhoud {
 
     /**
      * Maakt een Lo3OverlijdenInhoud object.
-     * 
-     * @param datum
-     *            de datum van overlijden, mag niet null zijn
-     * @param gemeenteCode
-     *            de gemeente van overlijden, mag niet null zijn
-     * @param landCode
-     *            het land van overlijden, mag niet null zijn
+     * @param datum de datum van overlijden, mag niet null zijn
+     * @param gemeenteCode de gemeente van overlijden, mag niet null zijn
+     * @param landCode het land van overlijden, mag niet null zijn
      */
     public Lo3OverlijdenInhoud(
-        @Element(name = "datum", required = false) final Lo3Datum datum,
-        @Element(name = "gemeenteCode", required = false) final Lo3GemeenteCode gemeenteCode,
-        @Element(name = "landCode", required = false) final Lo3LandCode landCode)
-    {
+            @Element(name = "datum", required = false) final Lo3Datum datum,
+            @Element(name = "gemeenteCode", required = false) final Lo3GemeenteCode gemeenteCode,
+            @Element(name = "landCode", required = false) final Lo3LandCode landCode) {
         this.datum = datum;
         this.gemeenteCode = gemeenteCode;
         this.landCode = landCode;
@@ -67,36 +61,33 @@ public final class Lo3OverlijdenInhoud implements Lo3CategorieInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.Lo3CategorieInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(datum, gemeenteCode, landCode);
+        return !Lo3Validatie.isEenParameterGevuld(datum, gemeenteCode, landCode);
     }
 
     /**
-     * Geef de waarde van datum.
-     *
-     * @return the datum, of null
+     * Geef de waarde van datum van Lo3OverlijdenInhoud.
+     * @return de waarde van datum van Lo3OverlijdenInhoud
      */
     public Lo3Datum getDatum() {
         return datum;
     }
 
     /**
-     * Geef de waarde van gemeente code.
-     *
-     * @return the gemeenteCode, of null
+     * Geef de waarde van gemeente code van Lo3OverlijdenInhoud.
+     * @return de waarde van gemeente code van Lo3OverlijdenInhoud
      */
     public Lo3GemeenteCode getGemeenteCode() {
         return gemeenteCode;
     }
 
     /**
-     * Geef de waarde van land code.
-     *
-     * @return the landCode, of null
+     * Geef de waarde van land code van Lo3OverlijdenInhoud.
+     * @return de waarde van land code van Lo3OverlijdenInhoud
      */
     public Lo3LandCode getLandCode() {
         return landCode;
@@ -112,9 +103,9 @@ public final class Lo3OverlijdenInhoud implements Lo3CategorieInhoud {
         }
         final Lo3OverlijdenInhoud castOther = (Lo3OverlijdenInhoud) other;
         return new EqualsBuilder().append(datum, castOther.datum)
-                                  .append(gemeenteCode, castOther.gemeenteCode)
-                                  .append(landCode, castOther.landCode)
-                                  .isEquals();
+                .append(gemeenteCode, castOther.gemeenteCode)
+                .append(landCode, castOther.landCode)
+                .isEquals();
     }
 
     @Override
@@ -125,9 +116,9 @@ public final class Lo3OverlijdenInhoud implements Lo3CategorieInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("datum", datum)
-                                                                          .append("gemeenteCode", gemeenteCode)
-                                                                          .append("landCode", landCode)
-                                                                          .toString();
+                .append("gemeenteCode", gemeenteCode)
+                .append("landCode", landCode)
+                .toString();
     }
 
     /**
@@ -142,14 +133,12 @@ public final class Lo3OverlijdenInhoud implements Lo3CategorieInhoud {
          * Maak een lege builder.
          */
         public Builder() {
-
+            //lege builder
         }
 
         /**
          * Maak een builder initieel gevud met de gegeven inhoud.
-         * 
-         * @param inhoud
-         *            inhoud
+         * @param inhoud inhoud
          */
         public Builder(final Lo3OverlijdenInhoud inhoud) {
             datum = inhoud.datum;
@@ -159,7 +148,6 @@ public final class Lo3OverlijdenInhoud implements Lo3CategorieInhoud {
 
         /**
          * Maak de inhoud.
-         * 
          * @return inhoud
          */
         public Lo3OverlijdenInhoud build() {
@@ -167,30 +155,24 @@ public final class Lo3OverlijdenInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * Zet de waarde van datum.
-         *
-         * @param datum
-         *            the datum to set
+         * Zet de waarden voor datum van Lo3OverlijdenInhoud.
+         * @param datum de nieuwe waarde voor datum van Lo3OverlijdenInhoud
          */
         public void setDatum(final Lo3Datum datum) {
             this.datum = datum;
         }
 
         /**
-         * Zet de waarde van gemeente code.
-         *
-         * @param gemeenteCode
-         *            the gemeenteCode to set
+         * Zet de waarden voor gemeente code van Lo3OverlijdenInhoud.
+         * @param gemeenteCode de nieuwe waarde voor gemeente code van Lo3OverlijdenInhoud
          */
         public void setGemeenteCode(final Lo3GemeenteCode gemeenteCode) {
             this.gemeenteCode = gemeenteCode;
         }
 
         /**
-         * Zet de waarde van land code.
-         *
-         * @param landCode
-         *            the landCode to set
+         * Zet de waarden voor land code van Lo3OverlijdenInhoud.
+         * @param landCode de nieuwe waarde voor land code van Lo3OverlijdenInhoud
          */
         public void setLandCode(final Lo3LandCode landCode) {
             this.landCode = landCode;

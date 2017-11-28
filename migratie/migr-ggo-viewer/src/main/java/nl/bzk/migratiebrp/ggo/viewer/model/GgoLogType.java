@@ -10,17 +10,29 @@ package nl.bzk.migratiebrp.ggo.viewer.model;
  * Log type.
  */
 public enum GgoLogType {
-    /** Verwerking. */
+    /**
+     * Verwerking.
+     */
     VERWERKING("Verwerking"),
-    /** Preconditie. */
+    /**
+     * Preconditie.
+     */
     PRECONDITIE("Preconditie"),
-    /** Bijzondere situatie. */
+    /**
+     * Bijzondere situatie.
+     */
     BIJZONDERE_SITUATIE("Bijzondere situatie"),
-    /** Structuur/domein regel. */
+    /**
+     * Structuur/domein regel.
+     */
     STRUCTUUR("Structuur"),
-    /** Syntax. */
+    /**
+     * Syntax.
+     */
     SYNTAX("Syntax"),
-    /** BCM. */
+    /**
+     * BCM.
+     */
     BCM("BCM");
 
     private final String label;
@@ -31,7 +43,6 @@ public enum GgoLogType {
 
     /**
      * Geef de waarde van label.
-     *
      * @return de label
      */
     public String getLabel() {

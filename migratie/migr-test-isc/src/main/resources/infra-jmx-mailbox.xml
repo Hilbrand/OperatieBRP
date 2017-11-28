@@ -13,8 +13,19 @@
         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
     ">
 
+	<bean id="mailboxJmxConnectorCredentials" class="nl.bzk.algemeenbrp.util.jmx.client.CredentialsFactory">
+		<property name="username" value="${mailbox.jmx.service.username:admin}" />
+		<property name="password" value="${mailbox.jmx.service.password:admin}" />
+	</bean>
+
     <bean id="mailboxJmxConnector" class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean">
-        <property name="serviceUrl" value="${mailbox.jmx.service.url:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi}"/>
+    	<property name="environment">
+			<map>
+				<entry key="jmx.remote.credentials" value-ref="mailboxJmxConnectorCredentials" />
+				<entry key="jmx.remote.requesttimeout" value="60" />
+			</map>
+    	</property>
+        <property name="serviceUrl" value="service:jmx:simple://${mailbox.jmx.service.host:localhost}:${mailbox.jmx.service.port:3481}"/>
     </bean>
 
 </beans>

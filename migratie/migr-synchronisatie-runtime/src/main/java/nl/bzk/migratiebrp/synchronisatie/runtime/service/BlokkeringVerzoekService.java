@@ -6,14 +6,15 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service;
 
+import java.sql.Timestamp;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Blokkering;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.RedenBlokkering;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.BlokkeringAntwoordType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.PersoonsaanduidingType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringVerzoekBericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.Blokkering;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.blokkering.entity.RedenBlokkering;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
 import nl.bzk.migratiebrp.synchronisatie.runtime.util.MessageId;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public final class BlokkeringVerzoekService implements SynchronisatieBerichtService<BlokkeringVerzoekBericht, BlokkeringAntwoordBericht> {
 
-    @Inject
-    private BrpDalService brpDalService;
+    private final BrpDalService brpDalService;
 
-    /* (non-Javadoc)
+    /**
+     * constructor
+     * @param brpDalService
+     */
+    @Inject
+    public BlokkeringVerzoekService(final BrpDalService brpDalService) {
+        this.brpDalService = brpDalService;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.synchronisatie.runtime.service.SynchronisatieBerichtService#getVerzoekType()
      */
     @Override
@@ -40,9 +51,7 @@ public final class BlokkeringVerzoekService implements SynchronisatieBerichtServ
     /**
      * Blokkeert op basis van onder andere het a-nummer een PL en retourneert een antwoordbericht met informatie omtrent
      * de blokkering.
-     *
-     * @param blokkeringVerzoekBericht
-     *            het blokkering verzoek met daarin de benodigde gegevens voor blokkeren.
+     * @param blokkeringVerzoekBericht het blokkering verzoek met daarin de benodigde gegevens voor blokkeren.
      * @return het antwoordbericht met daarin informatie omtrent de blokkering.
      */
     @Override
@@ -51,7 +60,7 @@ public final class BlokkeringVerzoekService implements SynchronisatieBerichtServ
 
         final BlokkeringAntwoordType blokkeringAntwoordType = new BlokkeringAntwoordType();
 
-        final Blokkering controleBlokkering = brpDalService.vraagOpBlokkering(Long.valueOf(blokkeringVerzoekBericht.getANummer()));
+        final Blokkering controleBlokkering = brpDalService.vraagOpBlokkering(blokkeringVerzoekBericht.getANummer());
 
         if (controleBlokkering != null) {
             blokkeringAntwoordType.setStatus(StatusType.GEBLOKKEERD);
@@ -62,12 +71,11 @@ public final class BlokkeringVerzoekService implements SynchronisatieBerichtServ
         } else {
 
             final Blokkering opTeSlaanBlokkering =
-                    Blokkering.newInstance(
-                        Long.valueOf(blokkeringVerzoekBericht.getANummer()),
-                        Long.valueOf(blokkeringVerzoekBericht.getProcessId()),
-                        blokkeringVerzoekBericht.getGemeenteNaar(),
-                        blokkeringVerzoekBericht.getGemeenteRegistratie(),
-                        mapRedenBlokkering(blokkeringVerzoekBericht.getPersoonsaanduiding()));
+                    new Blokkering(blokkeringVerzoekBericht.getANummer(), new Timestamp(System.currentTimeMillis()));
+            opTeSlaanBlokkering.setProcessId(Long.valueOf(blokkeringVerzoekBericht.getProcessId()));
+            opTeSlaanBlokkering.setGemeenteCodeNaar(blokkeringVerzoekBericht.getGemeenteNaar());
+            opTeSlaanBlokkering.setRegistratieGemeente(blokkeringVerzoekBericht.getGemeenteRegistratie());
+            opTeSlaanBlokkering.setRedenBlokkering(mapRedenBlokkering(blokkeringVerzoekBericht.getPersoonsaanduiding()));
 
             brpDalService.persisteerBlokkering(opTeSlaanBlokkering);
             blokkeringAntwoordType.setStatus(StatusType.OK);

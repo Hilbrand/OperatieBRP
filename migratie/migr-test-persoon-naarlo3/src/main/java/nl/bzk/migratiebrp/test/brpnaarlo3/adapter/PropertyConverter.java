@@ -8,18 +8,13 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter;
 
 /**
  * Converteer een string naar een property waarde.
- * 
- * @param <T>
- *            class die de converter ondersteunt.
- * 
+ * @param <T> class die de converter ondersteunt.
  */
 public interface PropertyConverter<T> {
 
     /**
      * Converteer de gegevens string naar een property waarde.
-     * 
-     * @param value
-     *            string waarde
+     * @param value string waarde
      * @return 'typed' waarde
      */
     T convert(String value);

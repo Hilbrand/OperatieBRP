@@ -31,9 +31,7 @@ public final class ZoekPersoonOpHistorischeGegevensVerzoekBericht extends Abstra
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een storebericht te maken.
-     *
-     * @param zoekPersoonOpHistorischeGegevensVerzoekType
-     *            het zoekPersoonOpHistorischeGegevensVerzoek type
+     * @param zoekPersoonOpHistorischeGegevensVerzoekType het zoekPersoonOpHistorischeGegevensVerzoek type
      */
     public ZoekPersoonOpHistorischeGegevensVerzoekBericht(final ZoekPersoonOpHistorischeGegevensVerzoekType zoekPersoonOpHistorischeGegevensVerzoekType) {
         super("ZoekPersoonOpHistorischeGegevensVerzoek");
@@ -51,7 +49,6 @@ public final class ZoekPersoonOpHistorischeGegevensVerzoekBericht extends Abstra
 
     /**
      * Geeft het A-nummer op het bericht terug.
-     *
      * @return Het A-nummer op het bericht.
      */
     public String getANummer() {
@@ -60,9 +57,7 @@ public final class ZoekPersoonOpHistorischeGegevensVerzoekBericht extends Abstra
 
     /**
      * Zet het A-nummer op het bericht.
-     *
-     * @param aNummer
-     *            Het te zetten A-nummer.
+     * @param aNummer Het te zetten A-nummer.
      */
     public void setANummer(final String aNummer) {
         zoekPersOpHistorischeGegevensVerzoekType.setANummer(aNummer);
@@ -70,7 +65,6 @@ public final class ZoekPersoonOpHistorischeGegevensVerzoekBericht extends Abstra
 
     /**
      * Geeft het BSN op het bericht terug.
-     *
      * @return Het BSN op het bericht.
      */
     public String getBsn() {
@@ -79,9 +73,7 @@ public final class ZoekPersoonOpHistorischeGegevensVerzoekBericht extends Abstra
 
     /**
      * Zet het BSN op het bericht.
-     *
-     * @param bsn
-     *            Het te zetten BSN.
+     * @param bsn Het te zetten BSN.
      */
     public void setBsn(final String bsn) {
         zoekPersOpHistorischeGegevensVerzoekType.setBurgerservicenummer(bsn);
@@ -89,7 +81,6 @@ public final class ZoekPersoonOpHistorischeGegevensVerzoekBericht extends Abstra
 
     /**
      * Geeft de geslachtsnaam op het bericht terug.
-     *
      * @return De geslachtsnaam op het bericht.
      */
     public String getGeslachtsnaam() {
@@ -98,9 +89,7 @@ public final class ZoekPersoonOpHistorischeGegevensVerzoekBericht extends Abstra
 
     /**
      * Zet de geslachtsnaam op het bericht.
-     *
-     * @param geslachtsnaam
-     *            De te zetten geslachtsnaamstam.
+     * @param geslachtsnaam De te zetten geslachtsnaamstam.
      */
     public void setGeslachtsnaam(final String geslachtsnaam) {
         zoekPersOpHistorischeGegevensVerzoekType.setGeslachtsnaam(geslachtsnaam);
@@ -108,7 +97,6 @@ public final class ZoekPersoonOpHistorischeGegevensVerzoekBericht extends Abstra
 
     /**
      * Geeft de aanvullende zoekcriteria op het bericht terug.
-     *
      * @return De aanvullende zoekcriteria op het bericht.
      */
     public String getAanvullendeZoekcriteria() {
@@ -117,9 +105,7 @@ public final class ZoekPersoonOpHistorischeGegevensVerzoekBericht extends Abstra
 
     /**
      * Zet de aanvullende zoekcriteria op het bericht.
-     *
-     * @param aanvullendeZoekcriteria
-     *            De te zetten aanvullende zoekcriteria.
+     * @param aanvullendeZoekcriteria De te zetten aanvullende zoekcriteria.
      */
     public void setAanvullendeZoekcriteria(final String aanvullendeZoekcriteria) {
         zoekPersOpHistorischeGegevensVerzoekType.setAanvullendeZoekcriteria(aanvullendeZoekcriteria);

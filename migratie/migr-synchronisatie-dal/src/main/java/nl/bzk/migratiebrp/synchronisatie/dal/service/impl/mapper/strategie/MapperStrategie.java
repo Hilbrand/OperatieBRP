@@ -6,29 +6,25 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 
 /**
  * De strategie die wordt gevolgt voor het mappen van een BrpStapel uit het migratie model naar de corresponderen
  * entiteiten in het operationele gegevensmodel van de BRP.
- * 
- * @param <T>
- *            het type inhoud van de BrpGroep
- * @param <E>
- *            de topLevelEntiteit
+ * @param <T> het type inhoud van de BrpGroep
+ * @param <E> de topLevelEntiteit
  */
 public interface MapperStrategie<T extends BrpGroepInhoud, E extends Object> {
 
     /**
      * Mapt de stapel uit het BRP-migratiemodel naar het BRP-datamodel en voegt deze toe op de meegegeven toplevel
      * enititeit (zoals bijvoorbeeld Persoon of Nationaliteit.
-     * 
-     * @param brpStapel
-     *            De stapel uit het BRP-migratiemodel. Mag wel null zijn, in dit geval heeft een aanroep van de methode
-     *            mapVanMigratie geen wijziging op de meegegeven topLevelEntiteit tot gevolg.
-     * @param topLevelEntiteit
-     *            De topLevelEntiteit waaraan de groepen worden toegevoegd. Mag niet null zijn.
+     * @param brpStapel De stapel uit het BRP-migratiemodel. Mag wel null zijn, in dit geval heeft een aanroep van de methode mapVanMigratie geen wijziging op
+     * de meegegeven topLevelEntiteit tot gevolg.
+     * @param topLevelEntiteit De topLevelEntiteit waaraan de groepen worden toegevoegd. Mag niet null zijn.
+     * @param objecttype het objecttype van de gerelateerde persoon. Null als het om de 'eigen' persoon gaat.
      */
-    void mapVanMigratie(final BrpStapel<T> brpStapel, final E topLevelEntiteit);
+    void mapVanMigratie(BrpStapel<T> brpStapel, E topLevelEntiteit, Element objecttype);
 }

@@ -25,7 +25,7 @@
         "Datum ontlening" : "30-09-1994"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -36,7 +36,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 1,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -45,8 +45,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : "PKA",
-            "Partij" : "51801 (Gemeente 's-Gravenhage)",
-            "Registratie - verval" : "10-09-1995 01:00:00 - "
+            "Partij" : "51801 (Gemeente 's-Gravenhage)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -87,7 +86,7 @@
         "Datum ontlening" : "30-09-1994"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -98,7 +97,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 1,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -107,8 +106,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : "PKA",
-            "Partij" : "51801 (Gemeente 's-Gravenhage)",
-            "Registratie - verval" : "10-09-1995 01:00:00 - "
+            "Partij" : "51801 (Gemeente 's-Gravenhage)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -149,7 +147,7 @@
         "Datum ontlening" : "30-09-1994"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -160,7 +158,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 1,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -169,8 +167,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : "PKA",
-            "Partij" : "51801 (Gemeente 's-Gravenhage)",
-            "Registratie - verval" : "10-09-1995 01:00:00 - "
+            "Partij" : "51801 (Gemeente 's-Gravenhage)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -213,7 +210,7 @@
         "Datum ontlening" : "30-09-1994"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -224,7 +221,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 1,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -233,8 +230,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : "PKA",
-            "Partij" : "51801 (Gemeente 's-Gravenhage)",
-            "Registratie - verval" : "10-09-1995 01:00:00 - "
+            "Partij" : "51801 (Gemeente 's-Gravenhage)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -275,7 +271,7 @@
         "Datum ontlening" : "30-09-1994"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -286,7 +282,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 1,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -295,8 +291,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : "PKA",
-            "Partij" : "51801 (Gemeente 's-Gravenhage)",
-            "Registratie - verval" : "10-09-1995 01:00:00 - "
+            "Partij" : "51801 (Gemeente 's-Gravenhage)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -336,7 +331,7 @@
         "Datum ontlening" : "30-09-1994"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -347,7 +342,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 1,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -356,8 +351,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : "PKA",
-            "Partij" : "51801 (Gemeente 's-Gravenhage)",
-            "Registratie - verval" : "10-09-1995 01:00:00 - "
+            "Partij" : "51801 (Gemeente 's-Gravenhage)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -385,8 +379,8 @@
     "vervallen" : false,
     "inhoud" : {
       "Voornamen" : "Jamie",
-      "Geslachtsnaamstam" : "Sands",
-      "Naamgebruik" : "V (Partner, Eigen)",
+      "Geslachtsnaamstam" : "Thomas-Sands",
+      "Naamgebruik" : "V (Partner, eigen)",
       "Indicatie afgeleid" : "Ja",
       "Registratie - verval" : "10-09-1995 01:00:00 - "
     },
@@ -399,7 +393,7 @@
         "Datum ontlening" : "30-09-1994"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -410,7 +404,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 1,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -419,8 +413,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : "PKA",
-            "Partij" : "51801 (Gemeente 's-Gravenhage)",
-            "Registratie - verval" : "10-09-1995 01:00:00 - "
+            "Partij" : "51801 (Gemeente 's-Gravenhage)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -438,7 +431,7 @@
   "label" : "F",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : null,
     "categorieLabelNr" : 0,
     "categorieNr" : 0,
     "stapelNr" : 0,
@@ -456,7 +449,7 @@
       "label" : "Relatie inhoud",
       "omschrijving" : null,
       "voorkomens" : [ {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 0,
         "categorieNr" : 2,
         "stapelNr" : 0,
@@ -475,7 +468,7 @@
             "Tijdstip registratie" : "30-09-1994 01:00:00"
           },
           "administratieveHandeling" : {
-            "Soort" : "99998 (GBA - Bijhouding actueel)",
+            "Soort" : "GBA - Bijhouding actueel",
             "Partij" : "199902 (Migratievoorziening)",
             "Tijdstip registratie" : "asdf"
           },
@@ -484,9 +477,9 @@
             "label" : "Document",
             "omschrijving" : null,
             "voorkomens" : [ {
-              "aNummer" : 1653648353,
+              "aNummer" : null,
               "categorieLabelNr" : 0,
-              "categorieNr" : 2,
+              "categorieNr" : 0,
               "stapelNr" : 0,
               "voorkomenNr" : 0,
               "label" : "Document",
@@ -495,8 +488,7 @@
               "inhoud" : {
                 "Soort document" : "Historie conversie",
                 "Aktenummer" : "1",
-                "Partij" : "190401 (Gemeente Stichtse Vecht)",
-                "Registratie - verval" : "30-09-1994 01:00:00 - "
+                "Partij" : "190401 (Gemeente Stichtse Vecht)"
               },
               "brpStapelNr" : 0,
               "actieInhoud" : null,
@@ -513,14 +505,14 @@
     },
     "relatieAfgeleidAdministratief" : null,
     "betrokkenheden" : [ {
-      "aNummer" : 1653648353,
+      "aNummer" : null,
       "brpStapelNr" : 0,
       "label" : "Ouder",
       "stapels" : [ {
         "label" : "Gerelateerde",
         "omschrijving" : null,
         "voorkomens" : [ {
-          "aNummer" : 1653648353,
+          "aNummer" : null,
           "categorieLabelNr" : 0,
           "categorieNr" : 2,
           "stapelNr" : 0,
@@ -544,7 +536,43 @@
             "Registratie - verval" : "30-09-1994 01:00:00 - "
           },
           "brpStapelNr" : 0,
-          "actieInhoud" : null,
+          "actieInhoud" : {
+            "inhoud" : {
+              "Soort actie" : "Conversie GBA",
+              "Partij" : "199902 (Migratievoorziening)",
+              "Tijdstip registratie" : "30-09-1994 01:00:00"
+            },
+            "administratieveHandeling" : {
+              "Soort" : "GBA - Bijhouding actueel",
+              "Partij" : "199902 (Migratievoorziening)",
+              "Tijdstip registratie" : "asdf"
+            },
+            "actieBronnen" : [ ],
+            "documenten" : [ {
+              "label" : "Document",
+              "omschrijving" : null,
+              "voorkomens" : [ {
+                "aNummer" : null,
+                "categorieLabelNr" : 0,
+                "categorieNr" : 0,
+                "stapelNr" : 0,
+                "voorkomenNr" : 0,
+                "label" : "Document",
+                "datumAanvangGeldigheid" : null,
+                "vervallen" : false,
+                "inhoud" : {
+                  "Soort document" : "Historie conversie",
+                  "Aktenummer" : "1",
+                  "Partij" : "190401 (Gemeente Stichtse Vecht)"
+                },
+                "brpStapelNr" : 0,
+                "actieInhoud" : null,
+                "actieVerval" : null,
+                "actieGeldigheid" : null,
+                "onderzoeken" : [ ]
+              } ]
+            } ]
+          },
           "actieVerval" : null,
           "actieGeldigheid" : null,
           "onderzoeken" : [ ]
@@ -553,7 +581,7 @@
         "label" : "Ouderschap",
         "omschrijving" : null,
         "voorkomens" : [ {
-          "aNummer" : 1653648353,
+          "aNummer" : null,
           "categorieLabelNr" : 0,
           "categorieNr" : 2,
           "stapelNr" : 0,
@@ -562,7 +590,6 @@
           "datumAanvangGeldigheid" : "21-08-1966",
           "vervallen" : false,
           "inhoud" : {
-            "Indicatie ouder" : "Ja",
             "Geldigheid" : "21-08-1966 - ",
             "Registratie - verval" : "30-09-1994 01:00:00 - "
           },
@@ -574,7 +601,7 @@
               "Tijdstip registratie" : "30-09-1994 01:00:00"
             },
             "administratieveHandeling" : {
-              "Soort" : "99998 (GBA - Bijhouding actueel)",
+              "Soort" : "GBA - Bijhouding actueel",
               "Partij" : "199902 (Migratievoorziening)",
               "Tijdstip registratie" : "asdf"
             },
@@ -583,9 +610,9 @@
               "label" : "Document",
               "omschrijving" : null,
               "voorkomens" : [ {
-                "aNummer" : 1653648353,
+                "aNummer" : null,
                 "categorieLabelNr" : 0,
-                "categorieNr" : 2,
+                "categorieNr" : 0,
                 "stapelNr" : 0,
                 "voorkomenNr" : 0,
                 "label" : "Document",
@@ -594,8 +621,7 @@
                 "inhoud" : {
                   "Soort document" : "Historie conversie",
                   "Aktenummer" : "1",
-                  "Partij" : "190401 (Gemeente Stichtse Vecht)",
-                  "Registratie - verval" : "30-09-1994 01:00:00 - "
+                  "Partij" : "190401 (Gemeente Stichtse Vecht)"
                 },
                 "brpStapelNr" : 0,
                 "actieInhoud" : null,
@@ -614,14 +640,14 @@
               "Omschrijving" : "Conversie GBA: 020000",
               "Status" : "Afgesloten"
             },
-            "betrokkenVelden" : [ "Identificatienummers.Administratienummer", "Identificatienummers.Burgerservicenummer", "Identificatienummers.Datum aanvang geldigheid", "Samengestelde naam.Adellijke titel", "Samengestelde naam.Geslachtsnaamstam", "Samengestelde naam.Predicaat", "Samengestelde naam.Voornamen", "Samengestelde naam.Voorvoegsel", "Samengestelde naam.Scheidingsteken", "Samengestelde naam.Datum aanvang geldigheid", "Geboorte.Datum geboorte", "Geboorte.Land/gebied geboorte", "Geboorte.Gemeente geboorte", "Geslachtsaanduiding.Geslachtsaanduiding", "Geslachtsaanduiding.Datum aanvang geldigheid", "Ouderschap.Datum aanvang geldigheid" ]
+            "betrokkenVelden" : [ "Identificatienummers.Administratienummer", "Identificatienummers.Burgerservicenummer", "Identificatienummers.Datum aanvang geldigheid", "Samengestelde naam.Adellijke titel", "Samengestelde naam.Geslachtsnaamstam", "Samengestelde naam.Voornamen", "Samengestelde naam.Voorvoegsel", "Samengestelde naam.Scheidingsteken", "Samengestelde naam.Datum aanvang geldigheid", "Geboorte.Datum geboorte", "Geboorte.Land/gebied geboorte", "Geboorte.Gemeente geboorte", "Geslachtsaanduiding.Geslachtsaanduiding", "Geslachtsaanduiding.Datum aanvang geldigheid", "Ouderschap.Datum aanvang geldigheid" ]
           } ]
         } ]
       }, {
         "label" : "Ouderlijk gezag",
         "omschrijving" : null,
         "voorkomens" : [ {
-          "aNummer" : 1653648353,
+          "aNummer" : null,
           "categorieLabelNr" : 0,
           "categorieNr" : 11,
           "stapelNr" : 0,
@@ -643,7 +669,7 @@
               "Datum ontlening" : "21-08-1966"
             },
             "administratieveHandeling" : {
-              "Soort" : "99998 (GBA - Bijhouding actueel)",
+              "Soort" : "GBA - Bijhouding actueel",
               "Partij" : "199902 (Migratievoorziening)",
               "Tijdstip registratie" : "asdf"
             },
@@ -652,9 +678,9 @@
               "label" : "Document",
               "omschrijving" : null,
               "voorkomens" : [ {
-                "aNummer" : 1653648353,
+                "aNummer" : null,
                 "categorieLabelNr" : 0,
-                "categorieNr" : 11,
+                "categorieNr" : 0,
                 "stapelNr" : 0,
                 "voorkomenNr" : 0,
                 "label" : "Document",
@@ -663,8 +689,7 @@
                 "inhoud" : {
                   "Soort document" : "Historie conversie",
                   "Omschrijving" : "Beschrijving gezag",
-                  "Partij" : "59901 (Gemeente Rotterdam)",
-                  "Registratie - verval" : "30-09-1994 01:00:00 - "
+                  "Partij" : "59901 (Gemeente Rotterdam)"
                 },
                 "brpStapelNr" : 0,
                 "actieInhoud" : null,
@@ -686,17 +711,17 @@
           "Omschrijving" : "Conversie GBA: 020000",
           "Status" : "Afgesloten"
         },
-        "betrokkenVelden" : [ "Identificatienummers.Administratienummer", "Identificatienummers.Burgerservicenummer", "Identificatienummers.Datum aanvang geldigheid", "Samengestelde naam.Adellijke titel", "Samengestelde naam.Geslachtsnaamstam", "Samengestelde naam.Predicaat", "Samengestelde naam.Voornamen", "Samengestelde naam.Voorvoegsel", "Samengestelde naam.Scheidingsteken", "Samengestelde naam.Datum aanvang geldigheid", "Geboorte.Datum geboorte", "Geboorte.Land/gebied geboorte", "Geboorte.Gemeente geboorte", "Geslachtsaanduiding.Geslachtsaanduiding", "Geslachtsaanduiding.Datum aanvang geldigheid", "Ouderschap.Datum aanvang geldigheid" ]
+        "betrokkenVelden" : [ "Identificatienummers.Administratienummer", "Identificatienummers.Burgerservicenummer", "Identificatienummers.Datum aanvang geldigheid", "Samengestelde naam.Adellijke titel", "Samengestelde naam.Geslachtsnaamstam", "Samengestelde naam.Voornamen", "Samengestelde naam.Voorvoegsel", "Samengestelde naam.Scheidingsteken", "Samengestelde naam.Datum aanvang geldigheid", "Geboorte.Datum geboorte", "Geboorte.Land/gebied geboorte", "Geboorte.Gemeente geboorte", "Geslachtsaanduiding.Geslachtsaanduiding", "Geslachtsaanduiding.Datum aanvang geldigheid", "Ouderschap.Datum aanvang geldigheid" ]
       } ]
     }, {
-      "aNummer" : 1653648353,
+      "aNummer" : null,
       "brpStapelNr" : 1,
       "label" : "Ouder",
       "stapels" : [ {
         "label" : "Gerelateerde",
         "omschrijving" : null,
         "voorkomens" : [ {
-          "aNummer" : 1653648353,
+          "aNummer" : null,
           "categorieLabelNr" : 0,
           "categorieNr" : 3,
           "stapelNr" : 0,
@@ -715,7 +740,44 @@
             "Registratie - verval" : "30-09-1994 01:00:00 - "
           },
           "brpStapelNr" : 1,
-          "actieInhoud" : null,
+          "actieInhoud" : {
+            "inhoud" : {
+              "Soort actie" : "Conversie GBA",
+              "Partij" : "199902 (Migratievoorziening)",
+              "Tijdstip registratie" : "30-09-1994 01:00:00",
+              "Datum ontlening" : "30-09-1994"
+            },
+            "administratieveHandeling" : {
+              "Soort" : "GBA - Bijhouding actueel",
+              "Partij" : "199902 (Migratievoorziening)",
+              "Tijdstip registratie" : "asdf"
+            },
+            "actieBronnen" : [ ],
+            "documenten" : [ {
+              "label" : "Document",
+              "omschrijving" : null,
+              "voorkomens" : [ {
+                "aNummer" : null,
+                "categorieLabelNr" : 0,
+                "categorieNr" : 0,
+                "stapelNr" : 0,
+                "voorkomenNr" : 0,
+                "label" : "Document",
+                "datumAanvangGeldigheid" : null,
+                "vervallen" : false,
+                "inhoud" : {
+                  "Soort document" : "Historie conversie",
+                  "Omschrijving" : "PK",
+                  "Partij" : "51801 (Gemeente 's-Gravenhage)"
+                },
+                "brpStapelNr" : 0,
+                "actieInhoud" : null,
+                "actieVerval" : null,
+                "actieGeldigheid" : null,
+                "onderzoeken" : [ ]
+              } ]
+            } ]
+          },
           "actieVerval" : null,
           "actieGeldigheid" : null,
           "onderzoeken" : [ ]
@@ -724,7 +786,7 @@
         "label" : "Ouderschap",
         "omschrijving" : null,
         "voorkomens" : [ {
-          "aNummer" : 1653648353,
+          "aNummer" : null,
           "categorieLabelNr" : 0,
           "categorieNr" : 3,
           "stapelNr" : 0,
@@ -733,7 +795,6 @@
           "datumAanvangGeldigheid" : "21-08-1966",
           "vervallen" : false,
           "inhoud" : {
-            "Indicatie ouder" : "Ja",
             "Geldigheid" : "21-08-1966 - ",
             "Registratie - verval" : "30-09-1994 01:00:00 - "
           },
@@ -746,7 +807,7 @@
               "Datum ontlening" : "30-09-1994"
             },
             "administratieveHandeling" : {
-              "Soort" : "99998 (GBA - Bijhouding actueel)",
+              "Soort" : "GBA - Bijhouding actueel",
               "Partij" : "199902 (Migratievoorziening)",
               "Tijdstip registratie" : "asdf"
             },
@@ -755,9 +816,9 @@
               "label" : "Document",
               "omschrijving" : null,
               "voorkomens" : [ {
-                "aNummer" : 1653648353,
+                "aNummer" : null,
                 "categorieLabelNr" : 0,
-                "categorieNr" : 3,
+                "categorieNr" : 0,
                 "stapelNr" : 0,
                 "voorkomenNr" : 0,
                 "label" : "Document",
@@ -766,8 +827,7 @@
                 "inhoud" : {
                   "Soort document" : "Historie conversie",
                   "Omschrijving" : "PK",
-                  "Partij" : "51801 (Gemeente 's-Gravenhage)",
-                  "Registratie - verval" : "30-09-1994 01:00:00 - "
+                  "Partij" : "51801 (Gemeente 's-Gravenhage)"
                 },
                 "brpStapelNr" : 0,
                 "actieInhoud" : null,
@@ -785,7 +845,7 @@
         "label" : "Ouderlijk gezag",
         "omschrijving" : null,
         "voorkomens" : [ {
-          "aNummer" : 1653648353,
+          "aNummer" : null,
           "categorieLabelNr" : 0,
           "categorieNr" : 11,
           "stapelNr" : 0,
@@ -807,7 +867,7 @@
               "Datum ontlening" : "21-08-1966"
             },
             "administratieveHandeling" : {
-              "Soort" : "99998 (GBA - Bijhouding actueel)",
+              "Soort" : "GBA - Bijhouding actueel",
               "Partij" : "199902 (Migratievoorziening)",
               "Tijdstip registratie" : "asdf"
             },
@@ -816,9 +876,9 @@
               "label" : "Document",
               "omschrijving" : null,
               "voorkomens" : [ {
-                "aNummer" : 1653648353,
+                "aNummer" : null,
                 "categorieLabelNr" : 0,
-                "categorieNr" : 11,
+                "categorieNr" : 0,
                 "stapelNr" : 0,
                 "voorkomenNr" : 0,
                 "label" : "Document",
@@ -827,8 +887,7 @@
                 "inhoud" : {
                   "Soort document" : "Historie conversie",
                   "Omschrijving" : "Beschrijving gezag",
-                  "Partij" : "59901 (Gemeente Rotterdam)",
-                  "Registratie - verval" : "30-09-1994 01:00:00 - "
+                  "Partij" : "59901 (Gemeente Rotterdam)"
                 },
                 "brpStapelNr" : 0,
                 "actieInhoud" : null,
@@ -849,7 +908,7 @@
       "label" : "Ouder1",
       "omschrijving" : null,
       "voorkomens" : [ {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 2,
         "categorieNr" : 2,
         "stapelNr" : 0,
@@ -887,11 +946,11 @@
         "actieGeldigheid" : null,
         "onderzoeken" : [ ],
         "administratieveHandeling" : {
-          "Soort" : "99998 (GBA - Bijhouding actueel)",
+          "Soort" : "GBA - Bijhouding actueel",
           "Partij" : "199902 (Migratievoorziening)"
         }
       }, {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 52,
         "categorieNr" : 52,
         "stapelNr" : 0,
@@ -902,7 +961,7 @@
         "inhoud" : {
           "Administratienummer" : "1653648352",
           "Burgerservicenummer" : "327389033",
-          "Predicaat" : "J (Jonkheer / Jonkvrouw)",
+          "Predicaat" : "J (jonkheer / jonkvrouw)",
           "Voornamen" : "Dina",
           "Voorvoegsel" : "Van",
           "Scheidingsteken" : " ",
@@ -929,11 +988,11 @@
         "actieGeldigheid" : null,
         "onderzoeken" : [ ],
         "administratieveHandeling" : {
-          "Soort" : "99998 (GBA - Bijhouding actueel)",
+          "Soort" : "GBA - Bijhouding actueel",
           "Partij" : "199902 (Migratievoorziening)"
         }
       }, {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 52,
         "categorieNr" : 52,
         "stapelNr" : 0,
@@ -944,7 +1003,7 @@
         "inhoud" : {
           "Administratienummer" : "1653648352",
           "Burgerservicenummer" : "327389033",
-          "Predicaat" : "J (Jonkheer / Jonkvrouw)",
+          "Predicaat" : "J (jonkheer / jonkvrouw)",
           "Voornamen" : "Dina",
           "Voorvoegsel" : "Van",
           "Scheidingsteken" : " ",
@@ -971,7 +1030,7 @@
         "actieGeldigheid" : null,
         "onderzoeken" : [ ],
         "administratieveHandeling" : {
-          "Soort" : "99998 (GBA - Bijhouding actueel)",
+          "Soort" : "GBA - Bijhouding actueel",
           "Partij" : "199902 (Migratievoorziening)"
         }
       } ]
@@ -979,7 +1038,7 @@
       "label" : "Ouder2",
       "omschrijving" : null,
       "voorkomens" : [ {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 3,
         "categorieNr" : 3,
         "stapelNr" : 0,
@@ -1008,7 +1067,7 @@
         "actieGeldigheid" : null,
         "onderzoeken" : [ ],
         "administratieveHandeling" : {
-          "Soort" : "99998 (GBA - Bijhouding actueel)",
+          "Soort" : "GBA - Bijhouding actueel",
           "Partij" : "199902 (Migratievoorziening)"
         }
       } ]
@@ -1016,7 +1075,7 @@
       "label" : "Gezagsverhouding",
       "omschrijving" : null,
       "voorkomens" : [ {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 11,
         "categorieNr" : 11,
         "stapelNr" : 0,
@@ -1039,7 +1098,7 @@
         "actieGeldigheid" : null,
         "onderzoeken" : [ ],
         "administratieveHandeling" : {
-          "Soort" : "99998 (GBA - Bijhouding actueel)",
+          "Soort" : "GBA - Bijhouding actueel",
           "Partij" : "199902 (Migratievoorziening)"
         }
       } ]
@@ -1072,7 +1131,7 @@
         "Datum ontlening" : "30-09-1994"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1083,7 +1142,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 4,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -1092,8 +1151,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : "PK",
-            "Partij" : "51801 (Gemeente 's-Gravenhage)",
-            "Registratie - verval" : "30-09-1994 01:00:00 - "
+            "Partij" : "51801 (Gemeente 's-Gravenhage)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -1111,7 +1169,7 @@
   "label" : "H",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : null,
     "categorieLabelNr" : 0,
     "categorieNr" : 0,
     "stapelNr" : 0,
@@ -1129,7 +1187,7 @@
       "label" : "Relatie inhoud",
       "omschrijving" : null,
       "voorkomens" : [ {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 0,
         "categorieNr" : 6,
         "stapelNr" : 0,
@@ -1155,7 +1213,7 @@
             "Tijdstip registratie" : "04-05-2011 01:00:00"
           },
           "administratieveHandeling" : {
-            "Soort" : "99998 (GBA - Bijhouding actueel)",
+            "Soort" : "GBA - Bijhouding actueel",
             "Partij" : "199902 (Migratievoorziening)",
             "Tijdstip registratie" : "asdf"
           },
@@ -1164,9 +1222,9 @@
             "label" : "Document",
             "omschrijving" : null,
             "voorkomens" : [ {
-              "aNummer" : 1653648353,
+              "aNummer" : null,
               "categorieLabelNr" : 0,
-              "categorieNr" : 6,
+              "categorieNr" : 0,
               "stapelNr" : 0,
               "voorkomenNr" : 0,
               "label" : "Document",
@@ -1175,8 +1233,7 @@
               "inhoud" : {
                 "Soort document" : "Historie conversie",
                 "Aktenummer" : "20A1234",
-                "Partij" : "59901 (Gemeente Rotterdam)",
-                "Registratie - verval" : "04-05-2011 01:00:00 - "
+                "Partij" : "59901 (Gemeente Rotterdam)"
               },
               "brpStapelNr" : 0,
               "actieInhoud" : null,
@@ -1190,7 +1247,7 @@
         "actieGeldigheid" : null,
         "onderzoeken" : [ ]
       }, {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 0,
         "categorieNr" : 5,
         "stapelNr" : 0,
@@ -1213,7 +1270,7 @@
             "Datum ontlening" : "30-09-1994"
           },
           "administratieveHandeling" : {
-            "Soort" : "99998 (GBA - Bijhouding actueel)",
+            "Soort" : "GBA - Bijhouding actueel",
             "Partij" : "199902 (Migratievoorziening)",
             "Tijdstip registratie" : "asdf"
           },
@@ -1222,9 +1279,9 @@
             "label" : "Document",
             "omschrijving" : null,
             "voorkomens" : [ {
-              "aNummer" : 1653648353,
+              "aNummer" : null,
               "categorieLabelNr" : 0,
-              "categorieNr" : 5,
+              "categorieNr" : 0,
               "stapelNr" : 0,
               "voorkomenNr" : 0,
               "label" : "Document",
@@ -1233,8 +1290,7 @@
               "inhoud" : {
                 "Soort document" : "Historie conversie",
                 "Omschrijving" : "PK",
-                "Partij" : "51801 (Gemeente 's-Gravenhage)",
-                "Registratie - verval" : "10-09-1995 01:00:00 - "
+                "Partij" : "51801 (Gemeente 's-Gravenhage)"
               },
               "brpStapelNr" : 0,
               "actieInhoud" : null,
@@ -1252,7 +1308,7 @@
             "Datum ontlening" : "30-09-1994"
           },
           "administratieveHandeling" : {
-            "Soort" : "99998 (GBA - Bijhouding actueel)",
+            "Soort" : "GBA - Bijhouding actueel",
             "Partij" : "199902 (Migratievoorziening)",
             "Tijdstip registratie" : "asdf"
           },
@@ -1261,9 +1317,9 @@
             "label" : "Document",
             "omschrijving" : null,
             "voorkomens" : [ {
-              "aNummer" : 1653648353,
+              "aNummer" : null,
               "categorieLabelNr" : 0,
-              "categorieNr" : 5,
+              "categorieNr" : 0,
               "stapelNr" : 0,
               "voorkomenNr" : 0,
               "label" : "Document",
@@ -1272,8 +1328,7 @@
               "inhoud" : {
                 "Soort document" : "Historie conversie",
                 "Omschrijving" : "PK",
-                "Partij" : "51801 (Gemeente 's-Gravenhage)",
-                "Registratie - verval" : "10-09-1995 01:00:00 - "
+                "Partij" : "51801 (Gemeente 's-Gravenhage)"
               },
               "brpStapelNr" : 0,
               "actieInhoud" : null,
@@ -1289,14 +1344,14 @@
     },
     "relatieAfgeleidAdministratief" : null,
     "betrokkenheden" : [ {
-      "aNummer" : 1653648353,
+      "aNummer" : null,
       "brpStapelNr" : 20,
       "label" : "Huwelijk",
       "stapels" : [ {
         "label" : "Gerelateerde",
         "omschrijving" : null,
         "voorkomens" : [ {
-          "aNummer" : 1653648353,
+          "aNummer" : null,
           "categorieLabelNr" : 0,
           "categorieNr" : 5,
           "stapelNr" : 0,
@@ -1317,7 +1372,44 @@
             "Registratie - verval" : "10-09-1995 01:00:00 - "
           },
           "brpStapelNr" : 20,
-          "actieInhoud" : null,
+          "actieInhoud" : {
+            "inhoud" : {
+              "Soort actie" : "Conversie GBA",
+              "Partij" : "199902 (Migratievoorziening)",
+              "Tijdstip registratie" : "10-09-1995 01:00:00",
+              "Datum ontlening" : "30-09-1994"
+            },
+            "administratieveHandeling" : {
+              "Soort" : "GBA - Bijhouding actueel",
+              "Partij" : "199902 (Migratievoorziening)",
+              "Tijdstip registratie" : "asdf"
+            },
+            "actieBronnen" : [ ],
+            "documenten" : [ {
+              "label" : "Document",
+              "omschrijving" : null,
+              "voorkomens" : [ {
+                "aNummer" : null,
+                "categorieLabelNr" : 0,
+                "categorieNr" : 0,
+                "stapelNr" : 0,
+                "voorkomenNr" : 0,
+                "label" : "Document",
+                "datumAanvangGeldigheid" : null,
+                "vervallen" : false,
+                "inhoud" : {
+                  "Soort document" : "Historie conversie",
+                  "Omschrijving" : "PK",
+                  "Partij" : "51801 (Gemeente 's-Gravenhage)"
+                },
+                "brpStapelNr" : 0,
+                "actieInhoud" : null,
+                "actieVerval" : null,
+                "actieGeldigheid" : null,
+                "onderzoeken" : [ ]
+              } ]
+            } ]
+          },
           "actieVerval" : null,
           "actieGeldigheid" : null,
           "onderzoeken" : [ ]
@@ -1329,7 +1421,7 @@
       "label" : "Huwelijk / GP",
       "omschrijving" : null,
       "voorkomens" : [ {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 5,
         "categorieNr" : 5,
         "stapelNr" : 0,
@@ -1362,7 +1454,7 @@
         "actieGeldigheid" : null,
         "onderzoeken" : [ ],
         "administratieveHandeling" : {
-          "Soort" : "99998 (GBA - Bijhouding actueel)",
+          "Soort" : "GBA - Bijhouding actueel",
           "Partij" : "199902 (Migratievoorziening)"
         }
       } ]
@@ -1394,7 +1486,7 @@
         "Tijdstip registratie" : "04-05-2011 01:00:00"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1405,7 +1497,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 6,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -1414,8 +1506,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Aktenummer" : "20A1234",
-            "Partij" : "59901 (Gemeente Rotterdam)",
-            "Registratie - verval" : "04-05-2011 01:00:00 - "
+            "Partij" : "59901 (Gemeente Rotterdam)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -1455,7 +1546,7 @@
         "Tijdstip registratie" : "04-05-2011 01:00:00"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1491,7 +1582,7 @@
         "Tijdstip registratie" : "04-05-2011 01:00:00"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1503,7 +1594,7 @@
     "onderzoeken" : [ ]
   } ]
 }, {
-  "label" : "Persoon Afgeleid administratief",
+  "label" : "Afgeleid administratief",
   "omschrijving" : null,
   "voorkomens" : [ {
     "aNummer" : 1653648353,
@@ -1511,11 +1602,13 @@
     "categorieNr" : 7,
     "stapelNr" : 0,
     "voorkomenNr" : 0,
-    "label" : "Persoon Afgeleid administratief",
+    "label" : "Afgeleid administratief",
     "datumAanvangGeldigheid" : null,
     "vervallen" : false,
     "inhoud" : {
-      "Indicatie onverwerkt bijhoudingsvoorstel niet-ingezetene aanwezig" : "Nee",
+      "Soort" : "GBA - Bijhouding actueel",
+      "Datum/tijd laatste wijziging" : "13-12-2016 13:08:47",
+      "Datum/tijd laatste wijziging GBA" : "13-12-2016 13:08:47",
       "Registratie - verval" : "04-05-2011 01:00:00 - "
     },
     "brpStapelNr" : 0,
@@ -1526,7 +1619,7 @@
         "Tijdstip registratie" : "04-05-2011 01:00:00"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1553,7 +1646,6 @@
       "Bijhoudingspartij" : "51801 (Gemeente 's-Gravenhage)",
       "Bijhoudingsaard" : "I (Ingezetene)",
       "Nadere bijhoudingsaard" : "O (Overleden)",
-      "Onverwerkt document aanwezig" : "Nee",
       "Geldigheid" : "01-05-2011 - ",
       "Registratie - verval" : "04-05-2011 01:00:00 - "
     },
@@ -1565,7 +1657,7 @@
         "Tijdstip registratie" : "04-05-2011 01:00:00"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1586,9 +1678,8 @@
     "vervallen" : false,
     "inhoud" : {
       "Bijhoudingspartij" : "51801 (Gemeente 's-Gravenhage)",
-      "Bijhoudingsaard" : "? (Onbekend)",
+      "Bijhoudingsaard" : "I (Ingezetene)",
       "Nadere bijhoudingsaard" : "? (Onbekend)",
-      "Onverwerkt document aanwezig" : "Nee",
       "Geldigheid" : "02-10-1990 - 01-05-2011",
       "Registratie - verval" : "30-09-1994 01:00:00 - "
     },
@@ -1600,7 +1691,7 @@
         "Tijdstip registratie" : "30-09-1994 01:00:00"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1615,7 +1706,7 @@
         "Tijdstip registratie" : "04-05-2011 01:00:00"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1658,7 +1749,7 @@
         "Tijdstip registratie" : "30-09-1994 01:00:00"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1673,7 +1764,7 @@
   "label" : "F",
   "omschrijving" : null,
   "voorkomens" : [ {
-    "aNummer" : 1653648353,
+    "aNummer" : null,
     "categorieLabelNr" : 0,
     "categorieNr" : 0,
     "stapelNr" : 0,
@@ -1691,7 +1782,7 @@
       "label" : "Relatie inhoud",
       "omschrijving" : null,
       "voorkomens" : [ {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 0,
         "categorieNr" : 9,
         "stapelNr" : 0,
@@ -1710,7 +1801,7 @@
             "Tijdstip registratie" : "13-09-2008 01:00:00"
           },
           "administratieveHandeling" : {
-            "Soort" : "99998 (GBA - Bijhouding actueel)",
+            "Soort" : "GBA - Bijhouding actueel",
             "Partij" : "199902 (Migratievoorziening)",
             "Tijdstip registratie" : "asdf"
           },
@@ -1719,9 +1810,9 @@
             "label" : "Document",
             "omschrijving" : null,
             "voorkomens" : [ {
-              "aNummer" : 1653648353,
+              "aNummer" : null,
               "categorieLabelNr" : 0,
-              "categorieNr" : 9,
+              "categorieNr" : 0,
               "stapelNr" : 0,
               "voorkomenNr" : 0,
               "label" : "Document",
@@ -1730,8 +1821,7 @@
               "inhoud" : {
                 "Soort document" : "Historie conversie",
                 "Aktenummer" : "10A0520",
-                "Partij" : "62601 (Gemeente Voorschoten)",
-                "Registratie - verval" : "13-09-2008 01:00:00 - "
+                "Partij" : "62601 (Gemeente Voorschoten)"
               },
               "brpStapelNr" : 0,
               "actieInhoud" : null,
@@ -1748,14 +1838,14 @@
     },
     "relatieAfgeleidAdministratief" : null,
     "betrokkenheden" : [ {
-      "aNummer" : 1653648353,
+      "aNummer" : null,
       "brpStapelNr" : 10,
       "label" : "Kind",
       "stapels" : [ {
         "label" : "Gerelateerde",
         "omschrijving" : null,
         "voorkomens" : [ {
-          "aNummer" : 1653648353,
+          "aNummer" : null,
           "categorieLabelNr" : 0,
           "categorieNr" : 9,
           "stapelNr" : 0,
@@ -1775,7 +1865,43 @@
             "Registratie - verval" : "13-09-2008 01:00:00 - "
           },
           "brpStapelNr" : 10,
-          "actieInhoud" : null,
+          "actieInhoud" : {
+            "inhoud" : {
+              "Soort actie" : "Conversie GBA",
+              "Partij" : "199902 (Migratievoorziening)",
+              "Tijdstip registratie" : "13-09-2008 01:00:00"
+            },
+            "administratieveHandeling" : {
+              "Soort" : "GBA - Bijhouding actueel",
+              "Partij" : "199902 (Migratievoorziening)",
+              "Tijdstip registratie" : "asdf"
+            },
+            "actieBronnen" : [ ],
+            "documenten" : [ {
+              "label" : "Document",
+              "omschrijving" : null,
+              "voorkomens" : [ {
+                "aNummer" : null,
+                "categorieLabelNr" : 0,
+                "categorieNr" : 0,
+                "stapelNr" : 0,
+                "voorkomenNr" : 0,
+                "label" : "Document",
+                "datumAanvangGeldigheid" : null,
+                "vervallen" : false,
+                "inhoud" : {
+                  "Soort document" : "Historie conversie",
+                  "Aktenummer" : "10A0520",
+                  "Partij" : "62601 (Gemeente Voorschoten)"
+                },
+                "brpStapelNr" : 0,
+                "actieInhoud" : null,
+                "actieVerval" : null,
+                "actieGeldigheid" : null,
+                "onderzoeken" : [ ]
+              } ]
+            } ]
+          },
           "actieVerval" : null,
           "actieGeldigheid" : null,
           "onderzoeken" : [ ]
@@ -1784,7 +1910,7 @@
         "label" : "Ouderschap",
         "omschrijving" : null,
         "voorkomens" : [ {
-          "aNummer" : 1653648353,
+          "aNummer" : null,
           "categorieLabelNr" : 0,
           "categorieNr" : 9,
           "stapelNr" : 0,
@@ -1793,7 +1919,6 @@
           "datumAanvangGeldigheid" : "12-09-2008",
           "vervallen" : false,
           "inhoud" : {
-            "Indicatie ouder" : "Ja",
             "Geldigheid" : "12-09-2008 - ",
             "Registratie - verval" : "13-09-2008 01:00:00 - "
           },
@@ -1805,7 +1930,7 @@
               "Tijdstip registratie" : "13-09-2008 01:00:00"
             },
             "administratieveHandeling" : {
-              "Soort" : "99998 (GBA - Bijhouding actueel)",
+              "Soort" : "GBA - Bijhouding actueel",
               "Partij" : "199902 (Migratievoorziening)",
               "Tijdstip registratie" : "asdf"
             },
@@ -1814,9 +1939,9 @@
               "label" : "Document",
               "omschrijving" : null,
               "voorkomens" : [ {
-                "aNummer" : 1653648353,
+                "aNummer" : null,
                 "categorieLabelNr" : 0,
-                "categorieNr" : 9,
+                "categorieNr" : 0,
                 "stapelNr" : 0,
                 "voorkomenNr" : 0,
                 "label" : "Document",
@@ -1825,8 +1950,7 @@
                 "inhoud" : {
                   "Soort document" : "Historie conversie",
                   "Aktenummer" : "10A0520",
-                  "Partij" : "62601 (Gemeente Voorschoten)",
-                  "Registratie - verval" : "13-09-2008 01:00:00 - "
+                  "Partij" : "62601 (Gemeente Voorschoten)"
                 },
                 "brpStapelNr" : 0,
                 "actieInhoud" : null,
@@ -1847,7 +1971,7 @@
       "label" : "Kind",
       "omschrijving" : null,
       "voorkomens" : [ {
-        "aNummer" : 1653648353,
+        "aNummer" : null,
         "categorieLabelNr" : 9,
         "categorieNr" : 9,
         "stapelNr" : 0,
@@ -1875,7 +1999,7 @@
         "actieGeldigheid" : null,
         "onderzoeken" : [ ],
         "administratieveHandeling" : {
-          "Soort" : "99998 (GBA - Bijhouding actueel)",
+          "Soort" : "GBA - Bijhouding actueel",
           "Partij" : "199902 (Migratievoorziening)"
         }
       } ]
@@ -1891,12 +2015,11 @@
     "stapelNr" : 0,
     "voorkomenNr" : 0,
     "label" : "Verblijfsrecht",
-    "datumAanvangGeldigheid" : "21-08-1966",
+    "datumAanvangGeldigheid" : null,
     "vervallen" : false,
     "inhoud" : {
       "Aanduiding verblijfsrecht" : "Onbekend",
       "Datum mededeling verblijfsrecht" : "21-08-1966",
-      "Geldigheid" : "21-08-1966 - ",
       "Registratie - verval" : "30-09-1994 01:00:00 - "
     },
     "brpStapelNr" : 0,
@@ -1907,7 +2030,7 @@
         "Tijdstip registratie" : "30-09-1994 01:00:00"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1948,7 +2071,7 @@
         "Datum ontlening" : "21-12-2010"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -1959,7 +2082,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 12,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -1968,8 +2091,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : "Aanvraagformulier",
-            "Partij" : "51801 (Gemeente 's-Gravenhage)",
-            "Registratie - verval" : "28-12-2010 01:00:00 - "
+            "Partij" : "51801 (Gemeente 's-Gravenhage)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -2009,7 +2131,7 @@
         "Datum ontlening" : "10-01-2010"
       },
       "administratieveHandeling" : {
-        "Soort" : "99998 (GBA - Bijhouding actueel)",
+        "Soort" : "GBA - Bijhouding actueel",
         "Partij" : "199902 (Migratievoorziening)",
         "Tijdstip registratie" : "asdf"
       },
@@ -2020,7 +2142,7 @@
         "voorkomens" : [ {
           "aNummer" : 1653648353,
           "categorieLabelNr" : 0,
-          "categorieNr" : 13,
+          "categorieNr" : 0,
           "stapelNr" : 0,
           "voorkomenNr" : 0,
           "label" : "Document",
@@ -2029,8 +2151,7 @@
           "inhoud" : {
             "Soort document" : "Historie conversie",
             "Omschrijving" : ".",
-            "Partij" : "190101 (Gemeente Bodegraven-Reeuwijk)",
-            "Registratie - verval" : "04-05-2011 01:00:00 - "
+            "Partij" : "190101 (Gemeente Bodegraven-Reeuwijk)"
           },
           "brpStapelNr" : 0,
           "actieInhoud" : null,
@@ -2057,9 +2178,9 @@
     "datumAanvangGeldigheid" : null,
     "vervallen" : false,
     "inhoud" : {
-      "Soort" : "99998 (GBA - Bijhouding actueel)",
+      "Soort" : "GBA - Bijhouding actueel",
       "Partij" : "199902 (Migratievoorziening)"
     },
-    "betrokkenVoorkomens" : [ "Identificatienummers - 10-09-1995 01:00:00", "Voornaam - 10-09-1995 01:00:00", "Geslachtsnaamcomponent - 10-09-1995 01:00:00", "Samengestelde naam - 10-09-1995 01:00:00", "Geboorte - 10-09-1995 01:00:00", "Geslachtsaanduiding - 10-09-1995 01:00:00", "Naamgebruik - 10-09-1995 01:00:00", "Ouderschap - 30-09-1994 01:00:00", "Ouderlijk gezag - 30-09-1994 01:00:00", "Relatie inhoud - 30-09-1994 01:00:00", "Gearchiveerde 02 Ouder1 - 30-09-1994", "Gearchiveerde 52 Ouder1 - 29-09-1994", "Gearchiveerde 52 Ouder1 - 28-09-1994", "Gearchiveerde 03 Ouder2 - 30-09-1994", "Gearchiveerde 11 Gezagsverhouding - 30-09-1994", "Nationaliteit - 30-09-1994 01:00:00", "Relatie inhoud - 04-05-2011 01:00:00", "Relatie inhoud - 10-09-1995 01:00:00", "Gearchiveerde 05 Huwelijk / GP - 10-09-1995", "Overlijden - 04-05-2011 01:00:00", "Inschrijving - 04-05-2011 01:00:00", "Persoonskaart - 04-05-2011 01:00:00", "Persoon Afgeleid administratief - 04-05-2011 01:00:00", "Bijhouding - 04-05-2011 01:00:00", "Bijhouding - 30-09-1994 01:00:00", "Adres - 30-09-1994 01:00:00", "Ouderschap - 13-09-2008 01:00:00", "Relatie inhoud - 13-09-2008 01:00:00", "Gearchiveerde 09 Kind - 13-09-2008", "Verblijfsrecht - 30-09-1994 01:00:00", "Reisdocument - 28-12-2010 01:00:00", "Deelname EU verkiezingen - 04-05-2011 01:00:00" ]
+    "betrokkenVoorkomens" : [ "Identificatienummers - 10-09-1995 01:00:00", "Voornaam - 10-09-1995 01:00:00", "Geslachtsnaamcomponent - 10-09-1995 01:00:00", "Samengestelde naam - 10-09-1995 01:00:00", "Geboorte - 10-09-1995 01:00:00", "Geslachtsaanduiding - 10-09-1995 01:00:00", "Naamgebruik - 10-09-1995 01:00:00", "Gerelateerde - 30-09-1994 01:00:00", "Ouderschap - 30-09-1994 01:00:00", "Ouderlijk gezag - 30-09-1994 01:00:00", "Relatie inhoud - 30-09-1994 01:00:00", "Gearchiveerde 02 Ouder1 - 30-09-1994", "Gearchiveerde 52 Ouder1 - 29-09-1994", "Gearchiveerde 52 Ouder1 - 28-09-1994", "Gearchiveerde 03 Ouder2 - 30-09-1994", "Gearchiveerde 11 Gezagsverhouding - 30-09-1994", "Nationaliteit - 30-09-1994 01:00:00", "Gerelateerde - 10-09-1995 01:00:00", "Relatie inhoud - 04-05-2011 01:00:00", "Relatie inhoud - 10-09-1995 01:00:00", "Gearchiveerde 05 Huwelijk / GP - 10-09-1995", "Overlijden - 04-05-2011 01:00:00", "Inschrijving - 04-05-2011 01:00:00", "Persoonskaart - 04-05-2011 01:00:00", "Afgeleid administratief - 04-05-2011 01:00:00", "Bijhouding - 04-05-2011 01:00:00", "Bijhouding - 30-09-1994 01:00:00", "Adres - 30-09-1994 01:00:00", "Gerelateerde - 13-09-2008 01:00:00", "Ouderschap - 13-09-2008 01:00:00", "Relatie inhoud - 13-09-2008 01:00:00", "Gearchiveerde 09 Kind - 13-09-2008", "Verblijfsrecht - 30-09-1994 01:00:00", "Reisdocument - 28-12-2010 01:00:00", "Deelname EU verkiezingen - 04-05-2011 01:00:00" ]
   } ]
 } ]

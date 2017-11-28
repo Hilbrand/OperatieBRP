@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
@@ -44,5 +44,28 @@ public final class Lo3WijzigingenCategorie08 extends Lo3Wijzigingen<Lo3Verblijfp
         if (categorie.getElement(Lo3ElementEnum.ELEMENT_7210) == null || "".equals(categorie.getElement(Lo3ElementEnum.ELEMENT_7210))) {
             categorie.addElement(Lo3ElementEnum.ELEMENT_7210, ".");
         }
+
+        categorie.addElement(
+                Lo3ElementEnum.ELEMENT_8510,
+                grootsteVan(
+                        categorie.getElement(Lo3ElementEnum.ELEMENT_0920),
+                        categorie.getElement(Lo3ElementEnum.ELEMENT_1320),
+                        categorie.getElement(Lo3ElementEnum.ELEMENT_8510)));
+    }
+
+    private String grootsteVan(final String... elementen) {
+        String result = null;
+
+        for (final String element : elementen) {
+            if (element == null) {
+                continue;
+            }
+
+            if (result == null || element.compareTo(result) > 0) {
+                result = element;
+            }
+        }
+
+        return result;
     }
 }

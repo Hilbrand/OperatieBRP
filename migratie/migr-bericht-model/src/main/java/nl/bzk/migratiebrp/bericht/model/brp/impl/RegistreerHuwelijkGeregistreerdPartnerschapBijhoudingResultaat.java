@@ -8,14 +8,15 @@ package nl.bzk.migratiebrp.bericht.model.brp.impl;
 
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.brp.AbstractBrpBericht;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingResultaatRegistreerHuwelijkGeregistreerdPartnerschapMigVrz;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjectFactory;
 import nl.bzk.migratiebrp.bericht.model.brp.xml.BrpXml;
 
 /**
  * Resultaat van een huwelijk/gp bijhouding.
  */
-public final class RegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat extends AbstractBrpBericht<MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat> {
+public final class RegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat
+        extends AbstractBrpBericht<BijhoudingResultaatRegistreerHuwelijkGeregistreerdPartnerschapMigVrz> {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,18 +26,15 @@ public final class RegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaa
      * Default constructor.
      */
     public RegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat() {
-        this(new MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat());
+        this(new BijhoudingResultaatRegistreerHuwelijkGeregistreerdPartnerschapMigVrz());
     }
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param resultaat
-     *            het resultaat type
+     * @param resultaat het resultaat type
      */
     public RegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat(
-        final MigratievoorzieningRegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat resultaat)
-    {
+            final BijhoudingResultaatRegistreerHuwelijkGeregistreerdPartnerschapMigVrz resultaat) {
         super("RegistreerHuwelijkGeregistreerdPartnerschapBijhoudingResultaat", resultaat);
     }
 

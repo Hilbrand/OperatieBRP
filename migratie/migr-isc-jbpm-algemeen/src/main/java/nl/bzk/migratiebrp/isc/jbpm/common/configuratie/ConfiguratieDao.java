@@ -15,28 +15,21 @@ public interface ConfiguratieDao {
 
     /**
      * Haal een configuratie setting op.
-     *
-     * @param naam
-     *            setting
-     *
+     * @param naam setting
      * @return waarde
      */
     String getConfiguratie(String naam);
 
     /**
      * Haal een configuratie setting op als integer.
-     *
-     * @param naam
-     *            setting
+     * @param naam setting
      * @return waarde
      */
     Integer getConfiguratieAsInteger(String naam);
 
     /**
      * Haal een configuratie settings op als (jbpm) duration.
-     *
-     * @param naam
-     *            setting
+     * @param naam setting
      * @return waarde
      */
     Duration getConfiguratieAsDuration(String naam);

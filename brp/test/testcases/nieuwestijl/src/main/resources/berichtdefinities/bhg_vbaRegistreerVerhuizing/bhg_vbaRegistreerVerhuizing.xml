@@ -27,7 +27,7 @@
         <brp:bronnen>
             <!--Zero or more repetitions:-->
             [#list verhuizingBinnengemeentelijk.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -146,7 +146,7 @@
         <brp:bronnen>
             <!--Zero or more repetitions:-->
             [#list verhuizingIntergemeentelijk.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -267,7 +267,7 @@
         <brp:bronnen>
             <!--Zero or more repetitions:-->
             [#list verhuizingNaarBuitenland.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>

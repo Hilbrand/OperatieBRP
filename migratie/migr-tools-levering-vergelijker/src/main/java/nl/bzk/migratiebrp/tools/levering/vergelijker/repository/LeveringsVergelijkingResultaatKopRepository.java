@@ -11,27 +11,22 @@ import nl.bzk.migratiebrp.tools.levering.vergelijker.entity.LeveringsVergelijkin
 
 /**
  * DAO interface voor leveringvergelijking resultaten.
- *
  */
 public interface LeveringsVergelijkingResultaatKopRepository {
 
     /**
      * Sla het resultaat van de leveringvergelijking op.
-     *
-     * @param leveringsVergelijkingResultaatKop
-     *            Het op te slaan vergelijkingResultaat.
+     * @param leveringsVergelijkingResultaatKop Het op te slaan vergelijkingResultaat.
      * @return Het gepersisteerde vergelijkingresultaat.
      */
     LeveringsVergelijkingResultaatKop opslaanLeveringsVergelijkingKopResultaat(LeveringsVergelijkingResultaatKop leveringsVergelijkingResultaatKop);
 
     /**
      * Sla de resultaten van de leveringvergelijkingen op.
-     *
-     * @param leveringsVergelijkingResultatenKop
-     *            De op te slaan vergelijkingResultaten.
+     * @param leveringsVergelijkingResultatenKop De op te slaan vergelijkingResultaten.
      * @return De gepersisteerde vergelijkingresultaten.
      */
     List<LeveringsVergelijkingResultaatKop> opslaanLeveringsVergelijkingKopResultaten(
-        List<LeveringsVergelijkingResultaatKop> leveringsVergelijkingResultatenKop);
+            List<LeveringsVergelijkingResultaatKop> leveringsVergelijkingResultatenKop);
 
 }

@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
@@ -29,10 +29,10 @@ public final class PlControleAnummerHistorischGelijk implements PlControle {
         final BrpPersoonslijst brpPersoonslijst = context.getBrpPersoonslijst();
         final ControleLogging logging = new ControleLogging(ControleMelding.PL_CONTROLE_ANUMMER_HISTORISCH_GELIJK);
 
-        final Set<Long> anummers = new HashSet<>();
+        final Set<String> anummers = new HashSet<>();
         for (final BrpGroep<BrpIdentificatienummersInhoud> groep : brpPersoonslijst.getIdentificatienummerStapel()) {
             final BrpIdentificatienummersInhoud inhoud = groep.getInhoud();
-            final Long aNr = BrpLong.unwrap(inhoud.getAdministratienummer());
+            final String aNr = BrpString.unwrap(inhoud.getAdministratienummer());
             if (aNr != null) {
                 anummers.add(aNr);
             }

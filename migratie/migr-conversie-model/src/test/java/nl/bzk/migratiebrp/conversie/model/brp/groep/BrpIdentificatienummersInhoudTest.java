@@ -6,23 +6,22 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
-import nl.bzk.migratiebrp.conversie.model.brp.BrpActieBron;
-import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
-import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +35,7 @@ public class BrpIdentificatienummersInhoudTest {
     private BrpIdentificatienummersInhoud inhoud6;
 
     public static BrpIdentificatienummersInhoud createInhoud() {
-        return new BrpIdentificatienummersInhoud(new BrpLong(123456789L), null);
+        return new BrpIdentificatienummersInhoud(new BrpString("123456789"), null);
     }
 
     public static BrpStapel<BrpIdentificatienummersInhoud> createStapel() {
@@ -46,18 +45,9 @@ public class BrpIdentificatienummersInhoudTest {
         return new BrpStapel<>(groepen);
     }
 
-    public static BrpStapel<BrpIdentificatienummersInhoud> createStapelMetHistorie() {
-        List<BrpGroep<BrpIdentificatienummersInhoud>> groepen = new ArrayList<>();
-        BrpGroep<BrpIdentificatienummersInhoud> groep = new BrpGroep<>(createInhoud(), BrpHistorieTest.createdefaultInhoud(), null, null, null);
-        BrpGroep<BrpIdentificatienummersInhoud> groep2 = new BrpGroep<>(createInhoud(), BrpHistorieTest.createNietActueleInhoud(), null, null, null);
-        groepen.add(groep);
-        groepen.add(groep2);
-        return new BrpStapel<>(groepen);
-    }
-
     public static BrpStapel<BrpIdentificatienummersInhoud> createStapelZonderActueele() {
         BrpActie actie =
-                new BrpActie(1000l, BrpSoortActieCode.CONVERSIE_GBA, BrpPartijCode.MINISTER, null, null, Collections.<BrpActieBron>emptyList(), 1, null);
+                new BrpActie(1000L, BrpSoortActieCode.CONVERSIE_GBA, BrpPartijCode.MINISTER, null, null, Collections.emptyList(), 1, null);
         List<BrpGroep<BrpIdentificatienummersInhoud>> groepen = new ArrayList<>();
         BrpGroep<BrpIdentificatienummersInhoud> groep = new BrpGroep<>(createInhoud(), BrpHistorieTest.createNietActueleInhoud(), null, actie, null);
         groepen.add(groep);
@@ -66,12 +56,12 @@ public class BrpIdentificatienummersInhoudTest {
 
     @Before
     public void setup() {
-        inhoud1 = new BrpIdentificatienummersInhoud(new BrpLong(123456789L), new BrpInteger(987654321));
-        inhoud2 = new BrpIdentificatienummersInhoud(new BrpLong(123456789L), new BrpInteger(987654321));
-        inhoud3 = new BrpIdentificatienummersInhoud(new BrpLong(123456789L), new BrpInteger(999999999));
-        inhoud4 = new BrpIdentificatienummersInhoud(new BrpLong(111111111L), new BrpInteger(987654321));
-        inhoud5 = new BrpIdentificatienummersInhoud(new BrpLong(123456789L), null);
-        inhoud6 = new BrpIdentificatienummersInhoud(new BrpLong(123456789L), null);
+        inhoud1 = new BrpIdentificatienummersInhoud(new BrpString("123456789"), new BrpString("987654321"));
+        inhoud2 = new BrpIdentificatienummersInhoud(new BrpString("123456789"), new BrpString("987654321"));
+        inhoud3 = new BrpIdentificatienummersInhoud(new BrpString("123456789"), new BrpString("999999999"));
+        inhoud4 = new BrpIdentificatienummersInhoud(new BrpString("111111111"), new BrpString("987654321"));
+        inhoud5 = new BrpIdentificatienummersInhoud(new BrpString("123456789"), null);
+        inhoud6 = new BrpIdentificatienummersInhoud(new BrpString("123456789"), null);
     }
 
     @Test

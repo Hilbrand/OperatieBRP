@@ -7,9 +7,6 @@
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie;
 
 import java.util.List;
-
-import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
@@ -32,33 +29,37 @@ import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerke
  */
 public abstract class AbstractSynchronisatieVerwerkerImpl implements SynchronisatieVerwerker {
 
-    @Inject
-    private Lo3SyntaxControle syntaxControle;
+    private final Lo3SyntaxControle syntaxControle;
+    private final PreconditiesService preconditieService;
+    private final ConverteerLo3NaarBrpService converteerLo3NaarBrpService;
 
-    @Inject
-    private PreconditiesService preconditieService;
-
-    @Inject
-    private ConverteerLo3NaarBrpService converteerLo3NaarBrpService;
+    /**
+     * Constructor.
+     * @param syntaxControle syntax controle
+     * @param preconditieService preconditie service
+     * @param converteerLo3NaarBrpService conversie lo3 naar brp service
+     */
+    protected AbstractSynchronisatieVerwerkerImpl(final Lo3SyntaxControle syntaxControle,
+                                                  final PreconditiesService preconditieService,
+                                                  final ConverteerLo3NaarBrpService converteerLo3NaarBrpService) {
+        this.syntaxControle = syntaxControle;
+        this.preconditieService = preconditieService;
+        this.converteerLo3NaarBrpService = converteerLo3NaarBrpService;
+    }
 
     /**
      * Parse de LO3 persoonslijst uit het synchronisatie verzoek.
-     *
-     * @param logging
-     *            logging
-     * @param verzoek
-     *            verzoek
+     * @param logging logging
+     * @param verzoek verzoek
      * @return LO3 persoonslijst
-     * @throws SynchronisatieVerwerkerException
-     *             bij fouten (parsen of syntax)
+     * @throws SynchronisatieVerwerkerException bij fouten (parsen of syntax)
      */
     protected final Lo3Persoonslijst parsePersoonslijst(final PlVerwerkerLogging logging, final SynchroniseerNaarBrpVerzoekBericht verzoek)
-        throws SynchronisatieVerwerkerException
-    {
+            throws SynchronisatieVerwerkerException {
         Lo3Persoonslijst lo3Persoonslijst = null;
         try {
             // Parse teletex string naar lo3 categorieen
-            final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getLo3BerichtAsTeletexString());
+            final List<Lo3CategorieWaarde> lo3Inhoud = Lo3Inhoud.parseInhoud(verzoek.getLo3PersoonslijstAlsTeletexString());
 
             // Controleer syntax obv lo3 categorieen
             final List<Lo3CategorieWaarde> lo3InhoudNaSyntaxControle = syntaxControle.controleer(lo3Inhoud);
@@ -80,26 +81,20 @@ public abstract class AbstractSynchronisatieVerwerkerImpl implements Synchronisa
     }
 
     private <T extends Exception> void logEnConverteerExceptie(final PlVerwerkerLogging logging, final T e, final String melding)
-        throws SynchronisatieVerwerkerException
-    {
+            throws SynchronisatieVerwerkerException {
         logging.addMelding(melding + e.getMessage());
         throw new SynchronisatieVerwerkerException(StatusType.FOUT, e);
     }
 
     /**
      * Converteer de LO3 persoonslijst naar een BRP persoonslijst.
-     *
-     * @param logging
-     *            logging
-     * @param lo3Persoonslijst
-     *            LO3 persoonslijst
+     * @param logging logging
+     * @param lo3Persoonslijst LO3 persoonslijst
      * @return BRP persoonslijst
-     * @throws SynchronisatieVerwerkerException
-     *             bij fouten (preconditie, conversie probleem)
+     * @throws SynchronisatieVerwerkerException bij fouten (preconditie, conversie probleem)
      */
     protected final BrpPersoonslijst converteerPersoonslijst(final PlVerwerkerLogging logging, final Lo3Persoonslijst lo3Persoonslijst)
-        throws SynchronisatieVerwerkerException
-    {
+            throws SynchronisatieVerwerkerException {
 
         // Controleer precondities
         final Lo3Persoonslijst schoneLo3Persoonslijst;

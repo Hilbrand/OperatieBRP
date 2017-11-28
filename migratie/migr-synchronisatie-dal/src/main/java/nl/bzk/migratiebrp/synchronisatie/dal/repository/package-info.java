@@ -6,11 +6,10 @@
 
 /**
  * Data Access Repositories (DAO's) van de DAL.
- * 
+ *
  * Een interface kan een pure Java-interface zijn of een specialisatie van een Spring Data JpaRepository.
  * In het laatste geval is er geen eigen implementatie nodig in de jpa-subpackage, omdat deze gegenereerd wordt
  * door Spring Data.
- * 
  * @since 1.0
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.repository;

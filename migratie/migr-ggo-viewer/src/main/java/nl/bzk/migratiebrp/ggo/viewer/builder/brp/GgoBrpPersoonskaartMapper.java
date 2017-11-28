@@ -6,25 +6,38 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonPersoonskaartHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonPersoonskaartHistorie;
-import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
  */
-@Component
 public class GgoBrpPersoonskaartMapper extends AbstractGgoBrpMapper<PersoonPersoonskaartHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpPersoonskaartMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+                                     final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(final GgoBrpVoorkomen voorkomen, final PersoonPersoonskaartHistorie brpInhoud, final GgoBrpGroepEnum brpGroepEnum) {
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.GEMEENTE_PK, brpInhoud.getPartij());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.GEMEENTE_PK, brpInhoud.getPartij());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.INDICATIE_PK_VOLLEDIG_GECONVERTEERD,
-            brpInhoud.getIndicatiePersoonskaartVolledigGeconverteerd());
+                voorkomen,
+                GgoBrpElementEnum.INDICATIE_PK_VOLLEDIG_GECONVERTEERD,
+                brpInhoud.getIndicatiePersoonskaartVolledigGeconverteerd());
 
     }
 }

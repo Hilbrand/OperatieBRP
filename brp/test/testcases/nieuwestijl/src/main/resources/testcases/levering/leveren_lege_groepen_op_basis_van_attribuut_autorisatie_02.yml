@@ -1,4 +1,0 @@
-parameters:
-  dienstIdentificatie: '${dienstId}'
-zoekcriteriaPersoon:
-  burgerservicenummer: '290978981'

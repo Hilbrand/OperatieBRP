@@ -43,13 +43,13 @@ public class LeesUitBrpAntwoordBerichtHandlerTest {
         antwoordBericht.setStatus(StatusType.OK);
         antwoordBericht.setLo3Persoonslijst(builder.build(), AntwoordFormaatType.LO_3_XML);
 
-        Mockito.when(loggingService.zoekInitVullingLog(Long.valueOf(correlatieId))).thenReturn(new InitVullingLog());
+        Mockito.when(loggingService.zoekInitVullingLog(correlatieId)).thenReturn(new InitVullingLog());
 
         // Execute
         subject.verwerk(antwoordBericht, messageId, correlatieId);
 
         // Verify
-        Mockito.verify(loggingService, Mockito.times(1)).zoekInitVullingLog(Long.valueOf(correlatieId));
+        Mockito.verify(loggingService, Mockito.times(1)).zoekInitVullingLog(correlatieId);
 
         final ArgumentCaptor<InitVullingLog> entityCaptor = ArgumentCaptor.forClass(InitVullingLog.class);
         Mockito.verify(loggingService, Mockito.times(1)).bepalenEnOpslaanVerschillen(entityCaptor.capture());
@@ -66,13 +66,13 @@ public class LeesUitBrpAntwoordBerichtHandlerTest {
         final LeesUitBrpAntwoordBericht antwoordBericht = new LeesUitBrpAntwoordBericht();
         antwoordBericht.setCorrelationId(correlatieId);
 
-        Mockito.when(loggingService.zoekInitVullingLog(Long.valueOf(correlatieId))).thenReturn(null);
+        Mockito.when(loggingService.zoekInitVullingLog(correlatieId)).thenReturn(null);
 
         // Execute
         subject.verwerk(antwoordBericht, messageId, correlatieId);
 
         // Verify
-        Mockito.verify(loggingService, Mockito.times(1)).zoekInitVullingLog(Long.valueOf(correlatieId));
+        Mockito.verify(loggingService, Mockito.times(1)).zoekInitVullingLog(correlatieId);
         Mockito.verifyNoMoreInteractions(loggingService);
     }
 }

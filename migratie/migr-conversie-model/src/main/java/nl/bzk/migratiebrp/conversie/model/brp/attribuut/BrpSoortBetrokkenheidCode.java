@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een Soort betrokkenheid. Deze class is immutable en threadsafe.
@@ -34,9 +34,7 @@ public final class BrpSoortBetrokkenheidCode extends AbstractBrpAttribuutMetOnde
 
     /**
      * Maakt een BrpSoortBetrokkenheidCode.
-     *
-     * @param waarde
-     *            BRP waarde
+     * @param waarde BRP waarde
      */
     public BrpSoortBetrokkenheidCode(final String waarde) {
         this(waarde, "");
@@ -44,26 +42,19 @@ public final class BrpSoortBetrokkenheidCode extends AbstractBrpAttribuutMetOnde
 
     /**
      * Maakt een BrpSoortBetrokkenheidCode met onderzoek.
-     *
-     * @param waarde
-     *            BRP waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde BRP waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpSoortBetrokkenheidCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         this(waarde, "", onderzoek);
     }
 
     /**
      * Maakt een BrpBijhoudingsaardCode.
-     *
-     * @param waarde
-     *            BRP waarde
-     * @param omschrijving
-     *            omschrijving
+     * @param waarde BRP waarde
+     * @param omschrijving omschrijving
      */
     public BrpSoortBetrokkenheidCode(final String waarde, final String omschrijving) {
         this(waarde, omschrijving, null);
@@ -71,13 +62,9 @@ public final class BrpSoortBetrokkenheidCode extends AbstractBrpAttribuutMetOnde
 
     /**
      * Maakt een BrpSoortBetrokkenheidCode met onderzoek.
-     *
-     * @param waarde
-     *            BRP waarde
-     * @param omschrijving
-     *            omschrijving
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde BRP waarde
+     * @param omschrijving omschrijving
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpSoortBetrokkenheidCode(final String waarde, final String omschrijving, final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
@@ -86,7 +73,7 @@ public final class BrpSoortBetrokkenheidCode extends AbstractBrpAttribuutMetOnde
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -97,7 +84,6 @@ public final class BrpSoortBetrokkenheidCode extends AbstractBrpAttribuutMetOnde
 
     /**
      * Geef de waarde van omschrijving.
-     *
      * @return omschrijving
      */
     public String getOmschrijving() {

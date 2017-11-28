@@ -6,15 +6,15 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
- *
+ * BrpIstGezagsVerhoudingGroepInhoud
  */
 public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud {
     @Element(name = "standaardGegevens", required = true)
@@ -39,25 +39,18 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
 
     /**
      * Maakt een BrpIstGezagsVerhoudingStapelInhoud object.
-     *
-     * @param standaardGroepInhoud
-     *            standaard IST gegevens
-     * @param ouder1HeeftGezag
-     *            indicatie dat ouder1 gezag geeft
-     * @param ouder2HeeftGezag
-     *            indicatie dat ouder2 gezag geeft
-     * @param derdeHeeftGezag
-     *            indicatie dat een derde gezag geeft
-     * @param onderCuratele
-     *            indicatie dat persoon onder curatele staat
+     * @param standaardGroepInhoud standaard IST gegevens
+     * @param ouder1HeeftGezag indicatie dat ouder1 gezag geeft
+     * @param ouder2HeeftGezag indicatie dat ouder2 gezag geeft
+     * @param derdeHeeftGezag indicatie dat een derde gezag geeft
+     * @param onderCuratele indicatie dat persoon onder curatele staat
      */
     public BrpIstGezagsVerhoudingGroepInhoud(
-        @Element(name = "standaardGegevens", required = true) final BrpIstStandaardGroepInhoud standaardGroepInhoud,
-        @Element(name = "indicatieOuder1HeeftGezag", required = false) final BrpBoolean ouder1HeeftGezag,
-        @Element(name = "indicatieOuder2HeeftGezag", required = false) final BrpBoolean ouder2HeeftGezag,
-        @Element(name = "indicatieDerdeHeeftGezag", required = false) final BrpBoolean derdeHeeftGezag,
-        @Element(name = "indicatieOnderCuratele", required = false) final BrpBoolean onderCuratele)
-    {
+            @Element(name = "standaardGegevens", required = true) final BrpIstStandaardGroepInhoud standaardGroepInhoud,
+            @Element(name = "indicatieOuder1HeeftGezag", required = false) final BrpBoolean ouder1HeeftGezag,
+            @Element(name = "indicatieOuder2HeeftGezag", required = false) final BrpBoolean ouder2HeeftGezag,
+            @Element(name = "indicatieDerdeHeeftGezag", required = false) final BrpBoolean derdeHeeftGezag,
+            @Element(name = "indicatieOnderCuratele", required = false) final BrpBoolean onderCuratele) {
         standaardGegevens = standaardGroepInhoud;
         indicatieOuder1HeeftGezag = ouder1HeeftGezag;
         indicatieOuder2HeeftGezag = ouder2HeeftGezag;
@@ -72,38 +65,38 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
         }
         final BrpIstGezagsVerhoudingGroepInhoud castOther = (BrpIstGezagsVerhoudingGroepInhoud) other;
         return new EqualsBuilder().append(standaardGegevens, castOther.standaardGegevens)
-                                  .append(indicatieOuder1HeeftGezag, castOther.indicatieOuder1HeeftGezag)
-                                  .append(indicatieOuder2HeeftGezag, castOther.indicatieOuder2HeeftGezag)
-                                  .append(indicatieDerdeHeeftGezag, castOther.indicatieDerdeHeeftGezag)
-                                  .append(indicatieOnderCuratele, castOther.indicatieOnderCuratele)
-                                  .isEquals();
+                .append(indicatieOuder1HeeftGezag, castOther.indicatieOuder1HeeftGezag)
+                .append(indicatieOuder2HeeftGezag, castOther.indicatieOuder2HeeftGezag)
+                .append(indicatieDerdeHeeftGezag, castOther.indicatieDerdeHeeftGezag)
+                .append(indicatieOnderCuratele, castOther.indicatieOnderCuratele)
+                .isEquals();
     }
 
     @Override
     public final int hashCode() {
         return new org.apache.commons.lang3.builder.HashCodeBuilder().append(standaardGegevens)
-                                                                     .append(indicatieOuder1HeeftGezag)
-                                                                     .append(indicatieOuder2HeeftGezag)
-                                                                     .append(indicatieDerdeHeeftGezag)
-                                                                     .append(indicatieOnderCuratele)
-                                                                     .toHashCode();
+                .append(indicatieOuder1HeeftGezag)
+                .append(indicatieOuder2HeeftGezag)
+                .append(indicatieDerdeHeeftGezag)
+                .append(indicatieOnderCuratele)
+                .toHashCode();
     }
 
     @Override
     public final String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("standaardGegevens", standaardGegevens)
-                                                                          .append("indicatieOuder1HeeftGezag", indicatieOuder1HeeftGezag)
-                                                                          .append("indicatieOuder2HeeftGezag", indicatieOuder2HeeftGezag)
-                                                                          .append("indicatieDerdeHeeftGezag", indicatieDerdeHeeftGezag)
-                                                                          .append("indicatieOnderCuratele", indicatieOnderCuratele)
-                                                                          .toString();
+                .append("standaardGegevens", standaardGegevens)
+                .append("indicatieOuder1HeeftGezag", indicatieOuder1HeeftGezag)
+                .append("indicatieOuder2HeeftGezag", indicatieOuder2HeeftGezag)
+                .append("indicatieDerdeHeeftGezag", indicatieDerdeHeeftGezag)
+                .append("indicatieOnderCuratele", indicatieOnderCuratele)
+                .toString();
 
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getCategorie()
      */
     @Override
@@ -113,7 +106,7 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getStapel()
      */
     @Override
@@ -123,7 +116,7 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getVoorkomen()
      */
     @Override
@@ -133,7 +126,7 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getStandaardGegevens()
      */
     @Override
@@ -142,36 +135,32 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
     }
 
     /**
-     * Geef de waarde van indicatie ouder1 heeft gezag.
-     *
-     * @return indicatie ouder1 heeft gezag
+     * Geef de waarde van indicatie ouder1 heeft gezag van BrpIstGezagsVerhoudingGroepInhoud.
+     * @return de waarde van indicatie ouder1 heeft gezag van BrpIstGezagsVerhoudingGroepInhoud
      */
     public final BrpBoolean getIndicatieOuder1HeeftGezag() {
         return indicatieOuder1HeeftGezag;
     }
 
     /**
-     * Geef de waarde van indicatie ouder2 heeft gezag.
-     *
-     * @return indicatie ouder2 heeft gezag
+     * Geef de waarde van indicatie ouder2 heeft gezag van BrpIstGezagsVerhoudingGroepInhoud.
+     * @return de waarde van indicatie ouder2 heeft gezag van BrpIstGezagsVerhoudingGroepInhoud
      */
     public final BrpBoolean getIndicatieOuder2HeeftGezag() {
         return indicatieOuder2HeeftGezag;
     }
 
     /**
-     * Geef de waarde van indicatie derde heeft gezag.
-     *
-     * @return indicatie derde heeft gezag
+     * Geef de waarde van indicatie derde heeft gezag van BrpIstGezagsVerhoudingGroepInhoud.
+     * @return de waarde van indicatie derde heeft gezag van BrpIstGezagsVerhoudingGroepInhoud
      */
     public final BrpBoolean getIndicatieDerdeHeeftGezag() {
         return indicatieDerdeHeeftGezag;
     }
 
     /**
-     * Geef de waarde van indicatie onder curatele.
-     *
-     * @return indicatie onder curatele
+     * Geef de waarde van indicatie onder curatele van BrpIstGezagsVerhoudingGroepInhoud.
+     * @return de waarde van indicatie onder curatele van BrpIstGezagsVerhoudingGroepInhoud
      */
     public final BrpBoolean getIndicatieOnderCuratele() {
         return indicatieOnderCuratele;
@@ -189,9 +178,7 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
 
         /**
          * Constructor met verplichte velden categorie, stapel en voorkomen.
-         *
-         * @param standaardGroepInhoud
-         *            standaard IST gegevens
+         * @param standaardGroepInhoud standaard IST gegevens
          */
         public Builder(final BrpIstStandaardGroepInhoud standaardGroepInhoud) {
             standaardGegevens = standaardGroepInhoud;
@@ -199,9 +186,7 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
 
         /**
          * zet de indicatie dat ouder1 gezag heeft.
-         *
-         * @param param
-         *            indictatie ouder1 heeft gezag
+         * @param param indictatie ouder1 heeft gezag
          * @return builder object
          */
         public final Builder indicatieOuder1HeeftGezag(final BrpBoolean param) {
@@ -211,9 +196,7 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
 
         /**
          * zet de indicatie dat ouder2 gezag heeft.
-         *
-         * @param param
-         *            indictatie ouder2 heeft gezag
+         * @param param indictatie ouder2 heeft gezag
          * @return builder object
          */
         public final Builder indicatieOuder2HeeftGezag(final BrpBoolean param) {
@@ -223,9 +206,7 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
 
         /**
          * zet de indicatie dat derde gezag heeft.
-         *
-         * @param param
-         *            indictatie derde heeft gezag
+         * @param param indictatie derde heeft gezag
          * @return builder object
          */
         public final Builder indicatieDerdeHeeftGezag(final BrpBoolean param) {
@@ -235,9 +216,7 @@ public class BrpIstGezagsVerhoudingGroepInhoud extends AbstractBrpIstGroepInhoud
 
         /**
          * zet de indicatie onder curatele.
-         *
-         * @param param
-         *            indicatie onder curatele
+         * @param param indicatie onder curatele
          * @return builder object
          */
         public final Builder indicatieOnderCuratele(final BrpBoolean param) {

@@ -30,16 +30,19 @@ public final class PlaatsenAfnIndTestUtil {
         return maakAp01Bericht(afnemerCode, null, null, null, null);
     }
 
+    public static Ap01Bericht maakAp01Bericht(final String afnemerCode, final Long aNummer) {
+        return maakAp01Bericht(afnemerCode, aNummer, null, null, null);
+    }
+
     public static Ap01Bericht maakAp01Bericht(
-        final String afnemerCode,
-        final Long aNummer,
-        final Integer bsn,
-        final String geslachtsnaam,
-        final String postcode)
-    {
+            final String afnemerCode,
+            final Long aNummer,
+            final Integer bsn,
+            final String geslachtsnaam,
+            final String postcode) {
         final Ap01Bericht ap01Bericht = new Ap01Bericht();
-        ap01Bericht.setBronGemeente(afnemerCode);
-        ap01Bericht.setDoelGemeente("3000200");
+        ap01Bericht.setBronPartijCode(afnemerCode);
+        ap01Bericht.setDoelPartijCode("199902");
         if (aNummer != null || bsn != null || geslachtsnaam != null || postcode != null) {
             ap01Bericht.setCategorieen(maakCategorieen(aNummer, bsn, geslachtsnaam, postcode));
         }

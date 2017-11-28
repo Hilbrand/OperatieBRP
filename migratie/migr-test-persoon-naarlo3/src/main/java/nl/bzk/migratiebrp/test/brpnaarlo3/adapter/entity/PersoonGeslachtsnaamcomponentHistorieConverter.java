@@ -8,14 +8,16 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponent;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponent;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -66,10 +68,10 @@ public final class PersoonGeslachtsnaamcomponentHistorieConverter extends Abstra
                 volgnr = Integer.valueOf(value);
                 break;
             case HEADER_PREDICAAT:
-                predicaat = Predicaat.parseId(Short.valueOf(value));
+                predicaat = Predicaat.parseId(Integer.valueOf(value));
                 break;
             case HEADER_ADELLIJKETITEL:
-                adellijkeTitel = AdellijkeTitel.parseId(Short.valueOf(value));
+                adellijkeTitel = AdellijkeTitel.parseId(Integer.valueOf(value));
                 break;
             case HEADER_VOORVOEGSEL:
                 voorvoegsel = value;

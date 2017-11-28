@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.conversie.model.logging;
 
 import java.io.Serializable;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
@@ -14,7 +15,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Een logregel.
@@ -37,22 +37,16 @@ public final class LogRegel implements Serializable {
 
     /**
      * Log regel.
-     * 
-     * @param lo3Herkomst
-     *            herkomst, mag niet null zijn
-     * @param severity
-     *            severity, mag niet null zijn
-     * @param soortMeldingCode
-     *            soortMeldingCode, mag niet null zijn
-     * @param lo3ElementNummer
-     *            het lo3 element nummer
+     * @param lo3Herkomst herkomst, mag niet null zijn
+     * @param severity severity, mag niet null zijn
+     * @param soortMeldingCode soortMeldingCode, mag niet null zijn
+     * @param lo3ElementNummer het lo3 element nummer
      */
     public LogRegel(
-        @Element(name = "lo3Herkomst", required = true) final Lo3Herkomst lo3Herkomst,
-        @Element(name = "severity", required = true) final LogSeverity severity,
-        @Element(name = "soortMeldingCode", required = true) final SoortMeldingCode soortMeldingCode,
-        @Element(name = "lo3ElementNummer", required = false) final Lo3ElementEnum lo3ElementNummer)
-    {
+            @Element(name = "lo3Herkomst", required = true) final Lo3Herkomst lo3Herkomst,
+            @Element(name = "severity", required = true) final LogSeverity severity,
+            @Element(name = "soortMeldingCode", required = true) final SoortMeldingCode soortMeldingCode,
+            @Element(name = "lo3ElementNummer", required = false) final Lo3ElementEnum lo3ElementNummer) {
         controleerVerplichteVelden(lo3Herkomst, severity, soortMeldingCode);
         this.lo3Herkomst = lo3Herkomst;
         this.severity = severity;
@@ -61,10 +55,9 @@ public final class LogRegel implements Serializable {
     }
 
     private void controleerVerplichteVelden(
-        final Lo3Herkomst lo3HerkomstParam,
-        final LogSeverity severityParam,
-        final SoortMeldingCode soortMeldingCodeParam)
-    {
+            final Lo3Herkomst lo3HerkomstParam,
+            final LogSeverity severityParam,
+            final SoortMeldingCode soortMeldingCodeParam) {
         if (lo3HerkomstParam == null) {
             throw new NullPointerException("lo3Herkomst mag niet null zijn");
         }
@@ -78,7 +71,6 @@ public final class LogRegel implements Serializable {
 
     /**
      * Geef de waarde van lo3 herkomst.
-     *
      * @return lo3 herkomst
      */
     public Lo3Herkomst getLo3Herkomst() {
@@ -87,7 +79,6 @@ public final class LogRegel implements Serializable {
 
     /**
      * Geef de waarde van severity.
-     *
      * @return severity
      */
     public LogSeverity getSeverity() {
@@ -96,9 +87,7 @@ public final class LogRegel implements Serializable {
 
     /**
      * Zet de waarde van severity.
-     *
-     * @param severity
-     *            severity
+     * @param severity severity
      */
     public void setSeverity(final LogSeverity severity) {
         this.severity = severity;
@@ -106,7 +95,6 @@ public final class LogRegel implements Serializable {
 
     /**
      * Geef de waarde van soort melding code.
-     *
      * @return soort melding code
      */
     public SoortMeldingCode getSoortMeldingCode() {
@@ -115,7 +103,6 @@ public final class LogRegel implements Serializable {
 
     /**
      * Geef de waarde van lo3 element nummer.
-     *
      * @return lo3 element nummer
      */
     public Lo3ElementEnum getLo3ElementNummer() {
@@ -146,10 +133,10 @@ public final class LogRegel implements Serializable {
         }
         final LogRegel castOther = (LogRegel) other;
         return new EqualsBuilder().append(lo3Herkomst, castOther.lo3Herkomst)
-                                  .append(severity, castOther.severity)
-                                  .append(soortMeldingCode, castOther.soortMeldingCode)
-                                  .append(lo3ElementNummer, castOther.lo3ElementNummer)
-                                  .isEquals();
+                .append(severity, castOther.severity)
+                .append(soortMeldingCode, castOther.soortMeldingCode)
+                .append(lo3ElementNummer, castOther.lo3ElementNummer)
+                .isEquals();
     }
 
     @Override
@@ -160,11 +147,11 @@ public final class LogRegel implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("herkomst", lo3Herkomst)
-                                                                          .append("severity", severity)
-                                                                          .append("soortMeldingCode", soortMeldingCode)
-                                                                          .append("lo3ElementNummer", lo3ElementNummer)
-                                                                          .toString();
+                .append("herkomst", lo3Herkomst)
+                .append("severity", severity)
+                .append("soortMeldingCode", soortMeldingCode)
+                .append("lo3ElementNummer", lo3ElementNummer)
+                .toString();
     }
 
 }

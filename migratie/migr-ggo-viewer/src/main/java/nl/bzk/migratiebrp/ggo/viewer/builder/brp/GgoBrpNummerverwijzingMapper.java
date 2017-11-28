@@ -6,39 +6,50 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNummerverwijzingHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNummerverwijzingHistorie;
-import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
  */
-@Component
 public class GgoBrpNummerverwijzingMapper extends AbstractGgoBrpMapper<PersoonNummerverwijzingHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpNummerverwijzingMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+
+                                        final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(final GgoBrpVoorkomen voorkomen, final PersoonNummerverwijzingHistorie brpInhoud, final GgoBrpGroepEnum brpGroepEnum) {
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.VORIG_ADMINISTRATIENUMMER,
-            brpInhoud.getVorigeAdministratienummer());
+                voorkomen,
+                GgoBrpElementEnum.VORIG_ADMINISTRATIENUMMER,
+                brpInhoud.getVorigeAdministratienummer());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.VOLGEND_ADMINISTRATIENUMMER,
-            brpInhoud.getVolgendeAdministratienummer());
+                voorkomen,
+                GgoBrpElementEnum.VOLGEND_ADMINISTRATIENUMMER,
+                brpInhoud.getVolgendeAdministratienummer());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.VORIG_BURGERSERVICENUMMER,
-            brpInhoud.getVorigeBurgerservicenummer());
+                voorkomen,
+                GgoBrpElementEnum.VORIG_BURGERSERVICENUMMER,
+                brpInhoud.getVorigeBurgerservicenummer());
         getGgoBrpValueConvert().verwerkElement(
-            voorkomen,
-            brpGroepEnum,
-            GgoBrpElementEnum.VOLGEND_BURGERSERVICENUMMER,
-            brpInhoud.getVolgendeBurgerservicenummer());
+                voorkomen,
+                GgoBrpElementEnum.VOLGEND_BURGERSERVICENUMMER,
+                brpInhoud.getVolgendeBurgerservicenummer());
     }
 
 }

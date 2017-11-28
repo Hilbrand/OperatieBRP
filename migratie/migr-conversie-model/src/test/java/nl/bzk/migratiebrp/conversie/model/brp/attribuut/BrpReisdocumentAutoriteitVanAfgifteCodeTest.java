@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
 public class BrpReisdocumentAutoriteitVanAfgifteCodeTest {
 
     public static BrpReisdocumentAutoriteitVanAfgifteCode Burgemeester() {

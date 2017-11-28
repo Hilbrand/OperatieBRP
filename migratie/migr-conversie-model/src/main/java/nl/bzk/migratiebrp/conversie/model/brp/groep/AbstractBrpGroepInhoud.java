@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 /**
  * Alle BrpGroepInhoud klassen moeten deze abstracte klasse extenden.
- * 
  */
 public abstract class AbstractBrpGroepInhoud implements BrpGroepInhoud {
 

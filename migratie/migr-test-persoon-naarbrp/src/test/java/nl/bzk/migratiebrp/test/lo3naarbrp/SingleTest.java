@@ -20,8 +20,8 @@ public class SingleTest extends Lo3NaarBrpConversieTestConfiguratie {
 
     @Override
     public boolean useMemoryDS() {
-        return true;
-        // return false;
+//        return true;
+         return false;
     }
 
     /* (non-Javadoc)
@@ -40,19 +40,13 @@ public class SingleTest extends Lo3NaarBrpConversieTestConfiguratie {
     @Override
     public FilenameFilter getCasusFilter() {
         final List<String> fileList = new ArrayList<>();
-        if (false) {
-//            fileList.add("ONDCAT0404C10T80.xls");
-//            fileList.add("ONDCAT0404C10T100.xls");
-//            fileList.add("ONDCAT0404C10T30");
-//            fileList.add("ONDCAT0404C10T50");
-//            fileList.add("ONDCAT0404C10T60");
-            fileList.add("ONDCAT04_ORANJE_3759");
-//            fileList.add("ONDCAT04_ORANJE_3803");
+        if (true) {
+            fileList.add("OVLD04C10T20");
 
             return new StartsWithListFilter(fileList, FilterType.FILE);
 
         } else if(false) {
-            fileList.add("DELTAOND");
+            fileList.add("0100-uit-persoon-Lg01.xls");
             return new StartsNotWithListFilter(fileList,FilterType.FILE);
         }else{
             return new BaseFilter(FilterType.FILE);

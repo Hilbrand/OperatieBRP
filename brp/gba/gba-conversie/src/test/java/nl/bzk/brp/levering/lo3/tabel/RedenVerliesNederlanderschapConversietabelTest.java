@@ -8,12 +8,10 @@ package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.RedenVerliesCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenVerliesNederlandschapCode;
 import org.junit.Assert;
 import org.junit.Test;
-import support.ReflectionUtils;
 
 /**
  * Test voor {@link RedenVerliesNederlanderschapConversietabel}.
@@ -23,14 +21,14 @@ public class RedenVerliesNederlanderschapConversietabelTest {
     @Test
     public void test() throws ReflectiveOperationException {
         final List<RedenVerliesNLNationaliteit> list = new ArrayList<>();
-        list.add(maakConversietabelRegel(1));
+        list.add(maakConversietabelRegel("001"));
 
         final RedenVerliesNederlanderschapConversietabel subject = new RedenVerliesNederlanderschapConversietabel(list);
 
-        Assert.assertEquals("001", subject.converteerNaarLo3(new BrpRedenVerliesNederlandschapCode((short) 1)).getWaarde());
+        Assert.assertEquals("001", subject.converteerNaarLo3(new BrpRedenVerliesNederlandschapCode("001")).getWaarde());
     }
 
-    private RedenVerliesNLNationaliteit maakConversietabelRegel(final Integer waarde) throws ReflectiveOperationException {
-        return ReflectionUtils.instantiate(RedenVerliesNLNationaliteit.class, new RedenVerliesCodeAttribuut(waarde.shortValue()), null, null, null);
+    private RedenVerliesNLNationaliteit maakConversietabelRegel(final String waarde) throws ReflectiveOperationException {
+        return new RedenVerliesNLNationaliteit(waarde, "Omschrijving");
     }
 }

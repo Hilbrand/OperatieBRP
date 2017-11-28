@@ -21,31 +21,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNummerverwijzingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-
 import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNummerverwijzingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
+import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
 
 /**
  * Unit test voor {@link DeltaVergelijkerResultaat}.
@@ -55,10 +55,9 @@ public class DeltaVergelijkerResultaatTest {
     private final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
     private final PersoonIDHistorie idOud = new PersoonIDHistorie(persoon);
     private final PersoonIDHistorie idNieuw = new PersoonIDHistorie(persoon);
-    private final Partij partij = new Partij("naam", 1);
-    private final AdministratieveHandeling administratieveHandeling = new AdministratieveHandeling(
-        partij,
-        SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
+    private final Partij partij = new Partij("naam", "000001");
+    private final AdministratieveHandeling administratieveHandeling =
+            new AdministratieveHandeling(partij, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL, new Timestamp(System.currentTimeMillis()));
     private final Timestamp timestamp = Timestamp.valueOf("2002-02-10 12:00:00.000");
     private final BRPActie actie = new BRPActie(SoortActie.CONVERSIE_GBA, administratieveHandeling, partij, timestamp);
 
@@ -113,7 +112,7 @@ public class DeltaVergelijkerResultaatTest {
     @Test
     public void testGetVerschillenIst() {
         final VergelijkerResultaat vergelijkerResultaat = new DeltaVergelijkerResultaat();
-        final IstSleutel istSleutel = new IstSleutel(new Stapel(new Persoon(SoortPersoon.ONBEKEND), "09", 0), true);
+        final IstSleutel istSleutel = new IstSleutel(new Stapel(new Persoon(SoortPersoon.PSEUDO_PERSOON), "09", 0), true);
         final Verschil istVerschil = new Verschil(istSleutel, 1, 2, null, null);
         vergelijkerResultaat.voegToeOfVervangVerschil(istVerschil);
 
@@ -238,7 +237,7 @@ public class DeltaVergelijkerResultaatTest {
         assertEquals(verschil, vergelijkerResultaat.zoekVerschil(sleutel, VerschilType.ELEMENT_AANGEPAST));
         assertNull(vergelijkerResultaat.zoekVerschil(sleutel, VerschilType.ELEMENT_NIEUW));
         assertNull(vergelijkerResultaat.zoekVerschil(sleutel2));
-        assertNull(vergelijkerResultaat.zoekVerschil(new EntiteitSleutel(Persoon.class, Persoon.VERSIENUMMER), VerschilType.ELEMENT_AANGEPAST));
+        assertNull(vergelijkerResultaat.zoekVerschil(new EntiteitSleutel(Persoon.class, Persoon.VERSIE_NUMMER), VerschilType.ELEMENT_AANGEPAST));
     }
 
     @Test
@@ -278,13 +277,14 @@ public class DeltaVergelijkerResultaatTest {
         vergelijkerResultaat.voegToeOfVervangVerschil(verschil);
         assertFalse(vergelijkerResultaat.isLeeg());
         assertEquals(
-            String.format("Verschillen:%n"
-                          + "Sleutel      : EntiteitSleutel[Entiteit=class nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie,Veld=bsn,EigenaarSleutel=<null>]%n"
-                          + "Oude waarde  : 1%n"
-                          + "Nieuwe waarde: 2%n"
-                          + "Type         : ELEMENT_AANGEPAST%n"
-                          + "%n"),
-            vergelijkerResultaat.toString());
+                String.format("Verschillen:%n"
+                        + "Sleutel      : EntiteitSleutel[Entiteit=class nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie,Veld=bsn,"
+                        + "EigenaarSleutel=<null>]%n"
+                        + "Oude waarde  : 1%n"
+                        + "Nieuwe waarde: 2%n"
+                        + "Type         : ELEMENT_AANGEPAST%n"
+                        + "%n"),
+                vergelijkerResultaat.toString());
     }
 
     @Test
@@ -383,12 +383,12 @@ public class DeltaVergelijkerResultaatTest {
     public void testBevatAlleenInfraWijzigingen() {
         final VergelijkerResultaat resultaat = new DeltaVergelijkerResultaat();
         resultaat.voegToeOfVervangVerschil(new Verschil(
-            new EntiteitSleutel(Persoon.class, Persoon.BUITENLANDSADRESREGEL1MIGRATIE),
-            null,
-            null,
-            VerschilType.ELEMENT_AANGEPAST,
-            null,
-            null));
+                new EntiteitSleutel(Persoon.class, Persoon.BUITENLANDS_ADRES_REGEL1_MIGRATIE),
+                null,
+                null,
+                VerschilType.ELEMENT_AANGEPAST,
+                null,
+                null));
         assertTrue(resultaat.bevatAlleenInfrastructureleWijzigingen());
     }
 
@@ -396,33 +396,19 @@ public class DeltaVergelijkerResultaatTest {
     public void testBevatNietAlleenInfraWijzigingen() {
         final VergelijkerResultaat resultaat = new DeltaVergelijkerResultaat();
         resultaat.voegToeOfVervangVerschil(new Verschil(
-            new EntiteitSleutel(Persoon.class, "persoonSamengesteldeNaamHistorieSet"),
-            null,
-            new PersoonSamengesteldeNaamHistorie(new Persoon(SoortPersoon.INGESCHREVENE), "Put", false, false),
-            VerschilType.RIJ_TOEGEVOEGD,
-            null,
-            null));
+                new EntiteitSleutel(Persoon.class, "persoonSamengesteldeNaamHistorieSet"),
+                null,
+                new PersoonSamengesteldeNaamHistorie(new Persoon(SoortPersoon.INGESCHREVENE), "Put", false, false),
+                VerschilType.RIJ_TOEGEVOEGD,
+                null,
+                null));
         assertFalse(resultaat.bevatAlleenInfrastructureleWijzigingen());
     }
 
     @Test
-    public void testBevatAlleenAnummerWijzigingen() {
-        final PersoonNummerverwijzingHistorie historie = new PersoonNummerverwijzingHistorie(new Persoon(SoortPersoon.INGESCHREVENE));
-        final VergelijkerResultaat resultaat = new DeltaVergelijkerResultaat();
-        resultaat.voegToeOfVervangVerschil(new Verschil(
-            new EntiteitSleutel(Persoon.class, "persoonNummerverwijzingHistorieSet"),
-            null,
-            historie,
-            VerschilType.RIJ_TOEGEVOEGD,
-            null,
-            null));
-
-        assertTrue(resultaat.bevatAlleenAnummerWijzigingen());
-    }
-
-    @Test
-    public void testBevatAlleenAnummerWijzigingenMeerWijzigingen() {
-        final PersoonNummerverwijzingHistorie historie = new PersoonNummerverwijzingHistorie(new Persoon(SoortPersoon.INGESCHREVENE));
+    public void testBevatAlleenAnummerWijzigingen() throws ReflectiveOperationException {
+        final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
+        final PersoonNummerverwijzingHistorie historie = new PersoonNummerverwijzingHistorie(persoon);
         final VergelijkerResultaat resultaat = new DeltaVergelijkerResultaat();
         resultaat.voegToeOfVervangVerschil(new Verschil(
                 new EntiteitSleutel(Persoon.class, "persoonNummerverwijzingHistorieSet"),
@@ -430,30 +416,47 @@ public class DeltaVergelijkerResultaatTest {
                 historie,
                 VerschilType.RIJ_TOEGEVOEGD,
                 null,
-                null));
-        resultaat.voegToeOfVervangVerschil(new Verschil(
-            new EntiteitSleutel(Persoon.class, "persoonAdresSet"),
-            null,
-            new PersoonAdres(new Persoon(SoortPersoon.INGESCHREVENE)),
-            VerschilType.RIJ_TOEGEVOEGD,
-            null,
-            null));
+                historie));
 
-        assertFalse(resultaat.bevatAlleenAnummerWijzigingen());
+        assertTrue(resultaat.bevatAlleenAnummerWijzigingen(persoon));
     }
 
     @Test
-    public void testBevatAlleenAnummerWijzigingenGeenNummerverwijzing() {
-        final PersoonNummerverwijzingHistorie historie = new PersoonNummerverwijzingHistorie(new Persoon(SoortPersoon.INGESCHREVENE));
+    public void testBevatAlleenAnummerWijzigingenMeerWijzigingen() throws ReflectiveOperationException {
+        final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
+        final PersoonNummerverwijzingHistorie historie = new PersoonNummerverwijzingHistorie(persoon);
         final VergelijkerResultaat resultaat = new DeltaVergelijkerResultaat();
         resultaat.voegToeOfVervangVerschil(new Verschil(
-            new EntiteitSleutel(Persoon.class, "persoonMigratieHistorieSet"),
-            null,
-            historie,
-            VerschilType.RIJ_TOEGEVOEGD,
-            null,
-            null));
+                new EntiteitSleutel(Persoon.class, "persoonNummerverwijzingHistorieSet"),
+                null,
+                historie,
+                VerschilType.RIJ_TOEGEVOEGD,
+                null,
+                historie));
+        resultaat.voegToeOfVervangVerschil(new Verschil(
+                new EntiteitSleutel(Persoon.class, "persoonAdresSet"),
+                null,
+                new PersoonAdres(persoon),
+                VerschilType.RIJ_TOEGEVOEGD,
+                null,
+                null));
 
-        assertFalse(resultaat.bevatAlleenAnummerWijzigingen());
+        assertFalse(resultaat.bevatAlleenAnummerWijzigingen(persoon));
+    }
+
+    @Test
+    public void testBevatAlleenAnummerWijzigingenGeenNummerverwijzing() throws ReflectiveOperationException {
+        final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
+        final PersoonNummerverwijzingHistorie historie = new PersoonNummerverwijzingHistorie(persoon);
+        final VergelijkerResultaat resultaat = new DeltaVergelijkerResultaat();
+        resultaat.voegToeOfVervangVerschil(new Verschil(
+                new EntiteitSleutel(Persoon.class, "persoonMigratieHistorieSet"),
+                null,
+                historie,
+                VerschilType.RIJ_TOEGEVOEGD,
+                null,
+                null));
+
+        assertFalse(resultaat.bevatAlleenAnummerWijzigingen(persoon));
     }
 }

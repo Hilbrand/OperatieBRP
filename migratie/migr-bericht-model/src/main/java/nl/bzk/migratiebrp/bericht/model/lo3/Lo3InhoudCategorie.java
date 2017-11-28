@@ -15,7 +15,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * LO3 Inhoud categorie.
- *
  */
 public final class Lo3InhoudCategorie {
 
@@ -32,12 +31,8 @@ public final class Lo3InhoudCategorie {
 
     /**
      * Maak een nieuwe categorie aan.
-     *
-     * @param categorie
-     *            categorienummer (moet 2 cijfers zijn)
-     * @throws IllegalArgumentException
-     *             als het categorienummer niet uit twee cijfers bestaat
-     *
+     * @param categorie categorienummer (moet 2 cijfers zijn)
+     * @throws IllegalArgumentException als het categorienummer niet uit twee cijfers bestaat
      */
     Lo3InhoudCategorie(final String categorie) {
         if (!CATEGORIE_PATTERN.matcher(categorie).matches()) {
@@ -50,9 +45,7 @@ public final class Lo3InhoudCategorie {
 
     /**
      * Voeg een element toe aan deze categorie.
-     *
-     * @param element
-     *            element
+     * @param element element
      */
     public void addElement(final Lo3InhoudElement element) {
         bytes = null;
@@ -61,7 +54,6 @@ public final class Lo3InhoudCategorie {
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return de categorie naam.
      */
     public String getCategorie() {
@@ -70,7 +62,6 @@ public final class Lo3InhoudCategorie {
 
     /**
      * Geef de waarde van elementen.
-     *
      * @return de elementen waaruit deze categorie bestaat.
      */
     public List<Lo3InhoudElement> getElementen() {
@@ -79,9 +70,7 @@ public final class Lo3InhoudCategorie {
 
     /**
      * Haal het element op met de meegegeven elementnaam.
-     *
-     * @param elementNaam
-     *            de naam van het element
+     * @param elementNaam de naam van het element
      * @return het corresponderende Lg01Element of null, als deze niet in de categorie voorkomt
      */
     public Lo3InhoudElement getElement(final String elementNaam) {
@@ -97,7 +86,6 @@ public final class Lo3InhoudCategorie {
 
     /**
      * Geef de byte weergave van deze categorie.
-     *
      * @return teletex encoded byte weergave van deze categorie
      */
     public byte[] getBytes() {

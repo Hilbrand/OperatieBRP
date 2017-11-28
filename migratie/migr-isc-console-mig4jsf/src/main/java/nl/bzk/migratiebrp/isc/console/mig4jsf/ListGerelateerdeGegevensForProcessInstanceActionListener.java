@@ -39,19 +39,14 @@ public final class ListGerelateerdeGegevensForProcessInstanceActionListener exte
 
     /**
      * Constructor.
-     *
-     * @param processInstanceExpression
-     *            process instance expression
-     * @param pagerExpression
-     *            pager expression
-     * @param targetExpression
-     *            target expression
+     * @param processInstanceExpression process instance expression
+     * @param pagerExpression pager expression
+     * @param targetExpression target expression
      */
     public ListGerelateerdeGegevensForProcessInstanceActionListener(
-        final ValueExpression processInstanceExpression,
-        final ValueExpression pagerExpression,
-        final ValueExpression targetExpression)
-    {
+            final ValueExpression processInstanceExpression,
+            final ValueExpression pagerExpression,
+            final ValueExpression targetExpression) {
         super("listGerelateerdeGegevensForProcessInstance");
         this.processInstanceExpression = processInstanceExpression;
         this.pagerExpression = pagerExpression;
@@ -108,9 +103,7 @@ public final class ListGerelateerdeGegevensForProcessInstanceActionListener exte
 
         /**
          * Constructor.
-         *
-         * @param whereClause
-         *            where clause
+         * @param whereClause where clause
          */
         public CountSql(final String whereClause) {
             this.whereClause = whereClause;
@@ -142,11 +135,8 @@ public final class ListGerelateerdeGegevensForProcessInstanceActionListener exte
 
         /**
          * Constructor.
-         *
-         * @param whereClause
-         *            where clause
-         * @param limitClause
-         *            limit clause
+         * @param whereClause where clause
+         * @param limitClause limit clause
          */
         public ListSql(final String whereClause, final String limitClause) {
             this.whereClause = whereClause;

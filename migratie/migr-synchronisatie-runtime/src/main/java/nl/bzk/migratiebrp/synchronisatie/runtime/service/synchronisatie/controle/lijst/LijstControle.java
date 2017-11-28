@@ -6,8 +6,9 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.lijst;
 
-import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
+
+import java.util.List;
 
 /**
  * Controle op basis van een lijst van BRP personen.
@@ -16,9 +17,7 @@ public interface LijstControle {
 
     /**
      * Controleer.
-     *
-     * @param lijst
-     *            lijst
+     * @param lijst lijst
      * @return true, als aan de controle wordt voldaan, anders false
      */
     boolean controleer(List<BrpPersoonslijst> lijst);

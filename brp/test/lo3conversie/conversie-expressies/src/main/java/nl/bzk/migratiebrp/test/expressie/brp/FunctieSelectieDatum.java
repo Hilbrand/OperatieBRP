@@ -6,49 +6,54 @@
 
 package nl.bzk.migratiebrp.test.expressie.brp;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.expressietaal.Context;
-import nl.bzk.brp.expressietaal.Expressie;
-import nl.bzk.brp.expressietaal.ExpressieType;
-import nl.bzk.brp.expressietaal.expressies.functies.Functieberekening;
-import nl.bzk.brp.expressietaal.expressies.functies.signatuur.Signatuur;
-import nl.bzk.brp.expressietaal.expressies.functies.signatuur.SimpeleSignatuur;
-import nl.bzk.brp.expressietaal.expressies.literals.DatumLiteralExpressie;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import nl.bzk.algemeenbrp.util.common.DatumUtil;
+import nl.bzk.brp.domain.expressie.Context;
+import nl.bzk.brp.domain.expressie.DatumLiteral;
+import nl.bzk.brp.domain.expressie.Expressie;
+import nl.bzk.brp.domain.expressie.ExpressieType;
+import nl.bzk.brp.domain.expressie.functie.Functie;
+import nl.bzk.brp.domain.expressie.signatuur.Signatuur;
+import nl.bzk.brp.domain.expressie.signatuur.SignatuurOptie;
+import nl.bzk.brp.domain.expressie.signatuur.SimpeleSignatuur;
 
 /**
- * Representeert de functie SELECTIE_DATUM(). De functie geeft als resultaat de selectiedatum. Echter deze implementatie
- * kan op een vaste datum worden gezet tbv regressie testen
+ * Representeert de functie SELECTIE_DATUM(X). De functie geeft als resultaat de selectie datum (bij executie van de expressie),
+ * waarbij opgeteld X jaar. Echter deze implementatie kan op een vaste datum worden gezet tbv regressie testen
  */
-public final class FunctieSelectieDatum implements Functieberekening {
+public final class FunctieSelectieDatum implements Functie {
 
-    private static final Signatuur SIGNATUUR = new SimpeleSignatuur();
+    private static final Signatuur SIGNATUUR = new SignatuurOptie(new SimpeleSignatuur(ExpressieType.DATUM), new SimpeleSignatuur());
 
-    private static DateTime selectieDatum = new DateTime();
+    private static Integer selectiedatum;
 
     /**
-     * Zet de waarde voor 'selectiedatum'.
-     * 
-     * @param waarde
-     *            De te zetten waarde.
+     * Zet de waarde 'selectiedatum'.
+     * @param waarde De te zetten waarde.
      */
-    public static void setSelectieDatum(final String waarde) {
-        final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd");
-        selectieDatum = fmt.parseDateTime(waarde);
+    public static void setSelectieDatum(final Integer waarde) {
+        selectiedatum = waarde;
     }
 
     /**
      * Reset de waarde van 'selectiedatum'.
      */
-    public static void resetSelectieDatum() {
-        selectieDatum = null;
+    public static void resetSelectiedatum() {
+        selectiedatum = null;
     }
 
     @Override
-    public List<Expressie> vulDefaultArgumentenIn(final List<Expressie> argumenten) {
-        return argumenten;
+    public List<Expressie> init(final List<Expressie> argumenten) {
+        final List<Expressie> volledigeArgumenten;
+        if (argumenten.isEmpty()) {
+            volledigeArgumenten = new ArrayList<>();
+            volledigeArgumenten.add(new DatumLiteral(0));
+        } else {
+            volledigeArgumenten = argumenten;
+        }
+        return volledigeArgumenten;
     }
 
     @Override
@@ -62,8 +67,19 @@ public final class FunctieSelectieDatum implements Functieberekening {
     }
 
     @Override
-    public ExpressieType getTypeVanElementen(final List<Expressie> argumenten, final Context context) {
-        return ExpressieType.ONBEKEND_TYPE;
+    public Expressie evalueer(final List<Expressie> argumenten, final Context context) {
+
+        if (argumenten.isEmpty()) {
+            return new DatumLiteral(selectiedatum);
+        } else {
+            final DatumLiteral datumVerschil = getArgument(argumenten, 0);
+            final LocalDate
+                    localDate =
+                    DatumUtil.vanIntegerNaarLocalDate(selectiedatum).plusYears(datumVerschil.getJaar().getWaarde())
+                            .plusMonths(datumVerschil.getMaand().getWaarde()).plusDays(datumVerschil.getDag().getWaarde());
+            DatumLiteral result = new DatumLiteral(localDate.atStartOfDay(DatumUtil.BRP_ZONE_ID));
+            return result;
+        }
     }
 
     @Override
@@ -72,17 +88,8 @@ public final class FunctieSelectieDatum implements Functieberekening {
     }
 
     @Override
-    public Expressie pasToe(final List<Expressie> argumenten, final Context context) {
-        return new DatumLiteralExpressie(selectieDatum);
+    public String getKeyword() {
+        return "SELECTIE_DATUM";
     }
 
-    @Override
-    public boolean berekenBijOptimalisatie() {
-        return false;
-    }
-
-    @Override
-    public Expressie optimaliseer(final List<Expressie> argumenten, final Context context) {
-        return null;
-    }
 }

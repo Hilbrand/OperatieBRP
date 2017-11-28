@@ -24,13 +24,9 @@ public final class IstStapelMatch {
 
     /**
      * Constructor voor stapelmatching resultaat.
-     *
-     * @param stapel
-     *            stapel waar voor mogelijk matchende stapels zijn gevonden
-     * @param matchingStapels
-     *            stapels waarmee stapel een match heeft
-     * @param matchType
-     *            type van de match
+     * @param stapel stapel waar voor mogelijk matchende stapels zijn gevonden
+     * @param matchingStapels stapels waarmee stapel een match heeft
+     * @param matchType type van de match
      */
     public IstStapelMatch(final StapelDecorator stapel, final List<StapelDecorator> matchingStapels, final StapelMatchType matchType) {
         this.stapel = stapel;
@@ -41,7 +37,6 @@ public final class IstStapelMatch {
     /**
      * Geeft een instantie van {@link IstStapelMatchSorter} terug waarmee een set van {@link IstStapelMatch} gesorteerd
      * kan worden.
-     *
      * @return een nieuwe instantie van een Comparator specifiek voor {@link IstStapelMatch}
      */
     public static Comparator<IstStapelMatch> getSorteerder() {
@@ -58,13 +53,12 @@ public final class IstStapelMatch {
 
     /**
      * Geeft de stapel.
-     * 
+     *
      * @return De stapel.
      */
 
     /**
      * Geeft de matchende stapels.
-     *
      * @return De matchende stapels.
      */
     public List<StapelDecorator> getMatchingStapels() {
@@ -74,10 +68,8 @@ public final class IstStapelMatch {
     /**
      * Geeft de matching stapel terug. Deze methode alleen gebruiken als het zeker is dat er maar 1 matching stapel is
      * (type = {@link StapelMatchType#MATCHED}).
-     *
-     * @throws IllegalStateException
-     *             Als aan het type = {@link StapelMatchType#MATCHED} niet voldaan wordt.
      * @return de machting stapel of de eerste uit de lijst
+     * @throws IllegalStateException Als aan het type = {@link StapelMatchType#MATCHED} niet voldaan wordt.
      */
     public StapelDecorator getMatchingStapel() {
         if (StapelMatchType.MATCHED.equals(type)) {
@@ -95,7 +87,6 @@ public final class IstStapelMatch {
 
     /**
      * Geeft het matchende type.
-     *
      * @return Het matchende type.
      */
     public StapelMatchType getMatchType() {

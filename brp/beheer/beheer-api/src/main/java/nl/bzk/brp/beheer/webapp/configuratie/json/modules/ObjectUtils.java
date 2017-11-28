@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.configuratie.json.modules;
@@ -22,12 +22,12 @@ public final class ObjectUtils {
 
     /**
      * Haal waarde op.
-     *
      * @param waardeObject node waarde
      * @param path path naar waarde
      * @param <T> verwachte resultaat type
      * @return gevonden waarde
      */
+    @SuppressWarnings("unchecked")
     public static <T> T getWaarde(final Object waardeObject, final String path) {
         final String[] pathElementen = path.split("\\.");
         Object testObject = waardeObject;
@@ -46,7 +46,6 @@ public final class ObjectUtils {
 
     /**
      * Haal waarde op.
-     *
      * @param waardeObject node waarde
      * @param path path naar waarde
      * @param sdf date formatter
@@ -66,10 +65,9 @@ public final class ObjectUtils {
             method.setAccessible(true);
             return method.invoke(obj);
         } catch (final
-            IllegalAccessException
-            | IllegalArgumentException
-            | InvocationTargetException ex)
-        {
+        IllegalAccessException
+                | IllegalArgumentException
+                | InvocationTargetException ex) {
             throw new IllegalArgumentException("Kan methode '" + methodName + "' niet uitvoeren.", ex);
         }
     }

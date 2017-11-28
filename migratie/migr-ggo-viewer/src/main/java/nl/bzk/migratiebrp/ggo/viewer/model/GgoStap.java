@@ -10,17 +10,29 @@ package nl.bzk.migratiebrp.ggo.viewer.model;
  * De stap waarin een fout gemeld is.
  */
 public enum GgoStap {
-    /** Lo3. */
+    /**
+     * Lo3.
+     */
     LO3("Lo3"),
-    /** BRP. */
+    /**
+     * BRP.
+     */
     BRP("BRP"),
-    /** Terugconversie. */
+    /**
+     * Terugconversie.
+     */
     TERUGCONVERSIE("Terugconversie"),
-    /** Vergelijking. */
+    /**
+     * Vergelijking.
+     */
     VERGELIJKING("Vergelijking"),
-    /** Precondities. */
+    /**
+     * Precondities.
+     */
     PRECONDITIES("Precondities"),
-    /** BCM. */
+    /**
+     * BCM.
+     */
     BCM("BCM");
 
     private final String label;
@@ -31,7 +43,6 @@ public enum GgoStap {
 
     /**
      * Geef de waarde van label.
-     *
      * @return de label
      */
     public String getLabel() {

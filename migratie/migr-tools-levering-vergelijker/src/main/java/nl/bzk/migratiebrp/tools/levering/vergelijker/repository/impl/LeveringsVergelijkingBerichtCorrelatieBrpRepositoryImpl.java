@@ -31,14 +31,13 @@ public final class LeveringsVergelijkingBerichtCorrelatieBrpRepositoryImpl imple
     @Override
     @Transactional(value = "leveringVergelijkerTransactionManager", propagation = Propagation.REQUIRES_NEW)
     public List<LeveringsVergelijkingBerichtCorrelatieBrp> haalLeveringsVergelijkingBerichtCorrelatiesBrpOp(
-        final Long bijhoudingBerichtMessageId,
-        final String afnemerCode)
-    {
+            final Long bijhoudingBerichtMessageId,
+            final String afnemerCode) {
         final TypedQuery<LeveringsVergelijkingBerichtCorrelatieBrp> selectQuery =
                 em.createQuery(
-                    "select l from LeveringsVergelijkingBerichtCorrelatieBrp l "
-                            + "where bijhoudingBerichtMessageId = :bijhoudingBerichtMessageId and afnemerCode = :afnemerCode",
-                    LeveringsVergelijkingBerichtCorrelatieBrp.class);
+                        "select l from LeveringsVergelijkingBerichtCorrelatieBrp l "
+                                + "where bijhoudingBerichtMessageId = :bijhoudingBerichtMessageId and afnemerCode = :afnemerCode",
+                        LeveringsVergelijkingBerichtCorrelatieBrp.class);
 
         selectQuery.setParameter(PARAM_BIJHOUDING_BERICHT_MESSAGE_ID, bijhoudingBerichtMessageId);
         selectQuery.setParameter(PARAM_AFNEMER_CODE, afnemerCode);

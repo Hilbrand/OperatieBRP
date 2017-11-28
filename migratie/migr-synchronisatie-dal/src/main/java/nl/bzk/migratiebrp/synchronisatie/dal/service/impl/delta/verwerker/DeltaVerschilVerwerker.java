@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.verwerker;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat;
 
 /**
@@ -17,17 +17,13 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResul
 public interface DeltaVerschilVerwerker {
 
     /**
-     * Verwerk de wijzigingen op {@link DeltaRootEntiteit}.
-     *
-     * @param verschillen
-     *            de lijst met verschillen
-     * @param bestaandEntiteit
-     *            de bestaande entiteit {@link DeltaRootEntiteit} waar de verschillen in wordt verwerkt
-     * @param administratieveHandeling
-     *            de administratieve handeling die aan deze wijzigingen is gekoppeld.
+     * Verwerk de wijzigingen op {@link RootEntiteit}.
+     * @param verschillen de lijst met verschillen
+     * @param bestaandEntiteit de bestaande entiteit {@link RootEntiteit} waar de verschillen in wordt verwerkt
+     * @param administratieveHandeling de administratieve handeling die aan deze wijzigingen is gekoppeld.
      */
     void verwerkWijzigingen(
-        final VergelijkerResultaat verschillen,
-        final DeltaRootEntiteit bestaandEntiteit,
-        final AdministratieveHandeling administratieveHandeling);
+            final VergelijkerResultaat verschillen,
+            final RootEntiteit bestaandEntiteit,
+            final AdministratieveHandeling administratieveHandeling);
 }

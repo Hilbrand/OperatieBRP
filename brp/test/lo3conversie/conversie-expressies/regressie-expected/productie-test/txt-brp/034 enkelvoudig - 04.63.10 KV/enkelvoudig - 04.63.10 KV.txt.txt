@@ -1,1 +1,1 @@
-ER_IS(RMAP(nationaliteiten, x, x.reden_verkrijging), v, NIET IS_NULL(v))
+(KV(Persoon.Nationaliteit.RedenVerkrijgingCode) OF KV(Persoon.Nationaliteit.MigratieRedenOpnameNationaliteit) OF KV(Persoon.Indicatie.Staatloos.MigratieRedenOpnameNationaliteit))

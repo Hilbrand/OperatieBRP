@@ -11,7 +11,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 
 /**
  * Format een Lo3 nationaliteit.
- *
  */
 public final class Lo3NationaliteitFormatter implements Lo3CategorieFormatter<Lo3NationaliteitInhoud> {
 
@@ -21,6 +20,7 @@ public final class Lo3NationaliteitFormatter implements Lo3CategorieFormatter<Lo
         formatter.element(Lo3ElementEnum.ELEMENT_6310, Lo3Format.format(categorie.getRedenVerkrijgingNederlandschapCode()));
         formatter.element(Lo3ElementEnum.ELEMENT_6410, Lo3Format.format(categorie.getRedenVerliesNederlandschapCode()));
         formatter.element(Lo3ElementEnum.ELEMENT_6510, Lo3Format.format(categorie.getAanduidingBijzonderNederlandschap()));
+        formatter.element(Lo3ElementEnum.ELEMENT_7310, Lo3Format.format(categorie.getBuitenlandsPersoonsnummer()));
     }
 
 }

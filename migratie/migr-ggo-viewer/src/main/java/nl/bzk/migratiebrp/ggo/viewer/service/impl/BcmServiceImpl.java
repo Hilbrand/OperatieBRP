@@ -18,7 +18,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lg01Bericht;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -30,11 +34,10 @@ import nl.bzk.migratiebrp.ggo.viewer.model.GgoStap;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoVoorkomen;
 import nl.bzk.migratiebrp.ggo.viewer.service.BcmService;
 import nl.bzk.migratiebrp.ggo.viewer.util.NaamUtil;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.gba.gbav.impl.checker.Checker;
 import nl.gba.gbav.impl.util.configuration.ServiceLocatorSpringImpl;
 import nl.gba.gbav.util.configuration.ServiceLocator;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -61,11 +64,8 @@ public final class BcmServiceImpl implements BcmService {
 
     /**
      * Controleer de Lo3Persoonslijst door de BCM.
-     *
-     * @param lo3Persoonslijst
-     *            Lo3Persoonslijst
-     * @param foutMelder
-     *            Het object om verwerkingsfouten aan te melden.
+     * @param lo3Persoonslijst Lo3Persoonslijst
+     * @param foutMelder Het object om verwerkingsfouten aan te melden.
      * @return bcmSignaleringen Lijst met signaleringen.
      */
     @Override
@@ -98,7 +98,6 @@ public final class BcmServiceImpl implements BcmService {
 
     /**
      * Controleert of BCM is ingeschakeld.
-     *
      * @return boolean bcmEnabled
      */
     boolean useBCM() {
@@ -123,9 +122,7 @@ public final class BcmServiceImpl implements BcmService {
 
     /**
      * Formateert de Lo3Persoonslijst naar een Lg01 string.
-     *
-     * @param lo3Persoonslijst
-     *            Lo3Persoonslijst
+     * @param lo3Persoonslijst Lo3Persoonslijst
      * @return String Lg01 body
      */
     String formatteerAlsLg01(final Lo3Persoonslijst lo3Persoonslijst) {
@@ -137,12 +134,9 @@ public final class BcmServiceImpl implements BcmService {
     /**
      * Converteert het resultaat van de BCM naar een formaat welke in de Viewer getoond kan worden. Verwacht formaat BCM
      * resultaat is 'L0001,[1;0;0],test(01.20.10;01.20.30)'.
-     *
-     * @param bcmResultaat
-     *            Set<String>
+     * @param bcmResultaat Set<String>
      * @return bcmResultaatVoorViewer List<FoutRegel>
-     * @throws BCMResultaatException
-     *             als een resultaat niet geconverteerd kan worden
+     * @throws BCMResultaatException als een resultaat niet geconverteerd kan worden
      */
     List<GgoFoutRegel> converteerBCMResultaat(final Set<String> bcmResultaat) throws BCMResultaatException {
         final List<GgoFoutRegel> bcmResultaatVoorViewer = new ArrayList<>();
@@ -167,7 +161,6 @@ public final class BcmServiceImpl implements BcmService {
 
     /**
      * Bepaalt de categorie/stapel/voorkomen uit de bronRegel uitgaande van formaat '[catNr;stapelNr;volgNr]'
-     *
      * @param bronRegel de bronRegel
      * @return lo3Herkomst
      */
@@ -202,9 +195,7 @@ public final class BcmServiceImpl implements BcmService {
 
     /**
      * Geeft de omschrijving van de bcm controle terug.
-     *
-     * @param bcmControleId
-     *            String
+     * @param bcmControleId String
      * @return bcmCheckDescription String
      */
     String getBcmControleOmschrijving(final String bcmControleId) {
@@ -229,9 +220,7 @@ public final class BcmServiceImpl implements BcmService {
 
     /**
      * Laad de properties uit het opgegeven bestand.
-     *
-     * @param filename
-     *            pad plus bestandsnaam
+     * @param filename pad plus bestandsnaam
      */
     private void laadBestand(final String filename) throws FileNotFoundException {
         final FileInputStream fis = new FileInputStream(filename);
@@ -257,9 +246,7 @@ public final class BcmServiceImpl implements BcmService {
     static class BCMResultaatException extends Exception {
         /**
          * Standaard constructor.
-         * 
-         * @param message
-         *            exception message
+         * @param message exception message
          */
         public BCMResultaatException(final String message) {
             super(message);
@@ -267,11 +254,8 @@ public final class BcmServiceImpl implements BcmService {
 
         /**
          * Standaard constructor.
-         *
-         * @param message
-         *            exception message
-         * @param cause
-         *            cause
+         * @param message exception message
+         * @param cause cause
          */
         public BCMResultaatException(final String message, final Exception cause) {
             super(message, cause);

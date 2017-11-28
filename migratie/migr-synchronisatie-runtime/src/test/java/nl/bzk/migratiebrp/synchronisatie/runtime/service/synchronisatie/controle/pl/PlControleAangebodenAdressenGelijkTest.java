@@ -42,145 +42,32 @@ public class PlControleAangebodenAdressenGelijkTest {
     public void testVergelijkingActueelGelijk() {
 
         // 1) actueel aangeboden PL komt voor in de historie van de DB PL.
-        Assert.assertTrue(subject.controleer(
-            new VerwerkingsContext(null, null, null, maakPl(maakAdres(
-                20010101,
-                null,
-                1,
-                HUISLETTER,
-                HUISNUMMERTOEVOEGING,
-                POSTCODE,
-                WOONPLAATS,
-                GEMEENTE_CODE,
-                BUITENLANDS_ADRES_REGEL1,
-                BUITENLANDS_ADRES_REGEL2,
-                BUITENLANDS_ADRES_REGEL3,
-                BUITENLANDS_ADRES_REGEL4,
-                BUITENLANDS_ADRES_REGEL5,
-                BUITENLANDS_ADRES_REGEL6))),
-                maakPl(maakAdres(
-                    20100101,
-                    null,
-                    1,
-                    HUISLETTER,
-                    HUISNUMMERTOEVOEGING,
-                    POSTCODE,
-                    WOONPLAATS,
-                    GEMEENTE_CODE,
-                    BUITENLANDS_ADRES_REGEL1,
-                    BUITENLANDS_ADRES_REGEL2,
-                    BUITENLANDS_ADRES_REGEL3,
-                    BUITENLANDS_ADRES_REGEL4,
-                    BUITENLANDS_ADRES_REGEL5,
-                    BUITENLANDS_ADRES_REGEL6))));
-    }
-
-    @Test
-    public void testVergelijkingActueelKomtNietOvereen() {
-
-        // 2) actueel aangeboden PL komt niet voor in de historie van de DB PL.
-        Assert.assertFalse(subject.controleer(
-            new VerwerkingsContext(null, null, null, maakPl(maakAdres(
-                20010101,
-                null,
-                1,
-                HUISLETTER,
-                HUISNUMMERTOEVOEGING,
-                POSTCODE,
-                WOONPLAATS,
-                GEMEENTE_CODE,
-                BUITENLANDS_ADRES_REGEL1,
-                BUITENLANDS_ADRES_REGEL2,
-                BUITENLANDS_ADRES_REGEL3,
-                BUITENLANDS_ADRES_REGEL4,
-                BUITENLANDS_ADRES_REGEL5,
-                null))),
-                maakPl(maakAdres(
-                    20020101,
-                    null,
-                    1,
-                    HUISLETTER,
-                    HUISNUMMERTOEVOEGING,
-                    POSTCODE,
-                    WOONPLAATS,
-                    GEMEENTE_CODE,
-                    BUITENLANDS_ADRES_REGEL1,
-                    BUITENLANDS_ADRES_REGEL2,
-                    BUITENLANDS_ADRES_REGEL3,
-                    BUITENLANDS_ADRES_REGEL4,
-                    BUITENLANDS_ADRES_REGEL5,
-                    BUITENLANDS_ADRES_REGEL6))));
-    }
-
-    @Test
-    public void testVergelijkingActueelEnHistorie() {
-        // 3) Historie + actueel aangeboden PL komt voor in de historie van de DB PL.
-        Assert.assertTrue(subject.controleer(
-            new VerwerkingsContext(null, null, null, maakPl(
-                maakAdres(
-                    20130101,
-                    null,
-                    1,
-                    HUISLETTER,
-                    HUISNUMMERTOEVOEGING,
-                    POSTCODE,
-                    WOONPLAATS,
-                    GEMEENTE_CODE,
-                    BUITENLANDS_ADRES_REGEL1,
-                    BUITENLANDS_ADRES_REGEL2,
-                    BUITENLANDS_ADRES_REGEL3,
-                    BUITENLANDS_ADRES_REGEL4,
-                    BUITENLANDS_ADRES_REGEL5,
-                    BUITENLANDS_ADRES_REGEL6),
-                    maakAdres(
-                        20100101,
-                        20130101,
-                        1,
-                        HUISLETTER,
-                        HUISNUMMERTOEVOEGING,
-                        POSTCODE,
-                        WOONPLAATS,
-                        GEMEENTE_CODE,
-                        BUITENLANDS_ADRES_REGEL1,
-                        BUITENLANDS_ADRES_REGEL2,
-                        BUITENLANDS_ADRES_REGEL3,
-                        BUITENLANDS_ADRES_REGEL4,
-                        BUITENLANDS_ADRES_REGEL5,
-                        BUITENLANDS_ADRES_REGEL6),
-                        maakAdres(
-                            20010101,
-                            20100101,
-                            1,
-                            HUISLETTER,
-                            HUISNUMMERTOEVOEGING,
-                            POSTCODE,
-                            WOONPLAATS,
-                            GEMEENTE_CODE,
-                            BUITENLANDS_ADRES_REGEL1,
-                            BUITENLANDS_ADRES_REGEL2,
-                            BUITENLANDS_ADRES_REGEL3,
-                            BUITENLANDS_ADRES_REGEL4,
-                            BUITENLANDS_ADRES_REGEL5,
-                            BUITENLANDS_ADRES_REGEL6))),
-                            maakPl(
+        Assert.assertTrue(
+                subject.controleer(
+                        new VerwerkingsContext(
+                                null,
+                                null,
+                                null,
+                                maakPl(
+                                        maakAdres(
+                                                20010101,
+                                                null,
+                                                1,
+                                                HUISLETTER,
+                                                HUISNUMMERTOEVOEGING,
+                                                POSTCODE,
+                                                WOONPLAATS,
+                                                GEMEENTE_CODE,
+                                                BUITENLANDS_ADRES_REGEL1,
+                                                BUITENLANDS_ADRES_REGEL2,
+                                                BUITENLANDS_ADRES_REGEL3,
+                                                BUITENLANDS_ADRES_REGEL4,
+                                                BUITENLANDS_ADRES_REGEL5,
+                                                BUITENLANDS_ADRES_REGEL6))),
+                        maakPl(
                                 maakAdres(
-                                    20140101,
-                                    null,
-                                    1,
-                                    HUISLETTER,
-                                    HUISNUMMERTOEVOEGING,
-                                    POSTCODE,
-                                    WOONPLAATS,
-                                    GEMEENTE_CODE,
-                                    BUITENLANDS_ADRES_REGEL1,
-                                    BUITENLANDS_ADRES_REGEL2,
-                                    BUITENLANDS_ADRES_REGEL3,
-                                    BUITENLANDS_ADRES_REGEL4,
-                                    BUITENLANDS_ADRES_REGEL5,
-                                    BUITENLANDS_ADRES_REGEL6),
-                                    maakAdres(
-                                        20130101,
-                                        20140101,
+                                        20100101,
+                                        null,
                                         1,
                                         HUISLETTER,
                                         HUISNUMMERTOEVOEGING,
@@ -192,23 +79,109 @@ public class PlControleAangebodenAdressenGelijkTest {
                                         BUITENLANDS_ADRES_REGEL3,
                                         BUITENLANDS_ADRES_REGEL4,
                                         BUITENLANDS_ADRES_REGEL5,
-                                        BUITENLANDS_ADRES_REGEL6),
+                                        BUITENLANDS_ADRES_REGEL6))));
+    }
+
+    @Test
+    public void testVergelijkingActueelKomtNietOvereen() {
+
+        // 2) actueel aangeboden PL komt niet voor in de historie van de DB PL.
+        Assert.assertFalse(
+                subject.controleer(
+                        new VerwerkingsContext(
+                                null,
+                                null,
+                                null,
+                                maakPl(
                                         maakAdres(
-                                            20100101,
-                                            20130101,
-                                            1,
-                                            HUISLETTER,
-                                            HUISNUMMERTOEVOEGING,
-                                            POSTCODE,
-                                            WOONPLAATS,
-                                            GEMEENTE_CODE,
-                                            BUITENLANDS_ADRES_REGEL1,
-                                            BUITENLANDS_ADRES_REGEL2,
-                                            BUITENLANDS_ADRES_REGEL3,
-                                            BUITENLANDS_ADRES_REGEL4,
-                                            BUITENLANDS_ADRES_REGEL5,
-                                            BUITENLANDS_ADRES_REGEL6),
-                                            maakAdres(
+                                                20010101,
+                                                null,
+                                                1,
+                                                HUISLETTER,
+                                                HUISNUMMERTOEVOEGING,
+                                                POSTCODE,
+                                                WOONPLAATS,
+                                                GEMEENTE_CODE,
+                                                BUITENLANDS_ADRES_REGEL1,
+                                                BUITENLANDS_ADRES_REGEL2,
+                                                BUITENLANDS_ADRES_REGEL3,
+                                                BUITENLANDS_ADRES_REGEL4,
+                                                BUITENLANDS_ADRES_REGEL5,
+                                                null))),
+                        maakPl(
+                                maakAdres(
+                                        20020101,
+                                        null,
+                                        1,
+                                        HUISLETTER,
+                                        HUISNUMMERTOEVOEGING,
+                                        POSTCODE,
+                                        WOONPLAATS,
+                                        GEMEENTE_CODE,
+                                        BUITENLANDS_ADRES_REGEL1,
+                                        BUITENLANDS_ADRES_REGEL2,
+                                        BUITENLANDS_ADRES_REGEL3,
+                                        BUITENLANDS_ADRES_REGEL4,
+                                        BUITENLANDS_ADRES_REGEL5,
+                                        BUITENLANDS_ADRES_REGEL6))));
+    }
+
+    @Test
+    public void testVergelijkingActueelEnHistorie() {
+        // 3) Historie + actueel DB PL komt voor in de historie van de DB PLaangeboden PL.
+        Assert.assertTrue(
+                subject.controleer(
+                        new VerwerkingsContext(
+                                null,
+                                null,
+                                null,
+                                maakPl(
+                                        maakAdres(
+                                                20140101,
+                                                null,
+                                                1,
+                                                HUISLETTER,
+                                                HUISNUMMERTOEVOEGING,
+                                                POSTCODE,
+                                                WOONPLAATS,
+                                                GEMEENTE_CODE,
+                                                BUITENLANDS_ADRES_REGEL1,
+                                                BUITENLANDS_ADRES_REGEL2,
+                                                BUITENLANDS_ADRES_REGEL3,
+                                                BUITENLANDS_ADRES_REGEL4,
+                                                BUITENLANDS_ADRES_REGEL5,
+                                                BUITENLANDS_ADRES_REGEL6),
+                                        maakAdres(
+                                                20130101,
+                                                20140101,
+                                                1,
+                                                HUISLETTER,
+                                                HUISNUMMERTOEVOEGING,
+                                                POSTCODE,
+                                                WOONPLAATS,
+                                                GEMEENTE_CODE,
+                                                BUITENLANDS_ADRES_REGEL1,
+                                                BUITENLANDS_ADRES_REGEL2,
+                                                BUITENLANDS_ADRES_REGEL3,
+                                                BUITENLANDS_ADRES_REGEL4,
+                                                BUITENLANDS_ADRES_REGEL5,
+                                                BUITENLANDS_ADRES_REGEL6),
+                                        maakAdres(
+                                                20100101,
+                                                20130101,
+                                                1,
+                                                HUISLETTER,
+                                                HUISNUMMERTOEVOEGING,
+                                                POSTCODE,
+                                                WOONPLAATS,
+                                                GEMEENTE_CODE,
+                                                BUITENLANDS_ADRES_REGEL1,
+                                                BUITENLANDS_ADRES_REGEL2,
+                                                BUITENLANDS_ADRES_REGEL3,
+                                                BUITENLANDS_ADRES_REGEL4,
+                                                BUITENLANDS_ADRES_REGEL5,
+                                                BUITENLANDS_ADRES_REGEL6),
+                                        maakAdres(
                                                 20010101,
                                                 20100101,
                                                 1,
@@ -222,78 +195,11 @@ public class PlControleAangebodenAdressenGelijkTest {
                                                 BUITENLANDS_ADRES_REGEL3,
                                                 BUITENLANDS_ADRES_REGEL4,
                                                 BUITENLANDS_ADRES_REGEL5,
-                                                BUITENLANDS_ADRES_REGEL6))));
-    }
-
-    @Test
-    public void testVergelijkingActueelEnHistorieOngelijk() {
-        // 4) Historie + actueel aangeboden PL komt niet voor in de historie van de DB PL.
-        Assert.assertFalse(subject.controleer(
-            new VerwerkingsContext(null, null, null, maakPl(
-                maakAdres(
-                    20130101,
-                    null,
-                    1,
-                    HUISLETTER,
-                    HUISNUMMERTOEVOEGING,
-                    POSTCODE,
-                    WOONPLAATS,
-                    GEMEENTE_CODE,
-                    BUITENLANDS_ADRES_REGEL1,
-                    BUITENLANDS_ADRES_REGEL2,
-                    BUITENLANDS_ADRES_REGEL3,
-                    BUITENLANDS_ADRES_REGEL4,
-                    BUITENLANDS_ADRES_REGEL5,
-                    BUITENLANDS_ADRES_REGEL6),
-                    maakAdres(
-                        20100101,
-                        20130101,
-                        1,
-                        HUISLETTER,
-                        HUISNUMMERTOEVOEGING,
-                        POSTCODE,
-                        WOONPLAATS,
-                        GEMEENTE_CODE,
-                        BUITENLANDS_ADRES_REGEL1,
-                        BUITENLANDS_ADRES_REGEL2,
-                        BUITENLANDS_ADRES_REGEL3,
-                        BUITENLANDS_ADRES_REGEL4,
-                        BUITENLANDS_ADRES_REGEL5,
-                        BUITENLANDS_ADRES_REGEL6),
-                        maakAdres(
-                            20010101,
-                            20100101,
-                            1,
-                            HUISLETTER,
-                            HUISNUMMERTOEVOEGING,
-                            POSTCODE,
-                            WOONPLAATS,
-                            GEMEENTE_CODE,
-                            BUITENLANDS_ADRES_REGEL1,
-                            BUITENLANDS_ADRES_REGEL2,
-                            BUITENLANDS_ADRES_REGEL3,
-                            BUITENLANDS_ADRES_REGEL4,
-                            BUITENLANDS_ADRES_REGEL5,
-                            BUITENLANDS_ADRES_REGEL6))),
-                            maakPl(
+                                                BUITENLANDS_ADRES_REGEL6))),
+                        maakPl(
                                 maakAdres(
-                                    20140101,
-                                    null,
-                                    3,
-                                    HUISLETTER,
-                                    HUISNUMMERTOEVOEGING,
-                                    POSTCODE,
-                                    WOONPLAATS,
-                                    GEMEENTE_CODE,
-                                    BUITENLANDS_ADRES_REGEL1,
-                                    BUITENLANDS_ADRES_REGEL2,
-                                    BUITENLANDS_ADRES_REGEL3,
-                                    BUITENLANDS_ADRES_REGEL4,
-                                    BUITENLANDS_ADRES_REGEL5,
-                                    BUITENLANDS_ADRES_REGEL6),
-                                    maakAdres(
                                         20130101,
-                                        20140101,
+                                        null,
                                         1,
                                         HUISLETTER,
                                         HUISNUMMERTOEVOEGING,
@@ -306,21 +212,139 @@ public class PlControleAangebodenAdressenGelijkTest {
                                         BUITENLANDS_ADRES_REGEL4,
                                         BUITENLANDS_ADRES_REGEL5,
                                         BUITENLANDS_ADRES_REGEL6),
+                                maakAdres(
+                                        20100101,
+                                        20130101,
+                                        1,
+                                        HUISLETTER,
+                                        HUISNUMMERTOEVOEGING,
+                                        POSTCODE,
+                                        WOONPLAATS,
+                                        GEMEENTE_CODE,
+                                        BUITENLANDS_ADRES_REGEL1,
+                                        BUITENLANDS_ADRES_REGEL2,
+                                        BUITENLANDS_ADRES_REGEL3,
+                                        BUITENLANDS_ADRES_REGEL4,
+                                        BUITENLANDS_ADRES_REGEL5,
+                                        BUITENLANDS_ADRES_REGEL6),
+                                maakAdres(
+                                        20010101,
+                                        20100101,
+                                        1,
+                                        HUISLETTER,
+                                        HUISNUMMERTOEVOEGING,
+                                        POSTCODE,
+                                        WOONPLAATS,
+                                        GEMEENTE_CODE,
+                                        BUITENLANDS_ADRES_REGEL1,
+                                        BUITENLANDS_ADRES_REGEL2,
+                                        BUITENLANDS_ADRES_REGEL3,
+                                        BUITENLANDS_ADRES_REGEL4,
+                                        BUITENLANDS_ADRES_REGEL5,
+                                        BUITENLANDS_ADRES_REGEL6))));
+    }
+
+    @Test
+    public void testVergelijkingActueelEnHistorieOngelijk() {
+        // 4) Historie + actueel DB PL komt niet voor in de historie van de aangeboden PL.
+        Assert.assertFalse(
+                subject.controleer(
+                        new VerwerkingsContext(
+                                null,
+                                null,
+                                null,
+                                maakPl(
                                         maakAdres(
-                                            20010101,
-                                            20130101,
-                                            1,
-                                            HUISLETTER,
-                                            HUISNUMMERTOEVOEGING,
-                                            POSTCODE,
-                                            WOONPLAATS,
-                                            GEMEENTE_CODE,
-                                            BUITENLANDS_ADRES_REGEL1,
-                                            BUITENLANDS_ADRES_REGEL2,
-                                            BUITENLANDS_ADRES_REGEL3,
-                                            BUITENLANDS_ADRES_REGEL4,
-                                            BUITENLANDS_ADRES_REGEL5,
-                                            BUITENLANDS_ADRES_REGEL6))));
+                                                20140101,
+                                                null,
+                                                3,
+                                                HUISLETTER,
+                                                HUISNUMMERTOEVOEGING,
+                                                POSTCODE,
+                                                WOONPLAATS,
+                                                GEMEENTE_CODE,
+                                                BUITENLANDS_ADRES_REGEL1,
+                                                BUITENLANDS_ADRES_REGEL2,
+                                                BUITENLANDS_ADRES_REGEL3,
+                                                BUITENLANDS_ADRES_REGEL4,
+                                                BUITENLANDS_ADRES_REGEL5,
+                                                BUITENLANDS_ADRES_REGEL6),
+                                        maakAdres(
+                                                20130101,
+                                                20140101,
+                                                1,
+                                                HUISLETTER,
+                                                HUISNUMMERTOEVOEGING,
+                                                POSTCODE,
+                                                WOONPLAATS,
+                                                GEMEENTE_CODE,
+                                                BUITENLANDS_ADRES_REGEL1,
+                                                BUITENLANDS_ADRES_REGEL2,
+                                                BUITENLANDS_ADRES_REGEL3,
+                                                BUITENLANDS_ADRES_REGEL4,
+                                                BUITENLANDS_ADRES_REGEL5,
+                                                BUITENLANDS_ADRES_REGEL6),
+                                        maakAdres(
+                                                20010101,
+                                                20130101,
+                                                1,
+                                                HUISLETTER,
+                                                HUISNUMMERTOEVOEGING,
+                                                POSTCODE,
+                                                WOONPLAATS,
+                                                GEMEENTE_CODE,
+                                                BUITENLANDS_ADRES_REGEL1,
+                                                BUITENLANDS_ADRES_REGEL2,
+                                                BUITENLANDS_ADRES_REGEL3,
+                                                BUITENLANDS_ADRES_REGEL4,
+                                                BUITENLANDS_ADRES_REGEL5,
+                                                BUITENLANDS_ADRES_REGEL6))),
+                        maakPl(
+                                maakAdres(
+                                        20130101,
+                                        null,
+                                        1,
+                                        HUISLETTER,
+                                        HUISNUMMERTOEVOEGING,
+                                        POSTCODE,
+                                        WOONPLAATS,
+                                        GEMEENTE_CODE,
+                                        BUITENLANDS_ADRES_REGEL1,
+                                        BUITENLANDS_ADRES_REGEL2,
+                                        BUITENLANDS_ADRES_REGEL3,
+                                        BUITENLANDS_ADRES_REGEL4,
+                                        BUITENLANDS_ADRES_REGEL5,
+                                        BUITENLANDS_ADRES_REGEL6),
+                                maakAdres(
+                                        20100101,
+                                        20130101,
+                                        1,
+                                        HUISLETTER,
+                                        HUISNUMMERTOEVOEGING,
+                                        POSTCODE,
+                                        WOONPLAATS,
+                                        GEMEENTE_CODE,
+                                        BUITENLANDS_ADRES_REGEL1,
+                                        BUITENLANDS_ADRES_REGEL2,
+                                        BUITENLANDS_ADRES_REGEL3,
+                                        BUITENLANDS_ADRES_REGEL4,
+                                        BUITENLANDS_ADRES_REGEL5,
+                                        BUITENLANDS_ADRES_REGEL6),
+                                maakAdres(
+                                        20010101,
+                                        20100101,
+                                        1,
+                                        HUISLETTER,
+                                        HUISNUMMERTOEVOEGING,
+                                        POSTCODE,
+                                        WOONPLAATS,
+                                        GEMEENTE_CODE,
+                                        BUITENLANDS_ADRES_REGEL1,
+                                        BUITENLANDS_ADRES_REGEL2,
+                                        BUITENLANDS_ADRES_REGEL3,
+                                        BUITENLANDS_ADRES_REGEL4,
+                                        BUITENLANDS_ADRES_REGEL5,
+                                        BUITENLANDS_ADRES_REGEL6))));
 
     }
 
@@ -330,37 +354,35 @@ public class PlControleAangebodenAdressenGelijkTest {
         // Mogelijkheden vergelijking:
         // 1) Actueel adres aangeboden PL inhoudelijk gelijk aan historie adres DB PL.
         // 2) Historisch + actueel adressen aangeboden PL inhoudelijk gelijk aan historie aangeboden PL.
-
         // 1) Actueel adres aangeboden PL inhoudelijk gelijk aan historie adres DB PL.
-        Assert.assertTrue(subject.controleer(
-            new VerwerkingsContext(null, null, null, maakPl(maakAdres(
-                20010101,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null))),
-                maakPl(
-                    maakAdres(20100101, null, null, null, null, null, null, null, null, null, null, null, null, null),
-                    maakAdres(20010101, 20100101, null, null, null, null, null, null, null, null, null, null, null, null))));
+        Assert.assertTrue(
+                subject.controleer(
+                        new VerwerkingsContext(
+                                null,
+                                null,
+                                null,
+                                maakPl(
+                                        maakAdres(20100101, null, null, null, null, null, null, null, null, null, null, null, null, null),
+                                        maakAdres(20010101, 20100101, null, null, null, null, null, null, null, null, null, null, null, null))),
+                        maakPl(
+                                maakAdres(20010101, null, null, null, null, null, null, null, null, null, null, null, null, null),
+                                maakAdres(20010101, 20100101, null, null, null, null, null, null, null, null, null, null, null, null))));
 
-        // 2) Historisch + actueel adres aangeboden PL inhoudelijk gelijk aan historie adres DB PL.
-        Assert.assertTrue(subject.controleer(
-            new VerwerkingsContext(null, null, null, maakPl(
-                maakAdres(20100101, null, null, null, null, null, null, null, null, null, null, null, null, null),
-                maakAdres(20010101, 20100101, null, null, null, null, null, null, null, null, null, null, null, null))),
-                maakPl(
-                    maakAdres(20014101, null, null, null, null, null, null, null, null, null, null, null, null, null),
-                    maakAdres(20100101, 20140101, null, null, null, null, null, null, null, null, null, null, null, null),
-                    maakAdres(20010101, 20100101, null, null, null, null, null, null, null, null, null, null, null, null))));
+        // 2) Historisch + actueel adres DB PL inhoudelijk gelijk aan historie adres aangeboden PL.
+        Assert.assertTrue(
+                subject.controleer(
+                        new VerwerkingsContext(
+                                null,
+                                null,
+                                null,
+                                maakPl(
+                                        maakAdres(20014101, null, null, null, null, null, null, null, null, null, null, null, null, null),
+                                        maakAdres(20100101, 20140101, null, null, null, null, null, null, null, null, null, null, null, null),
+                                        maakAdres(20010101, 20100101, null, null, null, null, null, null, null, null, null, null, null, null))),
+                        maakPl(
+                                maakAdres(20100101, null, null, null, null, null, null, null, null, null, null, null, null, null),
+                                maakAdres(20100101, 20140101, null, null, null, null, null, null, null, null, null, null, null, null),
+                                maakAdres(20010101, 20100101, null, null, null, null, null, null, null, null, null, null, null, null))));
 
     }
 
@@ -370,96 +392,149 @@ public class PlControleAangebodenAdressenGelijkTest {
         final BrpGroep<BrpAdresInhoud> nullAdresStapel = null;
 
         // 1) Controleer geen stapel in aangeboden PL tegen stapel op DB PL.
-        Assert.assertFalse(subject.controleer(
-            new VerwerkingsContext(null, null, null, maakPl(nullAdresStapel)),
-            maakPl(maakAdres(
-                20100101,
-                null,
-                1,
-                HUISLETTER,
-                HUISNUMMERTOEVOEGING,
-                POSTCODE,
-                WOONPLAATS,
-                GEMEENTE_CODE,
-                BUITENLANDS_ADRES_REGEL1,
-                BUITENLANDS_ADRES_REGEL2,
-                BUITENLANDS_ADRES_REGEL3,
-                BUITENLANDS_ADRES_REGEL4,
-                BUITENLANDS_ADRES_REGEL5,
-                BUITENLANDS_ADRES_REGEL6))));
+        Assert.assertFalse(
+                subject.controleer(
+                        new VerwerkingsContext(null, null, null, maakPl(nullAdresStapel)),
+                        maakPl(
+                                maakAdres(
+                                        20100101,
+                                        null,
+                                        1,
+                                        HUISLETTER,
+                                        HUISNUMMERTOEVOEGING,
+                                        POSTCODE,
+                                        WOONPLAATS,
+                                        GEMEENTE_CODE,
+                                        BUITENLANDS_ADRES_REGEL1,
+                                        BUITENLANDS_ADRES_REGEL2,
+                                        BUITENLANDS_ADRES_REGEL3,
+                                        BUITENLANDS_ADRES_REGEL4,
+                                        BUITENLANDS_ADRES_REGEL5,
+                                        BUITENLANDS_ADRES_REGEL6))));
 
         // 2) Controleer stapel in aangeboden PL tegen geen stapel op DB PL.
-        Assert.assertFalse(subject.controleer(
-            new VerwerkingsContext(null, null, null, maakPl(maakAdres(
-                20100101,
-                null,
-                1,
-                HUISLETTER,
-                HUISNUMMERTOEVOEGING,
-                POSTCODE,
-                WOONPLAATS,
-                GEMEENTE_CODE,
-                BUITENLANDS_ADRES_REGEL1,
-                BUITENLANDS_ADRES_REGEL2,
-                BUITENLANDS_ADRES_REGEL3,
-                BUITENLANDS_ADRES_REGEL4,
-                BUITENLANDS_ADRES_REGEL5,
-                BUITENLANDS_ADRES_REGEL6))),
-                maakPl(nullAdresStapel)));
+        Assert.assertFalse(
+                subject.controleer(
+                        new VerwerkingsContext(
+                                null,
+                                null,
+                                null,
+                                maakPl(
+                                        maakAdres(
+                                                20100101,
+                                                null,
+                                                1,
+                                                HUISLETTER,
+                                                HUISNUMMERTOEVOEGING,
+                                                POSTCODE,
+                                                WOONPLAATS,
+                                                GEMEENTE_CODE,
+                                                BUITENLANDS_ADRES_REGEL1,
+                                                BUITENLANDS_ADRES_REGEL2,
+                                                BUITENLANDS_ADRES_REGEL3,
+                                                BUITENLANDS_ADRES_REGEL4,
+                                                BUITENLANDS_ADRES_REGEL5,
+                                                BUITENLANDS_ADRES_REGEL6))),
+                        maakPl(nullAdresStapel)));
 
     }
 
+
+    @Test
+    public void testProductieDataTestCase() {
+
+        Assert.assertTrue(
+                subject.controleer(
+                        new VerwerkingsContext(
+                                null,
+                                null,
+                                null,
+                                maakPl(
+                                        maakAdres(
+                                                19700101,
+                                                20010101,
+                                                9,
+                                                null,
+                                                "K11D",
+                                                "6513AB",
+                                                "Nijmegen",
+                                                "0123",
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null),
+                                        maakAdres(20010101, null, null, null, null, null, null, null, null, null, null, null, null, null))),
+                        maakPl(
+                                maakAdres(
+                                        20010101,
+                                        null,
+                                        9,
+                                        null,
+                                        "K11D",
+                                        "6513AB",
+                                        "Nijmegen",
+                                        "0123",
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null),
+                                maakAdres(1970101, 20010101, null, null, null, null, null, null, null, null, null, null, null, null))));
+    }
+
     BrpGroep<BrpAdresInhoud> maakAdres(
-        final int datumIngang,
-        final Integer datumEinde,
-        final Integer huisnummer,
-        final Character huisletter,
-        final String huisnummertoevoeging,
-        final String postcode,
-        final String woonplaatsnaam,
-        final String gemeenteCode,
-        final String buitenlandsAdresRegel1,
-        final String buitenlandsAdresRegel2,
-        final String buitenlandsAdresRegel3,
-        final String buitenlandsAdresRegel4,
-        final String buitenlandsAdresRegel5,
-        final String buitenlandsAdresRegel6)
-        {
+            final int datumIngang,
+            final Integer datumEinde,
+            final Integer huisnummer,
+            final Character huisletter,
+            final String huisnummertoevoeging,
+            final String postcode,
+            final String woonplaatsnaam,
+            final String gemeenteCode,
+            final String buitenlandsAdresRegel1,
+            final String buitenlandsAdresRegel2,
+            final String buitenlandsAdresRegel3,
+            final String buitenlandsAdresRegel4,
+            final String buitenlandsAdresRegel5,
+            final String buitenlandsAdresRegel6) {
         final BrpAdresInhoud inhoud =
                 BrpStapelHelper.adres(
-                    "W",
-                    'A',
-                    'I',
-                    20000101,
-                    null,
-                    null,
-                    gemeenteCode,
-                    null,
-                    null,
-                    null,
-                    huisnummer,
-                    huisletter,
-                    huisnummertoevoeging,
-                    postcode,
-                    woonplaatsnaam,
-                    null,
-                    null,
-                    buitenlandsAdresRegel1,
-                    buitenlandsAdresRegel2,
-                    buitenlandsAdresRegel3,
-                    buitenlandsAdresRegel4,
-                    buitenlandsAdresRegel5,
-                    buitenlandsAdresRegel6,
-                    null,
-                    null);
+                        "W",
+                        'A',
+                        'I',
+                        20000101,
+                        null,
+                        null,
+                        gemeenteCode,
+                        null,
+                        null,
+                        null,
+                        huisnummer,
+                        huisletter,
+                        huisnummertoevoeging,
+                        postcode,
+                        woonplaatsnaam,
+                        null,
+                        null,
+                        buitenlandsAdresRegel1,
+                        buitenlandsAdresRegel2,
+                        buitenlandsAdresRegel3,
+                        buitenlandsAdresRegel4,
+                        buitenlandsAdresRegel5,
+                        buitenlandsAdresRegel6,
+                        null,
+                        null);
 
         return BrpStapelHelper.groep(
-            inhoud,
-            BrpStapelHelper.his(datumIngang, datumEinde, datumIngang, null),
-            BrpStapelHelper.act(1, datumIngang),
-            null,
-            datumEinde == null ? null : BrpStapelHelper.act(2, datumEinde));
-        }
+                inhoud,
+                BrpStapelHelper.his(datumIngang, datumEinde, datumIngang, null),
+                BrpStapelHelper.act(1, datumIngang),
+                null,
+                datumEinde == null ? null : BrpStapelHelper.act(2, datumEinde));
+    }
 
     @SafeVarargs
     private final BrpPersoonslijst maakPl(final BrpGroep<BrpAdresInhoud>... adressen) {

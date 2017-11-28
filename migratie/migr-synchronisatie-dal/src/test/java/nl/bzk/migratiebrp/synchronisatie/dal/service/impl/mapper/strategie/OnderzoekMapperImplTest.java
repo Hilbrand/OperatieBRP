@@ -6,39 +6,41 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Set;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.OnderzoekHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.GegevenInOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StatusOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.GegevenInOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.StatusOnderzoek;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-public class OnderzoekMapperImplTest extends AbstractDeltaTest{
+public class OnderzoekMapperImplTest extends AbstractDeltaTest {
     @Test
     public void testOnderzoekMapper() {
         final Persoon persoon = maakPersoon(true);
-        final OnderzoekMapper mapper = new OnderzoekMapperImpl(persoon);
+        final OnderzoekMapper mapper = new OnderzoekMapperImpl(persoon, maakPartij());
 
-        final DeltaEntiteit entiteit1 = new Persoon(SoortPersoon.INGESCHREVENE);
-        final DeltaEntiteit entiteit2a = new Persoon(SoortPersoon.INGESCHREVENE);
-        final DeltaEntiteit entiteit2b = new Persoon(SoortPersoon.INGESCHREVENE);
-        final DeltaEntiteit entiteit3 = new Persoon(SoortPersoon.INGESCHREVENE);
+        final Entiteit entiteit1 = new Persoon(SoortPersoon.INGESCHREVENE);
+        final Entiteit entiteit2a = new Persoon(SoortPersoon.INGESCHREVENE);
+        final Entiteit entiteit2b = new Persoon(SoortPersoon.INGESCHREVENE);
+        final Entiteit entiteit3 = new Persoon(SoortPersoon.INGESCHREVENE);
 
         final Lo3Herkomst lo3Herkomst = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0);
 
@@ -62,9 +64,9 @@ public class OnderzoekMapperImplTest extends AbstractDeltaTest{
         assertEquals(2, brpOnderzoek1.getGegevenInOnderzoekSet().size());
         for (final GegevenInOnderzoek gegevenInOnderzoek : brpOnderzoek1.getGegevenInOnderzoekSet()) {
             if (Element.PERSOON_OVERLIJDEN.equals(gegevenInOnderzoek.getSoortGegeven())) {
-                Assert.assertSame(entiteit1, gegevenInOnderzoek.getObject());
+                Assert.assertSame(entiteit1, gegevenInOnderzoek.getEntiteitOfVoorkomen());
             } else if (Element.PERSOON_OVERLIJDEN_DATUM.equals(gegevenInOnderzoek.getSoortGegeven())) {
-                Assert.assertSame(entiteit1, gegevenInOnderzoek.getObject());
+                Assert.assertSame(entiteit1, gegevenInOnderzoek.getEntiteitOfVoorkomen());
             } else {
                 Assert.fail();
             }
@@ -75,9 +77,9 @@ public class OnderzoekMapperImplTest extends AbstractDeltaTest{
         assertEquals(2, brpOnderzoek2.getGegevenInOnderzoekSet().size());
         for (final GegevenInOnderzoek gegevenInOnderzoek : brpOnderzoek2.getGegevenInOnderzoekSet()) {
             if (Element.PERSOON_NAAMGEBRUIK.equals(gegevenInOnderzoek.getSoortGegeven())) {
-                Assert.assertSame(entiteit2a, gegevenInOnderzoek.getObject());
+                Assert.assertSame(entiteit2a, gegevenInOnderzoek.getEntiteitOfVoorkomen());
             } else if (Element.PERSOON_SAMENGESTELDENAAM.equals(gegevenInOnderzoek.getSoortGegeven())) {
-                Assert.assertSame(entiteit2b, gegevenInOnderzoek.getObject());
+                Assert.assertSame(entiteit2b, gegevenInOnderzoek.getEntiteitOfVoorkomen());
             } else {
                 Assert.fail();
             }
@@ -86,7 +88,8 @@ public class OnderzoekMapperImplTest extends AbstractDeltaTest{
 
     private Onderzoek zoekLopendOnderzoek(final Set<Onderzoek> onderzoeken) {
         for (final Onderzoek onderzoek : onderzoeken) {
-            if (onderzoek.getStatusOnderzoek().equals(StatusOnderzoek.IN_UITVOERING)) {
+            final OnderzoekHistorie historie = FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(onderzoek.getOnderzoekHistorieSet());
+            if (historie.getStatusOnderzoek().equals(StatusOnderzoek.IN_UITVOERING)) {
                 return onderzoek;
             }
         }
@@ -95,7 +98,8 @@ public class OnderzoekMapperImplTest extends AbstractDeltaTest{
 
     private Onderzoek zoekBeeindigdOnderzoek(final Set<Onderzoek> onderzoeken) {
         for (final Onderzoek onderzoek : onderzoeken) {
-            if (onderzoek.getStatusOnderzoek().equals(StatusOnderzoek.AFGESLOTEN)) {
+            final OnderzoekHistorie historie = FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(onderzoek.getOnderzoekHistorieSet());
+            if (historie.getStatusOnderzoek().equals(StatusOnderzoek.AFGESLOTEN)) {
                 return onderzoek;
             }
         }

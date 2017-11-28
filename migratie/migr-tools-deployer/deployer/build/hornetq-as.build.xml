@@ -41,25 +41,25 @@
                 </not>
             </condition>
         </fail>
-    
+
     </target>
 
     <target name="install" depends="checkInstallProperties">
         <echo message="Installing ${ant.project.name} ...." />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd /tmp; mkdir ${application.directory}; cd ${application.directory}; rm -rf *;" />
-        
+
         <echo message="Copying ${application.file}" />
         <scp todir="${server.username}:${server.password}@${server.host}:/tmp/${application.directory}" trust="true" failonerror="true">
             <fileset dir="${application.source}">
                 <include name="${application.file}" />
             </fileset>
         </scp>
-        
+
         <echo message="Unpacking ${application.file}" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd ~; mkdir ${application.directory}; cd ${application.directory}; unzip -o /tmp/${application.directory}/${application.file} -d .;mv hornetq-*/* .;" />
-        
+
         <echo message="Copying configuration files" />
         <scp todir="${server.username}:${server.password}@${server.host}:~/${application.directory}/bin" trust="true" failonerror="true">
             <fileset dir="deps/hornetq">
@@ -70,25 +70,29 @@
             <fileset dir="deps/hornetq">
                 <include name="hornetq-configuration.xml" />
                 <include name="hornetq-jms.xml" />
+                <include name="jmx.properties" />
             </fileset>
         </scp>
     </target>
-    
+
     <target name="deinstall" depends="checkProperties">
         <echo message="Removing ${ant.project.name}" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd ~; rm -Rf ${application.directory}" />
     </target>
-    
+
     <target name="start" depends="checkProperties">
         <echo message="Starting ${ant.project.name}" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
+
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}"
                  command="cd ~; cd ${application.directory}; cd bin; ./run.sh > hornetq-output.txt 2&gt;&amp;1 &amp;" />
+
+        <echo message="Succesfully started ${ant.project.name}" />
     </target>
 
     <target name="stop" depends="checkProperties">
         <echo message="Stopping ${ant.project.name} (and sleeping 15s)" />
-        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" failonerror="false" 
+        <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" failonerror="false"
                  command="cd ~; cd ${application.directory}; cd bin; ./stop.sh" />
     </target>
 
@@ -98,5 +102,5 @@
     <target name="fail">
         <fail message="Call with valid task" />
     </target>
-    
+
 </project>

@@ -12,7 +12,6 @@ package nl.bzk.migratiebrp.test.isc.environment.id;
 public interface IdGenerator {
     /**
      * Genereer ID.
-     * 
      * @return id
      */
     String generateId();

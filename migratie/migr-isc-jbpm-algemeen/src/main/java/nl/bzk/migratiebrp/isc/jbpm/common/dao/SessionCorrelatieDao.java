@@ -7,9 +7,9 @@
 package nl.bzk.migratiebrp.isc.jbpm.common.dao;
 
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.model.Correlatie;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.jbpm.graph.exe.ProcessInstance;
@@ -22,19 +22,26 @@ import org.springframework.stereotype.Component;
 public final class SessionCorrelatieDao implements CorrelatieDao {
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private final SessionFactory sessionFactory;
+
+    /**
+     * Constructor.
+     * @param sessionFactory session factory
+     */
     @Inject
-    private SessionFactory sessionFactory;
+    public SessionCorrelatieDao(final SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public void opslaan(
-        final String messageId,
-        final String kanaal,
-        final String recipient,
-        final String originator,
-        final Long processInstanceId,
-        final Long tokenId,
-        final Long nodeId)
-    {
+            final String messageId,
+            final String kanaal,
+            final String recipient,
+            final String originator,
+            final Long processInstanceId,
+            final Long tokenId,
+            final Long nodeId) {
         final Correlatie correlatie = new Correlatie();
         correlatie.setMessageId(messageId);
         correlatie.setKanaal(kanaal);
@@ -56,11 +63,10 @@ public final class SessionCorrelatieDao implements CorrelatieDao {
 
     @Override
     public Correlatie zoeken(
-        final String receivedCorrelationId,
-        final String receivedKanaal,
-        final String receivedOriginator,
-        final String receivedRecipient)
-    {
+            final String receivedCorrelationId,
+            final String receivedKanaal,
+            final String receivedOriginator,
+            final String receivedRecipient) {
         final Session session = sessionFactory.getCurrentSession();
 
         LOG.info("Zoek op correlatie opgeslagen onder message id: {}", receivedCorrelationId);
@@ -75,9 +81,8 @@ public final class SessionCorrelatieDao implements CorrelatieDao {
             LOG.info("Vergelijk ontvangen recipient{} met opgeslagen originator {}", receivedRecipient, correlatie.getVerzendendePartij());
 
             if (!isEqual(receivedKanaal, correlatie.getKanaal())
-                || !isEqual(receivedOriginator, correlatie.getOntvangendePartij())
-                || !isEqual(receivedRecipient, correlatie.getVerzendendePartij()))
-            {
+                    || !isEqual(receivedOriginator, correlatie.getOntvangendePartij())
+                    || !isEqual(receivedRecipient, correlatie.getVerzendendePartij())) {
                 LOG.info("Incorrecte correlatie");
                 correlatie = null;
             } else {

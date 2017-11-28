@@ -8,6 +8,9 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.Set;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAdresHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingBijHuisnummerCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
@@ -20,10 +23,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblij
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortAdresCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAdresHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -33,16 +32,21 @@ import org.springframework.stereotype.Component;
 @Component
 public final class BrpAdresMapper {
 
+    private final BrpAdresInhoudMapper mapper;
+
+    /**
+     * Constructor.
+     * @param mapper adres inhoud mapper
+     */
     @Inject
-    private BrpAdresInhoudMapper mapper;
+    public BrpAdresMapper(final BrpAdresInhoudMapper mapper) {
+        this.mapper = mapper;
+    }
 
     /**
      * Map het eerste adres.
-     * 
-     * @param persoonAdresSet
-     *            de adressen
-     * @param brpOnderzoekMapper
-     *            De mapper voor onderzoeken
+     * @param persoonAdresSet de adressen
+     * @param brpOnderzoekMapper De mapper voor onderzoeken
      * @return adres
      */
     public BrpStapel<BrpAdresInhoud> map(final Set<PersoonAdres> persoonAdresSet, final BrpOnderzoekMapper brpOnderzoekMapper) {
@@ -61,140 +65,81 @@ public final class BrpAdresMapper {
 
         @Override
         protected BrpAdresInhoud mapInhoud(final PersoonAdresHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
-            final BrpSoortAdresCode soortAdresCode;
-            soortAdresCode =
-                    BrpMapperUtil.mapBrpSoortAdresCode(
-                        historie.getSoortAdres(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_SOORTCODE, true));
-            final BrpRedenWijzigingVerblijfCode redenWijzigingVerblijfCode;
-            redenWijzigingVerblijfCode =
-                    BrpMapperUtil.mapBrpRedenWijzigingVerblijfCode(
-                        historie.getRedenWijziging(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_REDENWIJZIGINGCODE, true));
-            final BrpAangeverCode aangeverCode;
-            aangeverCode =
-                    BrpMapperUtil.mapBrpAangeverCode(
-                        historie.getAangeverAdreshouding(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_AANGEVERADRESHOUDINGCODE, true));
-            final BrpDatum datumAanvangAdreshouding;
-            datumAanvangAdreshouding =
-                    BrpMapperUtil.mapDatum(
-                        historie.getDatumAanvangAdreshouding(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_DATUMAANVANGADRESHOUDING, true));
-            final BrpString identificatiecodeAdresseerbaarObject;
-            identificatiecodeAdresseerbaarObject =
-                    BrpString.wrap(
-                        historie.getIdentificatiecodeAdresseerbaarObject(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_IDENTIFICATIECODEADRESSEERBAAROBJECT, true));
-            final BrpString identificatiecodeNummeraanduiding;
-            identificatiecodeNummeraanduiding =
-                    BrpString.wrap(
-                        historie.getIdentificatiecodeNummeraanduiding(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_IDENTIFICATIECODENUMMERAANDUIDING, true));
-            final BrpGemeenteCode gemeenteCode;
-            gemeenteCode =
-                    BrpMapperUtil.mapBrpGemeenteCode(
-                        historie.getGemeente(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_GEMEENTECODE, true));
-            final BrpString naamOpenbareRuimte;
-            naamOpenbareRuimte =
-                    BrpString.wrap(
-                        historie.getNaamOpenbareRuimte(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_NAAMOPENBARERUIMTE, true));
-            final BrpString afgekorteNaamOpenbareRuimte;
-            afgekorteNaamOpenbareRuimte =
-                    BrpString.wrap(
-                        historie.getAfgekorteNaamOpenbareRuimte(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_AFGEKORTENAAMOPENBARERUIMTE, true));
-            final BrpString gemeentedeel;
-            gemeentedeel =
-                    BrpString.wrap(historie.getGemeentedeel(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_GEMEENTEDEEL, true));
-            final BrpInteger huisnummer;
-            huisnummer = BrpInteger.wrap(historie.getHuisnummer(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_HUISNUMMER, true));
-            final BrpCharacter huisletter;
-            huisletter = BrpCharacter.wrap(historie.getHuisletter(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_HUISLETTER, true));
-            final BrpString huisnummerToevoeging;
-            huisnummerToevoeging =
-                    BrpString.wrap(
-                        historie.getHuisnummertoevoeging(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_HUISNUMMERTOEVOEGING, true));
-            final BrpString postcode;
-            postcode = BrpString.wrap(historie.getPostcode(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_POSTCODE, true));
-            final BrpString woonplaatsnaam;
-            woonplaatsnaam =
-                    BrpString.wrap(historie.getWoonplaatsnaam(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_WOONPLAATSNAAM, true));
-            final BrpAanduidingBijHuisnummerCode aandBijHuisnummer;
-            final Lo3Onderzoek onderzoekAandBijHuisnummer =
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_LOCATIETENOPZICHTEVANADRES, true);
-            aandBijHuisnummer = BrpMapperUtil.mapBrpAanduidingBijHuisnummerCode(historie.getLocatietovAdres(), onderzoekAandBijHuisnummer);
-            final BrpString locatieOmschrijving =
-                    BrpString.wrap(
-                        historie.getLocatieOmschrijving(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_LOCATIEOMSCHRIJVING, true));
-            final BrpString buitenlandsAdresRegel1;
-            buitenlandsAdresRegel1 =
-                    BrpString.wrap(
-                        historie.getBuitenlandsAdresRegel1(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL1, true));
-            final BrpString buitenlandsAdresRegel2;
-            buitenlandsAdresRegel2 =
-                    BrpString.wrap(
-                        historie.getBuitenlandsAdresRegel2(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL2, true));
-            final BrpString buitenlandsAdresRegel3;
-            buitenlandsAdresRegel3 =
-                    BrpString.wrap(
-                        historie.getBuitenlandsAdresRegel3(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL3, true));
-            final BrpString buitenlandsAdresRegel4;
-            buitenlandsAdresRegel4 =
-                    BrpString.wrap(
-                        historie.getBuitenlandsAdresRegel4(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL4, true));
-            final BrpString buitenlandsAdresRegel5;
-            buitenlandsAdresRegel5 =
-                    BrpString.wrap(
-                        historie.getBuitenlandsAdresRegel5(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL5, true));
-            final BrpString buitenlandsAdresRegel6;
-            buitenlandsAdresRegel6 =
-                    BrpString.wrap(
-                        historie.getBuitenlandsAdresRegel6(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL6, true));
-            final BrpLandOfGebiedCode landOfGebied;
-            landOfGebied =
-                    BrpMapperUtil.mapBrpLandOfGebiedCode(
-                        historie.getLandOfGebied(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_LANDGEBIEDCODE, true));
+            final BrpSoortAdresCode soortAdresCode = BrpMapperUtil.mapBrpSoortAdresCode(historie.getSoortAdres(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_SOORTCODE, true));
+            final BrpRedenWijzigingVerblijfCode redenWijzigingVerblijfCode = BrpMapperUtil.mapBrpRedenWijzigingVerblijfCode(historie.getRedenWijziging(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_REDENWIJZIGINGCODE, true));
+            final BrpAangeverCode aangeverCode = BrpMapperUtil.mapBrpAangeverCode(historie.getAangeverAdreshouding(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_AANGEVERADRESHOUDINGCODE, true));
+            final BrpDatum datumAanvangAdreshouding = BrpMapperUtil.mapDatum(historie.getDatumAanvangAdreshouding(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_DATUMAANVANGADRESHOUDING, true));
+            final BrpString identificatiecodeAdresseerbaarObject = BrpString.wrap(historie.getIdentificatiecodeAdresseerbaarObject(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_IDENTIFICATIECODEADRESSEERBAAROBJECT, true));
+            final BrpString identificatiecodeNummeraanduiding = BrpString.wrap(historie.getIdentificatiecodeNummeraanduiding(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_IDENTIFICATIECODENUMMERAANDUIDING, true));
+            final BrpGemeenteCode gemeenteCode = BrpMapperUtil.mapBrpGemeenteCode(historie.getGemeente(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_GEMEENTECODE, true));
+            final BrpString naamOpenbareRuimte = BrpString.wrap(historie.getNaamOpenbareRuimte(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_NAAMOPENBARERUIMTE, true));
+            final BrpString afgekorteNaamOpenbareRuimte = BrpString.wrap(historie.getAfgekorteNaamOpenbareRuimte(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_AFGEKORTENAAMOPENBARERUIMTE, true));
+            final BrpString gemeentedeel = BrpString.wrap(historie.getGemeentedeel(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_GEMEENTEDEEL, true));
+            final BrpInteger huisnummer = BrpInteger.wrap(historie.getHuisnummer(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_HUISNUMMER, true));
+            final BrpCharacter huisletter = BrpCharacter.wrap(historie.getHuisletter(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_HUISLETTER, true));
+            final BrpString huisnummerToevoeging = BrpString.wrap(historie.getHuisnummertoevoeging(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_HUISNUMMERTOEVOEGING, true));
+            final BrpString postcode = BrpString.wrap(historie.getPostcode(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_POSTCODE, true));
+            final BrpString woonplaatsnaam = BrpString.wrap(historie.getWoonplaatsnaam(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_WOONPLAATSNAAM, true));
+            final BrpAanduidingBijHuisnummerCode aandBijHuisnummer = BrpMapperUtil.mapBrpAanduidingBijHuisnummerCode(historie.getLocatietovAdres(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_LOCATIETENOPZICHTEVANADRES, true));
+            final BrpString locatieOmschrijving = BrpString.wrap(historie.getLocatieOmschrijving(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_LOCATIEOMSCHRIJVING, true));
+            final BrpString buitenlandsAdresRegel1 = BrpString.wrap(historie.getBuitenlandsAdresRegel1(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL1, true));
+            final BrpString buitenlandsAdresRegel2 = BrpString.wrap(historie.getBuitenlandsAdresRegel2(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL2, true));
+            final BrpString buitenlandsAdresRegel3 = BrpString.wrap(historie.getBuitenlandsAdresRegel3(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL3, true));
+            final BrpString buitenlandsAdresRegel4 = BrpString.wrap(historie.getBuitenlandsAdresRegel4(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL4, true));
+            final BrpString buitenlandsAdresRegel5 = BrpString.wrap(historie.getBuitenlandsAdresRegel5(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL5, true));
+            final BrpString buitenlandsAdresRegel6 = BrpString.wrap(historie.getBuitenlandsAdresRegel6(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_BUITENLANDSADRESREGEL6, true));
+            final BrpLandOfGebiedCode landOfGebied = BrpMapperUtil.mapBrpLandOfGebiedCode(historie.getLandOfGebied(),
+                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_ADRES_LANDGEBIEDCODE, true));
 
             return new BrpAdresInhoud(
-                soortAdresCode,
-                redenWijzigingVerblijfCode,
-                aangeverCode,
-                datumAanvangAdreshouding,
-                identificatiecodeAdresseerbaarObject,
-                identificatiecodeNummeraanduiding,
-                gemeenteCode,
-                naamOpenbareRuimte,
-                afgekorteNaamOpenbareRuimte,
-                gemeentedeel,
-                huisnummer,
-                huisletter,
-                huisnummerToevoeging,
-                postcode,
-                woonplaatsnaam,
-                aandBijHuisnummer,
-                locatieOmschrijving,
-                buitenlandsAdresRegel1,
-                buitenlandsAdresRegel2,
-                buitenlandsAdresRegel3,
-                buitenlandsAdresRegel4,
-                buitenlandsAdresRegel5,
-                buitenlandsAdresRegel6,
-                landOfGebied,
-                null);
+                    soortAdresCode,
+                    redenWijzigingVerblijfCode,
+                    aangeverCode,
+                    datumAanvangAdreshouding,
+                    identificatiecodeAdresseerbaarObject,
+                    identificatiecodeNummeraanduiding,
+                    gemeenteCode,
+                    naamOpenbareRuimte,
+                    afgekorteNaamOpenbareRuimte,
+                    gemeentedeel,
+                    huisnummer,
+                    huisletter,
+                    huisnummerToevoeging,
+                    postcode,
+                    woonplaatsnaam,
+                    aandBijHuisnummer,
+                    locatieOmschrijving,
+                    buitenlandsAdresRegel1,
+                    buitenlandsAdresRegel2,
+                    buitenlandsAdresRegel3,
+                    buitenlandsAdresRegel4,
+                    buitenlandsAdresRegel5,
+                    buitenlandsAdresRegel6,
+                    landOfGebied,
+                    null);
         }
-
     }
-
 }

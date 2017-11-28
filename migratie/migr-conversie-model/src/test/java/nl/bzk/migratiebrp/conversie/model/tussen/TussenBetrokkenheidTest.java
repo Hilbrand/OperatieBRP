@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.tussen;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud;
@@ -39,23 +39,24 @@ public class TussenBetrokkenheidTest {
     @Mock
     private TussenStapel<BrpOuderInhoud> ouderStapel;
 
-    public static TussenBetrokkenheid createTussenBetrokkenheid(BrpSoortBetrokkenheidCode sb){
-        Lo3Herkomst her = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01,1,1);
-        return new TussenBetrokkenheid(sb,(TussenStapel<BrpIdentificatienummersInhoud>)TussenTestUtil.createTussenStapel(BrpIdentificatienummersInhoudTest.createInhoud(),her),
-                null,null,null,null,null);
+    public static TussenBetrokkenheid createTussenBetrokkenheid(BrpSoortBetrokkenheidCode sb) {
+        Lo3Herkomst her = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 1, 1);
+        return new TussenBetrokkenheid(sb,
+                (TussenStapel<BrpIdentificatienummersInhoud>) TussenTestUtil.createTussenStapel(BrpIdentificatienummersInhoudTest.createInhoud(), her),
+                null, null, null, null, null);
     }
 
     @Test
     public void test() throws ReflectiveOperationException {
         final TussenBetrokkenheid subject =
                 new TussenBetrokkenheid(
-                    BrpSoortBetrokkenheidCode.OUDER,
-                    identificatienummersStapel,
-                    geslachtsaanduidingStapel,
-                    geboorteStapel,
-                    ouderlijkGezagStapel,
-                    samengesteldeNaamStapel,
-                    ouderStapel);
+                        BrpSoortBetrokkenheidCode.OUDER,
+                        identificatienummersStapel,
+                        geslachtsaanduidingStapel,
+                        geboorteStapel,
+                        ouderlijkGezagStapel,
+                        samengesteldeNaamStapel,
+                        ouderStapel);
 
         Assert.assertEquals(BrpSoortBetrokkenheidCode.OUDER, subject.getRol());
         Assert.assertEquals(identificatienummersStapel, subject.getIdentificatienummersStapel());
@@ -66,22 +67,22 @@ public class TussenBetrokkenheidTest {
         Assert.assertEquals(ouderStapel, subject.getOuderStapel());
 
         EqualsAndHashcodeTester.testEqualsHashcodeAndToString(
-            subject,
-            new TussenBetrokkenheid(
-                BrpSoortBetrokkenheidCode.OUDER,
-                identificatienummersStapel,
-                geslachtsaanduidingStapel,
-                geboorteStapel,
-                ouderlijkGezagStapel,
-                samengesteldeNaamStapel,
-                ouderStapel),
-            new TussenBetrokkenheid(
-                BrpSoortBetrokkenheidCode.KIND,
-                identificatienummersStapel,
-                geslachtsaanduidingStapel,
-                geboorteStapel,
-                ouderlijkGezagStapel,
-                samengesteldeNaamStapel,
-                ouderStapel));
+                subject,
+                new TussenBetrokkenheid(
+                        BrpSoortBetrokkenheidCode.OUDER,
+                        identificatienummersStapel,
+                        geslachtsaanduidingStapel,
+                        geboorteStapel,
+                        ouderlijkGezagStapel,
+                        samengesteldeNaamStapel,
+                        ouderStapel),
+                new TussenBetrokkenheid(
+                        BrpSoortBetrokkenheidCode.KIND,
+                        identificatienummersStapel,
+                        geslachtsaanduidingStapel,
+                        geboorteStapel,
+                        ouderlijkGezagStapel,
+                        samengesteldeNaamStapel,
+                        ouderStapel));
     }
 }

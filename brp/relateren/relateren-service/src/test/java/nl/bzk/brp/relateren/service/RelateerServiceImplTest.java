@@ -8,6 +8,7 @@ package nl.bzk.brp.relateren.service;
 
 import static org.junit.Assert.*;
 
+import nl.bzk.brp.relateren.business.RelateerPersoonImpl;
 import org.junit.Test;
 
 /**
@@ -15,7 +16,7 @@ import org.junit.Test;
  */
 public class RelateerServiceImplTest {
 
-    private RelateerService service = new RelateerServiceImpl();
+    private RelateerService service = new RelateerServiceImpl(new RelateerPersoonImpl());
 
     /**
      * Test verwerkPersoonRelateerBericht.

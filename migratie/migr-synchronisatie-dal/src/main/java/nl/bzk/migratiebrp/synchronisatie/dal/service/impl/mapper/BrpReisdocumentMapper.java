@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
@@ -19,10 +22,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdo
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpReisdocumentInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocumentHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -32,16 +31,21 @@ import org.springframework.stereotype.Component;
 @Component
 public final class BrpReisdocumentMapper {
 
+    private final BrpReisdocumentInhoudMapper mapper;
+
+    /**
+     * Constructor.
+     * @param mapper inhoud mapper
+     */
     @Inject
-    private BrpReisdocumentInhoudMapper mapper;
+    public BrpReisdocumentMapper(final BrpReisdocumentInhoudMapper mapper) {
+        this.mapper = mapper;
+    }
 
     /**
      * Map BRP database reisdocumenten naar BRP conversiemodel reisdocumenten.
-     * 
-     * @param persoonReisdocumentSet
-     *            database reisdocumenten
-     * @param brpOnderzoekMapper
-     *            De mapper voor onderzoeken
+     * @param persoonReisdocumentSet database reisdocumenten
+     * @param brpOnderzoekMapper De mapper voor onderzoeken
      * @return conversiemodel reisdocumenten
      */
     public List<BrpStapel<BrpReisdocumentInhoud>> map(final Set<PersoonReisdocument> persoonReisdocumentSet, final BrpOnderzoekMapper brpOnderzoekMapper) {
@@ -73,36 +77,36 @@ public final class BrpReisdocumentMapper {
             final BrpSoortNederlandsReisdocumentCode soort;
             soort =
                     BrpMapperUtil.mapBrpReisdocumentSoort(
-                        historie.getPersoonReisdocument().getSoortNederlandsReisdocument(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie.getPersoonReisdocument(), Element.PERSOON_REISDOCUMENT_SOORTCODE, true));
+                            historie.getPersoonReisdocument().getSoortNederlandsReisdocument(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie.getPersoonReisdocument(), Element.PERSOON_REISDOCUMENT_SOORTCODE, true));
             final BrpString nummer;
             nummer = BrpString.wrap(historie.getNummer(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_NUMMER, true));
 
             final BrpDatum datumIngangDocument;
             datumIngangDocument =
                     BrpMapperUtil.mapDatum(
-                        historie.getDatumIngangDocument(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_DATUMINGANGDOCUMENT, true));
+                            historie.getDatumIngangDocument(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_DATUMINGANGDOCUMENT, true));
             final BrpDatum datumUitgifte;
             datumUitgifte =
                     BrpMapperUtil.mapDatum(
-                        historie.getDatumUitgifte(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_DATUMUITGIFTE, true));
+                            historie.getDatumUitgifte(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_DATUMUITGIFTE, true));
             final BrpReisdocumentAutoriteitVanAfgifteCode autoriteitVanAfgifte;
             autoriteitVanAfgifte =
                     BrpMapperUtil.mapBrpAutoriteitVanAfgifte(
-                        historie.getAutoriteitVanAfgifte(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_AUTORITEITVANAFGIFTE, true));
+                            historie.getAutoriteitVanAfgifte(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_AUTORITEITVANAFGIFTE, true));
             final BrpDatum datumEindeDocument;
             datumEindeDocument =
                     BrpMapperUtil.mapDatum(
-                        historie.getDatumEindeDocument(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_DATUMEINDEDOCUMENT, true));
+                            historie.getDatumEindeDocument(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_DATUMEINDEDOCUMENT, true));
             final BrpDatum datumInhoudingOfVermissing;
             datumInhoudingOfVermissing =
                     BrpMapperUtil.mapDatum(
-                        historie.getDatumInhoudingOfVermissing(),
-                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_DATUMINHOUDINGVERMISSING, true));
+                            historie.getDatumInhoudingOfVermissing(),
+                            brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_DATUMINHOUDINGVERMISSING, true));
             final BrpAanduidingInhoudingOfVermissingReisdocumentCode aanduidingInhoudingOfVermissing;
             final AanduidingInhoudingOfVermissingReisdocument aanduidingInhoudingOfVermissingReisdocument;
             aanduidingInhoudingOfVermissingReisdocument = historie.getAanduidingInhoudingOfVermissingReisdocument();
@@ -110,18 +114,18 @@ public final class BrpReisdocumentMapper {
                     brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_REISDOCUMENT_AANDUIDINGINHOUDINGVERMISSINGCODE, true);
             aanduidingInhoudingOfVermissing =
                     BrpMapperUtil.mapBrpAanduidingInhoudingOfVermissingReisdocument(
-                        aanduidingInhoudingOfVermissingReisdocument,
-                        onderzoekAanduidingInhoudingOfVermissing);
+                            aanduidingInhoudingOfVermissingReisdocument,
+                            onderzoekAanduidingInhoudingOfVermissing);
 
             return new BrpReisdocumentInhoud(
-                soort,
-                nummer,
-                datumIngangDocument,
-                datumUitgifte,
-                autoriteitVanAfgifte,
-                datumEindeDocument,
-                datumInhoudingOfVermissing,
-                aanduidingInhoudingOfVermissing);
+                    soort,
+                    nummer,
+                    datumIngangDocument,
+                    datumUitgifte,
+                    autoriteitVanAfgifte,
+                    datumEindeDocument,
+                    datumInhoudingOfVermissing,
+                    aanduidingInhoudingOfVermissing);
         }
     }
 

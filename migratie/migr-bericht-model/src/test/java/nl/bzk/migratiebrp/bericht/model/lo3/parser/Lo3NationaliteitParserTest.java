@@ -8,7 +8,8 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -18,10 +19,12 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingBijzonderNede
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenNederlandschapCode;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
+
 import org.junit.Test;
 
 public class Lo3NationaliteitParserTest extends AbstractParserTest {
@@ -36,10 +39,11 @@ public class Lo3NationaliteitParserTest extends AbstractParserTest {
 
         final Lo3NationaliteitInhoud categorieInhoud =
                 new Lo3NationaliteitInhoud(
-                    new Lo3NationaliteitCode(WAARDE_ELEMENT_0510, onderzoek),
-                    new Lo3RedenNederlandschapCode(WAARDE_ELEMENT_6310,onderzoek),
-                    new Lo3RedenNederlandschapCode(WAARDE_ELEMENT_6410,onderzoek),
-                    new Lo3AanduidingBijzonderNederlandschap(WAARDE_ELEMENT_6510, onderzoek));
+                        new Lo3NationaliteitCode(WAARDE_ELEMENT_0510, onderzoek),
+                        new Lo3RedenNederlandschapCode(WAARDE_ELEMENT_6310, onderzoek),
+                        new Lo3RedenNederlandschapCode(WAARDE_ELEMENT_6410, onderzoek),
+                        new Lo3AanduidingBijzonderNederlandschap(WAARDE_ELEMENT_6510, onderzoek),
+                        new Lo3String(WAARDE_ELEMENT_7310, onderzoek));
         final Lo3Categorie<Lo3NationaliteitInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(categorieInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_04, 0, 0));
 
@@ -53,6 +57,7 @@ public class Lo3NationaliteitParserTest extends AbstractParserTest {
         categorie.addElement(Lo3ElementEnum.ELEMENT_6310, WAARDE_ELEMENT_6310);
         categorie.addElement(Lo3ElementEnum.ELEMENT_6410, WAARDE_ELEMENT_6410);
         categorie.addElement(Lo3ElementEnum.ELEMENT_6510, WAARDE_ELEMENT_6510);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_7310, WAARDE_ELEMENT_7310);
         categorie.addElement(Lo3ElementEnum.ELEMENT_8210, WAARDE_ELEMENT_8210);
         categorie.addElement(Lo3ElementEnum.ELEMENT_8220, WAARDE_ELEMENT_8220);
         categorie.addElement(Lo3ElementEnum.ELEMENT_8230, WAARDE_ELEMENT_8230);
@@ -85,6 +90,7 @@ public class Lo3NationaliteitParserTest extends AbstractParserTest {
         categorie.addElement(Lo3ElementEnum.ELEMENT_6310, WAARDE_ELEMENT_6310);
         categorie.addElement(Lo3ElementEnum.ELEMENT_6410, WAARDE_ELEMENT_6410);
         categorie.addElement(Lo3ElementEnum.ELEMENT_6510, WAARDE_ELEMENT_6510);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_7310, WAARDE_ELEMENT_7310);
         categorie.addElement(Lo3ElementEnum.ELEMENT_8210, WAARDE_ELEMENT_8210);
         categorie.addElement(Lo3ElementEnum.ELEMENT_8220, WAARDE_ELEMENT_8220);
         categorie.addElement(Lo3ElementEnum.ELEMENT_8220, WAARDE_ELEMENT_8230);
@@ -108,6 +114,7 @@ public class Lo3NationaliteitParserTest extends AbstractParserTest {
         categorie.addElement(Lo3ElementEnum.ELEMENT_6310, null);
         categorie.addElement(Lo3ElementEnum.ELEMENT_6410, null);
         categorie.addElement(Lo3ElementEnum.ELEMENT_6510, null);
+        categorie.addElement(Lo3ElementEnum.ELEMENT_7310, null);
         categorie.addElement(Lo3ElementEnum.ELEMENT_8210, null);
         categorie.addElement(Lo3ElementEnum.ELEMENT_8220, null);
         categorie.addElement(Lo3ElementEnum.ELEMENT_8220, null);

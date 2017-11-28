@@ -12,20 +12,20 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeboorteHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.conversie.model.validatie.ValidationUtils;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeboorteHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.util.PersistenceUtil;
 
 /**
  * Decorator voor {@link Persoon} met daarin logica die niet in de entiteit zit.
@@ -40,9 +40,7 @@ public final class PersoonDecorator {
 
     /**
      * Maakt een PersoonDecorator object.
-     *
-     * @param persoon
-     *            het object waaraan functionaliteit moet worden toegevoegd
+     * @param persoon het object waaraan functionaliteit moet worden toegevoegd
      */
     private PersoonDecorator(final Persoon persoon) {
         ValidationUtils.controleerOpNullWaarden("persoon mag niet null zijn", persoon);
@@ -50,8 +48,7 @@ public final class PersoonDecorator {
     }
 
     /**
-     * @param stapel
-     *            het te decoreren Persoon object
+     * @param stapel het te decoreren Persoon object
      * @return een PersoonDecorator object
      */
     public static PersoonDecorator decorate(final Persoon stapel) {
@@ -59,7 +56,7 @@ public final class PersoonDecorator {
         if (stapel == null) {
             result = null;
         } else {
-            result = new PersoonDecorator(PersistenceUtil.getPojoFromObject(stapel));
+            result = new PersoonDecorator(Entiteit.convertToPojo(stapel));
         }
         return result;
     }
@@ -85,7 +82,6 @@ public final class PersoonDecorator {
 
     /**
      * Geeft de IST-stapels terug die betrekking hebben op de kind categorieen.
-     * 
      * @return de IST-stapels die betrekking hebben op de kind categorieen.
      */
     public Set<StapelDecorator> getKindStapels() {
@@ -100,7 +96,6 @@ public final class PersoonDecorator {
 
     /**
      * Geeft de IST-stapels terug die betrekking hebben op de huwelijk/geregistreerd partnerschap categorieen.
-     *
      * @return de IST-stapels die betrekking hebben op de huwelijk/geregistreerd partnerschap categorieen.
      */
     public Set<StapelDecorator> getHuwelijkOfGpStapels() {
@@ -115,7 +110,6 @@ public final class PersoonDecorator {
 
     /**
      * Geeft de IST-stapel terug die betrekking heeft op de ouder1 (cat02) categorie.
-     *
      * @return de IST-stapel terug die betrekking heeft op de ouder1 (cat02) categorie.
      */
     public StapelDecorator getOuder1Stapel() {
@@ -131,7 +125,6 @@ public final class PersoonDecorator {
 
     /**
      * Geeft de IST-stapel terug die betrekking heeft op de gezagsverhouding (cat11) categorie.
-     *
      * @return de IST-stapel terug die betrekking heeft op de gezagsverhouding (cat11) categorie.
      */
     public StapelDecorator getGezagsverhoudingStapel() {
@@ -147,7 +140,6 @@ public final class PersoonDecorator {
 
     /**
      * Geeft de IST-stapel terug die betrekking heeft op de ouder2 (cat03) categorie.
-     *
      * @return de IST-stapel terug die betrekking heeft op de ouder2 (cat03) categorie.
      */
     public StapelDecorator getOuder2Stapel() {
@@ -163,7 +155,6 @@ public final class PersoonDecorator {
 
     /**
      * /** Geeft de (IST) stapels terug die geen betrekking hebben op de kind-categorieen of huwelijk/GP categorieen.
-     *
      * @return de kindstapels.
      */
     public Set<StapelDecorator> getOverigeStapels() {
@@ -179,7 +170,6 @@ public final class PersoonDecorator {
 
     /**
      * Geef de waarde van IST-stapels.
-     *
      * @return de IST-stapels van deze persoon
      */
     public Set<StapelDecorator> getStapels() {
@@ -188,11 +178,8 @@ public final class PersoonDecorator {
 
     /**
      * Maak een nieuwe IST stapel aan die gekoppeld is aan deze persoon.
-     *
-     * @param categorie
-     *            de categorie voor de IST stapel
-     * @param stapelNummer
-     *            het stapelnummer voor de IST stapel
+     * @param categorie de categorie voor de IST stapel
+     * @param stapelNummer het stapelnummer voor de IST stapel
      * @return de nieuwe IST stapel
      */
     public StapelDecorator maakStapel(final String categorie, final int stapelNummer) {
@@ -205,9 +192,7 @@ public final class PersoonDecorator {
     /**
      * Verwijdert de stapels die leeg zijn van deze persoon. Ook de koppeling van deze stapel naar alle relaties wordt
      * dan verwijderd.
-     * 
-     * @param teVerwijderenStapels
-     *            Set van stapels die gemarkeerd zijn om te verwijderen
+     * @param teVerwijderenStapels Set van stapels die gemarkeerd zijn om te verwijderen
      */
     public void verwijderStapels(final Set<StapelDecorator> teVerwijderenStapels) {
         for (final StapelDecorator stapel : getStapels()) {
@@ -222,9 +207,7 @@ public final class PersoonDecorator {
 
     /**
      * Voegt een IST-stapel toe aan de persoon.
-     *
-     * @param stapel
-     *            de IST-stapel die toegevoegd moet worden
+     * @param stapel de IST-stapel die toegevoegd moet worden
      */
     public void addStapel(final StapelDecorator stapel) {
         persoon.addStapel(stapel.getStapel());
@@ -233,11 +216,8 @@ public final class PersoonDecorator {
     /**
      * Zoekt een stapel adhv de meegegeven categorie en volgnummer. Ook een check om te kijken of de meegeven stapel al
      * bestaat bij de persoon.
-     *
-     * @param categorie
-     *            categorie van de stapel
-     * @param stapelNummer
-     *            volgnummer van de stapel
+     * @param categorie categorie van de stapel
+     * @param stapelNummer volgnummer van de stapel
      * @return de stapel die voldoet aan {@link StapelDecorator#equals(Object)} methode.
      */
     public StapelDecorator zoekStapel(final String categorie, final int stapelNummer) {
@@ -254,9 +234,7 @@ public final class PersoonDecorator {
     /**
      * Zoekt een stapel adhv de meegegeven stapel op. Ook een check om te kijken of de meegeven stapel al bestaat bij de
      * persoon.
-     *
-     * @param verschilStapel
-     *            de stapel die gezocht wordt op de persoonslijst
+     * @param verschilStapel de stapel die gezocht wordt op de persoonslijst
      * @return de stapel die voldoet aan {@link StapelDecorator#equals(Object)} methode.
      */
     public StapelDecorator zoekStapel(final StapelDecorator verschilStapel) {
@@ -274,9 +252,7 @@ public final class PersoonDecorator {
      * Geeft de betrokkenheid terug die bij de opgegeven stapel hoort. Hiervoor wordt er gekeken wat voor stapel het is
      * (kind, ouder of partner) en deze informatie wordt gebruikt mbv de {@link SoortBetrokkenheid} om de juiste
      * betrokkenheid op te zoeken.
-     *
-     * @param stapel
-     *            de stapel waar de betreffende betrokkenheid opgezocht moet worden
+     * @param stapel de stapel waar de betreffende betrokkenheid opgezocht moet worden
      * @return de betrokkenheid als deze gevonden wordt voor de stapel, anders null.
      */
     public Set<BetrokkenheidDecorator> zoekIkBetrokkenhedenVoorStapel(final StapelDecorator stapel) {
@@ -300,7 +276,6 @@ public final class PersoonDecorator {
 
     /**
      * Geeft alle relaties terug als {@link RelatieDecorator}.
-     * 
      * @return alle relaties als @{link RelatieDecorator}
      */
     public Set<RelatieDecorator> getRelaties() {
@@ -314,7 +289,6 @@ public final class PersoonDecorator {
 
     /**
      * Geeft de persoon terug waar deze decorator voor gemaakt is.
-     * 
      * @return de undecorated persoon
      */
     public Persoon getPersoon() {
@@ -323,9 +297,7 @@ public final class PersoonDecorator {
 
     /**
      * Controleert of de meegegeven {@link PersoonDecorator} dezelfde {@link Persoon} object heeft als deze instantie.
-     * 
-     * @param persoonDecorator
-     *            de {@link PersoonDecorator} object waarmee vergeleken gaat worden
+     * @param persoonDecorator de {@link PersoonDecorator} object waarmee vergeleken gaat worden
      * @return true als beide decorators dezelfde {@link Persoon} object bevatten
      */
     public boolean isSameAs(final PersoonDecorator persoonDecorator) {
@@ -334,7 +306,6 @@ public final class PersoonDecorator {
 
     /**
      * Geeft de administratieve handeling terug die aan de persoon gekoppeld is.
-     * 
      * @return de administratieve handeling die aan de persoon gekoppeld is
      */
     public AdministratieveHandeling getAdministratieveHandeling() {
@@ -343,7 +314,6 @@ public final class PersoonDecorator {
 
     /**
      * Geeft de set van betrokkenheden terug die aan deze persoon gekoppeld zijn.
-     * 
      * @return de set van betrokkenheden
      */
     public Set<BetrokkenheidDecorator> getBetrokkenheidSet() {
@@ -352,9 +322,7 @@ public final class PersoonDecorator {
 
     /**
      * Voegt een set van betrokkenheden toe aan de persoon.
-     *
-     * @param nieuweBetrokkenheden
-     *            de set van betrokkenheden die toegevoegd moet worden aan de persoon
+     * @param nieuweBetrokkenheden de set van betrokkenheden die toegevoegd moet worden aan de persoon
      */
     public void addBetrokkenheden(final Set<BetrokkenheidDecorator> nieuweBetrokkenheden) {
         for (final BetrokkenheidDecorator betrokkenheid : nieuweBetrokkenheden) {
@@ -364,9 +332,7 @@ public final class PersoonDecorator {
 
     /**
      * Verwijderd een set van betrokkenheden van de persoon.
-     *
-     * @param verwijderdeBetrokkenheden
-     *            de set van betrokkenheid die verwijderd moet worden bij de persoon
+     * @param verwijderdeBetrokkenheden de set van betrokkenheid die verwijderd moet worden bij de persoon
      */
     public void verwijderBetrokkenheden(final Set<BetrokkenheidDecorator> verwijderdeBetrokkenheden) {
         for (final BetrokkenheidDecorator betrokkenheidDecorator : verwijderdeBetrokkenheden) {
@@ -376,9 +342,7 @@ public final class PersoonDecorator {
 
     /**
      * Verwijderd een betrokkenheid van de persoon.
-     *
-     * @param verwijderdeBetrokkenheid
-     *            de betrokkenheid die verwijderd moet worden bij de persoon
+     * @param verwijderdeBetrokkenheid de betrokkenheid die verwijderd moet worden bij de persoon
      */
     public void verwijderBetrokkenheid(final BetrokkenheidDecorator verwijderdeBetrokkenheid) {
         final Betrokkenheid betrokkenheid = verwijderdeBetrokkenheid.getBetrokkenheid();
@@ -390,9 +354,7 @@ public final class PersoonDecorator {
      * Geeft de relatie terug waarmee de ouders van de persoon aan zijn persoonslijst is gekoppeld. De relatie is aan de
      * persoon gekoppeld dmv een {$link Betrokkenheid}. Het gaat om een ouder als de soort van een {@link Betrokkenheid}
      * {@link SoortBetrokkenheid#KIND} .
-     * 
-     * @return de relatie waarmee de ouders aan de persoonlijst is gekoppeld of null als deze relatie niet gevonden
-     *         wordt.
+     * @return de relatie waarmee de ouders aan de persoonlijst is gekoppeld of null als deze relatie niet gevonden wordt.
      */
     public Relatie getOuderRelatie() {
         Relatie resultaat = null;
@@ -415,15 +377,12 @@ public final class PersoonDecorator {
      * Laat de persoon vervallen. De volgende groepen worden hierbij vervallen
      * <UL>
      * <LI>{@link PersoonGeboorteHistorie}</LI>
-     * <LI>{@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie}</LI>
-     * <LI>{@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie}</LI>
-     * <LI>{@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie}</LI>
+     * <LI>{@link nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie}</LI>
+     * <LI>{@link nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie}</LI>
+     * <LI>{@link nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie}</LI>
      * </UL>
-     * 
-     * @param actieVervalTbvLeveringMuts
-     *            de actie verval tbv levering mutatie
-     * @throws IllegalStateException
-     *             als de controle of de persoon vervallen kan worden, niet is uitgevoerd.
+     * @param actieVervalTbvLeveringMuts de actie verval tbv levering mutatie
+     * @throws IllegalStateException als de controle of de persoon vervallen kan worden, niet is uitgevoerd.
      */
     public void laatVervallen(final BRPActie actieVervalTbvLeveringMuts) {
         if (!checkGedaanOpVerval) {
@@ -453,7 +412,6 @@ public final class PersoonDecorator {
     /**
      * Controleert of de persoon kan worden vervallen. Dit is het geval als de persoon niet het soort
      * {@link SoortPersoon#INGESCHREVENE} is.
-     * 
      * @return true als de persoon kan worden vervallen
      */
     public boolean kanVervallen() {

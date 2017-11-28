@@ -13,9 +13,4 @@ import nl.bzk.migratiebrp.isc.jbpm.command.CommandExecutor;
  */
 public interface CommandService extends CommandExecutor {
 
-    /**
-     * JMX Naam.
-     */
-    String JMX_NAME = "nl.bzk.migratiebrp.isc:name=COMMANDO";
-
 }

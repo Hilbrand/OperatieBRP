@@ -14,6 +14,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -27,14 +29,11 @@ import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AangifteAdreshoudingEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3FunctieAdresEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.testutils.VerplichteStapel;
 import nl.bzk.migratiebrp.ggo.viewer.service.DbService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.mgt.SecurityManager;
@@ -90,7 +89,7 @@ public class PermissionServiceTest {
         // login als een gebruiker van gemeente rotterdam
         login("rotterdam", "rotterdam");
 
-        final Long aNrOuder1 = 465L;
+        final String aNrOuder1 = "465";
         // maak een lo3 pl uit den haag
         final Lo3Persoonslijst lo3Persoonslijst = createLo3Persoonslijst(ROLE_DENHAAG, aNrOuder1, null, null, null);
         // maak een lo3 pl uit rotterdam
@@ -109,7 +108,7 @@ public class PermissionServiceTest {
         // login als een gebruiker van gemeente rotterdam
         login("rotterdam", "rotterdam");
 
-        final Long aNrOuder2 = 466L;
+        final String aNrOuder2 = "466";
         // maak een lo3 pl uit den haag
         final Lo3Persoonslijst lo3Persoonslijst = createLo3Persoonslijst(ROLE_DENHAAG, null, aNrOuder2, null, null);
         // maak een lo3 pl uit rotterdam
@@ -128,7 +127,7 @@ public class PermissionServiceTest {
         // login als een gebruiker van gemeente rotterdam
         login("rotterdam", "rotterdam");
 
-        final Long aNrHuwelijk = 467L;
+        final String aNrHuwelijk = "467";
         // maak een lo3 pl uit den haag
         final Lo3Persoonslijst lo3Persoonslijst = createLo3Persoonslijst(ROLE_DENHAAG, null, null, aNrHuwelijk, null);
         // maak een lo3 pl uit rotterdam
@@ -147,7 +146,7 @@ public class PermissionServiceTest {
         // login als een gebruiker van gemeente rotterdam
         login("rotterdam", "rotterdam");
 
-        final Long aNrKind = 468L;
+        final String aNrKind = "468";
         // maak een lo3 pl uit den haag
         final Lo3Persoonslijst lo3Persoonslijst = createLo3Persoonslijst(ROLE_DENHAAG, null, null, null, aNrKind);
         // maak een lo3 pl uit rotterdam
@@ -166,7 +165,7 @@ public class PermissionServiceTest {
         // login als een gebruiker van gemeente rotterdam
         login("rotterdam", "rotterdam");
 
-        final Long aNrOuder = 465L;
+        final String aNrOuder = "465";
         // maak een lo3 pl uit den haag
         final Lo3Persoonslijst lo3Persoonslijst = createLo3Persoonslijst(ROLE_DENHAAG, aNrOuder, null, null, null);
         // maak een lo3 pl uit den haag
@@ -178,8 +177,8 @@ public class PermissionServiceTest {
         when(dbService.haalLo3PersoonslijstUitLo3Bericht(lo3BerichtOuder)).thenReturn(lo3PersoonslijstOuder);
 
         assertFalse(
-            "User rotterdam should NOT have permission, because pl has NO relations in rotterdam",
-            permissionService.hasPermissionOnPl(lo3Persoonslijst));
+                "User rotterdam should NOT have permission, because pl has NO relations in rotterdam",
+                permissionService.hasPermissionOnPl(lo3Persoonslijst));
     }
 
     @Test
@@ -198,12 +197,11 @@ public class PermissionServiceTest {
     }
 
     private Lo3Persoonslijst createLo3Persoonslijst(
-        final String gemeenteVanInschrijving,
-        final Long aNrOuder1,
-        final Long aNrOuder2,
-        final Long aNrHuwelijk,
-        final Long aNrKind)
-    {
+            final String gemeenteVanInschrijving,
+            final String aNrOuder1,
+            final String aNrOuder2,
+            final String aNrHuwelijk,
+            final String aNrKind) {
         final Lo3PersoonslijstBuilder builder = new Lo3PersoonslijstBuilder();
         // Persoon
         builder.persoonStapel(VerplichteStapel.createPersoonStapel());
@@ -234,28 +232,28 @@ public class PermissionServiceTest {
         return builder.build();
     }
 
-    private Lo3Stapel<Lo3HuwelijkOfGpInhoud> createLo3Huwelijk(final Long aNrHuwelijk) {
+    private Lo3Stapel<Lo3HuwelijkOfGpInhoud> createLo3Huwelijk(final String aNrHuwelijk) {
         final List<Lo3Categorie<Lo3HuwelijkOfGpInhoud>> huwelijken = new ArrayList<>();
         final Lo3HuwelijkOfGpInhoud inhoud =
                 new Lo3HuwelijkOfGpInhoud(
-                    Lo3Long.wrap(aNrHuwelijk),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
+                        Lo3String.wrap(aNrHuwelijk),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
         final Lo3Historie historie = new Lo3Historie(null, new Lo3Datum(20120101), new Lo3Datum(20120101));
         final Lo3Documentatie documentatie =
                 new Lo3Documentatie(-3000, new Lo3GemeenteCode("0518"), Lo3String.wrap("Verblijf-Akte"), null, null, null, null, null);
@@ -267,31 +265,31 @@ public class PermissionServiceTest {
         final List<Lo3Categorie<Lo3VerblijfplaatsInhoud>> verblijfplaatsen = new ArrayList<>();
         final Lo3VerblijfplaatsInhoud inhoud =
                 new Lo3VerblijfplaatsInhoud(
-                    new Lo3GemeenteCode(gemeenteVanInschrijving),
-                    new Lo3Datum(20120101),
-                    Lo3FunctieAdresEnum.WOONADRES.asElement(),
-                    null,
-                    new Lo3Datum(20120101),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    Lo3String.wrap("locatieBeschrijving"),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    Lo3AangifteAdreshoudingEnum.AMBSTHALVE.asElement(),
-                    null);
+                        new Lo3GemeenteCode(gemeenteVanInschrijving),
+                        new Lo3Datum(20120101),
+                        Lo3FunctieAdresEnum.WOONADRES.asElement(),
+                        null,
+                        new Lo3Datum(20120101),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        Lo3String.wrap("locatieBeschrijving"),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        Lo3AangifteAdreshoudingEnum.AMBSTHALVE.asElement(),
+                        null);
         final Lo3Historie historie = new Lo3Historie(null, new Lo3Datum(20120101), new Lo3Datum(20120101));
         final Lo3Documentatie documentatie =
                 new Lo3Documentatie(-3000, new Lo3GemeenteCode(ROLE_DENHAAG), Lo3String.wrap("Verblijf-Akte"), null, null, null, null, null);
@@ -299,9 +297,9 @@ public class PermissionServiceTest {
         return new Lo3Stapel<>(verblijfplaatsen);
     }
 
-    private Lo3Stapel<Lo3KindInhoud> createLo3Kind(final long aNrKind) {
+    private Lo3Stapel<Lo3KindInhoud> createLo3Kind(final String aNrKind) {
         final List<Lo3Categorie<Lo3KindInhoud>> kids = new ArrayList<>();
-        final Lo3KindInhoud inhoud = new Lo3KindInhoud(Lo3Long.wrap(aNrKind), null, null, null, null, null, null, null, null);
+        final Lo3KindInhoud inhoud = new Lo3KindInhoud(Lo3String.wrap(aNrKind), null, null, null, null, null, null, null, null);
         final Lo3Historie historie = new Lo3Historie(null, new Lo3Datum(20120101), new Lo3Datum(20120101));
         final Lo3Documentatie documentatie =
                 new Lo3Documentatie(-3000, new Lo3GemeenteCode(ROLE_DENHAAG), Lo3String.wrap("Verblijf-Akte"), null, null, null, null, null);

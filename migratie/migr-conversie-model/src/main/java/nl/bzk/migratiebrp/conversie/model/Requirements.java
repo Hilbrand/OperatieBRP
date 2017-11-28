@@ -11,9 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Enumeratie van alle te implementeren requirements.
- *
  */
-@SuppressWarnings("checkstyle:multiplestringliterals")
 public enum Requirements {
 
     /**
@@ -346,8 +344,16 @@ public enum Requirements {
      * Land overlijden.
      */
     CGR08_LB03("CGR08-LB03", "Land overlijden"),
-
     /**
+     * Buitenlands persoonsnummer.
+     */
+    CGR73_LB01("CGR73-LB01", "Buitenlands persoonsnummer"),
+    /**
+     * Buitenlands persoonsnummer.
+     */
+    CGR73_BL01("CGR73-BL01", "Buitenlands persoonsnummer"),
+
+    /*
      * ========================= == CHP == =========================
      */
 
@@ -440,7 +446,6 @@ public enum Requirements {
 
     /**
      * Geef de waarde van code.
-     *
      * @return code
      */
     public String getCode() {
@@ -449,7 +454,6 @@ public enum Requirements {
 
     /**
      * Geef de waarde van omschrijving.
-     *
      * @return omschrijving
      */
     public String getOmschrijving() {

@@ -11,35 +11,30 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 /**
  * De BRP groepen die onderdeel zijn van het IST schema. Deze bevatten LO3 informatie zoals categorie, stapelnummer en
  * voorkomennummer.
- * 
  */
 public interface BrpIstGroepInhoud extends BrpGroepInhoud {
 
     /**
-     * Geef de waarde van categorie.
-     *
-     * @return categorie
+     * Geef de waarde van categorie van BrpIstGroepInhoud.
+     * @return de waarde van categorie van BrpIstGroepInhoud
      */
     Lo3CategorieEnum getCategorie();
 
     /**
-     * Geef de waarde van stapel.
-     *
-     * @return stapel nummer
+     * Geef de waarde van stapel van BrpIstGroepInhoud.
+     * @return de waarde van stapel van BrpIstGroepInhoud
      */
     int getStapel();
 
     /**
-     * Geef de waarde van voorkomen.
-     *
-     * @return voorkomen nummer
+     * Geef de waarde van voorkomen van BrpIstGroepInhoud.
+     * @return de waarde van voorkomen van BrpIstGroepInhoud
      */
     int getVoorkomen();
 
     /**
-     * Geef de waarde van standaard gegevens.
-     *
-     * @return de inhoud die voor alle IST-stapels standaard is
+     * Geef de waarde van standaard gegevens van BrpIstGroepInhoud.
+     * @return de waarde van standaard gegevens van BrpIstGroepInhoud
      */
     BrpIstStandaardGroepInhoud getStandaardGegevens();
 }

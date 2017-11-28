@@ -7,9 +7,11 @@
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.sql;
 
 import java.io.IOException;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
+
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
@@ -21,7 +23,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
  */
 public class IvNaarVoiscKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "iv_naarvoisc";
 
     /**
@@ -29,11 +33,11 @@ public class IvNaarVoiscKanaal extends LazyLoadingKanaal {
      */
     public IvNaarVoiscKanaal() {
         super(new Worker(),
-              new Configuration(
-                  "classpath:configuratie.xml",
-                  "classpath:infra-db-gbav.xml",
-                  "classpath:infra-db-isc.xml",
-                  "classpath:infra-db-voisc.xml"));
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-db-gbav.xml",
+                        "classpath:infra-db-isc.xml",
+                        "classpath:infra-db-voisc.xml"));
     }
 
     /**

@@ -1,1 +1,1 @@
-select mailboxpwd from voisc.lo3_mailbox where  instantiecode = '3000200' and mailboxpwd ='6&S+1AF+';
+select mailboxpwd from voisc.lo3_mailbox where  mailboxnr = '3000230' and mailboxpwd ='6&S+1AF+';

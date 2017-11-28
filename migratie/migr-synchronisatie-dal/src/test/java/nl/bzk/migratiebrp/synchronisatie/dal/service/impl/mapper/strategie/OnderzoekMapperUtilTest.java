@@ -8,24 +8,74 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;
 
 import static org.junit.Assert.assertEquals;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponent;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+
 import org.junit.Test;
 
 public class OnderzoekMapperUtilTest {
 
     @Test
-    public void testBepaalDbobject() throws Exception {
-        assertEquals(Element.PERSOON_GESLACHTSAANDUIDING_DATUMAANVANGGELDIGHEID, OnderzoekMapperUtil.bepaalDbobject(
-            new PersoonGeslachtsaanduidingHistorie(new Persoon(SoortPersoon.INGESCHREVENE), Geslachtsaanduiding.MAN),
-            OnderzoekMapperUtil.Historieveldnaam.AANVANG));
-        assertEquals(Element.PERSOON_GESLACHTSNAAMCOMPONENT_DATUMEINDEGELDIGHEID, OnderzoekMapperUtil.bepaalDbobject(
-            new PersoonGeslachtsnaamcomponentHistorie(new PersoonGeslachtsnaamcomponent(new Persoon(SoortPersoon.INGESCHREVENE), 1), "Stam"),
-            OnderzoekMapperUtil.Historieveldnaam.EINDE));
+    public void testBepaalElement() throws Exception {
+
+        // Eigen Persoon
+        final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
+        final PersoonSamengesteldeNaamHistorie samengesteldeNaamHistorie = new PersoonSamengesteldeNaamHistorie(persoon, "stam", false, false);
+        final PersoonIDHistorie idHistorie = new PersoonIDHistorie(persoon);
+
+        assertEquals(
+                Element.PERSOON_SAMENGESTELDENAAM_DATUMAANVANGGELDIGHEID,
+                OnderzoekMapperUtil.bepaalElement(samengesteldeNaamHistorie, OnderzoekMapperUtil.Historieveldnaam.AANVANG));
+        assertEquals(
+                Element.PERSOON_IDENTIFICATIENUMMERS_TIJDSTIPREGISTRATIE,
+                OnderzoekMapperUtil.bepaalElement(idHistorie, OnderzoekMapperUtil.Historieveldnaam.REGISTRATIE));
+
+        // Gerelateerde geregistreerde partner
+        assertEquals(
+                Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM_DATUMAANVANGGELDIGHEID,
+                OnderzoekMapperUtil.bepaalElement(
+                        samengesteldeNaamHistorie,
+                        OnderzoekMapperUtil.Historieveldnaam.AANVANG,
+                        Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON));
+        assertEquals(
+                Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_IDENTIFICATIENUMMERS_TIJDSTIPREGISTRATIE,
+                OnderzoekMapperUtil
+                        .bepaalElement(idHistorie, OnderzoekMapperUtil.Historieveldnaam.REGISTRATIE, Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON));
+
+        // Gerelateerde huwelijks partner
+        assertEquals(
+                Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_DATUMAANVANGGELDIGHEID,
+                OnderzoekMapperUtil.bepaalElement(
+                        samengesteldeNaamHistorie,
+                        OnderzoekMapperUtil.Historieveldnaam.AANVANG,
+                        Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON));
+        assertEquals(
+                Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_IDENTIFICATIENUMMERS_TIJDSTIPREGISTRATIE,
+                OnderzoekMapperUtil.bepaalElement(idHistorie, OnderzoekMapperUtil.Historieveldnaam.REGISTRATIE, Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON));
+
+        // Gerelateerde ouder
+        assertEquals(
+                Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_DATUMAANVANGGELDIGHEID,
+                OnderzoekMapperUtil.bepaalElement(
+                        samengesteldeNaamHistorie,
+                        OnderzoekMapperUtil.Historieveldnaam.AANVANG,
+                        Element.GERELATEERDEOUDER_PERSOON));
+        assertEquals(
+                Element.GERELATEERDEOUDER_PERSOON_IDENTIFICATIENUMMERS_TIJDSTIPREGISTRATIE,
+                OnderzoekMapperUtil.bepaalElement(idHistorie, OnderzoekMapperUtil.Historieveldnaam.REGISTRATIE, Element.GERELATEERDEOUDER_PERSOON));
+
+        // Gerelateerde kind
+        assertEquals(
+                Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_DATUMAANVANGGELDIGHEID,
+                OnderzoekMapperUtil.bepaalElement(
+                        samengesteldeNaamHistorie,
+                        OnderzoekMapperUtil.Historieveldnaam.AANVANG,
+                        Element.GERELATEERDEKIND_PERSOON));
+        assertEquals(
+                Element.GERELATEERDEKIND_PERSOON_IDENTIFICATIENUMMERS_TIJDSTIPREGISTRATIE,
+                OnderzoekMapperUtil.bepaalElement(idHistorie, OnderzoekMapperUtil.Historieveldnaam.REGISTRATIE, Element.GERELATEERDEKIND_PERSOON));
     }
 }

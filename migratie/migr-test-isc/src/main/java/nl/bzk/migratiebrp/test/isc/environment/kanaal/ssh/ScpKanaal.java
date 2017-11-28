@@ -10,11 +10,13 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 
@@ -31,8 +33,8 @@ public final class ScpKanaal extends AbstractSchKanaal {
     protected void doInSession(final Session session, final Bericht bericht) throws IOException, JSchException, KanaalException {
         final String[] regels = bericht.getInhoud().replaceAll("\r", "").split("\n");
         if (regels.length % 2 != 0) {
-            throw new KanaalException("Het input bericht moet bestaan uit dubbele regels. Eerste regel is de remote path, "
-                                      + "tweede regel is het lokale te kopieren bestand.");
+            throw new KanaalException(
+                    "Het input bericht moet bestaan uit dubbele regels. Eerste regel is de remote path, " + "tweede regel is het lokale te kopieren bestand.");
         }
 
         for (int i = 0; i < regels.length; i = i + 2) {
@@ -41,9 +43,8 @@ public final class ScpKanaal extends AbstractSchKanaal {
 
     }
 
-    private void verstuurBestand(final Session session, final String remotePath, final String localFileName) throws KanaalException, JSchException,
-        IOException
-    {
+    private void verstuurBestand(final Session session, final String remotePath, final String localFileName)
+            throws KanaalException, JSchException, IOException {
         final File localFile = new File(localFileName);
         if (!localFile.exists() || !localFile.isFile() || !localFile.canRead()) {
             throw new KanaalException("Lokaal bestand '" + localFileName + "' kan niet worden gelezen.");

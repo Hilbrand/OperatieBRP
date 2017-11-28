@@ -14,7 +14,6 @@ import org.junit.Test;
 
 /**
  * Test het contract van Lo3LandCode.
- * 
  */
 public class Lo3LandCodeTest {
 

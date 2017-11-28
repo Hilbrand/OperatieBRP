@@ -9,13 +9,15 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 import java.io.Serializable;
 import nl.bzk.migratiebrp.bericht.model.lo3.AbstractCategorieGebaseerdParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3EindBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 
 /**
  * Pf01.
  */
-public final class Pf01Bericht extends AbstractCategorieGebaseerdParsedLo3Bericht implements Lo3Bericht, Serializable {
+public final class Pf01Bericht extends AbstractCategorieGebaseerdParsedLo3Bericht implements Lo3Bericht, Lo3EindBericht, Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Lo3Header HEADER = new Lo3Header(Lo3HeaderVeld.RANDOM_KEY, Lo3HeaderVeld.BERICHTNUMMER);
@@ -24,14 +26,12 @@ public final class Pf01Bericht extends AbstractCategorieGebaseerdParsedLo3Berich
      * Default constructor.
      */
     public Pf01Bericht() {
-        super(HEADER, "Pf01", null);
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Pf01", null);
     }
 
     /**
      * Convenience constructor.
-     *
-     * @param correlationId
-     *            correlation id
+     * @param correlationId correlation id
      */
     public Pf01Bericht(final String correlationId) {
         this();

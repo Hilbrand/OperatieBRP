@@ -27,6 +27,7 @@
     <property name="verzendendePartij" column="VERZENDENDE_PARTIJ" />
     <property name="ontvangendePartij" column="ONTVANGENDE_PARTIJ" />
     <property name="msSequenceNumber" column="MS_SEQUENCE_NUMBER" />
+    <property name="requestNonReceipt" column="REQUEST_NON_RECEIPT" />
     <property name="actie" column="ACTIE" />
     <property name="indicatieGeteld" column="INDICATIE_GETELD" />
   </class>

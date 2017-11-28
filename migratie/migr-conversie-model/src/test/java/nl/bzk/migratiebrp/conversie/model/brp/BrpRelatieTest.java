@@ -14,40 +14,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpRelatie.Builder;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoudTest;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstRelatieGroepInhoudTest;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpRelatieInhoudTest;
-
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpRelatieInhoudTestUtil;
 import org.junit.Test;
 
 public class BrpRelatieTest {
 
     public static BrpRelatie createOuderRelatieZonderOuders() {
-        BrpBetrokkenheid ik = BrpBetrokkenheidTest.maakBetrokkenheidINum(BrpSoortBetrokkenheidCode.KIND, BrpIdentificatienummersInhoudTest.createStapel());
-        return new BrpRelatie(
-            BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING,
-            BrpSoortBetrokkenheidCode.OUDER,
-            ik,
-            new ArrayList<BrpBetrokkenheid>(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
-    }
-
-    public static BrpRelatie createKindRelatie() {
-        BrpBetrokkenheid ik = BrpBetrokkenheidTest.maakBetrokkenheidINum(BrpSoortBetrokkenheidCode.KIND, BrpIdentificatienummersInhoudTest.createStapel());
+        final BrpBetrokkenheid ik =
+                BrpBetrokkenheidTest.maakBetrokkenheidINum(BrpSoortBetrokkenheidCode.KIND, BrpIdentificatienummersInhoudTest.createStapel());
         return new BrpRelatie(
                 BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING,
-                BrpSoortBetrokkenheidCode.KIND,
+                BrpSoortBetrokkenheidCode.OUDER,
                 ik,
-                new ArrayList<BrpBetrokkenheid>(),
+                new ArrayList<>(),
                 null,
                 null,
                 null,
@@ -56,14 +40,46 @@ public class BrpRelatieTest {
                 null);
     }
 
+    public static BrpRelatie createKindRelatie() {
+        final BrpBetrokkenheid ik =
+                BrpBetrokkenheidTest.maakBetrokkenheidINum(BrpSoortBetrokkenheidCode.KIND, BrpIdentificatienummersInhoudTest.createStapel());
+        return new BrpRelatie(
+                BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING,
+                BrpSoortBetrokkenheidCode.KIND,
+                ik,
+                new ArrayList<>(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
 
     public static BrpRelatie createHuwelijkRelatie() {
-        BrpBetrokkenheid ik = BrpBetrokkenheidTest.maakBetrokkenheidINum(BrpSoortBetrokkenheidCode.KIND, BrpIdentificatienummersInhoudTest.createStapel());
+        final BrpBetrokkenheid ik =
+                BrpBetrokkenheidTest.maakBetrokkenheidINum(BrpSoortBetrokkenheidCode.KIND, BrpIdentificatienummersInhoudTest.createStapel());
         return new BrpRelatie(
                 BrpSoortRelatieCode.HUWELIJK,
                 BrpSoortBetrokkenheidCode.PARTNER,
                 ik,
-                new ArrayList<BrpBetrokkenheid>(),
+                new ArrayList<>(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    public static BrpRelatie createPartnerschapRelatie() {
+        final BrpBetrokkenheid ik =
+                BrpBetrokkenheidTest.maakBetrokkenheidINum(BrpSoortBetrokkenheidCode.KIND, BrpIdentificatienummersInhoudTest.createStapel());
+        return new BrpRelatie(
+                BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP,
+                BrpSoortBetrokkenheidCode.PARTNER,
+                ik,
+                new ArrayList<>(),
                 null,
                 null,
                 null,
@@ -73,7 +89,7 @@ public class BrpRelatieTest {
     }
 
     public static List<BrpRelatie> createLegeOuderRelatie() {
-        List<BrpRelatie> result = new ArrayList<>();
+        final List<BrpRelatie> result = new ArrayList<>();
         result.add(createOuderRelatieZonderOuders());
         return result;
     }
@@ -81,31 +97,31 @@ public class BrpRelatieTest {
     @Test(expected = NullPointerException.class)
     public void testConstructorSoortRelatieNull() {
         new BrpRelatie(
-            null,
-            BrpSoortBetrokkenheidCode.OUDER,
-            BrpBetrokkenheidTest.maakBetrokkenheid(BrpSoortBetrokkenheidCode.KIND),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+                null,
+                BrpSoortBetrokkenheidCode.OUDER,
+                BrpBetrokkenheidTest.maakBetrokkenheid(BrpSoortBetrokkenheidCode.KIND),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testConstructorRolCodeNull() {
         new BrpRelatie(
-            BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING,
-            null,
-            BrpBetrokkenheidTest.maakBetrokkenheid(BrpSoortBetrokkenheidCode.KIND),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+                BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING,
+                null,
+                BrpBetrokkenheidTest.maakBetrokkenheid(BrpSoortBetrokkenheidCode.KIND),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -115,37 +131,37 @@ public class BrpRelatieTest {
 
     @Test(expected = NullPointerException.class)
     public void testConstructorMetBuilderSoortRelatieNull() {
-        Map<Long, BrpActie> actieCache = new HashMap<>();
-        BrpRelatie.Builder builder = new Builder(null, BrpSoortBetrokkenheidCode.OUDER, actieCache);
+        final Map<Long, BrpActie> actieCache = new HashMap<>();
+        final BrpRelatie.Builder builder = new Builder(12L, null, BrpSoortBetrokkenheidCode.OUDER, actieCache);
         builder.build();
     }
 
     @Test
     public void testConstructorMetBuilder() {
-        Map<Long, BrpActie> actieCache = new HashMap<>();
-        BrpRelatie.Builder b = new Builder(BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, BrpSoortBetrokkenheidCode.KIND, actieCache);
-        BrpRelatie result = b.build();
-        BrpRelatie.Builder b2 = new Builder(result, actieCache);
+        final Map<Long, BrpActie> actieCache = new HashMap<>();
+        final BrpRelatie.Builder b = new Builder(12L, BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, BrpSoortBetrokkenheidCode.KIND, actieCache);
+        final BrpRelatie result = b.build();
+        final BrpRelatie.Builder b2 = new Builder(result, result.getRelatieId(), actieCache);
         assertTrue(result.equals(b2.build()));
         result.valideer();
     }
 
     @Test
     public void testEquals() {
-        Map<Long, BrpActie> actieCache = new HashMap<>();
-        BrpRelatie.Builder b = new Builder(BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, BrpSoortBetrokkenheidCode.KIND, actieCache);
+        final Map<Long, BrpActie> actieCache = new HashMap<>();
+        BrpRelatie.Builder b = new Builder(12L, BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, BrpSoortBetrokkenheidCode.KIND, actieCache);
         b =
-                b.relatieStapel(BrpRelatieInhoudTest.createStapel())
-                 .betrokkenheden(BrpBetrokkenheidTest.maaklijstMetBetrokkenheden(2,false,false))
-                 .istOuder1Stapel(BrpIstRelatieGroepInhoudTest.createStapel())
-                 .istOuder2Stapel(BrpIstRelatieGroepInhoudTest.createStapel())
-                 .istHuwelijkOfGpStapel(null)
-                 .istKindStapel(null)
-                 .istGezagsverhoudingStapel(null);
+                b.relatieStapel(BrpRelatieInhoudTestUtil.createStapel())
+                        .betrokkenheden(BrpBetrokkenheidTest.maaklijstMetBetrokkenheden(2, false, false))
+                        .istOuder1Stapel(BrpIstRelatieGroepInhoudTest.createStapel())
+                        .istOuder2Stapel(BrpIstRelatieGroepInhoudTest.createStapel())
+                        .istHuwelijkOfGpStapel(null)
+                        .istKindStapel(null)
+                        .istGezagsverhoudingStapel(null);
 
-        BrpRelatie result = b.build();
-        BrpRelatie.Builder b2 = new Builder(result, actieCache);
-        BrpRelatie result2 = b2.build();
+        final BrpRelatie result = b.build();
+        final BrpRelatie.Builder b2 = new Builder(result, result.getRelatieId(), actieCache);
+        final BrpRelatie result2 = b2.build();
         assertTrue(result.equals(result2));
         assertTrue(result.equals(result));
         assertFalse(result.equals(geefZelfdeTerug(result2.getBetrokkenheden())));
@@ -155,23 +171,22 @@ public class BrpRelatieTest {
 
     @Test(expected = IllegalStateException.class)
     public void testBuilderOnbekendeBetrokkenheid() {
-        Map<Long, BrpActie> actieCache = new HashMap<>();
-        BrpSoortBetrokkenheidCode code = new BrpSoortBetrokkenheidCode("Z","ONBEKEND");
-        BrpRelatie.Builder b = new Builder(BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, code, actieCache);
-        b = b.relatieStapel(BrpRelatieInhoudTest.createStapel());
+        final Map<Long, BrpActie> actieCache = new HashMap<>();
+        final BrpSoortBetrokkenheidCode code = new BrpSoortBetrokkenheidCode("Z", "ONBEKEND");
+        BrpRelatie.Builder b = new Builder(12L, BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, code, actieCache);
+        b = b.relatieStapel(BrpRelatieInhoudTestUtil.createStapel());
         b.build();
     }
 
     @Test
     public void testBuilderOuder() {
-        Map<Long, BrpActie> actieCache = new HashMap<>();
-        BrpRelatie.Builder b = new Builder(BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, BrpSoortBetrokkenheidCode.OUDER, actieCache);
-        b = b.relatieStapel(BrpRelatieInhoudTest.createStapel())
-             .betrokkenheden(BrpBetrokkenheidTest.maaklijstMetBetrokkenheden(3,true,true));
-        BrpRelatie result = b.build();
+        final Map<Long, BrpActie> actieCache = new HashMap<>();
+        BrpRelatie.Builder b = new Builder(12L, BrpSoortRelatieCode.FAMILIERECHTELIJKE_BETREKKING, BrpSoortBetrokkenheidCode.OUDER, actieCache);
+        b = b.relatieStapel(BrpRelatieInhoudTestUtil.createStapel()).betrokkenheden(BrpBetrokkenheidTest.maaklijstMetBetrokkenheden(3, true, true));
+        b.build();
     }
 
-    private Object geefZelfdeTerug(Object iets) {
+    private Object geefZelfdeTerug(final Object iets) {
         return iets;
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="uc301" width="1547" height="2449">
+<root-container name="uc301" width="1525" height="2449">
   <node name="1. Ontvang Ii01-bericht" x="348" y="49" width="217" height="37">
     <edge>
       <label x="5" y="-10"/>

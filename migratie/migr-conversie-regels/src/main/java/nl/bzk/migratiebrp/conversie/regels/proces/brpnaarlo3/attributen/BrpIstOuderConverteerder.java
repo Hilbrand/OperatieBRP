@@ -22,16 +22,25 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpAttribuutConverteerder.Lo3GemeenteLand;
-import org.springframework.stereotype.Component;
 
 /**
  * Converteert een Brp Ist ouder stapel naar een {@link Lo3OuderInhoud}.
  */
-@Component
-public class BrpIstOuderConverteerder extends BrpIstAbstractConverteerder<BrpIstRelatieGroepInhoud> {
+public class BrpIstOuderConverteerder extends BrpIstAbstractConverteerder {
+    /**
+     * Constructor.
+     * @param attribuutConverteerder attribuut converteerder
+     */
+    public BrpIstOuderConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+        super(attribuutConverteerder);
+    }
 
-    @Override
-    public final Lo3Stapel<Lo3OuderInhoud> converteer(final BrpStapel<BrpIstRelatieGroepInhoud> brpStapel) {
+    /**
+     * Converteert de IST Ouder naar LO3.
+     * @param brpStapel de {@link BrpStapel} met een {@link BrpIstRelatieGroepInhoud}
+     * @return een {@link Lo3Stapel} met een {@link Lo3OuderInhoud}
+     */
+    public final Lo3Stapel<Lo3OuderInhoud> converteerOuder(final BrpStapel<BrpIstRelatieGroepInhoud> brpStapel) {
         if (brpStapel == null) {
             return null;
         }
@@ -42,18 +51,18 @@ public class BrpIstOuderConverteerder extends BrpIstAbstractConverteerder<BrpIst
             final Lo3OuderInhoud.Builder builder = new Lo3OuderInhoud.Builder();
 
             // 1-op-1 conversie
-            builder.anummer(getConverteerder().converteerAdministratieNummer(inhoud.getAnummer()));
-            builder.burgerservicenummer(getConverteerder().converteerBurgerservicenummer(inhoud.getBsn()));
-            builder.geslachtsnaam(getConverteerder().converteerString(inhoud.getGeslachtsnaamstam()));
-            builder.voornamen(getConverteerder().converteerString(inhoud.getVoornamen()));
+            builder.anummer(getAttribuutConverteerder().converteerAdministratieNummer(inhoud.getAnummer()));
+            builder.burgerservicenummer(getAttribuutConverteerder().converteerBurgerservicenummer(inhoud.getBsn()));
+            builder.geslachtsnaam(getAttribuutConverteerder().converteerString(inhoud.getGeslachtsnaamstam()));
+            builder.voornamen(getAttribuutConverteerder().converteerString(inhoud.getVoornamen()));
 
             // Conversie mbhv converteerder
-            builder.voorvoegselGeslachtsnaam(getConverteerder().converteerVoorvoegsel(inhoud.getVoorvoegsel(), inhoud.getScheidingsteken()));
-            builder.geslachtsaanduiding(getConverteerder().converteerGeslachtsaanduiding(inhoud.getGeslachtsaanduidingCode()));
+            builder.voorvoegselGeslachtsnaam(getAttribuutConverteerder().converteerVoorvoegsel(inhoud.getVoorvoegsel(), inhoud.getScheidingsteken()));
+            builder.geslachtsaanduiding(getAttribuutConverteerder().converteerGeslachtsaanduiding(inhoud.getGeslachtsaanduidingCode()));
 
             // Conversie van datums
-            builder.familierechtelijkeBetrekking(getConverteerder().converteerDatum(inhoud.getRubriek6210DatumIngangFamilierechtelijkeBetrekking()));
-            builder.geboortedatum(getConverteerder().converteerDatum(inhoud.getDatumGeboorte()));
+            builder.familierechtelijkeBetrekking(getAttribuutConverteerder().converteerDatum(inhoud.getRubriek6210DatumIngangFamilierechtelijkeBetrekking()));
+            builder.geboortedatum(getAttribuutConverteerder().converteerDatum(inhoud.getDatumGeboorte()));
 
             // Conversie specifiek
             vulGeboortePlaatsLand(builder, inhoud);
@@ -63,11 +72,11 @@ public class BrpIstOuderConverteerder extends BrpIstAbstractConverteerder<BrpIst
 
             final Lo3Categorie<Lo3OuderInhoud> voorkomen =
                     new Lo3Categorie<>(
-                        builder.build(),
-                        maakDocumentatie(standaardGegevens),
-                        maakOnderzoek(standaardGegevens),
-                        maakHistorie(standaardGegevens),
-                        maakHerkomst(standaardGegevens));
+                            builder.build(),
+                            maakDocumentatie(standaardGegevens),
+                            maakOnderzoek(standaardGegevens),
+                            maakHistorie(standaardGegevens),
+                            maakHerkomst(standaardGegevens));
 
             final Lo3Categorie<Lo3OuderInhoud> voorkomenMetOnderzoek = toevoegenOnderzoekAanElementen(voorkomen);
             voorkomens.add(voorkomenMetOnderzoek);
@@ -85,9 +94,9 @@ public class BrpIstOuderConverteerder extends BrpIstAbstractConverteerder<BrpIst
     }
 
     private void vulAdellijkeTitelPredikaat(final Lo3OuderInhoud.Builder builder, final BrpIstRelatieGroepInhoud inhoud) {
-        builder.adellijkeTitelPredikaatCode(getConverteerder().converteerAdellijkeTitelPredikaatCode(
-            inhoud.getAdellijkeTitelCode(),
-            inhoud.getPredicaatCode()));
+        builder.adellijkeTitelPredikaatCode(getAttribuutConverteerder().converteerAdellijkeTitelPredikaatCode(
+                inhoud.getAdellijkeTitelCode(),
+                inhoud.getPredicaatCode()));
 
     }
 

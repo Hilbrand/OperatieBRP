@@ -10,23 +10,22 @@
  */
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingEuropeesKiesrecht;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingUitgeslotenKiesrecht;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van LO3 categorie Kiesrecht.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class Lo3KiesrechtInhoud implements Lo3CategorieInhoud {
 
@@ -56,30 +55,20 @@ public final class Lo3KiesrechtInhoud implements Lo3CategorieInhoud {
 
     /**
      * Maakt een Lo3KiesrechtInhoud.
-     * 
-     * @param aanduidingEuropeesKiesrecht
-     *            aanduiding europees kiesrecht
-     * @param datumEuropeesKiesrecht
-     *            datum europees kiesrect
-     * @param einddatumUitsluitingEuropeesKiesrecht
-     *            einddatum uitsluiting europees kiesrecht
-     * @param aanduidingUitgeslotenKiesrecht
-     *            aanduiding uitgesloten kiesrecht
-     * @param einddatumUitsluitingKiesrecht
-     *            einddatum uitsluiting kiesrecht
-     * @throws IllegalArgumentException
-     *             als niet aan inhoudelijke voorwaarden is voldaan
-     *             {@link Lo3CategorieValidator#valideerCategorie13Kiesrecht}
-     * @throws NullPointerException
-     *             als verplichte velden niet aanwezig zijn {@link Lo3CategorieValidator#valideerCategorie13Kiesrecht}
+     * @param aanduidingEuropeesKiesrecht aanduiding europees kiesrecht
+     * @param datumEuropeesKiesrecht datum europees kiesrect
+     * @param einddatumUitsluitingEuropeesKiesrecht einddatum uitsluiting europees kiesrecht
+     * @param aanduidingUitgeslotenKiesrecht aanduiding uitgesloten kiesrecht
+     * @param einddatumUitsluitingKiesrecht einddatum uitsluiting kiesrecht
+     * @throws IllegalArgumentException als niet aan inhoudelijke voorwaarden is voldaan Lo3CategorieValidator#valideerCategorie13Kiesrecht
+     * @throws NullPointerException als verplichte velden niet aanwezig zijn Lo3CategorieValidator#valideerCategorie13Kiesrecht
      */
     public Lo3KiesrechtInhoud(
-        @Element(name = "aanduidingEuropeesKiesrecht", required = false) final Lo3AanduidingEuropeesKiesrecht aanduidingEuropeesKiesrecht,
-        @Element(name = "datumEuropeesKiesrecht", required = false) final Lo3Datum datumEuropeesKiesrecht,
-        @Element(name = "einddatumUitsluitingEuropeesKiesrecht", required = false) final Lo3Datum einddatumUitsluitingEuropeesKiesrecht,
-        @Element(name = "aanduidingUitgeslotenKiesrecht", required = false) final Lo3AanduidingUitgeslotenKiesrecht aanduidingUitgeslotenKiesrecht,
-        @Element(name = "einddatumUitsluitingKiesrecht", required = false) final Lo3Datum einddatumUitsluitingKiesrecht)
-    {
+            @Element(name = "aanduidingEuropeesKiesrecht", required = false) final Lo3AanduidingEuropeesKiesrecht aanduidingEuropeesKiesrecht,
+            @Element(name = "datumEuropeesKiesrecht", required = false) final Lo3Datum datumEuropeesKiesrecht,
+            @Element(name = "einddatumUitsluitingEuropeesKiesrecht", required = false) final Lo3Datum einddatumUitsluitingEuropeesKiesrecht,
+            @Element(name = "aanduidingUitgeslotenKiesrecht", required = false) final Lo3AanduidingUitgeslotenKiesrecht aanduidingUitgeslotenKiesrecht,
+            @Element(name = "einddatumUitsluitingKiesrecht", required = false) final Lo3Datum einddatumUitsluitingKiesrecht) {
         this.aanduidingEuropeesKiesrecht = aanduidingEuropeesKiesrecht;
         this.datumEuropeesKiesrecht = datumEuropeesKiesrecht;
         this.einddatumUitsluitingEuropeesKiesrecht = einddatumUitsluitingEuropeesKiesrecht;
@@ -94,54 +83,49 @@ public final class Lo3KiesrechtInhoud implements Lo3CategorieInhoud {
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(
-            aanduidingEuropeesKiesrecht,
-            datumEuropeesKiesrecht,
-            einddatumUitsluitingEuropeesKiesrecht,
-            aanduidingUitgeslotenKiesrecht,
-            einddatumUitsluitingKiesrecht);
+        return !Lo3Validatie.isEenParameterGevuld(
+                aanduidingEuropeesKiesrecht,
+                datumEuropeesKiesrecht,
+                einddatumUitsluitingEuropeesKiesrecht,
+                aanduidingUitgeslotenKiesrecht,
+                einddatumUitsluitingKiesrecht);
     }
 
     /**
-     * Geef de waarde van aanduiding europees kiesrecht.
-     *
-     * @return aanduiding europees kiesrecht
+     * Geef de waarde van aanduiding europees kiesrecht van Lo3KiesrechtInhoud.
+     * @return de waarde van aanduiding europees kiesrecht van Lo3KiesrechtInhoud
      */
     public Lo3AanduidingEuropeesKiesrecht getAanduidingEuropeesKiesrecht() {
         return aanduidingEuropeesKiesrecht;
     }
 
     /**
-     * Geef de waarde van aanduiding uitgesloten kiesrecht.
-     *
-     * @return aanduiding uitgesloten kiesrecht
+     * Geef de waarde van aanduiding uitgesloten kiesrecht van Lo3KiesrechtInhoud.
+     * @return de waarde van aanduiding uitgesloten kiesrecht van Lo3KiesrechtInhoud
      */
     public Lo3AanduidingUitgeslotenKiesrecht getAanduidingUitgeslotenKiesrecht() {
         return aanduidingUitgeslotenKiesrecht;
     }
 
     /**
-     * Geef de waarde van datum europees kiesrecht.
-     *
-     * @return datum europees kiesrecht
+     * Geef de waarde van datum europees kiesrecht van Lo3KiesrechtInhoud.
+     * @return de waarde van datum europees kiesrecht van Lo3KiesrechtInhoud
      */
     public Lo3Datum getDatumEuropeesKiesrecht() {
         return datumEuropeesKiesrecht;
     }
 
     /**
-     * Geef de waarde van einddatum uitsluiting europees kiesrecht.
-     *
-     * @return einddatum uitsluiting europees kiesrecht
+     * Geef de waarde van einddatum uitsluiting europees kiesrecht van Lo3KiesrechtInhoud.
+     * @return de waarde van einddatum uitsluiting europees kiesrecht van Lo3KiesrechtInhoud
      */
     public Lo3Datum getEinddatumUitsluitingEuropeesKiesrecht() {
         return einddatumUitsluitingEuropeesKiesrecht;
     }
 
     /**
-     * Geef de waarde van einddatum uitsluiting kiesrecht.
-     *
-     * @return einddatum uitsluiting kiesrecht
+     * Geef de waarde van einddatum uitsluiting kiesrecht van Lo3KiesrechtInhoud.
+     * @return de waarde van einddatum uitsluiting kiesrecht van Lo3KiesrechtInhoud
      */
     public Lo3Datum getEinddatumUitsluitingKiesrecht() {
         return einddatumUitsluitingKiesrecht;
@@ -157,33 +141,33 @@ public final class Lo3KiesrechtInhoud implements Lo3CategorieInhoud {
         }
         final Lo3KiesrechtInhoud castOther = (Lo3KiesrechtInhoud) other;
         return new EqualsBuilder().append(aanduidingEuropeesKiesrecht, castOther.aanduidingEuropeesKiesrecht)
-                                  .append(datumEuropeesKiesrecht, castOther.datumEuropeesKiesrecht)
-                                  .append(einddatumUitsluitingEuropeesKiesrecht, castOther.einddatumUitsluitingEuropeesKiesrecht)
-                                  .append(aanduidingUitgeslotenKiesrecht, castOther.aanduidingUitgeslotenKiesrecht)
-                                  .append(einddatumUitsluitingKiesrecht, castOther.einddatumUitsluitingKiesrecht)
-                                  .isEquals();
+                .append(datumEuropeesKiesrecht, castOther.datumEuropeesKiesrecht)
+                .append(einddatumUitsluitingEuropeesKiesrecht, castOther.einddatumUitsluitingEuropeesKiesrecht)
+                .append(aanduidingUitgeslotenKiesrecht, castOther.aanduidingUitgeslotenKiesrecht)
+                .append(einddatumUitsluitingKiesrecht, castOther.einddatumUitsluitingKiesrecht)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(aanduidingEuropeesKiesrecht)
-                                    .append(datumEuropeesKiesrecht)
-                                    .append(einddatumUitsluitingEuropeesKiesrecht)
-                                    .append(aanduidingUitgeslotenKiesrecht)
-                                    .append(einddatumUitsluitingKiesrecht)
-                                    .toHashCode();
+                .append(datumEuropeesKiesrecht)
+                .append(einddatumUitsluitingEuropeesKiesrecht)
+                .append(aanduidingUitgeslotenKiesrecht)
+                .append(einddatumUitsluitingKiesrecht)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("aanduidingEuropeesKiesrecht", aanduidingEuropeesKiesrecht)
-                                                                          .append("datumEuropeesKiesrecht", datumEuropeesKiesrecht)
-                                                                          .append(
-                                                                              "einddatumUitsluitingEuropeesKiesrecht",
-                                                                              einddatumUitsluitingEuropeesKiesrecht)
-                                                                          .append("aanduidingUitgeslotenKiesrecht", aanduidingUitgeslotenKiesrecht)
-                                                                          .append("einddatumUitsluitingKiesrecht", einddatumUitsluitingKiesrecht)
-                                                                          .toString();
+                .append("datumEuropeesKiesrecht", datumEuropeesKiesrecht)
+                .append(
+                        "einddatumUitsluitingEuropeesKiesrecht",
+                        einddatumUitsluitingEuropeesKiesrecht)
+                .append("aanduidingUitgeslotenKiesrecht", aanduidingUitgeslotenKiesrecht)
+                .append("einddatumUitsluitingKiesrecht", einddatumUitsluitingKiesrecht)
+                .toString();
     }
 
     /**
@@ -200,13 +184,12 @@ public final class Lo3KiesrechtInhoud implements Lo3CategorieInhoud {
          * Maak een lege builder.
          */
         public Builder() {
+            //lege builder
         }
 
         /**
          * Maak een buildeer gevud met de gegeven inhoud.
-         * 
-         * @param inhoud
-         *            inhoud
+         * @param inhoud inhoud
          */
         public Builder(final Lo3KiesrechtInhoud inhoud) {
             aanduidingEuropeesKiesrecht = inhoud.aanduidingEuropeesKiesrecht;
@@ -218,63 +201,52 @@ public final class Lo3KiesrechtInhoud implements Lo3CategorieInhoud {
 
         /**
          * Maak de inhoud.
-         * 
          * @return inhoud
          */
         public Lo3KiesrechtInhoud build() {
             return new Lo3KiesrechtInhoud(
-                aanduidingEuropeesKiesrecht,
-                datumEuropeesKiesrecht,
-                einddatumUitsluitingEuropeesKiesrecht,
-                aanduidingUitgeslotenKiesrecht,
-                einddatumUitsluitingKiesrecht);
+                    aanduidingEuropeesKiesrecht,
+                    datumEuropeesKiesrecht,
+                    einddatumUitsluitingEuropeesKiesrecht,
+                    aanduidingUitgeslotenKiesrecht,
+                    einddatumUitsluitingKiesrecht);
         }
 
         /**
-         * Zet de waarde van aanduiding europees kiesrecht.
-         *
-         * @param aanduidingEuropeesKiesrecht
-         *            the aanduidingEuropeesKiesrecht to set
+         * Zet de waarden voor aanduiding europees kiesrecht van Lo3KiesrechtInhoud.
+         * @param aanduidingEuropeesKiesrecht de nieuwe waarde voor aanduiding europees kiesrecht van Lo3KiesrechtInhoud
          */
         public void setAanduidingEuropeesKiesrecht(final Lo3AanduidingEuropeesKiesrecht aanduidingEuropeesKiesrecht) {
             this.aanduidingEuropeesKiesrecht = aanduidingEuropeesKiesrecht;
         }
 
         /**
-         * Zet de waarde van datum europees kiesrecht.
-         *
-         * @param datumEuropeesKiesrecht
-         *            the datumEuropeesKiesrecht to set
+         * Zet de waarden voor datum europees kiesrecht van Lo3KiesrechtInhoud.
+         * @param datumEuropeesKiesrecht de nieuwe waarde voor datum europees kiesrecht van Lo3KiesrechtInhoud
          */
         public void setDatumEuropeesKiesrecht(final Lo3Datum datumEuropeesKiesrecht) {
             this.datumEuropeesKiesrecht = datumEuropeesKiesrecht;
         }
 
         /**
-         * Zet de waarde van einddatum uitsluiting europees kiesrecht.
-         *
-         * @param einddatumUitsluitingEuropeesKiesrecht
-         *            the einddatumUitsluitingEuropeesKiesrecht to set
+         * Zet de waarden voor einddatum uitsluiting europees kiesrecht van Lo3KiesrechtInhoud.
+         * @param einddatumUitsluitingEuropeesKiesrecht de nieuwe waarde voor einddatum uitsluiting europees kiesrecht van Lo3KiesrechtInhoud
          */
         public void setEinddatumUitsluitingEuropeesKiesrecht(final Lo3Datum einddatumUitsluitingEuropeesKiesrecht) {
             this.einddatumUitsluitingEuropeesKiesrecht = einddatumUitsluitingEuropeesKiesrecht;
         }
 
         /**
-         * Zet de waarde van aanduiding uitgesloten kiesrecht.
-         *
-         * @param aanduidingUitgeslotenKiesrecht
-         *            the aanduidingUitgeslotenKiesrecht to set
+         * Zet de waarden voor aanduiding uitgesloten kiesrecht van Lo3KiesrechtInhoud.
+         * @param aanduidingUitgeslotenKiesrecht de nieuwe waarde voor aanduiding uitgesloten kiesrecht van Lo3KiesrechtInhoud
          */
         public void setAanduidingUitgeslotenKiesrecht(final Lo3AanduidingUitgeslotenKiesrecht aanduidingUitgeslotenKiesrecht) {
             this.aanduidingUitgeslotenKiesrecht = aanduidingUitgeslotenKiesrecht;
         }
 
         /**
-         * Zet de waarde van einddatum uitsluiting kiesrecht.
-         *
-         * @param einddatumUitsluitingKiesrecht
-         *            the einddatumUitsluitingKiesrecht to set
+         * Zet de waarden voor einddatum uitsluiting kiesrecht van Lo3KiesrechtInhoud.
+         * @param einddatumUitsluitingKiesrecht de nieuwe waarde voor einddatum uitsluiting kiesrecht van Lo3KiesrechtInhoud
          */
         public void setEinddatumUitsluitingKiesrecht(final Lo3Datum einddatumUitsluitingKiesrecht) {
             this.einddatumUitsluitingKiesrecht = einddatumUitsluitingKiesrecht;

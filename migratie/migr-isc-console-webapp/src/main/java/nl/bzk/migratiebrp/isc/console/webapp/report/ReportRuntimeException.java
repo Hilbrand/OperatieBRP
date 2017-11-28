@@ -14,9 +14,7 @@ public class ReportRuntimeException extends RuntimeException {
 
     /**
      * Constructor.
-     *
-     * @param message
-     *            melding
+     * @param message melding
      */
     public ReportRuntimeException(final String message) {
         super(message);
@@ -24,11 +22,8 @@ public class ReportRuntimeException extends RuntimeException {
 
     /**
      * Constructor.
-     *
-     * @param message
-     *            melding
-     * @param t
-     *            oorzaak
+     * @param message melding
+     * @param t oorzaak
      */
     public ReportRuntimeException(final String message, final Throwable t) {
         super(message, t);

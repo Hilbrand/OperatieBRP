@@ -20,11 +20,8 @@ public class ViewerResponse {
 
     /**
      * Constructor.
-     * 
-     * @param persoonslijstGroepen
-     *            De lijst met persoonslijstgroepen.
-     * @param list
-     *            De lijst met foutRegels.
+     * @param persoonslijstGroepen De lijst met persoonslijstgroepen.
+     * @param list De lijst met foutRegels.
      */
     public ViewerResponse(final List<GgoPersoonslijstGroep> persoonslijstGroepen, final List<GgoFoutRegel> list) {
         this.persoonslijstGroepen = persoonslijstGroepen;
@@ -33,7 +30,6 @@ public class ViewerResponse {
 
     /**
      * Dit heeft de Upload JS nodig om te bevestigen dat de upload gelukt is.
-     * 
      * @return String met daarin true.
      */
     public final String getSuccess() {
@@ -42,7 +38,6 @@ public class ViewerResponse {
 
     /**
      * Geef de waarde van persoonslijst groepen.
-     *
      * @return De persoonslijstGroepen lijst.
      */
     public final List<GgoPersoonslijstGroep> getPersoonslijstGroepen() {
@@ -51,7 +46,6 @@ public class ViewerResponse {
 
     /**
      * Geef de waarde van fout regels.
-     *
      * @return Een lijst met fouten die hebben plaatsgevonden tijdens het inlezen.
      */
     public final List<GgoFoutRegel> getFoutRegels() {

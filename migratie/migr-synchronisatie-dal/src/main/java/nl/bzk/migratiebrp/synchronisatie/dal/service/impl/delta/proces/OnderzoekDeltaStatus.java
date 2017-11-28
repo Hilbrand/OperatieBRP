@@ -7,14 +7,23 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.proces;
 
 /**
+ * Onderzoek delta status.
  */
 public enum OnderzoekDeltaStatus {
-    /** NIEUW. **/
+    /**
+     * NIEUW.
+     **/
     NIEUW,
-    /** GEWIJZIGD. **/
+    /**
+     * GEWIJZIGD.
+     **/
     GEWIJZIGD,
-    /** VERWIJDERD. **/
+    /**
+     * VERWIJDERD.
+     **/
     VERWIJDERD,
-    /** ONGEWIJZIGD. **/
+    /**
+     * ONGEWIJZIGD.
+     **/
     ONGEWIJZIGD
 }

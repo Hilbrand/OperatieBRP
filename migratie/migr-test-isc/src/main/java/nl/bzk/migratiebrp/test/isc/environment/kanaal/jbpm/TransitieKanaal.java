@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.test.isc.environment.kanaal.jbpm;
 
 import javax.inject.Inject;
+
 import nl.bzk.migratiebrp.isc.jbpm.command.client.CommandClient;
 import nl.bzk.migratiebrp.isc.jbpm.command.exception.CommandException;
 import nl.bzk.migratiebrp.isc.jbpm.command.impl.JbpmTransitionCommand;
@@ -22,19 +23,22 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
  */
 public class TransitieKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "trans";
 
     /**
      * Constructor.
      */
     public TransitieKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-jms-isc.xml",
-            "classpath:infra-jmx-isc.xml",
-            "classpath:infra-jbpm.xml"));
+        super(new Worker(),
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-db-isc.xml",
+                        "classpath:infra-jms-isc.xml",
+                        "classpath:infra-jmx-isc.xml",
+                        "classpath:infra-jbpm.xml"));
     }
 
     /**
@@ -50,7 +54,7 @@ public class TransitieKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -76,9 +80,8 @@ public class TransitieKanaal extends LazyLoadingKanaal {
                     berichtId = correlator.getBerichtReferentie(bericht.getCorrelatieReferentie());
 
                     if (berichtId == null) {
-                        throw new KanaalException("Bericht gerefereerd aan bericht met volgnummer "
-                                                  + bericht.getCorrelatieReferentie()
-                                                  + ", maar geen bericht gevonden.");
+                        throw new KanaalException(
+                                "Bericht gerefereerd aan bericht met volgnummer " + bericht.getCorrelatieReferentie() + ", maar geen bericht gevonden.");
                     }
 
                     bepaalTokenOpCorrelatie = false;

@@ -6,15 +6,13 @@
 
 package nl.bzk.migratiebrp.test.common.resultaat;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
+import nl.bzk.algemeenbrp.util.xml.annotation.Attribute;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Resultaat van een testgeval of een onderdeel daarvan t.b.v. rapportage van het resultaat. In het rapport
  * correspondeert dit met een enkele regel.
  */
-@Root(name = "resultaat")
 public abstract class TestResultaat {
 
     private final String thema;
@@ -28,16 +26,12 @@ public abstract class TestResultaat {
 
     /**
      * Constructor.
-     * 
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
+     * @param thema thema
+     * @param naam naam
      */
     protected TestResultaat(
-        @Attribute(name = "thema", required = false) final String thema,
-        @Attribute(name = "naam", required = false) final String naam)
-    {
+            @Attribute(name = "thema", required = false) final String thema,
+            @Attribute(name = "naam", required = false) final String naam) {
         super();
         this.thema = thema;
         this.naam = naam;
@@ -45,7 +39,6 @@ public abstract class TestResultaat {
 
     /**
      * Geef de waarde van thema.
-     *
      * @return thema
      */
     @Attribute(name = "thema", required = false)
@@ -55,7 +48,6 @@ public abstract class TestResultaat {
 
     /**
      * Geef de waarde van naam.
-     *
      * @return naam
      */
     @Attribute(name = "naam", required = false)
@@ -65,7 +57,6 @@ public abstract class TestResultaat {
 
     /**
      * Geef de waarde van bron.
-     *
      * @return bron
      */
     public final String getBron() {
@@ -74,9 +65,7 @@ public abstract class TestResultaat {
 
     /**
      * Zet de waarde van bron.
-     *
-     * @param bron
-     *            bron
+     * @param bron bron
      */
     public final void setBron(final String bron) {
         this.bron = bron;
@@ -84,7 +73,6 @@ public abstract class TestResultaat {
 
     /**
      * Geef de waarde van foutmelding.
-     *
      * @return foutmelding
      */
     public final Foutmelding getFoutmelding() {
@@ -93,9 +81,7 @@ public abstract class TestResultaat {
 
     /**
      * Zet de waarde van foutmelding.
-     *
-     * @param foutmelding
-     *            foutmelding
+     * @param foutmelding foutmelding
      */
     public final void setFoutmelding(final Foutmelding foutmelding) {
         this.foutmelding = foutmelding;
@@ -103,16 +89,13 @@ public abstract class TestResultaat {
 
     /**
      * Geef de succes.
-     *
      * @return was the test succesfull?
      */
     public abstract boolean isSucces();
 
     /**
      * Controleer of alle stappen ok zijn.
-     * 
-     * @param stappen
-     *            stappen
+     * @param stappen stappen
      * @return true, als alle stappen ok zijn, anders false
      */
     public static final boolean isSucces(final TestStap... stappen) {

@@ -8,7 +8,6 @@ package nl.bzk.brp.beheer.webapp.configuratie.json.modules;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.Nee;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,6 +114,33 @@ public class JsonUtilsTest {
     }
 
     @Test
+    public void testGetAsCharacter() {
+        Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(theNode);
+        Mockito.when(theNode.asText()).thenReturn("-");
+        Assert.assertEquals("Waarde moet overeenkomen", Character.valueOf('-'), JsonUtils.getAsCharacter(parentNode, "-"));
+    }
+
+    @Test
+    public void testGetAsCharacterEmpty() {
+        Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(theNode);
+        Mockito.when(theNode.asText()).thenReturn("");
+        Assert.assertNull("Waarde moet null zijn", JsonUtils.getAsCharacter(parentNode, "test"));
+    }
+
+    @Test
+    public void testGetAsCharacterisNull() {
+        Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(theNode);
+        Mockito.when(theNode.getNodeType()).thenReturn(JsonNodeType.NULL);
+        Assert.assertNull("Waarde moet null zijn", JsonUtils.getAsCharacter(parentNode, "test"));
+    }
+
+    @Test
+    public void testGetAsCharacterNull() {
+        Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(null);
+        Assert.assertNull("Waarde moet null zijn", JsonUtils.getAsCharacter(parentNode, "test"));
+    }
+
+    @Test
     public void testGetAsBooleanTrue() {
         Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(theNode);
         Mockito.when(theNode.asText()).thenReturn("test");
@@ -139,32 +165,5 @@ public class JsonUtilsTest {
     public void testGetAsBooleanNull() {
         Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(null);
         Assert.assertFalse("Waarde moet false zijn", JsonUtils.getAsBoolean(parentNode, "test", "test", Boolean.TRUE, Boolean.FALSE));
-    }
-
-    @Test
-    public void testGetAsNeeTrue() {
-        Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(theNode);
-        Mockito.when(theNode.asText()).thenReturn("test");
-        Assert.assertEquals("Waarde moet waar zijn", Nee.N, JsonUtils.getAsNee(parentNode, "test", "test"));
-    }
-
-    @Test
-    public void testGetAsNeeFalse() {
-        Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(theNode);
-        Mockito.when(theNode.asText()).thenReturn("geentest");
-        Assert.assertNull("Waarde moet null zijn", JsonUtils.getAsNee(parentNode, "test", "test"));
-    }
-
-    @Test
-    public void testGetAsNeeIsNull() {
-        Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(theNode);
-        Mockito.when(theNode.getNodeType()).thenReturn(JsonNodeType.NULL);
-        Assert.assertEquals("Waarde moet Nee zijn", Nee.N, JsonUtils.getAsNee(parentNode, "test", "test"));
-    }
-
-    @Test
-    public void testGetAsNeeNull() {
-        Mockito.when(parentNode.get(Mockito.anyString())).thenReturn(null);
-        Assert.assertEquals("Waarde moet Nee zijn", Nee.N, JsonUtils.getAsNee(parentNode, "test", "test"));
     }
 }

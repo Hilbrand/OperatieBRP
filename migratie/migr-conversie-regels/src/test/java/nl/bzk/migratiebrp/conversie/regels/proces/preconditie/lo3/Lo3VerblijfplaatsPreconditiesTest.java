@@ -29,6 +29,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import nl.bzk.migratiebrp.conversie.regels.tabel.GemeenteConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.LandConversietabel;
 import nl.bzk.migratiebrp.conversie.regels.tabel.WoonplaatsnaamConversietabel;
@@ -44,8 +45,7 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     private static final Lo3Herkomst LO3_HERKOMST_VERBLIJFPLAATS_2 = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 2);
     private static final String GEMEENTE_INSCHRIJVING = "0518";
 
-    @Inject
-    private Lo3VerblijfplaatsPrecondities precondities;
+    private Lo3VerblijfplaatsPrecondities precondities = new Lo3VerblijfplaatsPrecondities(new ConversietabelFactoryImpl());
 
     private Lo3VerblijfplaatsInhoud.Builder bagBuilder() {
         final Lo3VerblijfplaatsInhoud.Builder builder = new Lo3VerblijfplaatsInhoud.Builder();
@@ -202,7 +202,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testHappyBag() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -212,7 +213,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testHappyOud() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(oudBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(oudBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -222,11 +224,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testHappyLocatie() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    locatieBuilder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(locatieBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -236,7 +235,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testHappyImmigratie() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -395,11 +395,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr110() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, 20000101, 20000100),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(null, 20000101, 20000100), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -431,11 +428,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr246() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, null, 20000101),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(null, null, 20000101), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -446,11 +440,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr247() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, 20000101, null),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(null, 20000101, null), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -461,7 +452,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPreconditie94Groep14Only() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
         precondities.controleerStapel(stapel);
 
         assertSoortMeldingCode(SoortMeldingCode.PRE094, 0);
@@ -539,11 +531,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr251() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His("O", 20000101, 20000101),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His("O", 20000101, 20000101), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -648,11 +637,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr40124() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, 20040141, 20010101),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(null, 20040141, 20010101), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -662,11 +648,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testContr40125() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    null,
-                    Lo3StapelHelper.lo3His(null, 20010101, 20040141),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), null, Lo3StapelHelper.lo3His(null, 20010101, 20040141), LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -920,7 +903,7 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre084Groep10AanwezigStraatnaamLeegMetOnderzoek() {
         final Lo3VerblijfplaatsInhoud.Builder builder = bagBuilder();
-        final Lo3Onderzoek onderzoek = new Lo3Onderzoek(new Lo3Integer("080000", null), Lo3Datum.NULL_DATUM, null);
+        final Lo3Onderzoek onderzoek = new Lo3Onderzoek(new Lo3Integer("080000", null), new Lo3Datum(0), null);
         builder.straatnaam(new Lo3String(null, onderzoek));
         builder.locatieBeschrijving(null);
 
@@ -934,7 +917,7 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre084Groep10AanwezigLocatieBeschrijvingLeegMetOnderzoek() {
         final Lo3VerblijfplaatsInhoud.Builder builder = bagBuilder();
-        final Lo3Onderzoek onderzoek = new Lo3Onderzoek(new Lo3Integer("080000", null), Lo3Datum.NULL_DATUM, null);
+        final Lo3Onderzoek onderzoek = new Lo3Onderzoek(new Lo3Integer("080000", null), new Lo3Datum(0), null);
         builder.straatnaam(null);
         builder.locatieBeschrijving(new Lo3String(null, onderzoek));
 
@@ -948,7 +931,7 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPre084Groep10AanwezigStraatEnLocatieBeschrijvingLeegMetOnderzoek() {
         final Lo3VerblijfplaatsInhoud.Builder builder = bagBuilder();
-        final Lo3Onderzoek onderzoek = new Lo3Onderzoek(new Lo3Integer("080000", null), Lo3Datum.NULL_DATUM, null);
+        final Lo3Onderzoek onderzoek = new Lo3Onderzoek(new Lo3Integer("080000", null), new Lo3Datum(0), null);
         builder.straatnaam(new Lo3String(null, onderzoek));
         builder.locatieBeschrijving(new Lo3String(null, onderzoek));
 
@@ -1025,11 +1008,12 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPreconditie098GroepNietAanwezig() {
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                bagBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_VERBLIJFPLAATS));
         precondities.controleerStapel(stapel);
         assertAantalErrors(0);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 0);
@@ -1038,13 +1022,18 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     @Test
     public void testPreconditie098GroepAanwezig8810NietGevuld() {
         final Lo3Documentatie lo3Doc =
-                Lo3StapelHelper.lo3Documentatie(1L, GEMEENTE_INSCHRIJVING, "1-X" + String.format("%04d", 1), null, null, null, null, "omschrijvingVerdrag");
+                Lo3StapelHelper.lo3Documentatie(
+                        1L,
+                        GEMEENTE_INSCHRIJVING,
+                        "1-X" + String.format("%04d", 1),
+                        null,
+                        null,
+                        null,
+                        null,
+                        "omschrijvingVerdrag");
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    lo3Doc,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), lo3Doc, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
         precondities.controleerStapel(stapel);
         assertAantalErrors(1);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 1);
@@ -1055,11 +1044,8 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
         final Lo3Documentatie lo3Doc =
                 Lo3StapelHelper.lo3Documentatie(1L, GEMEENTE_INSCHRIJVING, "1-X" + String.format("%04d", 1), null, null, null, "0000", null);
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    lo3Doc,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(bagBuilder().build(), lo3Doc, Lo3StapelHelper.lo3His(20000101), LO3_HERKOMST_VERBLIJFPLAATS));
         precondities.controleerStapel(stapel);
         assertAantalErrors(0);
         assertSoortMeldingCode(SoortMeldingCode.PRE098, 0);
@@ -1069,12 +1055,13 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     public void testControleerGroep83Procedure8320NietGevuld() {
         final Lo3Onderzoek lo3Onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10110), null, null);
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> stapel =
-                Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-                    bagBuilder().build(),
-                    Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
-                    lo3Onderzoek,
-                    Lo3StapelHelper.lo3His(20000101),
-                    LO3_HERKOMST_VERBLIJFPLAATS));
+                Lo3StapelHelper.lo3Stapel(
+                        Lo3StapelHelper.lo3Cat(
+                                bagBuilder().build(),
+                                Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
+                                lo3Onderzoek,
+                                Lo3StapelHelper.lo3His(20000101),
+                                LO3_HERKOMST_VERBLIJFPLAATS));
 
         precondities.controleerStapel(stapel);
 
@@ -1116,12 +1103,13 @@ public class Lo3VerblijfplaatsPreconditiesTest extends AbstractPreconditieTest {
     }
 
     private Lo3Stapel<Lo3VerblijfplaatsInhoud> maakLo3Stapel(final Lo3VerblijfplaatsInhoud.Builder inhoud) {
-        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-            inhoud.build(),
-            Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
-            null,
-            Lo3StapelHelper.lo3His(20000101),
-            LO3_HERKOMST_VERBLIJFPLAATS));
+        return Lo3StapelHelper.lo3Stapel(
+                Lo3StapelHelper.lo3Cat(
+                        inhoud.build(),
+                        Lo3StapelHelper.lo3Doc(1L, "0514", 20000101, "Doc"),
+                        null,
+                        Lo3StapelHelper.lo3His(20000101),
+                        LO3_HERKOMST_VERBLIJFPLAATS));
     }
 
     @Test

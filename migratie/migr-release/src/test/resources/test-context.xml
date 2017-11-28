@@ -2,27 +2,33 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:amq="http://activemq.apache.org/schema/core"
+    xmlns:context="http://www.springframework.org/schema/context"
     xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
 	<!-- Config -->
-
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="properties">
-			<props>
-				<prop key="mailbox.host">localhost</prop>
-				<prop key="mailbox.portnummer">1233</prop>
-				<prop key="voisc.hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
-			</props>
-		</property>
-	</bean>
+	<context:property-placeholder />
 
 	<!-- INFRA -->
 	<import resource="test-context-datasource.xml" />
 	<import resource="test-context-jta.xml" />
-	<amq:connectionFactory id="connectionFactory" brokerURL="tcp://localhost:61638"/>
-  	<amq:connectionFactory id="brpConnectionFactory" brokerURL="tcp://localhost:61639"/>
+	<amq:connectionFactory id="connectionFactory" brokerURL="tcp://localhost:${test.routering.port}">
+		<amq:redeliveryPolicy>
+			<amq:redeliveryPolicy maximumRedeliveries="0" />
+		</amq:redeliveryPolicy>
+	</amq:connectionFactory>
+  	<amq:connectionFactory id="brpConnectionFactory" brokerURL="tcp://localhost:${test.messagebroker.port}">
+		<amq:redeliveryPolicy>
+			<amq:redeliveryPolicy maximumRedeliveries="0" />
+		</amq:redeliveryPolicy>
+	</amq:connectionFactory>
+	<amq:connectionFactory id="brpQueueConnectionFactory" brokerURL="tcp://localhost:${test.messagebroker.port}">
+		<amq:redeliveryPolicy>
+			<amq:redeliveryPolicy maximumRedeliveries="0" />
+		</amq:redeliveryPolicy>
+	</amq:connectionFactory>
 
 	<!-- Mailbox -->
 	<import resource="test-context-mailbox.xml" />

@@ -45,7 +45,7 @@
         <brp:bronnen>
             <!--Zero or more repetitions:-->
             [#list gBASluitingHuwelijkGeregistreerdPartnerschap.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron"><!--Optional:-->
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron"><!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
                     <brp:identificatie>${bron.document.identificatie}</brp:identificatie>
@@ -372,7 +372,7 @@
         <brp:bronnen>
             <!--1 or more repetitions:-->
             [#list gBAOntbindingHuwelijkGeregistreerdPartnerschap.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>
@@ -492,7 +492,7 @@
         <brp:bronnen>
             <!--1 or more repetitions:-->
             [#list gBAOmzettingHuwelijkGeregistreerdPartnerschap.bronnen as bron]
-            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="ActieBron">
+            <brp:bron brp:communicatieID="${bron.communicatieID}" brp:objecttype="AdministratieveHandelingBron">
                 <!--Optional:-->
                 <brp:document brp:communicatieID="${bron.document.communicatieID}" brp:objecttype="Document">
                     <brp:soortNaam>${bron.document.soortNaam}</brp:soortNaam>

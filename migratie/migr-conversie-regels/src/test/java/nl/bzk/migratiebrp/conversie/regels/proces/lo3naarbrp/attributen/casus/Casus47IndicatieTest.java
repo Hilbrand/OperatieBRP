@@ -36,20 +36,20 @@ public class Casus47IndicatieTest extends AbstractCasusTest {
     private final List<Lo3Categorie<Lo3NationaliteitInhoud>> categorieen = new ArrayList<>();
 
     private final Lo3NationaliteitInhoud lo3BijzonderNl = new Lo3NationaliteitInhoud(
-        null,
-        null,
-        null,
-        Lo3AanduidingBijzonderNederlandschapEnum.BEHANDELD_ALS_NEDERLANDER.asElement());
+            null,
+            null,
+            null,
+            Lo3AanduidingBijzonderNederlandschapEnum.BEHANDELD_ALS_NEDERLANDER.asElement(), null);
     private final Lo3NationaliteitInhoud lo3VastgesteldNietNl = new Lo3NationaliteitInhoud(
-        null,
-        null,
-        null,
-        Lo3AanduidingBijzonderNederlandschapEnum.VASTGESTELD_NIET_NEDERLANDER.asElement());
+            null,
+            null,
+            null,
+            Lo3AanduidingBijzonderNederlandschapEnum.VASTGESTELD_NIET_NEDERLANDER.asElement(), null);
 
     private final BrpBehandeldAlsNederlanderIndicatieInhoud brpBehandeldAlsNl =
             new BrpBehandeldAlsNederlanderIndicatieInhoud(new BrpBoolean(true), null, null);
     private final BrpVastgesteldNietNederlanderIndicatieInhoud brpVastgesteldNietNl = new BrpVastgesteldNietNederlanderIndicatieInhoud(new BrpBoolean(
-true), null, null);
+            true), null, null);
 
     private final BrpTestObject<BrpBehandeldAlsNederlanderIndicatieInhoud> brpBijzNl1 = new BrpTestObject<>();
     private final BrpTestObject<BrpVastgesteldNietNederlanderIndicatieInhoud> brpVastgesteldNietNl1 = new BrpTestObject<>();

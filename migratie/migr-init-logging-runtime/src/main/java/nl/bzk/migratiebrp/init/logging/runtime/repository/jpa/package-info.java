@@ -8,4 +8,3 @@
  * De JPA implementatie van de Logging Repository.
  */
 package nl.bzk.migratiebrp.init.logging.runtime.repository.jpa;
-

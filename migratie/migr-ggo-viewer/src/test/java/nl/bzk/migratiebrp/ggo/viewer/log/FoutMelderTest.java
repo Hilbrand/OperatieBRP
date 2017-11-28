@@ -18,7 +18,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test class voor de FoutMelder.
- * 
  */
 @RunWith(MockitoJUnitRunner.class)
 public class FoutMelderTest {
@@ -88,11 +87,10 @@ public class FoutMelderTest {
     }
 
     private void assertFoutRegels(
-        final GgoFoutRegel foutRegel,
-        final LogSeverity expectedLogSeverity,
-        final String expectedCode,
-        final String expectedOmschrijving)
-    {
+            final GgoFoutRegel foutRegel,
+            final LogSeverity expectedLogSeverity,
+            final String expectedCode,
+            final String expectedOmschrijving) {
         assertEquals("LogSeverity", expectedLogSeverity, foutRegel.getSeverity());
         assertEquals("Code", expectedCode, foutRegel.getCode());
         assertTrue("Omschrijving", foutRegel.getOmschrijving().startsWith(expectedOmschrijving));

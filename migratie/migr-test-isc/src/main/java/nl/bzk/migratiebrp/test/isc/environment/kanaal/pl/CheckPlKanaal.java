@@ -19,7 +19,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
  */
 public class CheckPlKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "check_pl";
 
     /**
@@ -27,13 +29,13 @@ public class CheckPlKanaal extends LazyLoadingKanaal {
      */
     public CheckPlKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-brp.xml",
-            "classpath:infra-jta.xml",
-            "classpath:infra-db-sync.xml",
-            "classpath:infra-em-sync.xml",
-            "classpath:beans-sync.xml",
-            "classpath:infra-pl.xml"));
+                "classpath:configuratie.xml",
+                "classpath:infra-db-brp.xml",
+                "classpath:infra-jta.xml",
+                "classpath:infra-db-sync.xml",
+                "classpath:infra-em-sync.xml",
+                "classpath:beans-sync.xml",
+                "classpath:infra-pl.xml"));
     }
 
     /**
@@ -55,11 +57,7 @@ public class CheckPlKanaal extends LazyLoadingKanaal {
 
         @Override
         public void verwerkUitgaand(final TestCasusContext testCasus, final Bericht bericht) throws KanaalException {
-            try {
-                plHelper.checkPl(bericht.getBerichtReferentie(), Long.valueOf(bericht.getInhoud()));
-            } catch (final NumberFormatException e) {
-                throw new KanaalException("Bericht bevatte niet een geldig getal (administratienummer)", e);
-            }
+            plHelper.checkPl(bericht.getBerichtReferentie(), bericht.getInhoud());
         }
 
         @Override

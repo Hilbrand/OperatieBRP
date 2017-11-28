@@ -8,14 +8,11 @@ package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.conv.LO3NederlandsReisdocumentAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.SoortNederlandsReisdocumentCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieSoortNLReisdocument;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNlReisdocument;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import org.junit.Assert;
 import org.junit.Test;
-import support.ReflectionUtils;
 
 /**
  * Test voor {@link SoortNlReisdocumentConversietabel}.
@@ -26,8 +23,8 @@ public class SoortNlReisdocumentConversietabelTest {
     private static final String Z = "Z";
 
     @Test
-    public void test() throws ReflectiveOperationException {
-        final List<ConversieSoortNLReisdocument> list = new ArrayList<>();
+    public void test() {
+        final List<SoortNlReisdocument> list = new ArrayList<>();
         list.add(maakConversietabelRegel(X, Z));
 
         final SoortNlReisdocumentConversietabel subject = new SoortNlReisdocumentConversietabel(list);
@@ -35,10 +32,7 @@ public class SoortNlReisdocumentConversietabelTest {
         Assert.assertEquals(X, subject.converteerNaarLo3(new BrpSoortNederlandsReisdocumentCode(Z)).getWaarde());
     }
 
-    private ConversieSoortNLReisdocument maakConversietabelRegel(final String lo3, final String brp) throws ReflectiveOperationException {
-        return ReflectionUtils.instantiate(
-            ConversieSoortNLReisdocument.class,
-            new LO3NederlandsReisdocumentAttribuut(lo3),
-            new SoortNederlandsReisdocument(new SoortNederlandsReisdocumentCodeAttribuut(brp), null, null, null));
+    private SoortNlReisdocument maakConversietabelRegel(final String lo3, final String brp) {
+        return new SoortNlReisdocument(lo3, new SoortNederlandsReisdocument(brp, brp));
     }
 }

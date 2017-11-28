@@ -8,14 +8,14 @@ package nl.bzk.migratiebrp.bericht.model.brp.impl;
 
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.brp.AbstractBrpBericht;
-import nl.bzk.migratiebrp.bericht.model.brp.generated.MigratievoorzieningRegistreerNaamGeslachtBijhouding;
+import nl.bzk.migratiebrp.bericht.model.brp.generated.BijhoudingRegistreerNaamGeslachtMigVrz;
 import nl.bzk.migratiebrp.bericht.model.brp.generated.ObjectFactory;
 import nl.bzk.migratiebrp.bericht.model.brp.xml.BrpXml;
 
 /**
  * Naam/geslacht bijhouding.
  */
-public final class RegistreerNaamGeslachtBijhouding extends AbstractBrpBericht<MigratievoorzieningRegistreerNaamGeslachtBijhouding> {
+public final class RegistreerNaamGeslachtBijhouding extends AbstractBrpBericht<BijhoudingRegistreerNaamGeslachtMigVrz> {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,16 +25,14 @@ public final class RegistreerNaamGeslachtBijhouding extends AbstractBrpBericht<M
      * Default constructor.
      */
     public RegistreerNaamGeslachtBijhouding() {
-        this(new MigratievoorzieningRegistreerNaamGeslachtBijhouding());
+        this(new BijhoudingRegistreerNaamGeslachtMigVrz());
     }
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param bijhouding
-     *            het bijhouding type
+     * @param bijhouding het bijhouding type
      */
-    public RegistreerNaamGeslachtBijhouding(final MigratievoorzieningRegistreerNaamGeslachtBijhouding bijhouding) {
+    public RegistreerNaamGeslachtBijhouding(final BijhoudingRegistreerNaamGeslachtMigVrz bijhouding) {
         super("RegistreerNaamGeslachtBijhouding", bijhouding);
     }
 

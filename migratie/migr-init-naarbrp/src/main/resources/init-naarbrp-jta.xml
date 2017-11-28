@@ -26,13 +26,19 @@
         </property>
     </bean>
 
-    <bean id="atomikosUserTransactionService" class="com.atomikos.icatch.config.UserTransactionServiceImp" init-method="init" destroy-method="shutdownForce" depends-on="atomikosSystemProperties">
+    <bean id="atomikosLogBaseCreator" class="nl.bzk.algemeenbrp.jta.util.DirectoryCreator">
+    	<property name="directory" value="${atomikos.base.dir:work/atomikos}" />
+    </bean>
+
+    <bean id="atomikosUserTransactionService" class="com.atomikos.icatch.config.UserTransactionServiceImp" 
+          init-method="init" destroy-method="shutdownForce" depends-on="atomikosSystemProperties,atomikosLogBaseCreator">
         <constructor-arg>
             <props>
-                <prop key="com.atomikos.icatch.max_timeout">${atomikos.max.timeout:300000}</prop>
+            	<!-- Maximale timeout hier naar Integer.MAX_VALUE+'000' zodat de 'laad' SQL er niet uitklapt. -->
+                <prop key="com.atomikos.icatch.max_timeout">${atomikos.max.timeout:2147483647000}</prop>
                 <prop key="com.atomikos.icatch.default_jta_timeout">${atomikos.default.timeout:30000}</prop>
                 <prop key="com.atomikos.icatch.max_actives">${atomikos.max.actives:50}</prop>
-                <prop key="com.atomikos.icatch.enable_logging">true</prop>
+                <prop key="com.atomikos.icatch.enable_logging">${atomikos.enable_logging:true}</prop>
                 <prop key="com.atomikos.icatch.tm_unique_name">${atomikos.unique.name:init-naarbrp}-</prop>
                 <prop key="com.atomikos.icatch.serial_jta_transactions">false</prop>
                 <prop key="com.atomikos.icatch.force_shutdown_on_vm_exit">false</prop>

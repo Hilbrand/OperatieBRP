@@ -1,4 +1,4 @@
 UPDATE voisc.lo3_mailbox SET
 blokkering_start_dt = NULL,
 blokkering_eind_dt = NULL
-WHERE instantiecode = '3000200';
+WHERE mailboxnr = '3000210';

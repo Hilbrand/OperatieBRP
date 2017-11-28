@@ -8,16 +8,12 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 /**
  * Deze marker interface typeert alle BRP groep inhoud typen.
- * 
- * 
- * 
  */
 public interface BrpGroepInhoud {
 
     /**
-     * Geef de leeg.
-     *
-     * @return true als de inhoud leeg is.
+     * Geef de waarde van leeg van BrpGroepInhoud.
+     * @return de waarde van leeg van BrpGroepInhoud
      */
     boolean isLeeg();
 

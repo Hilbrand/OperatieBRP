@@ -8,6 +8,10 @@ package nl.bzk.migratiebrp.test.preconditie;
 
 import java.io.File;
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.LoggingContext;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
@@ -17,15 +21,13 @@ import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
 import nl.bzk.migratiebrp.test.dal.AbstractConversieTestCasus;
 import nl.bzk.migratiebrp.test.dal.TestCasusOutputStap;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.LoggingContext;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Test casus: precondities.
  */
-@SuppressWarnings("checkstyle:illegalcatch")
+
 public final class PreconditieTestCasus extends AbstractConversieTestCasus {
 
     private static final Logger LOG = LoggerFactory.getLogger();
@@ -35,25 +37,18 @@ public final class PreconditieTestCasus extends AbstractConversieTestCasus {
 
     /**
      * Constructor.
-     *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
-     * @param outputFolder
-     *            output folder
-     * @param expectedFolder
-     *            expected folder
-     * @param lo3CategorieWaarden
-     *            categorieen
+     * @param thema thema
+     * @param naam naam
+     * @param outputFolder output folder
+     * @param expectedFolder expected folder
+     * @param lo3CategorieWaarden categorieen
      */
     protected PreconditieTestCasus(
-        final String thema,
-        final String naam,
-        final File outputFolder,
-        final File expectedFolder,
-        final List<Lo3CategorieWaarde> lo3CategorieWaarden)
-    {
+            final String thema,
+            final String naam,
+            final File outputFolder,
+            final File expectedFolder,
+            final List<Lo3CategorieWaarde> lo3CategorieWaarden) {
         super(thema, naam, outputFolder, expectedFolder);
         this.lo3CategorieWaarden = lo3CategorieWaarden;
         lse = null;
@@ -61,25 +56,18 @@ public final class PreconditieTestCasus extends AbstractConversieTestCasus {
 
     /**
      * Constructor.
-     *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
-     * @param outputFolder
-     *            output folder
-     * @param expectedFolder
-     *            expected folder
-     * @param lse
-     *            de Lo3SyntaxException die gegenereerd is bij het inlezen
+     * @param thema thema
+     * @param naam naam
+     * @param outputFolder output folder
+     * @param expectedFolder expected folder
+     * @param lse de Lo3SyntaxException die gegenereerd is bij het inlezen
      */
     protected PreconditieTestCasus(
-        final String thema,
-        final String naam,
-        final File outputFolder,
-        final File expectedFolder,
-        final Lo3SyntaxException lse)
-    {
+            final String thema,
+            final String naam,
+            final File outputFolder,
+            final File expectedFolder,
+            final Lo3SyntaxException lse) {
         super(thema, naam, outputFolder, expectedFolder);
         lo3CategorieWaarden = null;
         this.lse = lse;

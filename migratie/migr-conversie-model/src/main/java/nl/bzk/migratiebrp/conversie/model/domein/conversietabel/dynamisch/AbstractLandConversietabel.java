@@ -6,25 +6,23 @@
 
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch;
 
-import java.text.DecimalFormat;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * Abstract land conversie tabel.
  */
 public abstract class AbstractLandConversietabel implements Conversietabel<Lo3LandCode, BrpLandOfGebiedCode> {
 
-    private static final String LAND_CODE_FORMAT = "0000";
-
     @Override
     public final BrpLandOfGebiedCode converteerNaarBrp(final Lo3LandCode input) {
         final BrpLandOfGebiedCode resultaat;
 
-        if (nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie.isElementGevuld(input)) {
-            resultaat = new BrpLandOfGebiedCode(Short.parseShort(input.getWaarde()), input.getOnderzoek());
+        if (Lo3Validatie.isElementGevuld(input)) {
+            resultaat = new BrpLandOfGebiedCode(input.getWaarde(), input.getOnderzoek());
         } else {
             if (input != null && input.getOnderzoek() != null) {
                 resultaat = new BrpLandOfGebiedCode(null, input.getOnderzoek());
@@ -40,8 +38,8 @@ public abstract class AbstractLandConversietabel implements Conversietabel<Lo3La
     public final Lo3LandCode converteerNaarLo3(final BrpLandOfGebiedCode input) {
         final Lo3LandCode resultaat;
 
-        if (Validatie.isAttribuutGevuld(input)) {
-            resultaat = new Lo3LandCode(new DecimalFormat(LAND_CODE_FORMAT).format(input.getWaarde()), input.getOnderzoek());
+        if (BrpValidatie.isAttribuutGevuld(input)) {
+            resultaat = new Lo3LandCode(input.getWaarde(), input.getOnderzoek());
         } else {
             if (input != null && input.getOnderzoek() != null) {
                 resultaat = new Lo3LandCode(null, input.getOnderzoek());

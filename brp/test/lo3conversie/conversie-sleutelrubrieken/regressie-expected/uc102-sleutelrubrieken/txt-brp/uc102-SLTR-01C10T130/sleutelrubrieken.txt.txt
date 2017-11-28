@@ -1,1 +1,1 @@
-GEWIJZIGD(HUWELIJKEN(oud), HUWELIJKEN(nieuw), [datum_aanvang]) OF GEWIJZIGD(PARTNERSCHAPPEN(oud), PARTNERSCHAPPEN(nieuw), [datum_aanvang])
+GEWIJZIGD(MAP(FILTER(oud.Huwelijk, x, KNV(x.DatumEinde)), y, y.DatumAanvang), MAP(FILTER(nieuw.Huwelijk, x, KNV(x.DatumEinde)), y, y.DatumAanvang)) OF GEWIJZIGD(MAP(FILTER(oud.GeregistreerdPartnerschap, x, KNV(x.DatumEinde)), y, y.DatumAanvang), MAP(FILTER(nieuw.GeregistreerdPartnerschap, x, KNV(x.DatumEinde)), y, y.DatumAanvang))

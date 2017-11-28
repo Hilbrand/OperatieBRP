@@ -6,9 +6,6 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime;
 
-import java.util.concurrent.Callable;
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -16,15 +13,15 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.MDCProcessor;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 /**
  * Abstract message handler (common helper methods).
@@ -33,32 +30,24 @@ public abstract class AbstractMessageHandler implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    private JmsTemplate jmsTemplate;
-
-    @Inject
-    @Named("queueSyncAntwoord")
-    private Destination destination;
+    private final Destination destination;
+    private final JmsTemplate jmsTemplate;
 
     /**
-     * Zet de waarde van connection factory.
-     *
-     * @param connectionFactory
-     *            connection factory
+     * Constructor.
+     * @param destination destination (queue sync antwoord)
+     * @param connectionFactory queue connection factory
      */
-    @Inject
-    @Named("queueConnectionFactory")
-    final void setConnectionFactory(final ConnectionFactory connectionFactory) {
+    protected AbstractMessageHandler(final Destination destination, final ConnectionFactory connectionFactory) {
+        this.destination = destination;
         jmsTemplate = new JmsTemplate(connectionFactory);
     }
 
     /**
      * Lees bericht inhoud.
-     *
-     * @param message
-     *            message
+     * @param message message
      * @return inhoud
-     * @throws BerichtLeesException
-     *             bij lees fouten
+     * @throws BerichtLeesException bij lees fouten
      */
     protected final String bepaalBerichtInhoud(final Message message) throws BerichtLeesException {
         final String result;
@@ -76,63 +65,29 @@ public abstract class AbstractMessageHandler implements MessageListener {
 
     /**
      * Verstuur het antwoord.
-     *
-     * @param bericht
-     *            antwoord
+     * @param bericht antwoord
      */
     protected final void stuurAntwoord(final SyncBericht bericht) {
         try {
-            Herhaal.herhaalOperatie(new Callable<Object>() {
-                @Override
-                public Object call() {
-                    jmsTemplate.send(destination, new MessageCreator() {
-                        @Override
-                        public Message createMessage(final Session session) throws JMSException {
-                            try {
-                                final Message message = session.createTextMessage(bericht.format());
-                                message.setStringProperty(JMSConstants.BERICHT_REFERENTIE, bericht.getMessageId());
-                                message.setStringProperty(JMSConstants.CORRELATIE_REFERENTIE, bericht.getCorrelationId());
-                                return message;
-                            } catch (final BerichtInhoudException exceptie) {
-                                return null;
-                            }
-                        }
-                    });
-                    return null;
-                }
-
+            Herhaal.herhaalOperatie(() -> {
+                jmsTemplate.send(destination, session -> maakAntwoordBericht(session, bericht));
+                return null;
             });
         } catch (final HerhaalException e) {
             LOG.error("Kon bericht met Id=" + bericht.getMessageId() + " niet verzenden.", e);
         }
     }
 
-    /**
-     * Fout bij het verwerken van JMS bericht.
-     */
-    public static final class BerichtLeesException extends Exception {
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Constructor.
-         *
-         * @param message
-         *            message
-         */
-        public BerichtLeesException(final String message) {
-            super(message);
-        }
-
-        /**
-         * Constructor.
-         *
-         * @param message
-         *            message
-         * @param cause
-         *            cause
-         */
-        public BerichtLeesException(final String message, final Throwable cause) {
-            super(message, cause);
+    private Message maakAntwoordBericht(Session session, final SyncBericht bericht) throws JMSException {
+        try {
+            final Message message = session.createTextMessage(bericht.format());
+            MDCProcessor.registreerVerwerkingsCode(message);
+            message.setStringProperty(JMSConstants.BERICHT_REFERENTIE, bericht.getMessageId());
+            message.setStringProperty(JMSConstants.CORRELATIE_REFERENTIE, bericht.getCorrelationId());
+            return message;
+        } catch (final BerichtInhoudException exceptie) {
+            LOG.error("Fout opgetreden bij versturen antwoord: {}", exceptie);
+            return null;
         }
     }
 }

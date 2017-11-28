@@ -10,6 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3Lg01BerichtWaarde;
@@ -17,9 +20,8 @@ import nl.bzk.migratiebrp.test.common.reader.Reader;
 import nl.bzk.migratiebrp.test.common.reader.ReaderFactory;
 import nl.bzk.migratiebrp.test.dal.AbstractTestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.excel.ExcelAdapterException;
+
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
@@ -32,9 +34,7 @@ public final class PreconditieTestCasusFactory extends AbstractTestCasusFactory 
 
     /**
      * Constructor.
-     * 
-     * @param context
-     *            spring bean factory
+     * @param context spring bean factory
      */
     protected PreconditieTestCasusFactory(final GenericXmlApplicationContext context) {
         super(context);
@@ -62,7 +62,12 @@ public final class PreconditieTestCasusFactory extends AbstractTestCasusFactory 
                     final List<Lo3CategorieWaarde> lo3CategorieWaarden = berichtWaarde.getLo3CategorieWaardeList();
 
                     final TestCasus testCasus =
-                            new PreconditieTestCasus(getThema(), maakNaam(input.getName(), i), getOutputFolder(), getExpectedFolder(), lo3CategorieWaarden);
+                            new PreconditieTestCasus(
+                                    getThema(),
+                                    maakNaam(input.getName(), i),
+                                    getOutputFolder(),
+                                    getExpectedFolder(),
+                                    lo3CategorieWaarden);
                     autowireBeanFactory.autowireBean(testCasus);
                     result.add(testCasus);
                 }

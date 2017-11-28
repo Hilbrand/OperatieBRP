@@ -9,6 +9,7 @@
     <context:property-placeholder
             location="classpath:datasource.naarlo3.properties"/>
     <import resource="synchronisatie-dal.xml"/>
+    <import resource="classpath:/test-dal-beans.xml"/>
 
     <context:component-scan base-package="nl.bzk.migratiebrp.test"/>
     <context:component-scan base-package="nl.bzk.migratiebrp.init.logging.verschilanalyse"/>
@@ -42,7 +43,7 @@
     <beans profile="!memoryDS">
         <bean id="syncDalDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean">
             <property name="uniqueResourceName">
-                <bean class="nl.bzk.migratiebrp.util.common.UniqueName">
+                <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName">
                     <property name="baseName" value="syncDalDatabase"/>
                 </bean>
             </property>
@@ -72,14 +73,14 @@
     <beans profile="memoryDS">
         <!-- In memory profile -->
         <jdbc:initialize-database data-source="syncDalDataSource">
-            <jdbc:script location="classpath:sql/hsqldb/HSQLDB.sql"/>
-            <jdbc:script location="classpath:sql/hsqldb/4_brp-migratie-tijdelijk.sql"/>
+            <jdbc:script location="classpath:bmr/HSQLDB/HSQLDB.sql" encoding="UTF-8"/>
+            <jdbc:script location="classpath:bmr/HSQLDB/PENDING_BMR_CHANGES.sql" encoding="UTF-8"/>
         </jdbc:initialize-database>
 
 
         <bean name="syncDalDataSource" class="com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean">
             <property name="uniqueResourceName">
-                <bean class="nl.bzk.migratiebrp.util.common.UniqueName">
+                <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName">
                     <property name="baseName" value="syncDalDatabase"/>
                 </bean>
             </property>
@@ -88,7 +89,7 @@
             <property name="user" value="sa"/>
             <property name="password" value=""/>
             <property name="maxPoolSize" value="20"/>
-            <property name="minPoolSize" value="10"/>
+            <property name="minPoolSize" value="1"/>
         </bean>
 
         <bean name="syncDalJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">

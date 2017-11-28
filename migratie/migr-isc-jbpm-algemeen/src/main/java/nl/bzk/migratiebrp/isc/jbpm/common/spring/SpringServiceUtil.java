@@ -21,7 +21,6 @@ public final class SpringServiceUtil {
     /**
      * Get the SpringService from the current execution context (fallback to JbpmContext.getCurrentJbpmContext if
      * execution context is null).
-     *
      * @return spring service
      */
     public static SpringService getSpringService() {
@@ -42,13 +41,9 @@ public final class SpringServiceUtil {
 
     /**
      * Get a bean from the spring bean factory.
-     *
-     * @param <T>
-     *            bean type
-     * @param name
-     *            bean name
-     * @param clazz
-     *            bean class
+     * @param <T> bean type
+     * @param name bean name
+     * @param clazz bean class
      * @return the bean
      * @see org.springframework.beans.factory.BeanFactory#getBean(String, Class)
      */
@@ -58,11 +53,8 @@ public final class SpringServiceUtil {
 
     /**
      * Get a bean from the spring bean factory.
-     *
-     * @param <T>
-     *            bean type
-     * @param clazz
-     *            bean class
+     * @param <T> bean type
+     * @param clazz bean class
      * @return the bean
      * @see org.springframework.beans.factory.BeanFactory#getBean(Class)
      */

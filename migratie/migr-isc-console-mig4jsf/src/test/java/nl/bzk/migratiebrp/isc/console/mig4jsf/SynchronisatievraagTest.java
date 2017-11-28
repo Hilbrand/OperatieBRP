@@ -8,9 +8,9 @@ package nl.bzk.migratiebrp.isc.console.mig4jsf;
 
 import java.util.HashMap;
 import java.util.Map;
-import nl.bzk.migratiebrp.isc.console.mig4jsf.util.ValidationUtil;
 import nl.bzk.migratiebrp.isc.jbpm.command.client.CommandClient;
 import nl.bzk.migratiebrp.isc.jbpm.command.impl.JbpmSynchronisatievraagCommand;
+import nl.bzk.migratiebrp.util.common.AnummerUtil;
 import org.jbpm.JbpmConfiguration.Configs;
 import org.jbpm.context.exe.ContextInstance;
 import org.jbpm.graph.exe.ProcessInstance;
@@ -51,11 +51,11 @@ public class SynchronisatievraagTest extends AbstractTagTest {
         addTagAttribute("target", null);
 
         setupDatabase(
-            "/sql/mig-drop.sql",
-            "/sql/jbpm-drop.sql",
-            "/sql/jbpm-create.sql",
-            "/sql/mig-create.sql",
-            "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
+                "/sql/mig-drop.sql",
+                "/sql/jbpm-drop.sql",
+                "/sql/jbpm-create.sql",
+                "/sql/mig-create.sql",
+                "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-berichten.sql");
 
         // Execute
         subject = initializeSubject(SynchronisatievraagHandler.class);
@@ -98,7 +98,7 @@ public class SynchronisatievraagTest extends AbstractTagTest {
     @Test
     public void testUc811() throws Exception {
         final String anummer = "4398684193";
-        Assert.assertTrue(ValidationUtil.valideerANummer(anummer));
+        Assert.assertTrue(AnummerUtil.isAnummerValide(anummer));
         setupProcess("uc811");
         setupMessageService();
         setupMockSpringService();
@@ -128,7 +128,7 @@ public class SynchronisatievraagTest extends AbstractTagTest {
     @Test
     public void testUc812() throws Exception {
         final String anummer = "4398684193";
-        Assert.assertTrue(ValidationUtil.valideerANummer(anummer));
+        Assert.assertTrue(AnummerUtil.isAnummerValide(anummer));
         setupProcess("uc812");
         setupMessageService();
         setupMockSpringService();

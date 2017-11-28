@@ -5,9 +5,6 @@
  */
 
 /**
- * 
- */
-/**
- * 
+ * Client package.
  */
 package nl.bzk.migratiebrp.isc.jbpm.command.client;

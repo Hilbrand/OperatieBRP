@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.La01Bericht;
@@ -26,8 +28,6 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * Insert een persoon in de GBA-v tabellen.
@@ -56,7 +56,7 @@ public final class GbavPersoonKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -84,46 +84,52 @@ public final class GbavPersoonKanaal extends LazyLoadingKanaal {
                     Lo3CategorieWaardeUtil.getElementWaarde(categorieen, Lo3CategorieEnum.CATEGORIE_07, 0, 0, Lo3ElementEnum.ELEMENT_6720);
             final Long aNummer =
                     toLong(Lo3CategorieWaardeUtil.getElementWaarde(categorieen, Lo3CategorieEnum.CATEGORIE_01, 0, 0, Lo3ElementEnum.ELEMENT_0110));
+            final Long bsn =
+                    toLong(Lo3CategorieWaardeUtil.getElementWaarde(categorieen, Lo3CategorieEnum.CATEGORIE_01, 0, 0, Lo3ElementEnum.ELEMENT_0120));
             final String originatorOrRecipient =
                     Lo3CategorieWaardeUtil.getElementWaarde(categorieen, Lo3CategorieEnum.CATEGORIE_08, 0, 0, Lo3ElementEnum.ELEMENT_0910);
 
-            LOG.info("Bijwerken persoon: anr: {}, originator: {}, opschortdatum: {}, opschortreden: {}", new Object[] {aNummer,
-                                                                                                                       originatorOrRecipient,
-                                                                                                                       bijhoudingOpschortDatum,
-                                                                                                                       bijhoudingOpschortReden, });
+            LOG.info(
+                    "Bijwerken persoon: anr: {}, bsn {}, originator: {}, opschortdatum: {}, opschortreden: {}",
+                    new Object[]{aNummer, bsn, originatorOrRecipient, bijhoudingOpschortDatum, bijhoudingOpschortReden,});
 
             try {
+                final Integer plId;
+                if (bericht.getCorrelatieReferentie() != null) {
+                    plId = gbavHelper.getPlIdObvReferentiePersoon(bericht.getCorrelatieReferentie());
+                } else {
+                    plId = gbavRepository.insertLo3Pl(bijhoudingOpschortDatum, bijhoudingOpschortReden, null, aNummer, bsn);
+                }
+
                 final Integer cyclusActiviteitId =
                         gbavRepository.insertActiviteit(
-                            null,
-                            GbavRepository.ACTIVITEIT_TYPE_LG01_CYCLUS,
-                            GbavRepository.ACTIVITEIT_SUBTYPE_LG01_CYCLUS,
-                            GbavRepository.TOESTAND_VERWERKT);
+                                null,
+                                GbavRepository.ACTIVITEIT_TYPE_LG01_CYCLUS,
+                                GbavRepository.ACTIVITEIT_SUBTYPE_LG01_CYCLUS,
+                                GbavRepository.TOESTAND_VERWERKT,
+                                plId,
+                                bericht.getOntvangendePartij(),
+                                null);
                 gbavHelper.registeerCyclusActiviteitIdObvReferentiePersoon(bericht.getBerichtReferentie(), cyclusActiviteitId);
 
                 final Integer berichtActiviteitId =
                         gbavRepository.insertActiviteit(
-                            cyclusActiviteitId,
-                            GbavRepository.ACTIVITEIT_TYPE_LG01_BERICHT,
-                            GbavRepository.ACTIVITEIT_SUBTYPE_LG01_BERICHT,
-                            GbavRepository.TOESTAND_VERWERKT);
+                                cyclusActiviteitId,
+                                GbavRepository.ACTIVITEIT_TYPE_LG01_BERICHT,
+                                GbavRepository.ACTIVITEIT_SUBTYPE_LG01_BERICHT,
+                                GbavRepository.TOESTAND_VERWERKT,
+                                plId,
+                                bericht.getOntvangendePartij(),
+                                null);
 
                 final Date tijdstipVerzendingOntvangst = toDate(bericht.getTestBericht().getTestBerichtProperty("tijdstipVerzendingOntvangst"));
                 gbavRepository.insertBericht(bericht.getInhoud(), originatorOrRecipient, berichtActiviteitId, tijdstipVerzendingOntvangst);
-
-                if (bericht.getCorrelatieReferentie() != null) {
-                    final Integer plId = gbavHelper.getPlIdObvReferentiePersoon(bericht.getCorrelatieReferentie());
-                    gbavRepository.updateLo3Pl(plId, bijhoudingOpschortDatum, bijhoudingOpschortReden, berichtActiviteitId, aNummer);
-
-                } else {
-                    final Integer plId = gbavRepository.insertLo3Pl(bijhoudingOpschortDatum, bijhoudingOpschortReden, berichtActiviteitId, aNummer);
-                    gbavHelper.registeerPlIdObvReferentiePersoon(bericht.getBerichtReferentie(), plId);
-                }
+                gbavRepository.updateLo3Pl(plId, bijhoudingOpschortDatum, bijhoudingOpschortReden, berichtActiviteitId, aNummer, bsn);
+                gbavHelper.registeerPlIdObvReferentiePersoon(bericht.getBerichtReferentie(), plId);
 
             } catch (final
-                SQLException
-                | ParseException e)
-            {
+            SQLException
+                    | ParseException e) {
                 throw new KanaalException("Kan persoonslijst niet toevoegen aan GBA-v tabellen", e);
             }
 

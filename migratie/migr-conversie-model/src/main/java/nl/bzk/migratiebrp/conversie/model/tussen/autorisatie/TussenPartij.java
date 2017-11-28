@@ -6,15 +6,14 @@
 
 package nl.bzk.migratiebrp.conversie.model.tussen.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpPartijInhoud;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Migratie representatie voor een partij (BRP inhoud, LO3 historie).
@@ -34,22 +33,16 @@ public final class TussenPartij {
 
     /**
      * Maak een nieuw TussenPartij object.
-     *
-     * @param id
-     *            de id van de partij
-     * @param naam
-     *            de naam van de partij
-     * @param partijCode
-     *            de code van de partij
-     * @param partijStapel
-     *            de partij stapels
+     * @param id de id van de partij
+     * @param naam de naam van de partij
+     * @param partijCode de code van de partij
+     * @param partijStapel de partij stapels
      */
     public TussenPartij(
-        @Element(name = "id", required = false) final Long id,
-        @Element(name = "naam", required = false) final String naam,
-        @Element(name = "partijCode", required = false) final BrpPartijCode partijCode,
-        @Element(name = "partijStapel", required = false) final TussenStapel<BrpPartijInhoud> partijStapel)
-    {
+            @Element(name = "id", required = false) final Long id,
+            @Element(name = "naam", required = false) final String naam,
+            @Element(name = "partijCode", required = false) final BrpPartijCode partijCode,
+            @Element(name = "partijStapel", required = false) final TussenStapel<BrpPartijInhoud> partijStapel) {
         super();
         this.id = id;
         this.naam = naam;
@@ -58,36 +51,32 @@ public final class TussenPartij {
     }
 
     /**
-     * Geef de waarde van id.
-     *
-     * @return id
+     * Geef de waarde van id van TussenPartij.
+     * @return de waarde van id van TussenPartij
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * Geef de waarde van naam.
-     *
-     * @return naam
+     * Geef de waarde van naam van TussenPartij.
+     * @return de waarde van naam van TussenPartij
      */
     public String getNaam() {
         return naam;
     }
 
     /**
-     * Geef de waarde van partij code.
-     *
-     * @return partij code
+     * Geef de waarde van partij code van TussenPartij.
+     * @return de waarde van partij code van TussenPartij
      */
     public BrpPartijCode getPartijCode() {
         return partijCode;
     }
 
     /**
-     * Geef de waarde van partij stapel.
-     *
-     * @return partij stapel
+     * Geef de waarde van partij stapel van TussenPartij.
+     * @return de waarde van partij stapel van TussenPartij
      */
     public TussenStapel<BrpPartijInhoud> getPartijStapel() {
         return partijStapel;

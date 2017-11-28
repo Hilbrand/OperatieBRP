@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.apache.commons.io.IOUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,7 +21,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
  */
 public abstract class AbstractJdbcRepository {
 
-    /** Transactionmanager. */
+    /**
+     * Transactionmanager.
+     */
     protected static final String PROEF_SYNCHRONISATIE_TRANSACTION_MANAGER = "proefSynchronisatie-transactionManager";
 
     private static final Logger LOG = LoggerFactory.getLogger();
@@ -31,9 +33,7 @@ public abstract class AbstractJdbcRepository {
 
     /**
      * Set the datasource to use.
-     *
-     * @param dataSource
-     *            the datasource to use
+     * @param dataSource the datasource to use
      */
     @Resource(name = "proefSynchronisatie-datasource")
     public final void setDataSource(final DataSource dataSource) {
@@ -43,7 +43,6 @@ public abstract class AbstractJdbcRepository {
 
     /**
      * Geef de waarde van jdbc template.
-     *
      * @return jdbc template
      */
     protected final NamedParameterJdbcTemplate getJdbcTemplate() {
@@ -52,9 +51,7 @@ public abstract class AbstractJdbcRepository {
 
     /**
      * Haalt de string op die in het opgegeven resource pad zit.
-     *
-     * @param resourcePath
-     *            Het pad van de resource.
+     * @param resourcePath Het pad van de resource.
      * @return String representatie van de resource.
      */
     protected final String getStringResourceData(final String resourcePath) {

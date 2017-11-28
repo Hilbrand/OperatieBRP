@@ -10,9 +10,8 @@
  * Het LO3 model beschrijft de MigratieSpecifieke kijk op het LO3 model en moet voldoende
  * informatie bevatten om geconverteert te worden naar een Lg01 bericht. Dit model dient ter ondersteuning aan
  * de conversieregels.
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.model
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.model.lo3;
 

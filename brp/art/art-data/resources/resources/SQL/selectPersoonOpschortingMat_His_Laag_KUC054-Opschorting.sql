@@ -1,1 +1,0 @@
-select hpo.* from kern.his_persopschorting hpo where hpo.pers in(select id from kern.pers where bsn = ${DataSource Values#|persoon1|}) order by hpo.actieinh asc

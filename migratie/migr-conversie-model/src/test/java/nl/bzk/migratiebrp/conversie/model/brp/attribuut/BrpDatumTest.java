@@ -6,19 +6,20 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import org.junit.Test;
 
 public class BrpDatumTest {
 
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testWrapZonderWaardeEnZonderOnderzoek() throws Exception {
@@ -27,14 +28,14 @@ public class BrpDatumTest {
 
     @Test
     public void testWrapMetWaardeEnZonderOnderzoek() throws Exception {
-        BrpDatum result = BrpDatum.wrap(20010101, null);
+        final BrpDatum result = BrpDatum.wrap(20010101, null);
         assertNull(result.getOnderzoek());
         assertEquals(20010101, result.getWaarde().intValue());
     }
 
     @Test
     public void testWrapZonderWaardeEnMetOnderzoek() throws Exception {
-        BrpDatum result = BrpDatum.wrap(null, onderzoek);
+        final BrpDatum result = BrpDatum.wrap(null, onderzoek);
         assertNotNull(result.getOnderzoek());
         assertNull(result.getWaarde());
     }
@@ -52,17 +53,17 @@ public class BrpDatumTest {
 
     @Test(expected = NullPointerException.class)
     public void testCompareNull() {
-        BrpDatum datum1 = new BrpDatum(20050607, null);
+        final BrpDatum datum1 = new BrpDatum(20050607, null);
         datum1.compareTo(null);
     }
 
     @Test
     public void testCompare() {
-        BrpDatum datum1 = new BrpDatum(20050607, null);
-        BrpDatum datum2 = new BrpDatum(20050607, null);
-        BrpDatum datum3 = new BrpDatum(20050608, null);
-        BrpDatum datum4 = new BrpDatum(20050606, null);
-        BrpDatum datum5 = new BrpDatum(20050607, onderzoek);
+        final BrpDatum datum1 = new BrpDatum(20050607, null);
+        final BrpDatum datum2 = new BrpDatum(20050607, null);
+        final BrpDatum datum3 = new BrpDatum(20050608, null);
+        final BrpDatum datum4 = new BrpDatum(20050606, null);
+        final BrpDatum datum5 = new BrpDatum(20050607, onderzoek);
         assertEquals(0, datum1.compareTo(datum2));
         assertEquals(-1, datum1.compareTo(datum3));
         assertEquals(1, datum1.compareTo(datum4));
@@ -71,22 +72,22 @@ public class BrpDatumTest {
 
     @Test(expected = NullPointerException.class)
     public void isOnbekendWaardeNull() {
-        BrpDatum datum2 = new BrpDatum(null, onderzoek);
+        final BrpDatum datum2 = new BrpDatum(null, onderzoek);
         datum2.isOnbekend();
     }
 
     @Test
     public void isOnbekend() {
-        BrpDatum datum1 = new BrpDatum(new Integer("20050607"), null);
-        BrpDatum datum2 = new BrpDatum(new Integer("00000607"), null);
-        BrpDatum datum7 = new BrpDatum(new Integer("00000600"), null);
-        BrpDatum datum8 = new BrpDatum(new Integer("00000007"), null);
-        BrpDatum datum3 = new BrpDatum(new Integer("20010007"), null);
-        BrpDatum datum4 = new BrpDatum(new Integer("00000000"), null);
-        BrpDatum datum5 = new BrpDatum(new Integer("20010000"), null);
-        BrpDatum datum6 = new BrpDatum(new Integer("20010600"), null);
-        BrpDatum datum9 = new BrpDatum(new Integer("330601"), null);
-        BrpDatum datum10 = new BrpDatum(new Integer("030601"), null);
+        final BrpDatum datum1 = new BrpDatum(new Integer("20050607"), null);
+        final BrpDatum datum2 = new BrpDatum(new Integer("00000607"), null);
+        final BrpDatum datum7 = new BrpDatum(new Integer("00000600"), null);
+        final BrpDatum datum8 = new BrpDatum(new Integer("00000007"), null);
+        final BrpDatum datum3 = new BrpDatum(new Integer("20010007"), null);
+        final BrpDatum datum4 = new BrpDatum(new Integer("00000000"), null);
+        final BrpDatum datum5 = new BrpDatum(new Integer("20010000"), null);
+        final BrpDatum datum6 = new BrpDatum(new Integer("20010600"), null);
+        final BrpDatum datum9 = new BrpDatum(new Integer("330601"), null);
+        final BrpDatum datum10 = new BrpDatum(new Integer("030601"), null);
 
         assertFalse(datum1.isOnbekend());
         assertTrue(datum2.isOnbekend());

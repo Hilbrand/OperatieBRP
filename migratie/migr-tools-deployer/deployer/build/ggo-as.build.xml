@@ -187,7 +187,7 @@ defaultpl.location=~/${application.directory}/demo/]]></echo>
      define subcomponents such as "Valves" at this level.
      Documentation at /docs/config/server.html
  -->
-<Server port="8005" shutdown="SHUTDOWN">
+<Server port="8006" shutdown="SHUTDOWN">
   <!-- Security listener. Documentation at /docs/config/listeners.html
   <Listener className="org.apache.catalina.security.SecurityListener" />
   -->
@@ -320,8 +320,11 @@ defaultpl.location=~/${application.directory}/demo/]]></echo>
 	
 	<target name="start" depends="checkProperties">
 		<echo message="Starting ${ant.project.name}" />
+
 		<sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
 		         command="cd ~; cd ${application.directory}; cd bin; ./startup.sh" />
+
+        <echo message="Succesfully started ${ant.project.name}" />
     </target>
 
 	<target name="stop" depends="checkProperties">

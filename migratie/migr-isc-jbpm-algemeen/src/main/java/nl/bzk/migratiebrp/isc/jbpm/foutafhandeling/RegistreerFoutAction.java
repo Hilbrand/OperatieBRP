@@ -8,8 +8,10 @@ package nl.bzk.migratiebrp.isc.jbpm.foutafhandeling;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import nl.bzk.migratiebrp.isc.jbpm.common.ProcessInstanceUtil;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
+
 import org.jbpm.graph.exe.ExecutionContext;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +28,7 @@ public final class RegistreerFoutAction implements SpringAction {
 
     /**
      * Zet de waarde van fouten dao.
-     *
-     * @param foutenDao
-     *            fouten dao
+     * @param foutenDao fouten dao
      */
     public void setFoutenDao(final FoutenDao foutenDao) {
         this.foutenDao = foutenDao;
@@ -39,8 +39,8 @@ public final class RegistreerFoutAction implements SpringAction {
         // Fout
         final String foutcode = (String) parameters.get(FoutafhandelingConstants.FOUT);
         final String foutmelding = (String) parameters.get(FoutafhandelingConstants.FOUTMELDING);
-        final String bronGemeente = (String) parameters.get(FoutafhandelingConstants.BRON_GEMEENTE);
-        final String doelGemeente = (String) parameters.get(FoutafhandelingConstants.DOEL_GEMEENTE);
+        final String bronPartijCode = (String) parameters.get(FoutafhandelingConstants.BRON_PARTIJ_CODE);
+        final String doelPartijCode = (String) parameters.get(FoutafhandelingConstants.DOEL_PARTIJ_CODE);
 
         // Process
         final ExecutionContext context = ExecutionContext.currentExecutionContext();
@@ -50,7 +50,7 @@ public final class RegistreerFoutAction implements SpringAction {
         final long processId = processInstance.getId();
 
         // Opslaan
-        final long id = foutenDao.registreerFout(foutcode, foutmelding, process, processId, bronGemeente, doelGemeente);
+        final long id = foutenDao.registreerFout(foutcode, foutmelding, process, processId, bronPartijCode, doelPartijCode);
 
         // Results
         final Map<String, Object> result = new HashMap<>();

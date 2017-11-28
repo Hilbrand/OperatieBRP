@@ -9,6 +9,26 @@ package nl.bzk.migratiebrp.ggo.viewer.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerkrijgingNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Naamgebruik;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBijhoudingsaardCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
@@ -16,28 +36,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortAdresCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Naamgebruik;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerkrijgingNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerliesNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Verblijfsrecht;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
-
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -59,10 +57,9 @@ public class BrpStamtabelServiceTest {
 
     @Test
     public void getNationaliteitTestOK() {
-        final short natCode = (short) 1;
+        final String natCode = "0001";
         final Nationaliteit expectedNat = new Nationaliteit("Nederlandse", natCode);
-        final String natCodePadded = BrpStamtabelServiceTest.zeroPad(String.valueOf(expectedNat.getCode()), 4);
-        final String expected = String.format(STRING_FORMAT, natCodePadded, expectedNat.getNaam());
+        final String expected = String.format(STRING_FORMAT, expectedNat.getCode(), expectedNat.getNaam());
         Mockito.doReturn(expectedNat).when(dynamischeStamtabelRepository).getNationaliteitByNationaliteitcode(natCode);
 
         final String resultNat = brpStamtabelService.getNationaliteit(String.valueOf(natCode));
@@ -75,10 +72,10 @@ public class BrpStamtabelServiceTest {
      */
     @Test
     public void getNationaliteitTestNotExist() {
-        final short natCode = (short) 999;
+        final String natCode = "0999";
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getNationaliteitByNationaliteitcode(natCode);
+                .when(dynamischeStamtabelRepository)
+                .getNationaliteitByNationaliteitcode(natCode);
 
         final String resultNat = brpStamtabelService.getNationaliteit(String.valueOf(natCode));
         assertEquals("0999", resultNat);
@@ -168,7 +165,7 @@ public class BrpStamtabelServiceTest {
     @Test
     public void getFunctieAdresTestOK() {
         final BrpSoortAdresCode faCode = BrpSoortAdresCode.B;
-        final FunctieAdres expectedFa = FunctieAdres.BRIEFADRES;
+        final SoortAdres expectedFa = SoortAdres.BRIEFADRES;
         final String expected = String.format(STRING_FORMAT, expectedFa.getCode(), expectedFa.getNaam());
         final String resultFa = brpStamtabelService.getFunctieAdres(faCode.getWaarde());
         assertEquals(expected, resultFa);
@@ -235,11 +232,10 @@ public class BrpStamtabelServiceTest {
 
     @Test
     public void getGemeenteByPartijTestOK() {
-        final Short gemCode = 8;
-        final Partij expectedPartij = new Partij("Bierum", gemCode);
+        final String gemCode = "0008";
+        final Partij expectedPartij = new Partij("Bierum", gemCode + "01");
         final Gemeente expectedGem = new Gemeente((short) 1, "Bierum", gemCode, expectedPartij);
-        final String gemCodePadded = BrpStamtabelServiceTest.zeroPad(String.valueOf(expectedGem.getCode()), 4);
-        final String expected = String.format(STRING_FORMAT, gemCodePadded, expectedGem.getNaam());
+        final String expected = String.format(STRING_FORMAT, expectedGem.getCode(), expectedGem.getNaam());
         Mockito.doReturn(expectedPartij).when(dynamischeStamtabelRepository).getPartijByCode(gemCode);
         Mockito.doReturn(expectedGem).when(dynamischeStamtabelRepository).getGemeenteByPartij(expectedPartij);
 
@@ -253,22 +249,21 @@ public class BrpStamtabelServiceTest {
      */
     @Test
     public void getGemeenteByPartijTestNotExist() {
-        final Short gemCode = 5000;
+        final String gemCode = "005000";
         final Partij expectedPartij = new Partij("Onbekend", gemCode);
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getPartijByCode(gemCode);
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getGemeenteByPartij(expectedPartij);
 
         final String resultGem = brpStamtabelService.getGemeenteByPartij(gemCode);
-        assertEquals("5000", resultGem);
+        assertEquals("005000", resultGem);
     }
 
     @Test
     public void getGemeenteCodeByPartijTestOK() {
-        final Short gemCode = 8;
-        final Partij expectedPartij = new Partij("Bierum", gemCode);
+        final String gemCode = "0008";
+        final Partij expectedPartij = new Partij("Bierum", gemCode + "01");
         final Gemeente expectedGem = new Gemeente((short) 1, "Bierum", gemCode, expectedPartij);
-        final String gemCodePadded = BrpStamtabelServiceTest.zeroPad(String.valueOf(expectedGem.getCode()), 4);
-        final String expected = gemCodePadded;
+        final String expected = expectedGem.getCode();
         Mockito.doReturn(expectedPartij).when(dynamischeStamtabelRepository).getPartijByCode(gemCode);
         Mockito.doReturn(expectedGem).when(dynamischeStamtabelRepository).getGemeenteByPartij(expectedPartij);
 
@@ -278,7 +273,7 @@ public class BrpStamtabelServiceTest {
 
     @Test
     public void getGemeenteCodeByPartijTestNotExist() {
-        final Short gemCode = 5000;
+        final String gemCode = "005000";
         final Partij expectedPartij = new Partij("Onbekend", gemCode);
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getPartijByCode(gemCode);
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getGemeenteByPartij(expectedPartij);
@@ -289,10 +284,9 @@ public class BrpStamtabelServiceTest {
 
     @Test
     public void getPartijTestOK() {
-        final int partijCode = 1401;
+        final String partijCode = "001401";
         final Partij expectedPartij = new Partij("Groningen", partijCode);
-        final String gemCodePadded = BrpStamtabelServiceTest.zeroPad(String.valueOf(expectedPartij.getCode()), 4);
-        final String expected = String.format(STRING_FORMAT, gemCodePadded, expectedPartij.getNaam());
+        final String expected = String.format(STRING_FORMAT, expectedPartij.getCode(), expectedPartij.getNaam());
         Mockito.doReturn(expectedPartij).when(dynamischeStamtabelRepository).getPartijByCode(partijCode);
 
         final String resultPartij = brpStamtabelService.getPartij(partijCode);
@@ -305,7 +299,7 @@ public class BrpStamtabelServiceTest {
      */
     @Test
     public void getPartijTestNotExist() {
-        final int partijCode = 500000;
+        final String partijCode = "500000";
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getPartijByCode(partijCode);
 
         final String resultGem = brpStamtabelService.getPartij(partijCode);
@@ -314,10 +308,9 @@ public class BrpStamtabelServiceTest {
 
     @Test
     public void getLandTestOK() {
-        final short landCode = (short) 6037;
+        final String landCode = "6037";
         final LandOfGebied expectedLandOfGebied = new LandOfGebied(landCode, "Spanje");
-        final String landCodePadded = BrpStamtabelServiceTest.zeroPad(String.valueOf(expectedLandOfGebied.getCode()), 4);
-        final String expected = String.format(STRING_FORMAT, landCodePadded, expectedLandOfGebied.getNaam());
+        final String expected = String.format(STRING_FORMAT, expectedLandOfGebied.getCode(), expectedLandOfGebied.getNaam());
         Mockito.doReturn(expectedLandOfGebied).when(dynamischeStamtabelRepository).getLandOfGebiedByCode(landCode);
 
         final String resultLand = brpStamtabelService.getLandOfGebied(String.valueOf(landCode));
@@ -330,10 +323,10 @@ public class BrpStamtabelServiceTest {
      */
     @Test
     public void getLandTestNotExist() {
-        final short landCode = (short) 50;
+        final String landCode = "0050";
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getLandOfGebiedByCode(landCode);
 
-        final String resultLand = brpStamtabelService.getLandOfGebied(String.valueOf(landCode));
+        final String resultLand = brpStamtabelService.getLandOfGebied(landCode);
         assertEquals("0050", resultLand);
     }
 
@@ -359,10 +352,9 @@ public class BrpStamtabelServiceTest {
 
     @Test
     public void getRedenVerkrijgingNlTestOK() {
-        final short rvnCode = (short) 0;
+        final String rvnCode = "000";
         final RedenVerkrijgingNLNationaliteit expectedRvn = new RedenVerkrijgingNLNationaliteit(rvnCode, "000");
-        final String rvnCodePadded = BrpStamtabelServiceTest.zeroPad(String.valueOf(expectedRvn.getCode()), 3);
-        final String expected = String.format(STRING_FORMAT, rvnCodePadded, expectedRvn.getOmschrijving());
+        final String expected = String.format(STRING_FORMAT, expectedRvn.getCode(), expectedRvn.getOmschrijving());
         Mockito.doReturn(expectedRvn).when(dynamischeStamtabelRepository).getRedenVerkrijgingNLNationaliteitByCode(rvnCode);
 
         final String resultRvn = brpStamtabelService.getRedenVerkrijgingNederlandschap(String.valueOf(rvnCode));
@@ -375,21 +367,17 @@ public class BrpStamtabelServiceTest {
      */
     @Test
     public void getRedenVerkrijgingNlTestNotExist() {
-        final short rvnCode = (short) 300;
-        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getRedenVerkrijgingNLNationaliteitByCode(rvnCode);
-
+        final String rvnCode = "300";
+        Mockito.when(dynamischeStamtabelRepository.getRedenVerkrijgingNLNationaliteitByCode(rvnCode)).thenReturn(null);
         final String resultRvn = brpStamtabelService.getRedenVerkrijgingNederlandschap(String.valueOf(rvnCode));
         assertEquals("300", resultRvn);
     }
 
     @Test
     public void getRedenVerliesNlTestOK() {
-        final short rvnCode = (short) 34;
+        final String rvnCode = "034";
         final RedenVerliesNLNationaliteit expectedRvn = new RedenVerliesNLNationaliteit(rvnCode, "034");
-        final String rvnCodePadded = BrpStamtabelServiceTest.zeroPad(String.valueOf(expectedRvn.getCode()), 3);
-        final String expected = String.format(STRING_FORMAT, rvnCodePadded, expectedRvn.getOmschrijving());
+        final String expected = String.format(STRING_FORMAT, expectedRvn.getCode(), expectedRvn.getOmschrijving());
         Mockito.doReturn(expectedRvn).when(dynamischeStamtabelRepository).getRedenVerliesNLNationaliteitByCode(rvnCode);
 
         final String resultRvn = brpStamtabelService.getRedenVerliesNederlandschap(String.valueOf(rvnCode));
@@ -402,11 +390,8 @@ public class BrpStamtabelServiceTest {
      */
     @Test
     public void getRedenVerliesNlTestNotExist() {
-        final short rvnCode = (short) 2;
-        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getRedenVerliesNLNationaliteitByCode(rvnCode);
-
+        final String rvnCode = "002";
+        Mockito.when(dynamischeStamtabelRepository.getRedenVerliesNLNationaliteitByCode(rvnCode)).thenReturn(null);
         final String resultRvn = brpStamtabelService.getRedenVerliesNederlandschap(String.valueOf(rvnCode));
         assertEquals("002", resultRvn);
     }
@@ -430,8 +415,8 @@ public class BrpStamtabelServiceTest {
     public void getSoortNlReisdocumentTestNotExist() {
         final String snrCode = "XY";
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getSoortNederlandsReisdocumentByCode(snrCode);
+                .when(dynamischeStamtabelRepository)
+                .getSoortNederlandsReisdocumentByCode(snrCode);
 
         final String resultSnr = brpStamtabelService.getSoortNlReisdocument(snrCode);
         assertEquals("XY", resultSnr);
@@ -464,8 +449,8 @@ public class BrpStamtabelServiceTest {
     public void getRedenVervallenReisdocTestNotExist() {
         final char rvrCode = '#';
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getAanduidingInhoudingOfVermissingReisdocumentByCode(rvrCode);
+                .when(dynamischeStamtabelRepository)
+                .getAanduidingInhoudingOfVermissingReisdocumentByCode(rvrCode);
 
         final String resultRvr = brpStamtabelService.getRedenOntbrekenReisdocument(String.valueOf(rvrCode));
         assertEquals("#", resultRvr);
@@ -474,10 +459,7 @@ public class BrpStamtabelServiceTest {
     @Test
     public void getVerblijfstitelTestOK() {
         final Verblijfsrecht expectedVb =
-                new Verblijfsrecht((short) 11, "Vergunning art. 9 Vw, zonder beperking, dan wel gerechtigd krachtens art. 10 Vw");
-        // TODO: verblijfstitel opzoeken bij code en dan code + omschrijving terugkrijgen.
-        // final String expected = String.format(STRING_FORMAT, "", expectedVb.getOmschrijving());
-        final String expected = expectedVb.getOmschrijving();
+                new Verblijfsrecht("11", "Vergunning art. 9 Vw, zonder beperking, dan wel gerechtigd krachtens art. 10 Vw");
         Mockito.doReturn(expectedVb).when(dynamischeStamtabelRepository).getVerblijfsrechtByCode(expectedVb.getCode());
 
         final String resultVb = brpStamtabelService.getVerblijfstitel("11");
@@ -490,7 +472,7 @@ public class BrpStamtabelServiceTest {
      */
     @Test
     public void getVerblijfsrechtTestNotExist() {
-        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getVerblijfsrechtByCode((short) 99);
+        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getVerblijfsrechtByCode("99");
 
         final String resultVb = brpStamtabelService.getVerblijfstitel("99");
         assertEquals("99", resultVb);
@@ -498,8 +480,8 @@ public class BrpStamtabelServiceTest {
 
     @Test
     public void getRedenOpschortingTestOK() {
-        final BrpNadereBijhoudingsaardCode robCode = BrpNadereBijhoudingsaardCode.MINISTERIEEL_BESLUIT;
-        final NadereBijhoudingsaard expectedRob = NadereBijhoudingsaard.MINISTERIEEL_BESLUIT;
+        final BrpNadereBijhoudingsaardCode robCode = BrpNadereBijhoudingsaardCode.BIJZONDERE_STATUS;
+        final NadereBijhoudingsaard expectedRob = NadereBijhoudingsaard.BIJZONDERE_STATUS;
         final String expected = String.format(STRING_FORMAT, expectedRob.getCode(), expectedRob.getNaam());
         final String resultRob = brpStamtabelService.getRedenOpschorting(robCode.getWaarde());
         assertEquals(expected, resultRob);
@@ -537,14 +519,10 @@ public class BrpStamtabelServiceTest {
     public void getRedenEindeRelatieNotExist() {
         final char rerCode = '-';
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getRedenBeeindigingRelatieByCode(rerCode);
+                .when(dynamischeStamtabelRepository)
+                .getRedenBeeindigingRelatieByCode(rerCode);
 
         final String resultRer = brpStamtabelService.getRedenEindeRelatie(String.valueOf(rerCode));
         assertEquals("-", resultRer);
-    }
-
-    private static String zeroPad(final String string, final int size) {
-        return StringUtils.leftPad(string, size, "0");
     }
 }

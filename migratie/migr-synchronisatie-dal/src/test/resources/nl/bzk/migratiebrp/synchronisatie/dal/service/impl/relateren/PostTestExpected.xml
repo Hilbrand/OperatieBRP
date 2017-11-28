@@ -2,7 +2,7 @@
 <!DOCTYPE dataset
         PUBLIC "brp_kern" "brp_kern.dtd">
 <dataset>
-    <kern.partij id="8" naam="Bierum" code="8"/>
+    <kern.partij id="8" naam="Bierum" code="8" indagvrijber="false"/>
     <!-- IST -->
     <ist.stapel id="1" pers="1" categorie="11" volgnr="0"/>
 

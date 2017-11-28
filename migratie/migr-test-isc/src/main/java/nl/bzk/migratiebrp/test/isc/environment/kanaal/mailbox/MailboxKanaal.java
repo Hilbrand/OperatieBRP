@@ -11,7 +11,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkGbaBericht;
 import nl.bzk.migratiebrp.test.isc.environment.correlatie.Correlator;
 import nl.bzk.migratiebrp.test.isc.environment.id.IdGenerator;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.AbstractKanaal;
@@ -19,26 +24,33 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.operatie.ExceptionWrapper;
 import nl.bzk.migratiebrp.util.common.operatie.Herhaal;
 import nl.bzk.migratiebrp.util.common.operatie.HerhaalException;
 import nl.bzk.migratiebrp.voisc.database.entities.Mailbox;
 import nl.bzk.migratiebrp.voisc.database.entities.StatusEnum;
 import nl.bzk.migratiebrp.voisc.database.repository.MailboxRepository;
-import nl.bzk.migratiebrp.voisc.spd.MailboxClient;
-import nl.bzk.migratiebrp.voisc.spd.constants.SpdConstants;
-import nl.bzk.migratiebrp.voisc.spd.exception.SpdProtocolException;
+import nl.bzk.migratiebrp.voisc.mailbox.client.Connection;
+import nl.bzk.migratiebrp.voisc.mailbox.client.MailboxClient;
+import nl.bzk.migratiebrp.voisc.mailbox.client.exception.ConnectionException;
+import nl.bzk.migratiebrp.voisc.spd.SpdConstants;
 import nl.bzk.migratiebrp.voisc.spd.exception.VoaException;
+
 import org.junit.Assert;
 
 /**
  * Mailbox kanaal.
  */
 public final class MailboxKanaal extends LazyLoadingKanaal {
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "mailbox";
+
+    /**
+     * Bericht attribuut waarop wordt aangegeven of het bericht is ontvangen met een non receipt notification request.
+     */
+    public static final String ATTRIBUTE_REQUEST_NON_RECEIPT_NOTIFICATION = "requestNonReceiptNotification";
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
@@ -46,12 +58,13 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
      * Constructor.
      */
     public MailboxKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-voisc.xml",
-            "classpath:infra-em-voisc.xml",
-            "classpath:infra-jta.xml",
-            "classpath:infra-mailbox.xml"));
+        super(new Worker(),
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-db-voisc.xml",
+                        "classpath:infra-em-voisc.xml",
+                        "classpath:infra-jta.xml",
+                        "classpath:infra-mailbox.xml"));
     }
 
     /**
@@ -76,7 +89,7 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -90,19 +103,19 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
             LOG.info("Start versturen bericht namens instantie {} naar instantie {}.", bericht.getVerzendendePartij(), bericht.getOntvangendePartij());
             if (bericht.getVerzendendePartij() == null || bericht.getOntvangendePartij() == null) {
                 throw new KanaalException("Verzendende ("
-                                          + bericht.getVerzendendePartij()
-                                          + ") en ontvangende ("
-                                          + bericht.getOntvangendePartij()
-                                          + ") partij moeten beide gevuld zijn.");
+                        + bericht.getVerzendendePartij()
+                        + ") en ontvangende ("
+                        + bericht.getOntvangendePartij()
+                        + ") partij moeten beide gevuld zijn.");
             }
 
             instanties.add(bericht.getVerzendendePartij());
             instanties.add(bericht.getOntvangendePartij());
-            final Mailbox mailbox = mailboxRepository.getMailboxByInstantiecode(Integer.parseInt(bericht.getVerzendendePartij()));
+            final Mailbox mailbox = mailboxRepository.getMailboxByNummer(bericht.getVerzendendePartij());
             LOG.info("Verwerk uitgaand bericht voor mailbox: {}", mailbox);
             Assert.assertNotNull(String.format(ERROR_MAILBOX_NIET_GEVONDEN, bericht.getVerzendendePartij()), mailbox);
 
-            final Mailbox recipient = mailboxRepository.getMailboxByInstantiecode(Integer.parseInt(bericht.getOntvangendePartij()));
+            final Mailbox recipient = mailboxRepository.getMailboxByNummer(bericht.getOntvangendePartij());
             Assert.assertNotNull(String.format(ERROR_MAILBOX_NIET_GEVONDEN, bericht.getOntvangendePartij()), mailbox);
 
             // Controleer correlatie
@@ -121,26 +134,35 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
             mailboxBericht.setOriginator(mailbox.getMailboxnr());
             mailboxBericht.setRecipient(recipient.getMailboxnr());
             mailboxBericht.setStatus(StatusEnum.SENDING_TO_MAILBOX);
+            mailboxBericht.setRequestNonReceiptNotification(Boolean.TRUE.equals(bericht.getRequestNonReceiptNotification()));
 
             // SSL verbinding opbouwen
-            mailboxServerProxy.connect();
+            try (final Connection mailboxConnection = mailboxServerProxy.connect()) {
 
-            try {
-                // Inloggen op de Mailbox
-                mailboxServerProxy.logOn(mailbox);
-
-                // Versturen berichten naar Mailbox
-                mailboxServerProxy.putMessage(mailboxBericht);
-            } catch (final VoaException e) {
-                throw new RuntimeException("Fout bij versturen bericht.", e);
-            } finally {
-                // Logout
                 try {
-                    mailboxServerProxy.logOff();
-                } catch (final SpdProtocolException e) {
-                    throw new RuntimeException("Fout bij uitloggen na versturen bericht.", e);
+                    // Inloggen op de Mailbox
+                    mailboxServerProxy.logOn(mailboxConnection, mailbox);
+
+                    // Versturen berichten naar Mailbox
+                    mailboxServerProxy.putMessage(mailboxConnection, mailboxBericht);
+                } catch (final VoaException e) {
+                    throw new RuntimeException("Fout bij versturen bericht.", e);
+                } finally {
+                    // Logout
+                    try {
+                        mailboxServerProxy.logOff(mailboxConnection);
+                    } catch (final VoaException e) {
+                        throw new RuntimeException("Fout bij uitloggen na versturen bericht.", e);
+                    }
                 }
+            } catch (final ConnectionException e) {
+                throw new KanaalException("Fout bij verbreken van de verbinding.", e);
             }
+        }
+
+        @Override
+        protected boolean vergelijkInhoud(final String verwachteInhoud, final String ontvangenInhoud) {
+            return VergelijkGbaBericht.vergelijk(verwachteInhoud, ontvangenInhoud);
         }
 
         @Override
@@ -155,7 +177,7 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
             }
 
             LOG.info("Ontvangen bericht voor instantie: {}", verwachtBericht.getOntvangendePartij());
-            final Mailbox mailbox = mailboxRepository.getMailboxByInstantiecode(Integer.parseInt(verwachtBericht.getOntvangendePartij()));
+            final Mailbox mailbox = mailboxRepository.getMailboxByNummer(verwachtBericht.getOntvangendePartij());
             LOG.info("Mailbox: {}", mailbox);
             if (mailbox.getMailboxpwd() == null || "".equals(mailbox.getMailboxpwd())) {
                 mailbox.setMailboxpwd(STANDAARD_MAILBOX_PASSWORD);
@@ -177,7 +199,6 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
 
         /**
          * Verzendende en ontvangende partij ook vergelijken bij inkomend bericht.
-         *
          * @return false
          */
         @Override
@@ -187,7 +208,6 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
 
         /**
          * Correlatie referenties ook vergelijken bij inkomend bericht.
-         *
          * @return false
          */
         @Override
@@ -195,10 +215,19 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
             return false;
         }
 
+        /**
+         * Request non receipt notification ook vergelijken bij inkomend bericht.
+         * @return false
+         */
+        @Override
+        protected boolean negeerRequestNonReceiptNotification() {
+            return false;
+        }
+
         @Override
         public List<Bericht> naTestcase(final TestCasusContext testCasus) {
             for (final String instantie : instanties) {
-                final Mailbox mailbox = mailboxRepository.getMailboxByInstantiecode(Integer.parseInt(instantie));
+                final Mailbox mailbox = mailboxRepository.getMailboxByNummer(instantie);
                 try {
                     final OntvangMailbox ontvangMailbox = new OntvangMailbox(mailbox, mailboxServerProxy, mailboxRepository, berichten, null, testCasus);
                     ontvangMailbox.ontvangBerichten();
@@ -231,28 +260,20 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
 
             /**
              * Constructor.
-             *
-             * @param mailbox
-             *            Mailbox
-             * @param mailboxServerProxy
-             *            De mailbox proxy
-             * @param mailboxRepository
-             *            De mailbox repository
-             * @param berichten
-             *            De lijst met ontvangen berichten
-             * @param verwachtBericht
-             *            Het verwachte bericht
-             * @param testCasus
-             *            De huidige test casus
+             * @param mailbox Mailbox
+             * @param mailboxServerProxy De mailbox proxy
+             * @param mailboxRepository De mailbox repository
+             * @param berichten De lijst met ontvangen berichten
+             * @param verwachtBericht Het verwachte bericht
+             * @param testCasus De huidige test casus
              */
             public OntvangMailbox(
-                final Mailbox mailbox,
-                final MailboxClient mailboxServerProxy,
-                final MailboxRepository mailboxRepository,
-                final List<Bericht> berichten,
-                final Bericht verwachtBericht,
-                final TestCasusContext testCasus)
-            {
+                    final Mailbox mailbox,
+                    final MailboxClient mailboxServerProxy,
+                    final MailboxRepository mailboxRepository,
+                    final List<Bericht> berichten,
+                    final Bericht verwachtBericht,
+                    final TestCasusContext testCasus) {
                 this.mailbox = mailbox;
                 this.mailboxServerProxy = mailboxServerProxy;
                 this.mailboxRepository = mailboxRepository;
@@ -272,8 +293,9 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
 
                 if (result == null) {
                     if ("$$geenBericht$$".equals(verwachtBericht.getInhoud())) {
-                        LOG.info("Geen bericht gevonden bij mailbox. Berichtinhoud van verwacht bericht is '$$geenBericht$$', dus verwachting is geen bericht. "
-                                 + "Resultaat -> ok");
+                        LOG.info(
+                                "Geen bericht gevonden bij mailbox. Berichtinhoud van verwacht bericht is '$$geenBericht$$', dus verwachting is geen bericht. "
+                                        + "Resultaat -> ok");
                         result = verwachtBericht;
                     } else {
                         throw new ExceptionWrapper(new KanaalException("Kan bericht niet ophalen bij mailbox."));
@@ -285,53 +307,65 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
             private void ontvangBerichten() {
 
                 // SSL verbinding opbouwen
-                mailboxServerProxy.connect();
-
-                try {
-                    // Inloggen op de Mailbox
-                    LOG.info("Aanmelden op mailbox: " + mailbox.getMailboxnr());
-                    mailboxServerProxy.logOn(mailbox);
-
-                    // Versturen berichten naar Mailbox
-                    final List<Integer> seqNummers = new ArrayList<>();
-
-                    int nextSequenceNumber = 0;
-                    do {
-                        nextSequenceNumber =
-                                mailboxServerProxy.listMessages(nextSequenceNumber, seqNummers, MAXIMUM_AANTAL_BERICHTEN, "001", SpdConstants.PRIORITY);
-
-                        for (final Integer seqNr : seqNummers) {
-                            final nl.bzk.migratiebrp.voisc.database.entities.Bericht mailboxBericht = mailboxServerProxy.getMessage(seqNr);
-
-                            LOG.info("Ontvangen mailbox bericht: " + mailboxBericht);
-                            final Bericht ontvangenBericht = new Bericht();
-                            ontvangenBericht.setOntvangendePartij(mailbox.getFormattedInstantiecode());
-                            final Mailbox originator = mailboxRepository.getMailboxByNummer(mailboxBericht.getOriginator());
-                            ontvangenBericht.setVerzendendePartij(originator.getFormattedInstantiecode());
-
-                            // Registreer EREF
-                            ontvangenBericht.setBerichtReferentie(mailboxBericht.getMessageId());
-
-                            if (mailboxBericht.getCorrelationId() != null) {
-                                LOG.info("Bepaal correlatie id voor ontvangen bericht EREF2 {}", mailboxBericht.getCorrelationId());
-                                ontvangenBericht.setCorrelatieReferentie(mailboxBericht.getCorrelationId());
-                            }
-
-                            ontvangenBericht.setInhoud(mailboxBericht.getBerichtInhoud());
-                            berichten.add(ontvangenBericht);
-                        }
-                    } while (nextSequenceNumber != 0);
-                } catch (final VoaException e) {
-                    throw new ExceptionWrapper(new KanaalException("Fout bij ontvangen bericht.", e));
-                } finally {
-                    // Logout
+                try (Connection mailboxConnection = mailboxServerProxy.connect()) {
                     try {
-                        mailboxServerProxy.logOff();
-                    } catch (final SpdProtocolException e) {
-                        throw new ExceptionWrapper(new KanaalException("Fout bij uitloggen na ontvangen bericht.", e));
+                        // Inloggen op de Mailbox
+                        LOG.info("Aanmelden op mailbox: " + mailbox.getMailboxnr());
+                        mailboxServerProxy.logOn(mailboxConnection, mailbox);
+                    } catch (final VoaException e) {
+                        throw new ExceptionWrapper(new KanaalException("Fout bij ontvangen bericht.", e));
+                    }
+
+                    try {
+                        // Versturen berichten naar Mailbox
+                        final List<Integer> seqNummers = new ArrayList<>();
+
+                        int nextSequenceNumber = 0;
+                        do {
+                            nextSequenceNumber =
+                                    mailboxServerProxy.listMessages(
+                                            mailboxConnection,
+                                            nextSequenceNumber,
+                                            seqNummers,
+                                            MAXIMUM_AANTAL_BERICHTEN,
+                                            "001",
+                                            SpdConstants.Priority.defaultValue());
+
+                            for (final Integer seqNr : seqNummers) {
+                                final nl.bzk.migratiebrp.voisc.database.entities.Bericht mailboxBericht =
+                                        mailboxServerProxy.getMessage(mailboxConnection, seqNr);
+
+                                LOG.info("Ontvangen mailbox bericht: " + mailboxBericht);
+                                final Bericht ontvangenBericht = new Bericht();
+                                ontvangenBericht.setOntvangendePartij(mailbox.getMailboxnr());
+                                ontvangenBericht.setVerzendendePartij(mailboxBericht.getOriginator());
+
+                                // Registreer EREF
+                                ontvangenBericht.setBerichtReferentie(mailboxBericht.getMessageId());
+                                if (mailboxBericht.getCorrelationId() != null) {
+                                    LOG.info("Bepaal correlatie id voor ontvangen bericht EREF2 {}", mailboxBericht.getCorrelationId());
+                                    ontvangenBericht.setCorrelatieReferentie(mailboxBericht.getCorrelationId());
+                                }
+
+                                ontvangenBericht.setInhoud(mailboxBericht.getBerichtInhoud());
+
+                                // Request non receipt notification
+                                ontvangenBericht.setRequestNonReceiptNotification(mailboxBericht.getRequestNonReceiptNotification());
+
+                                berichten.add(ontvangenBericht);
+                            }
+                        } while (nextSequenceNumber != 0);
+                    } catch (final VoaException e) {
+                        throw new ExceptionWrapper(new KanaalException("Fout bij ontvangen bericht.", e));
+                    } finally {
+                        // Logout
+                        try {
+                            mailboxServerProxy.logOff(mailboxConnection);
+                        } catch (final VoaException e) {
+                            throw new ExceptionWrapper(new KanaalException("Fout bij uitloggen na ontvangen bericht.", e));
+                        }
                     }
                 }
-
             }
 
             private Bericht zoekBericht() {
@@ -350,7 +384,6 @@ public final class MailboxKanaal extends LazyLoadingKanaal {
 
             /**
              * Geef de waarde van result.
-             *
              * @return result
              */
             public Bericht getResult() {

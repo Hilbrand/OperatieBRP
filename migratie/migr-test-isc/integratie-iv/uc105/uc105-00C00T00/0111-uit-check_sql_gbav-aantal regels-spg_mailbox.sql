@@ -1,1 +1,0 @@
-select count(*) as aantal_spg from spg_mailbox

@@ -37,16 +37,16 @@ public class Casus08aNationaliteitTest extends AbstractCasusTest {
 
     private final BrpNationaliteitInhoud brpNederlands =
             new BrpNationaliteitInhoud(
-                new BrpNationaliteitCode(Short.parseShort("0001")),
-                new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort("001")),
-                null,
-                null,
-                null,
-                null,
-                null);
+                    new BrpNationaliteitCode("0001"),
+                    new BrpRedenVerkrijgingNederlandschapCode("001"),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
     private final Lo3NationaliteitInhoud lo3Nederlands =
-            new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("0001"), new Lo3RedenNederlandschapCode("001"), null, null);
-    private final Lo3NationaliteitInhoud lo3Leeg = new Lo3NationaliteitInhoud(null, null, null, null);
+            new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("0001"), new Lo3RedenNederlandschapCode("001"), null, null, null);
+    private final Lo3NationaliteitInhoud lo3Leeg = new Lo3NationaliteitInhoud(null, null, null, null, null);
     private final BrpTestObject<BrpNationaliteitInhoud> brp1 = new BrpTestObject<>();
 
     {

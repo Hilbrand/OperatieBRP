@@ -6,45 +6,37 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponent;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsnaamcomponentInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponent;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
 
 /**
- * Mapper waarmee een {@link BrpStapel<BrpGeslachtsnaamcomponentInhoud>} gemapt kan worden op een verzameling van
- * {@link PersoonGeslachtsnaamcomponent} inclusief historie.
- * 
+ * Mapper waarmee een {@link nl.bzk.migratiebrp.conversie.model.brp.BrpStapel<BrpGeslachtsnaamcomponentInhoud>} gemapt
+ * kan worden op een verzameling van {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponent}
+ * inclusief historie.
  */
-public final class PersoonGeslachtsnaamcomponentMapper extends
-        AbstractHistorieMapperStrategie<BrpGeslachtsnaamcomponentInhoud, PersoonGeslachtsnaamcomponentHistorie, PersoonGeslachtsnaamcomponent>
-{
+public final class PersoonGeslachtsnaamcomponentMapper
+        extends AbstractHistorieMapperStrategie<BrpGeslachtsnaamcomponentInhoud, PersoonGeslachtsnaamcomponentHistorie, PersoonGeslachtsnaamcomponent> {
 
     /**
      * Maakt een PersoonGeslachtsnaamcomponentMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonGeslachtsnaamcomponentMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -60,22 +52,9 @@ public final class PersoonGeslachtsnaamcomponentMapper extends
      * {@inheritDoc}
      */
     @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonGeslachtsnaamcomponentHistorie historie, final PersoonGeslachtsnaamcomponent entiteit) {
-        entiteit.setAdellijkeTitel(historie.getAdellijkeTitel());
-        entiteit.setStam(historie.getStam());
-        entiteit.setPredicaat(historie.getPredicaat());
-        entiteit.setScheidingsteken(historie.getScheidingsteken());
-        entiteit.setVoorvoegsel(historie.getVoorvoegsel());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected PersoonGeslachtsnaamcomponentHistorie mapHistorischeGroep(
-        final BrpGeslachtsnaamcomponentInhoud groepInhoud,
-        final PersoonGeslachtsnaamcomponent entiteit)
-    {
+            final BrpGeslachtsnaamcomponentInhoud groepInhoud,
+            final PersoonGeslachtsnaamcomponent entiteit) {
         final PersoonGeslachtsnaamcomponentHistorie result = new PersoonGeslachtsnaamcomponentHistorie(entiteit, BrpString.unwrap(groepInhoud.getStam()));
         if (groepInhoud.getAdellijkeTitelCode() != null) {
             result.setAdellijkeTitel(AdellijkeTitel.parseCode(groepInhoud.getAdellijkeTitelCode().getWaarde()));
@@ -95,13 +74,5 @@ public final class PersoonGeslachtsnaamcomponentMapper extends
         getOnderzoekMapper().mapOnderzoek(result, groepInhoud.getVolgnummer(), Element.PERSOON_GESLACHTSNAAMCOMPONENT_VOLGNUMMER);
 
         return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpGeslachtsnaamcomponentInhoud> brpStapel, final PersoonGeslachtsnaamcomponent entiteit) {
-        entiteit.setVolgnummer(BrpInteger.unwrap(brpStapel.getLaatsteElement().getInhoud().getVolgnummer()));
     }
 }

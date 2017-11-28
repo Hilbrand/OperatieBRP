@@ -15,25 +15,21 @@ import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AangeverRedenWij
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AbstractConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AangifteAdreshouding;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 /**
  * De Conversietabel voor aangever adreshouding. Deze mapt een Lo3AangifteAdreshouding op de unieke combinatie van
  * BrpAangeverCode en BrpRedenWijzigingVerblijfCode.
  */
 public abstract class AbstractAangeverRedenWijzigingVerblijfConversietabel extends
-        AbstractConversietabel<Lo3AangifteAdreshouding, AangeverRedenWijzigingVerblijfPaar>
-{
+        AbstractConversietabel<Lo3AangifteAdreshouding, AangeverRedenWijzigingVerblijfPaar> {
 
     /**
      * Maakt een AangeverRedenWijzigingVerblijfConversietabel object.
-     * 
-     * @param conversieLijst
-     *            de lijst met alle AangifteAdreshouding entries uit de conversietabel
+     * @param conversieLijst de lijst met alle AangifteAdreshouding entries uit de conversietabel
      */
     protected AbstractAangeverRedenWijzigingVerblijfConversietabel(
-        final List<Entry<Lo3AangifteAdreshouding, AangeverRedenWijzigingVerblijfPaar>> conversieLijst)
-    {
+            final List<Entry<Lo3AangifteAdreshouding, AangeverRedenWijzigingVerblijfPaar>> conversieLijst) {
         super(conversieLijst);
     }
 
@@ -65,7 +61,7 @@ public abstract class AbstractAangeverRedenWijzigingVerblijfConversietabel exten
     @Override
     protected final Lo3AangifteAdreshouding voegOnderzoekToeLo3(final Lo3AangifteAdreshouding input, final Lo3Onderzoek onderzoek) {
         final Lo3AangifteAdreshouding resultaat;
-        if (!Validatie.isElementGevuld(input)) {
+        if (!Lo3Validatie.isElementGevuld(input)) {
             if (onderzoek == null) {
                 resultaat = null;
             } else {
@@ -91,8 +87,8 @@ public abstract class AbstractAangeverRedenWijzigingVerblijfConversietabel exten
         } else {
             final BrpAangeverCode aangeverCode =
                     input.getBrpAangeverCode() == null || input.getBrpAangeverCode().getWaarde() == null ? null : new BrpAangeverCode(
-                        input.getBrpAangeverCode().getWaarde(),
-                        onderzoek);
+                            input.getBrpAangeverCode().getWaarde(),
+                            onderzoek);
             final BrpRedenWijzigingVerblijfCode redenCode;
             if (input.getBrpRedenWijzigingVerblijfCode() == null || input.getBrpRedenWijzigingVerblijfCode().getWaarde() == null) {
                 redenCode = null;

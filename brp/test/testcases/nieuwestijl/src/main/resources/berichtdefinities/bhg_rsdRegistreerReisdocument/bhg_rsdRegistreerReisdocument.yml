@@ -22,9 +22,9 @@ verkrijgingReisdocument:
       communicatieID: 'comid.verkrijgingReisdocument.bron1'
       document:
         communicatieID: 'comid.verkrijgingReisdocument.bron1.document'
-        soortNaam: 'Geboorteakte'
-        identificatie: 'identificatie.bron1'
-        aktenummer: '1234567'
+        soortNaam: 'Nederlands reisdocument'
+        identificatie: 'HA0530-3AA0001'
+        aktenummer: '[]'
         partijCode: '017401'
       rechtsgrondCode: '[]'
       rechtsgrondomschrijving: '[]'

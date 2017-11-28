@@ -8,11 +8,11 @@ package nl.bzk.migratiebrp.conversie.model.brp;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBehandeldAlsNederlanderIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBuitenlandsPersoonsnummerInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDeelnameEuVerkiezingenInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDerdeHeeftGezagIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
@@ -28,6 +28,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNaamgebruikInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNationaliteitInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNummerverwijzingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnderCurateleIndicatieInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnverwerktDocumentAanwezigIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOverlijdenInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoud;
@@ -45,23 +46,26 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud;
 /**
  * Deze class helpt bij het maken van een BrpPersoonslijst. De verplichte argumenten moeten in de contructor worden
  * meegegeven en optionele argumenten kunnen via method-chaining worden toegevoegd.
- *
  */
 public final class BrpPersoonslijstBuilder {
 
     private final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> geslachtsnaamcomponentStapels = new ArrayList<>();
     private final List<BrpStapel<BrpNationaliteitInhoud>> nationaliteitStapels = new ArrayList<>();
+    private final List<BrpStapel<BrpBuitenlandsPersoonsnummerInhoud>> buitenlandsPersoonsnummerStapels = new ArrayList<>();
     private final List<BrpStapel<BrpReisdocumentInhoud>> reisdocumentStapels = new ArrayList<>();
     private final List<BrpRelatie> relaties = new ArrayList<>();
     private final List<BrpStapel<BrpVoornaamInhoud>> voornaamStapels = new ArrayList<>();
     private final List<BrpStapel<BrpVerificatieInhoud>> verificatieStapels = new ArrayList<>();
     private final List<BrpStapel<BrpIstHuwelijkOfGpGroepInhoud>> istHuwelijkOfGpStapels = new ArrayList<>();
     private final List<BrpStapel<BrpIstRelatieGroepInhoud>> istKindStapels = new ArrayList<>();
-    private Integer persoonId;
+    private Long persoonId;
+    private Long persoonVersie;
+    private Long administratieveHandelingId;
     private BrpStapel<BrpNaamgebruikInhoud> naamgebruikStapel;
     private BrpStapel<BrpAdresInhoud> adresStapel;
     private BrpStapel<BrpPersoonAfgeleidAdministratiefInhoud> persoonAfgeleidAdministratiefStapel;
     private BrpStapel<BrpBehandeldAlsNederlanderIndicatieInhoud> behandeldAlsNederlanderIndicatieStapel;
+    private BrpStapel<BrpOnverwerktDocumentAanwezigIndicatieInhoud> onverwerktDocumentAanwezigIndicatieStapel;
     private BrpStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel;
     private BrpStapel<BrpBijhoudingInhoud> bijhoudingStapel;
     private BrpStapel<BrpDerdeHeeftGezagIndicatieInhoud> derdeHeeftGezagIndicatieStapel;
@@ -91,20 +95,19 @@ public final class BrpPersoonslijstBuilder {
      * Maak lege builder.
      */
     public BrpPersoonslijstBuilder() {
-
+        /*empty builder*/
     }
 
     /**
      * Maak builder gevuld met stapels uit persoonslijst.
-     *
-     * @param persoonslijst
-     *            initiele vulling
+     * @param persoonslijst initiele vulling
      */
     public BrpPersoonslijstBuilder(final BrpPersoonslijst persoonslijst) {
         naamgebruikStapel = persoonslijst.getNaamgebruikStapel();
         adresStapel = persoonslijst.getAdresStapel();
         persoonAfgeleidAdministratiefStapel = persoonslijst.getPersoonAfgeleidAdministratiefStapel();
         behandeldAlsNederlanderIndicatieStapel = persoonslijst.getBehandeldAlsNederlanderIndicatieStapel();
+        onverwerktDocumentAanwezigIndicatieStapel = persoonslijst.getOnverwerktDocumentAanwezigIndicatieStapel();
         signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel = persoonslijst.getSignaleringMetBetrekkingTotVerstrekkenReisdocumentStapel();
         bijhoudingStapel = persoonslijst.getBijhoudingStapel();
         derdeHeeftGezagIndicatieStapel = persoonslijst.getDerdeHeeftGezagIndicatieStapel();
@@ -116,6 +119,9 @@ public final class BrpPersoonslijstBuilder {
         migratieStapel = persoonslijst.getMigratieStapel();
         inschrijvingStapel = persoonslijst.getInschrijvingStapel();
         nationaliteitStapels.addAll(persoonslijst.getNationaliteitStapels());
+        if (persoonslijst.getBuitenlandsPersoonsnummerStapels() != null) {
+            buitenlandsPersoonsnummerStapels.addAll(persoonslijst.getBuitenlandsPersoonsnummerStapels());
+        }
         nummerverwijzingStapel = persoonslijst.getNummerverwijzingStapel();
         onderCurateleIndicatieStapel = persoonslijst.getOnderCurateleIndicatieStapel();
         overlijdenStapel = persoonslijst.getOverlijdenStapel();
@@ -138,6 +144,9 @@ public final class BrpPersoonslijstBuilder {
         istKindStapels.addAll(persoonslijst.getIstKindStapels());
         istGezagsverhoudingStapel = persoonslijst.getIstGezagsverhoudingsStapel();
         relaties.addAll(persoonslijst.getRelaties());
+
+        persoonId = persoonslijst.getPersoonId();
+        persoonVersie = persoonslijst.getPersoonVersie();
     }
 
     /**
@@ -145,61 +154,81 @@ public final class BrpPersoonslijstBuilder {
      */
     public BrpPersoonslijst build() {
         return new BrpPersoonslijst(
-            persoonId,
-            naamgebruikStapel,
-            adresStapel,
-            persoonAfgeleidAdministratiefStapel,
-            behandeldAlsNederlanderIndicatieStapel,
-            signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel,
-            bijhoudingStapel,
-            derdeHeeftGezagIndicatieStapel,
-            deelnameEuVerkiezingenStapel,
-            geboorteStapel,
-            geslachtsaanduidingStapel,
-            geslachtsnaamcomponentStapels,
-            identificatienummersStapel,
-            migratieStapel,
-            inschrijvingStapel,
-            nationaliteitStapels,
-            nummerverwijzingStapel,
-            onderCurateleIndicatieStapel,
-            overlijdenStapel,
-            persoonskaartStapel,
-            reisdocumentStapels,
-            relaties,
-            samengesteldeNaamStapel,
-            staatloosIndicatieStapel,
-            uitsluitingKiesrechtStapel,
-            vastgesteldNietNederlanderIndicatieStapel,
-            verblijfsrechtStapel,
-            verstrekkingsbeperkingIndicatieStapel,
-            voornaamStapels,
-            bijzondereVerblijfsrechtelijkePositieIndicatieStapel,
-            verificatieStapels,
-            istOuder1Stapel,
-            istOuder2Stapel,
-            istHuwelijkOfGpStapels,
-            istKindStapels,
-            istGezagsverhoudingStapel);
+                persoonId,
+                persoonVersie,
+                administratieveHandelingId,
+                naamgebruikStapel,
+                adresStapel,
+                persoonAfgeleidAdministratiefStapel,
+                behandeldAlsNederlanderIndicatieStapel,
+                onverwerktDocumentAanwezigIndicatieStapel,
+                signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel,
+                bijhoudingStapel,
+                derdeHeeftGezagIndicatieStapel,
+                deelnameEuVerkiezingenStapel,
+                geboorteStapel,
+                geslachtsaanduidingStapel,
+                geslachtsnaamcomponentStapels,
+                identificatienummersStapel,
+                migratieStapel,
+                inschrijvingStapel,
+                nationaliteitStapels,
+                buitenlandsPersoonsnummerStapels,
+                nummerverwijzingStapel,
+                onderCurateleIndicatieStapel,
+                overlijdenStapel,
+                persoonskaartStapel,
+                reisdocumentStapels,
+                relaties,
+                samengesteldeNaamStapel,
+                staatloosIndicatieStapel,
+                uitsluitingKiesrechtStapel,
+                vastgesteldNietNederlanderIndicatieStapel,
+                verblijfsrechtStapel,
+                verstrekkingsbeperkingIndicatieStapel,
+                voornaamStapels,
+                bijzondereVerblijfsrechtelijkePositieIndicatieStapel,
+                verificatieStapels,
+                istOuder1Stapel,
+                istOuder2Stapel,
+                istHuwelijkOfGpStapels,
+                istKindStapels,
+                istGezagsverhoudingStapel);
     }
 
     /**
-     * Zet de persoon.id toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de persoon id, mag null zijn
+     * Voegt de persoon.id toe aan deze persoonslijst builder.
+     * @param param de persoon id, mag null zijn
      * @return de BrpPersoonslijstBuilder
      */
-    public BrpPersoonslijstBuilder persoonId(final Integer param) {
+    public BrpPersoonslijstBuilder persoonId(final Long param) {
         persoonId = param;
         return this;
     }
 
     /**
+     * Voegt de persoon.versie toe aan deze persoonslijst builder.
+     * @param param de persoon versie, mag null zijn
+     * @return de BrpPersoonslijstBuilder
+     */
+    public BrpPersoonslijstBuilder persoonVersie(final Long param) {
+        persoonVersie = param;
+        return this;
+    }
+
+    /**
+     * Voegt de persoon.administratieveHandeling.id toe aan deze persoonslijst builder.
+     * @param param de administratieve handeling id, mag null zijn
+     * @return de BrpPersoonslijstBuilder
+     */
+    public BrpPersoonslijstBuilder administratieveHandelingId(final Long param) {
+        administratieveHandelingId = param;
+        return this;
+    }
+
+    /**
      * Voegt de naamgebruik stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de naamgebruik stapel, mag null zijn
+     * @param param de naamgebruik stapel, mag null zijn
      * @return de BrpPersoonslijstBuilder
      */
     public BrpPersoonslijstBuilder naamgebruikStapel(final BrpStapel<BrpNaamgebruikInhoud> param) {
@@ -210,9 +239,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de adresStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de adresStapel, mag null zijn
+     * @param param de adresStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder adresStapel(final BrpStapel<BrpAdresInhoud> param) {
@@ -222,9 +249,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de persoonAfgeleidAdministratiefStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de geslachtsaanduidingStapel, mag null zijn
+     * @param param de geslachtsaanduidingStapel, mag null zijn
      * @return het builder object
      */
     public BrpPersoonslijstBuilder persoonAfgeleidAdministratiefStapel(final BrpStapel<BrpPersoonAfgeleidAdministratiefInhoud> param) {
@@ -234,9 +259,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de BrpBehandeldAlsNederlanderIndicatieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de BrpBehandeldAlsNederlanderIndicatieStapel, mag null zijn
+     * @param param de BrpBehandeldAlsNederlanderIndicatieStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder behandeldAlsNederlanderIndicatieStapel(final BrpStapel<BrpBehandeldAlsNederlanderIndicatieInhoud> param) {
@@ -245,24 +268,29 @@ public final class BrpPersoonslijstBuilder {
     }
 
     /**
+     * Voegt de {@link BrpOnverwerktDocumentAanwezigIndicatieInhoud} toe aan deze persoonslijst builder.
+     * @param param de {@link BrpOnverwerktDocumentAanwezigIndicatieInhoud}, mag null zijn
+     * @return het BrpPersoonslijstBuilder object
+     */
+    public BrpPersoonslijstBuilder onverwerktDocumentAanwezigIndicatieStapel(final BrpStapel<BrpOnverwerktDocumentAanwezigIndicatieInhoud> param) {
+        onverwerktDocumentAanwezigIndicatieStapel = param;
+        return this;
+    }
+
+    /**
      * Voegt de BrpSignaleringMetBetrekkingTotVerstrekkenReisdocument stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentStapelStapel, mag null zijn
+     * @param param de BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentStapelStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel(
-        final BrpStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> param)
-    {
+            final BrpStapel<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> param) {
         signaleringMetBetrekkingTotVerstrekkenReisdocumentStapel = param;
         return this;
     }
 
     /**
      * Voegt de bijhoudingStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de bijhoudingStapel, mag null zijn
+     * @param param de bijhoudingStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder bijhoudingStapel(final BrpStapel<BrpBijhoudingInhoud> param) {
@@ -272,9 +300,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de derdeHeeftGezagIndicatieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de derdeHeeftGezagIndicatieStapel, mag null zijn
+     * @param param de derdeHeeftGezagIndicatieStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder derdeHeeftGezagIndicatieStapel(final BrpStapel<BrpDerdeHeeftGezagIndicatieInhoud> param) {
@@ -284,9 +310,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de deelnameEuVerkiezingenStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de deelnameEuVerkiezingenStapel, mag null zijn
+     * @param param de deelnameEuVerkiezingenStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder deelnameEuVerkiezingenStapel(final BrpStapel<BrpDeelnameEuVerkiezingenInhoud> param) {
@@ -296,9 +320,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de Geboorte BrpStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de geboorteStapel, mag null zijn
+     * @param param de geboorteStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder geboorteStapel(final BrpStapel<BrpGeboorteInhoud> param) {
@@ -309,9 +331,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de geslachtsaanduidingStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de geslachtsaanduidingStapel, mag null zijn
+     * @param param de geslachtsaanduidingStapel, mag null zijn
      * @return het builder object
      */
     public BrpPersoonslijstBuilder geslachtsaanduidingStapel(final BrpStapel<BrpGeslachtsaanduidingInhoud> param) {
@@ -321,9 +341,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de Geslachtsnaamcomponent BrpStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de geslachtsnaamcomponentStapel, mag null zijn
+     * @param param de geslachtsnaamcomponentStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder geslachtsnaamcomponentStapel(final BrpStapel<BrpGeslachtsnaamcomponentInhoud> param) {
@@ -335,9 +353,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de lijst met Geslachtsnaamcomponent BrpStapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de lijst met geslachtsnaamcomponentStapels, mag null zijn
+     * @param param de lijst met geslachtsnaamcomponentStapels, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder geslachtsnaamcomponentStapels(final List<BrpStapel<BrpGeslachtsnaamcomponentInhoud>> param) {
@@ -350,9 +366,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de identificatienummer stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de identificatienummer, mag null zijn
+     * @param param de identificatienummer, mag null zijn
      * @return het builder object
      */
     public BrpPersoonslijstBuilder identificatienummersStapel(final BrpStapel<BrpIdentificatienummersInhoud> param) {
@@ -362,9 +376,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de migratieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de migratieStapel, mag null zijn
+     * @param param de migratieStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder migratieStapel(final BrpStapel<BrpMigratieInhoud> param) {
@@ -374,9 +386,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de inschrijvingStapel toe aan deze BrpPersoonslijstBuilder.
-     *
-     * @param param
-     *            de inschrijvingStapel, mag null zijn
+     * @param param de inschrijvingStapel, mag null zijn
      * @return de persoonslijstbuilder met daaraan de inschrijvingStapel toegevoegd
      */
     public BrpPersoonslijstBuilder inschrijvingStapel(final BrpStapel<BrpInschrijvingInhoud> param) {
@@ -386,9 +396,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de BrpNationaliteitStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de BrpNationaliteitStapel, mag null zijn
+     * @param param de BrpNationaliteitStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder nationaliteitStapel(final BrpStapel<BrpNationaliteitInhoud> param) {
@@ -399,10 +407,20 @@ public final class BrpPersoonslijstBuilder {
     }
 
     /**
+     * Voegt de BrpBuitenlandsPersoonsnummerStapel toe aan deze persoonslijst builder.
+     * @param param de BrpBuitenlandsPersoonsnummerStapel, mag null zijn
+     * @return het BrpPersoonslijstBuilder object
+     */
+    public BrpPersoonslijstBuilder buitenlandsPersoonsnummerStapel(final BrpStapel<BrpBuitenlandsPersoonsnummerInhoud> param) {
+        if (param != null) {
+            buitenlandsPersoonsnummerStapels.add(param);
+        }
+        return this;
+    }
+
+    /**
      * Voegt de lijst met BrpNationaliteitStapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de lijst met BrpNationaliteitStapel, mag null zijn
+     * @param param de lijst met BrpNationaliteitStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder nationaliteitStapels(final List<BrpStapel<BrpNationaliteitInhoud>> param) {
@@ -414,10 +432,21 @@ public final class BrpPersoonslijstBuilder {
     }
 
     /**
+     * Voegt de lijst met BrpBuitenlandsPersoonsnummerStapels toe aan deze persoonslijst builder.
+     * @param param de lijst met BrpBuitenlandsPersoonsnummerStapel, mag null zijn
+     * @return het BrpPersoonslijstBuilder object
+     */
+    public BrpPersoonslijstBuilder buitenlandsPersoonsnummerStapels(final List<BrpStapel<BrpBuitenlandsPersoonsnummerInhoud>> param) {
+        if (param != null) {
+            buitenlandsPersoonsnummerStapels.clear();
+            buitenlandsPersoonsnummerStapels.addAll(param);
+        }
+        return this;
+    }
+
+    /**
      * Voegt de nummerverwijzingStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de nummerverwijzingStapel, mag null zijn
+     * @param param de nummerverwijzingStapel, mag null zijn
      * @return het brpPersoonslijstbuilder object
      */
     public BrpPersoonslijstBuilder nummerverwijzingStapel(final BrpStapel<BrpNummerverwijzingInhoud> param) {
@@ -427,9 +456,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de onderCurateleIndicatieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de onderCurateleIndicatieStapel, mag null zijn
+     * @param param de onderCurateleIndicatieStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder onderCurateleIndicatieStapel(final BrpStapel<BrpOnderCurateleIndicatieInhoud> param) {
@@ -439,9 +466,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de overlijden stapel aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de overlijden stapel
+     * @param param de overlijden stapel
      * @return de BrpPersoonslijstBuilder
      */
     public BrpPersoonslijstBuilder overlijdenStapel(final BrpStapel<BrpOverlijdenInhoud> param) {
@@ -451,9 +476,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de persoonskaart stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            the persoonskaartStapel to set
+     * @param param the persoonskaartStapel to set
      * @return de builder (this)
      */
     public BrpPersoonslijstBuilder persoonskaartStapel(final BrpStapel<BrpPersoonskaartInhoud> param) {
@@ -463,9 +486,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de Reisdocument BrpStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de reisdocumentStapel, mag null zijn
+     * @param param de reisdocumentStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder reisdocumentStapel(final BrpStapel<BrpReisdocumentInhoud> param) {
@@ -477,9 +498,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de Reisdocument Stapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de reisdocumentStapels, mag null zijn
+     * @param param de reisdocumentStapels, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder reisdocumentStapels(final List<BrpStapel<BrpReisdocumentInhoud>> param) {
@@ -492,9 +511,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de BrpRelatieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de relatie, mag null zijn
+     * @param param de relatie, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder relatie(final BrpRelatie param) {
@@ -506,9 +523,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de BrpRelatieStapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de relaties, mag null zijn
+     * @param param de relaties, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder relaties(final List<BrpRelatie> param) {
@@ -521,9 +536,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de samengestelde naam stapel toe aan deze persoonlijst builder.
-     *
-     * @param param
-     *            samengestelde naam stapel
+     * @param param samengestelde naam stapel
      * @return builder (this)
      */
     public BrpPersoonslijstBuilder samengesteldeNaamStapel(final BrpStapel<BrpSamengesteldeNaamInhoud> param) {
@@ -533,9 +546,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de staatloosIndicatieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de staatloosIndicatieStapel, mag null zijn
+     * @param param de staatloosIndicatieStapel, mag null zijn
      * @return het builder object
      */
     public BrpPersoonslijstBuilder staatloosIndicatieStapel(final BrpStapel<BrpStaatloosIndicatieInhoud> param) {
@@ -545,9 +556,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de uitsluitingKiesrechtStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de uitsluitingKiesrechtStapel, mag null zijn
+     * @param param de uitsluitingKiesrechtStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder uitsluitingKiesrechtStapel(final BrpStapel<BrpUitsluitingKiesrechtInhoud> param) {
@@ -557,9 +566,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de BrpVastgesteldNietNederlanderIndicatieStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de BrpVastgesteldNietNederlanderIndicatieStapel, mag null zijn
+     * @param param de BrpVastgesteldNietNederlanderIndicatieStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder vastgesteldNietNederlanderIndicatieStapel(final BrpStapel<BrpVastgesteldNietNederlanderIndicatieInhoud> param) {
@@ -571,9 +578,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de verblijfsrecht stapel aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de verblijfsrecht stapel
+     * @param param de verblijfsrecht stapel
      * @return de BrpPersoonslijstBuilder
      */
     public BrpPersoonslijstBuilder verblijfsrechtStapel(final BrpStapel<BrpVerblijfsrechtInhoud> param) {
@@ -583,9 +588,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de verstrekkingsbeperkingIndicatie stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            the verstrekkingsbeperkingIndicatieStapel to set
+     * @param param the verstrekkingsbeperkingIndicatieStapel to set
      * @return de builder (this)
      */
     public BrpPersoonslijstBuilder verstrekkingsbeperkingIndicatieStapel(final BrpStapel<BrpVerstrekkingsbeperkingIndicatieInhoud> param) {
@@ -595,9 +598,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de Voornaam BrpStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de brpVoornaamStapel, mag null zijn
+     * @param param de brpVoornaamStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder voornaamStapel(final BrpStapel<BrpVoornaamInhoud> param) {
@@ -609,11 +610,8 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de lijst met Voornaam BrpStapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de lijst met brpVoornaamStapels, mag null zijn
+     * @param param de lijst met brpVoornaamStapels, mag null zijn
      * @return het BrpPersoonslijstBuilder object
-     *
      */
     public BrpPersoonslijstBuilder voornaamStapels(final List<BrpStapel<BrpVoornaamInhoud>> param) {
         if (param != null) {
@@ -625,9 +623,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de Verificatie BrpStapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de brpVerificatieStapel, mag null zijn
+     * @param param de brpVerificatieStapel, mag null zijn
      * @return het BrpPersoonslijstBuilder object
      */
     public BrpPersoonslijstBuilder verificatieStapel(final BrpStapel<BrpVerificatieInhoud> param) {
@@ -639,11 +635,8 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de lijst met Verificatie BrpStapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de lijst met brpVerificatieStapels, mag null zijn
+     * @param param de lijst met brpVerificatieStapels, mag null zijn
      * @return het BrpPersoonslijstBuilder object
-     *
      */
     public BrpPersoonslijstBuilder verificatieStapels(final List<BrpStapel<BrpVerificatieInhoud>> param) {
         if (param != null) {
@@ -655,23 +648,18 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de bijzondereVerblijfsrechtelijkePositieIndicatie stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de bijzondereVerblijfsrechtelijkePositieIndicatie stapel die moet worden toegevoegd
+     * @param param de bijzondereVerblijfsrechtelijkePositieIndicatie stapel die moet worden toegevoegd
      * @return de builder
      */
     public BrpPersoonslijstBuilder bijzondereVerblijfsrechtelijkePositieIndicatieStapel(
-        final BrpStapel<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud> param)
-    {
+            final BrpStapel<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud> param) {
         bijzondereVerblijfsrechtelijkePositieIndicatieStapel = param;
         return this;
     }
 
     /**
      * Voegt de IST ouder1 stapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de IST ouder1 stapel die moet worden toegevoegd
+     * @param param de IST ouder1 stapel die moet worden toegevoegd
      * @return de builder
      */
     public BrpPersoonslijstBuilder istOuder1Stapel(final BrpStapel<BrpIstRelatieGroepInhoud> param) {
@@ -681,9 +669,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de IST ouder2 stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de IST ouder2 stapel die moet worden toegevoegd
+     * @param param de IST ouder2 stapel die moet worden toegevoegd
      * @return de builder
      */
     public BrpPersoonslijstBuilder istOuder2Stapel(final BrpStapel<BrpIstRelatieGroepInhoud> param) {
@@ -693,9 +679,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de IST huwelijkOfGp stapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de IST huwelijkOfGp stapels die moet worden toegevoegd
+     * @param param de IST huwelijkOfGp stapels die moet worden toegevoegd
      * @return de builder
      */
     public BrpPersoonslijstBuilder istHuwelijkOfGpStapels(final List<BrpStapel<BrpIstHuwelijkOfGpGroepInhoud>> param) {
@@ -708,9 +692,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de IST kind stapels toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de IST kind stapels die moet worden toegevoegd
+     * @param param de IST kind stapels die moet worden toegevoegd
      * @return de builder
      */
     public BrpPersoonslijstBuilder istKindStapels(final List<BrpStapel<BrpIstRelatieGroepInhoud>> param) {
@@ -723,9 +705,7 @@ public final class BrpPersoonslijstBuilder {
 
     /**
      * Voegt de IST gezagsverhouding stapel toe aan deze persoonslijst builder.
-     *
-     * @param param
-     *            de IST gezagsverhouding stapel die moet worden toegevoegd
+     * @param param de IST gezagsverhouding stapel die moet worden toegevoegd
      * @return de builder
      */
     public BrpPersoonslijstBuilder istGezagsverhoudingStapel(final BrpStapel<BrpIstGezagsVerhoudingGroepInhoud> param) {

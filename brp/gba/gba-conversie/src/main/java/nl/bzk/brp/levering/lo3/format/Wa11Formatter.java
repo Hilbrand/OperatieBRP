@@ -1,17 +1,15 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.format;
 
 import java.util.List;
-
-import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
-import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
+import nl.bzk.brp.levering.lo3.conversie.IdentificatienummerMutatie;
+import nl.bzk.brp.levering.lo3.mapper.PersoonIdentificatienummersMapper;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,13 +19,24 @@ import org.springframework.stereotype.Component;
 public final class Wa11Formatter extends AbstractWa11Formatter implements Formatter {
 
     @Override
-    protected String bepaalOudAnummer(final List<Lo3CategorieWaarde> categorieen) {
-        return FormatterUtil.geefElementWaarde(categorieen, Lo3CategorieEnum.CATEGORIE_01, Lo3ElementEnum.ELEMENT_2010);
+    protected String bepaalOudAnummer(final List<Lo3CategorieWaarde> categorieen, final IdentificatienummerMutatie identificatienummerMutatie) {
+        return identificatienummerMutatie.getVervallenIdentificatienummersRecord()
+                .getAttribuut(PersoonIdentificatienummersMapper.ADMINISTRATIENUMMER_ELEMENT)
+                .getWaarde()
+                .toString();
     }
 
     @Override
-    protected String bepaalNieuwAnummer(final List<Lo3CategorieWaarde> categorieen) {
-        return FormatterUtil.geefElementWaarde(categorieen, Lo3CategorieEnum.CATEGORIE_01, Lo3ElementEnum.ELEMENT_0110);
+    protected String bepaalNieuwAnummer(final List<Lo3CategorieWaarde> categorieen, final IdentificatienummerMutatie identificatienummerMutatie) {
+        return identificatienummerMutatie.getNieuwIdentificatienummersRecord()
+                .getAttribuut(PersoonIdentificatienummersMapper.ADMINISTRATIENUMMER_ELEMENT)
+                .getWaarde()
+                .toString();
+    }
+
+    @Override
+    protected String bepaalDatumIngangGeldigheid(final List<Lo3CategorieWaarde> categorieen, final IdentificatienummerMutatie identificatienummerMutatie) {
+        return identificatienummerMutatie.getNieuwIdentificatienummersRecord().getDatumAanvangGeldigheid().toString();
     }
 
 }

@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
 import nl.bzk.migratiebrp.conversie.model.validatie.Periode;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -74,11 +73,11 @@ public class Lo3DatumTest {
     @Test
     public void testMaximaliseerDatum() {
         Lo3Datum lo3a = new Lo3Datum(10);
-        Lo3Datum lo3b = lo3a.maximaliseerOnbekendeDatum();
-        Assert.assertEquals("99999910", lo3b.getWaarde());
+        int lo3b = lo3a.maximaliseerOnbekendeDatum();
+        Assert.assertEquals(9999_99_10, lo3b);
         Lo3Datum lo3c = new Lo3Datum(22181313);
-        Lo3Datum lo3d = lo3c.maximaliseerOnbekendeDatum();
-        Assert.assertEquals("22181313", lo3d.getWaarde());
+        int lo3d = lo3c.maximaliseerOnbekendeDatum();
+        Assert.assertEquals(2218_13_13, lo3d);
     }
 
     @Test(expected = NullPointerException.class)

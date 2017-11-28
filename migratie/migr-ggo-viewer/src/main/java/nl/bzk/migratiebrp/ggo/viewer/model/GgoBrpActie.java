@@ -30,7 +30,6 @@ public class GgoBrpActie implements Serializable {
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return the inhoud
      */
     public final Map<String, String> getInhoud() {
@@ -39,9 +38,7 @@ public class GgoBrpActie implements Serializable {
 
     /**
      * Sets the inhoud.
-     *
-     * @param inhoud
-     *            the inhoud to set
+     * @param inhoud the inhoud to set
      */
     public final void setInhoud(final Map<String, String> inhoud) {
         this.inhoud = inhoud;
@@ -49,7 +46,6 @@ public class GgoBrpActie implements Serializable {
 
     /**
      * Geef de waarde van administratieve handeling.
-     *
      * @return de administratieve handeling
      */
     public final Map<String, String> getAdministratieveHandeling() {
@@ -58,9 +54,7 @@ public class GgoBrpActie implements Serializable {
 
     /**
      * Sets the administratieve handeling.
-     *
-     * @param administratieveHandeling
-     *            De administratieve handeling
+     * @param administratieveHandeling De administratieve handeling
      */
     public final void setAdministratieveHandeling(final Map<String, String> administratieveHandeling) {
         this.administratieveHandeling = administratieveHandeling;
@@ -68,7 +62,6 @@ public class GgoBrpActie implements Serializable {
 
     /**
      * Geef de waarde van actie bronnen.
-     *
      * @return De actieBronnen.
      */
     public final List<Map<String, String>> getActieBronnen() {
@@ -77,9 +70,7 @@ public class GgoBrpActie implements Serializable {
 
     /**
      * Sets the actie bronnen.
-     *
-     * @param actieBronnen
-     *            De actieBronnen.
+     * @param actieBronnen De actieBronnen.
      */
     public final void setActieBronnen(final List<Map<String, String>> actieBronnen) {
         this.actieBronnen = actieBronnen;
@@ -87,7 +78,6 @@ public class GgoBrpActie implements Serializable {
 
     /**
      * Geef de waarde van documenten.
-     *
      * @return the documenten
      */
     public final List<GgoStapel> getDocumenten() {
@@ -96,9 +86,7 @@ public class GgoBrpActie implements Serializable {
 
     /**
      * Zet de waarde van documenten.
-     *
-     * @param documenten
-     *            the documenten to set
+     * @param documenten the documenten to set
      */
     public final void setDocumenten(final List<GgoStapel> documenten) {
         this.documenten = documenten;

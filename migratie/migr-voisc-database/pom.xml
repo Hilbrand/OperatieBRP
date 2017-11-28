@@ -1,38 +1,38 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>nl.bzk.migratiebrp</groupId>
         <artifactId>migr-voisc</artifactId>
-        <version>3.2.108-SNAPSHOT</version>
-		<relativePath>../migr-voisc</relativePath>
+        <version>145.3</version>
+        <relativePath>../migr-voisc</relativePath>
     </parent>
-    <groupId>nl.bzk.migratiebrp.voisc</groupId>
-    <artifactId>migr-voisc-database</artifactId>
-    <name>Migr - VOISC - Database</name>
-    <packaging>jar</packaging>
 
-	<properties>
-		<m2e.jpa.activation>false</m2e.jpa.activation>
-	</properties>
+    <artifactId>migr-voisc-database</artifactId>
+    <packaging>jar</packaging>
+    <name>Migr - VOISC - Database</name>
+
+    <properties>
+        <m2e.jpa.activation>false</m2e.jpa.activation>
+    </properties>
 
     <dependencies>
         <!-- Project -->
         <dependency>
-            <groupId>nl.bzk.migratiebrp.util</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-util-common</artifactId>
         </dependency>
         <dependency>
             <groupId>nl.bzk.migratiebrp.util</groupId>
             <artifactId>migr-util-gbav</artifactId>
         </dependency>
-		<!--
-		<dependency>
-			<groupId>org.jboss.logging</groupId>
-			<artifactId>jboss-logging</artifactId>
-		</dependency>
-		-->
+        <!--
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+        </dependency>
+        -->
 
         <!-- Provides a host of helper utilities for the java.lang API -->
         <dependency>
@@ -75,26 +75,26 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-			<!--
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging</artifactId>
-                </exclusion>
-		    </exclusions>
-			-->
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-			<!--
+            <!--
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.logging</groupId>
                     <artifactId>jboss-logging</artifactId>
                 </exclusion>
             </exclusions>
-			-->
+            -->
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <!--
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                </exclusion>
+            </exclusions>
+            -->
         </dependency>
         <!-- PostgreSQL JDBC -->
         <dependency>
@@ -121,19 +121,23 @@
         <!-- TEST -->
         <!-- TEST -->
 
-
-  		<!-- Reflections -->
+        <!-- Reflections -->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <scope>test</scope>
         </dependency>
 
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>nl.bzk.algemeenbrp</groupId>
+            <artifactId>alg-dal-jta</artifactId>
+        </dependency>
     </dependencies>
 </project>
 

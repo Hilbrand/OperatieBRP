@@ -15,8 +15,8 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Shutdown VOISC.
@@ -31,34 +31,34 @@ public final class Exit {
 
     /**
      * Execute.
-     *
-     * @param args
-     *            arguments
-     * @throws IOException
-     *             bij communicatie fouten
-     * @throws JMException
-     *             bij JMX fouten
+     * @param args arguments
      */
-    public static void main(final String[] args) throws IOException, JMException {
-        LOGGER.info("Exit");
-        final Properties properties = new Properties();
-        try (InputStream is = Exit.class.getResourceAsStream("/routering-runtime.properties")) {
-            properties.load(is);
+    public static void main(final String[] args) {
+        try {
+            LOGGER.info("Exit");
+            final Properties properties = new Properties();
+            try (InputStream is = Exit.class.getResourceAsStream("/routering-runtime.properties")) {
+                properties.load(is);
+            }
+
+            final String registryPort = properties.getProperty("routering.rmi.registry", "1099");
+            final String serverPort = properties.getProperty("routering.jmx.service", "9875");
+            final String url = "service:jmx:rmi://localhost:" + serverPort + "/jndi/rmi://localhost:" + registryPort + "/jmxrmi";
+            LOGGER.info("URL: {}", url);
+
+            final JMXServiceURL jmxUrl = new JMXServiceURL(url);
+
+            try (final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxUrl, null)) {
+                final MBeanServerConnection serverConnection = jmxConnector.getMBeanServerConnection();
+                final ObjectName name = new ObjectName("nl.bzk.migratiebrp.routering:name=ROUTERING");
+
+                LOGGER.info("Invoke");
+                serverConnection.invoke(name, "afsluiten", null, null);
+                LOGGER.info("Done");
+            }
+        } catch (final IOException | JMException e) {
+            LOGGER.error("Fout tijdens uitvoeren.", e);
+            System.exit(1);
         }
-
-        final String registryPort = properties.getProperty("routering.rmi.registry", "1099");
-        final String serverPort = properties.getProperty("routering.jmx.service", "9875");
-        final String url = "service:jmx:rmi://localhost:" + serverPort + "/jndi/rmi://localhost:" + registryPort + "/jmxrmi";
-        LOGGER.info("URL: {}", url);
-
-        final JMXServiceURL jmxUrl = new JMXServiceURL(url);
-
-        final JMXConnector jmxConnector = JMXConnectorFactory.connect(jmxUrl, null);
-        final MBeanServerConnection serverConnection = jmxConnector.getMBeanServerConnection();
-        final ObjectName name = new ObjectName("nl.bzk.migratiebrp.routering:name=ROUTERING");
-
-        LOGGER.info("Invoke");
-        serverConnection.invoke(name, "afsluiten", null, null);
-        LOGGER.info("Done");
     }
 }

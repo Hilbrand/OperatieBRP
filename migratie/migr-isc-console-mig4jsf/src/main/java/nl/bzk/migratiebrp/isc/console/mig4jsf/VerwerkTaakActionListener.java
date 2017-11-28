@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.isc.console.mig4jsf;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,13 +15,9 @@ import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import nl.bzk.migratiebrp.isc.jbpm.command.client.CommandClient;
-import nl.bzk.migratiebrp.isc.jbpm.command.exception.CommandException;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.command.impl.JbpmTaakCommand;
-import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringService;
-import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringServiceFactory;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.jbpm.jsf.JbpmJsfContext;
 import org.jbpm.jsf.core.impl.UpdatesHashMap;
 
@@ -38,22 +35,13 @@ public final class VerwerkTaakActionListener extends AbstractActionListener {
 
     /**
      * Constructor voor de action listener.
-     *
-     * @param idExpression
-     *            Het id van de taak.
-     * @param transitionExpression
-     *            De gekozen transitie.
-     * @param commentExpression
-     *            Eventueel toegevoegd commentaar.
-     * @param variableMapExpression
-     *            Verzameling van variabelen behorende bij de taak.
+     * @param idExpression Het id van de taak.
+     * @param transitionExpression De gekozen transitie.
+     * @param commentExpression Eventueel toegevoegd commentaar.
+     * @param variableMapExpression Verzameling van variabelen behorende bij de taak.
      */
-    public VerwerkTaakActionListener(
-        final ValueExpression idExpression,
-        final ValueExpression transitionExpression,
-        final ValueExpression commentExpression,
-        final ValueExpression variableMapExpression)
-    {
+    public VerwerkTaakActionListener(final ValueExpression idExpression, final ValueExpression transitionExpression, final ValueExpression commentExpression,
+                                     final ValueExpression variableMapExpression) {
         super("verwerkTaak");
         this.idExpression = idExpression;
         this.transitionExpression = transitionExpression;
@@ -62,7 +50,7 @@ public final class VerwerkTaakActionListener extends AbstractActionListener {
     }
 
     @Override
-    public void verwerkAction(final JbpmJsfContext context, final ActionEvent event) throws CommandException {
+    public void verwerkAction(final JbpmJsfContext context, final ActionEvent event) throws ActionException {
         final FacesContext facesContext = FacesContext.getCurrentInstance();
         final ELContext elContext = facesContext.getELContext();
 
@@ -81,22 +69,19 @@ public final class VerwerkTaakActionListener extends AbstractActionListener {
         LOG.debug("Commentaar = {}", commentaar);
         LOG.debug("VariableMap = {}", wijzigingenHashMap);
 
-        final Map<String, Object> updateSet = new HashMap<>();
+        final Map<String, Serializable> updateSet = new HashMap<>();
         final Set<String> deletes = new HashSet<>();
 
         if (wijzigingenHashMap != null) {
             deletes.addAll(wijzigingenHashMap.deletesSet());
 
             for (final String sleutelUpdate : wijzigingenHashMap.updatesSet()) {
-                updateSet.put(sleutelUpdate, wijzigingenHashMap.get(sleutelUpdate));
+                updateSet.put(sleutelUpdate, (Serializable) wijzigingenHashMap.get(sleutelUpdate));
             }
         }
 
         final JbpmTaakCommand command = new JbpmTaakCommand(id, deletes, updateSet, commentaar, transitie);
-        final SpringService springService = (SpringService) context.getJbpmContext().getServiceFactory(SpringServiceFactory.SERVICE_NAME).openService();
-        final CommandClient commandClient = springService.getBean(CommandClient.class);
-        commandClient.executeCommand(command);
-
+        executeCommand(context, command);
         context.addSuccessMessage("Taak voltooid.");
         context.selectOutcome("success");
     }

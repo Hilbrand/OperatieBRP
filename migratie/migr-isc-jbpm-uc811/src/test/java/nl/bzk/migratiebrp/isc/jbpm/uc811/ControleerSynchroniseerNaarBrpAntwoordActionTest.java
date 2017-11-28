@@ -14,21 +14,12 @@ import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ControleerSynchroniseerNaarBrpAntwoordActionTest {
 
-    private ControleerSynchroniseerNaarBrpAntwoordAction subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new ControleerSynchroniseerNaarBrpAntwoordAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private ControleerSynchroniseerNaarBrpAntwoordAction subject = new ControleerSynchroniseerNaarBrpAntwoordAction(berichtenDao);
 
     @Test
     public void testToegevoegd() {
@@ -66,7 +57,7 @@ public class ControleerSynchroniseerNaarBrpAntwoordActionTest {
         parameters.put("synchroniseerNaarBrpAntwoordBericht", berichtenDao.bewaarBericht(antwoord));
 
         final Map<String, Object> result = subject.execute(parameters);
-        Assert.assertEquals("10f. Genegeerd", result.get(SpringActionHandler.TRANSITION_RESULT));
+        Assert.assertEquals("5f. Genegeerd", result.get(SpringActionHandler.TRANSITION_RESULT));
     }
 
     @Test
@@ -79,7 +70,7 @@ public class ControleerSynchroniseerNaarBrpAntwoordActionTest {
         parameters.put("synchroniseerNaarBrpAntwoordBericht", berichtenDao.bewaarBericht(antwoord));
 
         final Map<String, Object> result = subject.execute(parameters);
-        Assert.assertEquals("10h. Fout", result.get(SpringActionHandler.TRANSITION_RESULT));
+        Assert.assertEquals("5c. Fout", result.get(SpringActionHandler.TRANSITION_RESULT));
     }
 
     @Test
@@ -92,7 +83,7 @@ public class ControleerSynchroniseerNaarBrpAntwoordActionTest {
         parameters.put("synchroniseerNaarBrpAntwoordBericht", berichtenDao.bewaarBericht(antwoord));
 
         final Map<String, Object> result = subject.execute(parameters);
-        Assert.assertEquals("10g. Afgekeurd", result.get(SpringActionHandler.TRANSITION_RESULT));
+        Assert.assertEquals("5e. Afgekeurd", result.get(SpringActionHandler.TRANSITION_RESULT));
     }
 
     @Test
@@ -105,7 +96,7 @@ public class ControleerSynchroniseerNaarBrpAntwoordActionTest {
         parameters.put("synchroniseerNaarBrpAntwoordBericht", berichtenDao.bewaarBericht(antwoord));
 
         final Map<String, Object> result = subject.execute(parameters);
-        Assert.assertEquals("10g. Afgekeurd", result.get(SpringActionHandler.TRANSITION_RESULT));
+        Assert.assertEquals("5e. Afgekeurd", result.get(SpringActionHandler.TRANSITION_RESULT));
     }
 
     @Test
@@ -118,7 +109,7 @@ public class ControleerSynchroniseerNaarBrpAntwoordActionTest {
         parameters.put("synchroniseerNaarBrpAntwoordBericht", berichtenDao.bewaarBericht(antwoord));
 
         final Map<String, Object> result = subject.execute(parameters);
-        Assert.assertEquals("10e. Onduidelijk", result.get(SpringActionHandler.TRANSITION_RESULT));
+        Assert.assertEquals("5d. Onduidelijk", result.get(SpringActionHandler.TRANSITION_RESULT));
     }
 
 }

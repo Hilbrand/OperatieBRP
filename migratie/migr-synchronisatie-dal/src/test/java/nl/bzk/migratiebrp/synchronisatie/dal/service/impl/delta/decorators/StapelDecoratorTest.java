@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,17 +20,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RelatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
 
 import org.junit.Test;
 
@@ -39,10 +41,9 @@ import org.junit.Test;
 public class StapelDecoratorTest {
 
     private static final Persoon PERSOON = new Persoon(SoortPersoon.INGESCHREVENE);
-    private static final Partij PARTIJ = new Partij("partij", 1);
-    private static final AdministratieveHandeling ADMINISTRATIEVE_HANDELING = new AdministratieveHandeling(
-        PARTIJ,
-        SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
+    private static final Partij PARTIJ = new Partij("partij", "000001");
+    private static final AdministratieveHandeling ADMINISTRATIEVE_HANDELING =
+            new AdministratieveHandeling(PARTIJ, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL, new Timestamp(System.currentTimeMillis()));
 
     @Test
     public void testDecorate() {
@@ -84,16 +85,22 @@ public class StapelDecoratorTest {
     @Test(expected = IllegalStateException.class)
     public void testRelatiesHuwelijkOfGp() {
         final Relatie relatie = new Relatie(SoortRelatie.HUWELIJK);
+        final RelatieHistorie relatieHistorie = new RelatieHistorie(relatie);
         final Relatie relatie2 = new Relatie(SoortRelatie.HUWELIJK);
+        final RelatieHistorie relatieHistorie2 = new RelatieHistorie(relatie2);
+
         final Stapel stapel = new Stapel(PERSOON, "05", 0);
         stapel.addRelatie(relatie);
         stapel.addRelatie(relatie2);
 
+        relatieHistorie.setDatumAanvang(20150101);
         relatie.addStapel(stapel);
-        relatie.setDatumAanvang(20150101);
+        relatie.addRelatieHistorie(relatieHistorie);
+
+        relatieHistorie2.setDatumAanvang(20130101);
+        relatieHistorie2.setDatumEinde(20140101);
         relatie2.addStapel(stapel);
-        relatie2.setDatumAanvang(20130101);
-        relatie2.setDatumEinde(20140101);
+        relatie2.addRelatieHistorie(relatieHistorie2);
 
         final StapelDecorator stapelDecorator = StapelDecorator.decorate(stapel);
         assertNotNull(stapelDecorator);
@@ -187,8 +194,8 @@ public class StapelDecoratorTest {
         final StapelDecorator decorator = StapelDecorator.decorate(stapel);
         final Set<StapelVoorkomenDecorator> teVerwijderenVoorkomens =
                 decorator.setVoorkomens(
-                    new LinkedHashSet<>(Arrays.asList(StapelVoorkomenDecorator.decorate(voorkomen1a), StapelVoorkomenDecorator.decorate(voorkomen2))),
-                    false);
+                        new LinkedHashSet<>(Arrays.asList(StapelVoorkomenDecorator.decorate(voorkomen1a), StapelVoorkomenDecorator.decorate(voorkomen2))),
+                        false);
 
         assertEquals(voorkomen1a.getDatumAanvang(), voorkomen1.getDatumAanvang());
         assertTrue(teVerwijderenVoorkomens.isEmpty());
@@ -209,9 +216,9 @@ public class StapelDecoratorTest {
 
         final Set<StapelVoorkomenDecorator> verwijderdeVoorkomens =
                 decorator.setVoorkomensEnRelaties(
-                    Collections.singleton(StapelVoorkomenDecorator.decorate(voorkomen1)),
-                    Collections.singletonList(RelatieDecorator.decorate(relatie)),
-                    true);
+                        Collections.singleton(StapelVoorkomenDecorator.decorate(voorkomen1)),
+                        Collections.singletonList(RelatieDecorator.decorate(relatie)),
+                        true);
 
         assertTrue(verwijderdeVoorkomens.isEmpty());
         assertFalse(decorator.getRelaties().isEmpty());
@@ -380,7 +387,7 @@ public class StapelDecoratorTest {
         sv2.setDatumEinde(datum2);
 
         final StapelVoorkomenDecorator svDecorator = StapelVoorkomenDecorator.decorate(sv);
-        sd.voegNieuwActueelVoorkomenToe(svDecorator, Collections.<StapelVoorkomenDecorator>emptySet());
+        sd.voegNieuwActueelVoorkomenToe(svDecorator, Collections.emptySet());
         assertEquals(1, sd.getVoorkomens().size());
 
         sd.voegNieuwActueelVoorkomenToe(StapelVoorkomenDecorator.decorate(sv2), Collections.singleton(svDecorator));
@@ -396,7 +403,7 @@ public class StapelDecoratorTest {
 
         stapel.getStapelvoorkomens().clear();
         stapel.addStapelVoorkomen(sv);
-        sd.voegNieuwActueelVoorkomenToe(StapelVoorkomenDecorator.decorate(sv1), Collections.<StapelVoorkomenDecorator>emptySet());
+        sd.voegNieuwActueelVoorkomenToe(StapelVoorkomenDecorator.decorate(sv1), Collections.emptySet());
         assertEquals(2, sd.getVoorkomens().size());
     }
 
@@ -434,9 +441,14 @@ public class StapelDecoratorTest {
     public void testGetOverigeRelaties() {
         final Stapel stapel = new Stapel(PERSOON, "05", 0);
         final Relatie relatie = new Relatie(SoortRelatie.HUWELIJK);
-        relatie.setDatumAanvang(20150101);
+        final RelatieHistorie relatieHistorie = new RelatieHistorie(relatie);
+        relatieHistorie.setDatumAanvang(20150101);
+        relatie.addRelatieHistorie(relatieHistorie);
+
         final Relatie relatie2 = new Relatie(SoortRelatie.HUWELIJK);
-        relatie2.setDatumAanvang(20160101);
+        final RelatieHistorie relatieHistorie2 = new RelatieHistorie(relatie2);
+        relatieHistorie2.setDatumAanvang(20160101);
+        relatie2.addRelatieHistorie(relatieHistorie2);
 
         stapel.addRelatie(relatie);
         stapel.addRelatie(relatie2);

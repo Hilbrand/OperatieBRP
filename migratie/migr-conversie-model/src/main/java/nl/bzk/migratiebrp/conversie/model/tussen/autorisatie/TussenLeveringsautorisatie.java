@@ -7,17 +7,15 @@
 package nl.bzk.migratiebrp.conversie.model.tussen.autorisatie;
 
 import java.util.List;
-
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpStelselCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpLeveringsautorisatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 
 /**
  * Migratie representatie voor een leveringsautorisatie (BRP inhoud, LO3 historie).
@@ -37,21 +35,17 @@ public final class TussenLeveringsautorisatie {
 
     /**
      * Maak een nieuw TussenLeveringsAutorisatie object.
-     *
-     * @param stelsel
-     *            stelsel
-     * @param indicatieModelautorisatie
-     *            de indicatieModelautorisatie
-     * @param leveringsautorisatieStapel
-     *            de stapel van leveringsAutorisatie
-     * @param dienstBundels
-     *            de gekoppelde dienstbundels
+     * @param stelsel stelsel
+     * @param indicatieModelautorisatie de indicatieModelautorisatie
+     * @param leveringsautorisatieStapel de stapel van leveringsAutorisatie
+     * @param dienstBundels de gekoppelde dienstbundels
      */
-    public TussenLeveringsautorisatie(@Element(name = "stelsel", required = false) final BrpStelselCode stelsel, @Element(
-        name = "indicatieModelautorisatie", required = false) final Boolean indicatieModelautorisatie, @Element(name = "leveringsautorisatieStapel",
-        required = false) final TussenStapel<BrpLeveringsautorisatieInhoud> leveringsautorisatieStapel, @ElementList(name = "dienstBundels",
-        entry = "dienstBundel", type = TussenDienstbundel.class, required = false) final List<TussenDienstbundel> dienstBundels)
-    {
+    public TussenLeveringsautorisatie(
+            @Element(name = "stelsel", required = false) final BrpStelselCode stelsel,
+            @Element(name = "indicatieModelautorisatie", required = false) final Boolean indicatieModelautorisatie,
+            @Element(name = "leveringsautorisatieStapel", required = false) final TussenStapel<BrpLeveringsautorisatieInhoud> leveringsautorisatieStapel,
+            @ElementList(name = "dienstBundels", entry = "dienstBundel", type = TussenDienstbundel.class,
+                    required = false) final List<TussenDienstbundel> dienstBundels) {
         super();
         this.stelsel = stelsel;
         this.indicatieModelautorisatie = indicatieModelautorisatie;
@@ -60,36 +54,32 @@ public final class TussenLeveringsautorisatie {
     }
 
     /**
-     * Geef de waarde van stelsel.
-     *
-     * @return stelsel
+     * Geef de waarde van stelsel van TussenLeveringsautorisatie.
+     * @return de waarde van stelsel van TussenLeveringsautorisatie
      */
     public BrpStelselCode getStelsel() {
         return stelsel;
     }
 
     /**
-     * Geef de waarde van indicatieModelautorisatie.
-     *
-     * @return indicatieModelautorisatie
+     * Geef de waarde van indicatie modelautorisatie van TussenLeveringsautorisatie.
+     * @return de waarde van indicatie modelautorisatie van TussenLeveringsautorisatie
      */
     public Boolean getIndicatieModelautorisatie() {
         return indicatieModelautorisatie;
     }
 
     /**
-     * Geef de waarde van de leveringautorisatieinhoud stapel.
-     *
-     * @return leveringautorisatieinhoud stapel
+     * Geef de waarde van leveringsautorisatie stapel van TussenLeveringsautorisatie.
+     * @return de waarde van leveringsautorisatie stapel van TussenLeveringsautorisatie
      */
     public TussenStapel<BrpLeveringsautorisatieInhoud> getLeveringsautorisatieStapel() {
         return leveringsautorisatieStapel;
     }
 
     /**
-     * Geef de waarde van dienstenbundels.
-     *
-     * @return diensten
+     * Geef de waarde van dienst bundels van TussenLeveringsautorisatie.
+     * @return de waarde van dienst bundels van TussenLeveringsautorisatie
      */
     public List<TussenDienstbundel> getDienstBundels() {
         return dienstBundels;
@@ -114,18 +104,18 @@ public final class TussenLeveringsautorisatie {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(stelsel)
-                                    .append(indicatieModelautorisatie)
-                                    .append(leveringsautorisatieStapel)
-                                    .append(dienstBundels)
-                                    .toHashCode();
+                .append(indicatieModelautorisatie)
+                .append(leveringsautorisatieStapel)
+                .append(dienstBundels)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("stelsel", stelsel)
-                                                                          .append("indicatieModelautorisatie", indicatieModelautorisatie)
-                                                                          .append("leveringsAutorisatieStapel", leveringsautorisatieStapel)
-                                                                          .append("dienstBundels", dienstBundels)
-                                                                          .toString();
+                .append("indicatieModelautorisatie", indicatieModelautorisatie)
+                .append("leveringsAutorisatieStapel", leveringsautorisatieStapel)
+                .append("dienstBundels", dienstBundels)
+                .toString();
     }
 }

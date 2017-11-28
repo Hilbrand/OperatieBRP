@@ -6,8 +6,8 @@
 
 /**
  * Levert de noodzakelijk classes om een LO3 persoonslijst te parsen.
- * @since 1.0
  * @see nl.bzk.migratiebrp.adapter.excel
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 

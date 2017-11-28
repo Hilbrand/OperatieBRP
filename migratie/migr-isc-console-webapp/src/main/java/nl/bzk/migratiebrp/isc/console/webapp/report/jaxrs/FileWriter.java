@@ -21,12 +21,12 @@ import javax.ws.rs.ext.Provider;
  * To output files via JAX-RS.
  */
 @Provider
-@Produces({"text/html", "image/*" })
+@Produces({"text/html", "image/*"})
 public final class FileWriter implements MessageBodyWriter<File> {
 
     @Override
     public boolean isWriteable(final Class<?> type, final Type genericType, final Annotation[] annotations, final MediaType mediaType) {
-        return type.equals(java.io.File.class);
+        return type.equals(File.class);
     }
 
     @Override
@@ -36,14 +36,13 @@ public final class FileWriter implements MessageBodyWriter<File> {
 
     @Override
     public void writeTo(
-        final File file,
-        final java.lang.Class<?> type,
-        final java.lang.reflect.Type genericType,
-        final java.lang.annotation.Annotation[] annotations,
-        final MediaType mediaType,
-        final MultivaluedMap<java.lang.String, java.lang.Object> httpHeaders,
-        final java.io.OutputStream entityStream) throws IOException
-    {
+            final File file,
+            final java.lang.Class<?> type,
+            final Type genericType,
+            final Annotation[] annotations,
+            final MediaType mediaType,
+            final MultivaluedMap<java.lang.String, java.lang.Object> httpHeaders,
+            final java.io.OutputStream entityStream) throws IOException {
         try (FileInputStream fin = new FileInputStream(file)) {
             int c;
             while ((c = fin.read()) != -1) {

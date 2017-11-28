@@ -6,7 +6,6 @@
 
 /**
  * Bevat de entities van het BRP datamodel.
- *
  * @since 1.0
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity;

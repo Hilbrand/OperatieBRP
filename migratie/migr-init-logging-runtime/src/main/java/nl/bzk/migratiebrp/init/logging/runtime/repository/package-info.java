@@ -8,4 +8,3 @@
  * De logging repository.
  */
 package nl.bzk.migratiebrp.init.logging.runtime.repository;
-

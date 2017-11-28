@@ -22,7 +22,7 @@
         <!--Optional:-->
         <brp:bronnen>
             <!--Zero or more repetitions:-->
-            <brp:bron brp:objecttype="ActieBron" brp:communicatieID="?">
+            <brp:bron brp:objecttype="AdministratieveHandelingBron" brp:communicatieID="?">
                 <!--Optional:-->
                 <brp:document brp:objecttype="Document" brp:communicatieID="?">
                     <brp:soortNaam>?</brp:soortNaam>

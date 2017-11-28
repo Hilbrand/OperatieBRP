@@ -7,9 +7,8 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -25,7 +24,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 
 /**
  * Gezagsverhouding parser.
- * 
  */
 public final class Lo3GezagsverhoudingParser extends AbstractLo3CategorieParser<Lo3GezagsverhoudingInhoud> {
 
@@ -33,7 +31,8 @@ public final class Lo3GezagsverhoudingParser extends AbstractLo3CategorieParser<
     public Lo3Stapel<Lo3GezagsverhoudingInhoud> parse(final List<Lo3CategorieWaarde> categorieen) {
         final List<Lo3Categorie<Lo3GezagsverhoudingInhoud>> gezagsverhoudingList = new ArrayList<>();
         for (final Lo3CategorieWaarde categorie : categorieen) {
-            final Map<Lo3ElementEnum, String> elementen = new HashMap<>(categorie.getElementen());
+            final EnumMap<Lo3ElementEnum, String> elementen = new EnumMap<>(Lo3ElementEnum.class);
+            elementen.putAll(categorie.getElementen());
             final Lo3Herkomst lo3Herkomst = categorie.getLo3Herkomst();
             final Lo3Onderzoek lo3Onderzoek = parseLo3Onderzoek(elementen, lo3Herkomst);
             final Lo3CategorieEnum herkomstCategorie = lo3Herkomst.getCategorie();
@@ -53,11 +52,11 @@ public final class Lo3GezagsverhoudingParser extends AbstractLo3CategorieParser<
 
             final Lo3Categorie<Lo3GezagsverhoudingInhoud> gezagsverhouding =
                     new Lo3Categorie<>(
-                        new Lo3GezagsverhoudingInhoud(indicatieGezagMinderjarige, indicatieCurateleregister),
-                        lo3Documentatie,
-                        lo3Onderzoek,
-                        lo3Historie,
-                        categorie.getLo3Herkomst());
+                            new Lo3GezagsverhoudingInhoud(indicatieGezagMinderjarige, indicatieCurateleregister),
+                            lo3Documentatie,
+                            lo3Onderzoek,
+                            lo3Historie,
+                            categorie.getLo3Herkomst());
 
             gezagsverhoudingList.add(gezagsverhouding);
         }

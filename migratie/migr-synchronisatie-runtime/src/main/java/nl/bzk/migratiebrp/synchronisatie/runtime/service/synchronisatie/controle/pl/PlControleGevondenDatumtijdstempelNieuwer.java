@@ -11,13 +11,11 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-import org.springframework.stereotype.Component;
 
 /**
  * Controleer dat de datumtijdstempel van de gevonden persoonslijst kleiner is dan het datumtijdstempel van de
  * aangeboden persoonslijst.
  */
-@Component(value = "plControleGevondenDatumtijdstempelNieuwer")
 public final class PlControleGevondenDatumtijdstempelNieuwer implements PlControle {
 
     @Override

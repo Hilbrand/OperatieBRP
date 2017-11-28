@@ -6,11 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze enum representeert een BRP Soort partij.
@@ -33,9 +33,7 @@ public final class BrpSoortPartijCode implements BrpAttribuut {
 
     /**
      * Maakt een BrpSoortPartijCode.
-     *
-     * @param soortPartij
-     *            BRP soortPartij
+     * @param soortPartij BRP soortPartij
      */
     public BrpSoortPartijCode(@Element(name = "soortPartij", required = false) final String soortPartij) {
         this.soortPartij = soortPartij;
@@ -43,7 +41,6 @@ public final class BrpSoortPartijCode implements BrpAttribuut {
 
     /**
      * Geef de waarde van soortPartij.
-     *
      * @return the soortPartij
      */
     public String getSoortPartij() {

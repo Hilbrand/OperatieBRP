@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lo3Persoonslijst>
    <persoonStapel>
       <lo3Categorie>
@@ -14,7 +15,7 @@
                <waarde>6205310952</waarde>
             </aNummer>
             <burgerservicenummer>
-               <waarde>411738665</waarde>
+               <waarde>669001417</waarde>
             </burgerservicenummer>
             <voornamen>
                <waarde>Johan</waarde>
@@ -243,12 +244,8 @@
    <inschrijvingStapel>
       <lo3Categorie>
          <historie>
-            <ingangsdatumGeldigheid>
-               <waarde>00000000</waarde>
-            </ingangsdatumGeldigheid>
-            <datumVanOpneming>
-               <waarde>00000000</waarde>
-            </datumVanOpneming>
+            
+            
          </historie>
          <inhoud class="nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3InschrijvingInhoud">
             <datumEersteInschrijving>

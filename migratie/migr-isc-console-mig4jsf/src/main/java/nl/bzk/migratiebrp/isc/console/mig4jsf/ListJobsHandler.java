@@ -21,12 +21,12 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "listJobs", description = "Read a list of jobs.",
         attributes = {@TldAttribute(name = "target",
-                              description = "An EL expression into which the process instance list should be stored.", required = true,
-                              deferredType = List.class),
-                      @TldAttribute(name = "pager", description = "An EL expression of the pager to be used.", required = true,
-                              deferredType = PagerBean.class),
-                      @TldAttribute(name = "viewMode", description = "An EL expression of the viewMode to be used.", required = true,
-                              deferredType = String.class) })
+                description = "An EL expression into which the process instance list should be stored.", required = true,
+                deferredType = List.class),
+                @TldAttribute(name = "pager", description = "An EL expression of the pager to be used.", required = true,
+                        deferredType = PagerBean.class),
+                @TldAttribute(name = "viewMode", description = "An EL expression of the viewMode to be used.", required = true,
+                        deferredType = String.class)})
 public final class ListJobsHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute pagerTagAttribute;
@@ -34,9 +34,7 @@ public final class ListJobsHandler extends AbstractHandler {
 
     /**
      * Constructor waarbij de tag configuratie meegegeven kan worden.
-     * 
-     * @param config
-     *            Tag configuratie waarin o.a. migratie tags staan.
+     * @param config Tag configuratie waarin o.a. migratie tags staan.
      */
     public ListJobsHandler(final TagConfig config) {
         super(config);
@@ -48,8 +46,8 @@ public final class ListJobsHandler extends AbstractHandler {
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new ListJobsActionListener(getValueExpression(pagerTagAttribute, ctx, PagerBean.class), getValueExpression(
-            targetTagAttribute,
-            ctx,
-            List.class), getValueExpression(viewModeTagAttribute, ctx, String.class));
+                targetTagAttribute,
+                ctx,
+                List.class), getValueExpression(viewModeTagAttribute, ctx, String.class));
     }
 }

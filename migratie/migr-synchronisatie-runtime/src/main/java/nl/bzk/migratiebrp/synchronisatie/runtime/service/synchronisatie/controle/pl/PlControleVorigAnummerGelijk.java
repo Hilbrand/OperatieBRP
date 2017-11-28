@@ -13,12 +13,11 @@ import java.util.TreeSet;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNummerverwijzingInhoud;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-import org.springframework.stereotype.Component;
 
 /**
  * Controleer of 'de gevonden persoonslijst in de BRP een <b>vorig a-nummer</b> heeft dat gelijk is aan het
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Component;
  *
  * het actuele vorige a-nummer van de gevonden en de aanboden persoonslijsten overeenkomt.
  */
-@Component(value = "plControleVorigAnummerGelijk")
 public final class PlControleVorigAnummerGelijk implements PlControle {
 
     @Override
@@ -37,11 +35,11 @@ public final class PlControleVorigAnummerGelijk implements PlControle {
         final ControleLogging logging = new ControleLogging(ControleMelding.PL_CONTROLE_VORIG_ANUMMER_GELIJK);
 
         // Aangeboden waarden
-        final Long brpVorigAnummer = getVorigAnummer(brpPersoonslijst);
+        final String brpVorigAnummer = getVorigAnummer(brpPersoonslijst);
         logging.logAangebodenWaarden(brpVorigAnummer);
 
         // Gevonden waarden
-        final Long dbVorigAnummer = getVorigAnummer(dbPersoonslijst);
+        final String dbVorigAnummer = getVorigAnummer(dbPersoonslijst);
         logging.logGevondenWaarden(dbVorigAnummer);
 
         // Resultaat
@@ -53,11 +51,11 @@ public final class PlControleVorigAnummerGelijk implements PlControle {
         logging.addMelding("Resultaat: false, ga door met controle op historie vorige a-nummers");
 
         // Aangeboden waarden
-        final Set<Long> brpVorigAnummers = getVorigAnummers(brpPersoonslijst);
+        final Set<String> brpVorigAnummers = getVorigAnummers(brpPersoonslijst);
         logging.logAangebodenWaarden(brpVorigAnummers);
 
         // Gevonden waarden
-        final Set<Long> dbVorigAnummers = getVorigAnummers(dbPersoonslijst);
+        final Set<String> dbVorigAnummers = getVorigAnummers(dbPersoonslijst);
         logging.logGevondenWaarden(dbVorigAnummers);
 
         // Resultaat
@@ -67,31 +65,31 @@ public final class PlControleVorigAnummerGelijk implements PlControle {
         return result;
     }
 
-    private Long getVorigAnummer(final BrpPersoonslijst persoonslijst) {
+    private String getVorigAnummer(final BrpPersoonslijst persoonslijst) {
         final BrpStapel<BrpNummerverwijzingInhoud> stapel = persoonslijst.getNummerverwijzingStapel();
 
         if (stapel == null || stapel.getActueel() == null || stapel.getActueel().getInhoud() == null) {
             return null;
         }
 
-        return BrpLong.unwrap(stapel.getActueel().getInhoud().getVorigeAdministratienummer());
+        return BrpString.unwrap(stapel.getActueel().getInhoud().getVorigeAdministratienummer());
     }
 
-    private Set<Long> getVorigAnummers(final BrpPersoonslijst persoonslijst) {
+    private Set<String> getVorigAnummers(final BrpPersoonslijst persoonslijst) {
         final BrpStapel<BrpNummerverwijzingInhoud> stapel = persoonslijst.getNummerverwijzingStapel();
 
         if (stapel == null) {
             return Collections.emptySet();
         }
 
-        final SortedSet<Long> vorigeAnummers = new TreeSet<>();
+        final SortedSet<String> vorigeAnummers = new TreeSet<>();
 
         for (final BrpGroep<BrpNummerverwijzingInhoud> groep : persoonslijst.getNummerverwijzingStapel()) {
             if (groep.getActieVerval() != null) {
                 continue;
             }
             final BrpNummerverwijzingInhoud inhoud = groep.getInhoud();
-            final Long vorigeAdministratienummer = BrpLong.unwrap(inhoud.getVorigeAdministratienummer());
+            final String vorigeAdministratienummer = BrpString.unwrap(inhoud.getVorigeAdministratienummer());
             if (vorigeAdministratienummer != null && !vorigeAnummers.contains(vorigeAdministratienummer)) {
                 vorigeAnummers.add(vorigeAdministratienummer);
             }

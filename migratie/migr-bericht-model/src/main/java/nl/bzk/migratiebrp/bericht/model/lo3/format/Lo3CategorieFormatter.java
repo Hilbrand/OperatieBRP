@@ -10,20 +10,14 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3CategorieInhoud;
 
 /**
  * Interface voor een Lo3 categorie formatter.
- * 
- * @param <T>
- *            Categorie die wordt geformat.
- * 
+ * @param <T> Categorie die wordt geformat.
  */
 public interface Lo3CategorieFormatter<T extends Lo3CategorieInhoud> {
 
     /**
      * Format een categorie.
-     * 
-     * @param categorie
-     *            te formatteren categorie inhoud
-     * @param formatter
-     *            te gebruiken (output)formatter
+     * @param categorie te formatteren categorie inhoud
+     * @param formatter te gebruiken (output)formatter
      */
     void format(final T categorie, final Lo3Formatter formatter);
 

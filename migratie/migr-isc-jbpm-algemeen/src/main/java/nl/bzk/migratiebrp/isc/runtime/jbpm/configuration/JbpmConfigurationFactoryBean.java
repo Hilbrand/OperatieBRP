@@ -8,15 +8,12 @@ package nl.bzk.migratiebrp.isc.runtime.jbpm.configuration;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringServiceFactory;
-import nl.bzk.migratiebrp.isc.runtime.jbpm.event.JbpmConfiguredEvent;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.job.QuartzMessageServiceFactory;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.job.QuartzSchedulerServiceFactory;
 import nl.bzk.migratiebrp.isc.runtime.jbpm.persistence.Hibernate4PersistenceServiceFactory;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.hibernate.SessionFactory;
 import org.jbpm.JbpmConfiguration;
 import org.quartz.Scheduler;
@@ -26,18 +23,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * JBPM Configuration factory bean. Configureert JBPM met de gegeven componenten.
  */
-public final class JbpmConfigurationFactoryBean implements FactoryBean<JbpmConfiguration>, InitializingBean, ApplicationListener<ContextRefreshedEvent>,
-        ApplicationContextAware, ApplicationEventPublisherAware, DisposableBean
-{
+public final class JbpmConfigurationFactoryBean implements FactoryBean<JbpmConfiguration>, InitializingBean, ApplicationContextAware, DisposableBean {
 
     private static final String MESSAGE_SERVICE_FACTORY = "message";
 
@@ -49,28 +40,28 @@ public final class JbpmConfigurationFactoryBean implements FactoryBean<JbpmConfi
 
     private static final String JBPM_CONFIG = "isc-jbpm-algemeen-jbpm.cfg.xml";
 
-    /** Logger for this class. */
+    /**
+     * Logger for this class.
+     */
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    /** The singleton object that this factory produces */
+    /**
+     * The singleton object that this factory produces
+     */
     private JbpmConfiguration jbpmConfiguration;
 
-    /** The Hibernate session factory used by jBPM and the application */
+    /**
+     * The Hibernate session factory used by jBPM and the application
+     */
     private SessionFactory sessionFactory;
 
     private Scheduler scheduler;
 
     private ApplicationContext applicationContext;
-    private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -90,9 +81,7 @@ public final class JbpmConfigurationFactoryBean implements FactoryBean<JbpmConfi
 
     /**
      * Zet de sessie factory.
-     *
-     * @param sessionFactory
-     *            De te zetten sessie factory.
+     * @param sessionFactory De te zetten sessie factory.
      */
     @Required
     public void setSessionFactory(final SessionFactory sessionFactory) {
@@ -101,9 +90,7 @@ public final class JbpmConfigurationFactoryBean implements FactoryBean<JbpmConfi
 
     /**
      * Zet de scheduler.
-     *
-     * @param scheduler
-     *            De te zetten scheduler.
+     * @param scheduler De te zetten scheduler.
      */
     @Required
     public void setScheduler(final Scheduler scheduler) {
@@ -170,22 +157,6 @@ public final class JbpmConfigurationFactoryBean implements FactoryBean<JbpmConfi
     }
 
     @Override
-    public void onApplicationEvent(final ContextRefreshedEvent applicationEvent) {
-        // Install process definitions
-        LOG.info("Installing process instances");
-        final Map<String, JbpmProcessInstaller> installers = applicationContext.getBeansOfType(JbpmProcessInstaller.class);
-        for (final Map.Entry<String, JbpmProcessInstaller> installer : installers.entrySet()) {
-            LOG.info("Installing {}", installer.getKey());
-            installer.getValue().deployJbpmProcesses(jbpmConfiguration);
-        }
-        LOG.info("Process instances installed");
-
-        LOG.info("Publishing event: JbpmConfiguredEvent");
-        applicationEventPublisher.publishEvent(new JbpmConfiguredEvent(this));
-        LOG.info("Event published (JbpmConfiguredEvent)");
-    }
-
-    @Override
     public void destroy() {
         LOG.info("Closing the jBPM configuration");
         LOG.info(JBPM_PERSISTENCE_FACTORY_MELDING, jbpmConfiguration.getServiceFactory(PERSISTENCE_SERVICE_FACTORY));
@@ -196,4 +167,5 @@ public final class JbpmConfigurationFactoryBean implements FactoryBean<JbpmConfi
         overwriteDefaultJbpmConfiguration(null);
         LOG.info("jBPM configuration closed.");
     }
+
 }

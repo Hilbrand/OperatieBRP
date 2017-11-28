@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Indicatie document.
@@ -16,9 +16,7 @@ public final class Lo3IndicatieDocument extends AbstractLo3Element {
 
     /**
      * Constructor.
-     * 
-     * @param waarde
-     *            code
+     * @param waarde code
      */
     public Lo3IndicatieDocument(final Integer waarde) {
         this(String.valueOf(waarde), null);
@@ -26,21 +24,16 @@ public final class Lo3IndicatieDocument extends AbstractLo3Element {
 
     /**
      * Constructor met onderzoek.
-     * 
-     * @param waarde
-     *            code
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde code
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
     public Lo3IndicatieDocument(@Element(name = "waarde", required = false) final String waarde, @Element(name = "onderzoek",
-            required = false) final Lo3Onderzoek onderzoek)
-    {
+            required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Geef de waarde van integer waarde.
-     *
      * @return integer waarde
      */
     public Integer getIntegerWaarde() {

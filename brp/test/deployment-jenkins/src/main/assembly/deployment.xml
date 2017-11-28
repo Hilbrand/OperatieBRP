@@ -50,7 +50,7 @@
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>nl.bzk.brp.bijhouding:brp-bijhouding-webservice:war</include>
+                <include>nl.bzk.brp.bijhouding:brp-bijhouding-delivery-ws:war</include>
             </includes>
             <outputFileNameMapping>bijhouding${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
@@ -59,7 +59,16 @@
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>nl.bzk.brp.bevraging:brp-bevraging-webservice:war</include>
+                <include>nl.bzk.brp:brp-delivery-ah-publicatie:war</include>
+            </includes>
+            <outputFileNameMapping>ah-publicatie${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+            <unpack>false</unpack>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>nl.bzk.brp:brp-delivery-bevraging:war</include>
             </includes>
             <outputFileNameMapping>bevraging${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
@@ -68,16 +77,7 @@
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>nl.bzk.brp.levering.services:brp-levering-services-bezemwagen:war</include>
-            </includes>
-            <outputFileNameMapping>bezemwagen${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-            <unpack>false</unpack>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>/</outputDirectory>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>nl.bzk.brp.levering.services:brp-levering-services-synchronisatie:war</include>
+                <include>nl.bzk.brp:brp-delivery-synchronisatie:war</include>
             </includes>
             <outputFileNameMapping>synchronisatie${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
@@ -86,7 +86,7 @@
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>nl.bzk.brp.levering.services:brp-levering-services-mutatielevering:war</include>
+                <include>nl.bzk.brp:brp-delivery-mutatielevering:jar</include>
             </includes>
             <outputFileNameMapping>mutatielevering${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
@@ -95,7 +95,7 @@
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>nl.bzk.brp.levering.services:brp-levering-services-verzending:war</include>
+                <include>nl.bzk.brp:brp-delivery-verzending:war</include>
             </includes>
             <outputFileNameMapping>verzending${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
@@ -104,12 +104,11 @@
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>nl.bzk.brp.levering.protocollering:brp-levering-protocollering:war</include>
+                <include>nl.bzk.brp:brp-delivery-protocollering:war</include>
             </includes>
             <outputFileNameMapping>protocollering${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
         </dependencySet>
-        <!-- Deprecated, bij nieuwe release zou deze niet meer nodig moeten zijn, is opgesplitst in gba-levering-routering-centrale en activemq -->
         <dependencySet>
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
@@ -119,20 +118,11 @@
             <outputFileNameMapping>brp-message-broker${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
         </dependencySet>
-<!--        <dependencySet>
-            <outputDirectory>/</outputDirectory>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>nl.bzk.brp.levering.routering:gba-levering-routering-centrale:war</include>
-            </includes>
-            <outputFileNameMapping>gba-routering-centrale${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-            <unpack>false</unpack>
-        </dependencySet>-->
         <dependencySet>
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>nl.bzk.brp.levering.services:brp-levering-services-onderhoud-afnemerindicaties:war</include>
+                <include>nl.bzk.brp:brp-delivery-afnemerindicatie:war</include>
             </includes>
             <outputFileNameMapping>afnemerindicaties${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
@@ -141,18 +131,9 @@
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
-                <include>nl.bzk.brp.levering.services:brp-levering-services-afnemer-voorbeeld:war</include>
+                <include>nl.bzk.brp.leveren:brp-delivery-afnemervoorbeeld:war</include>
             </includes>
             <outputFileNameMapping>brp-kennisgeving-ontvanger${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-            <unpack>false</unpack>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>/</outputDirectory>
-            <useProjectArtifact>false</useProjectArtifact>
-            <includes>
-                <include>nl.bzk.brp.utils:brp-utils-jvm-beheer:war</include>
-            </includes>
-            <outputFileNameMapping>brp-jvm-beheer${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
         </dependencySet>
         <dependencySet>
@@ -162,6 +143,24 @@
                 <include>nl.bzk.brp.beheer:brp-beheer-api:war</include>
             </includes>
             <outputFileNameMapping>brp-beheer${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+            <unpack>false</unpack>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>nl.bzk.brp:brp-delivery-vrijbericht:war</include>
+            </includes>
+            <outputFileNameMapping>vrijbericht${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+            <unpack>false</unpack>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>nl.bzk.brp:archivering-delivery-archivering:war</include>
+            </includes>
+            <outputFileNameMapping>archivering${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
         </dependencySet>
     </dependencySets>

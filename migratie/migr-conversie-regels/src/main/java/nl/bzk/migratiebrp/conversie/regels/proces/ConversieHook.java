@@ -12,23 +12,9 @@ package nl.bzk.migratiebrp.conversie.regels.proces;
 public interface ConversieHook {
 
     /**
-     * De 'lege' ConversieHook; deze doet niets.
-     */
-    ConversieHook NULL_HOOK = new ConversieHook() {
-        @Override
-        public void stap(final ConversieStap stap, final Object object) {
-            // Niets
-        }
-    };
-
-    /**
      * Registratie *NA* een stap is uitgevoerd.
-     * 
-     * @param stap
-     *            stap
-     * @param object
-     *            geconverteerde (tussen)object
-     * 
+     * @param stap stap
+     * @param object geconverteerde (tussen)object
      */
     void stap(ConversieStap stap, Object object);
 }

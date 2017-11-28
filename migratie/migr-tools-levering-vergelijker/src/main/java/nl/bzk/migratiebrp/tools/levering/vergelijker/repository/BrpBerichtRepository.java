@@ -16,18 +16,14 @@ public interface BrpBerichtRepository {
 
     /**
      * Haalt het BRP bijhoudingsbericht op.
-     *
-     * @param leveringsVergelijkingBerichtCorrelatieBrp
-     *            Het leveringBericht met de id van het op te halen bericht.
+     * @param leveringsVergelijkingBerichtCorrelatieBrp Het leveringBericht met de id van het op te halen bericht.
      * @return Het opgehaalde bericht.
      */
     BrpBericht haalBrpBijhoudingsBerichtOp(LeveringsVergelijkingBerichtCorrelatieBrp leveringsVergelijkingBerichtCorrelatieBrp);
 
     /**
      * Haalt het BRP leveringbericht op.
-     *
-     * @param leveringsVergelijkingBerichtCorrelatieBrp
-     *            Het leveringBericht met de id van het op te halen bericht.
+     * @param leveringsVergelijkingBerichtCorrelatieBrp Het leveringBericht met de id van het op te halen bericht.
      * @return Het opgehaalde bericht.
      */
     BrpBericht haalBrpLeveringBerichtOp(LeveringsVergelijkingBerichtCorrelatieBrp leveringsVergelijkingBerichtCorrelatieBrp);

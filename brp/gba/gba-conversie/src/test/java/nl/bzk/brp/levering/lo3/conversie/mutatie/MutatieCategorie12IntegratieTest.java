@@ -6,147 +6,333 @@
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.logMetaObject;
+import static nl.bzk.brp.levering.lo3.support.TestHelper.assertElementen;
+
+import java.util.HashSet;
 import java.util.List;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.Ja;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.SoortNederlandsReisdocumentCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortActie;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortAdministratieveHandeling;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortNederlandsReisdocument;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonIndicatieSignaleringMetBetrekkingTotVerstrekkenReisdocumentHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonReisdocumentHisVolledigImplBuilder;
+import java.util.Set;
+import javax.inject.Inject;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
+import nl.bzk.brp.levering.lo3.builder.MetaObjectAdder;
+import nl.bzk.brp.levering.lo3.conversie.ConversieCache;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import org.junit.Assert;
 import org.junit.Test;
-import support.PersoonHisVolledigUtil;
 
 /**
  * Reisdocument.
  */
 public class MutatieCategorie12IntegratieTest extends AbstractMutatieConverteerderIntegratieTest {
 
+    @Inject
+    private MutatieConverteerder subject;
+
     @Test
     public void testGroep35NederlandsReisdocument() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final SoortNederlandsReisdocument soortNederlandsReisdocument =
-                new SoortNederlandsReisdocument(new SoortNederlandsReisdocumentCodeAttribuut("PN"), null, null, null);
-        final PersoonReisdocumentHisVolledigImplBuilder reisdocumentBuilder = new PersoonReisdocumentHisVolledigImplBuilder(soortNederlandsReisdocument);
-        reisdocumentBuilder.nieuwStandaardRecord(actie)
-                           .nummer("123")
-                           .datumUitgifte(actie.getDatumAanvangGeldigheid())
-                           .datumIngangDocument(19400202)
-                           .autoriteitVanAfgifte("1234")
-                           .datumEindeDocument(19550101)
-                           .eindeRecord();
-        builder.voegPersoonReisdocumentToe(reisdocumentBuilder.build());
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final GroepElement reisdocumentIdentiteitGroep = ElementHelper.getGroepElement(Element.PERSOON_REISDOCUMENT_IDENTITEIT.getId());
+        final MetaRecord reisdocumentIdentiteitRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_REISDOCUMENT.getId()))
+                        .metGroep()
+                        .metGroepElement(reisdocumentIdentiteitGroep)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_SOORTCODE.getId()), "PN")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(reisdocumentIdentiteitGroep)
+                        .getRecords()
+                        .iterator()
+                        .next();
+
+        final GroepElement reisdocumentStandaardGroep = ElementHelper.getGroepElement(Element.PERSOON_REISDOCUMENT_STANDAARD.getId());
+        final MetaRecord reisdocumentStandaardRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_REISDOCUMENT.getId()))
+                        .metGroep()
+                        .metGroepElement(reisdocumentStandaardGroep)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_AUTORITEITVANAFGIFTE.getId()), "1234")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_DATUMEINDEDOCUMENT.getId()), 19550101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_DATUMINGANGDOCUMENT.getId()), 19400202)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_DATUMUITGIFTE.getId()), 19400101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_NUMMER.getId()), "123")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(reisdocumentStandaardGroep)
+                        .getRecords()
+                        .iterator()
+                        .next();
+
+        final Persoonslijst persoon =
+                new Persoonslijst(
+                        persoonAdder.voegPersoonMutatieToe(reisdocumentIdentiteitRecord).voegPersoonMutatieToe(reisdocumentStandaardRecord).build(),
+                        0L);
+
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_12,
-            true,
-            Lo3ElementEnum.ELEMENT_3510,
-            "PN",
-            Lo3ElementEnum.ELEMENT_3520,
-            "123",
-            Lo3ElementEnum.ELEMENT_3530,
-            "19400101",
-            Lo3ElementEnum.ELEMENT_3540,
-            "1234",
-            Lo3ElementEnum.ELEMENT_3550,
-            "19550101",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19400202",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_12,
+                true,
+                Lo3ElementEnum.ELEMENT_3510,
+                "PN",
+                Lo3ElementEnum.ELEMENT_3520,
+                "123",
+                Lo3ElementEnum.ELEMENT_3530,
+                "19400101",
+                Lo3ElementEnum.ELEMENT_3540,
+                "1234",
+                Lo3ElementEnum.ELEMENT_3550,
+                "19550101",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19400202",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_62,
-            true,
-            Lo3ElementEnum.ELEMENT_3510,
-            "",
-            Lo3ElementEnum.ELEMENT_3520,
-            "",
-            Lo3ElementEnum.ELEMENT_3530,
-            "",
-            Lo3ElementEnum.ELEMENT_3540,
-            "",
-            Lo3ElementEnum.ELEMENT_3550,
-            "",
-            Lo3ElementEnum.ELEMENT_8510,
-            "",
-            Lo3ElementEnum.ELEMENT_8610,
-            "");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_62,
+                true,
+                Lo3ElementEnum.ELEMENT_3510,
+                "",
+                Lo3ElementEnum.ELEMENT_3520,
+                "",
+                Lo3ElementEnum.ELEMENT_3530,
+                "",
+                Lo3ElementEnum.ELEMENT_3540,
+                "",
+                Lo3ElementEnum.ELEMENT_3550,
+                "",
+                Lo3ElementEnum.ELEMENT_8510,
+                "",
+                Lo3ElementEnum.ELEMENT_8610,
+                "");
         Assert.assertEquals(2, resultaat.size());
     }
 
     @Test
     public void testGroep36Signalering() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        final PersoonIndicatieSignaleringMetBetrekkingTotVerstrekkenReisdocumentHisVolledigImplBuilder signaleringBuilder =
-                new PersoonIndicatieSignaleringMetBetrekkingTotVerstrekkenReisdocumentHisVolledigImplBuilder();
-        signaleringBuilder.nieuwStandaardRecord(actie).waarde(Ja.J).eindeRecord();
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        builder.voegPersoonIndicatieSignaleringMetBetrekkingTotVerstrekkenReisdocumentToe(signaleringBuilder.build());
+        final MetaRecord indicatieIdentiteitRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(
+                                ElementHelper.getObjectElement(Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT.getId()))
+                        .metId(95)
+                        .metGroep()
+                        .metGroepElement(
+                                ElementHelper.getGroepElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_IDENTITEIT.getId()))
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metAttribuut(
+                                ElementHelper.getAttribuutElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_SOORTNAAM.getId()),
+                                SoortIndicatie.SIGNALERING_MET_BETREKKING_TOT_VERSTREKKEN_REISDOCUMENT.toString())
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(
+                                ElementHelper.getGroepElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_IDENTITEIT.getId()))
+                        .getRecords()
+                        .iterator()
+                        .next();
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final MetaRecord indicatieStandaardRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(
+                                ElementHelper.getObjectElement(Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT.getId()))
+                        .metId(95)
+                        .metGroep()
+                        .metGroepElement(
+                                ElementHelper.getGroepElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_STANDAARD.getId()))
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metAttribuut(
+                                ElementHelper.getAttribuutElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_WAARDE.getId()),
+                                true)
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(
+                                ElementHelper.getGroepElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_STANDAARD.getId()))
+                        .getRecords()
+                        .iterator()
+                        .next();
+
+        final Persoonslijst persoon =
+                new Persoonslijst(
+                        persoonAdder.voegPersoonMutatieToe(indicatieIdentiteitRecord).voegPersoonMutatieToe(indicatieStandaardRecord).build(),
+                        0L);
+
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
 
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_12,
-            true,
-            Lo3ElementEnum.ELEMENT_3610,
-            "1",
-            Lo3ElementEnum.ELEMENT_8510,
-            "19400102",
-            Lo3ElementEnum.ELEMENT_8610,
-            "19400102");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_12,
+                true,
+                Lo3ElementEnum.ELEMENT_3610,
+                "1",
+                Lo3ElementEnum.ELEMENT_8510,
+                "19400102",
+                Lo3ElementEnum.ELEMENT_8610,
+                "19400102");
         assertElementen(
-            resultaat,
-            Lo3CategorieEnum.CATEGORIE_62,
-            true,
-            Lo3ElementEnum.ELEMENT_3610,
-            "",
-            Lo3ElementEnum.ELEMENT_8510,
-            "",
-            Lo3ElementEnum.ELEMENT_8610,
-            "");
+                resultaat,
+                Lo3CategorieEnum.CATEGORIE_62,
+                true,
+                Lo3ElementEnum.ELEMENT_3610,
+                "",
+                Lo3ElementEnum.ELEMENT_8510,
+                "",
+                Lo3ElementEnum.ELEMENT_8610,
+                "");
         Assert.assertEquals(2, resultaat.size());
     }
 
     @Test
     public void testAlleInhoudelijkeGroepen() {
-        final ActieModel actie =
-                PersoonHisVolledigUtil.maakActie(2L, SoortAdministratieveHandeling.G_B_A_BIJHOUDING_ACTUEEL, SoortActie.CONVERSIE_G_B_A, 19400101, partij);
+        final AdministratieveHandeling administratieveHandeling = getBijhoudingsAdministratieveHandeling();
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(basisAdministratieveHandeling);
+        administratieveHandelingen.add(administratieveHandeling);
 
-        // Reisdocument
-        final SoortNederlandsReisdocument soortNederlandsReisdocument =
-                new SoortNederlandsReisdocument(new SoortNederlandsReisdocumentCodeAttribuut("PN"), null, null, null);
-        final PersoonReisdocumentHisVolledigImplBuilder reisdocumentBuilder = new PersoonReisdocumentHisVolledigImplBuilder(soortNederlandsReisdocument);
-        reisdocumentBuilder.nieuwStandaardRecord(actie)
-                           .nummer("123")
-                           .datumUitgifte(19450101)
-                           .autoriteitVanAfgifte("1234")
-                           .datumIngangDocument(19400202)
-                           .datumEindeDocument(19550101)
-                           .eindeRecord();
-        builder.voegPersoonReisdocumentToe(reisdocumentBuilder.build());
+        MetaObjectAdder persoonAdder = MetaObjectAdder.nieuw(maakBasisPersoon(idTeller.getAndIncrement()));
 
-        // Signalering
-        final PersoonIndicatieSignaleringMetBetrekkingTotVerstrekkenReisdocumentHisVolledigImplBuilder signaleringBuilder =
-                new PersoonIndicatieSignaleringMetBetrekkingTotVerstrekkenReisdocumentHisVolledigImplBuilder();
-        signaleringBuilder.nieuwStandaardRecord(actie).waarde(Ja.J).eindeRecord();
-        builder.voegPersoonIndicatieSignaleringMetBetrekkingTotVerstrekkenReisdocumentToe(signaleringBuilder.build());
+        final GroepElement reisdocumentIdentiteitGroep = ElementHelper.getGroepElement(Element.PERSOON_REISDOCUMENT_IDENTITEIT.getId());
+        final MetaRecord reisdocumentIdentiteitRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_REISDOCUMENT.getId()))
+                        .metGroep()
+                        .metGroepElement(reisdocumentIdentiteitGroep)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_SOORTCODE.getId()), "PN")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(reisdocumentIdentiteitGroep)
+                        .getRecords()
+                        .iterator()
+                        .next();
 
-        final List<Lo3CategorieWaarde> resultaat = uitvoeren(actie);
+        final GroepElement reisdocumentStandaardGroep = ElementHelper.getGroepElement(Element.PERSOON_REISDOCUMENT_STANDAARD.getId());
+        final MetaRecord reisdocumentStandaardRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(ElementHelper.getObjectElement(Element.PERSOON_REISDOCUMENT.getId()))
+                        .metGroep()
+                        .metGroepElement(reisdocumentStandaardGroep)
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_AUTORITEITVANAFGIFTE.getId()), "1234")
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_DATUMEINDEDOCUMENT.getId()), 19550101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_DATUMINGANGDOCUMENT.getId()), 19400202)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_DATUMUITGIFTE.getId()), 19400101)
+                        .metAttribuut(ElementHelper.getAttribuutElement(Element.PERSOON_REISDOCUMENT_NUMMER.getId()), "123")
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(reisdocumentStandaardGroep)
+                        .getRecords()
+                        .iterator()
+                        .next();
+
+        final MetaRecord indicatieIdentiteitRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(
+                                ElementHelper.getObjectElement(Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT.getId()))
+                        .metId(95)
+                        .metGroep()
+                        .metGroepElement(
+                                ElementHelper.getGroepElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_IDENTITEIT.getId()))
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metAttribuut(
+                                ElementHelper.getAttribuutElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_SOORTNAAM.getId()),
+                                SoortIndicatie.SIGNALERING_MET_BETREKKING_TOT_VERSTREKKEN_REISDOCUMENT.toString())
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(
+                                ElementHelper.getGroepElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_IDENTITEIT.getId()))
+                        .getRecords()
+                        .iterator()
+                        .next();
+
+        final MetaRecord indicatieStandaardRecord =
+                MetaObject.maakBuilder()
+                        .metObjectElement(
+                                ElementHelper.getObjectElement(Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT.getId()))
+                        .metId(95)
+                        .metGroep()
+                        .metGroepElement(
+                                ElementHelper.getGroepElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_STANDAARD.getId()))
+                        .metRecord()
+                        .metId(idTeller.getAndIncrement())
+                        .metActieInhoud(administratieveHandeling.getActies().iterator().next())
+                        .metAttribuut(
+                                ElementHelper.getAttribuutElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_WAARDE.getId()),
+                                true)
+                        .eindeRecord()
+                        .eindeGroep()
+                        .build()
+                        .getGroep(
+                                ElementHelper.getGroepElement(
+                                        Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_STANDAARD.getId()))
+                        .getRecords()
+                        .iterator()
+                        .next();
+
+        final Persoonslijst persoon = new Persoonslijst(
+                persoonAdder.voegPersoonMutatieToe(indicatieIdentiteitRecord)
+                        .voegPersoonMutatieToe(indicatieStandaardRecord)
+                        .voegPersoonMutatieToe(reisdocumentIdentiteitRecord)
+                        .voegPersoonMutatieToe(reisdocumentStandaardRecord)
+                        .build(),
+                0L);
+
+        logMetaObject(persoon.getMetaObject());
+        final List<Lo3CategorieWaarde> resultaat = subject.converteer(persoon, null, administratieveHandeling, null, new ConversieCache());
+
         Assert.assertEquals(4, resultaat.size());
     }
-
 }

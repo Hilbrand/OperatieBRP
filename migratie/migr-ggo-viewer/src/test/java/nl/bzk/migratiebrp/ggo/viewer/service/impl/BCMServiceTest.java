@@ -108,9 +108,9 @@ public class BCMServiceTest {
         ((ServiceLocatorSpringImpl) ServiceLocator.getInstance()).setSystemProperty("bcmDescriptionsPath", path);
 
         Assert.assertEquals(
-            "Omschrijving moet gevonden worden",
-            "Rubriek Datum opneming Persoon BEVAT EEN GELDIGE KALENDERDATUM",
-            bcmService.getBcmControleOmschrijving("L3000"));
+                "Omschrijving moet gevonden worden",
+                "Rubriek Datum opneming Persoon BEVAT EEN GELDIGE KALENDERDATUM",
+                bcmService.getBcmControleOmschrijving("L3000"));
     }
 
     @Test

@@ -9,17 +9,21 @@ package nl.bzk.migratiebrp.test.perf.synchronisatie.environment;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.management.MBeanServerConnection;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.perf.synchronisatie.bericht.TestBericht;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.voisc.database.entities.Mailbox;
 import nl.bzk.migratiebrp.voisc.database.entities.StatusEnum;
 import nl.bzk.migratiebrp.voisc.database.repository.MailboxRepository;
-import nl.bzk.migratiebrp.voisc.spd.MailboxClient;
+import nl.bzk.migratiebrp.voisc.mailbox.client.Connection;
+import nl.bzk.migratiebrp.voisc.mailbox.client.MailboxClient;
 import nl.bzk.migratiebrp.voisc.spd.exception.VoaException;
+
 import org.junit.Assert;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,8 +35,8 @@ public final class TestEnvironment {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    private static final String CONTROLE_SQL = "select count(*) from mig_extractieprocessen where procesNaam = 'uc202' and einddatum is not null "
-                                               + "and wachtstartdatum is null";
+    private static final String CONTROLE_SQL =
+            "select count(*) from mig_extractieprocessen where procesNaam = 'uc202' and einddatum is not null " + "and wachtstartdatum is null";
     private static final String ERROR_MAILBOX_NIET_GEVONDEN = "Mailbox voor instantie '%s' niet gevonden.";
 
     private static final int DERTIG_LOOPS = 30;
@@ -64,7 +68,6 @@ public final class TestEnvironment {
 
     /**
      * Mailbox proxy initializator.
-     *
      * @return Mailbox client.
      */
     public synchronized MailboxClient initializeMailboxServerProxy() {
@@ -73,23 +76,22 @@ public final class TestEnvironment {
 
     /**
      * Verzend een testbericht met behulp van de mailbox client.
-     *
-     * @param testBericht
-     *            Het te verzenden bericht.
-     * @param mailboxClient
-     *            De mailbox client.
+     * @param testBericht Het te verzenden bericht.
+     * @param mailboxClient De mailbox client.
      */
     public synchronized void verzendBericht(final TestBericht testBericht, final MailboxClient mailboxClient) {
         // We moeten een bericht versturen via de mailbox van de bronInstantie
         LOG.info(
-            "Start versturen bericht# " + testBericht.getVolgnummer() + " namens instantie {} naar instantie {}.",
-            testBericht.getVerzendendePartij(),
-            testBericht.getOntvangendePartij());
-        final Mailbox mailbox = mailboxRepository.getMailboxByInstantiecode(Integer.parseInt(testBericht.getVerzendendePartij()));
+                "Start versturen bericht# "
+                        + testBericht.getVolgnummer()
+                        + " namens instantie {} naar instantie {}.",
+                testBericht.getVerzendendePartij(),
+                testBericht.getOntvangendePartij());
+        final Mailbox mailbox = mailboxRepository.getMailboxByPartijcode(testBericht.getVerzendendePartij());
         LOG.info("Verwerk uitgaand bericht voor mailbox: {}", mailbox.getMailboxnr());
         Assert.assertNotNull(String.format(ERROR_MAILBOX_NIET_GEVONDEN, testBericht.getVerzendendePartij()), mailbox);
 
-        final Mailbox recipient = mailboxRepository.getMailboxByInstantiecode(Integer.parseInt(testBericht.getOntvangendePartij()));
+        final Mailbox recipient = mailboxRepository.getMailboxByPartijcode(testBericht.getOntvangendePartij());
         Assert.assertNotNull(String.format(ERROR_MAILBOX_NIET_GEVONDEN, testBericht.getOntvangendePartij()), mailbox);
 
         final nl.bzk.migratiebrp.voisc.database.entities.Bericht mailboxBericht = new nl.bzk.migratiebrp.voisc.database.entities.Bericht();
@@ -99,12 +101,11 @@ public final class TestEnvironment {
         mailboxBericht.setRecipient(recipient.getMailboxnr());
         mailboxBericht.setStatus(StatusEnum.SENDING_TO_MAILBOX);
 
-        try {
-
-            mailboxClient.logOn(mailbox);
+        try (final Connection mailboxConnection = mailboxClient.connect()) {
+            mailboxClient.logOn(mailboxConnection, mailbox);
 
             // Versturen berichten naar Mailbox
-            mailboxClient.putMessage(mailboxBericht);
+            mailboxClient.putMessage(mailboxConnection, mailboxBericht);
         } catch (final VoaException e) {
             throw new RuntimeException("Fout bij versturen bericht.", e);
         }
@@ -123,13 +124,9 @@ public final class TestEnvironment {
     }
 
     /**
-     *
-     * @param wanted
-     *            Aantal verwachte berichten.
-     * @param started
-     *            Starttijd.
-     * @throws InterruptedException
-     *             kan worden gegooid bij aanroepen van Thread.sleep().
+     * @param wanted Aantal verwachte berichten.
+     * @param started Starttijd.
+     * @throws InterruptedException kan worden gegooid bij aanroepen van TimeUnit.MILLISECONDS.sleep().
      */
     public void afterTestCase(final long wanted, final Date started) throws InterruptedException {
         // Gewenste aantal berichten
@@ -156,30 +153,31 @@ public final class TestEnvironment {
                     TimeUnit.SECONDS.toSeconds(verwachteResterendeTijd) - TimeUnit.SECONDS.toMinutes(verwachteResterendeTijd) * SECONDEN_PER_MINUUT;
             final Timestamp verwachteEindtijd = new Timestamp(System.currentTimeMillis() + verwachteResterendeTijd * MILLIS + LOOP_WACHTTIJD_IN_MILLIS);
 
-            LOG.info("\n\n"
-                     + new Date()
-                     + "; Beeindigde processen interval: "
-                     + (verzondenLeveringsberichtenCounter - previous)
-                     + "\nBeeindigde processen tot nu toe: "
-                     + verzondenLeveringsberichtenCounter
-                     + "\nGemiddelde snelheid interval: "
-                     + gemiddeldeSnelheidInterval
-                     + " Beeindigde processen/s. "
-                     + "\nGemiddelde snelheid test: "
-                     + gemiddeldeSnelheidTest
-                     + " Beeindigde processen/s."
-                     + "\nVerwachte resterende duur: "
-                     + verwachteResterendeTijd
-                     + " seconde"
-                     + "("
-                     + verwachteResterendeDuurUren
-                     + " uren "
-                     + verwachteResterendeDuurMinuten
-                     + " minuten "
-                     + verwachteResterendeDuurSeconde
-                     + " seconde)"
-                     + "\nVerwachte eindtijd: "
-                     + verwachteEindtijd);
+            LOG.info(
+                    "\n\n"
+                            + new Date()
+                            + "; Beeindigde processen interval: "
+                            + (verzondenLeveringsberichtenCounter - previous)
+                            + "\nBeeindigde processen tot nu toe: "
+                            + verzondenLeveringsberichtenCounter
+                            + "\nGemiddelde snelheid interval: "
+                            + gemiddeldeSnelheidInterval
+                            + " Beeindigde processen/s. "
+                            + "\nGemiddelde snelheid test: "
+                            + gemiddeldeSnelheidTest
+                            + " Beeindigde processen/s."
+                            + "\nVerwachte resterende duur: "
+                            + verwachteResterendeTijd
+                            + " seconde"
+                            + "("
+                            + verwachteResterendeDuurUren
+                            + " uren "
+                            + verwachteResterendeDuurMinuten
+                            + " minuten "
+                            + verwachteResterendeDuurSeconde
+                            + " seconde)"
+                            + "\nVerwachte eindtijd: "
+                            + verwachteEindtijd);
 
             if (current == verzondenLeveringsberichtenCounter) {
                 loopsCurrentSame++;
@@ -194,7 +192,7 @@ public final class TestEnvironment {
             }
 
             // Check each 10 seconds
-            Thread.sleep(LOOP_WACHTTIJD_IN_MILLIS);
+            TimeUnit.MILLISECONDS.sleep(LOOP_WACHTTIJD_IN_MILLIS);
         }
 
         LOG.info(new Date() + "; Geëindigd met: " + current);
@@ -203,7 +201,6 @@ public final class TestEnvironment {
 
     /**
      * Geef de waarde van beeindigde processen counter.
-     *
      * @return hoeveel processen er al beeindigd zijn.
      */
     public Long getBeeindigdeProcessenCounter() {
@@ -216,11 +213,8 @@ public final class TestEnvironment {
 
     /**
      * Verifieer of het aantal beeindigde processen kleiner is dan het verwachte aantal.
-     *
-     * @param verwachtAantal
-     *            Het verwachte aantal
+     * @param verwachtAantal Het verwachte aantal
      * @return true als het aantal beeindigde processen kleiner is dan het verwachte aantal.
-     * @throws Exception
      */
     public boolean verifieerBeeindigdeProcessen(final long verwachtAantal) {
         boolean result;

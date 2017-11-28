@@ -1,1 +1,1 @@
-GEWIJZIGD(GERELATEERDE_BETROKKENHEDEN(oud,"KIND","FAMILIERECHTELIJKE_BETREKKING","OUDER"), GERELATEERDE_BETROKKENHEDEN(nieuw,"KIND","FAMILIERECHTELIJKE_BETREKKING","OUDER"), [ouderschap.datum_aanvang_geldigheid])
+GEWIJZIGD(oud, nieuw, [GerelateerdeOuder.Ouderschap.DatumAanvangGeldigheid])

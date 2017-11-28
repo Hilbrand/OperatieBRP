@@ -7,6 +7,6 @@ stuurgegevens:
 parameters:
   communicatieID: 'comid.parameters'
   leveringsautorisatieIdentificatie: '${leveringsautorisatieIdentificatieId}'
-zoekcriteriaPersoon:
-  communicatieID: 'comid.zoekCriteria'
+identificatiecriteria:
+  communicatieID: 'identificatie02V'
   burgerservicenummer: ''

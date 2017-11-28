@@ -1,7 +1,12 @@
 describe('json-toon', function() {
-    var $compile, $rootScopei, scope;
+    var $compile, $rootScope, scope;
 
     beforeEach(module('json-toon'));
+    beforeEach(function() {
+        module(function($provide) {
+            $provide.value('context', {params: {}, vorig: {}});
+        });
+    });
     beforeEach(inject(function(_$compile_, _$rootScope_) {
         $compile = _$compile_;
         $rootScope = _$rootScope_;

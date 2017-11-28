@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,9 +38,7 @@ public class BrpOnderzoekLo3 {
     /**
      * Verzamel de onderzoek gegevens uit de LO3 elementen, en consolideer die tot 1 onderzoek gegeven op categorie
      * niveau.
-     *
-     * @param persoonslijst
-     *            persoonslijst
+     * @param persoonslijst persoonslijst
      * @return persoonslijst (met ingevuld onderzoek per categorie)
      */
     public final Lo3Persoonslijst converteer(final Lo3Persoonslijst persoonslijst) {
@@ -64,7 +63,7 @@ public class BrpOnderzoekLo3 {
 
     private <T extends Lo3CategorieInhoud> List<Lo3Stapel<T>> verwerkOnderzoek(final List<Lo3Stapel<T>> stapels, final Lo3CategorieEnum categorieEnum) {
         if (stapels == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         final List<Lo3Stapel<T>> verwerkteStapels = new ArrayList<>();
@@ -100,29 +99,24 @@ public class BrpOnderzoekLo3 {
         final Lo3Onderzoek onderzoek = bepaalOnderzoekUitElementen(categorie, categorieEnum);
 
         return new Lo3Categorie<>(
-            categorie.getInhoud(),
-            categorie.getDocumentatie(),
-            onderzoek,
-            categorie.getHistorie(),
-            categorie.getLo3Herkomst(),
-            categorie.isAfsluitendVoorkomen());
+                categorie.getInhoud(),
+                categorie.getDocumentatie(),
+                onderzoek,
+                categorie.getHistorie(),
+                categorie.getLo3Herkomst(),
+                categorie.isAfsluitendVoorkomen());
     }
 
     /**
      * Bepaal het onderzoek voor een categorie.
-     *
-     * @param categorie
-     *            categorie
-     * @param categorieEnum
-     *            categorie enum
-     * @param <T>
-     *            lo3 categorie inhoud type
+     * @param categorie categorie
+     * @param categorieEnum categorie enum
+     * @param <T> lo3 categorie inhoud type
      * @return onderzoek
      */
     public final <T extends Lo3CategorieInhoud> Lo3Onderzoek bepaalOnderzoekUitElementen(
-        final Lo3Categorie<T> categorie,
-        final Lo3CategorieEnum categorieEnum)
-    {
+            final Lo3Categorie<T> categorie,
+            final Lo3CategorieEnum categorieEnum) {
         final List<Pair<AbstractLo3Element, Lo3ElementEnum>> elementen = new ArrayList<>();
 
         elementen.addAll(bepaalElementen(categorie.getInhoud()));
@@ -138,16 +132,16 @@ public class BrpOnderzoekLo3 {
                     onderzoeken.add(onderzoek);
                 } else {
                     onderzoeken.add(new Lo3Onderzoek(
-                        new Lo3Integer(bepaalOnderzoekCode(element.getRight(), categorieEnum), null),
-                        onderzoek.getDatumIngangOnderzoek(),
-                        onderzoek.getDatumEindeOnderzoek()));
+                            new Lo3Integer(bepaalOnderzoekCode(element.getRight(), categorieEnum), null),
+                            onderzoek.getDatumIngangOnderzoek(),
+                            onderzoek.getDatumEindeOnderzoek()));
                 }
             }
         }
 
         final Lo3Onderzoek resultaat;
 
-        if (onderzoeken.size() == 0) {
+        if (onderzoeken.isEmpty()) {
             resultaat = null;
         } else if (onderzoeken.size() == 1) {
             resultaat = onderzoeken.iterator().next();
@@ -165,30 +159,35 @@ public class BrpOnderzoekLo3 {
             final Field[] velden = elementVerzameling.getClass().getDeclaredFields();
             for (final Field veld : velden) {
                 final Lo3Elementnummer elementAnnotation = veld.getAnnotation(Lo3Elementnummer.class);
-                if (elementAnnotation != null) {
-                    veld.setAccessible(true);
-                    try {
-                        final Object veldWaarde = veld.get(elementVerzameling);
-
-                        if (veldWaarde instanceof AbstractLo3Element) {
-                            resultaat.add(Pair.of((AbstractLo3Element) veldWaarde, elementAnnotation.value()));
-                        }
-                    } catch (final IllegalAccessException iae) {
-                        throw new IllegalStateException(iae);
-                    }
-                }
+                voegLo3ElementenToe(elementVerzameling, resultaat, veld, elementAnnotation);
             }
         }
 
         return resultaat;
     }
 
+    private void voegLo3ElementenToe(final Object elementVerzameling, final List<Pair<AbstractLo3Element, Lo3ElementEnum>> resultaat, final Field veld,
+                                     final Lo3Elementnummer elementAnnotation) {
+        if (elementAnnotation != null) {
+            veld.setAccessible(true);
+            try {
+                final Object veldWaarde = veld.get(elementVerzameling);
+
+                if (veldWaarde instanceof AbstractLo3Element) {
+                    resultaat.add(Pair.of((AbstractLo3Element) veldWaarde, elementAnnotation.value()));
+                }
+            } catch (final IllegalAccessException iae) {
+                throw new IllegalStateException(iae);
+            }
+        }
+    }
+
     private String bepaalOnderzoekCode(final Lo3ElementEnum element, final Lo3CategorieEnum categorie) {
         return String.valueOf(categorie.getCategorieAsInt()
-                              * TWEE_CIJFERS
-                              * TWEE_CIJFERS
-                              + element.getGroep().getGroepAsInt()
-                              * TWEE_CIJFERS
-                              + element.getRubriek().getRubriekAsInt());
+                * TWEE_CIJFERS
+                * TWEE_CIJFERS
+                + element.getGroep().getGroepAsInt()
+                * TWEE_CIJFERS
+                + element.getRubriek().getRubriekAsInt());
     }
 }

@@ -14,19 +14,16 @@ import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhoud;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.logging.ControleMelding;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-import org.springframework.stereotype.Component;
 
 /**
- * Controle dat de actuele persoonsgegevens (bsn en geboortedatum) in de gevonden persoonslijst voorkomen in de historie
- * van de aangeboden persoonslijst.
+ * Controle dezelfde persoon.
  */
-@Component(value = "plControleDezelfdePersoon")
 public final class PlControleDezelfdePersoon implements PlControle {
 
     @Override
@@ -34,75 +31,70 @@ public final class PlControleDezelfdePersoon implements PlControle {
         final BrpPersoonslijst brpPersoonslijst = context.getBrpPersoonslijst();
         final ControleLogging logging = new ControleLogging(ControleMelding.PL_CONTROLE_DEZELFDE_PERSOON);
 
-        // Gevonden waarden
-        final Integer dbBsn = BrpInteger.unwrap(dbPersoonslijst.getIdentificatienummerStapel().getActueel().getInhoud().getBurgerservicenummer());
-        final BrpDatum dbGeboortedatum = dbPersoonslijst.getGeboorteStapel().getActueel().getInhoud().getGeboortedatum();
-
-        final boolean result =
-                dbBsn != null
-                        && dbGeboortedatum != null
-                        && controleerBsn(logging, brpPersoonslijst, dbBsn)
-                        && controleerGeboorteDatums(logging, brpPersoonslijst, dbPersoonslijst);
+        final boolean result = controleerBsn(logging, brpPersoonslijst, dbPersoonslijst)
+                && controleerGeboorteDatums(logging, brpPersoonslijst, dbPersoonslijst);
 
         logging.logResultaat(result);
         return result;
     }
 
-    private boolean controleerBsn(final ControleLogging logging, final BrpPersoonslijst brpPersoonslijst, final Integer dbBsn) {
-
+    private boolean controleerBsn(final ControleLogging logging, final BrpPersoonslijst brpPersoonslijst, final BrpPersoonslijst dbPersoonslijst) {
         logging.addMelding("Controle op BSN.");
 
-        for (final BrpGroep<BrpIdentificatienummersInhoud> groep : brpPersoonslijst.getIdentificatienummerStapel()) {
-            if (groep.getActieVerval() != null) {
-                continue;
-            }
+        final Set<String> aangebodenBsns = getBsns(brpPersoonslijst);
+        final Set<String> dbBsns = getBsns(dbPersoonslijst);
 
-            final Integer aangebodenBsn = BrpInteger.unwrap(groep.getInhoud().getBurgerservicenummer());
+        // Log waarden
+        logging.logAangebodenWaarden(aangebodenBsns);
+        logging.logGevondenWaarden(dbBsns);
 
-            // Aangeboden waarde.
-            logging.logAangebodenWaarden(aangebodenBsn);
-
-            // Gevonden waarde.
-            logging.logGevondenWaarden(dbBsn);
-
-            if (dbBsn.equals(aangebodenBsn)) {
-                return true;
-            }
-        }
-
-        return false;
+        return aangebodenBsns.containsAll(dbBsns);
     }
 
-    private boolean controleerGeboorteDatums(final ControleLogging logging, final BrpPersoonslijst brpPersoonslijst, final BrpPersoonslijst dbPersoonslijst)
-    {
+    private Set<String> getBsns(final BrpPersoonslijst persoonslijst) {
+        final BrpStapel<BrpIdentificatienummersInhoud> stapel = persoonslijst.getIdentificatienummerStapel();
+        if (stapel == null) {
+            return Collections.emptySet();
+        }
 
+        final SortedSet<String> bsns = new TreeSet<>();
+        for (final BrpGroep<BrpIdentificatienummersInhoud> groep : stapel) {
+            if (groep.getHistorie().isVervallen()) {
+                continue;
+            }
+            final BrpIdentificatienummersInhoud inhoud = groep.getInhoud();
+            final String bsn = BrpString.unwrap(inhoud.getBurgerservicenummer());
+            bsns.add(bsn == null ? "" : bsn);
+        }
+
+        return bsns;
+    }
+
+
+    private boolean controleerGeboorteDatums(final ControleLogging logging, final BrpPersoonslijst brpPersoonslijst, final BrpPersoonslijst dbPersoonslijst) {
         logging.addMelding("Controle op geboortedatum.");
 
         // Aangeboden waarden
-        final Set<Integer> brpGeboorteDatums = getGeboorteDatumStapel(brpPersoonslijst);
+        final Set<Integer> brpGeboorteDatums = getGeboortedatums(brpPersoonslijst);
         logging.logAangebodenWaarden(brpGeboorteDatums);
 
         // Gevonden waarden
-        final Set<Integer> dbGeboorteDatums = getGeboorteDatumStapel(dbPersoonslijst);
+        final Set<Integer> dbGeboorteDatums = getGeboortedatums(dbPersoonslijst);
         logging.logGevondenWaarden(dbGeboorteDatums);
 
         // Resultaat
-        final boolean result = brpGeboorteDatums.containsAll(dbGeboorteDatums);
-
-        return result;
+        return brpGeboorteDatums.containsAll(dbGeboorteDatums);
     }
 
-    private Set<Integer> getGeboorteDatumStapel(final BrpPersoonslijst persoonslijst) {
-        final BrpStapel<BrpGeboorteInhoud> stapel = persoonslijst.getGeboorteStapel();
 
+    private Set<Integer> getGeboortedatums(final BrpPersoonslijst persoonslijst) {
+        final BrpStapel<BrpGeboorteInhoud> stapel = persoonslijst.getGeboorteStapel();
         if (stapel == null) {
             return Collections.emptySet();
         }
 
         final SortedSet<Integer> geboorteDatums = new TreeSet<>();
-
-        for (final BrpGroep<BrpGeboorteInhoud> groep : persoonslijst.getGeboorteStapel()) {
-
+        for (final BrpGroep<BrpGeboorteInhoud> groep : stapel) {
             final BrpGeboorteInhoud inhoud = groep.getInhoud();
             final Integer geboorteDatum = BrpDatum.unwrap(inhoud.getGeboortedatum());
             if (geboorteDatum != null && !geboorteDatums.contains(geboorteDatum)) {

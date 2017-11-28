@@ -4,17 +4,6 @@ Deze maven module is bedoeld om makkelijk een lokale test omgeving op te zetten 
 laatste ART-Engine, laatste BRP database versie e.d.
 Dit project kent de volgende gebruik scenario's:
 
-ART-Engine
-----------
-Om lokaal de laatste ART-Engine te gebruiken zonder dat je eraan ontwikkelt, kun je dit project gebruiken en de volgende instructie geven op de command prompt:
-mvn clean validate -Pnieuwste
-Hiermee krijg je de nieuwste ART-Engine die dan in de directory art-engine wortdt geplaatst. Voor het gemak is er een batch en shell script gemaakt om dit te doen:
-artengine.bat
-artengine.sh
-
-Wil je de laatste release gebruiken, kan dit ook, dan moet je de volgende instructie gebruiken:
-mvn clean validate -Prelease
-
 ART-Database
 ------------
 Om lokaal te kunnen testen is een database nodig met de testpersonen. Om de laatste BRP database te maken en te vullen kunnen de volgende instructies worden gebruikt:

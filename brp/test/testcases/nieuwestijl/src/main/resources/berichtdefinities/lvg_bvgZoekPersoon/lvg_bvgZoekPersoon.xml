@@ -5,18 +5,20 @@
         <brp:referentienummer>${stuurgegevens.referentienummer}</brp:referentienummer>
         <brp:tijdstipVerzending>${stuurgegevens.tijdstipVerzending}</brp:tijdstipVerzending>
     </brp:stuurgegevens>
-    <!--Optional:-->
     <brp:parameters brp:communicatieID="${parameters.communicatieID}">
-        <brp:abonnementNaam>${parameters.abonnementNaam}</brp:abonnementNaam>
+        <brp:rolNaam>${parameters.rolNaam}</brp:rolNaam>
+        <brp:leveringsautorisatieIdentificatie>${parameters.leveringsautorisatieIdentificatie}</brp:leveringsautorisatieIdentificatie>
+        <brp:dienstIdentificatie>${parameters.dienstIdentificatie}</brp:dienstIdentificatie>
+        <brp:zoekbereik>${parameters.zoekbereik}</brp:zoekbereik>
+        <brp:peilmomentMaterieel>${parameters.peilmomentMaterieel}</brp:peilmomentMaterieel>
     </brp:parameters>
-    <brp:zoekcriteriaPersoon brp:communicatieID="${zoekcriteriaPersoon.communicatieID}">
-        <!--Optional:-->
-        <brp:burgerservicenummer>${zoekcriteriaPersoon.burgerservicenummer}</brp:burgerservicenummer>
-        <!--Optional:-->
-        <brp:administratienummer>${zoekcriteriaPersoon.administratienummer}</brp:administratienummer>
-        <!--Optional:-->
-        <brp:geslachtsnaamstam>${zoekcriteriaPersoon.geslachtsnaamstam}</brp:geslachtsnaamstam>
-        <!--Optional:-->
-        <brp:geboortedatum>${zoekcriteriaPersoon.geboortedatum}</brp:geboortedatum>
-    </brp:zoekcriteriaPersoon>
+    <brp:zoekcriteria>
+        [#list zoekcriteriaPersoon as zoekcriterium]
+        <brp:zoekcriterium brp:objecttype="Zoekcriterium" brp:communicatieID="${zoekcriterium.communicatieID}">
+            <brp:elementNaam>${zoekcriterium.elementnaam}</brp:elementNaam>
+            <brp:waarde>${zoekcriterium.waarde}</brp:waarde>
+            <brp:optie>${zoekcriterium.optie}</brp:optie>
+        </brp:zoekcriterium>
+        [/#list]
+    </brp:zoekcriteria>
 </brp:lvg_bvgZoekPersoon>

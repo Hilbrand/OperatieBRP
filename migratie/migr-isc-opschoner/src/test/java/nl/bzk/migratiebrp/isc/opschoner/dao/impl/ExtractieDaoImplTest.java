@@ -10,8 +10,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 import javax.inject.Inject;
-import junit.framework.Assert;
 import nl.bzk.migratiebrp.isc.opschoner.dao.ExtractieDao;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ExtractieDaoImplTest extends AbstractDaoTest {
@@ -22,8 +22,7 @@ public class ExtractieDaoImplTest extends AbstractDaoTest {
     @Test
     public void testOphalenOpTeSchonenProcessen() throws SQLException {
 
-        final List<Long> procesIds =
-                extractieDao.haalProcesIdsOpBasisVanBeeindigdeProcesExtractiesOp(new Timestamp(System.currentTimeMillis()));
+        final List<Long> procesIds = extractieDao.haalProcesIdsOpBasisVanBeeindigdeProcesExtractiesOp(new Timestamp(System.currentTimeMillis()));
 
         Assert.assertEquals(1, procesIds.size());
     }
@@ -31,8 +30,7 @@ public class ExtractieDaoImplTest extends AbstractDaoTest {
     @Test
     public void testUpdatenVerwijderTijd() throws SQLException {
 
-        final List<Long> procesIds =
-                extractieDao.haalProcesIdsOpBasisVanBeeindigdeProcesExtractiesOp(new Timestamp(System.currentTimeMillis()));
+        final List<Long> procesIds = extractieDao.haalProcesIdsOpBasisVanBeeindigdeProcesExtractiesOp(new Timestamp(System.currentTimeMillis()));
 
         Assert.assertEquals(1, procesIds.size());
 
@@ -40,16 +38,12 @@ public class ExtractieDaoImplTest extends AbstractDaoTest {
 
         extractieDao.updateVerwachteVerwijderDatum(procesIds.get(0), verwachteVerwijderDatum);
 
-        final Timestamp opgehaaldTijdstip =
-                geefQueryResultaat(
-                    "select verwachte_verwijder_datum from mig_extractie_proces where process_instance_id = " + procesIds.get(0),
-                    Timestamp.class);
+        final Timestamp opgehaaldTijdstip = geefQueryResultaat(
+                "select verwachte_verwijder_datum from mig_extractie_proces where process_instance_id = " + procesIds.get(0), Timestamp.class);
 
         Assert.assertEquals(verwachteVerwijderDatum, opgehaaldTijdstip);
 
-        voerUpdateQueryUit(
-            "update mig_extractie_proces set verwachte_verwijder_datum = null where process_instance_id = " + procesIds.get(0),
-            1);
+        voerUpdateQueryUit("update mig_extractie_proces set verwachte_verwijder_datum = null where process_instance_id = " + procesIds.get(0), 1);
 
     }
 }

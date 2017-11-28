@@ -6,15 +6,24 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderlijkGezagHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.MaterieleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeboorteHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RelatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBetrokkenheid;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
@@ -24,26 +33,17 @@ import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpRelatie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoStapel;
 import nl.bzk.migratiebrp.ggo.viewer.util.ViewerDateUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderlijkGezagHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.HistorieUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.MaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeboorteHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RelatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
 
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 /**
  * De builder die de BrpPersoonslijst omzet naar het viewer model.
@@ -53,45 +53,58 @@ public class GgoBrpRelatieBuilder {
     private static final String CATEGORIE_PREFIX = "CATEGORIE_";
     private static final int HIST = 50;
 
+
+    private final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder;
+
+    private final GgoBrpActieBuilder ggoBrpActieBuilder;
+
+    private final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder;
+
+    private final GgoBrpValueConvert brpValueConvert;
+
+    private final GgoBrpIdentificatienummersMapper identificatienummersMapper;
+
+    private final GgoBrpGeslachtsaanduidingMapper geslachtsaanduidingMapper;
+
+    private final GgoBrpSamengesteldeNaamMapper samengesteldeNaamMapper;
+
+    private final GgoBrpGeboorteMapper geboorteMapper;
+
+    /**
+     * Constructor.
+     * @param gegevensgroepenBuilder gegevens groepen builder
+     * @param actieBuilder actie builder
+     * @param onderzoekBuilder onderzoek builder
+     * @param valueConvert value converter
+     */
     @Inject
-    private GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder;
-    @Inject
-    private GgoBrpActieBuilder ggoBrpActieBuilder;
-    @Inject
-    private GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder;
-    @Inject
-    private GgoBrpValueConvert brpValueConvert;
-    @Inject
-    private GgoBrpIdentificatienummersMapper identificatienummersMapper;
-    @Inject
-    private GgoBrpGeslachtsaanduidingMapper geslachtsaanduidingMapper;
-    @Inject
-    private GgoBrpSamengesteldeNaamMapper samengesteldeNaamMapper;
-    @Inject
-    private GgoBrpGeboorteMapper geboorteMapper;
+    public GgoBrpRelatieBuilder(final GgoBrpGegevensgroepenBuilder gegevensgroepenBuilder, final GgoBrpActieBuilder actieBuilder,
+                                final GgoBrpOnderzoekBuilder onderzoekBuilder, final GgoBrpValueConvert valueConvert) {
+        this.ggoBrpGegevensgroepenBuilder = gegevensgroepenBuilder;
+        this.ggoBrpActieBuilder = actieBuilder;
+        this.ggoBrpOnderzoekBuilder = onderzoekBuilder;
+        this.brpValueConvert = valueConvert;
+        this.identificatienummersMapper = new GgoBrpIdentificatienummersMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        this.geslachtsaanduidingMapper = new GgoBrpGeslachtsaanduidingMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        this.samengesteldeNaamMapper = new GgoBrpSamengesteldeNaamMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+        this.geboorteMapper = new GgoBrpGeboorteMapper(gegevensgroepenBuilder, actieBuilder, onderzoekBuilder, valueConvert);
+    }
 
     /**
      * Maak de relaties van een specifieke soort.
-     *
-     * @param soort
-     *            Selecteer welke soort relatie te maken
-     * @param rol
-     *            De soort betrokkenheid
-     * @param brpPersoon
-     *            brpPersoon
-     * @param ggoBrpPersoonslijst
-     *            de viewer-persoonslijst
-     * @param ahs
-     *            Map met administratieve handelingen tbv de losse weergaven van AH's.
+     * @param soort Selecteer welke soort relatie te maken
+     * @param rol De soort betrokkenheid
+     * @param brpPersoon brpPersoon
+     * @param ggoBrpPersoonslijst de viewer-persoonslijst
+     * @param ahs Map met administratieve handelingen tbv de losse weergaven van AH's.
      */
-    public final void buildRelaties(
-        final SoortRelatie soort,
-        final SoortBetrokkenheid rol,
-        final Persoon brpPersoon,
-        final List<GgoStapel> ggoBrpPersoonslijst,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-    {
-        final Long aNummer = brpPersoon.getAdministratienummer();
+    final void buildRelaties(
+            final SoortRelatie soort,
+            final SoortBetrokkenheid rol,
+            final Persoon brpPersoon,
+            final List<GgoStapel> ggoBrpPersoonslijst,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
+        final String aNummer = FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(brpPersoon.getPersoonIDHistorieSet()).getAdministratienummer();
         if (brpPersoon.getRelaties() != null) {
             int brpStapelNr = 0;
             for (final Relatie relatie : brpPersoon.getRelaties()) {
@@ -116,25 +129,19 @@ public class GgoBrpRelatieBuilder {
 
     /**
      * Maak de relaties.
-     *
-     * @param aNummer
-     *            Het aNummer.
-     * @param brpStapelNr
-     *            Het indexnummer van de brp stapel.
-     * @param relatie
-     *            De brp relatie.
-     * @param ggoBrpPersoonslijst
-     *            de GGO brp persoonslijst.
+     * @param aNummer Het aNummer.
+     * @param brpStapelNr Het indexnummer van de brp stapel.
+     * @param relatie De brp relatie.
+     * @param ggoBrpPersoonslijst de GGO brp persoonslijst.
      */
     private void buildRelatie(
-        final SoortBetrokkenheid rol,
-        final Long aNummer,
-        final int brpStapelNr,
-        final Persoon persoon,
-        final Relatie relatie,
-        final List<GgoStapel> ggoBrpPersoonslijst,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-    {
+            final SoortBetrokkenheid rol,
+            final String aNummer,
+            final int brpStapelNr,
+            final Persoon persoon,
+            final Relatie relatie,
+            final List<GgoStapel> ggoBrpPersoonslijst,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
         final GgoBrpRelatie ggoBrpRelatie = new GgoBrpRelatie();
 
         // betrokkenheden, alleen actuele info
@@ -160,11 +167,10 @@ public class GgoBrpRelatieBuilder {
     }
 
     private List<GgoStapel> createIstInhoud(
-        final Relatie relatie,
-        final int brpStapelNr,
-        final Long aNummer,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-    {
+            final Relatie relatie,
+            final int brpStapelNr,
+            final String aNummer,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
         final List<GgoStapel> result = new ArrayList<>();
         for (final Stapel stapel : relatie.getStapels()) {
             addIstInhoud(stapel, Lo3CategorieEnum.valueOf(CATEGORIE_PREFIX + stapel.getCategorie()), brpStapelNr, aNummer, result, ahs);
@@ -174,20 +180,18 @@ public class GgoBrpRelatieBuilder {
     }
 
     private void addIstInhoud(
-        final Stapel brpStapel,
-        final Lo3CategorieEnum categorieEnum,
-        final int brpStapelNr,
-        final Long aNummer,
-        final List<GgoStapel> istInhoud,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-
-    {
+            final Stapel brpStapel,
+            final Lo3CategorieEnum categorieEnum,
+            final int brpStapelNr,
+            final String aNummer,
+            final List<GgoStapel> istInhoud,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
         if (brpStapel != null) {
             final GgoStapel stapel = new GgoStapel(categorieEnum.getLabel());
 
             for (final StapelVoorkomen istRelatieInhoud : brpStapel.getStapelvoorkomens()) {
                 final GgoBrpVoorkomen voorkomen = createGgoIstBrpVoorkomen(istRelatieInhoud, aNummer, categorieEnum, brpStapelNr);
-                voorkomen.setInhoud(new LinkedHashMap<String, String>());
+                voorkomen.setInhoud(new LinkedHashMap<>());
 
                 if (isFamilierechtelijkeBetrekking(brpStapel)) {
                     brpValueConvert.bepaalVervallenEnDatumGeldigheid(voorkomen, istRelatieInhoud);
@@ -205,16 +209,14 @@ public class GgoBrpRelatieBuilder {
                     stapel.addVoorkomen(voorkomen);
                 }
 
-                if (ahs.get(istRelatieInhoud.getAdministratieveHandeling()) == null) {
-                    ahs.put(istRelatieInhoud.getAdministratieveHandeling(), new LinkedHashSet<String>());
-                }
+                ahs.computeIfAbsent(istRelatieInhoud.getAdministratieveHandeling(), k -> new LinkedHashSet<>());
 
                 ahs.get(istRelatieInhoud.getAdministratieveHandeling()).add(
-                    String.format(
-                        "Gearchiveerde %02d %s - %s",
-                        voorkomen.getCategorieLabelNr(),
-                        voorkomen.getLabel(),
-                        ViewerDateUtil.formatDatum(istRelatieInhoud.getRubriek8610DatumVanOpneming())));
+                        String.format(
+                                "Gearchiveerde %02d %s - %s",
+                                voorkomen.getCategorieLabelNr(),
+                                voorkomen.getLabel(),
+                                ViewerDateUtil.formatDatum(istRelatieInhoud.getRubriek8610DatumVanOpneming())));
             }
 
             istInhoud.add(stapel);
@@ -238,25 +240,19 @@ public class GgoBrpRelatieBuilder {
 
     /**
      * Maak een GgoBrpVoorkomen van het type IST.
-     *
-     * @param istInhoud
-     *            BrpGroep<? extends BrpGroepInhoud>.
-     * @param aNummer
-     *            Het anummer van de persoon.
-     * @param categorieEnum
-     *            Het label van de IST categorie
-     * @param brpStapelNr
-     *            Het index nummer van de brp stapel.
+     * @param istInhoud BrpGroep<? extends BrpGroepInhoud>.
+     * @param aNummer Het anummer van de persoon.
+     * @param categorieEnum Het label van de IST categorie
+     * @param brpStapelNr Het index nummer van de brp stapel.
      * @return GgoCategorieKey met de waarden.
      */
-    public final GgoBrpIstVoorkomen createGgoIstBrpVoorkomen(
-        final StapelVoorkomen istInhoud,
-        final Long aNummer,
-        final Lo3CategorieEnum categorieEnum,
-        final int brpStapelNr)
-    {
+    private GgoBrpIstVoorkomen createGgoIstBrpVoorkomen(
+            final StapelVoorkomen istInhoud,
+            final String aNummer,
+            final Lo3CategorieEnum categorieEnum,
+            final int brpStapelNr) {
         final GgoBrpIstVoorkomen voorkomen = new GgoBrpIstVoorkomen();
-        voorkomen.setInhoud(new LinkedHashMap<String, String>());
+        voorkomen.setInhoud(new LinkedHashMap<>());
 
         voorkomen.setBrpStapelNr(brpStapelNr);
         voorkomen.setaNummer(aNummer);
@@ -277,13 +273,12 @@ public class GgoBrpRelatieBuilder {
     }
 
     private void createRelatieInhoud(
-        final Persoon persoon,
-        final Relatie relatie,
-        final GgoBrpRelatie ggoBrpRelatie,
-        final int brpStapelNr,
-        final Long aNummer,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-    {
+            final Persoon persoon,
+            final Relatie relatie,
+            final GgoBrpRelatie ggoBrpRelatie,
+            final int brpStapelNr,
+            final String aNummer,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
 
         final GgoBrpGroepEnum brpGroepEnum = GgoBrpGroepEnum.RELATIE_INHOUD;
 
@@ -295,14 +290,10 @@ public class GgoBrpRelatieBuilder {
             for (final RelatieHistorie relatieInhoud : relatie.getRelatieHistorieSet()) {
                 final GgoBrpVoorkomen voorkomen = brpValueConvert.createGgoBrpVoorkomen(relatieInhoud, aNummer, brpGroepEnum, brpStapelNr);
 
-                ggoBrpGegevensgroepenBuilder.addGroepRelatie(voorkomen, relatieInhoud, brpGroepEnum);
-                ggoBrpGegevensgroepenBuilder.addHistorie(voorkomen, relatieInhoud, brpGroepEnum);
+                ggoBrpGegevensgroepenBuilder.addGroepRelatie(voorkomen, relatieInhoud);
+                ggoBrpGegevensgroepenBuilder.addHistorie(voorkomen, relatieInhoud);
                 ggoBrpActieBuilder.createActies(voorkomen, relatieInhoud, brpGroepEnum, aNummer, ahs);
-                ggoBrpOnderzoekBuilder.createOnderzoeken(voorkomen, persoon, relatieInhoud, aNummer);
-
-                // if (voorkomen.getOnderzoeken() != null) {
-                // ggoBrpRelatie.getOnderzoeken().addAll(voorkomen.getOnderzoeken());
-                // }
+                ggoBrpOnderzoekBuilder.createOnderzoeken(voorkomen, persoon, relatieInhoud);
 
                 stapel.addVoorkomen(voorkomen);
             }
@@ -312,13 +303,12 @@ public class GgoBrpRelatieBuilder {
     }
 
     private List<GgoBetrokkenheid> createBetrokkenheden(
-        final SoortBetrokkenheid rol,
-        final Persoon persoon,
-        final Relatie relatie,
-        final int brpStapelNr,
-        final Long aNummer,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-    {
+            final SoortBetrokkenheid rol,
+            final Persoon persoon,
+            final Relatie relatie,
+            final int brpStapelNr,
+            final String aNummer,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
         // Betrokkenheid heeft een extra unieke key nodig om een betrokkenheid uniek te maken in de Map.
         // Bijvoorbeeld OuderlijkGezag heeft voor betrokkenheid Ouder1 als Ouder2 dezelfde
         // herkomst,label,brpStapelNr.
@@ -331,16 +321,14 @@ public class GgoBrpRelatieBuilder {
             betrokkenheden = new ArrayList<>();
             for (final Betrokkenheid betrokkenheid : relatie.getBetrokkenheidSet()) {
                 if (betrokkenheid.getPersoon() == persoon
-                    || SoortBetrokkenheid.OUDER.equals(rol)
-                    && SoortBetrokkenheid.OUDER.equals(betrokkenheid.getSoortBetrokkenheid()))
-                {
+                        || SoortBetrokkenheid.OUDER.equals(rol) && SoortBetrokkenheid.OUDER.equals(betrokkenheid.getSoortBetrokkenheid())) {
                     continue;
                 }
 
                 final GgoBetrokkenheid ggoBetrokkenheid = new GgoBetrokkenheid();
 
                 final GgoStapel gerelateerdeStapel = new GgoStapel(GgoBrpGroepEnum.GERELATEERDE.getLabel());
-                gerelateerdeStapel.addVoorkomen(maakGerelateerde(persoon, brpStapelBetrokkenheidNr, ggoBetrokkenheid, betrokkenheid, aNummer));
+                gerelateerdeStapel.addVoorkomen(maakGerelateerde(persoon, brpStapelBetrokkenheidNr, ggoBetrokkenheid, betrokkenheid, aNummer, ahs));
                 ggoBetrokkenheid.addStapel(gerelateerdeStapel);
 
                 createRelatieOuder(persoon, brpStapelBetrokkenheidNr, ggoBetrokkenheid, betrokkenheid, aNummer, ahs);
@@ -375,12 +363,12 @@ public class GgoBrpRelatieBuilder {
     }
 
     private GgoBrpVoorkomen maakGerelateerde(
-        final Persoon persoon,
-        final int brpStapelNr,
-        final GgoBetrokkenheid ggoBetrokkenheid,
-        final Betrokkenheid betrokkenheid,
-        final Long aNummer)
-    {
+            final Persoon persoon,
+            final int brpStapelNr,
+            final GgoBetrokkenheid ggoBetrokkenheid,
+            final Betrokkenheid betrokkenheid,
+            final String aNummer,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
         final Map<String, String> gerelateerdeInhoud = new LinkedHashMap<>();
 
         MaterieleHistorie materieleHistorie = null;
@@ -389,114 +377,108 @@ public class GgoBrpRelatieBuilder {
         final Persoon betrokkenheidPersoon = betrokkenheid.getPersoon();
 
         if (betrokkenheidPersoon != null) {
-            final PersoonIDHistorie ids = HistorieUtil.getActueelHistorieVoorkomen(betrokkenheidPersoon.getPersoonIDHistorieSet());
+            final PersoonIDHistorie ids = FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(betrokkenheidPersoon.getPersoonIDHistorieSet());
             if (ids != null) {
                 materieleHistorie = ids;
-                identificatienummersMapper.verwerkInhoud(gerelateerdeInhoud, ids, GgoBrpGroepEnum.IDENTIFICATIENUMMERS);
-                ggoBrpOnderzoekBuilder.createOnderzoeken(ggoBetrokkenheid, persoon, ids, aNummer);
+                identificatienummersMapper.verwerkInhoud(gerelateerdeInhoud, ids);
+                ggoBrpOnderzoekBuilder.createOnderzoeken(ggoBetrokkenheid, persoon, ids);
             }
 
             final PersoonSamengesteldeNaamHistorie namen =
-                    HistorieUtil.getActueelHistorieVoorkomen(betrokkenheidPersoon.getPersoonSamengesteldeNaamHistorieSet());
+                    FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(betrokkenheidPersoon.getPersoonSamengesteldeNaamHistorieSet());
             if (namen != null) {
                 materieleHistorie = namen;
                 final Map<String, String> samengesteldeNaamMap = new LinkedHashMap<>();
-                samengesteldeNaamMapper.verwerkInhoud(samengesteldeNaamMap, namen, GgoBrpGroepEnum.SAMENGESTELDE_NAAM);
+                samengesteldeNaamMapper.verwerkInhoud(samengesteldeNaamMap, namen);
 
                 // niet tonen in relatie
                 samengesteldeNaamMap.remove(GgoBrpElementEnum.INDICATIE_AFGELEID.getLabel());
                 samengesteldeNaamMap.remove(GgoBrpElementEnum.INDICATIE_NAMENREEKS.getLabel());
 
                 gerelateerdeInhoud.putAll(samengesteldeNaamMap);
-                ggoBrpOnderzoekBuilder.createOnderzoeken(ggoBetrokkenheid, persoon, namen, aNummer);
+                ggoBrpOnderzoekBuilder.createOnderzoeken(ggoBetrokkenheid, persoon, namen);
             }
 
-            final PersoonGeboorteHistorie geboorte = HistorieUtil.getActueelHistorieVoorkomen(betrokkenheidPersoon.getPersoonGeboorteHistorieSet());
+            final PersoonGeboorteHistorie geboorte =
+                    FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(betrokkenheidPersoon.getPersoonGeboorteHistorieSet());
             if (geboorte != null) {
                 formeleHistorie = geboorte;
-                geboorteMapper.verwerkInhoud(gerelateerdeInhoud, geboorte, GgoBrpGroepEnum.GEBOORTE);
-                ggoBrpOnderzoekBuilder.createOnderzoeken(ggoBetrokkenheid, persoon, geboorte, aNummer);
+                geboorteMapper.verwerkInhoud(gerelateerdeInhoud, geboorte);
+                ggoBrpOnderzoekBuilder.createOnderzoeken(ggoBetrokkenheid, persoon, geboorte);
             }
 
             final PersoonGeslachtsaanduidingHistorie geslacht =
-                    HistorieUtil.getActueelHistorieVoorkomen(betrokkenheidPersoon.getPersoonGeslachtsaanduidingHistorieSet());
+                    FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(betrokkenheidPersoon.getPersoonGeslachtsaanduidingHistorieSet());
             if (geslacht != null) {
                 materieleHistorie = geslacht;
-                geslachtsaanduidingMapper.verwerkInhoud(gerelateerdeInhoud, geslacht, GgoBrpGroepEnum.GESLACHTSAANDUIDING);
-                ggoBrpOnderzoekBuilder.createOnderzoeken(ggoBetrokkenheid, persoon, geslacht, aNummer);
+                geslachtsaanduidingMapper.verwerkInhoud(gerelateerdeInhoud, geslacht);
+                ggoBrpOnderzoekBuilder.createOnderzoeken(ggoBetrokkenheid, persoon, geslacht);
             }
         }
-        return maakGerelateerdeVoorkomen(brpStapelNr, aNummer, gerelateerdeInhoud, materieleHistorie, formeleHistorie);
+        return maakGerelateerdeVoorkomen(brpStapelNr, aNummer, gerelateerdeInhoud, materieleHistorie, formeleHistorie, ahs);
     }
 
     private GgoBrpVoorkomen maakGerelateerdeVoorkomen(
-        final int brpStapelNr,
-        final Long aNummer,
-        final Map<String, String> gerelateerdeInhoud,
-        final MaterieleHistorie materieleHistorie,
-        final FormeleHistorie formeleHistorie)
-    {
+            final int brpStapelNr,
+            final String aNummer,
+            final Map<String, String> gerelateerdeInhoud,
+            final MaterieleHistorie materieleHistorie,
+            final FormeleHistorie formeleHistorie,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
         final FormeleHistorie groep = materieleHistorie != null ? materieleHistorie : formeleHistorie;
         if (groep != null) {
             final GgoBrpVoorkomen gerelateerdeVoorkomen = brpValueConvert.createGgoBrpVoorkomen(groep, aNummer, GgoBrpGroepEnum.GERELATEERDE, brpStapelNr);
             gerelateerdeVoorkomen.setInhoud(gerelateerdeInhoud);
-            ggoBrpGegevensgroepenBuilder.addHistorie(gerelateerdeVoorkomen, groep, GgoBrpGroepEnum.GERELATEERDE);
+            ggoBrpGegevensgroepenBuilder.addHistorie(gerelateerdeVoorkomen, groep);
+            ggoBrpActieBuilder.createActies(gerelateerdeVoorkomen, formeleHistorie, GgoBrpGroepEnum.GERELATEERDE, aNummer, ahs);
             return gerelateerdeVoorkomen;
         } else {
             return null;
         }
     }
 
-    private void createRelatieOuderlijkGezag(
-        final Persoon persoon,
-        final int brpStapelNr,
-        final GgoBetrokkenheid ggoBetrokkenheid,
-        final Betrokkenheid betrokkenheid,
-        final Long aNummer,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-    {
-        final BetrokkenheidOuderlijkGezagHistorie ouderlijkGezagInhoudGroep =
-                HistorieUtil.getActueelHistorieVoorkomen(betrokkenheid.getBetrokkenheidOuderlijkGezagHistorieSet());
+    private void createRelatieOuderlijkGezag(final Persoon persoon, final int brpStapelNr, final GgoBetrokkenheid ggoBetrokkenheid,
+                                             final Betrokkenheid betrokkenheid, final String aNummer, final Map<AdministratieveHandeling, Set<String>> ahs) {
+        for (final BetrokkenheidOuderlijkGezagHistorie historie : betrokkenheid.getBetrokkenheidOuderlijkGezagHistorieSet()) {
+            if (historie != null) {
+                final GgoBrpGroepEnum brpGroepEnum = GgoBrpGroepEnum.OUDERLIJK_GEZAG;
 
-        if (ouderlijkGezagInhoudGroep != null) {
-            final GgoBrpGroepEnum brpGroepEnum = GgoBrpGroepEnum.OUDERLIJK_GEZAG;
+                final GgoBrpVoorkomen voorkomen = brpValueConvert.createGgoBrpVoorkomen(historie, aNummer, brpGroepEnum, brpStapelNr);
 
-            final GgoBrpVoorkomen voorkomen = brpValueConvert.createGgoBrpVoorkomen(ouderlijkGezagInhoudGroep, aNummer, brpGroepEnum, brpStapelNr);
+                ggoBrpGegevensgroepenBuilder.addGroepOuderlijkGezag(voorkomen, historie);
+                ggoBrpGegevensgroepenBuilder.addHistorie(voorkomen, historie);
+                ggoBrpActieBuilder.createActies(voorkomen, historie, brpGroepEnum, aNummer, ahs);
+                ggoBrpOnderzoekBuilder.createOnderzoeken(voorkomen, persoon, historie);
 
-            ggoBrpGegevensgroepenBuilder.addGroepOuderlijkGezag(voorkomen, ouderlijkGezagInhoudGroep, brpGroepEnum);
-            ggoBrpGegevensgroepenBuilder.addHistorie(voorkomen, ouderlijkGezagInhoudGroep, brpGroepEnum);
-            ggoBrpActieBuilder.createActies(voorkomen, ouderlijkGezagInhoudGroep, brpGroepEnum, aNummer, ahs);
-            ggoBrpOnderzoekBuilder.createOnderzoeken(voorkomen, persoon, ouderlijkGezagInhoudGroep, aNummer);
-
-            final GgoStapel stapel = new GgoStapel(brpGroepEnum.getLabel());
-            stapel.addVoorkomen(voorkomen);
-            ggoBetrokkenheid.addStapel(stapel);
+                final GgoStapel stapel = new GgoStapel(brpGroepEnum.getLabel());
+                stapel.addVoorkomen(voorkomen);
+                ggoBetrokkenheid.addStapel(stapel);
+            }
         }
     }
 
     private void createRelatieOuder(
-        final Persoon persoon,
-        final int brpStapelNr,
-        final GgoBetrokkenheid ggoBetrokkenheid,
-        final Betrokkenheid betrokkenheid,
-        final Long aNummer,
-        final Map<AdministratieveHandeling, Set<String>> ahs)
-    {
-        final BetrokkenheidOuderHistorie ouderInhoudGroep = HistorieUtil.getActueelHistorieVoorkomen(betrokkenheid.getBetrokkenheidOuderHistorieSet());
+            final Persoon persoon,
+            final int brpStapelNr,
+            final GgoBetrokkenheid ggoBetrokkenheid,
+            final Betrokkenheid betrokkenheid,
+            final String aNummer,
+            final Map<AdministratieveHandeling, Set<String>> ahs) {
+        for (final BetrokkenheidOuderHistorie historie : betrokkenheid.getBetrokkenheidOuderHistorieSet()) {
 
-        if (ouderInhoudGroep != null) {
-            final GgoBrpGroepEnum brpGroepEnum = GgoBrpGroepEnum.OUDER;
+            if (historie != null) {
+                final GgoBrpGroepEnum brpGroepEnum = GgoBrpGroepEnum.OUDER;
+                final GgoBrpVoorkomen voorkomen = brpValueConvert.createGgoBrpVoorkomen(historie, aNummer, brpGroepEnum, brpStapelNr);
 
-            final GgoBrpVoorkomen voorkomen = brpValueConvert.createGgoBrpVoorkomen(ouderInhoudGroep, aNummer, brpGroepEnum, brpStapelNr);
+                ggoBrpGegevensgroepenBuilder.addGroepOuder(voorkomen, historie);
+                ggoBrpGegevensgroepenBuilder.addHistorie(voorkomen, historie);
+                ggoBrpActieBuilder.createActies(voorkomen, historie, brpGroepEnum, aNummer, ahs);
+                ggoBrpOnderzoekBuilder.createOnderzoeken(voorkomen, persoon, historie);
 
-            ggoBrpGegevensgroepenBuilder.addGroepOuder(voorkomen, ouderInhoudGroep, brpGroepEnum);
-            ggoBrpGegevensgroepenBuilder.addHistorie(voorkomen, ouderInhoudGroep, brpGroepEnum);
-            ggoBrpActieBuilder.createActies(voorkomen, ouderInhoudGroep, brpGroepEnum, aNummer, ahs);
-            ggoBrpOnderzoekBuilder.createOnderzoeken(voorkomen, persoon, ouderInhoudGroep, aNummer);
-
-            final GgoStapel stapel = new GgoStapel(GgoBrpGroepEnum.OUDER.getLabel());
-            stapel.addVoorkomen(voorkomen);
-            ggoBetrokkenheid.addStapel(stapel);
+                final GgoStapel stapel = new GgoStapel(GgoBrpGroepEnum.OUDER.getLabel());
+                stapel.addVoorkomen(voorkomen);
+                ggoBetrokkenheid.addStapel(stapel);
+            }
         }
     }
 

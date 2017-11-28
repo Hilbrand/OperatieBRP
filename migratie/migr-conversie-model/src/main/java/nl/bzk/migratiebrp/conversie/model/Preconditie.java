@@ -22,6 +22,7 @@ public @interface Preconditie {
 
     /**
      * Een unieke verwijzing naar een gedocumenteerde preconditie die door de code wordt geimplementeerd.
+     * @return lijst van soort melding codes
      */
     SoortMeldingCode[] value();
 }

@@ -9,7 +9,6 @@ package nl.bzk.migratiebrp.bericht.model.sync.impl;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3Format;
@@ -47,9 +46,7 @@ public final class AfnemersindicatiesBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param afnemersindicatiesType
-     *            het afnemersindicatiesType type
+     * @param afnemersindicatiesType het afnemersindicatiesType type
      */
     public AfnemersindicatiesBericht(final AfnemersindicatiesType afnemersindicatiesType) {
         super("Afnemersindicaties");
@@ -60,20 +57,21 @@ public final class AfnemersindicatiesBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Geef de inhoud van het bericht als een Lo3Afnemersindicatie object.
-     *
      * @return Lo3Afnemersindicatie object
      */
     public Lo3Afnemersindicatie getAfnemersindicaties() {
-        final Long aNummer = Long.valueOf(afnemersindicatiesType.getANummer());
+
+        final String aNummer = afnemersindicatiesType.getANummer();
         final List<Lo3Stapel<Lo3AfnemersindicatieInhoud>> afnemersindicatieStapels = new ArrayList<>();
 
         final List<AfnemersindicatieRecordType> afnemersindicatieRecords = afnemersindicatiesType.getAfnemersindicatie();
-        Collections.sort(afnemersindicatieRecords, new AfnemersindicatieComparator());
+        afnemersindicatieRecords.sort(new AfnemersindicatieComparator());
 
         List<Lo3Categorie<Lo3AfnemersindicatieInhoud>> huidigeStapel = null;
-        String huidigeStapelNummer = null;
+        int huidigeStapelNummer = -1;
         for (final AfnemersindicatieRecordType record : afnemersindicatieRecords) {
-            if (!record.getStapelNummer().equals(huidigeStapelNummer)) {
+
+            if (record.getStapelNummer() != huidigeStapelNummer) {
                 if (huidigeStapel != null) {
                     afnemersindicatieStapels.add(new Lo3Stapel<>(huidigeStapel));
                 }
@@ -93,10 +91,10 @@ public final class AfnemersindicatiesBericht extends AbstractSyncBerichtZonderGe
     }
 
     private Lo3Categorie<Lo3AfnemersindicatieInhoud> maakAfnemersindicatie(final AfnemersindicatieRecordType record) {
-        final Lo3AfnemersindicatieInhoud inhoud = new Lo3AfnemersindicatieInhoud(SimpleParser.parseInteger(record.getAfnemerCode()));
+        final Lo3AfnemersindicatieInhoud inhoud = new Lo3AfnemersindicatieInhoud(record.getAfnemerCode());
 
-        final int stapel = SimpleParser.parseInteger(record.getStapelNummer());
-        final int voorkomen = SimpleParser.parseInteger(record.getVolgNummer());
+        final int stapel = record.getStapelNummer();
+        final int voorkomen = record.getVolgNummer();
         final Lo3Datum datumIngang = SimpleParser.parseLo3Datum(record.getGeldigheidStartDatum().toString());
 
         final Lo3Historie historie = new Lo3Historie(null, datumIngang, datumIngang);
@@ -108,9 +106,7 @@ public final class AfnemersindicatiesBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Zet de inhoud van het bericht als een Lo3Afnemersindicatie object.
-     *
-     * @param afnemersindicaties
-     *            Lo3Afnemersindicatie object
+     * @param afnemersindicaties Lo3Afnemersindicatie object
      */
     public void setAfnemersindicaties(final Lo3Afnemersindicatie afnemersindicaties) {
         afnemersindicatiesType.setANummer(Lo3Format.format(afnemersindicaties.getANummer()));
@@ -135,8 +131,8 @@ public final class AfnemersindicatiesBericht extends AbstractSyncBerichtZonderGe
         final AfnemersindicatieRecordType result = new AfnemersindicatieRecordType();
         result.setAfnemerCode(Lo3Format.format(categorie.getInhoud().getAfnemersindicatie()));
         result.setGeldigheidStartDatum(new BigInteger(Lo3Format.format(categorie.getHistorie().getDatumVanOpneming())));
-        result.setStapelNummer(Lo3Format.format(categorie.getLo3Herkomst().getStapel()));
-        result.setVolgNummer(Lo3Format.format(categorie.getLo3Herkomst().getVoorkomen()));
+        result.setStapelNummer(categorie.getLo3Herkomst().getStapel());
+        result.setVolgNummer(categorie.getLo3Herkomst().getVoorkomen());
 
         return result;
     }
@@ -156,9 +152,15 @@ public final class AfnemersindicatiesBericht extends AbstractSyncBerichtZonderGe
 
         @Override
         public int compare(final AfnemersindicatieRecordType o1, final AfnemersindicatieRecordType o2) {
-            int result = o1.getStapelNummer().compareTo(o2.getStapelNummer());
+            // Indien o1 of 02 null is, geven we altijd 0 terug. Voor de volgorde zijn de null-waarden niet van belang
+            // aangezien deze worden genegeerd.
+            if (o1 == null || o2 == null) {
+                return 0;
+            }
+
+            int result = Integer.compare(o1.getStapelNummer(), o2.getStapelNummer());
             if (result == 0) {
-                result = o1.getVolgNummer().compareTo(o2.getVolgNummer());
+                result = Integer.compare(o1.getVolgNummer(), o2.getVolgNummer());
             }
             return result;
         }

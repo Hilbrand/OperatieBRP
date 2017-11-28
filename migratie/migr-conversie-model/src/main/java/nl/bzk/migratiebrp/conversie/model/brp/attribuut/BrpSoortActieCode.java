@@ -6,42 +6,60 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een BRP soort actie code.
  */
 public final class BrpSoortActieCode extends AbstractBrpAttribuutMetOnderzoek {
 
-    /** Conversie GBA. */
+    /**
+     * Conversie GBA.
+     */
     public static final BrpSoortActieCode CONVERSIE_GBA = new BrpSoortActieCode("Conversie GBA");
-    /** Inschrijving Geboorte. */
+    /**
+     * Inschrijving Geboorte.
+     */
     public static final BrpSoortActieCode INSCHR_GEBOORTE = new BrpSoortActieCode("Inschrijving Geboorte");
-    /** Verhuizing. */
+    /**
+     * Verhuizing.
+     */
     public static final BrpSoortActieCode VERHUIZING = new BrpSoortActieCode("Verhuizing");
-    /** Registratie Erkenning. */
+    /**
+     * Registratie Erkenning.
+     */
     public static final BrpSoortActieCode REG_ERKENNING = new BrpSoortActieCode("Registratie Erkenning");
-    /** Registratie Huwelijk. */
+    /**
+     * Registratie Huwelijk.
+     */
     public static final BrpSoortActieCode REG_HUWELIJK = new BrpSoortActieCode("Registratie Huwelijk");
-    /** Wijziging Geslachtsnaamcomponent. */
+    /**
+     * Wijziging Geslachtsnaamcomponent.
+     */
     public static final BrpSoortActieCode WIJZ_GESLACHTSNAAM = new BrpSoortActieCode("Wijziging Geslachtsnaamcomponent");
-    /** Wijziging Naamgebruik. */
+    /**
+     * Wijziging Naamgebruik.
+     */
     public static final BrpSoortActieCode WIJZ_NAAMGEBRUIK = new BrpSoortActieCode("Wijziging Naamgebruik");
-    /** Correctie Adres Binnen NL. */
+    /**
+     * Correctie Adres Binnen NL.
+     */
     public static final BrpSoortActieCode CORRECTIE_ADRES = new BrpSoortActieCode("Correctie Adres Binnen NL");
-    /** Conversie GBA Materiële historie. */
+    /**
+     * Conversie GBA Materiële historie.
+     */
     public static final BrpSoortActieCode CONVERSIE_GBA_MATERIELE_HISTORIE = new BrpSoortActieCode("Conversie GBA Materiële historie");
-    /** Conversie GBA Materiële historie. */
-    public static final BrpSoortActieCode CONVERSIE_GBA_LEEG_CATEGORIE_ONJUIST = new BrpSoortActieCode("Conversie GBA Lege onjuist categorie");
+    /**
+     * Conversie GBA Materiële historie.
+     */
+    public static final BrpSoortActieCode CONVERSIE_GBA_LEEG_CATEGORIE_ONJUIST = new BrpSoortActieCode("Conversie GBA Lege onjuiste categorie");
 
     private static final long serialVersionUID = 1L;
 
     /**
      * Maakt een BrpSoortActieCode.
-     * 
-     * @param waarde
-     *            BRP waarde
+     * @param waarde BRP waarde
      */
     public BrpSoortActieCode(final String waarde) {
         this(waarde, null);
@@ -49,22 +67,18 @@ public final class BrpSoortActieCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpSoortActieCode met onderzoek.
-     * 
-     * @param waarde
-     *            BRP waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde BRP waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpSoortActieCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override

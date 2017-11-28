@@ -6,28 +6,42 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
  */
-@Component
 public class GgoBrpMigratieMapper extends AbstractGgoBrpMapper<PersoonMigratieHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpMigratieMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+                                final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(final GgoBrpVoorkomen voorkomen, final PersoonMigratieHistorie brpInhoud, final GgoBrpGroepEnum brpGroepEnum) {
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.SOORT_MIGRATIE, brpInhoud.getSoortMigratie());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.REDEN_WIJZIGING_ADRES, brpInhoud.getRedenWijzigingMigratie());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.AANGEVER_ADRESHOUDING, brpInhoud.getAangeverMigratie());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.LAND_OF_GEBIED_MIGRATIE, brpInhoud.getLandOfGebied());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_1, brpInhoud.getBuitenlandsAdresRegel1());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_2, brpInhoud.getBuitenlandsAdresRegel2());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_3, brpInhoud.getBuitenlandsAdresRegel3());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_4, brpInhoud.getBuitenlandsAdresRegel4());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_5, brpInhoud.getBuitenlandsAdresRegel5());
-        getGgoBrpValueConvert().verwerkElement(voorkomen, brpGroepEnum, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_6, brpInhoud.getBuitenlandsAdresRegel6());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.SOORT_MIGRATIE, brpInhoud.getSoortMigratie());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.REDEN_WIJZIGING_ADRES, brpInhoud.getRedenWijzigingMigratie());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.AANGEVER_ADRESHOUDING, brpInhoud.getAangeverMigratie());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.LAND_OF_GEBIED_MIGRATIE, brpInhoud.getLandOfGebied());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_1, brpInhoud.getBuitenlandsAdresRegel1());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_2, brpInhoud.getBuitenlandsAdresRegel2());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_3, brpInhoud.getBuitenlandsAdresRegel3());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_4, brpInhoud.getBuitenlandsAdresRegel4());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_5, brpInhoud.getBuitenlandsAdresRegel5());
+        getGgoBrpValueConvert().verwerkElement(voorkomen, GgoBrpElementEnum.BUITENLANDS_ADRES_REGEL_6, brpInhoud.getBuitenlandsAdresRegel6());
     }
 }

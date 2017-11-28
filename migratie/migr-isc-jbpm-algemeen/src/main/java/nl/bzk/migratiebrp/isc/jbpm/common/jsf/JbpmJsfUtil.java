@@ -23,7 +23,6 @@ public final class JbpmJsfUtil {
 
     /**
      * Geef de huidige jbpm context.
-     *
      * @return jbpm context
      */
     public static JbpmContext getJbpmContext() {
@@ -34,19 +33,17 @@ public final class JbpmJsfUtil {
         try {
             return (JbpmContext) jbpmJsfContext.getClass().getMethod("getJbpmContext", (Class[]) null).invoke(jbpmJsfContext, (Object[]) null);
         } catch (final
-            IllegalArgumentException
-            | NoSuchMethodException
-            | InvocationTargetException
-            | IllegalAccessException
-            | SecurityException e)
-        {
+        IllegalArgumentException
+                | NoSuchMethodException
+                | InvocationTargetException
+                | IllegalAccessException
+                | SecurityException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
     /**
      * Geef de huidige task instantie.
-     *
      * @return task instantie
      */
     public static TaskInstance getTaskInstance() {

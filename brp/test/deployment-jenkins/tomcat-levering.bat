@@ -1,2 +1,1 @@
-mvn clean install -U -P LOCALHOST,nieuwste,tomcat,levering,protocollering,bijhouding,bevraging,levering-synchronisatie,levering-afnemerindicaties
--Dnieuwste
+mvn clean install -o -P LOCALHOST,nieuwste,tomcat,levering,admhnd-publicatie,protocollering,bijhouding,bevraging,levering-synchronisatie,levering-afnemerindicaties,vrijbericht,archivering -Dnieuwste

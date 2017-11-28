@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
@@ -9,11 +9,11 @@ package nl.bzk.brp.levering.lo3.conversie.mutatie;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import nl.bzk.brp.levering.lo3.conversie.OnderzoekUtil;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
-import nl.bzk.brp.model.basis.ModelIdentificeerbaar;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.domain.leveringmodel.Actie;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.levering.lo3.filter.OnderzoekUtil;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3CategorieFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3Format;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3PersoonslijstFormatter;
@@ -32,9 +32,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * LO3 Wijzigingen.
- *
- * @param <L>
- *            lo3 categorie inhoud type
+ * @param <L> lo3 categorie inhoud type
  */
 public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
@@ -52,17 +50,14 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
     private final Lo3CategorieWaarde actueleCategorie;
     private final Lo3CategorieWaarde historischeCategorie;
 
-    private ActieModel laatsteActie;
+    private Actie laatsteActie;
     private Lo3Categorie<L> laatsteInhoud;
     private LaatsteActieType laatsteActieType;
 
     /**
      * Constructor.
-     *
-     * @param categorie
-     *            categorie
-     * @param formatter
-     *            formatter
+     * @param categorie categorie
+     * @param formatter formatter
      */
     public Lo3Wijzigingen(final Lo3CategorieEnum categorie, final Lo3CategorieFormatter<L> formatter) {
         this.formatter = formatter;
@@ -73,16 +68,12 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Registreer een actie inhoud (die in deze verwerking niet tot een wijziging heeft geleid).
-     *
-     * @param actieInhoud
-     *            actie
-     * @param historie
-     *            historie
-     * @param inhoud
-     *            inhoud
+     * @param actieInhoud actie
+     * @param historie historie
+     * @param inhoud inhoud
      */
-    public final void registreerActieInhoud(final ActieModel actieInhoud, final ModelIdentificeerbaar<?> historie, final Lo3Categorie<L> inhoud) {
-        if (laatsteActie == null || !laatsteActie.getTijdstipRegistratie().na(actieInhoud.getTijdstipRegistratie())) {
+    public final void registreerActieInhoud(final Actie actieInhoud, final MetaRecord historie, final Lo3Categorie<L> inhoud) {
+        if ((laatsteActie == null) || !laatsteActie.getTijdstipRegistratie().isAfter(actieInhoud.getTijdstipRegistratie())) {
             laatsteActie = actieInhoud;
             laatsteInhoud = inhoud;
             laatsteActieType = LaatsteActieType.INHOUD;
@@ -92,9 +83,7 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Zet actuele onderzoek.
-     *
-     * @param onderzoek
-     *            onderzoek
+     * @param onderzoek onderzoek
      */
     public final void setActueleOnderzoek(final Lo3Onderzoek onderzoek) {
         actueleOnderzoek = onderzoek;
@@ -102,7 +91,6 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Geef het actuele onderzoek.
-     *
      * @return actuele onderzoek (kan null zijn)
      */
     public final Lo3Onderzoek getActueleOnderzoek() {
@@ -111,9 +99,7 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Zet historisch onderzoek.
-     *
-     * @param onderzoek
-     *            onderzoek
+     * @param onderzoek onderzoek
      */
     public final void setHistorischOnderzoek(final Lo3Onderzoek onderzoek) {
         historischeOnderzoek = onderzoek;
@@ -121,7 +107,6 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Geef het historische onderzoek.
-     *
      * @return historische onderzoek (kan null zijn)
      */
     public final Lo3Onderzoek getHistorischeOnderzoek() {
@@ -130,34 +115,23 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Registreer laatste actie inhoud.
-     *
-     * @param actieInhoud
-     *            actie inhoud
-     * @param historie
-     *            historie
-     * @param inhoud
-     *            inhoud
+     * @param actieInhoud actie inhoud
+     * @param historie historie
+     * @param inhoud inhoud
      */
-    protected void laatsteActieInhoud(final ActieModel actieInhoud, final ModelIdentificeerbaar<?> historie, final Lo3Categorie<L> inhoud) {
+    protected void laatsteActieInhoud(final Actie actieInhoud, final MetaRecord historie, final Lo3Categorie<L> inhoud) {
         // Hook
     }
 
     /**
-     * Registreer een actie aanpassing geldigheid (die in deze verwerking niet tot een wijziging heeft geleid).
-     *
-     * @param actieAanpassingGeldigheid
-     *            actie
-     * @param historie
-     *            historie
-     * @param inhoud
-     *            inhoud
+     * Registreer een actie aanpassing geldigheid (die in deze verwerking niet tot een wijziging
+     * heeft geleid).
+     * @param actieAanpassingGeldigheid actie
+     * @param historie historie
+     * @param inhoud inhoud
      */
-    public final void registreerActieAanpassingGeldigheid(
-        final ActieModel actieAanpassingGeldigheid,
-        final ModelIdentificeerbaar<?> historie,
-        final Lo3Categorie<L> inhoud)
-    {
-        if (laatsteActie == null || !laatsteActie.getTijdstipRegistratie().na(actieAanpassingGeldigheid.getTijdstipRegistratie())) {
+    public final void registreerActieAanpassingGeldigheid(final Actie actieAanpassingGeldigheid, final MetaRecord historie, final Lo3Categorie<L> inhoud) {
+        if ((laatsteActie == null) || !laatsteActie.getTijdstipRegistratie().isAfter(actieAanpassingGeldigheid.getTijdstipRegistratie())) {
             laatsteActie = actieAanpassingGeldigheid;
             laatsteInhoud = inhoud;
             laatsteActieType = LaatsteActieType.AANPASSING_GELDIGHEID;
@@ -167,21 +141,30 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Registreer laatste actie aanpassing geldigheid.
-     *
-     * @param actie
-     *            actie
-     * @param historie
-     *            historie
-     * @param inhoud
-     *            inhoud
+     * @param actie actie
+     * @param historie historie
+     * @param inhoud inhoud
      */
-    protected void laatsteActieAanpassingGeldigheid(final ActieModel actie, final ModelIdentificeerbaar<?> historie, final Lo3Categorie<L> inhoud) {
+    protected void laatsteActieAanpassingGeldigheid(final Actie actie, final MetaRecord historie, final Lo3Categorie<L> inhoud) {
         // Hook
     }
 
     /**
+     * Registreer een actie verval (die in deze verwerking niet tot een wijziging heeft geleid).
+     * @param actieVerval actie
+     * @param historie historie
+     * @param inhoud inhoud
+     */
+    public final void registreerActieVerval(final Actie actieVerval, final MetaRecord historie, final Lo3Categorie<L> inhoud) {
+        if ((laatsteActie == null) || !laatsteActie.getTijdstipRegistratie().isAfter(actieVerval.getTijdstipRegistratie())) {
+            laatsteActie = actieVerval;
+            laatsteInhoud = inhoud;
+            laatsteActieType = LaatsteActieType.VERVAL;
+        }
+    }
+
+    /**
      * Geef de actuele inhoud.
-     *
      * @return actuele inhoud
      */
     public final Lo3Categorie<L> getActueleInhoud() {
@@ -190,17 +173,15 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Zet de actuele inhoud.
-     *
-     * @param actueleInhoud
-     *            actuele inhoud
+     * @param actueleInhoud actuele inhoud
      */
     public final void setActueleInhoud(final Lo3Categorie<L> actueleInhoud) {
+        LOGGER.debug("---------------- Set actuele inhoud: {}", actueleInhoud);
         this.actueleInhoud = actueleInhoud;
     }
 
     /**
      * Geef de historische inhoud.
-     *
      * @return historische inhoud
      */
     public final Lo3Categorie<L> getHistorischeInhoud() {
@@ -209,17 +190,15 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Zet de historische inhoud.
-     *
-     * @param historischeInhoud
-     *            historische inhoud
+     * @param historischeInhoud historische inhoud
      */
     public final void setHistorischeInhoud(final Lo3Categorie<L> historischeInhoud) {
+        LOGGER.debug("---------------- Set historische inhoud: {}", historischeInhoud);
         this.historischeInhoud = historischeInhoud;
     }
 
     /**
      * Geef de actuele categorie waarde (gevuld na het aanroepen van {@link #format}).
-     *
      * @return actuele categorie waarde.
      */
     public final Lo3CategorieWaarde geefActueleCategorie() {
@@ -228,7 +207,6 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Geef de historische categorie waarde (gevuld na het aanroepen van {@link #format}).
-     *
      * @return historische categorie waarde.
      */
     public final Lo3CategorieWaarde geefHistorischeCategorie() {
@@ -237,18 +215,33 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Bevat wijzigingen.
-     *
      * @return true, als de actuele of de historie categorie waarden bevat.
      */
     public final boolean bevatWijzigingen() {
         return !actueleCategorie.isEmpty() || !historischeCategorie.isEmpty();
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* *** FORMAT ************************************************************************************************** */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
+    /*
+     * *** FORMAT
+     * *********************************************************************************************
+     * *****
+     */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
     private void formatCategorie(final Lo3Categorie<L> categorie, final Lo3CategorieWaarde formatted) {
         final MutatieOutputter outputter = new MutatieOutputter(formatted);
@@ -275,15 +268,25 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
         verwerkOnderzoek();
 
         // Formatteer inhoud
-        if (actueleInhoud != null) {
-            formatCategorie(actueleInhoud, actueleCategorie);
-        }
-        if (historischeInhoud != null) {
-            formatCategorie(historischeInhoud, historischeCategorie);
-        }
+        formatInhoud();
 
         // Defaults
-        if (actueleCategorie.isGevuld() && !historischeCategorie.isGevuld() && laatsteActie != null) {
+        formatDefaults();
+
+        // Vul RNI gegevens omdat deze 'altijd' geleverd moeten worden
+        vulRniGegevens();
+        // Pure onderzoeks wijzigingen
+        formatOnderzoek();
+
+        // Actueel kan nooit onjuist zijn.
+        actueleCategorie.addElement(Lo3ElementEnum.ELEMENT_8410, null);
+        vulDefaults(actueleCategorie, historischeCategorie);
+
+        opschonen();
+    }
+
+    private void formatDefaults() {
+        if (actueleCategorie.isGevuld() && !historischeCategorie.isGevuld() && (laatsteActie != null)) {
             final MutatieOutputter outputter = new MutatieOutputter(historischeCategorie);
 
             // Inhoud
@@ -299,8 +302,27 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
             // Historie
             Lo3PersoonslijstFormatter.formatHistorie(laatsteInhoud.getHistorie(), outputter);
         }
+    }
 
-        // Vul RNI gegevens omdat deze 'altijd' geleverd moeten worden
+    private void formatInhoud() {
+        if (actueleInhoud != null) {
+            formatCategorie(actueleInhoud, actueleCategorie);
+        }
+        if (historischeInhoud != null) {
+            formatCategorie(historischeInhoud, historischeCategorie);
+        }
+    }
+
+    private void formatOnderzoek() {
+        if ((actueleInhoud == null) && (actueleOnderzoek != null)) {
+            formatCategorie(actueleOnderzoek, actueleCategorie);
+        }
+        if ((historischeInhoud == null) && (historischeOnderzoek != null)) {
+            formatCategorie(historischeOnderzoek, historischeCategorie);
+        }
+    }
+
+    private void vulRniGegevens() {
         if (historischeInhoud == null) {
             vulRniVanuitLaatsteInhoud(laatsteInhoud, historischeCategorie);
 
@@ -308,20 +330,6 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
                 vulRniVanuitLaatsteInhoud(laatsteInhoud, actueleCategorie);
             }
         }
-
-        // Pure onderzoeks wijzigingen
-        if (actueleInhoud == null && actueleOnderzoek != null) {
-            formatCategorie(actueleOnderzoek, actueleCategorie);
-        }
-        if (historischeInhoud == null && historischeOnderzoek != null) {
-            formatCategorie(historischeOnderzoek, historischeCategorie);
-        }
-
-        // Actueel kan nooit onjuist zijn.
-        actueleCategorie.addElement(Lo3ElementEnum.ELEMENT_8410, null);
-        vulDefaults(actueleCategorie, historischeCategorie);
-
-        opschonen();
     }
 
     private void vulRniVanuitLaatsteInhoud(final Lo3Categorie<L> inhoud, final Lo3CategorieWaarde categorie) {
@@ -347,20 +355,14 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Bepaal historische inhoud obv de laatste actie.
-     *
-     * @param paramLaatsteActie
-     *            laatste actie
-     * @param paramLaatsteInhoud
-     *            inhoud behorende bij de laatste actie
-     * @param paramLaatsteActieType
-     *            typering van de laatste actie
+     * @param paramLaatsteActie laatste actie
+     * @param paramLaatsteInhoud inhoud behorende bij de laatste actie
+     * @param paramLaatsteActieType typering van de laatste actie
      * @return te gebruiken historische inhoud (null als er geen historische inhoud is)
      */
-    protected L bepaalHistorischeInhoudObvLaatsteActie(
-        final ActieModel paramLaatsteActie,
-        final Lo3Categorie<L> paramLaatsteInhoud,
-        final LaatsteActieType paramLaatsteActieType)
-    {
+    
+    protected L bepaalHistorischeInhoudObvLaatsteActie(final Actie paramLaatsteActie, final Lo3Categorie<L> paramLaatsteInhoud,
+                                                       final LaatsteActieType paramLaatsteActieType) {
         // Hook
         return null;
     }
@@ -375,12 +377,8 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
     }
 
     private Lo3Categorie<L> verwerkOnderzoek(final Lo3Categorie<L> inhoud, final Lo3CategorieEnum categorie) {
-        return new Lo3Categorie<L>(
-            inhoud.getInhoud(),
-            inhoud.getDocumentatie(),
-            ONDERZOEK_VERWERKER.bepaalOnderzoekUitElementen(inhoud, categorie),
-            inhoud.getHistorie(),
-            inhoud.getLo3Herkomst());
+        return new Lo3Categorie<>(inhoud.getInhoud(), inhoud.getDocumentatie(), ONDERZOEK_VERWERKER.bepaalOnderzoekUitElementen(inhoud, categorie),
+                inhoud.getHistorie(), inhoud.getLo3Herkomst());
     }
 
     private void opschonen() {
@@ -420,7 +418,7 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     private boolean isRubriekInOnderzoekGewijzigd() {
         final String gegevensInOnderzoek = actueleCategorie.getElement(Lo3ElementEnum.ELEMENT_8310);
-        if (gegevensInOnderzoek == null || "".equals(gegevensInOnderzoek)) {
+        if ((gegevensInOnderzoek == null) || "".equals(gegevensInOnderzoek)) {
             return false;
         }
 
@@ -444,7 +442,7 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
         for (final Map.Entry<Lo3ElementEnum, String> entry : actueleCategorie.getElementen().entrySet()) {
             final Lo3ElementEnum element = entry.getKey();
 
-            final boolean isRniElement = element.getGroep() == Lo3GroepEnum.GROEP71 || element.getGroep() == Lo3GroepEnum.GROEP88;
+            final boolean isRniElement = (element.getGroep() == Lo3GroepEnum.GROEP71) || (element.getGroep() == Lo3GroepEnum.GROEP88);
             final boolean isOngewijzigd = entry.getValue().equals(historischeCategorie.getElement(element));
 
             if (!isRniElement || !isOngewijzigd) {
@@ -462,19 +460,16 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     /**
      * Vul defaults (hook).
-     *
-     * @param deActueleCategorie
-     *            actuele categorie
-     * @param deHistorischeCategorie
-     *            historische categorie
+     * @param deActueleCategorie actuele categorie
+     * @param deHistorischeCategorie historische categorie
      */
     protected void vulDefaults(final Lo3CategorieWaarde deActueleCategorie, final Lo3CategorieWaarde deHistorischeCategorie) {
         // Hook
     }
 
     /**
-     * Zorg dat de actuele categorie en de historische categorie dezelfde elementen bevatten (indien 1 van de
-     * categorieen een element niet bevat wordt de waarde "" toegevoegd).
+     * Zorg dat de actuele categorie en de historische categorie dezelfde elementen bevatten (indien
+     * 1 van de categorieen een element niet bevat wordt de waarde "" toegevoegd).
      */
     private void synchroonMakenElementen() {
         for (final Lo3ElementEnum element : actueleCategorie.getElementen().keySet()) {
@@ -501,7 +496,7 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
         }
 
         for (final Lo3ElementEnum element : teVerwijderenElementen) {
-            if (element.getGroep() == Lo3GroepEnum.GROEP83 || element.getGroep() == Lo3GroepEnum.GROEP71 || element.getGroep() == Lo3GroepEnum.GROEP88) {
+            if ((element.getGroep() == Lo3GroepEnum.GROEP83) || (element.getGroep() == Lo3GroepEnum.GROEP71) || (element.getGroep() == Lo3GroepEnum.GROEP88)) {
                 continue;
             }
 
@@ -511,21 +506,28 @@ public class Lo3Wijzigingen<L extends Lo3CategorieInhoud> {
 
     @Override
     public final String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("actueleCategorie", actueleCategorie)
-                                                                          .append("historischeCategorie", historischeCategorie)
-                                                                          .toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString()).append("actueleInhoud", actueleInhoud)
+                .append("historischeInhoud", historischeInhoud).toString();
     }
 
     /**
      * Laatste actie type.
      */
-    public static enum LaatsteActieType {
-        /** Actie inhoud. */
+    enum LaatsteActieType {
+        /**
+         * Actie inhoud.
+         */
         INHOUD,
 
-        /** Actie aanpassing geldigheid. */
-        AANPASSING_GELDIGHEID;
+        /**
+         * Actie aanpassing geldigheid.
+         */
+        AANPASSING_GELDIGHEID,
+
+        /**
+         * Actie verval.
+         */
+        VERVAL;
     }
 
 }

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
@@ -34,9 +33,7 @@ public final class PersoonslijstOverzichtBuilder {
 
     /**
      * Voeg PL toe.
-     * 
-     * @param categorieen
-     *            pl
+     * @param categorieen pl
      */
     public void voegPersoonslijstToe(final List<Lo3CategorieWaarde> categorieen) {
         plen.add(categorieen);
@@ -44,7 +41,6 @@ public final class PersoonslijstOverzichtBuilder {
 
     /**
      * Bouw overzicht.
-     * 
      * @return overzicht
      */
     public PersoonslijstOverzicht build() {
@@ -89,23 +85,21 @@ public final class PersoonslijstOverzichtBuilder {
             stapels.add(PersoonslijstUtil.getStapel(pl, categorie, stapelIndex));
         }
 
-        // Actuele categorie
+        // Verzamel categorieen over PL-en heen
         final List<Lo3CategorieWaarde> actueleCategorieen = new ArrayList<>();
-        for (final List<Lo3CategorieWaarde> stapel : stapels) {
-            actueleCategorieen.add(stapel.isEmpty() ? null : stapel.remove(0));
-        }
-
-        final List<Categorie> result = new ArrayList<>();
-        result.add(maakCategorie(actueleCategorieen, categorie));
-
-        // Historische categorieen
         final Set<String> histories = new TreeSet<>();
         for (final List<Lo3CategorieWaarde> stapel : stapels) {
+            actueleCategorieen.add(stapel.isEmpty() ? null : stapel.remove(0));
             for (final Lo3CategorieWaarde categorieWaarde : stapel) {
                 histories.add(getHistorie(categorieWaarde));
             }
         }
 
+        // Actuele categorie
+        final List<Categorie> result = new ArrayList<>();
+        result.add(maakCategorie(actueleCategorieen, categorie));
+
+        // Historische categorieen
         final Lo3CategorieEnum historieCategorie = Lo3CategorieEnum.bepaalHistorischeCategorie(categorie);
         for (final String historie : histories) {
             final List<Lo3CategorieWaarde> historieCategorieen = new ArrayList<>();

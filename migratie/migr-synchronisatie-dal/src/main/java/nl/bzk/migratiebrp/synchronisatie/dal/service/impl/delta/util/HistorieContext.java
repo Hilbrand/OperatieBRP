@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
 
 /**
  * Interne class voor het doorgeven van de historie-rij context waarin de vergelijker aan het werk is.
@@ -38,8 +38,7 @@ public final class HistorieContext {
     }
 
     /**
-     * @return true als de {@link HistorieContext} gevuld is met of de bestaande historie of met de nieuwe historie of
-     *         allebei.
+     * @return true als de {@link HistorieContext} gevuld is met of de bestaande historie of met de nieuwe historie of allebei.
      */
     public boolean isGevuld() {
         return bestaandeHistorieRij != null || nieuweHistorieRij != null;
@@ -47,24 +46,17 @@ public final class HistorieContext {
 
     /**
      * Bepaalt een nieuwe historie context als er nog geen omringende context is.
-     * 
-     * @param omringendeHistorieContext
-     *            de evt. omringende context.
-     * @param oudeEntiteit
-     *            de bestaande (historische) entiteit
-     * @param nieuweEntiteit
-     *            de nieuwe (historische) entiteit
-     * @return als de oudeEntiteit en/of nieuweEntiteit niet null zijn en de {@link FormeleHistorie} interface
-     *         implementeren, dan een nieuw context. Als de omringende context niet null is en deze is gevuld, dan wordt
-     *         deze context terug gegeven. Als deze situaties niet van toepassing dan wordt er een leeg context terug
-     *         gegeven.
-     * 
+     * @param omringendeHistorieContext de evt. omringende context.
+     * @param oudeEntiteit de bestaande (historische) entiteit
+     * @param nieuweEntiteit de nieuwe (historische) entiteit
+     * @return als de oudeEntiteit en/of nieuweEntiteit niet null zijn en de {@link FormeleHistorie} interface implementeren, dan een nieuw context. Als de
+     * omringende context niet null is en deze is gevuld, dan wordt deze context terug gegeven. Als deze situaties niet van toepassing dan wordt er een leeg
+     * context terug gegeven.
      */
     public static HistorieContext bepaalNieuweHistorieContext(
-        final HistorieContext omringendeHistorieContext,
-        final Object oudeEntiteit,
-        final Object nieuweEntiteit)
-    {
+            final HistorieContext omringendeHistorieContext,
+            final Object oudeEntiteit,
+            final Object nieuweEntiteit) {
         final HistorieContext result;
 
         if (omringendeHistorieContext != null && omringendeHistorieContext.isGevuld()) {

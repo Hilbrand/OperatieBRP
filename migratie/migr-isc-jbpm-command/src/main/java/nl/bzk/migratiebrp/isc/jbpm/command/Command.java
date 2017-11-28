@@ -11,9 +11,7 @@ import nl.bzk.migratiebrp.isc.runtime.jbpm.JbpmInvoker.JbpmExecution;
 
 /**
  * Interface voor remote commands.
- *
- * @param <T>
- *            return type
+ * @param <T> return type
  */
 public interface Command<T> extends JbpmExecution<T>, Serializable {
 

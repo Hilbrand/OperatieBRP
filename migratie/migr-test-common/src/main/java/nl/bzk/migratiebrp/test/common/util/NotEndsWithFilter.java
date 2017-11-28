@@ -23,11 +23,8 @@ public final class NotEndsWithFilter implements FilenameFilter {
 
     /**
      * Constructor.
-     *
-     * @param accept
-     *            waarmee de bestandsnaam (hoofdletter ongevoelig) niet eindigt, null accepteert alles
-     * @param type
-     *            type of files to accept
+     * @param accept waarmee de bestandsnaam (hoofdletter ongevoelig) niet eindigt, null accepteert alles
+     * @param type type of files to accept
      */
     public NotEndsWithFilter(final String accept, final FilterType type) {
         if (accept == null) {
@@ -40,11 +37,8 @@ public final class NotEndsWithFilter implements FilenameFilter {
 
     /**
      * Constructor.
-     *
-     * @param accepts
-     *            waarmee de bestandsnaam (hoofdletter ongevoelig) niet eindigt, null accepteert alles
-     * @param type
-     *            type of files to accept
+     * @param accepts waarmee de bestandsnaam (hoofdletter ongevoelig) niet eindigt, null accepteert alles
+     * @param type type of files to accept
      */
     public NotEndsWithFilter(final List<String> accepts, final FilterType type) {
         if (accepts == null) {
@@ -60,11 +54,8 @@ public final class NotEndsWithFilter implements FilenameFilter {
 
     /**
      * Constructor.
-     *
-     * @param accepts
-     *            waarmee de bestandsnaam (hoofdletter ongevoelig) niet eindigt, null accepteert alles
-     * @param type
-     *            type of files to accept
+     * @param accepts waarmee de bestandsnaam (hoofdletter ongevoelig) niet eindigt, null accepteert alles
+     * @param type type of files to accept
      */
     public NotEndsWithFilter(final FilterType type, final String... accepts) {
         this(Arrays.asList(accepts), type);

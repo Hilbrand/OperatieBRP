@@ -8,12 +8,12 @@ package nl.bzk.migratiebrp.test.levering.mutatiebericht;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.xml.annotation.Attribute;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStatus;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 
 /**
  * Test resultaat: levering mutatiebericht.
@@ -34,13 +34,16 @@ public final class LeveringMutatieberichtTestResultaat extends TestResultaat {
      * @param naam
      *            naam
      */
-    protected LeveringMutatieberichtTestResultaat(@Attribute(name = "thema", required = false) final String thema, @Attribute(name = "naam",
-            required = false) final String naam)
+    protected LeveringMutatieberichtTestResultaat(
+        @Attribute(name = "thema", required = false) final String thema,
+        @Attribute(name = "naam", required = false) final String naam)
     {
         super(thema, naam);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see nl.bzk.migratiebrp.test.common.resultaat.TestResultaat#isSucces()
      */
     @Override

@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
@@ -20,6 +21,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
+import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.Lo3AttribuutConverteerder;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import org.springframework.stereotype.Component;
 
@@ -28,19 +30,28 @@ import org.springframework.stereotype.Component;
  * wel materiele historie) BRP historie (geen materiele historie, wel formele historie).
  */
 @Component
-public class Lo3HistorieConversieVariantLB25 extends Lo3HistorieConversieVariant {
+public class Lo3HistorieConversieVariantLB25 extends AbstractLo3HistorieConversieVariant {
 
     private static final int EEN_MINUUT = 100;
 
+
+    /**
+     * constructor.
+     * @param converteerder Lo3AttribuutConverteerder
+     */
+    @Inject
+    public Lo3HistorieConversieVariantLB25(final Lo3AttribuutConverteerder converteerder) {
+        super(converteerder);
+    }
+
     @Override
     protected final <T extends BrpGroepInhoud> BrpGroep<T> converteerLo3Groep(
-        final TussenGroep<T> lo3Groep,
-        final List<TussenGroep<T>> lo3Groepen,
-        final List<BrpGroep<T>> brpGroepen,
-        final Map<Long, BrpActie> actieCache)
-    {
+            final TussenGroep<T> lo3Groep,
+            final List<TussenGroep<T>> lo3Groepen,
+            final List<BrpGroep<T>> brpGroepen,
+            final Map<Long, BrpActie> actieCache) {
         final BrpDatumTijd tijdstipRegistratie = bepaalTijdstipRegistratie(lo3Groep, brpGroepen);
-        final BrpActie actieInhoud = maakActie(lo3Groep.getDocumentatie(), lo3Groep.getHistorie(), lo3Groep.getLo3Herkomst(), actieCache);
+        final BrpActie actieInhoud = maakActie(lo3Groep, actieCache);
 
         BrpGroep<T> vorigRecord = brpGroepen.isEmpty() ? null : brpGroepen.get(brpGroepen.size() - 1);
 
@@ -98,9 +109,8 @@ public class Lo3HistorieConversieVariantLB25 extends Lo3HistorieConversieVariant
     }
 
     private <T extends BrpGroepInhoud> boolean tijdstipRegistratieBestaatReeds(
-        final BrpDatumTijd tijdstipRegistratie,
-        final List<BrpGroep<T>> brpGroepen)
-    {
+            final BrpDatumTijd tijdstipRegistratie,
+            final List<BrpGroep<T>> brpGroepen) {
         for (final BrpGroep<T> brpGroep : brpGroepen) {
             if (AbstractBrpAttribuutMetOnderzoek.equalsWaarde(tijdstipRegistratie, brpGroep.getHistorie().getDatumTijdRegistratie())) {
                 return true;

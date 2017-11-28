@@ -8,13 +8,14 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.Serializable;
 import nl.bzk.migratiebrp.bericht.model.lo3.AbstractUnparsedLo3Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3EindBericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Header;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 
 /**
  * Gv02 bericht.
  */
-public final class Gv02Bericht extends AbstractUnparsedLo3Bericht implements Serializable {
+public final class Gv02Bericht extends AbstractUnparsedLo3Bericht implements Lo3EindBericht, Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Lo3Header HEADER = new Lo3Header(Lo3HeaderVeld.RANDOM_KEY, Lo3HeaderVeld.BERICHTNUMMER, Lo3HeaderVeld.A_NUMMER);

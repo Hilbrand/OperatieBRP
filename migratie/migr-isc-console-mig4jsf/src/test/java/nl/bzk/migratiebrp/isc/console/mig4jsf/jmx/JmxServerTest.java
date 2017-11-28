@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-@PrepareForTest({JmxServer.class, JmxServerActionListener.class })
+@PrepareForTest({JmxServer.class, JmxServerActionListener.class})
 public class JmxServerTest extends AbstractTagTest {
 
     @Test

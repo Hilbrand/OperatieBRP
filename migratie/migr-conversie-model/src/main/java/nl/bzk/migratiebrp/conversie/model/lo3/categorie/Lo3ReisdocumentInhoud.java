@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.categorie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.Definitie;
 import nl.bzk.migratiebrp.conversie.model.Definities;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingInhoudingVermissingNederlandsReisdocument;
@@ -14,20 +15,18 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Signalering;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Elementnummer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class geeft de inhoud weer van een LO3 Categorie 12 Reisdocument.
  *
  * Deze class is immutable en threadsafe.
- *
  */
 public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
 
@@ -65,35 +64,27 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
 
     /**
      * Maakt een Lo3ReisdocumentInhoud object.
-     *
-     * @param soortNederlandsReisdocument
-     *            soort Nederlands reisdocument 35.10 of null
-     * @param nummerNederlandsReisdocument
-     *            nummer Nederlands reisdocument 35.20 of null
-     * @param datumUitgifteNederlandsReisdocument
-     *            datum uitgifte Nederlands reisdocument 35.30 of null
-     * @param autoriteitVanAfgifteNederlandsReisdocument
-     *            autoriteit van afgifte Nederlands reisdocument 35.40 of null
-     * @param datumEindeGeldigheidNederlandsReisdocument
-     *            datum einde geldigheid Nederlands reisdocument 35.50 of null
-     * @param datumInhoudingVermissingNederlandsReisdocument
-     *            datum inhouding dan wel vermissing Nederlands reisdocument 35.60 of null
-     * @param aanduidingInhoudingNederlandsReisdocument
-     *            aanduiding inhouding dan wel vermissing Nederlands reisdocument 35.70 of null
-     * @param signalering
-     *            signalering met betrekking tot het verstrekken van een Nederlands reisdocument 36.10 of null
+     * @param soortNederlandsReisdocument soort Nederlands reisdocument 35.10 of null
+     * @param nummerNederlandsReisdocument nummer Nederlands reisdocument 35.20 of null
+     * @param datumUitgifteNederlandsReisdocument datum uitgifte Nederlands reisdocument 35.30 of null
+     * @param autoriteitVanAfgifteNederlandsReisdocument autoriteit van afgifte Nederlands reisdocument 35.40 of null
+     * @param datumEindeGeldigheidNederlandsReisdocument datum einde geldigheid Nederlands reisdocument 35.50 of null
+     * @param datumInhoudingVermissingNederlandsReisdocument datum inhouding dan wel vermissing Nederlands reisdocument 35.60 of null
+     * @param aanduidingInhoudingNederlandsReisdocument aanduiding inhouding dan wel vermissing Nederlands reisdocument 35.70 of null
+     * @param signalering signalering met betrekking tot het verstrekken van een Nederlands reisdocument 36.10 of null
      */
     public Lo3ReisdocumentInhoud(
         /* Meer dan 7 parameters is in constructors van immutable model klassen getolereerd. */
         @Element(name = "soortNederlandsReisdocument", required = false) final Lo3SoortNederlandsReisdocument soortNederlandsReisdocument,
         @Element(name = "nummerNederlandsReisdocument", required = false) final Lo3String nummerNederlandsReisdocument,
         @Element(name = "datumUitgifteNederlandsReisdocument", required = false) final Lo3Datum datumUitgifteNederlandsReisdocument,
-        @Element(name = "autoriteitVanAfgifteNederlandsReisdocument", required = false) final Lo3AutoriteitVanAfgifteNederlandsReisdocument autoriteitVanAfgifteNederlandsReisdocument,
+        @Element(name = "autoriteitVanAfgifteNederlandsReisdocument",
+                required = false) final Lo3AutoriteitVanAfgifteNederlandsReisdocument autoriteitVanAfgifteNederlandsReisdocument,
         @Element(name = "datumEindeGeldigheidNederlandsReisdocument", required = false) final Lo3Datum datumEindeGeldigheidNederlandsReisdocument,
         @Element(name = "datumInhoudingVermissingNederlandsReisdocument", required = false) final Lo3Datum datumInhoudingVermissingNederlandsReisdocument,
-        @Element(name = "aanduidingInhoudingNederlandsReisdocument", required = false) final Lo3AanduidingInhoudingVermissingNederlandsReisdocument aanduidingInhoudingNederlandsReisdocument,
-        @Element(name = "signalering", required = false) final Lo3Signalering signalering)
-    {
+        @Element(name = "aanduidingInhoudingNederlandsReisdocument",
+                required = false) final Lo3AanduidingInhoudingVermissingNederlandsReisdocument aanduidingInhoudingNederlandsReisdocument,
+        @Element(name = "signalering", required = false) final Lo3Signalering signalering) {
         this.soortNederlandsReisdocument = soortNederlandsReisdocument;
         this.nummerNederlandsReisdocument = nummerNederlandsReisdocument;
         this.datumUitgifteNederlandsReisdocument = datumUitgifteNederlandsReisdocument;
@@ -117,116 +108,106 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.lo3.Lo3CategorieInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(
-            soortNederlandsReisdocument,
-            nummerNederlandsReisdocument,
-            datumUitgifteNederlandsReisdocument,
-            autoriteitVanAfgifteNederlandsReisdocument,
-            datumEindeGeldigheidNederlandsReisdocument,
-            datumInhoudingVermissingNederlandsReisdocument,
-            aanduidingInhoudingNederlandsReisdocument,
-            signalering);
+        return !Lo3Validatie.isEenParameterGevuld(
+                soortNederlandsReisdocument,
+                nummerNederlandsReisdocument,
+                datumUitgifteNederlandsReisdocument,
+                autoriteitVanAfgifteNederlandsReisdocument,
+                datumEindeGeldigheidNederlandsReisdocument,
+                datumInhoudingVermissingNederlandsReisdocument,
+                aanduidingInhoudingNederlandsReisdocument,
+                signalering);
     }
 
     /**
-     * Geef de nederlands reisdocument.
-     *
-     * @return true als er elementen uit groep 35 zijn gevuld
+     * Geef de waarde van nederlands reisdocument van Lo3ReisdocumentInhoud.
+     * @return de waarde van nederlands reisdocument van Lo3ReisdocumentInhoud
      */
     @Definitie(Definities.DEF063)
     public boolean isNederlandsReisdocument() {
-        return Validatie.isEenParameterGevuld(
-            soortNederlandsReisdocument,
-            nummerNederlandsReisdocument,
-            datumUitgifteNederlandsReisdocument,
-            autoriteitVanAfgifteNederlandsReisdocument,
-            datumEindeGeldigheidNederlandsReisdocument,
-            datumInhoudingVermissingNederlandsReisdocument,
-            aanduidingInhoudingNederlandsReisdocument);
+        return Lo3Validatie.isEenParameterGevuld(
+                soortNederlandsReisdocument,
+                nummerNederlandsReisdocument,
+                datumUitgifteNederlandsReisdocument,
+                autoriteitVanAfgifteNederlandsReisdocument,
+                datumEindeGeldigheidNederlandsReisdocument,
+                datumInhoudingVermissingNederlandsReisdocument,
+                aanduidingInhoudingNederlandsReisdocument);
     }
 
     /**
-     * Geef de belemmering verstrekking.
-     *
-     * @return true als er elementen uit groep 36 zijn gevuld
+     * Geef de waarde van belemmering verstrekking van Lo3ReisdocumentInhoud.
+     * @return de waarde van belemmering verstrekking van Lo3ReisdocumentInhoud
      */
     @Definitie(Definities.DEF065)
     public boolean isBelemmeringVerstrekking() {
-        return Validatie.isEenParameterGevuld(signalering);
+        return Lo3Validatie.isEenParameterGevuld(signalering);
     }
 
     /**
-     * Geef de waarde van soort nederlands reisdocument.
-     *
-     * @return the soortNederlandsReisdocument
+     * Geef de waarde van soort nederlands reisdocument van Lo3ReisdocumentInhoud.
+     * @return de waarde van soort nederlands reisdocument van Lo3ReisdocumentInhoud
      */
     public Lo3SoortNederlandsReisdocument getSoortNederlandsReisdocument() {
         return soortNederlandsReisdocument;
     }
 
     /**
-     * Geef de waarde van nummer nederlands reisdocument.
-     *
-     * @return the nummerNederlandsReisdocument
+     * Geef de waarde van nummer nederlands reisdocument van Lo3ReisdocumentInhoud.
+     * @return de waarde van nummer nederlands reisdocument van Lo3ReisdocumentInhoud
      */
     public Lo3String getNummerNederlandsReisdocument() {
         return nummerNederlandsReisdocument;
     }
 
     /**
-     * Geef de waarde van datum uitgifte nederlands reisdocument.
-     *
-     * @return the datumUitgifteNederlandsReisdocument
+     * Geef de waarde van datum uitgifte nederlands reisdocument van Lo3ReisdocumentInhoud.
+     * @return de waarde van datum uitgifte nederlands reisdocument van Lo3ReisdocumentInhoud
      */
     public Lo3Datum getDatumUitgifteNederlandsReisdocument() {
         return datumUitgifteNederlandsReisdocument;
     }
 
     /**
-     * Geef de waarde van autoriteit van afgifte nederlands reisdocument.
-     *
-     * @return the autoriteitVanAfgifteNederlandsReisdocument
+     * Geef de waarde van autoriteit van afgifte nederlands reisdocument van Lo3ReisdocumentInhoud.
+     * @return de waarde van autoriteit van afgifte nederlands reisdocument van Lo3ReisdocumentInhoud
      */
     public Lo3AutoriteitVanAfgifteNederlandsReisdocument getAutoriteitVanAfgifteNederlandsReisdocument() {
         return autoriteitVanAfgifteNederlandsReisdocument;
     }
 
     /**
-     * Geef de waarde van datum einde geldigheid nederlands reisdocument.
-     *
-     * @return the datumEindeGeldigheidNederlandsReisdocument
+     * Geef de waarde van datum einde geldigheid nederlands reisdocument van Lo3ReisdocumentInhoud.
+     * @return de waarde van datum einde geldigheid nederlands reisdocument van Lo3ReisdocumentInhoud
      */
     public Lo3Datum getDatumEindeGeldigheidNederlandsReisdocument() {
         return datumEindeGeldigheidNederlandsReisdocument;
     }
 
     /**
-     * Geef de waarde van datum inhouding vermissing nederlands reisdocument.
-     *
-     * @return the datumInhoudingVermissingNederlandsReisdocument
+     * Geef de waarde van datum inhouding vermissing nederlands reisdocument van Lo3ReisdocumentInhoud.
+     * @return de waarde van datum inhouding vermissing nederlands reisdocument van Lo3ReisdocumentInhoud
      */
     public Lo3Datum getDatumInhoudingVermissingNederlandsReisdocument() {
         return datumInhoudingVermissingNederlandsReisdocument;
     }
 
     /**
-     * Geef de waarde van aanduiding inhouding vermissing nederlands reisdocument.
-     *
-     * @return the aanduidingInhoudingVermissingNederlandsReisdocument
+     * Geef de waarde van aanduiding inhouding vermissing nederlands reisdocument van Lo3ReisdocumentInhoud.
+     * @return de waarde van aanduiding inhouding vermissing nederlands reisdocument van Lo3ReisdocumentInhoud
      */
     public Lo3AanduidingInhoudingVermissingNederlandsReisdocument getAanduidingInhoudingVermissingNederlandsReisdocument() {
         return aanduidingInhoudingNederlandsReisdocument;
     }
 
     /**
-     * Geef de waarde van signalering.
-     *
-     * @return the signalering
+     * Geef de waarde van signalering van Lo3ReisdocumentInhoud.
+     * @return de waarde van signalering van Lo3ReisdocumentInhoud
      */
     public Lo3Signalering getSignalering() {
         return signalering;
@@ -242,53 +223,55 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         }
         final Lo3ReisdocumentInhoud castOther = (Lo3ReisdocumentInhoud) other;
         return new EqualsBuilder().append(soortNederlandsReisdocument, castOther.soortNederlandsReisdocument)
-                                  .append(nummerNederlandsReisdocument, castOther.nummerNederlandsReisdocument)
-                                  .append(datumUitgifteNederlandsReisdocument, castOther.datumUitgifteNederlandsReisdocument)
-                                  .append(autoriteitVanAfgifteNederlandsReisdocument, castOther.autoriteitVanAfgifteNederlandsReisdocument)
-                                  .append(datumEindeGeldigheidNederlandsReisdocument, castOther.datumEindeGeldigheidNederlandsReisdocument)
-                                  .append(datumInhoudingVermissingNederlandsReisdocument, castOther.datumInhoudingVermissingNederlandsReisdocument)
-                                  .append(aanduidingInhoudingNederlandsReisdocument, castOther.aanduidingInhoudingNederlandsReisdocument)
-                                  .append(signalering, castOther.signalering)
-                                  .isEquals();
+                .append(nummerNederlandsReisdocument, castOther.nummerNederlandsReisdocument)
+                .append(datumUitgifteNederlandsReisdocument, castOther.datumUitgifteNederlandsReisdocument)
+                .append(autoriteitVanAfgifteNederlandsReisdocument, castOther.autoriteitVanAfgifteNederlandsReisdocument)
+                .append(datumEindeGeldigheidNederlandsReisdocument, castOther.datumEindeGeldigheidNederlandsReisdocument)
+                .append(datumInhoudingVermissingNederlandsReisdocument, castOther.datumInhoudingVermissingNederlandsReisdocument)
+                .append(aanduidingInhoudingNederlandsReisdocument, castOther.aanduidingInhoudingNederlandsReisdocument)
+                .append(signalering, castOther.signalering)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(soortNederlandsReisdocument)
-                                    .append(nummerNederlandsReisdocument)
-                                    .append(datumUitgifteNederlandsReisdocument)
-                                    .append(autoriteitVanAfgifteNederlandsReisdocument)
-                                    .append(datumEindeGeldigheidNederlandsReisdocument)
-                                    .append(datumInhoudingVermissingNederlandsReisdocument)
-                                    .append(aanduidingInhoudingNederlandsReisdocument)
-                                    .append(signalering)
-                                    .toHashCode();
+                .append(nummerNederlandsReisdocument)
+                .append(datumUitgifteNederlandsReisdocument)
+                .append(autoriteitVanAfgifteNederlandsReisdocument)
+                .append(datumEindeGeldigheidNederlandsReisdocument)
+                .append(datumInhoudingVermissingNederlandsReisdocument)
+                .append(aanduidingInhoudingNederlandsReisdocument)
+                .append(signalering)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("soortNederlandsReisdocument", soortNederlandsReisdocument)
-                                                                          .append("nummerNederlandsReisdocument", nummerNederlandsReisdocument)
-                                                                          .append(
-                                                                              "datumUitgifteNederlandsReisdocument",
-                                                                              datumUitgifteNederlandsReisdocument)
-                                                                          .append(
-                                                                              "autoriteitVanAfgifteNederlandsReisdocument",
-                                                                              autoriteitVanAfgifteNederlandsReisdocument)
-                                                                          .append(
-                                                                              "datumEindeGeldigheidNederlandsReisdocument",
-                                                                              datumEindeGeldigheidNederlandsReisdocument)
-                                                                          .append(
-                                                                              "datumInhoudingVermissingNederlandsReisdocument",
-                                                                              datumInhoudingVermissingNederlandsReisdocument)
-                                                                          .append(
-                                                                              "aanduidingInhoudingVermissingNederlandsReisdocument",
-                                                                              aanduidingInhoudingNederlandsReisdocument)
-                                                                          .append("signalering", signalering)
-                                                                          .toString();
+                .append("nummerNederlandsReisdocument", nummerNederlandsReisdocument)
+                .append(
+                        "datumUitgifteNederlandsReisdocument",
+                        datumUitgifteNederlandsReisdocument)
+                .append(
+                        "autoriteitVanAfgifteNederlandsReisdocument",
+                        autoriteitVanAfgifteNederlandsReisdocument)
+                .append(
+                        "datumEindeGeldigheidNederlandsReisdocument",
+                        datumEindeGeldigheidNederlandsReisdocument)
+                .append(
+                        "datumInhoudingVermissingNederlandsReisdocument",
+                        datumInhoudingVermissingNederlandsReisdocument)
+                .append(
+                        "aanduidingInhoudingVermissingNederlandsReisdocument",
+                        aanduidingInhoudingNederlandsReisdocument)
+                .append("signalering", signalering)
+                .toString();
     }
 
-    /** Builder. */
+    /**
+     * Builder.
+     */
     public static final class Builder {
 
         private Lo3SoortNederlandsReisdocument soortNederlandsReisdocument;
@@ -300,15 +283,16 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         private Lo3AanduidingInhoudingVermissingNederlandsReisdocument aanduidingInhoudingNederlandsReisdocument;
         private Lo3Signalering signalering;
 
-        /** Maak een lege builder. */
+        /**
+         * Maak een lege builder.
+         */
         public Builder() {
+            //lege builder
         }
 
         /**
          * Maak een initieel gevulde builder.
-         *
-         * @param inhoud
-         *            initiele inhoud
+         * @param inhoud initiele inhoud
          */
         public Builder(final Lo3ReisdocumentInhoud inhoud) {
             soortNederlandsReisdocument = inhoud.soortNederlandsReisdocument;
@@ -343,7 +327,6 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
 
         /**
          * Build.
-         *
          * @return inhoud
          */
         public Lo3ReisdocumentInhoud build() {
@@ -351,8 +334,7 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the soortNederlandsReisdocument to set
+         * @param param the soortNederlandsReisdocument to set
          * @return builder object
          */
         public Builder soortNederlandsReisdocument(final Lo3SoortNederlandsReisdocument param) {
@@ -361,8 +343,7 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the nummerNederlandsReisdocument to set
+         * @param param the nummerNederlandsReisdocument to set
          * @return builder object
          */
         public Builder nummerNederlandsReisdocument(final Lo3String param) {
@@ -371,8 +352,7 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the datumUitgifteNederlandsReisdocument to set
+         * @param param the datumUitgifteNederlandsReisdocument to set
          * @return builder object
          */
         public Builder datumUitgifteNederlandsReisdocument(final Lo3Datum param) {
@@ -381,8 +361,7 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the autoriteitVanAfgifteNederlandsReisdocument to set
+         * @param param the autoriteitVanAfgifteNederlandsReisdocument to set
          * @return builder object
          */
         public Builder autoriteitVanAfgifteNederlandsReisdocument(final Lo3AutoriteitVanAfgifteNederlandsReisdocument param) {
@@ -391,8 +370,7 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the datumEindeGeldigheidNederlandsReisdocument to set
+         * @param param the datumEindeGeldigheidNederlandsReisdocument to set
          * @return builder object
          */
         public Builder datumEindeGeldigheidNederlandsReisdocument(final Lo3Datum param) {
@@ -401,8 +379,7 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the datumInhoudingVermissingNederlandsReisdocument to set
+         * @param param the datumInhoudingVermissingNederlandsReisdocument to set
          * @return builder object
          */
         public Builder datumInhoudingVermissingNederlandsReisdocument(final Lo3Datum param) {
@@ -411,8 +388,7 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the aanduidingInhoudingNederlandsReisdocument to set
+         * @param param the aanduidingInhoudingNederlandsReisdocument to set
          * @return builder object
          */
         public Builder aanduidingInhoudingNederlandsReisdocument(final Lo3AanduidingInhoudingVermissingNederlandsReisdocument param) {
@@ -421,8 +397,7 @@ public final class Lo3ReisdocumentInhoud implements Lo3CategorieInhoud {
         }
 
         /**
-         * @param param
-         *            the signalering to set
+         * @param param the signalering to set
          * @return builder object
          */
         public Builder signalering(final Lo3Signalering param) {

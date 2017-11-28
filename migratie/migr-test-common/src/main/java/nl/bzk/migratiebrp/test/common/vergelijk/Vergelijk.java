@@ -36,23 +36,29 @@ public final class Vergelijk {
     private static final String TIMESTAMP = "\\{timestamp\\}";
     private static final String DATUMTIJDSTEMPEL = "\\{timestamp-lo3\\}";
     private static final String DATUM = "\\{datum-lo3\\}";
-    private static final Pattern SPLIT_PATTERN = Pattern.compile(DECIMAL
-                                                                 + REGULIERE_EXPRESSIE_SPLITTER
-                                                                 + TEXT
-                                                                 + REGULIERE_EXPRESSIE_SPLITTER
-                                                                 + MESSAGE_ID
-                                                                 + REGULIERE_EXPRESSIE_SPLITTER
-                                                                 + EREF
-                                                                 + REGULIERE_EXPRESSIE_SPLITTER
-                                                                 + UUID
-                                                                 + REGULIERE_EXPRESSIE_SPLITTER
-                                                                 + OBJECTSLEUTEL
-                                                                 + REGULIERE_EXPRESSIE_SPLITTER
-                                                                 + TIMESTAMP
-                                                                 + REGULIERE_EXPRESSIE_SPLITTER
-                                                                 + DATUMTIJDSTEMPEL
-                                                                 + REGULIERE_EXPRESSIE_SPLITTER
-                                                                 + DATUM);
+    private static final String VASTELENGTE_WILDCARD = "\\[\\?+\\]";
+    private static final Pattern SPLIT_PATTERN =
+            Pattern.compile(
+                    DECIMAL
+                            + REGULIERE_EXPRESSIE_SPLITTER
+                            + TEXT
+                            + REGULIERE_EXPRESSIE_SPLITTER
+                            + MESSAGE_ID
+                            + REGULIERE_EXPRESSIE_SPLITTER
+                            + EREF
+                            + REGULIERE_EXPRESSIE_SPLITTER
+                            + UUID
+                            + REGULIERE_EXPRESSIE_SPLITTER
+                            + OBJECTSLEUTEL
+                            + REGULIERE_EXPRESSIE_SPLITTER
+                            + TIMESTAMP
+                            + REGULIERE_EXPRESSIE_SPLITTER
+                            + DATUMTIJDSTEMPEL
+                            + REGULIERE_EXPRESSIE_SPLITTER
+                            + DATUM
+                            + REGULIERE_EXPRESSIE_SPLITTER
+                            + VASTELENGTE_WILDCARD
+                            );
 
     private static final Pattern DECIMAL_PATTERN = Pattern.compile(DECIMAL);
 
@@ -62,7 +68,7 @@ public final class Vergelijk {
     private static final String OBJECTSLEUTEL_REGEX = "[0-9A-Za-z+/]{32}";
     private static final String DECIMAL_REGEX = "\\d*";
     private static final String TEXT_REGEX = ".*?";
-    private static final String TIMESTAMP_REGEX = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}(([+-]\\d{2}:\\d{2})?)";
+    private static final String TIMESTAMP_REGEX = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}((([+-]\\d{2}:\\d{2})|Z)?)";
     private static final String DATUMTIJDSTEMPEL_REGEX = "\\d{17}";
     private static final String DATUM_REGEX = "\\d{8}";
 
@@ -72,11 +78,8 @@ public final class Vergelijk {
 
     /**
      * Vergelijk.
-     * 
-     * @param expected
-     *            verwachte string (kan {decimal(:x)} en {messageId} bevatten.
-     * @param actual
-     *            actuele string
+     * @param expected verwachte string (kan {decimal(:x)} en {messageId} bevatten.
+     * @param actual actuele string
      * @return true als de actuele string vergelijkbaar is met de verwachte string
      */
     public static boolean vergelijk(final String expected, final String actual) {
@@ -86,19 +89,19 @@ public final class Vergelijk {
     /**
      * Vergelijk (externe context). {decimal:1} moet altijd dezelfde waarde bevatten als dezelfde context wordt gebruikt
      * (ook al zijn het verschillende methode aanroepen).
-     * 
-     * @param vergelijkingContext
-     *            context
-     * @param expected
-     *            verwachte string (kan {decimal(:x)} en {messageId} bevatten.
-     * @param actual
-     *            actuele string
+     * @param vergelijkingContext context
+     * @param expected verwachte string (kan {decimal(:x)} en {messageId} bevatten.
+     * @param actual actuele string
      * @return true als de actuele string vergelijkbaar is met de verwachte string
      */
     public static boolean vergelijk(final VergelijkingContext vergelijkingContext, final String expected, final String actual) {
         if (StringUtils.isEmpty(expected) && StringUtils.isEmpty(actual)) {
             return true;
         }
+        if (StringUtils.isEmpty(expected) || StringUtils.isEmpty(actual)) {
+            return false;
+        }
+
         final String normExpected = expected.replaceAll(NORMALIZE_LINEFEED_PATTERN, NORMALIZE_LINEFEED_REPLACEMENT);
         final String normActual = actual.replaceAll(NORMALIZE_LINEFEED_PATTERN, NORMALIZE_LINEFEED_REPLACEMENT);
 
@@ -180,6 +183,8 @@ public final class Vergelijk {
             result = new RegexVergelijking(DATUM_REGEX);
         } else if (Pattern.matches(TEXT, group)) {
             result = new RegexVergelijking(TEXT_REGEX);
+        } else if (Pattern.matches(VASTELENGTE_WILDCARD, group)) {
+            result = new RegexVergelijking(maakVasteLengteRegex(group.length()));
         } else {
             result = decimalVergelijking(group);
         }
@@ -189,6 +194,10 @@ public final class Vergelijk {
         }
 
         return result;
+    }
+
+    private static String maakVasteLengteRegex(int length) {
+        return ".{"+length+"}";
     }
 
     private static Vergelijking decimalVergelijking(final String group) {

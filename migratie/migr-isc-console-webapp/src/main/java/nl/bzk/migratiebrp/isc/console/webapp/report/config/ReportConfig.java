@@ -15,14 +15,12 @@ public interface ReportConfig {
 
     /**
      * Report directory.
-     * 
      * @return report directory
      */
     File getReportDirectory();
 
     /**
      * Images directory.
-     * 
      * @return images directory
      */
     File getImagesDirectory();

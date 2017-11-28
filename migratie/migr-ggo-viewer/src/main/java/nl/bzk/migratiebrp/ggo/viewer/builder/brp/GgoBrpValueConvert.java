@@ -6,70 +6,68 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import java.sql.Timestamp;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AutoriteitAfgifteBuitenlandsPersoonsnummer;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.MaterieleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerkrijgingNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Naamgebruik;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
 import nl.bzk.migratiebrp.ggo.viewer.builder.lo3.GgoLo3ValueConvert;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
 import nl.bzk.migratiebrp.ggo.viewer.util.VerwerkerUtil;
 import nl.bzk.migratiebrp.ggo.viewer.util.ViewerDateUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.MaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Naamgebruik;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerkrijgingNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerliesNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Verblijfsrecht;
 
 import org.springframework.stereotype.Component;
+
+import java.sql.Timestamp;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Checkt de waarden en zet ze om naar viewer format.
  */
 @Component("newGgoBrpValueConvert")
 public class GgoBrpValueConvert {
-    /** Code weergave. */
-    protected static final String CODE_WEERGAVE = "%s (%s)";
-    /** Code weergave (3 cijfers). */
-    protected static final String CODE_WEERGAVE3 = "%03d (%s)";
-    /** Code weergave (4 cijfers). */
-    protected static final String CODE_WEERGAVE4 = "%04d (%s)";
-    /** Code weergave (geslacht). */
-    protected static final String CODE_WEERGAVE_GESL = "%s (%s / %s)";
+    /**
+     * Code weergave.
+     */
+    private static final String CODE_WEERGAVE = "%s (%s)";
+    /**
+     * Code weergave (geslacht).
+     */
+    private static final String CODE_WEERGAVE_GESL = "%s (%s / %s)";
 
     /**
      * Zet de waarde om in een viewer geformatteerde waarde.
-     *
-     * @param value
-     *            De eventueel om te zetten waarde.
-     * @param element
-     *            Element enum welke aangeeft welk element het is.
+     * @param value De eventueel om te zetten waarde.
+     * @param element Element enum welke aangeeft welk element het is.
      * @return De omgezette waarde.
      */
-    public final String convertToViewerValue(final Object value, final GgoBrpElementEnum element) {
+    final String convertToViewerValue(final Object value, final GgoBrpElementEnum element) {
         final String convertedValue;
         switch (element) {
             case AANGEVER_ADRESHOUDING:
@@ -81,9 +79,6 @@ public class GgoBrpValueConvert {
                 final AdellijkeTitel adellijkeTitel = (AdellijkeTitel) value;
                 convertedValue = maakCodeWeergave(adellijkeTitel.getCode(), adellijkeTitel.getNaamMannelijk(), adellijkeTitel.getNaamVrouwelijk());
                 break;
-            case AUTORITEIT_VAN_AFGIFTE:
-                convertedValue = (String) value;
-                break;
             case BIJHOUDINGSAARD:
                 final Bijhoudingsaard bijhoudingsaard = (Bijhoudingsaard) value;
                 convertedValue = maakCodeWeergave(bijhoudingsaard.getCode(), bijhoudingsaard.getNaam());
@@ -92,7 +87,7 @@ public class GgoBrpValueConvert {
             case BIJHOUDINGSPARTIJ:
             case GEMEENTE_PK:
                 final Partij partij = (Partij) value;
-                convertedValue = maakCodeWeergave4(partij.getCode(), partij.getNaam());
+                convertedValue = maakCodeWeergave(partij.getCode(), partij.getNaam());
                 break;
             case INGANGSDATUM_GELDIGHEID:
                 convertedValue = converteerDatum((Integer) value);
@@ -102,7 +97,7 @@ public class GgoBrpValueConvert {
             case GEMEENTE_EINDE:
             case GEMEENTE_GEBOORTE:
                 final Gemeente gemeente = (Gemeente) value;
-                convertedValue = maakCodeWeergave4(gemeente.getCode(), gemeente.getNaam());
+                convertedValue = maakCodeWeergave(gemeente.getCode(), gemeente.getNaam());
                 break;
             case GESLACHTSAANDUIDING:
                 final Geslachtsaanduiding geslacht = (Geslachtsaanduiding) value;
@@ -114,10 +109,7 @@ public class GgoBrpValueConvert {
             case LAND_OF_GEBIED_GEBOORTE:
             case LAND_OF_GEBIED:
                 final LandOfGebied landOfGebied = (LandOfGebied) value;
-                convertedValue = maakCodeWeergave4(landOfGebied.getCode(), landOfGebied.getNaam());
-                break;
-            case LOCATIE_TOV_ADRES:
-                convertedValue = (String) value;
+                convertedValue = maakCodeWeergave(landOfGebied.getCode(), landOfGebied.getNaam());
                 break;
             case NADERE_BIJHOUDINGSAARD:
                 final NadereBijhoudingsaard nadereBijhoudingsaard = (NadereBijhoudingsaard) value;
@@ -125,8 +117,10 @@ public class GgoBrpValueConvert {
                 break;
             case NATIONALITEIT:
                 final Nationaliteit nationaliteit = (Nationaliteit) value;
-                convertedValue = maakCodeWeergave4(nationaliteit.getCode(), nationaliteit.getNaam());
+                convertedValue = maakCodeWeergave(nationaliteit.getCode(), nationaliteit.getNaam());
                 break;
+            case AUTORITEIT_VAN_AFGIFTE:
+            case LOCATIE_TOV_ADRES:
             case WOONPLAATSNAAM_AANVANG:
             case WOONPLAATSNAAM_EINDE:
             case WOONPLAATS:
@@ -146,11 +140,11 @@ public class GgoBrpValueConvert {
                 break;
             case REDEN_VERKRIJGING_NEDERLANDSCHAP:
                 final RedenVerkrijgingNLNationaliteit redenVerkrijging = (RedenVerkrijgingNLNationaliteit) value;
-                convertedValue = maakCodeWeergave3(redenVerkrijging.getCode(), redenVerkrijging.getOmschrijving());
+                convertedValue = maakCodeWeergave(redenVerkrijging.getCode(), redenVerkrijging.getOmschrijving());
                 break;
             case REDEN_VERLIES_NEDERLANDSCHAP:
                 final RedenVerliesNLNationaliteit redenVerlies = (RedenVerliesNLNationaliteit) value;
-                convertedValue = maakCodeWeergave3(redenVerlies.getCode(), redenVerlies.getOmschrijving());
+                convertedValue = maakCodeWeergave(redenVerlies.getCode(), redenVerlies.getOmschrijving());
                 break;
             case REDEN_WIJZIGING_ADRES:
             case REDEN_WIJZIGING_MIGRATIE:
@@ -166,7 +160,7 @@ public class GgoBrpValueConvert {
                 convertedValue = soortActie.getNaam();
                 break;
             case SOORT_ADRES:
-                final FunctieAdres functieAdres = (FunctieAdres) value;
+                final SoortAdres functieAdres = (SoortAdres) value;
                 convertedValue = maakCodeWeergave(functieAdres.getCode(), functieAdres.getNaam());
                 break;
             case SOORT_DOCUMENT:
@@ -179,7 +173,7 @@ public class GgoBrpValueConvert {
                 break;
             case SOORT_ADMINISTRATIEVE_HANDELING:
                 final SoortAdministratieveHandeling soortAh = (SoortAdministratieveHandeling) value;
-                convertedValue = maakCodeWeergave(soortAh.getCode(), soortAh.getNaam());
+                convertedValue = soortAh.getNaam();
                 break;
             case AANDUIDING_VERBLIJFSRECHT:
                 final Verblijfsrecht verblijfsrecht = (Verblijfsrecht) value;
@@ -192,6 +186,10 @@ public class GgoBrpValueConvert {
             case NAAMGEBRUIK:
                 final Naamgebruik naamgebruik = (Naamgebruik) value;
                 convertedValue = maakCodeWeergave(naamgebruik.getCode(), naamgebruik.getNaam());
+                break;
+            case AUTORITEIT_VAN_AFGIFTE_BUITENLANDS_PERSOONSNUMMER:
+                final AutoriteitAfgifteBuitenlandsPersoonsnummer autoriteitAfgifte = (AutoriteitAfgifteBuitenlandsPersoonsnummer) value;
+                convertedValue = maakCodeWeergave(String.valueOf(autoriteitAfgifte.getCode()), autoriteitAfgifte.getLandOfGebied().getNaam());
                 break;
             default:
                 convertedValue = defaultConvertToViewerValue(value, element);
@@ -206,14 +204,6 @@ public class GgoBrpValueConvert {
 
     private String maakCodeWeergave(final Character code, final String waarde) {
         return String.format(CODE_WEERGAVE, code, waarde);
-    }
-
-    private String maakCodeWeergave3(final int code, final String waarde) {
-        return String.format(CODE_WEERGAVE3, code, waarde);
-    }
-
-    private String maakCodeWeergave4(final int code, final String waarde) {
-        return String.format(CODE_WEERGAVE4, code, waarde);
     }
 
     private String maakCodeWeergave(final String code, final String waarde, final String waarde2) {
@@ -253,25 +243,19 @@ public class GgoBrpValueConvert {
 
     /**
      * Maak een GgoBrpVoorkomen.
-     *
-     * @param brpGroep
-     *            BrpGroep<? extends BrpGroepInhoud>.
-     * @param aNummer
-     *            Het anummer van de persoon.
-     * @param ggoBrpGroepEnum
-     *            De label van de BrpGroep.
-     * @param brpStapelNr
-     *            Het index nummer van de brp stapel.
+     * @param brpGroep BrpGroep<? extends BrpGroepInhoud>.
+     * @param aNummer Het anummer van de persoon.
+     * @param ggoBrpGroepEnum De label van de BrpGroep.
+     * @param brpStapelNr Het index nummer van de brp stapel.
      * @return GgoCategorieKey met de waarden.
      */
     public final GgoBrpVoorkomen createGgoBrpVoorkomen(
-        final FormeleHistorie brpGroep,
-        final Long aNummer,
-        final GgoBrpGroepEnum ggoBrpGroepEnum,
-        final int brpStapelNr)
-    {
+            final FormeleHistorie brpGroep,
+            final String aNummer,
+            final GgoBrpGroepEnum ggoBrpGroepEnum,
+            final int brpStapelNr) {
         final GgoBrpVoorkomen voorkomen = new GgoBrpVoorkomen();
-        voorkomen.setInhoud(new LinkedHashMap<String, String>());
+        voorkomen.setInhoud(new LinkedHashMap<>());
 
         if (brpGroep.getActieInhoud() != null && brpGroep.getActieInhoud().getLo3Voorkomen() != null) {
             final Lo3Voorkomen lo3Herkomst = brpGroep.getActieInhoud().getLo3Voorkomen();
@@ -298,11 +282,8 @@ public class GgoBrpValueConvert {
 
     /**
      * Bepaal vervallen en datum geldigheid.
-     *
-     * @param voorkomen
-     *            Het voorkomen.
-     * @param inhoud
-     *            De inhoud.
+     * @param voorkomen Het voorkomen.
+     * @param inhoud De inhoud.
      */
     public final void bepaalVervallenEnDatumGeldigheid(final GgoBrpVoorkomen voorkomen, final StapelVoorkomen inhoud) {
         final Character onjuist = inhoud.getRubriek8410OnjuistOfStrijdigOpenbareOrde();
@@ -316,9 +297,7 @@ public class GgoBrpValueConvert {
 
     /**
      * Geeft de tekstuele waarde van een Boolean terug.
-     *
-     * @param booleanValue
-     *            Boolean.
+     * @param booleanValue Boolean.
      * @return String Ja of Nee
      */
     public final String getBooleanValue(final Boolean booleanValue) {
@@ -331,44 +310,28 @@ public class GgoBrpValueConvert {
 
     /**
      * Voeg een element toe aan voorkomen. Verwerk bovendien de onderzoeksgegevens.
-     *
-     * @param voorkomen
-     *            Voorkomen waar het element aan toegevoegd wordt.
-     * @param brpGroepEnum
-     *            De groep waarbij dit element hoort.
-     * @param brpElementEnum
-     *            Het element.
-     * @param value
-     *            De waarde die gezet moet worden. Als deze null is wordt niets toegevoegd.
+     * @param voorkomen Voorkomen waar het element aan toegevoegd wordt.
+     * @param brpElementEnum Het element.
+     * @param value De waarde die gezet moet worden. Als deze null is wordt niets toegevoegd.
      */
     public final void verwerkElement(
-        final GgoBrpVoorkomen voorkomen,
-        final GgoBrpGroepEnum brpGroepEnum,
-        final GgoBrpElementEnum brpElementEnum,
-        final Object value)
-    {
-        verwerkElement(voorkomen.getInhoud(), brpGroepEnum, brpElementEnum, value);
+            final GgoBrpVoorkomen voorkomen,
+            final GgoBrpElementEnum brpElementEnum,
+            final Object value) {
+        verwerkElement(voorkomen.getInhoud(), brpElementEnum, value);
     }
 
     /**
      * Voeg een element toe aan de Map<String,String> ggoInhoud. Verwerk bovendien de onderzoeksgegevens.
-     *
-     * @param ggoInhoud
-     *            Doorgaans de inhoud van het meegegeven voorkomen. In enkele gevallen (samenvatting, acties) staat deze
-     *            Map<String,String> echter los van een voorkomen.
-     * @param brpGroepEnum
-     *            De groep waarbij dit element hoort.
-     * @param brpElementEnum
-     *            Het element.
-     * @param value
-     *            De waarde die gezet moet worden. Als deze null is wordt niets toegevoegd.
+     * @param ggoInhoud Doorgaans de inhoud van het meegegeven voorkomen. In enkele gevallen (samenvatting, acties) staat deze Map<String,String> echter los van
+     * een voorkomen.
+     * @param brpElementEnum Het element.
+     * @param value De waarde die gezet moet worden. Als deze null is wordt niets toegevoegd.
      */
     public final void verwerkElement(
-        final Map<String, String> ggoInhoud,
-        final GgoBrpGroepEnum brpGroepEnum,
-        final GgoBrpElementEnum brpElementEnum,
-        final Object value)
-    {
+            final Map<String, String> ggoInhoud,
+            final GgoBrpElementEnum brpElementEnum,
+            final Object value) {
         if (value != null) {
             ggoInhoud.put(brpElementEnum.getLabel(), convertToViewerValue(value, brpElementEnum));
         }

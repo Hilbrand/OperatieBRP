@@ -15,35 +15,22 @@ public interface CorrelatieDao {
 
     /**
      * Bewaar een correlatie (overschrijf de huidige opgeslagen correlatie vanwege herhaalberichten).
-     *
-     * @param messageId
-     *            bericht id
-     * @param kanaal
-     *            kanaal
-     * @param recipient
-     *            recipient
-     * @param originator
-     *            originator
-     * @param processInstanceId
-     *            process instance id
-     * @param tokenId
-     *            token id
-     * @param nodeId
-     *            node id
+     * @param messageId bericht id
+     * @param kanaal kanaal
+     * @param recipient recipient
+     * @param originator originator
+     * @param processInstanceId process instance id
+     * @param tokenId token id
+     * @param nodeId node id
      */
     void opslaan(String messageId, String kanaal, String recipient, String originator, Long processInstanceId, Long tokenId, Long nodeId);
 
     /**
      * Zoek een correlatie.
-     *
-     * @param messageId
-     *            bericht id
-     * @param kanaal
-     *            kanaal
-     * @param recipient
-     *            recipient
-     * @param originator
-     *            originator
+     * @param messageId bericht id
+     * @param kanaal kanaal
+     * @param recipient recipient
+     * @param originator originator
      * @return process instance data (null als niet gevonden)
      */
     Correlatie zoeken(String messageId, String kanaal, String originator, String recipient);

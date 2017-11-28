@@ -1,4 +1,4 @@
-<project name="migr-init-naarlo3" basedir="." default="fail">
+<project name="IV NaarLo3" basedir="." default="fail">
 
     <!--
      | Algemene properties
@@ -116,8 +116,11 @@ vanaf.anummer=0
     
     <target name="start" depends="checkProperties">
         <echo message="Starting ${ant.project.name}" />
+
         <sshexec host="${server.host}" trust="true" username="${server.username}" password="${server.password}" 
                  command="cd ~; cd ${application.directory}; ./runLo3QueueVulling.sh" />
+
+        <echo message="Succesfully started ${ant.project.name}" />
     </target>
 
     <target name="stop" depends="checkProperties">

@@ -26,13 +26,9 @@ public final class Lo3GroepUtil {
 
     /**
      * Controleer of de opgegeven groep aanwezig is in de opgegeven categorie inhoud.
-     * 
-     * @param <T>
-     *            de mogelijke inhoud classes
-     * @param groep
-     *            De groep waar op gecontroleerd wordt of deze aanwezig is
-     * @param inhoud
-     *            de categorie waarin gecontroleerd moet worden of de opgegeven groep aanwezig is
+     * @param <T> de mogelijke inhoud classes
+     * @param groep De groep waar op gecontroleerd wordt of deze aanwezig is
+     * @param inhoud de categorie waarin gecontroleerd moet worden of de opgegeven groep aanwezig is
      * @return true als minimaal 1 element van de opgegeven groep aanwezig is.
      */
     public static <T extends Lo3CategorieInhoud> boolean isGroepAanwezig(final Lo3GroepEnum groep, final T inhoud) {
@@ -42,11 +38,8 @@ public final class Lo3GroepUtil {
 
     /**
      * Controleer of de opgegeven groep aanwezig is in de opgegeven historie.
-     * 
-     * @param groep
-     *            De groep waar op gecontroleerd wordt of deze aanwezig is
-     * @param historie
-     *            de historie waarin gecontroleerd moet worden of de opgegeven groep aanwezig is
+     * @param groep De groep waar op gecontroleerd wordt of deze aanwezig is
+     * @param historie de historie waarin gecontroleerd moet worden of de opgegeven groep aanwezig is
      * @return true als minimaal 1 element van de opgegeven groep aanwezig is.
      */
     public static boolean isGroepAanwezig(final Lo3GroepEnum groep, final Lo3Historie historie) {
@@ -60,11 +53,8 @@ public final class Lo3GroepUtil {
 
     /**
      * Controleer of de opgegeven groep aanwezig is in de opgegeven documentatie.
-     * 
-     * @param groep
-     *            De groep waar op gecontroleerd wordt of deze aanwezig is
-     * @param documentatie
-     *            de documentatie waarin gecontroleerd moet worden of de opgegeven groep aanwezig is
+     * @param groep De groep waar op gecontroleerd wordt of deze aanwezig is
+     * @param documentatie de documentatie waarin gecontroleerd moet worden of de opgegeven groep aanwezig is
      * @return true als minimaal 1 element van de opgegeven groep aanwezig is.
      */
     public static boolean isGroepAanwezig(final Lo3GroepEnum groep, final Lo3Documentatie documentatie) {
@@ -78,11 +68,8 @@ public final class Lo3GroepUtil {
 
     /**
      * Controleer of de opgegeven groep aanwezig is in de opgegeven onderzoek.
-     * 
-     * @param groep
-     *            De groep waar op gecontroleerd wordt of deze aanwezig is
-     * @param onderzoek
-     *            de onderzoek waarin gecontroleerd moet worden of de opgegeven groep aanwezig is
+     * @param groep De groep waar op gecontroleerd wordt of deze aanwezig is
+     * @param onderzoek de onderzoek waarin gecontroleerd moet worden of de opgegeven groep aanwezig is
      * @return true als minimaal 1 element van de opgegeven groep aanwezig is.
      */
     public static boolean isGroepAanwezig(final Lo3GroepEnum groep, final Lo3Onderzoek onderzoek) {
@@ -104,8 +91,8 @@ public final class Lo3GroepUtil {
                 try {
                     final Object value = field.get(object);
                     if (value != null
-                        && (value instanceof AbstractLo3Element && ((AbstractLo3Element) value).isInhoudelijkGevuld() || !(value instanceof AbstractLo3Element)))
-                    {
+                            && (value instanceof AbstractLo3Element && ((AbstractLo3Element) value).isInhoudelijkGevuld()
+                            || !(value instanceof AbstractLo3Element))) {
                         elementGevuldAanwezig = true;
                         break;
                     }

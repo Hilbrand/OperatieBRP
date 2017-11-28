@@ -8,4 +8,3 @@
  * BerichtenBatch is een container voor lo3Bericht plId paartjes.
  */
 package nl.bzk.migratiebrp.init.naarbrp.domein;
-

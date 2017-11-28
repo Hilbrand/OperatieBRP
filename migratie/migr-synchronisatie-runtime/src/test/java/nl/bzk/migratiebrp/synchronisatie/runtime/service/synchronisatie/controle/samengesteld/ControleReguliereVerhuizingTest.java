@@ -6,188 +6,233 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.samengesteld;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.inject.Named;
-
-import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpVerzoekBericht;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.lijst.LijstControle;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.pl.PlControle;
-import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.verzoek.VerzoekControle;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.controle.zoeker.PlZoeker;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.verwerker.context.VerwerkingsContext;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ControleReguliereVerhuizingTest {
 
     @Mock
-    @Named(value = "verzoekControleOudAnummerIsNietGevuld")
-    private VerzoekControle verzoekControleOudAnummerIsNietGevuld;
-
+    private PlZoeker plZoekerObvActueelAnummer;
     @Mock
-    @Named(value = "plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummer")
-    private PlZoeker plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummer;
-
+    private PlZoeker plZoekerObvActueelBsn;
     @Mock
-    @Named(value = "lijstControleEen")
     private LijstControle lijstControleEen;
-
     @Mock
-    @Named(value = "plControleBijhoudingsPartijOngelijk")
+    private PlControle plControleGevondenBlokkeringssituatieIsJuist;
+    @Mock
     private PlControle plControleBijhoudingsPartijOngelijk;
     @Mock
-    @Named(value = "plControleBijhoudingsPartijOngelijkRni")
+    private PlControle plControleBijhoudingsPartijGelijkVerzendendeGemeente;
+    @Mock
     private PlControle plControleBijhoudingsPartijOngelijkRni;
     @Mock
-    @Named(value = "plControleVorigAnummerGelijk")
     private PlControle plControleVorigAnummerGelijk;
     @Mock
-    @Named(value = "plControleHistorieAnummerGelijk")
     private PlControle plControleHistorieAnummerGelijk;
     @Mock
-    @Named(value = "plControleDezelfdePersoon")
     private PlControle plControleDezelfdePersoon;
     @Mock
-    @Named(value = "plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressen")
+    private PlControle plControleActueelBsnGelijk;
+    @Mock
+    private LijstControle lijstControleGeen;
+    @Mock
     private PlControle plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressen;
     @Mock
-    @Named(value = "plControleGevondenVersienummerGelijkOfKleiner")
     private PlControle plControleGevondenVersienummerGelijkOfKleiner;
     @Mock
-    @Named(value = "plControleGevondenDatumtijdstempelOuder")
     private PlControle plControleGevondenDatumtijdstempelOuder;
 
-    @InjectMocks
     private ControleReguliereVerhuizing subject;
 
     @Before
     public void setupLogging() {
         SynchronisatieLogging.init();
+        subject = new ControleReguliereVerhuizing(null, null);
+        ReflectionTestUtils.setField(subject, "plZoekerObvActueelAnummer", plZoekerObvActueelAnummer);
+        ReflectionTestUtils.setField(subject, "plZoekerObvActueelBsn", plZoekerObvActueelBsn);
+        ReflectionTestUtils.setField(subject, "lijstControleEen", lijstControleEen);
+        ReflectionTestUtils.setField(subject, "plControleGevondenBlokkeringssituatieIsJuist", plControleGevondenBlokkeringssituatieIsJuist);
+        ReflectionTestUtils.setField(subject, "plControleBijhoudingsPartijOngelijk", plControleBijhoudingsPartijOngelijk);
+        ReflectionTestUtils.setField(subject, "plControleBijhoudingsPartijGelijkVerzendendeGemeente", plControleBijhoudingsPartijGelijkVerzendendeGemeente);
+        ReflectionTestUtils.setField(subject, "plControleVorigAnummerGelijk", plControleVorigAnummerGelijk);
+        ReflectionTestUtils.setField(subject, "plControleHistorieAnummerGelijk", plControleHistorieAnummerGelijk);
+        ReflectionTestUtils.setField(subject, "plControleDezelfdePersoon", plControleDezelfdePersoon);
+        ReflectionTestUtils.setField(subject, "plControleActueelBsnGelijk", plControleActueelBsnGelijk);
+        ReflectionTestUtils.setField(subject, "lijstControleGeen", lijstControleGeen);
+        ReflectionTestUtils.setField(subject, "plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressen",
+                plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressen);
+        ReflectionTestUtils.setField(subject, "plControleGevondenVersienummerGelijkOfKleiner", plControleGevondenVersienummerGelijkOfKleiner);
+        ReflectionTestUtils.setField(subject, "plControleGevondenDatumtijdstempelOuder", plControleGevondenDatumtijdstempelOuder);
     }
 
     @Test
     public void ok() {
         final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
-        setup(Arrays.asList(dbPersoonslijst), true, true, true, true, true, true, true, true, true, true);
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, true, true, true, true, true, true, true, true, true);
         Assert.assertTrue(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
-    public void verzoekControleOudAnummerIsNietGevuldNok() {
-        final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
-        setup(Arrays.asList(dbPersoonslijst), false, true, true, true, true, true, true, true, true, true);
+    public void lijstControleEenNok() {
+        setup(Collections.emptyList(), Collections.emptyList(),
+                false, true, true, true, true, true, true, true, true, true, true, true);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
-    public void lijstControleEenNok() {
-        setup(Collections.<BrpPersoonslijst>emptyList(), true, false, true, true, true, true, true, true, true, true);
+    public void testVerzendendeGemeente() {
+        final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, false, true, true, true, true, true, true, true, true, true, true);
+        Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
+    }
+
+    @Test
+    public void bijhoudingssituatieNok() {
+        final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, false, true, true, true, true, true, true, true, true, true);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
     public void plControleBijhoudingsPartijOngelijkNok() {
         final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
-        setup(Arrays.asList(dbPersoonslijst), true, true, false, true, true, true, true, true, true, true);
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, false, true, true, true, true, true, true, true, true);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
     public void plControleVorigAnummerGelijkNok() {
         final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
-        setup(Arrays.asList(dbPersoonslijst), true, true, true, false, true, true, true, true, true, true);
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, true, false, true, true, true, true, true, true, true);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
     public void plControleHistorieAnummerGelijkNok() {
         final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
-        setup(Arrays.asList(dbPersoonslijst), true, true, true, true, false, true, true, true, true, true);
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, true, true, false, true, true, true, true, true, true);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
     public void plControleDezelfdePersoonNok() {
         final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
-        setup(Arrays.asList(dbPersoonslijst), true, true, true, true, true, false, true, true, true, true);
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, true, true, true, false, true, true, true, true, true);
+        Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
+    }
+
+    @Test
+    public void bsnOk() {
+        final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, true, true, true, true, false, true, true, true, true);
+        Assert.assertTrue(subject.controleer(new VerwerkingsContext(null, null, null, null)));
+    }
+
+    @Test
+    public void bsnNok() {
+        final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, true, true, true, true, false, false, true, true, true);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
     public void plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressenNok() {
         final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
-        setup(Arrays.asList(dbPersoonslijst), true, true, true, true, true, true, false, true, true, true);
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, true, true, true, true, true, true, false, true, true);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
     public void plControleGevondenVersienummerGelijkOfKleinerNok() {
         final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
-        setup(Arrays.asList(dbPersoonslijst), true, true, true, true, true, true, true, false, true, true);
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, true, true, true, true, true, true, true, false, true);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     @Test
     public void plControleGevondenDatumtijdstempelOuderNok() {
         final BrpPersoonslijst dbPersoonslijst = new BrpPersoonslijstBuilder().build();
-        setup(Arrays.asList(dbPersoonslijst), true, true, true, true, true, true, true, true, false, true);
+        setup(Collections.singletonList(dbPersoonslijst), Collections.singletonList(dbPersoonslijst),
+                true, true, true, true, true, true, true, true, true, true, true, false);
         Assert.assertFalse(subject.controleer(new VerwerkingsContext(null, null, null, null)));
     }
 
     private void setup(
-        final List<BrpPersoonslijst> plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummerResult,
-        final boolean verzoekControleOudAnummerIsNietGevuldResult,
-        final boolean lijstControleEenResult,
-        final boolean plControleBijhoudingsPartijOngelijkResult,
-        final boolean plControleVorigAnummerGelijkResult,
-        final boolean plControleHistorieAnummerGelijkResult,
-        final boolean plControleDezelfdePersoonResult,
-        final boolean plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressenResult,
-        final boolean plControleGevondenVersienummerGelijkOfKleinerResult,
-        final boolean plControleGevondenDatumtijdstempelOuderResult,
-        final boolean plControleBijhoudingsPartijOngelijkRniResult)
-    {
-        Mockito.when(plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummer.zoek(Matchers.any(VerwerkingsContext.class))).thenReturn(
-            plZoekerOpAnummerEnNietFoutiefOpgeschortObvActueelAnummerResult);
-
-        Mockito.when(verzoekControleOudAnummerIsNietGevuld.controleer(Matchers.any(SynchroniseerNaarBrpVerzoekBericht.class))).thenReturn(
-            verzoekControleOudAnummerIsNietGevuldResult);
+            final List<BrpPersoonslijst> plZoekerObvActueelAnummerResult,
+            final List<BrpPersoonslijst> plZoekerObvActueelBsnResult,
+            final boolean lijstControleEenResult,
+            final boolean resultControleVerzendendeGemeente,
+            final boolean resultControleBijhoudingssituatie,
+            final boolean plControleBijhoudingsPartijOngelijkResult,
+            final boolean plControleVorigAnummerGelijkResult,
+            final boolean plControleHistorieAnummerGelijkResult,
+            final boolean plControleDezelfdePersoonResult,
+            final boolean plControleActueelBsnGelijkResult,
+            final boolean lijstControleGeenResult,
+            final boolean plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressenResult,
+            final boolean plControleGevondenVersienummerGelijkOfKleinerResult,
+            final boolean plControleGevondenDatumtijdstempelOuderResult) {
+        Mockito.when(plZoekerObvActueelAnummer.zoek(Matchers.any(VerwerkingsContext.class)))
+                .thenReturn(plZoekerObvActueelAnummerResult);
+        Mockito.when(plZoekerObvActueelBsn.zoek(Matchers.any(VerwerkingsContext.class)))
+                .thenReturn(plZoekerObvActueelBsnResult);
 
         Mockito.when(lijstControleEen.controleer(Matchers.anyListOf(BrpPersoonslijst.class))).thenReturn(lijstControleEenResult);
-
+        Mockito.when(plControleGevondenBlokkeringssituatieIsJuist.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
+                .thenReturn(resultControleBijhoudingssituatie);
+        Mockito.when(
+                plControleBijhoudingsPartijGelijkVerzendendeGemeente.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
+                .thenReturn(resultControleVerzendendeGemeente);
         Mockito.when(plControleBijhoudingsPartijOngelijk.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
-        .thenReturn(plControleBijhoudingsPartijOngelijkResult);
+                .thenReturn(plControleBijhoudingsPartijOngelijkResult);
         Mockito.when(plControleBijhoudingsPartijOngelijkRni.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
-        .thenReturn(plControleBijhoudingsPartijOngelijkRniResult);
-        Mockito.when(plControleVorigAnummerGelijk.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class))).thenReturn(
-            plControleVorigAnummerGelijkResult);
-        Mockito.when(plControleHistorieAnummerGelijk.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class))).thenReturn(
-            plControleHistorieAnummerGelijkResult);
-        Mockito.when(plControleDezelfdePersoon.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class))).thenReturn(
-            plControleDezelfdePersoonResult);
+                .thenReturn(true);
+        Mockito.when(plControleVorigAnummerGelijk.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
+                .thenReturn(plControleVorigAnummerGelijkResult);
+        Mockito.when(plControleHistorieAnummerGelijk.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
+                .thenReturn(plControleHistorieAnummerGelijkResult);
+        Mockito.when(plControleDezelfdePersoon.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
+                .thenReturn(plControleDezelfdePersoonResult);
+        Mockito.when(plControleActueelBsnGelijk.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
+                .thenReturn(plControleActueelBsnGelijkResult);
+        Mockito.when(lijstControleGeen.controleer(Matchers.anyListOf(BrpPersoonslijst.class))).thenReturn(lijstControleGeenResult);
         Mockito.when(
-            plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressen.controleer(
-                Matchers.any(VerwerkingsContext.class),
-                Matchers.any(BrpPersoonslijst.class))).thenReturn(plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressenResult);
+                plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressen.controleer(
+                        Matchers.any(VerwerkingsContext.class),
+                        Matchers.any(BrpPersoonslijst.class)))
+                .thenReturn(plControleGevondenAdressenKomenVoorInHistorieAangebodenAdressenResult);
         Mockito.when(
-            plControleGevondenVersienummerGelijkOfKleiner.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
-            .thenReturn(plControleGevondenVersienummerGelijkOfKleinerResult);
+                plControleGevondenVersienummerGelijkOfKleiner.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
+                .thenReturn(plControleGevondenVersienummerGelijkOfKleinerResult);
         Mockito.when(plControleGevondenDatumtijdstempelOuder.controleer(Matchers.any(VerwerkingsContext.class), Matchers.any(BrpPersoonslijst.class)))
-        .thenReturn(plControleGevondenDatumtijdstempelOuderResult);
+                .thenReturn(plControleGevondenDatumtijdstempelOuderResult);
     }
 }

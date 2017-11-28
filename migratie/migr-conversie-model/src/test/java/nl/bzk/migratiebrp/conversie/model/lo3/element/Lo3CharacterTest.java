@@ -19,8 +19,6 @@ public class Lo3CharacterTest {
 
     /**
      * constructor test.
-     * 
-     * @throws Exception
      */
     @Test
     public void testGetCharacterWaarde() throws Exception {
@@ -33,8 +31,6 @@ public class Lo3CharacterTest {
 
     /**
      * wrapping test.
-     *
-     * @throws Exception
      */
     @Test
     public void testWrap() throws Exception {
@@ -47,8 +43,6 @@ public class Lo3CharacterTest {
 
     /**
      * unwrapping test
-     * 
-     * @throws Exception
      */
     @Test
     public void testUnwrap() throws Exception {

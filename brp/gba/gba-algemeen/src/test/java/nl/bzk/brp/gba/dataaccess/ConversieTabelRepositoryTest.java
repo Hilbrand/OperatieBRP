@@ -7,21 +7,25 @@
 package nl.bzk.brp.gba.dataaccess;
 
 import java.util.List;
-
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AangifteAdreshouding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdellijkeTitelPredikaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RNIDeelnemer;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenOntbindingHuwelijkPartnerschap;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenOpschorting;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNlReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.VoorvoegselConversie;
+import nl.bzk.brp.gba.dataaccess.conversie.AanduidingInhoudingVermissingReisdocumentRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.AangifteAdreshoudingRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.AdellijkeTitelPredikaatRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.RNIDeelnemerRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.RedenOntbindingHuwelijkPartnerschapRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.RedenOpschortingRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.SoortNlReisdocumentRepository;
+import nl.bzk.brp.gba.dataaccess.conversie.VoorvoegselConversieRepository;
 import org.junit.Assert;
 import org.junit.Test;
-
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieAanduidingInhoudingVermissingReisdocument;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieAangifteAdreshouding;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieAdellijkeTitelPredikaat;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieRNIDeelnemer;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieRedenOntbindingHuwelijkGeregistreerdPartnerschap;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieRedenOpschorting;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieSoortNLReisdocument;
-import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieVoorvoegsel;
-
 
 /**
  * Conversie tabel repository test
@@ -29,55 +33,67 @@ import nl.bzk.brp.model.algemeen.stamgegeven.conv.ConversieVoorvoegsel;
 public class ConversieTabelRepositoryTest extends AbstractIntegratieTest {
 
     @Inject
-    private ConversieTabelRepository conversieTabelRepository;
+    private AanduidingInhoudingVermissingReisdocumentRepository aanduidingInhoudingVermissingReisdocumentRepository;
+    @Inject
+    private AangifteAdreshoudingRepository aangifteAdreshoudingRepository;
+    @Inject
+    private AdellijkeTitelPredikaatRepository adellijkeTitelPredikaatRepository;
+    @Inject
+    private RedenOntbindingHuwelijkPartnerschapRepository redenOntbindingHuwelijkPartnerschapRepository;
+    @Inject
+    private RedenOpschortingRepository redenOpschortingRepository;
+    @Inject
+    private RNIDeelnemerRepository rniDeelnemerRepository;
+    @Inject
+    private SoortNlReisdocumentRepository soortNlReisdocumentRepository;
+    @Inject
+    private VoorvoegselConversieRepository voorvoegselConversieRepository;
 
     @Test
     public final void findAllAangifteAdreshouding() {
-        final List<ConversieAangifteAdreshouding> result = conversieTabelRepository.findAllAangifteAdreshouding();
+        final List<AangifteAdreshouding> result = aangifteAdreshoudingRepository.findAll();
         Assert.assertEquals(12, result.size());
     }
 
     @Test
     public final void findAllAdellijkeTitelPredikaat() {
-        final List<ConversieAdellijkeTitelPredikaat> result = conversieTabelRepository.findAllAdellijkeTitelPredikaat();
+        final List<AdellijkeTitelPredikaat> result = adellijkeTitelPredikaatRepository.findAll();
         Assert.assertEquals(14, result.size());
     }
 
     @Test
     public final void findAllRedenInhoudingVermissingReisdocument() {
-        final List<ConversieAanduidingInhoudingVermissingReisdocument> result =
-                conversieTabelRepository.findAllAanduidingInhoudingVermissingReisdocument();
-        Assert.assertEquals(3, result.size());
+        final List<AanduidingInhoudingVermissingReisdocument> result = aanduidingInhoudingVermissingReisdocumentRepository.findAll();
+        Assert.assertEquals(4, result.size());
     }
 
     @Test
     public final void findAllRedenOntbindingHuwelijkPartnerschap() {
-        final List<ConversieRedenOntbindingHuwelijkGeregistreerdPartnerschap> result =
-                conversieTabelRepository.findAllRedenOntbindingHuwelijkPartnerschap();
+        final List<RedenOntbindingHuwelijkPartnerschap> result = redenOntbindingHuwelijkPartnerschapRepository.findAll();
         Assert.assertEquals(8, result.size());
     }
 
     @Test
     public final void findAllRedenOpschorting() {
-        final List<ConversieRedenOpschorting> result = conversieTabelRepository.findAllRedenOpschorting();
-        Assert.assertEquals(8, result.size());
+        final List<RedenOpschorting> result = redenOpschortingRepository.findAll();
+        Assert.assertEquals(9, result.size());
     }
 
     @Test
     public final void findAllSoortNlReisdocument() {
-        final List<ConversieSoortNLReisdocument> result = conversieTabelRepository.findAllSoortNlReisdocument();
+        final List<SoortNlReisdocument> result = soortNlReisdocumentRepository.findAll();
         Assert.assertEquals(30, result.size());
     }
 
     @Test
     public final void findAllVoorvoegsel() {
-        final List<ConversieVoorvoegsel> result = conversieTabelRepository.findAllVoorvoegsel();
+        final List<VoorvoegselConversie> result = voorvoegselConversieRepository.findAll();
         Assert.assertEquals(333, result.size());
     }
 
     @Test
     public final void findAllRNIDeelnemer() {
-        final List<ConversieRNIDeelnemer> result = conversieTabelRepository.findAllRNIDeelnemer();
+        final List<RNIDeelnemer> result = rniDeelnemerRepository.findAll();
         Assert.assertEquals(7, result.size());
     }
 }

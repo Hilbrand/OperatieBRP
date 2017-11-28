@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.opschoner.dao.JbpmDao;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,8 +23,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public final class JbpmDaoImpl implements JbpmDao {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private final JdbcTemplate template;
+
+    /**
+     * Constructor.
+     * @param template jdbc template
+     */
     @Inject
-    private JdbcTemplate template;
+    public JbpmDaoImpl(final JdbcTemplate template) {
+        this.template = template;
+    }
 
     @Override
     public List<Long> selecteerSubProcessenVoorProces(final Long procesId) {
@@ -30,12 +42,10 @@ public final class JbpmDaoImpl implements JbpmDao {
         final List<Long> superProcessTokens = bepaalTokensVoorProces(procesId);
 
         final List<Long> result = new ArrayList<>();
-
         for (final Long superProcessToken : superProcessTokens) {
-
             final List<Long> ids = selecteerProcesInstantiesOpBasisVanSuperProcessToken(superProcessToken);
 
-            if (ids.size() > 0) {
+            if (!ids.isEmpty()) {
                 result.addAll(ids);
             }
         }
@@ -49,6 +59,7 @@ public final class JbpmDaoImpl implements JbpmDao {
         try {
             return template.queryForObject(query, Timestamp.class, procesId);
         } catch (final EmptyResultDataAccessException e) {
+            LOGGER.debug("Geen resultaten gevonden voor eindedatum", e);
             return null;
         }
 
@@ -85,7 +96,7 @@ public final class JbpmDaoImpl implements JbpmDao {
 
         for (final Long token : tokens) {
             final List<Long> variableInstanceList = template.queryForList(query, Long.class, token);
-            if (variableInstanceList.size() > 0) {
+            if (!variableInstanceList.isEmpty()) {
                 result.addAll(variableInstanceList);
             }
         }
@@ -119,7 +130,7 @@ public final class JbpmDaoImpl implements JbpmDao {
 
         for (final Long variableInstance : variableInstances) {
             final List<Long> byteArrayList = template.queryForList(query, Long.class, variableInstance);
-            if (byteArrayList.size() > 0) {
+            if (!byteArrayList.isEmpty()) {
                 result.addAll(byteArrayList);
             }
         }
@@ -203,30 +214,23 @@ public final class JbpmDaoImpl implements JbpmDao {
 
     @Override
     public void elimineerReferentieTokenNaarProcesInstantie(final List<Long> tokens) {
-
-        final Set<Long> uniekeProcesInstanties = new HashSet<>();
-
         for (final Long superProcessToken : tokens) {
+            final Set<Long> uniekeProcesInstanties = new HashSet<>();
             uniekeProcesInstanties.addAll(selecteerProcesInstantiesOpBasisVanSuperProcessToken(superProcessToken));
-        }
 
-        final String queryElimineerSuperProcessToken = "update jbpm_processinstance set superprocesstoken_ = null where id_ = ?";
+            final String queryElimineerSuperProcessToken = "update jbpm_processinstance set superprocesstoken_ = null where id_ = ?";
+            for (final Long procesInstantie : uniekeProcesInstanties) {
+                template.update(queryElimineerSuperProcessToken, procesInstantie);
+            }
 
-        for (final Long procesInstantie : uniekeProcesInstanties) {
-            template.update(queryElimineerSuperProcessToken, procesInstantie);
-        }
-
-        final String queryElimineerSubProcessen = "update jbpm_token set processinstance_ = null where id_ = ?";
-
-        for (final Long token : tokens) {
-            template.update(queryElimineerSubProcessen, token);
+            final String queryElimineerSubProcessen = "update jbpm_token set processinstance_ = null where id_ = ?";
+            template.update(queryElimineerSubProcessen, superProcessToken);
         }
     }
 
     @Override
     public void verwijderTokenVariableMapVoorToken(final List<Long> tokens) {
         final String query = "delete from jbpm_tokenvariablemap where token_ = ?";
-
         for (final Long token : tokens) {
             template.update(query, token);
         }

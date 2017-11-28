@@ -7,8 +7,10 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta;
 
 import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -27,7 +29,6 @@ public class TestPersonen {
 
     /**
      * Geef de waarde van db persoon.
-     *
      * @return db persoon
      */
     public Persoon getDbPersoon() {
@@ -36,7 +37,6 @@ public class TestPersonen {
 
     /**
      * Geef de waarde van db persoon onderzoek.
-     *
      * @return db persoon onderzoek
      */
     public Set<Onderzoek> getDbPersoonOnderzoek() {
@@ -45,7 +45,6 @@ public class TestPersonen {
 
     /**
      * Geef de waarde van kluizenaar.
-     *
      * @return kluizenaar
      */
     public Persoon getKluizenaar() {
@@ -54,7 +53,6 @@ public class TestPersonen {
 
     /**
      * Geef de waarde van kluizenaar onderzoek.
-     *
      * @return kluizenaar onderzoek
      */
     public Set<Onderzoek> getKluizenaarOnderzoek() {

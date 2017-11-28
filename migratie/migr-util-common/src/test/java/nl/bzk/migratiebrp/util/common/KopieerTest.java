@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.util.common;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -26,7 +26,7 @@ public class KopieerTest {
             constructors[0].setAccessible(true);
             constructors[0].newInstance((Object[]) null);
             Assert.fail();
-        }catch(InvocationTargetException e){
+        } catch (InvocationTargetException e) {
             Assert.assertTrue(e.getCause() instanceof UnsupportedOperationException);
             throw e.getCause();
         }
@@ -37,8 +37,8 @@ public class KopieerTest {
         Calendar now = Calendar.getInstance();
         Timestamp timestamp = new Timestamp(now.getTimeInMillis());
         Timestamp result = Kopieer.timestamp(timestamp);
-        assertEquals(result.getTime(),timestamp.getTime());
-        assertNotSame(result,timestamp);
+        assertEquals(result.getTime(), timestamp.getTime());
+        assertNotSame(result, timestamp);
         assertNull(Kopieer.timestamp(null));
 
     }
@@ -47,7 +47,7 @@ public class KopieerTest {
     public void testSqlDate() throws Exception {
         Date now = new Date(Calendar.getInstance().getTimeInMillis());
         Date result = Kopieer.sqlDate(now);
-        assertEquals(result.getTime(),now.getTime());
+        assertEquals(result.getTime(), now.getTime());
         assertNotSame(result, now);
         assertNull(Kopieer.sqlDate(null));
 
@@ -58,7 +58,7 @@ public class KopieerTest {
     public void testUtilDate() throws Exception {
         java.util.Date now = new java.util.Date(Calendar.getInstance().getTimeInMillis());
         java.util.Date result = Kopieer.utilDate(now);
-        assertEquals(result.getTime(),now.getTime());
+        assertEquals(result.getTime(), now.getTime());
         assertNotSame(result, now);
         assertNull(Kopieer.utilDate(null));
     }

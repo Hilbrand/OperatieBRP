@@ -17,6 +17,30 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Set;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ActieBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Document;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.GegevenInOnderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.OnderzoekHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.StatusOnderzoek;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
@@ -24,24 +48,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.ActieBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaEntiteitPaar;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Document;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.GegevenInOnderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.OnderzoekHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StatusOnderzoek;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
@@ -75,21 +82,33 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
         final Timestamp timestamp2 = Timestamp.valueOf("2015-09-01 01:00:00.000");
         timestamp = Timestamp.valueOf("2015-01-01 01:00:00.000");
 
-        bestaandPersoon = maakPersoon(true);
-        nieuwPersoon = maakPersoon(false);
-        bestaandPersoon.getPersoonSamengesteldeNaamHistorieSet().add(maakPersoonSamengesteldeNaamHistorie(bestaandPersoon, false));
-        nieuwPersoon.getPersoonSamengesteldeNaamHistorieSet().add(maakPersoonSamengesteldeNaamHistorie(nieuwPersoon, false));
+        bestaandPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
+        nieuwPersoon = new Persoon(SoortPersoon.INGESCHREVENE);
 
         partij = maakPartij();
-        administratieveHandeling = new AdministratieveHandeling(partij, SoortAdministratieveHandeling.GBA_INITIELE_VULLING);
-        administratieveHandeling.setDatumTijdRegistratie(timestamp);
+        administratieveHandeling = new AdministratieveHandeling(partij, SoortAdministratieveHandeling.GBA_INITIELE_VULLING, timestamp);
 
-        bestaandPersoon.setAdministratieveHandeling(administratieveHandeling);
-        bestaandPersoon.setDatumtijdstempel(timestamp);
-        nieuwPersoon.setDatumtijdstempel(timestamp2);
+        bestaandPersoon.addPersoonAfgeleidAdministratiefHistorie(new PersoonAfgeleidAdministratiefHistorie(
+                (short) 1,
+                bestaandPersoon,
+                administratieveHandeling,
+                timestamp));
+        bestaandPersoon.addPersoonInschrijvingHistorie(new PersoonInschrijvingHistorie(bestaandPersoon, 20150101, 1L, timestamp));
+        bestaandPersoon.addPersoonBijhoudingHistorie(new PersoonBijhoudingHistorie(
+                bestaandPersoon,
+                partij,
+                Bijhoudingsaard.INGEZETENE,
+                NadereBijhoudingsaard.ACTUEEL));
+        bestaandPersoon.addPersoonSamengesteldeNaamHistorie(maakPersoonSamengesteldeNaamHistorie(bestaandPersoon, false));
 
-        nieuwPersoon.setAdministratieveHandeling(administratieveHandeling);
-        bestaandPersoon.setBijhoudingspartij(partij);
+        nieuwPersoon.addPersoonInschrijvingHistorie(new PersoonInschrijvingHistorie(nieuwPersoon, 20150101, 2L, timestamp2));
+        nieuwPersoon.addPersoonAfgeleidAdministratiefHistorie(new PersoonAfgeleidAdministratiefHistorie(
+                (short) 1,
+                nieuwPersoon,
+                administratieveHandeling,
+                timestamp2));
+        nieuwPersoon.addPersoonSamengesteldeNaamHistorie(maakPersoonSamengesteldeNaamHistorie(nieuwPersoon, false));
+
         onderzoekDeltaProces = new OnderzoekDeltaProces();
 
         context = new DeltaBepalingContext(nieuwPersoon, bestaandPersoon, null, false);
@@ -103,11 +122,11 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testToevoegenOnderzoekAanPersoon() throws ReflectiveOperationException {
-        controleerOngekoppeldOnderzoek(null);
+        assertTrue(bestaandPersoon.getOnderzoeken().isEmpty());
         final PersoonIndicatieHistorie indicatieHistorie = maakPersoonIndicatie(bestaandPersoon);
 
-        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon);
-        onderzoekMapper.mapOnderzoek(indicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon, maakPartij());
+        onderzoekMapper.mapOnderzoek(indicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         final Onderzoek onderzoek = onderzoekMapper.getOnderzoekSet().iterator().next();
 
         onderzoekDeltaProces.verwerkVerschillen(context);
@@ -118,21 +137,21 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testDeltaGeenOnderzoek() {
-        controleerOngekoppeldOnderzoek(null);
+        assertTrue(bestaandPersoon.getOnderzoeken().isEmpty());
 
         onderzoekDeltaProces.verwerkVerschillen(context);
         // Er waren geen onderzoeken dus persoon moet nog steeds geen onderzoeken bevatten
-        controleerOngekoppeldOnderzoek(null);
+        assertTrue(bestaandPersoon.getOnderzoeken().isEmpty());
     }
 
     @Test
     public void testDeltaOnderzoekToegevoegdNietBestaandVoorkomen() throws ReflectiveOperationException {
-        controleerOngekoppeldOnderzoek(null);
+        assertTrue(bestaandPersoon.getOnderzoeken().isEmpty());
 
         final PersoonIndicatieHistorie indicatieHistorie = maakPersoonIndicatie(bestaandPersoon);
 
-        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon);
-        onderzoekMapper.mapOnderzoek(indicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon, maakPartij());
+        onderzoekMapper.mapOnderzoek(indicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         final Set<Onderzoek> onderzoeken = onderzoekMapper.getOnderzoekSet();
         assertEquals(1, onderzoeken.size());
 
@@ -144,16 +163,16 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testDeltaOnderzoekToegevoegdBestaandVoorkomen() throws ReflectiveOperationException {
-        controleerOngekoppeldOnderzoek(null);
+        assertTrue(bestaandPersoon.getOnderzoeken().isEmpty());
 
         final PersoonIndicatieHistorie bestaandPersoonIndicatieHistorie = maakPersoonIndicatie(bestaandPersoon);
         final PersoonIndicatieHistorie nieuwPersoonIndicatieHistorie = maakPersoonIndicatie(nieuwPersoon);
 
         context.addDeltaEntiteitPaarSetInhoud(
-            Collections.singletonList(new DeltaEntiteitPaar(bestaandPersoonIndicatieHistorie, nieuwPersoonIndicatieHistorie)));
+                Collections.singletonList(new DeltaEntiteitPaar(bestaandPersoonIndicatieHistorie, nieuwPersoonIndicatieHistorie)));
 
-        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon);
-        onderzoekMapper.mapOnderzoek(nieuwPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon, maakPartij());
+        onderzoekMapper.mapOnderzoek(nieuwPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         final Set<Onderzoek> onderzoeken = onderzoekMapper.getOnderzoekSet();
         assertEquals(1, onderzoeken.size());
 
@@ -164,14 +183,14 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
         assertEquals(1, gekoppeldOnderzoek.getGegevenInOnderzoekSet().size());
 
         final GegevenInOnderzoek gegevenInOnderzoek = gekoppeldOnderzoek.getGegevenInOnderzoekSet().iterator().next();
-        final DeltaEntiteit entiteit = gegevenInOnderzoek.getObjectOfVoorkomen();
+        final Entiteit entiteit = gegevenInOnderzoek.getEntiteitOfVoorkomen();
         assertNotSame(nieuwPersoonIndicatieHistorie, entiteit);
         assertSame(bestaandPersoonIndicatieHistorie, entiteit);
     }
 
     @Test
     public void testDeltaOnderzoekToegevoegdBestaandVoorkomenALaag() throws ReflectiveOperationException {
-        controleerOngekoppeldOnderzoek(null);
+        assertTrue(bestaandPersoon.getOnderzoeken().isEmpty());
 
         final PersoonIndicatieHistorie bestaandPersoonIndicatieHistorie = maakPersoonIndicatie(bestaandPersoon);
         final PersoonIndicatieHistorie nieuwPersoonIndicatieHistorie = maakPersoonIndicatie(nieuwPersoon);
@@ -180,11 +199,10 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
 
         context.addDeltaEntiteitPaarSetInhoud(
                 Collections.singletonList(new DeltaEntiteitPaar(bestaandPersoonIndicatieHistorie, nieuwPersoonIndicatieHistorie)));
-        context.addDeltaEntiteitPaarSetInhoud(
-                Collections.singletonList(new DeltaEntiteitPaar(bestaandPersoonIndicatie, nieuwPersoonIndicatie)));
+        context.addDeltaEntiteitPaarSetInhoud(Collections.singletonList(new DeltaEntiteitPaar(bestaandPersoonIndicatie, nieuwPersoonIndicatie)));
 
-        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon);
-        onderzoekMapper.mapOnderzoek(nieuwPersoonIndicatie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon, maakPartij());
+        onderzoekMapper.mapOnderzoek(nieuwPersoonIndicatie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         final Set<Onderzoek> onderzoeken = onderzoekMapper.getOnderzoekSet();
         assertEquals(1, onderzoeken.size());
 
@@ -195,19 +213,19 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
         assertEquals(1, gekoppeldOnderzoek.getGegevenInOnderzoekSet().size());
 
         final GegevenInOnderzoek gegevenInOnderzoek = gekoppeldOnderzoek.getGegevenInOnderzoekSet().iterator().next();
-        final DeltaEntiteit entiteit = gegevenInOnderzoek.getObjectOfVoorkomen();
+        final Entiteit entiteit = gegevenInOnderzoek.getEntiteitOfVoorkomen();
         assertNotSame(nieuwPersoonIndicatie, entiteit);
         assertSame(bestaandPersoonIndicatie, entiteit);
     }
 
     @Test
     public void testDeltaOnderzoekVerwijderd() throws ReflectiveOperationException {
-        controleerOngekoppeldOnderzoek(null);
+        assertTrue(bestaandPersoon.getOnderzoeken().isEmpty());
 
         final PersoonIndicatieHistorie bestaandPersoonIndicatieHistorie = maakPersoonIndicatie(bestaandPersoon);
 
-        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(bestaandPersoon);
-        onderzoekMapper.mapOnderzoek(bestaandPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(bestaandPersoon, maakPartij());
+        onderzoekMapper.mapOnderzoek(bestaandPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         final Onderzoek bestaandOnderzoek = onderzoekMapper.getOnderzoekSet().iterator().next();
 
         controleerGekoppeldOnderzoek(onderzoekMapper.getOnderzoekSet().iterator().next());
@@ -222,37 +240,38 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testDeltaOnderzoekGewijzigd() throws ReflectiveOperationException {
-        controleerOngekoppeldOnderzoek(null);
+        assertTrue(bestaandPersoon.getOnderzoeken().isEmpty());
         final PersoonIndicatieHistorie bestaandPersoonIndicatieHistorie = maakPersoonIndicatie(bestaandPersoon);
         final PersoonIndicatieHistorie nieuwPersoonIndicatieHistorie = maakPersoonIndicatie(nieuwPersoon);
 
         context.addDeltaEntiteitPaarSetInhoud(
                 Collections.singletonList(new DeltaEntiteitPaar(bestaandPersoonIndicatieHistorie, nieuwPersoonIndicatieHistorie)));
 
-        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(bestaandPersoon);
-        onderzoekMapper.mapOnderzoek(bestaandPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(bestaandPersoon, maakPartij());
+        onderzoekMapper.mapOnderzoek(bestaandPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         final Onderzoek bestaandOnderzoek = onderzoekMapper.getOnderzoekSet().iterator().next();
         controleerGekoppeldOnderzoek(bestaandOnderzoek);
 
         final Integer onderzoekEinddatum = 20150102;
         final BrpBoolean trueWaardeGeslotenOnderzoek =
-                new BrpBoolean(
-                    true,
-                    new Lo3Onderzoek(
+                new BrpBoolean(true, new Lo3Onderzoek(
                         new Lo3Integer(LO3_ONDERZOEK, null),
                         new Lo3Datum(ONDERZOEK_START_DATUM),
                         new Lo3Datum(onderzoekEinddatum),
                         lo3Herkomst));
 
-        final OnderzoekMapper nieuwOnderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon);
-        nieuwOnderzoekMapper.mapOnderzoek(nieuwPersoonIndicatieHistorie, trueWaardeGeslotenOnderzoek, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper nieuwOnderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon, maakPartij());
+        nieuwOnderzoekMapper.mapOnderzoek(nieuwPersoonIndicatieHistorie, trueWaardeGeslotenOnderzoek, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         onderzoekDeltaProces.verwerkVerschillen(context);
 
         controleerGekoppeldOnderzoek(bestaandOnderzoek);
-        assertEquals(onderzoekEinddatum, bestaandOnderzoek.getDatumEinde());
-        assertEquals(StatusOnderzoek.AFGESLOTEN, bestaandOnderzoek.getStatusOnderzoek());
         assertEquals(2, bestaandOnderzoek.getOnderzoekHistorieSet().size());
-        assertEquals(2, bestaandOnderzoek.getOnderzoekAfgeleidAdministratiefHistorieSet().size());
+        final OnderzoekHistorie
+                onderzoekHistorie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandOnderzoek.getOnderzoekHistorieSet());
+        assertNotNull(onderzoekHistorie);
+        assertEquals(onderzoekEinddatum, onderzoekHistorie.getDatumEinde());
+        assertEquals(StatusOnderzoek.AFGESLOTEN, onderzoekHistorie.getStatusOnderzoek());
     }
 
     @Test
@@ -263,14 +282,14 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
         context.addDeltaEntiteitPaarSetInhoud(
                 Collections.singletonList(new DeltaEntiteitPaar(bestaandPersoonIndicatieHistorie, nieuwPersoonIndicatieHistorie)));
 
-        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(bestaandPersoon);
-        onderzoekMapper.mapOnderzoek(bestaandPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(bestaandPersoon, maakPartij());
+        onderzoekMapper.mapOnderzoek(bestaandPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         final Onderzoek bestaandOnderzoek = onderzoekMapper.getOnderzoekSet().iterator().next();
 
         controleerGekoppeldOnderzoek(bestaandOnderzoek);
 
-        final OnderzoekMapper nieuwOnderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon);
-        nieuwOnderzoekMapper.mapOnderzoek(nieuwPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper nieuwOnderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon, maakPartij());
+        nieuwOnderzoekMapper.mapOnderzoek(nieuwPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         onderzoekDeltaProces.verwerkVerschillen(context);
 
         controleerGekoppeldOnderzoek(bestaandOnderzoek);
@@ -282,14 +301,14 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
         final PersoonIndicatieHistorie nieuwPersoonIndicatieHistorie = maakPersoonIndicatie(nieuwPersoon);
         nieuwPersoonIndicatieHistorie.setDatumTijdVerval(timestamp);
 
-        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(bestaandPersoon);
-        onderzoekMapper.mapOnderzoek(bestaandPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(bestaandPersoon, maakPartij());
+        onderzoekMapper.mapOnderzoek(bestaandPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         final Onderzoek bestaandOnderzoek = onderzoekMapper.getOnderzoekSet().iterator().next();
 
         controleerGekoppeldOnderzoek(bestaandOnderzoek);
 
-        OnderzoekMapper nieuwOnderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon);
-        nieuwOnderzoekMapper.mapOnderzoek(nieuwPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE);
+        final OnderzoekMapper nieuwOnderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon, maakPartij());
+        nieuwOnderzoekMapper.mapOnderzoek(nieuwPersoonIndicatieHistorie, trueWaarde, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE);
         onderzoekDeltaProces.verwerkVerschillen(context);
 
         assertTrue(context.isBijhoudingOverig());
@@ -300,17 +319,18 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
         final PersoonIndicatieHistorie nieuwPersoonIndicatieHistorie = maakPersoonIndicatie(nieuwPersoon);
         nieuwPersoonIndicatieHistorie.setDatumTijdVerval(timestamp);
 
+        final Partij partij = maakPartij();
         final BRPActie brpActie = maakBrpActie(administratieveHandeling, timestamp);
         nieuwPersoonIndicatieHistorie.setActieInhoud(brpActie);
-        final Document document = new Document(new SoortDocument("test", "test"));
+        final Document document = new Document(new SoortDocument("test", "test"), partij);
         final ActieBron actieBron = new ActieBron(brpActie);
         actieBron.setDocument(document);
         document.addActieBron(actieBron);
         brpActie.addActieBron(actieBron);
 
-        final BrpPartijCode partijCode = new BrpPartijCode(1, lo3Onderzoek);
+        final BrpPartijCode partijCode = new BrpPartijCode("000001", lo3Onderzoek);
 
-        OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon);
+        final OnderzoekMapper onderzoekMapper = new OnderzoekMapperImpl(nieuwPersoon, partij);
         onderzoekMapper.mapOnderzoek(document, partijCode, Element.DOCUMENT_PARTIJCODE);
         final Onderzoek nieuwOnderzoek = (Onderzoek) onderzoekMapper.getOnderzoekSet().toArray()[0];
         onderzoekDeltaProces.verwerkVerschillen(context);
@@ -328,10 +348,10 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
 
     private PersoonIndicatieHistorie maakPersoonIndicatie(final Persoon persoon) throws ReflectiveOperationException {
         final PersoonIndicatie indicatie = new PersoonIndicatie(persoon, SoortIndicatie.ONDER_CURATELE);
-        indicatie.setId(1);
+        indicatie.setId((long) 1);
 
         final PersoonIndicatieHistorie historie = new PersoonIndicatieHistorie(indicatie, trueWaarde.getWaarde());
-        historie.setId(1);
+        historie.setId((long) 1);
         historie.setDatumTijdRegistratie(timestamp);
 
         indicatie.addPersoonIndicatieHistorie(historie);
@@ -341,44 +361,43 @@ public class OnderzoekDeltaProcesTest extends AbstractDeltaTest {
 
     private void controleerGekoppeldOnderzoek(final Onderzoek onderzoek) {
         if (onderzoek == null) {
-            assertEquals(0, bestaandPersoon.getPersoonOnderzoekSet().size());
+            assertEquals(0, bestaandPersoon.getOnderzoeken().size());
         } else {
-            assertEquals(1, bestaandPersoon.getPersoonOnderzoekSet().size());
-            final Onderzoek gekoppeldOnderzoek = bestaandPersoon.getPersoonOnderzoekSet().iterator().next().getOnderzoek();
+            assertEquals(1, bestaandPersoon.getOnderzoeken().size());
+            final Onderzoek gekoppeldOnderzoek = bestaandPersoon.getOnderzoeken().iterator().next();
             assertEquals(onderzoek, gekoppeldOnderzoek);
 
-            assertEquals(1, onderzoek.getPersoonOnderzoekSet().size());
-            final Persoon gekoppeldePersoon = onderzoek.getPersoonOnderzoekSet().iterator().next().getPersoon();
+            assertTrue(onderzoek.getOnderzoekHistorieSet().size() > 0);
+            final Persoon gekoppeldePersoon = onderzoek.getPersoon();
             assertEquals(bestaandPersoon, gekoppeldePersoon);
 
-            assertEquals(1, onderzoek.getPartijOnderzoekSet().size());
-            final Partij gekoppeldePartij = onderzoek.getPartijOnderzoekSet().iterator().next().getPartij();
-            assertEquals(partij, gekoppeldePartij);
+            assertNotNull(onderzoek.getPartij());
+            final Partij gekoppeldePartij = onderzoek.getPartij();
+            assertEquals(partij.getCode(), gekoppeldePartij.getCode());
         }
     }
 
     private void controleerOnderzoek(final Onderzoek onderzoek) {
-        assertEquals(1, onderzoek.getOnderzoekAfgeleidAdministratiefHistorieSet().size());
 
         assertEquals(1, onderzoek.getOnderzoekHistorieSet().size());
         final OnderzoekHistorie onderzoekHistorie = onderzoek.getOnderzoekHistorieSet().iterator().next();
-        assertEquals(onderzoek.getOmschrijving(), onderzoekHistorie.getOmschrijving());
-        assertEquals(onderzoek.getDatumAanvang(), onderzoekHistorie.getDatumAanvang());
-        assertEquals(onderzoek.getDatumEinde(), onderzoekHistorie.getDatumEinde());
-        assertEquals(onderzoek.getVerwachteAfhandelDatum(), onderzoekHistorie.getVerwachteAfhandelDatum());
-        assertEquals(onderzoek.getStatusOnderzoek(), onderzoekHistorie.getStatusOnderzoek());
+        assertNull(onderzoek.getOmschrijving());
+        assertNull(onderzoek.getDatumAanvang());
+        assertNull(onderzoek.getDatumEinde());
+        assertNull(onderzoek.getStatusOnderzoek());
+
+        assertNotNull(onderzoekHistorie.getOmschrijving());
+        assertNotNull(onderzoekHistorie.getDatumAanvang());
+        assertNotNull(onderzoekHistorie.getStatusOnderzoek());
         assertNotNull(onderzoekHistorie.getActieInhoud());
+        assertNull(onderzoekHistorie.getDatumEinde());
+
         assertNull(onderzoekHistorie.getIndicatieVoorkomenTbvLeveringMutaties());
         assertNull(onderzoekHistorie.getActieVervalTbvLeveringMutaties());
     }
 
-    private void controleerOngekoppeldOnderzoek(final Onderzoek onderzoek) {
-        assertTrue(bestaandPersoon.getPersoonOnderzoekSet().isEmpty());
-        if (onderzoek != null) {
-            assertTrue(onderzoek.getPersoonOnderzoekSet().isEmpty());
-            assertTrue(onderzoek.getOnderzoekAfgeleidAdministratiefHistorieSet().isEmpty());
-            assertTrue(onderzoek.getOnderzoekHistorieSet().isEmpty());
-            assertTrue(onderzoek.getPartijOnderzoekSet().isEmpty());
-        }
+    public Partij maakPartij() {
+        return new Partij("Gemeente 's-Gravenhage", "051801");
     }
+
 }

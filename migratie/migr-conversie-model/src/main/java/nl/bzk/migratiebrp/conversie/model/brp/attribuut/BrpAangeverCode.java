@@ -6,23 +6,20 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een BRP Aangever code.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpAangeverCode extends AbstractBrpAttribuutMetOnderzoek {
     private static final long serialVersionUID = 1L;
 
     /**
      * Maakt een BrpAangeverCode object.
-     * 
-     * @param waarde
-     *            de waarde
+     * @param waarde de waarde
      */
     public BrpAangeverCode(final Character waarde) {
         this(waarde, null);
@@ -30,22 +27,18 @@ public final class BrpAangeverCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpAangeverCode object met onderzoek.
-     * 
-     * @param waarde
-     *            de waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde de waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpAangeverCode(
-        @Element(name = "waarde", required = false) final Character waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final Character waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -56,7 +49,6 @@ public final class BrpAangeverCode extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Geeft een kopie van het attribuut terug zonder onderzoek.
-     * 
      * @return Geeft een kopie van het attribuut terug zonder onderzoek
      */
     public BrpAangeverCode verwijderOnderzoek() {

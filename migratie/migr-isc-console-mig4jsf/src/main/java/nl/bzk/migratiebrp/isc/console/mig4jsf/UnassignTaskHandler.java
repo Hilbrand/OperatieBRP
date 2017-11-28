@@ -19,15 +19,13 @@ import org.jbpm.taskmgmt.exe.TaskInstance;
  * Handler voor het unassignen van een taak.
  */
 @TldTag(name = "unassignTask", description = "Unassign a task.", attributes = {@TldAttribute(name = "task",
-        description = "The task instance to unassign.", required = true, deferredType = TaskInstance.class) })
+        description = "The task instance to unassign.", required = true, deferredType = TaskInstance.class)})
 public final class UnassignTaskHandler extends AbstractHandler {
     private final TagAttribute taskTagAttribute;
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public UnassignTaskHandler(final TagConfig config) {
         super(config);

@@ -13,83 +13,86 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNationaliteitCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenVerkrijgingNederlandschapCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenVerliesNederlandschapCode;
-
 import org.junit.Test;
 
 /**
  * Test het contract van BrpNationaliteitInhoud.
- * 
  */
 public class BrpNationaliteitInhoudTest {
 
-    private static final String STRING_1234 = "1234";
+    private static final String CODE_1234 = "1234";
+    private static final String CODE_123 = "123";
 
     private final BrpNationaliteitInhoud inhoud1 =
             new BrpNationaliteitInhoud(
-                new BrpNationaliteitCode(Short.parseShort(STRING_1234)),
-                new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort(STRING_1234)),
-                new BrpRedenVerliesNederlandschapCode(Short.parseShort(STRING_1234)),
-                null,
-                null,
-                null,
-                null);
+                    new BrpNationaliteitCode(CODE_1234),
+                    new BrpRedenVerkrijgingNederlandschapCode(CODE_123),
+                    new BrpRedenVerliesNederlandschapCode(CODE_123),
+                    null,
+                    null,
+                    null,
+                    null);
     private final BrpNationaliteitInhoud inhoud2 =
             new BrpNationaliteitInhoud(
-                new BrpNationaliteitCode(Short.parseShort(STRING_1234)),
-                new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort(STRING_1234)),
-                new BrpRedenVerliesNederlandschapCode(Short.parseShort(STRING_1234)),
-                null,
-                null,
-                null,
-                null);
+                    new BrpNationaliteitCode(CODE_1234),
+                    new BrpRedenVerkrijgingNederlandschapCode(CODE_123),
+                    new BrpRedenVerliesNederlandschapCode(CODE_123),
+                    null,
+                    null,
+                    null,
+                    null);
     private final BrpNationaliteitInhoud inhoud3 =
             new BrpNationaliteitInhoud(
-                new BrpNationaliteitCode(Short.parseShort(STRING_1234)),
-                new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort("8888")),
-                new BrpRedenVerliesNederlandschapCode(Short.parseShort(STRING_1234)),
-                null,
-                null,
-                null,
-                null);
+                    new BrpNationaliteitCode(CODE_1234),
+                    new BrpRedenVerkrijgingNederlandschapCode("888"),
+                    new BrpRedenVerliesNederlandschapCode(CODE_123),
+                    null,
+                    null,
+                    null,
+                    null);
     private final BrpNationaliteitInhoud inhoud4 =
-            new BrpNationaliteitInhoud(null, null, new BrpRedenVerliesNederlandschapCode(Short.parseShort(STRING_1234)), null, null, null, null);
+            new BrpNationaliteitInhoud(null, null, new BrpRedenVerliesNederlandschapCode(CODE_123), null, null, null, null);
     private final BrpNationaliteitInhoud inhoud5 = new BrpNationaliteitInhoud(null, null, null, null, null, null, null);
     private final BrpNationaliteitInhoud inhoud6 =
             new BrpNationaliteitInhoud(
-                new BrpNationaliteitCode(Short.parseShort(STRING_1234)),
-                new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort(STRING_1234)),
-                null,
-                null,
-                null,
-                null,
-                null);
+                    new BrpNationaliteitCode(CODE_1234),
+                    new BrpRedenVerkrijgingNederlandschapCode(CODE_123),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
     private final BrpNationaliteitInhoud inhoud7 =
             new BrpNationaliteitInhoud(
-                new BrpNationaliteitCode(Short.parseShort(STRING_1234)),
-                new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort("1235")),
-                null,
+                    new BrpNationaliteitCode(CODE_1234),
+                    new BrpRedenVerkrijgingNederlandschapCode("123"),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+
+    public static BrpNationaliteitInhoud createInhoud() {
+        return createInhoud(CODE_1234);
+    }
+
+    public static BrpNationaliteitInhoud createInhoud(String nationaliteitCode) {
+        return new BrpNationaliteitInhoud(
+                new BrpNationaliteitCode(nationaliteitCode),
+                new BrpRedenVerkrijgingNederlandschapCode(CODE_123),
+                new BrpRedenVerliesNederlandschapCode(CODE_123),
                 null,
                 null,
                 null,
                 null);
-
-    public static BrpNationaliteitInhoud createInhoud() {
-        return new BrpNationaliteitInhoud(
-            new BrpNationaliteitCode(Short.parseShort(STRING_1234)),
-            new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort(STRING_1234)),
-            new BrpRedenVerliesNederlandschapCode(Short.parseShort(STRING_1234)),
-            null,
-            null,
-            null,
-            null);
     }
+
 
     public static BrpStapel<BrpNationaliteitInhoud> createStapel(boolean metActueel) {
         List<BrpGroep<BrpNationaliteitInhoud>> groepen = new ArrayList<>();
@@ -103,7 +106,6 @@ public class BrpNationaliteitInhoudTest {
 
     /**
      * maak lijst met actuele inhoud
-     * 
      * @return ArrayList
      */
     public static List<BrpStapel<BrpNationaliteitInhoud>> createList(boolean metActueleInhoud) {

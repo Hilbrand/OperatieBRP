@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="uc812" width="1569" height="1225">
+<root-container name="uc812" width="1394" height="1225">
   <node name="Start (ontvang bulk bestand)" x="384" y="24" width="217" height="37">
     <edge>
       <label x="5" y="-10"/>

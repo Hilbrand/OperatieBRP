@@ -7,8 +7,7 @@
 package nl.bzk.migratiebrp.conversie.model.tussen.autorisatie;
 
 import java.util.Collections;
-
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpEffectAfnemerindicatiesCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpSoortDienstCode;
@@ -18,7 +17,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.testutils.EqualsAndHashcodeTester;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
-
 import org.junit.Test;
 
 public class TussenDienstTest {
@@ -36,11 +34,11 @@ public class TussenDienstTest {
 
     public static TussenDienst maak(final int datumIngang) {
         return new TussenDienst(
-            BrpEffectAfnemerindicatiesCode.PLAATSEN,
-            BrpSoortDienstCode.MUTATIELEVERING_OP_BASIS_VAN_AFNEMERSINDICATIE,
-            maakStapel(datumIngang),
-            null,
-            null);
+                BrpEffectAfnemerindicatiesCode.PLAATSEN,
+                BrpSoortDienstCode.MUTATIELEVERING_OP_BASIS_VAN_AFNEMERSINDICATIE,
+                maakStapel(datumIngang),
+                null,
+                null);
     }
 
     private static TussenStapel<BrpDienstInhoud> maakStapel(final int datumIngang) {

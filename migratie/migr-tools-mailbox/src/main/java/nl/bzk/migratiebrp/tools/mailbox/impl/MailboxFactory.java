@@ -13,25 +13,20 @@ public interface MailboxFactory {
 
     /**
      * Retrieve the mailbox for the given mailboxnr.
-     * 
-     * @param mailboxnr
-     *            mailboxnr
+     * @param mailboxnr mailboxnr
      * @return mailbox
      */
     Mailbox getMailbox(String mailboxnr);
 
     /**
      * Get the next ms sequence nr.
-     * 
      * @return MsSequenceNumber
      */
     int getNextMsSequenceNr();
 
     /**
      * Clean up all the mailboxes.
-     * 
-     * @throws MailboxException
-     *             bij fouten
+     * @throws MailboxException bij fouten
      */
     void deleteAll() throws MailboxException;
 

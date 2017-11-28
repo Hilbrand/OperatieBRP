@@ -21,18 +21,16 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
         name = "startTaak",
         description = "Mark a task as started.",
         attributes = {@TldAttribute(name = "task", description = "The task to mark as started.", required = true, deferredType = Long.class),
-                      @TldAttribute(name = "actorId",
-                              description = "The actor to assign the task to.  If not given, the current actor is not changed.",
-                              deferredType = String.class) })
+                @TldAttribute(name = "actorId",
+                        description = "The actor to assign the task to.  If not given, the current actor is not changed.",
+                        deferredType = String.class)})
 public final class StartTaakHandler extends AbstractHandler {
     private final TagAttribute instanceTagAttribute;
     private final TagAttribute actorIdTagAttribute;
 
     /**
      * Constructor waarbij de tag configuratie meegegeven kan worden.
-     * 
-     * @param config
-     *            Tag configuratie waarin o.a. migratie tags staan.
+     * @param config Tag configuratie waarin o.a. migratie tags staan.
      */
     public StartTaakHandler(final TagConfig config) {
         super(config);
@@ -43,8 +41,8 @@ public final class StartTaakHandler extends AbstractHandler {
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new StartTaakActionListener(getValueExpression(instanceTagAttribute, ctx, Long.class), getValueExpression(
-            actorIdTagAttribute,
-            ctx,
-            String.class));
+                actorIdTagAttribute,
+                ctx,
+                String.class));
     }
 }

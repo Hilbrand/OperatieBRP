@@ -6,7 +6,6 @@
 
 package nl.bzk.migratiebrp.isc.console.mig4jsf.jmx;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import javax.el.ELContext;
@@ -15,7 +14,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
-import javax.management.JMException;
 
 /**
  * Haal een waarde op via jmx.
@@ -29,19 +27,14 @@ public final class BepaalEsbNaamActionListener implements ActionListener, Serial
 
     /**
      * Constructor.
-     *
-     * @param targetExpression
-     *            expression voor target
-     * @param serverExpression
-     *            expression voor jmx server
-     * @param prefixExpression
-     *            expression voor deployment name prefix
+     * @param targetExpression expression voor target
+     * @param serverExpression expression voor jmx server
+     * @param prefixExpression expression voor deployment name prefix
      */
-    public BepaalEsbNaamActionListener(
-        final ValueExpression targetExpression,
-        final ValueExpression serverExpression,
-        final ValueExpression prefixExpression)
-    {
+    BepaalEsbNaamActionListener(
+            final ValueExpression targetExpression,
+            final ValueExpression serverExpression,
+            final ValueExpression prefixExpression) {
         this.targetExpression = targetExpression;
         this.serverExpression = serverExpression;
         this.prefixExpression = prefixExpression;
@@ -60,10 +53,7 @@ public final class BepaalEsbNaamActionListener implements ActionListener, Serial
             final String result = deployments.isEmpty() ? "Geen ESB deployment gevonden met prefix '" + prefix + "'." : deployments.get(0);
 
             targetExpression.setValue(elContext, result);
-        } catch (final
-            IOException
-            | JMException e)
-        {
+        } catch (final JmxServerException e) {
             throw new AbortProcessingException("JMX Attribute kan niet worden opgehaald.", e);
         }
     }

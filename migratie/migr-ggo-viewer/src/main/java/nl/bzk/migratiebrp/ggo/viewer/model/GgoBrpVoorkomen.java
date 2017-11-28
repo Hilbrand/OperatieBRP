@@ -33,7 +33,6 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
 
     /**
      * Geef de waarde van brp stapel nr.
-     *
      * @return the brpStapelNr
      */
     public final int getBrpStapelNr() {
@@ -42,9 +41,7 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
 
     /**
      * Zet de waarde van brp stapel nr.
-     *
-     * @param brpStapelNr
-     *            the brpStapelNr to set
+     * @param brpStapelNr the brpStapelNr to set
      */
     public final void setBrpStapelNr(final int brpStapelNr) {
         this.brpStapelNr = brpStapelNr;
@@ -52,7 +49,6 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
 
     /**
      * Geef de waarde van actie inhoud.
-     *
      * @return the actieInhoud
      */
     public final GgoBrpActie getActieInhoud() {
@@ -61,9 +57,7 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
 
     /**
      * Zet de waarde van actie inhoud.
-     *
-     * @param actieInhoud
-     *            the actieInhoud to set
+     * @param actieInhoud the actieInhoud to set
      */
     public final void setActieInhoud(final GgoBrpActie actieInhoud) {
         this.actieInhoud = actieInhoud;
@@ -71,7 +65,6 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
 
     /**
      * Geef de waarde van actie verval.
-     *
      * @return the actieVerval
      */
     public final GgoBrpActie getActieVerval() {
@@ -80,9 +73,7 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
 
     /**
      * Zet de waarde van actie verval.
-     *
-     * @param actieVerval
-     *            the actieVerval to set
+     * @param actieVerval the actieVerval to set
      */
     public final void setActieVerval(final GgoBrpActie actieVerval) {
         this.actieVerval = actieVerval;
@@ -90,7 +81,6 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
 
     /**
      * Geef de waarde van actie geldigheid.
-     *
      * @return the actieGeldigheid
      */
     public final GgoBrpActie getActieGeldigheid() {
@@ -99,9 +89,7 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
 
     /**
      * Zet de waarde van actie geldigheid.
-     *
-     * @param actieGeldigheid
-     *            the actieGeldigheid to set
+     * @param actieGeldigheid the actieGeldigheid to set
      */
     public final void setActieGeldigheid(final GgoBrpActie actieGeldigheid) {
         this.actieGeldigheid = actieGeldigheid;
@@ -109,7 +97,6 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
 
     /**
      * Geef de waarde van onderzoeken.
-     *
      * @return the onderzoeken
      */
     public final Set<GgoBrpOnderzoek> getOnderzoeken() {
@@ -117,8 +104,7 @@ public class GgoBrpVoorkomen extends GgoVoorkomen {
     }
 
     /**
-     * @param onderzoek
-     *            Het toe te voegen onderzoek
+     * @param onderzoek Het toe te voegen onderzoek
      */
     public final void addOnderzoek(final GgoBrpOnderzoek onderzoek) {
         onderzoeken.add(onderzoek);

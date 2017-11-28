@@ -1,3 +1,4 @@
-"admhnd","naam","objectsleutelgegeven","lo3categorie","lo3stapelvolgnr","lo3voorkomenvolgnr","indvoorkomentbvlevmuts"
-"2","Persoon.Nationaliteit.NationaliteitCode","1","null","null","null","null"
-"2","Persoon.Nationaliteit.RedenVerkrijgingCode","null","54","1","1","null"
+"naam","lo3categorie","lo3stapelvolgnr","lo3voorkomenvolgnr","indvoorkomentbvlevmuts"
+"Persoon.Nationaliteit.NationaliteitCode","null","null","null","null"
+"Persoon.Nationaliteit.RedenVerkrijgingCode","54","1","1","null"
+"Persoon.Nationaliteit.Standaard","04","0","0","null"

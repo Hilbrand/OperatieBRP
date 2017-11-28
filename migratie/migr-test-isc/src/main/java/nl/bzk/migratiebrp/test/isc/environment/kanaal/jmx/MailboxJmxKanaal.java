@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jmx;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.management.MBeanServerConnection;
+
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
 /**
@@ -32,7 +33,9 @@ public final class MailboxJmxKanaal extends LazyLoadingKanaal {
         @Named("mailboxJmxConnector")
         private MBeanServerConnection connection;
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.Kanaal#getKanaal()
          */
         @Override
@@ -40,7 +43,9 @@ public final class MailboxJmxKanaal extends LazyLoadingKanaal {
             return "jmx_mailbox";
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see nl.bzk.migratiebrp.test.isc.environment.kanaal.jmx.AbstractJmxKanaal#getConnection()
          */
         @Override

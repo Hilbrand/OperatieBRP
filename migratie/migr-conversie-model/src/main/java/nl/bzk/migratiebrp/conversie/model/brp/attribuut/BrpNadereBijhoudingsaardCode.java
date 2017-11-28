@@ -6,49 +6,62 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze enum representeert een BRP Reden nadere bijhoudingsaard. Dit is een statische stamtabel en daarom een enum en
  * geen class.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpNadereBijhoudingsaardCode extends AbstractBrpAttribuutMetOnderzoek {
 
-    /** Actueel. */
+    /**
+     * Actueel.
+     */
     public static final BrpNadereBijhoudingsaardCode ACTUEEL = new BrpNadereBijhoudingsaardCode("A");
 
-    /** Rechtstreeks niet ingezetene. */
+    /**
+     * Rechtstreeks niet ingezetene.
+     */
     public static final BrpNadereBijhoudingsaardCode RECHTSTREEKS_NIET_INGEZETENE = new BrpNadereBijhoudingsaardCode("R");
 
-    /** Emigratie. */
+    /**
+     * Emigratie.
+     */
     public static final BrpNadereBijhoudingsaardCode EMIGRATIE = new BrpNadereBijhoudingsaardCode("E");
 
-    /** Overleden. */
+    /**
+     * Overleden.
+     */
     public static final BrpNadereBijhoudingsaardCode OVERLEDEN = new BrpNadereBijhoudingsaardCode("O");
 
-    /** Vertrokken onbekend waarheen. */
+    /**
+     * Vertrokken onbekend waarheen.
+     */
     public static final BrpNadereBijhoudingsaardCode VERTROKKEN_ONBEKEND_WAARHEEN = new BrpNadereBijhoudingsaardCode("V");
 
-    /** Ministerieel besluit. */
-    public static final BrpNadereBijhoudingsaardCode MINISTERIEEL_BESLUIT = new BrpNadereBijhoudingsaardCode("M");
+    /**
+     * Bijzondere status.
+     */
+    public static final BrpNadereBijhoudingsaardCode BIJZONDERE_STATUS = new BrpNadereBijhoudingsaardCode("M");
 
-    /** Fout. */
+    /**
+     * Fout.
+     */
     public static final BrpNadereBijhoudingsaardCode FOUT = new BrpNadereBijhoudingsaardCode("F");
 
-    /** Onbekend. */
+    /**
+     * Onbekend.
+     */
     public static final BrpNadereBijhoudingsaardCode ONBEKEND = new BrpNadereBijhoudingsaardCode("?");
 
     private static final long serialVersionUID = 1L;
 
     /**
      * Maakt een BrpNadereBijhoudingsaardCode.
-     * 
-     * @param waarde
-     *            BRP code
+     * @param waarde BRP code
      */
     public BrpNadereBijhoudingsaardCode(final String waarde) {
         this(waarde, null);
@@ -56,22 +69,18 @@ public final class BrpNadereBijhoudingsaardCode extends AbstractBrpAttribuutMetO
 
     /**
      * Maakt een BrpNadereBijhoudingsaardCode object met onderzoek.
-     * 
-     * @param waarde
-     *            de waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde de waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpNadereBijhoudingsaardCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override

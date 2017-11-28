@@ -6,13 +6,13 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
-import java.util.List;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
+
+import java.util.List;
 
 /**
  * Tranformatie voor gevallen die resulteren in een verwijderde rij.
@@ -27,12 +27,11 @@ public final class TransformatieDw001 extends AbstractTransformatie {
 
     @Override
     public VerschilGroep execute(
-        final VerschilGroep verschilGroep,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final DeltaBepalingContext deltaBepalingContext)
-    {
+            final VerschilGroep verschilGroep,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final DeltaBepalingContext deltaBepalingContext) {
         final Verschil verschil = verschilGroep.get(0);
-        final List<Verschil> mRijVerschillen = transformeerVerwijderdeRijNaarMRijVerschillen(verschil, actieVervalTbvLeveringMuts, deltaBepalingContext);
+        final List<Verschil> mRijVerschillen = transformeerVerwijderdeRijNaarMRijVerschillen(verschil, actieVervalTbvLeveringMuts);
 
         final VerschilGroep kopieVerschilGroep = VerschilGroep.maakKopieZonderVerschillen(verschilGroep);
         kopieVerschilGroep.addVerschillen(mRijVerschillen);

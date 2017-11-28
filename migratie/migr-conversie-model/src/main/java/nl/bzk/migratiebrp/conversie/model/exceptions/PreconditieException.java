@@ -9,15 +9,15 @@ package nl.bzk.migratiebrp.conversie.model.exceptions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
+import nl.bzk.algemeenbrp.util.xml.annotation.Root;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
 
 /**
- * Exception class voor Preconditie fouten van BRP -> LO3.
+ * Exception class voor Preconditie fouten van BRP -&lt; LO3.
  */
 @Root
 public final class PreconditieException extends RuntimeException {
@@ -33,15 +33,12 @@ public final class PreconditieException extends RuntimeException {
 
     /**
      * Constructor voor SimpleXML.
-     * 
-     * @param preconditieNaam
-     *            de naam van de getriggerde preconditie
-     * @param groepen
-     *            de groepen die de preconditie triggerde
+     * @param preconditieNaam de naam van de getriggerde preconditie
+     * @param groepen de groepen die de preconditie triggerde
      */
-    public PreconditieException(@Element(name = "naam") final String preconditieNaam, @ElementList(name = "groepen", entry = "groep", type = String.class,
-            required = false) final List<String> groepen)
-    {
+    public PreconditieException(
+            @Element(name = "naam") final String preconditieNaam,
+            @ElementList(name = "groepen", entry = "groep", type = String.class, required = false) final List<String> groepen) {
         this.preconditieNaam = preconditieNaam;
         this.groepen.clear();
         this.groepen.addAll(groepen);
@@ -49,11 +46,8 @@ public final class PreconditieException extends RuntimeException {
 
     /**
      * Constructor.
-     * 
-     * @param preconditie
-     *            de preconditie die getriggered is
-     * @param groepNamen
-     *            de BRP groep(en) die er voor zorgde dat de preconditie triggerde
+     * @param preconditie de preconditie die getriggered is
+     * @param groepNamen de BRP groep(en) die er voor zorgde dat de preconditie triggerde
      */
     public PreconditieException(final SoortMeldingCode preconditie, final String[] groepNamen) {
         this(preconditie);
@@ -62,11 +56,8 @@ public final class PreconditieException extends RuntimeException {
 
     /**
      * Constructor.
-     * 
-     * @param soortMeldingCode
-     *            de soortMeldingCode die getriggered is
-     * @param groepNaam
-     *            de BRP groep naam die er voor zorgde dat de soortMeldingCode triggerde
+     * @param soortMeldingCode de soortMeldingCode die getriggered is
+     * @param groepNaam de BRP groep naam die er voor zorgde dat de soortMeldingCode triggerde
      */
     public PreconditieException(final SoortMeldingCode soortMeldingCode, final String groepNaam) {
         this(soortMeldingCode);
@@ -75,7 +66,6 @@ public final class PreconditieException extends RuntimeException {
 
     /**
      * Geef de waarde van preconditie naam.
-     *
      * @return preconditie naam
      */
     @Element(name = "naam")
@@ -85,7 +75,6 @@ public final class PreconditieException extends RuntimeException {
 
     /**
      * Geef de waarde van groepen.
-     *
      * @return groepen
      */
     @ElementList(name = "groepen", entry = "groep", type = String.class, required = false)

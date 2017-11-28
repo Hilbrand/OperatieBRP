@@ -24,7 +24,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     @Id
     @SequenceGenerator(name = "mig_leveringsvergelijking_resultaat_kop_id_generator",
-    sequenceName = "public.mig_leveringsvergelijking_resultaat_kop_id_seq", allocationSize = 1)
+            sequenceName = "public.mig_leveringsvergelijking_resultaat_kop_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mig_leveringsvergelijking_resultaat_kop_id_generator")
     @Column(nullable = false)
     private Integer id;
@@ -55,7 +55,6 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public Integer getId() {
@@ -64,9 +63,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public void setId(final Integer id) {
         this.id = id;
@@ -74,7 +71,6 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Geef de waarde van bijhouding bericht eref.
-     *
      * @return bijhouding bericht eref
      */
     public Long getBijhoudingBerichtEref() {
@@ -83,9 +79,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Zet de waarde van bijhouding bericht eref.
-     *
-     * @param bijhoudingBerichtEref
-     *            bijhouding bericht eref
+     * @param bijhoudingBerichtEref bijhouding bericht eref
      */
     public void setBijhoudingBerichtEref(final Long bijhoudingBerichtEref) {
         this.bijhoudingBerichtEref = bijhoudingBerichtEref;
@@ -93,7 +87,6 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Geef de waarde van bijhouding bericht id gbav.
-     *
      * @return bijhouding bericht id gbav
      */
     public Long getBijhoudingBerichtIdGbav() {
@@ -102,9 +95,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Zet de waarde van bijhouding bericht id gbav.
-     *
-     * @param bijhoudingBerichtIdGbav
-     *            bijhouding bericht id gbav
+     * @param bijhoudingBerichtIdGbav bijhouding bericht id gbav
      */
     public void setBijhoudingBerichtIdGbav(final Long bijhoudingBerichtIdGbav) {
         this.bijhoudingBerichtIdGbav = bijhoudingBerichtIdGbav;
@@ -112,7 +103,6 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Geef de waarde van bijhouding bericht id brp.
-     *
      * @return bijhouding bericht id brp
      */
     public Long getBijhoudingBerichtIdBrp() {
@@ -121,9 +111,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Zet de waarde van bijhouding bericht id brp.
-     *
-     * @param bijhoudingBerichtIdBrp
-     *            bijhouding bericht id brp
+     * @param bijhoudingBerichtIdBrp bijhouding bericht id brp
      */
     public void setBijhoudingBerichtIdBrp(final Long bijhoudingBerichtIdBrp) {
         this.bijhoudingBerichtIdBrp = bijhoudingBerichtIdBrp;
@@ -131,7 +119,6 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Geef de waarde van afnemer code.
-     *
      * @return afnemer code
      */
     public String getAfnemerCode() {
@@ -140,9 +127,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Zet de waarde van afnemer code.
-     *
-     * @param afnemerCode
-     *            afnemer code
+     * @param afnemerCode afnemer code
      */
     public void setAfnemerCode(final String afnemerCode) {
         this.afnemerCode = afnemerCode;
@@ -150,7 +135,6 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Geef de waarde van levering bericht id gbav.
-     *
      * @return levering bericht id gbav
      */
     public Long getLeveringBerichtIdGbav() {
@@ -159,9 +143,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Zet de waarde van levering bericht id gbav.
-     *
-     * @param leveringBerichtIdGbav
-     *            levering bericht id gbav
+     * @param leveringBerichtIdGbav levering bericht id gbav
      */
     public void setLeveringBerichtIdGbav(final Long leveringBerichtIdGbav) {
         this.leveringBerichtIdGbav = leveringBerichtIdGbav;
@@ -169,7 +151,6 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Geef de waarde van levering bericht id brp.
-     *
      * @return levering bericht id brp
      */
     public Long getLeveringBerichtIdBrp() {
@@ -178,9 +159,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Zet de waarde van levering bericht id brp.
-     *
-     * @param leveringBerichtIdBrp
-     *            levering bericht id brp
+     * @param leveringBerichtIdBrp levering bericht id brp
      */
     public void setLeveringBerichtIdBrp(final Long leveringBerichtIdBrp) {
         this.leveringBerichtIdBrp = leveringBerichtIdBrp;
@@ -188,7 +167,6 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Geef de waarde van afwijkingen.
-     *
      * @return afwijkingen
      */
     public String getAfwijkingen() {
@@ -197,9 +175,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Zet de waarde van afwijkingen.
-     *
-     * @param afwijkingen
-     *            afwijkingen
+     * @param afwijkingen afwijkingen
      */
     public void setAfwijkingen(final String afwijkingen) {
         this.afwijkingen = afwijkingen;
@@ -207,7 +183,6 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Geef de waarde van bericht nummer.
-     *
      * @return bericht nummer
      */
     public String getBerichtNummer() {
@@ -216,9 +191,7 @@ public class LeveringsVergelijkingResultaatKop {
 
     /**
      * Zet de waarde van bericht nummer.
-     *
-     * @param berichtNummer
-     *            bericht nummer
+     * @param berichtNummer bericht nummer
      */
     public void setBerichtNummer(final String berichtNummer) {
         this.berichtNummer = berichtNummer;

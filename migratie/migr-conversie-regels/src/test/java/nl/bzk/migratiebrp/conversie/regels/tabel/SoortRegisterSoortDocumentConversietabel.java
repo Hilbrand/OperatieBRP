@@ -14,6 +14,7 @@ import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 public class SoortRegisterSoortDocumentConversietabel implements Conversietabel<Character, BrpSoortDocumentCode> {
 
     private static final Set<Character> ONJUISTE_WAARDES = new HashSet<>();
+
     static {
         ONJUISTE_WAARDES.add('4');
         ONJUISTE_WAARDES.add('6');

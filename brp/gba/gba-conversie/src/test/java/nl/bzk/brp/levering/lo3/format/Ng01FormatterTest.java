@@ -8,10 +8,10 @@ package nl.bzk.brp.levering.lo3.format;
 
 import java.util.Arrays;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.brp.levering.lo3.filter.Ng01BerichtFilter;
 import nl.bzk.brp.levering.lo3.filter.VulBerichtFilter;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3PersoonslijstFormatter;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -19,16 +19,15 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3PersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3InschrijvingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3.Lo3StapelHelper;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Test voor {@link Ng01Formatter}.
@@ -41,23 +40,23 @@ public class Ng01FormatterTest {
     private static final String GEBOORTE_GEMEENTE_CODE = "0518";
 
     private final VulBerichtFilter filter = new VulBerichtFilter();
-    private final Ng01BerichtFilter ng01filter = new Ng01BerichtFilter();
+    private final Ng01BerichtFilter ng01filter = new Ng01BerichtFilter(filter);
     private final Ng01Formatter subject = new Ng01Formatter();
-
-    @Before
-    public void injectDependencies() {
-        ReflectionTestUtils.setField(ng01filter, "vulBerichtFilter", filter);
-    }
 
     @Test
     public void test() {
         final List<Lo3CategorieWaarde> categorieen = new Lo3PersoonslijstFormatter().format(buildLo3Persoonslijst());
 
         final List<Lo3CategorieWaarde> gefilterdeCategorieen =
-            ng01filter.filter(null, null, null, categorieen, Arrays.asList("01.01.10", "01.02.10", "01.02.20", "01.02.30", "01.02.40", "01.03.10",
-                                                                           "01.03.20", "01.03.30", "07.80.10"));
+                ng01filter.filter(
+                    null,
+                    null,
+                    null,
+                    null,
+                    categorieen,
+                    Arrays.asList("01.01.10", "01.02.10", "01.02.20", "01.02.30", "01.02.40", "01.03.10", "01.03.20", "01.03.30", "07.80.10"));
 
-        final String ng01 = subject.maakPlatteTekst(null, categorieen, gefilterdeCategorieen);
+        final String ng01 = subject.maakPlatteTekst(null, null, categorieen, gefilterdeCategorieen);
         LOGGER.info(ng01);
 
         final StringBuilder verwachteNg01 = new StringBuilder();
@@ -90,18 +89,20 @@ public class Ng01FormatterTest {
     }
 
     private Lo3Stapel<Lo3PersoonInhoud> buildPersoonstapel() {
-        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-            Lo3StapelHelper.lo3Persoon(3450924321L, "Scarlet", "Simpspoon", 19770101, GEBOORTE_GEMEENTE_CODE, "6030", "V"),
-            Lo3StapelHelper.lo3Akt(1),
-            Lo3StapelHelper.lo3His(19770101),
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0)));
+        return Lo3StapelHelper.lo3Stapel(
+            Lo3StapelHelper.lo3Cat(
+                Lo3StapelHelper.lo3Persoon("3450924321", "Scarlet", "Simpspoon", 19770101, GEBOORTE_GEMEENTE_CODE, "6030", "V"),
+                Lo3StapelHelper.lo3Akt(1),
+                Lo3StapelHelper.lo3His(19770101),
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 0, 0)));
     }
 
     private Lo3Stapel<Lo3InschrijvingInhoud> buildInschrijvingStapel() {
-        return Lo3StapelHelper.lo3Stapel(Lo3StapelHelper.lo3Cat(
-            Lo3StapelHelper.lo3Inschrijving(null, 20140101, F, 19770202, GEBOORTE_GEMEENTE_CODE, 0, 1, 19770102123014000L, true),
-            null,
-            Lo3Historie.NULL_HISTORIE,
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
+        return Lo3StapelHelper.lo3Stapel(
+            Lo3StapelHelper.lo3Cat(
+                Lo3StapelHelper.lo3Inschrijving(null, 20140101, F, 19770202, GEBOORTE_GEMEENTE_CODE, 0, 1, 19770102123014000L, true),
+                null,
+                new Lo3Historie(null, new Lo3Datum(0), new Lo3Datum(0)),
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0)));
     }
 }

@@ -9,10 +9,8 @@ package nl.bzk.migratiebrp.bericht.model.sync.impl;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.SimpleParser;
 import nl.bzk.migratiebrp.bericht.model.sync.AbstractSyncBerichtZonderGerelateerdeInformatie;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AutorisatieRecordType;
@@ -47,9 +45,7 @@ public final class AutorisatieBericht extends AbstractSyncBerichtZonderGerelatee
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param autorisatieType
-     *            het autorisatieType type
+     * @param autorisatieType het autorisatieType type
      */
     public AutorisatieBericht(final AutorisatieType autorisatieType) {
         super("Autorisatie");
@@ -60,15 +56,14 @@ public final class AutorisatieBericht extends AbstractSyncBerichtZonderGerelatee
 
     /**
      * Geef de inhoud van het bericht als een Lo3Autorisatie object.
-     *
      * @return Lo3Autorisatie object
      */
     public Lo3Autorisatie getAutorisatie() {
-        final Integer afnemerCode = Integer.valueOf(autorisatieType.getAfnemerCode());
+        final String afnemerCode = autorisatieType.getAfnemerCode();
         final List<Lo3Categorie<Lo3AutorisatieInhoud>> tabelRegels = new ArrayList<>();
 
-        final List<AutorisatieRecordType> autorisatieTabelRegels = autorisatieType.getAutorisatieTabelRegels();
-        Collections.sort(autorisatieTabelRegels, new AutorisatieDatumIngangDescendingComparator());
+        final List<AutorisatieRecordType> autorisatieTabelRegels = autorisatieType.getAutorisatieTabelRegels().getAutorisatieTabelRegel();
+        autorisatieTabelRegels.sort(new AutorisatieDatumIngangDescendingComparator());
 
         int index = 0;
         for (final AutorisatieRecordType record : autorisatieTabelRegels) {
@@ -85,12 +80,13 @@ public final class AutorisatieBericht extends AbstractSyncBerichtZonderGerelatee
         return new Lo3Autorisatie(new Lo3Stapel<>(tabelRegels));
     }
 
-    private Lo3AutorisatieInhoud maakAutorisatieInhoud(final Integer afnemerCode, final AutorisatieRecordType record) {
+    private Lo3AutorisatieInhoud maakAutorisatieInhoud(final String afnemerCode, final AutorisatieRecordType record) {
         final Lo3AutorisatieInhoud result = new Lo3AutorisatieInhoud();
 
+        result.setAutorisatieId(record.getAutorisatieId());
         result.setAfnemersindicatie(afnemerCode);
         result.setAfnemernaam(record.getAfnemerNaam());
-        result.setIndicatieGeheimhouding(SimpleParser.parseLo3IndicatieGeheimCode(String.valueOf(record.getGeheimhoudingInd())));
+        result.setIndicatieGeheimhouding(SimpleParser.parseInteger(String.valueOf(record.getGeheimhoudingInd())));
         result.setVerstrekkingsbeperking(SimpleParser.parseInteger(String.valueOf(record.getVerstrekkingsBeperking())));
         result.setRubrieknummerSpontaan(record.getSpontaanRubrieken());
         result.setVoorwaarderegelSpontaan(record.getSpontaanVoorwaarderegel());
@@ -121,9 +117,7 @@ public final class AutorisatieBericht extends AbstractSyncBerichtZonderGerelatee
 
     /**
      * Parse een Lo3Datum.
-     *
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return Lo3Datum of null als de waarde null is
      */
     private Lo3Datum parseLo3Datum(final BigInteger waarde) {
@@ -132,9 +126,7 @@ public final class AutorisatieBericht extends AbstractSyncBerichtZonderGerelatee
 
     /**
      * Parse een Enum.
-     *
-     * @param waarde
-     *            waarde
+     * @param waarde waarde
      * @return String of null als de waarde null is
      */
 

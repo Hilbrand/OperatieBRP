@@ -15,9 +15,7 @@ public interface VerzoekControle {
 
     /**
      * Controle.
-     *
-     * @param verzoek
-     *            verzoek
+     * @param verzoek verzoek
      * @return true, als de controle voldoet, anders false
      */
     boolean controleer(SynchroniseerNaarBrpVerzoekBericht verzoek);

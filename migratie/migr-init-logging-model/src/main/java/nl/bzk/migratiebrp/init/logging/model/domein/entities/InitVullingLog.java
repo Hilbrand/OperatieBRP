@@ -26,13 +26,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "initvullingresult", schema = "initvul")
-@NamedQueries({@NamedQuery(name = "InitVullingLog.selectLogByAnummer", query = "select ivl from InitVullingLog ivl where ivl.anummer = :anummer") })
-@SuppressWarnings("checkstyle:designforextension")
+@NamedQueries({@NamedQuery(name = "InitVullingLog.selectLogByAnummer", query = "select ivl from InitVullingLog ivl where ivl.anummer = :anummer")})
 public class InitVullingLog implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "anummer", insertable = true, updatable = true, unique = true, nullable = false)
-    private Long anummer;
+    private String anummer;
 
     @Column(name = "berichtidentificatie", insertable = true, updatable = true)
     private Integer berichtId;
@@ -57,7 +56,7 @@ public class InitVullingLog implements Serializable {
     private Character redenOpschorting;
 
     @Column(name = "berichttype", insertable = true, updatable = true)
-    private Integer berichtType;
+    private String berichtType;
 
     @Column(name = "gemeente_van_inschrijving", insertable = true, updatable = true)
     private String gemeenteVanInschrijving;
@@ -65,43 +64,33 @@ public class InitVullingLog implements Serializable {
     @Column(name = "conversie_resultaat", insertable = true, updatable = true, length = 200)
     private String conversieResultaat;
 
-    @Column(name = "foutmelding", insertable = true, updatable = true)
+    @Column(name = "foutmelding_terugconversie", insertable = true, updatable = true)
     private String foutmelding;
 
-    @Column(name = "foutcategorie", insertable = true, updatable = true)
-    private Integer foutCategorie;
-
-    @Column(name = "preconditie", insertable = true, updatable = true)
-    private String preconditie;
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "log", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "log", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private Set<FingerPrint> fingerPrints = new LinkedHashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "log", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "log", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private Set<VerschilAnalyseRegel> verschilAnalyseRegels = new LinkedHashSet<>();
 
     /**
      * Geef de waarde van anummer.
-     *
      * @return the anummer
      */
-    public Long getAnummer() {
+    public String getAnummer() {
         return anummer;
     }
 
     /**
      * Zet de waarde van anummer.
-     *
-     * @param anummer
-     *            the anummer to set
+     * @param anummer the anummer to set
      */
-    public void setAnummer(final Long anummer) {
+    public void setAnummer(final String anummer) {
         this.anummer = anummer;
     }
 
     /**
      * Geef de waarde van bericht id.
-     *
      * @return the berichtId
      */
     public Integer getBerichtId() {
@@ -110,9 +99,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van bericht id.
-     *
-     * @param berichtId
-     *            the berichtId to set
+     * @param berichtId the berichtId to set
      */
     public void setBerichtId(final Integer berichtId) {
         this.berichtId = berichtId;
@@ -120,7 +107,6 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van lo3 bericht.
-     *
      * @return the lo3Bericht
      */
     public String getLo3Bericht() {
@@ -129,9 +115,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van lo3 bericht.
-     *
-     * @param lo3Bericht
-     *            the lo3Bericht to set
+     * @param lo3Bericht the lo3Bericht to set
      */
     public void setLo3Bericht(final String lo3Bericht) {
         berichtInhoud = lo3Bericht;
@@ -139,7 +123,6 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van bericht na terug conversie.
-     *
      * @return een XML representatie van een terug geconverteerde LO3 Persoonslijst
      */
     public String getBerichtNaTerugConversie() {
@@ -148,9 +131,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van bericht na terug conversie.
-     *
-     * @param brpLo3Bericht
-     *            een XML representatie van een terug geconverteerde LO3 Persoonslijst
+     * @param brpLo3Bericht een XML representatie van een terug geconverteerde LO3 Persoonslijst
      */
     public void setBerichtNaTerugConversie(final String brpLo3Bericht) {
         berichtNaTerugConv = brpLo3Bericht;
@@ -158,7 +139,6 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van datum tijd opname gbav.
-     *
      * @return the datumTijdOpnameGbav
      */
     public Date getDatumTijdOpnameGbav() {
@@ -167,9 +147,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van datum tijd opname gbav.
-     *
-     * @param datumTijdOpnameGbav
-     *            the datumTijdOpnameGbav to set
+     * @param datumTijdOpnameGbav the datumTijdOpnameGbav to set
      */
     public void setDatumTijdOpnameGbav(final Date datumTijdOpnameGbav) {
         this.datumTijdOpnameGbav = new Date(datumTijdOpnameGbav.getTime());
@@ -177,7 +155,6 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van pl id.
-     *
      * @return the plId
      */
     public Integer getPlId() {
@@ -186,9 +163,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van pl id.
-     *
-     * @param plId
-     *            the plId to set
+     * @param plId the plId to set
      */
     public void setPlId(final Integer plId) {
         this.plId = plId;
@@ -196,7 +171,6 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van datum opschorting.
-     *
      * @return the datumOpschorting
      */
     public Integer getDatumOpschorting() {
@@ -205,9 +179,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van datum opschorting.
-     *
-     * @param datumOpschorting
-     *            the datumOpschorting to set
+     * @param datumOpschorting the datumOpschorting to set
      */
     public void setDatumOpschorting(final Integer datumOpschorting) {
         this.datumOpschorting = datumOpschorting;
@@ -215,7 +187,6 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van reden opschorting.
-     *
      * @return the redenOpschorting
      */
     public Character getRedenOpschorting() {
@@ -224,9 +195,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van reden opschorting.
-     *
-     * @param redenOpschorting
-     *            the redenOpschorting to set
+     * @param redenOpschorting the redenOpschorting to set
      */
     public void setRedenOpschorting(final Character redenOpschorting) {
         this.redenOpschorting = redenOpschorting;
@@ -234,26 +203,22 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van bericht type.
-     *
      * @return the berichtType
      */
-    public Integer getBerichtType() {
+    public String getBerichtType() {
         return berichtType;
     }
 
     /**
      * Zet de waarde van bericht type.
-     *
-     * @param berichtType
-     *            the berichtType to set
+     * @param berichtType the berichtType to set
      */
-    public void setBerichtType(final Integer berichtType) {
+    public void setBerichtType(final String berichtType) {
         this.berichtType = berichtType;
     }
 
     /**
      * Geef de waarde van gemeente van inschrijving.
-     *
      * @return the gemeenteVanInschrijving
      */
     public String getGemeenteVanInschrijving() {
@@ -262,9 +227,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van gemeente van inschrijving.
-     *
-     * @param gemeenteVanInschrijving
-     *            the gemeenteVanInschrijving to set
+     * @param gemeenteVanInschrijving the gemeenteVanInschrijving to set
      */
     public void setGemeenteVanInschrijving(final String gemeenteVanInschrijving) {
         this.gemeenteVanInschrijving = gemeenteVanInschrijving;
@@ -272,7 +235,6 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van conversie resultaat.
-     *
      * @return the conversieResultaat
      */
     public String getConversieResultaat() {
@@ -281,9 +243,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van conversie resultaat.
-     *
-     * @param conversieResultaat
-     *            the conversieResultaat to set
+     * @param conversieResultaat the conversieResultaat to set
      */
     public void setConversieResultaat(final String conversieResultaat) {
         this.conversieResultaat = conversieResultaat;
@@ -291,7 +251,6 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van foutmelding.
-     *
      * @return the foutmelding
      */
     public String getFoutmelding() {
@@ -300,55 +259,14 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van foutmelding.
-     *
-     * @param foutmelding
-     *            the foutmelding to set
+     * @param foutmelding the foutmelding to set
      */
     public void setFoutmelding(final String foutmelding) {
         this.foutmelding = foutmelding;
     }
 
     /**
-     * Geef de waarde van fout categorie.
-     *
-     * @return the foutCategorie
-     */
-    public Integer getFoutCategorie() {
-        return foutCategorie;
-    }
-
-    /**
-     * Zet de waarde van fout categorie.
-     *
-     * @param foutCategorie
-     *            the foutCategorie to set
-     */
-    public void setFoutCategorie(final Integer foutCategorie) {
-        this.foutCategorie = foutCategorie;
-    }
-
-    /**
-     * Geef de waarde van preconditie.
-     *
-     * @return the preconditie
-     */
-    public String getPreconditie() {
-        return preconditie;
-    }
-
-    /**
-     * Zet de waarde van preconditie.
-     *
-     * @param preconditie
-     *            the preconditie to set
-     */
-    public void setPreconditie(final String preconditie) {
-        this.preconditie = preconditie;
-    }
-
-    /**
      * Geef de waarde van finger prints.
-     *
      * @return the fingerPrints
      */
     public Set<FingerPrint> getFingerPrints() {
@@ -357,9 +275,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Zet de waarde van finger prints.
-     *
-     * @param fingerPrints
-     *            the fingerPrints to set
+     * @param fingerPrints the fingerPrints to set
      */
     public void setFingerPrints(final Set<FingerPrint> fingerPrints) {
         for (final FingerPrint fingerPrint : fingerPrints) {
@@ -370,9 +286,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Voeg een FingerPrint toe aan de log.
-     *
-     * @param fingerPrint
-     *            de FingerPrint
+     * @param fingerPrint de FingerPrint
      */
     public void addFingerPrint(final FingerPrint fingerPrint) {
         fingerPrint.setLog(this);
@@ -381,7 +295,6 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Geef de waarde van verschil analyse regels.
-     *
      * @return de verschilAnalyseRegels
      */
     public Set<VerschilAnalyseRegel> getVerschilAnalyseRegels() {
@@ -389,8 +302,7 @@ public class InitVullingLog implements Serializable {
     }
 
     /**
-     * @param paramVerschilAnalyseRegels
-     *            de verschilAnalyseRegels
+     * @param paramVerschilAnalyseRegels de verschilAnalyseRegels
      */
     public void setdiffAnalyseRegels(final Set<VerschilAnalyseRegel> paramVerschilAnalyseRegels) {
         for (final VerschilAnalyseRegel verschilAnalyseRegel : paramVerschilAnalyseRegels) {
@@ -401,9 +313,7 @@ public class InitVullingLog implements Serializable {
 
     /**
      * Voeg de DiffAnalyseRegels toe aan de bestaande lijst van DiffAnalyseRegels.
-     *
-     * @param paramVerschilAnalyseRegels
-     *            de DiffAnalyseRegel
+     * @param paramVerschilAnalyseRegels de DiffAnalyseRegel
      */
     public void addVerschilAnalyseRegels(final Collection<VerschilAnalyseRegel> paramVerschilAnalyseRegels) {
         for (final VerschilAnalyseRegel verschilAnalyseRegel : paramVerschilAnalyseRegels) {

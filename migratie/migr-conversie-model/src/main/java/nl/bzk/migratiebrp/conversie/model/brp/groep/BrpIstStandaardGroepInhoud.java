@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
@@ -16,7 +17,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de standaard inhoud voor de IST-tabellen.
@@ -59,52 +59,36 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
     /**
      * Constructor met de verplichte velden voor de BrpIstStapelInhoud.
-     *
-     * @param categorienummer
-     *            categorie nummer
-     * @param stapelnummer
-     *            stapel nummer binnen de categorie
-     * @param voorkomennummer
-     *            voorkomen nummer binnen de stapel
-     * @param soortDocumentCode
-     *            het soort document
-     * @param nummerAkte
-     *            het aktenummer
-     * @param partijCode
-     *            de partij die het document heeft uitgegeven
-     * @param datumDocument
-     *            datum van het document
-     * @param omschrijvingDocument
-     *            omschrijving van het document
-     * @param aanduidingGegevensInOnderzoek
-     *            aanduiding welke gegevens in onderzoek zijn
-     * @param datumIngangOnderzoek
-     *            datum wanneer het onderzoek is gestart
-     * @param datumEindeOnderzoek
-     *            datum wanneer het onderzoek klaar was
-     * @param onjuistOfStrijdigOpenbareOrde
-     *            indicatie onjuis of strijdig met openbare orde
-     * @param ingangsdatumGeldigheid
-     *            datum ingang geldigheid
-     * @param datumVanOpneming
-     *            datum van opneming
+     * @param categorienummer categorie nummer
+     * @param stapelnummer stapel nummer binnen de categorie
+     * @param voorkomennummer voorkomen nummer binnen de stapel
+     * @param soortDocumentCode het soort document
+     * @param nummerAkte het aktenummer
+     * @param partijCode de partij die het document heeft uitgegeven
+     * @param datumDocument datum van het document
+     * @param omschrijvingDocument omschrijving van het document
+     * @param aanduidingGegevensInOnderzoek aanduiding welke gegevens in onderzoek zijn
+     * @param datumIngangOnderzoek datum wanneer het onderzoek is gestart
+     * @param datumEindeOnderzoek datum wanneer het onderzoek klaar was
+     * @param onjuistOfStrijdigOpenbareOrde indicatie onjuis of strijdig met openbare orde
+     * @param ingangsdatumGeldigheid datum ingang geldigheid
+     * @param datumVanOpneming datum van opneming
      */
     public BrpIstStandaardGroepInhoud(
-        @Element(name = "categorie", required = true) final Lo3CategorieEnum categorienummer,
-        @Element(name = "stapel", required = true) final int stapelnummer,
-        @Element(name = "voorkomen", required = true) final int voorkomennummer,
-        @Element(name = "soortDocument", required = false) final BrpSoortDocumentCode soortDocumentCode,
-        @Element(name = "aktenummer", required = false) final BrpString nummerAkte,
-        @Element(name = "partij", required = false) final BrpPartijCode partijCode,
-        @Element(name = "rubriek8220DatumDocument", required = false) final BrpInteger datumDocument,
-        @Element(name = "documentOmschrijving", required = false) final BrpString omschrijvingDocument,
-        @Element(name = "rubriek8310AanduidingGegevensInOnderzoek", required = false) final BrpInteger aanduidingGegevensInOnderzoek,
-        @Element(name = "rubriek8320DatumIngangOnderzoek", required = false) final BrpInteger datumIngangOnderzoek,
-        @Element(name = "rubriek8330DatumEindeOnderzoek", required = false) final BrpInteger datumEindeOnderzoek,
-        @Element(name = "rubriek8410OnjuistOfStrijdigOpenbareOrde", required = false) final BrpCharacter onjuistOfStrijdigOpenbareOrde,
-        @Element(name = "rubriek8510IngangsdatumGeldigheid", required = false) final BrpInteger ingangsdatumGeldigheid,
-        @Element(name = "rubriek8610DatumVanOpneming", required = false) final BrpInteger datumVanOpneming)
-    {
+            @Element(name = "categorie", required = true) final Lo3CategorieEnum categorienummer,
+            @Element(name = "stapel", required = true) final int stapelnummer,
+            @Element(name = "voorkomen", required = true) final int voorkomennummer,
+            @Element(name = "soortDocument", required = false) final BrpSoortDocumentCode soortDocumentCode,
+            @Element(name = "aktenummer", required = false) final BrpString nummerAkte,
+            @Element(name = "partij", required = false) final BrpPartijCode partijCode,
+            @Element(name = "rubriek8220DatumDocument", required = false) final BrpInteger datumDocument,
+            @Element(name = "documentOmschrijving", required = false) final BrpString omschrijvingDocument,
+            @Element(name = "rubriek8310AanduidingGegevensInOnderzoek", required = false) final BrpInteger aanduidingGegevensInOnderzoek,
+            @Element(name = "rubriek8320DatumIngangOnderzoek", required = false) final BrpInteger datumIngangOnderzoek,
+            @Element(name = "rubriek8330DatumEindeOnderzoek", required = false) final BrpInteger datumEindeOnderzoek,
+            @Element(name = "rubriek8410OnjuistOfStrijdigOpenbareOrde", required = false) final BrpCharacter onjuistOfStrijdigOpenbareOrde,
+            @Element(name = "rubriek8510IngangsdatumGeldigheid", required = false) final BrpInteger ingangsdatumGeldigheid,
+            @Element(name = "rubriek8610DatumVanOpneming", required = false) final BrpInteger datumVanOpneming) {
         categorie = categorienummer;
         stapel = stapelnummer;
         voorkomen = voorkomennummer;
@@ -123,9 +107,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
     /**
      * Constructor op basis van Builder-pattern. Gebruik {@link BrpIstStandaardGroepInhoud.Builder}.
-     *
-     * @param builder
-     *            builder met daar in de gegevens om de elementen van een BrpIstAbstractGroepInhoud te vullen
+     * @param builder builder met daar in de gegevens om de elementen van een BrpIstAbstractGroepInhoud te vullen
      * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstRelatieGroepInhoud.Builder
      */
     private BrpIstStandaardGroepInhoud(final BrpIstStandaardGroepInhoud.Builder builder) {
@@ -153,70 +135,70 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
         }
         final BrpIstStandaardGroepInhoud castOther = (BrpIstStandaardGroepInhoud) other;
         return new EqualsBuilder().append(categorie, castOther.categorie)
-                                  .append(stapel, castOther.stapel)
-                                  .append(voorkomen, castOther.voorkomen)
-                                  .append(soortDocument, castOther.soortDocument)
-                                  .append(aktenummer, castOther.aktenummer)
-                                  .append(partij, castOther.partij)
-                                  .append(rubriek8220DatumDocument, castOther.rubriek8220DatumDocument)
-                                  .append(documentOmschrijving, castOther.documentOmschrijving)
-                                  .append(rubriek8310AanduidingGegevensInOnderzoek, castOther.rubriek8310AanduidingGegevensInOnderzoek)
-                                  .append(rubriek8320DatumIngangOnderzoek, castOther.rubriek8320DatumIngangOnderzoek)
-                                  .append(rubriek8330DatumEindeOnderzoek, castOther.rubriek8330DatumEindeOnderzoek)
-                                  .append(rubriek8410OnjuistOfStrijdigOpenbareOrde, castOther.rubriek8410OnjuistOfStrijdigOpenbareOrde)
-                                  .append(rubriek8510IngangsdatumGeldigheid, castOther.rubriek8510IngangsdatumGeldigheid)
-                                  .append(rubriek8610DatumVanOpneming, castOther.rubriek8610DatumVanOpneming)
-                                  .isEquals();
+                .append(stapel, castOther.stapel)
+                .append(voorkomen, castOther.voorkomen)
+                .append(soortDocument, castOther.soortDocument)
+                .append(aktenummer, castOther.aktenummer)
+                .append(partij, castOther.partij)
+                .append(rubriek8220DatumDocument, castOther.rubriek8220DatumDocument)
+                .append(documentOmschrijving, castOther.documentOmschrijving)
+                .append(rubriek8310AanduidingGegevensInOnderzoek, castOther.rubriek8310AanduidingGegevensInOnderzoek)
+                .append(rubriek8320DatumIngangOnderzoek, castOther.rubriek8320DatumIngangOnderzoek)
+                .append(rubriek8330DatumEindeOnderzoek, castOther.rubriek8330DatumEindeOnderzoek)
+                .append(rubriek8410OnjuistOfStrijdigOpenbareOrde, castOther.rubriek8410OnjuistOfStrijdigOpenbareOrde)
+                .append(rubriek8510IngangsdatumGeldigheid, castOther.rubriek8510IngangsdatumGeldigheid)
+                .append(rubriek8610DatumVanOpneming, castOther.rubriek8610DatumVanOpneming)
+                .isEquals();
     }
 
     /* equals methode wordt overridden in BrpIstRelatieGroepInhoud en BrpIstGezagsverhoudingGroepInhoud */
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(categorie)
-                                    .append(stapel)
-                                    .append(voorkomen)
-                                    .append(soortDocument)
-                                    .append(aktenummer)
-                                    .append(partij)
-                                    .append(rubriek8220DatumDocument)
-                                    .append(documentOmschrijving)
-                                    .append(rubriek8310AanduidingGegevensInOnderzoek)
-                                    .append(rubriek8320DatumIngangOnderzoek)
-                                    .append(rubriek8330DatumEindeOnderzoek)
-                                    .append(rubriek8410OnjuistOfStrijdigOpenbareOrde)
-                                    .append(rubriek8510IngangsdatumGeldigheid)
-                                    .append(rubriek8610DatumVanOpneming)
-                                    .toHashCode();
+                .append(stapel)
+                .append(voorkomen)
+                .append(soortDocument)
+                .append(aktenummer)
+                .append(partij)
+                .append(rubriek8220DatumDocument)
+                .append(documentOmschrijving)
+                .append(rubriek8310AanduidingGegevensInOnderzoek)
+                .append(rubriek8320DatumIngangOnderzoek)
+                .append(rubriek8330DatumEindeOnderzoek)
+                .append(rubriek8410OnjuistOfStrijdigOpenbareOrde)
+                .append(rubriek8510IngangsdatumGeldigheid)
+                .append(rubriek8610DatumVanOpneming)
+                .toHashCode();
     }
 
     /* toString methode wordt overridden in BrpIstRelatieGroepInhoud en BrpIstGezagsverhoudingGroepInhoud */
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("categorie", categorie)
-                                                                          .append("stapel", stapel)
-                                                                          .append("voorkomen", voorkomen)
-                                                                          .append("soortDocument", soortDocument)
-                                                                          .append("aktenummer", aktenummer)
-                                                                          .append("partij", partij)
-                                                                          .append("rubriek8220DatumDocument", rubriek8220DatumDocument)
-                                                                          .append("documentOmschrijving", documentOmschrijving)
-                                                                          .append(
-                                                                              "rubriek8310AanduidingGegevensInOnderzoek",
-                                                                              rubriek8310AanduidingGegevensInOnderzoek)
-                                                                          .append("rubriek8320DatumIngangOnderzoek", rubriek8320DatumIngangOnderzoek)
-                                                                          .append("rubriek8330DatumEindeOnderzoek", rubriek8330DatumEindeOnderzoek)
-                                                                          .append(
-                                                                              "rubriek8410OnjuistOfStrijdigOpenbareOrde",
-                                                                              rubriek8410OnjuistOfStrijdigOpenbareOrde)
-                                                                          .append("rubriek8510IngangsdatumGeldigheid", rubriek8510IngangsdatumGeldigheid)
-                                                                          .append("rubriek8610DatumVanOpneming", rubriek8610DatumVanOpneming)
-                                                                          .toString();
+                .append("categorie", categorie)
+                .append("stapel", stapel)
+                .append("voorkomen", voorkomen)
+                .append("soortDocument", soortDocument)
+                .append("aktenummer", aktenummer)
+                .append("partij", partij)
+                .append("rubriek8220DatumDocument", rubriek8220DatumDocument)
+                .append("documentOmschrijving", documentOmschrijving)
+                .append(
+                        "rubriek8310AanduidingGegevensInOnderzoek",
+                        rubriek8310AanduidingGegevensInOnderzoek)
+                .append("rubriek8320DatumIngangOnderzoek", rubriek8320DatumIngangOnderzoek)
+                .append("rubriek8330DatumEindeOnderzoek", rubriek8330DatumEindeOnderzoek)
+                .append(
+                        "rubriek8410OnjuistOfStrijdigOpenbareOrde",
+                        rubriek8410OnjuistOfStrijdigOpenbareOrde)
+                .append("rubriek8510IngangsdatumGeldigheid", rubriek8510IngangsdatumGeldigheid)
+                .append("rubriek8610DatumVanOpneming", rubriek8610DatumVanOpneming)
+                .toString();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getCategorie()
      */
     @Override
@@ -226,7 +208,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getStapel()
      */
     @Override
@@ -236,7 +218,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getVoorkomen()
      */
     @Override
@@ -246,7 +228,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpIstGroepInhoud#getStandaardGegevens()
      */
     @Override
@@ -255,99 +237,88 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
     }
 
     /**
-     * Geef de waarde van soort document.
-     *
-     * @return soort document
+     * Geef de waarde van soort document van BrpIstStandaardGroepInhoud.
+     * @return de waarde van soort document van BrpIstStandaardGroepInhoud
      */
     public BrpSoortDocumentCode getSoortDocument() {
         return soortDocument;
     }
 
     /**
-     * Geef de waarde van aktenummer.
-     *
-     * @return aktenummer
+     * Geef de waarde van aktenummer van BrpIstStandaardGroepInhoud.
+     * @return de waarde van aktenummer van BrpIstStandaardGroepInhoud
      */
     public BrpString getAktenummer() {
         return aktenummer;
     }
 
     /**
-     * Geef de waarde van partij.
-     *
-     * @return partij
+     * Geef de waarde van partij van BrpIstStandaardGroepInhoud.
+     * @return de waarde van partij van BrpIstStandaardGroepInhoud
      */
     public BrpPartijCode getPartij() {
         return partij;
     }
 
     /**
-     * Geef de waarde van rubriek8220 datum document.
-     *
-     * @return rubriek8220 datum document
+     * Geef de waarde van rubriek8220 datum document van BrpIstStandaardGroepInhoud.
+     * @return de waarde van rubriek8220 datum document van BrpIstStandaardGroepInhoud
      */
     public BrpInteger getRubriek8220DatumDocument() {
         return rubriek8220DatumDocument;
     }
 
     /**
-     * Geef de waarde van document omschrijving.
-     *
-     * @return document omschrijving
+     * Geef de waarde van document omschrijving van BrpIstStandaardGroepInhoud.
+     * @return de waarde van document omschrijving van BrpIstStandaardGroepInhoud
      */
     public BrpString getDocumentOmschrijving() {
         return documentOmschrijving;
     }
 
     /**
-     * Geef de waarde van rubriek8310 aanduiding gegevens in onderzoek.
-     *
-     * @return rubriek8310 aanduiding gegevens in onderzoek
+     * Geef de waarde van rubriek8310 aanduiding gegevens in onderzoek van BrpIstStandaardGroepInhoud.
+     * @return de waarde van rubriek8310 aanduiding gegevens in onderzoek van BrpIstStandaardGroepInhoud
      */
     public BrpInteger getRubriek8310AanduidingGegevensInOnderzoek() {
         return rubriek8310AanduidingGegevensInOnderzoek;
     }
 
     /**
-     * Geef de waarde van rubriek8320 datum ingang onderzoek.
-     *
-     * @return rubriek8320 datum ingang onderzoek
+     * Geef de waarde van rubriek8320 datum ingang onderzoek van BrpIstStandaardGroepInhoud.
+     * @return de waarde van rubriek8320 datum ingang onderzoek van BrpIstStandaardGroepInhoud
      */
     public BrpInteger getRubriek8320DatumIngangOnderzoek() {
         return rubriek8320DatumIngangOnderzoek;
     }
 
     /**
-     * Geef de waarde van rubriek8330 datum einde onderzoek.
-     *
-     * @return rubriek8330 datum einde onderzoek
+     * Geef de waarde van rubriek8330 datum einde onderzoek van BrpIstStandaardGroepInhoud.
+     * @return de waarde van rubriek8330 datum einde onderzoek van BrpIstStandaardGroepInhoud
      */
     public BrpInteger getRubriek8330DatumEindeOnderzoek() {
         return rubriek8330DatumEindeOnderzoek;
     }
 
     /**
-     * Geef de waarde van rubriek8410 onjuist of strijdig openbare orde.
-     *
-     * @return rubriek8410 onjuist of strijdig openbare orde
+     * Geef de waarde van rubriek8410 onjuist of strijdig openbare orde van BrpIstStandaardGroepInhoud.
+     * @return de waarde van rubriek8410 onjuist of strijdig openbare orde van BrpIstStandaardGroepInhoud
      */
     public BrpCharacter getRubriek8410OnjuistOfStrijdigOpenbareOrde() {
         return rubriek8410OnjuistOfStrijdigOpenbareOrde;
     }
 
     /**
-     * Geef de waarde van rubriek8510 ingangsdatum geldigheid.
-     *
-     * @return rubriek8510 ingangsdatum geldigheid
+     * Geef de waarde van rubriek8510 ingangsdatum geldigheid van BrpIstStandaardGroepInhoud.
+     * @return de waarde van rubriek8510 ingangsdatum geldigheid van BrpIstStandaardGroepInhoud
      */
     public BrpInteger getRubriek8510IngangsdatumGeldigheid() {
         return rubriek8510IngangsdatumGeldigheid;
     }
 
     /**
-     * Geef de waarde van rubriek8610 datum van opneming.
-     *
-     * @return rubriek8610 datum van opneming
+     * Geef de waarde van rubriek8610 datum van opneming van BrpIstStandaardGroepInhoud.
+     * @return de waarde van rubriek8610 datum van opneming van BrpIstStandaardGroepInhoud
      */
     public BrpInteger getRubriek8610DatumVanOpneming() {
         return rubriek8610DatumVanOpneming;
@@ -378,13 +349,9 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * Constructor met verplichte velden categorie, stapel en voorkomen.
-         *
-         * @param categorienummer
-         *            categorie nummer
-         * @param stapelnummer
-         *            stapel nummer
-         * @param voorkomennummer
-         *            voorkomen nummer
+         * @param categorienummer categorie nummer
+         * @param stapelnummer stapel nummer
+         * @param voorkomennummer voorkomen nummer
          */
         public Builder(final Lo3CategorieEnum categorienummer, final int stapelnummer, final int voorkomennummer) {
             categorie = categorienummer;
@@ -394,9 +361,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet het soort document.
-         *
-         * @param param
-         *            soort document
+         * @param param soort document
          * @return builder object
          */
         public Builder soortDocument(final BrpSoortDocumentCode param) {
@@ -406,9 +371,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet het aktenummer.
-         *
-         * @param param
-         *            aktenummer
+         * @param param aktenummer
          * @return builder object
          */
         public Builder aktenummer(final BrpString param) {
@@ -418,9 +381,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet de partij.
-         *
-         * @param param
-         *            partij
+         * @param param partij
          * @return builder object
          */
         public Builder partij(final BrpPartijCode param) {
@@ -430,9 +391,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet de datum van het document (82.20).
-         *
-         * @param param
-         *            datum document (82.20)
+         * @param param datum document (82.20)
          * @return builder object
          */
         public Builder rubriek8220DatumDocument(final BrpInteger param) {
@@ -442,9 +401,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet de omschrijving van het document.
-         *
-         * @param param
-         *            omschrijving van het document
+         * @param param omschrijving van het document
          * @return builder object
          */
         public Builder documentOmschrijving(final BrpString param) {
@@ -454,9 +411,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet de aanduiding gegevens in onderzoek.
-         *
-         * @param param
-         *            aanduiding gegevens in onderzoek
+         * @param param aanduiding gegevens in onderzoek
          * @return builder object
          */
         public Builder rubriek8310AanduidingGegevensInOnderzoek(final BrpInteger param) {
@@ -466,9 +421,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet de datum ingang onderzoek.
-         *
-         * @param param
-         *            datum ingang onderzoek
+         * @param param datum ingang onderzoek
          * @return builder object
          */
         public Builder rubriek8320DatumIngangOnderzoek(final BrpInteger param) {
@@ -478,9 +431,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet de datum einde onderzoek.
-         *
-         * @param param
-         *            datum einde onderzoek
+         * @param param datum einde onderzoek
          * @return builder object
          */
         public Builder rubriek8330DatumEindeOnderzoek(final BrpInteger param) {
@@ -490,9 +441,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet het de indicatie onjuist / strijdig met openbare orde.
-         *
-         * @param param
-         *            indicatie / strijdig met openbare orde
+         * @param param indicatie / strijdig met openbare orde
          * @return builder object
          */
         public Builder rubriek8410OnjuistOfStrijdigOpenbareOrde(final BrpCharacter param) {
@@ -502,9 +451,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet de datum ingang geldigheid.
-         *
-         * @param param
-         *            datum ingang geldigheid
+         * @param param datum ingang geldigheid
          * @return builder object
          */
         public Builder rubriek8510IngangsdatumGeldigheid(final BrpInteger param) {
@@ -514,9 +461,7 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * zet de datum van opneming.
-         *
-         * @param param
-         *            datum van opneming
+         * @param param datum van opneming
          * @return builder object
          */
         public Builder rubriek8610DatumVanOpneming(final BrpInteger param) {
@@ -526,7 +471,6 @@ public final class BrpIstStandaardGroepInhoud extends AbstractBrpIstGroepInhoud 
 
         /**
          * Bouwt een instantie.
-         *
          * @return soort object
          */
         public BrpIstStandaardGroepInhoud build() {

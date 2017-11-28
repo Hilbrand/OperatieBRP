@@ -10,14 +10,9 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
-import nl.bzk.migratiebrp.ggo.viewer.util.ViewerDateUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +20,17 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
+import nl.bzk.migratiebrp.ggo.viewer.util.PortInitializer;
+import nl.bzk.migratiebrp.ggo.viewer.util.ViewerDateUtil;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml" })
+@ContextConfiguration(locations = {"classpath:test-viewer-beans.xml"}, initializers = {PortInitializer.class})
 public class GgoBrpActieBuilderTest {
     @Inject
     private GgoBrpActieBuilder builder;
@@ -35,7 +39,7 @@ public class GgoBrpActieBuilderTest {
 
     @Before
     public void setUp() {
-        partij = new Partij("tegen Alles", 518);
+        partij = new Partij("tegen Alles", "051801");
     }
 
     @Test
@@ -46,13 +50,16 @@ public class GgoBrpActieBuilderTest {
         final Timestamp datumTijdRegistratie = new Timestamp(new Date().getTime());
         final BRPActie brpActie =
                 new BRPActie(soortActieCode, new AdministratieveHandeling(
-                    partij,
-                    SoortAdministratieveHandeling.AANGAAN_GEREGISTREERD_PARTNERSCHAP_IN_BUITENLAND), partij, datumTijdRegistratie);
+                        partij,
+                        SoortAdministratieveHandeling.AANGAAN_GEREGISTREERD_PARTNERSCHAP_IN_BUITENLAND,
+                        datumTijdRegistratie),
+                        partij,
+                        datumTijdRegistratie);
 
-        builder.addActie(voorkomen, brpActie, null);
+        builder.addActie(voorkomen, brpActie);
 
         assertContains(voorkomen, GgoBrpElementEnum.SOORT_ACTIE, "Conversie GBA");
-        assertContains(voorkomen, GgoBrpElementEnum.PARTIJ, "0518 (tegen Alles)");
+        assertContains(voorkomen, GgoBrpElementEnum.PARTIJ, "051801 (tegen Alles)");
         assertContains(voorkomen, GgoBrpElementEnum.TIJDSTIP_REGISTRATIE, ViewerDateUtil.formatDatumTijdUtc(datumTijdRegistratie));
     }
 

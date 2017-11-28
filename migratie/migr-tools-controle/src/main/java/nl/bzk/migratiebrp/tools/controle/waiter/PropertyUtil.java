@@ -20,9 +20,7 @@ public final class PropertyUtil {
 
     /**
      * Geef property uit environment of system properties.
-     *
-     * @param key
-     *            key
+     * @param key key
      * @return waarde
      */
     public static String getProperty(final String key) {

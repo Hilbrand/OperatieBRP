@@ -7,14 +7,13 @@
 package nl.bzk.migratiebrp.init.logging.runtime.service.impl;
 
 import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatie;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAutorisatie;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingLog;
+import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingProtocollering;
 import nl.bzk.migratiebrp.init.logging.runtime.repository.InitVullingLogRepository;
 import nl.bzk.migratiebrp.init.logging.runtime.service.LoggingService;
 import nl.bzk.migratiebrp.init.logging.verschilanalyse.service.VerschilAnalyseService;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +30,8 @@ public final class LoggingServiceImpl implements LoggingService {
 
     /**
      * Default constructor.
-     *
-     * @param logRepository
-     *            log repository voor het bevragen en opslaan van log regels voor een persoonslijst
-     * @param verschilAnalyseService
-     *            de bepaalt de verschillen tussen de PL-en
+     * @param logRepository log repository voor het bevragen en opslaan van log regels voor een persoonslijst
+     * @param verschilAnalyseService de bepaalt de verschillen tussen de PL-en
      */
     @Inject
     LoggingServiceImpl(final InitVullingLogRepository logRepository, final VerschilAnalyseService verschilAnalyseService) {
@@ -53,14 +49,18 @@ public final class LoggingServiceImpl implements LoggingService {
     @Override
     public void persisteerInitVullingAutorisatie(final InitVullingAutorisatie autorisaties) {
         logRepository.saveInitVullingAutorisatie(autorisaties);
+    }
 
+    @Transactional(value = LOGGING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
+    @Override
+    public void persisteerInitVullingProtocollering(final InitVullingProtocollering protocollering) {
+        logRepository.saveInitVullingProtocollering(protocollering);
     }
 
     @Transactional(value = LOGGING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
     @Override
     public void persisteerInitVullingAfnemerindicatie(final InitVullingAfnemersindicatie afnemerindicatie) {
         logRepository.saveInitVullingAfnemersindicatie(afnemerindicatie);
-
     }
 
     @Transactional(value = LOGGING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
@@ -72,19 +72,25 @@ public final class LoggingServiceImpl implements LoggingService {
 
     @Transactional(value = LOGGING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public InitVullingLog zoekInitVullingLog(final Long anummer) {
+    public InitVullingLog zoekInitVullingLog(final String anummer) {
         return logRepository.findInitVullingLogPersoon(anummer);
     }
 
     @Transactional(value = LOGGING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public InitVullingAutorisatie zoekInitVullingAutorisatie(final Integer afnemerCode) {
-        return logRepository.findInitVullingAutorisatie(afnemerCode);
+    public InitVullingAutorisatie zoekInitVullingAutorisatie(final Long autorisatieId) {
+        return logRepository.findInitVullingAutorisatie(autorisatieId);
     }
 
     @Transactional(value = LOGGING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public InitVullingAfnemersindicatie zoekInitVullingAfnemerindicatie(final Long anummer) {
+    public InitVullingAfnemersindicatie zoekInitVullingAfnemerindicatie(final String anummer) {
         return logRepository.findInitVullingAfnemersindicatie(anummer);
+    }
+
+    @Transactional(value = LOGGING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED, readOnly = true)
+    @Override
+    public InitVullingProtocollering zoekInitVullingProtocollering(final long activiteitId) {
+        return logRepository.findInitVullingProtocollering(activiteitId);
     }
 }

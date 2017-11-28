@@ -6,6 +6,18 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.service.impl;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerkrijgingNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Naamgebruik;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
@@ -14,20 +26,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortAdresCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RNIDeelnemerCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Naamgebruik;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerkrijgingNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerliesNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
-
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,10 +50,6 @@ public class Lo3StamtabelServiceTest {
     @InjectMocks
     private Lo3StamtabelServiceImpl lo3StamtabelService;
 
-    private static String zeroPad(final String string, final int size) {
-        return StringUtils.leftPad(string, size, "0");
-    }
-
     @Test
     public void getAanduidingInhoudingVermissingNlReisdocumentOkTest() {
         final String loAanduidingInhVermNlReisdoc = "I";
@@ -69,10 +63,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getAanduidingInhoudingVermissingNlReisdocumentNOkTest() {
         final String loAanduidingInhVermNlReisdoc = "X";
-        final String expected = loAanduidingInhVermNlReisdoc;
 
         final String resultNat = lo3StamtabelService.getAanduidingInhoudingVermissingNlReisdocument(loAanduidingInhVermNlReisdoc);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(loAanduidingInhVermNlReisdoc, resultNat);
     }
 
     @Test
@@ -88,16 +81,15 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getAangifteAdreshoudingNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getAangifteAdreshouding(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     @Test
     public void getAdellijkeTitelPredikaatOkTest() {
         final String code = "JH";
-        final String expectedLabel = "Jonkheer / Jonkvrouw";
+        final String expectedLabel = "jonkheer / jonkvrouw";
         final String expected = code + " (" + expectedLabel + ")";
 
         final String resultNat = lo3StamtabelService.getAdellijkeTitelPredikaat(code);
@@ -107,10 +99,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getAdellijkeTitelPredikaatNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getAdellijkeTitelPredikaat(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getAanduidingBijzonderNederlandschap
@@ -127,10 +118,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getAanduidingBijzonderNederlandschapNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getAanduidingBijzonderNederlandschap(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getAanduidingEuropeesKiesrecht
@@ -147,10 +137,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getAanduidingEuropeesKiesrechtNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getAanduidingEuropeesKiesrecht(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getAanduidingHuisnummer
@@ -167,10 +156,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getAanduidingHuisnummerNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getAanduidingHuisnummer(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getAanduidingUitgeslotenKiesrecht
@@ -187,10 +175,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getAanduidingUitgeslotenKiesrechtNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getAanduidingUitgeslotenKiesrecht(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getIndicatieGeheim
@@ -207,10 +194,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getIndicatieGeheimNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getIndicatieGeheim(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getIndicatiePKVolledigGeconverteerdCode
@@ -227,10 +213,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getIndicatiePKVolledigGeconverteerdCodeNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getIndicatiePKVolledigGeconverteerdCode(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getSoortVerbintenis
@@ -247,10 +232,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getSoortVerbintenisNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getSoortVerbintenis(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getIndicatieCurateleRegister
@@ -267,10 +251,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getIndicatieCurateleRegisterNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getIndicatieCurateleRegister(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getIndicatieGezagMinderjarige
@@ -287,10 +270,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getIndicatieGezagMinderjarigeNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getIndicatieGezagMinderjarige(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getIndicatieOnjuist
@@ -307,10 +289,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getIndicatieOnjuistNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getIndicatieOnjuist(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getIndicatieDocument
@@ -327,30 +308,17 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getIndicatieDocumentNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getIndicatieDocument(code);
-        Assert.assertEquals(expected, resultNat);
-    }
-
-    // getIndicatiePkVolledigGeconverteerdCode
-    @Test
-    public void getIndicatiePkVolledigGeconverteerdCodeOkTest() {
-        final String code = "P";
-        final String expedtedLabel = "Volledig geconverteerd";
-        final String expected = String.format(STRING_FORMAT, code, expedtedLabel);
-
-        final String resultNat = lo3StamtabelService.getIndicatiePKVolledigGeconverteerdCode(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     @Test
     public void getIndicatiePkVolledigGeconverteerdCodeNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getIndicatiePKVolledigGeconverteerdCode(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     // getSignalering
@@ -367,10 +335,9 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getSignaleringNOkTest() {
         final String code = "X";
-        final String expected = code;
 
         final String resultNat = lo3StamtabelService.getSignalering(code);
-        Assert.assertEquals(expected, resultNat);
+        Assert.assertEquals(code, resultNat);
     }
 
     /**
@@ -379,12 +346,10 @@ public class Lo3StamtabelServiceTest {
      */
     @Test
     public void getNationaliteitTestNotExist() {
-        final Short natCode = (short) 999;
-        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getNationaliteitByNationaliteitcode(natCode);
+        final String natCode = "0999";
+        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getNationaliteitByNationaliteitcode(natCode);
 
-        final String resultNat = lo3StamtabelService.getNationaliteit(natCode.toString());
+        final String resultNat = lo3StamtabelService.getNationaliteit(natCode);
         Assert.assertEquals("0999", resultNat);
     }
 
@@ -400,7 +365,7 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getFunctieAdresTestOK() {
         final BrpSoortAdresCode faCode = BrpSoortAdresCode.B;
-        final FunctieAdres expectedFa = FunctieAdres.BRIEFADRES;
+        final SoortAdres expectedFa = SoortAdres.BRIEFADRES;
         final String expected = String.format(STRING_FORMAT, expectedFa.getCode(), expectedFa.getNaam());
         final String resultFa = lo3StamtabelService.getFunctieAdres(faCode.getWaarde());
         Assert.assertEquals(expected, resultFa);
@@ -409,11 +374,10 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getGemeenteTestOK() {
         final String gemCode = "0008";
-        final Partij expectedPartij = new Partij("Bierum", Integer.parseInt(gemCode));
-        final Gemeente expectedGem = new Gemeente((short) 1, "Bierum", new Short(gemCode), expectedPartij);
-        final String gemCodePadded = Lo3StamtabelServiceTest.zeroPad(String.valueOf(expectedPartij.getCode()), 4);
-        final String expected = String.format(STRING_FORMAT, gemCodePadded, expectedPartij.getNaam());
-        Mockito.doReturn(expectedGem).when(dynamischeStamtabelRepository).getGemeenteByGemeentecode(new Short(gemCode));
+        final Partij expectedPartij = new Partij("Bierum", gemCode+"01");
+        final Gemeente expectedGem = new Gemeente((short) 1, "Bierum", gemCode, expectedPartij);
+        final String expected = String.format(STRING_FORMAT, expectedGem.getCode(), expectedGem.getNaam());
+        Mockito.doReturn(expectedGem).when(dynamischeStamtabelRepository).getGemeenteByGemeentecode(gemCode);
 
         final String resultGem = lo3StamtabelService.getGemeente(gemCode);
         Assert.assertEquals(expected, resultGem);
@@ -425,10 +389,10 @@ public class Lo3StamtabelServiceTest {
      */
     @Test
     public void getGemeenteTestNotExist() {
-        final Short gemCode = 5000;
+        final String gemCode = "5000";
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getGemeenteByGemeentecode(gemCode);
 
-        final String resultGem = lo3StamtabelService.getGemeente(gemCode.toString());
+        final String resultGem = lo3StamtabelService.getGemeente(gemCode);
         Assert.assertEquals("5000", resultGem);
     }
 
@@ -456,13 +420,13 @@ public class Lo3StamtabelServiceTest {
 
     @Test
     public void getLandTestOK() {
-        final Short landCode = (short) 6037;
+        final String landCode = "6037";
         final LandOfGebied expectedLandOfGebied = new LandOfGebied(landCode, "Spanje");
-        final String landCodePadded = Lo3StamtabelServiceTest.zeroPad(Short.toString(expectedLandOfGebied.getCode()), 4);
+        final String landCodePadded = expectedLandOfGebied.getCode();
         final String expected = String.format(STRING_FORMAT, landCodePadded, expectedLandOfGebied.getNaam());
         Mockito.doReturn(expectedLandOfGebied).when(dynamischeStamtabelRepository).getLandOfGebiedByCode(landCode);
 
-        final String resultLand = lo3StamtabelService.getLandOfGebied(landCode.toString());
+        final String resultLand = lo3StamtabelService.getLandOfGebied(landCode);
         Assert.assertEquals(expected, resultLand);
     }
 
@@ -472,10 +436,10 @@ public class Lo3StamtabelServiceTest {
      */
     @Test
     public void getLandTestNotExist() {
-        final Short landCode = (short) 50;
+        final String landCode = "0050";
         Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getLandOfGebiedByCode(landCode);
 
-        final String resultLand = lo3StamtabelService.getLandOfGebied(landCode.toString());
+        final String resultLand = lo3StamtabelService.getLandOfGebied(landCode);
         Assert.assertEquals("0050", resultLand);
     }
 
@@ -490,13 +454,13 @@ public class Lo3StamtabelServiceTest {
 
     @Test
     public void getRedenVerkrijgingNlTestOK() {
-        final Short rvnCode = (short) 0;
+        final String rvnCode = "000";
         final RedenVerkrijgingNLNationaliteit expectedRvn = new RedenVerkrijgingNLNationaliteit(rvnCode, "000");
-        final String rvnCodePadded = Lo3StamtabelServiceTest.zeroPad(Short.toString(expectedRvn.getCode()), 3);
+        final String rvnCodePadded = expectedRvn.getCode();
         final String expected = String.format(STRING_FORMAT, rvnCodePadded, expectedRvn.getOmschrijving());
         Mockito.doReturn(expectedRvn).when(dynamischeStamtabelRepository).getRedenVerkrijgingNLNationaliteitByCode(rvnCode);
 
-        final String resultRvn = lo3StamtabelService.getRedenVerkrijgingNederlandschap(rvnCode.toString());
+        final String resultRvn = lo3StamtabelService.getRedenVerkrijgingNederlandschap(rvnCode);
         Assert.assertEquals(expected, resultRvn);
     }
 
@@ -506,24 +470,21 @@ public class Lo3StamtabelServiceTest {
      */
     @Test
     public void getRedenVerkrijgingNlTestNotExist() {
-        final Short rvnCode = (short) 300;
-        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getRedenVerkrijgingNLNationaliteitByCode(rvnCode);
-
-        final String resultRvn = lo3StamtabelService.getRedenVerkrijgingNederlandschap(rvnCode.toString());
+        final String rvnCode = "300";
+        Mockito.when(dynamischeStamtabelRepository.getRedenVerkrijgingNLNationaliteitByCode(rvnCode)).thenReturn(null);
+        final String resultRvn = lo3StamtabelService.getRedenVerkrijgingNederlandschap(rvnCode);
         Assert.assertEquals("300", resultRvn);
     }
 
     @Test
     public void getRedenVerliesNlTestOK() {
-        final Short rvnCode = (short) 34;
+        final String rvnCode = "034";
         final RedenVerliesNLNationaliteit expectedRvn = new RedenVerliesNLNationaliteit(rvnCode, "034");
-        final String rvnCodePadded = Lo3StamtabelServiceTest.zeroPad(Short.toString(expectedRvn.getCode()), 3);
+        final String rvnCodePadded = expectedRvn.getCode();
         final String expected = String.format(STRING_FORMAT, rvnCodePadded, expectedRvn.getOmschrijving());
         Mockito.doReturn(expectedRvn).when(dynamischeStamtabelRepository).getRedenVerliesNLNationaliteitByCode(rvnCode);
 
-        final String resultRvn = lo3StamtabelService.getRedenVerliesNederlandschap(rvnCode.toString());
+        final String resultRvn = lo3StamtabelService.getRedenVerliesNederlandschap(rvnCode);
         Assert.assertEquals(expected, resultRvn);
     }
 
@@ -533,12 +494,10 @@ public class Lo3StamtabelServiceTest {
      */
     @Test
     public void getRedenVerliesNlTestNotExist() {
-        final Short rvnCode = (short) 2;
-        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getRedenVerliesNLNationaliteitByCode(rvnCode);
+        final String rvnCode = "002";
+        Mockito.when(dynamischeStamtabelRepository.getRedenVerliesNLNationaliteitByCode(rvnCode)).thenReturn(null);
 
-        final String resultRvn = lo3StamtabelService.getRedenVerliesNederlandschap(rvnCode.toString());
+        final String resultRvn = lo3StamtabelService.getRedenVerliesNederlandschap(rvnCode);
         Assert.assertEquals("002", resultRvn);
     }
 
@@ -560,9 +519,7 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getSoortNlReisdocumentTestNotExist() {
         final String snrCode = "XY";
-        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getSoortNederlandsReisdocumentByCode(snrCode);
+        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getSoortNederlandsReisdocumentByCode(snrCode);
 
         final String resultSnr = lo3StamtabelService.getSoortNlReisdocument(snrCode);
         Assert.assertEquals("XY", resultSnr);
@@ -577,8 +534,8 @@ public class Lo3StamtabelServiceTest {
 
     @Test
     public void getRedenOpschortingTestOK() {
-        final BrpNadereBijhoudingsaardCode robCode = BrpNadereBijhoudingsaardCode.MINISTERIEEL_BESLUIT;
-        final NadereBijhoudingsaard expectedRob = NadereBijhoudingsaard.MINISTERIEEL_BESLUIT;
+        final BrpNadereBijhoudingsaardCode robCode = BrpNadereBijhoudingsaardCode.BIJZONDERE_STATUS;
+        final NadereBijhoudingsaard expectedRob = NadereBijhoudingsaard.BIJZONDERE_STATUS;
         final String expected = String.format(STRING_FORMAT, expectedRob.getCode(), expectedRob.getNaam());
         final String resultRob = lo3StamtabelService.getRedenOpschorting(robCode.getWaarde());
         Assert.assertEquals(expected, resultRob);
@@ -602,9 +559,7 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getRedenEindeRelatieNotExist() {
         final char rerCode = '-';
-        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING))
-               .when(dynamischeStamtabelRepository)
-               .getRedenBeeindigingRelatieByCode(rerCode);
+        Mockito.doThrow(new IllegalArgumentException(MELDING_STRING)).when(dynamischeStamtabelRepository).getRedenBeeindigingRelatieByCode(rerCode);
 
         final String resultRer = lo3StamtabelService.getRedenEindeRelatie(String.valueOf(rerCode));
         Assert.assertEquals("-", resultRer);
@@ -613,12 +568,12 @@ public class Lo3StamtabelServiceTest {
     @Test
     public void getRNIDeelnemerTestOK() {
         final Lo3RNIDeelnemerCode lo3RniDeelnemerCode = new Lo3RNIDeelnemerCode("0101");
-        final BrpPartijCode brpPartijCode = new BrpPartijCode(250001);
+        final BrpPartijCode brpPartijCode = new BrpPartijCode("250001");
         final Conversietabel<Lo3RNIDeelnemerCode, BrpPartijCode> convTabel = Mockito.mock(Conversietabel.class);
         Mockito.when(conversietabellen.createRNIDeelnemerConversietabel()).thenReturn(convTabel);
         Mockito.when(convTabel.converteerNaarBrp(lo3RniDeelnemerCode)).thenReturn(brpPartijCode);
 
-        final Partij partij = new Partij("Belastingdienst - Centrum voor ICT", 250001);
+        final Partij partij = new Partij("Belastingdienst - Centrum voor ICT", "250001");
         final String expected = String.format(STRING_FORMAT, lo3RniDeelnemerCode.getWaarde(), partij.getNaam());
         Mockito.doReturn(partij).when(dynamischeStamtabelRepository).getPartijByCode(brpPartijCode.getWaarde());
 

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +27,19 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3GeslachtsaanduidingEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3NationaliteitCode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ExcelAdapterTest {
     private final ExcelAdapter excelAdapter = new ExcelAdapterImpl();
 
     private final Lo3PersoonslijstParser parser = new Lo3PersoonslijstParser();
+
+
+    @Test(expected = ExcelAdapterException.class)
+    public void testNietBestaandBestand() throws ExcelAdapterException, Lo3SyntaxException, FileNotFoundException {
+        final InputStream excelBestand = ExcelAdapter.class.getResourceAsStream("/exceladapter/OngeldigExcelBestand.txt");
+        excelAdapter.leesExcelBestand(excelBestand);
+    }
 
     @Test
     public void testMaakLo3Persoonslijsten() throws ExcelAdapterException, Lo3SyntaxException {
@@ -102,46 +109,6 @@ public class ExcelAdapterTest {
         assertEquals(1, persoonslijst.getKindStapels().size());
     }
 
-    // @Test
-    // public void testOntbrekendVeld() throws Exception {
-    // final InputStream excelBestand =
-    // ExcelAdapter.class.getResourceAsStream("/exceladapter/TestOntbrekendeGeslachtsaanduiding.xls");
-    // try {
-    //
-    // final List<Lo3Persoonslijst> lo3s = ExcelAdapter.maakLo3Persoonslijsten(excelBestand);
-    // for (final Lo3Persoonslijst lo3 : lo3s) {
-    // lo3.valideer();
-    // }
-    // } catch (final NullPointerException exception) {
-    // // assertTrue(exception.getMessage().contains("kolom C"));
-    // assertTrue(exception.getMessage().contains("Geslachtsaanduiding"));
-    // return;
-    // }
-    // fail("Exceptie verwacht voor ontbrekend veld geslachtsaanduiding");
-    // }
-
-    @Test
-    @Ignore
-    public void testVerkeerdGevuldVeld() throws Lo3SyntaxException {
-        final InputStream excelBestand = ExcelAdapterTest.class.getResourceAsStream("/exceladapter/TestInvalideGeslachtsaanduiding.xls");
-        try {
-            // Lees excel
-            final List<ExcelData> excelDatas = excelAdapter.leesExcelBestand(excelBestand);
-
-            // Parsen input *ZONDER* syntax en precondite controles
-            for (final ExcelData excelData : excelDatas) {
-                parser.parse(excelData.getCategorieLijst());
-            }
-
-        } catch (final ExcelAdapterException exception) {
-            assertTrue(exception.getMessage().contains("kolom C"));
-            assertTrue(exception.getMessage().contains("N"));
-            assertTrue(exception.getMessage().contains("geslachtsaanduiding"));
-            return;
-        }
-        fail("Exceptie verwacht voor invalide veld geslachtsaanduiding");
-    }
-
     @Test
     public void testVerliesNationaliteit() throws ExcelAdapterException, Lo3SyntaxException {
         final InputStream excelBestand = ExcelAdapterTest.class.getResourceAsStream("/exceladapter/TestVerliesNationaliteit.xls");
@@ -178,9 +145,6 @@ public class ExcelAdapterTest {
 
     /**
      * Ging fout tijdens issue MIG-166
-     * 
-     * @throws Lo3SyntaxException
-     * @throws ExcelAdapterException
      */
     @Test
     public void testOnjuistIndicatie() throws ExcelAdapterException, Lo3SyntaxException {

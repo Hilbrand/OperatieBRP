@@ -10,6 +10,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
@@ -20,10 +23,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpInschrijvingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.OnderzoekMapper;
 import org.junit.Test;
@@ -57,11 +57,7 @@ public class PersoonInschrijvingMapperTest {
         final BrpStapel<BrpInschrijvingInhoud> brpStapel = new BrpStapel<>(groepen);
         final Persoon persoon = new Persoon(SoortPersoon.INGESCHREVENE);
 
-        mapper.mapVanMigratie(brpStapel, persoon);
-
-        // Test A-laag
-        assertEquals(5, persoon.getVersienummer().longValue());
-        assertEquals(20120101, persoon.getDatumInschrijving().intValue());
+        mapper.mapVanMigratie(brpStapel, persoon, null);
 
         // Test historie
         assertEquals(1, persoon.getPersoonInschrijvingHistorieSet().size());
@@ -76,9 +72,9 @@ public class PersoonInschrijvingMapperTest {
         final BrpHistorie historie =
                 new BrpHistorie(new BrpDatum(20000101, null), null, BrpDatumTijd.fromDatumTijdMillis(20000101121212L, null), null, null);
         final BrpActie actieInhoud =
-                new BrpActie(1L, BrpSoortActieCode.CONVERSIE_GBA, new BrpPartijCode(1), BrpDatumTijd.fromDatumTijdMillis(
-                    20000101121212L,
-                    null), null, null, 1, null);
+                new BrpActie(1L, BrpSoortActieCode.CONVERSIE_GBA, new BrpPartijCode("000001"), BrpDatumTijd.fromDatumTijdMillis(
+                        20000101121212L,
+                        null), null, null, 1, null);
         final BrpActie actieVerval = null;
         final BrpActie actieGeldigheid = null;
         return new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieGeldigheid);

@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -28,21 +28,21 @@ public class Lo3InschrijvingParserTest extends AbstractParserTest {
 
     @Test
     public void testInschrijvingParser() {
-        final Lo3Historie historie = Lo3Historie.NULL_HISTORIE;
+        final Lo3Historie historie = new Lo3Historie(null, null, null);
         final List<Lo3Categorie<Lo3InschrijvingInhoud>> categorieInhoudLijst = new ArrayList<>();
         final Lo3InschrijvingInhoud inschrijvingInhoud =
                 new Lo3InschrijvingInhoud(
-                    maakDatum(WAARDE_ELEMENT_6620, null),
-                    maakDatum(WAARDE_ELEMENT_6710, null),
-                    new Lo3RedenOpschortingBijhoudingCode(WAARDE_ELEMENT_6720),
-                    maakDatum(WAARDE_ELEMENT_6810, null),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_6910),
-                    new Lo3IndicatieGeheimCode(Integer.valueOf(WAARDE_ELEMENT_7010)),
-                    maakDatum(WAARDE_ELEMENT_7110, null),
-                    maakLo3String(WAARDE_ELEMENT_7120, null),
-                    maakLo3Integer(WAARDE_ELEMENT_8010, null),
-                    new Lo3Datumtijdstempel(Long.valueOf(WAARDE_ELEMENT_8020)),
-                    new Lo3IndicatiePKVolledigGeconverteerdCode(WAARDE_ELEMENT_8710));
+                        maakDatum(WAARDE_ELEMENT_6620, null),
+                        maakDatum(WAARDE_ELEMENT_6710, null),
+                        new Lo3RedenOpschortingBijhoudingCode(WAARDE_ELEMENT_6720),
+                        maakDatum(WAARDE_ELEMENT_6810, null),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_6910),
+                        new Lo3IndicatieGeheimCode(Integer.valueOf(WAARDE_ELEMENT_7010)),
+                        maakDatum(WAARDE_ELEMENT_7110, null),
+                        maakLo3String(WAARDE_ELEMENT_7120, null),
+                        maakLo3Integer(WAARDE_ELEMENT_8010, null),
+                        new Lo3Datumtijdstempel(Long.valueOf(WAARDE_ELEMENT_8020)),
+                        new Lo3IndicatiePKVolledigGeconverteerdCode(WAARDE_ELEMENT_8710));
 
         final Lo3Categorie<Lo3InschrijvingInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(inschrijvingInhoud, null, null, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_07, 0, 0));
@@ -130,7 +130,7 @@ public class Lo3InschrijvingParserTest extends AbstractParserTest {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.parser.AbstractParserTest#getGegevensInOnderzoek()
      */
     @Override
@@ -140,7 +140,7 @@ public class Lo3InschrijvingParserTest extends AbstractParserTest {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.parser.AbstractParserTest#getCategorie()
      */
     @Override

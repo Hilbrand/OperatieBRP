@@ -7,16 +7,16 @@
 package nl.bzk.migratiebrp.conversie.model.lo3.herkomst;
 
 import java.io.Serializable;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * De herkomst vanuit een lo3 bericht wordt vastgelegd door de categorie, stapelnummer en categorievoorkomen.
  */
-public final class Lo3Herkomst implements Serializable {
+public final class Lo3Herkomst implements Serializable, Comparable<Lo3Herkomst> {
 
     private static final long serialVersionUID = 1L;
     private static final int ACTUEEL_VOORKOMEN = 0;
@@ -32,19 +32,14 @@ public final class Lo3Herkomst implements Serializable {
 
     /**
      * Constructor.
-     *
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            stapel
-     * @param voorkomen
-     *            voorkomen
+     * @param categorie categorie
+     * @param stapel stapel
+     * @param voorkomen voorkomen
      */
     public Lo3Herkomst(
-        @Element(name = "categorie", required = false) final Lo3CategorieEnum categorie,
-        @Element(name = "stapel") final int stapel,
-        @Element(name = "voorkomen") final int voorkomen)
-    {
+            @Element(name = "categorie", required = false) final Lo3CategorieEnum categorie,
+            @Element(name = "stapel") final int stapel,
+            @Element(name = "voorkomen") final int voorkomen) {
         super();
         this.categorie = categorie;
         this.stapel = stapel;
@@ -54,15 +49,10 @@ public final class Lo3Herkomst implements Serializable {
 
     /**
      * Constructor.
-     *
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            stapel
-     * @param voorkomen
-     *            voorkomen
-     * @param conversieSortering
-     *            conversieSortering
+     * @param categorie categorie
+     * @param stapel stapel
+     * @param voorkomen voorkomen
+     * @param conversieSortering conversieSortering
      */
     public Lo3Herkomst(final Lo3CategorieEnum categorie, final int stapel, final int voorkomen, final Integer conversieSortering) {
         super();
@@ -74,7 +64,6 @@ public final class Lo3Herkomst implements Serializable {
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return categorie
      */
     public Lo3CategorieEnum getCategorie() {
@@ -83,7 +72,6 @@ public final class Lo3Herkomst implements Serializable {
 
     /**
      * Geef de waarde van stapel.
-     *
      * @return stapel
      */
     public int getStapel() {
@@ -92,7 +80,6 @@ public final class Lo3Herkomst implements Serializable {
 
     /**
      * Geef de waarde van voorkomen.
-     *
      * @return voorkomen
      */
     public int getVoorkomen() {
@@ -101,7 +88,6 @@ public final class Lo3Herkomst implements Serializable {
 
     /**
      * Geef de waarde van conversie sortering.
-     *
      * @return conversie sortering
      */
     public Integer getConversieSortering() {
@@ -119,17 +105,15 @@ public final class Lo3Herkomst implements Serializable {
         final Lo3Herkomst castOther = (Lo3Herkomst) other;
         // Het veld 'conversieSortering' wordt bewust niet meegenomen in equals() en hashCode()
         return new EqualsBuilder().append(categorie, castOther.categorie)
-                                  .append(stapel, castOther.stapel)
-                                  .append(voorkomen, castOther.voorkomen)
-                                  .isEquals();
+                .append(stapel, castOther.stapel)
+                .append(voorkomen, castOther.voorkomen)
+                .isEquals();
     }
 
     /**
      * zelfde als equals, maar dan alleen op categorie en stapelnummer. Van beide objecten die vergeleken worden, worden
      * de categorieen naar hun actuele categorienummer vertaald (dwz cat54 wordt cat04).
-     *
-     * @param other
-     *            andere object waarmee vergeleken wordt
+     * @param other andere object waarmee vergeleken wordt
      * @return true als other van het type Lo3Herkomst is en categorie en stapel gelijk zijn
      */
     public boolean equalsCategorieStapelOnly(final Object other) {
@@ -157,18 +141,36 @@ public final class Lo3Herkomst implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("categorie", categorie)
-                                                                          .append("stapel", stapel)
-                                                                          .append("voorkomen", voorkomen)
-                                                                          .toString();
+                .append("categorie", categorie)
+                .append("stapel", stapel)
+                .append("voorkomen", voorkomen)
+                .toString();
     }
 
     /**
      * Geef de lo3 actueel voorkomen.
-     *
      * @return lo3 actueel voorkomen
      */
     public boolean isLo3ActueelVoorkomen() {
         return voorkomen == ACTUEEL_VOORKOMEN;
     }
+
+    @Override
+    public int compareTo(final Lo3Herkomst andereHerkomst) {
+        if (andereHerkomst == null) {
+            throw new NullPointerException("Andere herkomst is null");
+        }
+
+        int result = categorie.getCategorieAsInt() - andereHerkomst.categorie.getCategorieAsInt();
+        if (result == 0) {
+            result = stapel - andereHerkomst.stapel;
+        }
+
+        if (result == 0) {
+            result = voorkomen - andereHerkomst.voorkomen;
+        }
+
+        return result;
+    }
+
 }

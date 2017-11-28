@@ -74,25 +74,8 @@ public abstract class AbstractBericht implements Bericht, Serializable {
     /* ************************************************************************************************************* */
 
     /**
-     * Geeft de integer representatie van de string waarde terug.
-     *
-     * @param value
-     *            De string waarde.
-     * @return De integer representatie van de string waarde.
-     */
-    protected static final Integer asInteger(final String value) {
-        if (value == null || "".equals(value)) {
-            return null;
-        } else {
-            return Integer.parseInt(value);
-        }
-    }
-
-    /**
      * Geeft de integer representatie van de biginteger waarde terug.
-     *
-     * @param value
-     *            De biginteger waarde.
+     * @param value De biginteger waarde.
      * @return De long representatie van de biginteger waarde.
      */
     protected static final Integer asInteger(final BigInteger value) {
@@ -105,9 +88,7 @@ public abstract class AbstractBericht implements Bericht, Serializable {
 
     /**
      * Geeft de long representatie van de string waarde terug.
-     *
-     * @param value
-     *            De string waarde.
+     * @param value De string waarde.
      * @return De long representatie van de string waarde.
      */
     protected static final Long asLong(final String value) {
@@ -120,9 +101,7 @@ public abstract class AbstractBericht implements Bericht, Serializable {
 
     /**
      * Geeft de string representatie van een waarde terug.
-     *
-     * @param value
-     *            De waarde.
+     * @param value De waarde.
      * @return De string representatie van de waarde.
      */
     protected static final String asString(final Object value) {
@@ -137,11 +116,8 @@ public abstract class AbstractBericht implements Bericht, Serializable {
 
     /**
      * Registereer velden om te negeren bij equals, hashCode en toString.
-     *
-     * @param clazz
-     *            class
-     * @param excludedFieldNames
-     *            te negeren veld namen
+     * @param clazz class
+     * @param excludedFieldNames te negeren veld namen
      */
     protected static void registerExcludedFieldNames(final Class<?> clazz, final String[] excludedFieldNames) {
         EXCLUDED_FIELD_NAMES.put(clazz, Arrays.asList(excludedFieldNames));
@@ -175,11 +151,11 @@ public abstract class AbstractBericht implements Bericht, Serializable {
     @Override
     public final int hashCode() {
         return HashCodeBuilder.reflectionHashCode(
-            HASHCODE_INITIAL_NON_ZERO_ODD_NUMBER,
-            HASHCODE_MULTIPLIER_NON_ZERO_ODD_NUMBER,
-            this,
-            true,
-            null,
-            bepaalExcludedFieldNames(getClass()));
+                HASHCODE_INITIAL_NON_ZERO_ODD_NUMBER,
+                HASHCODE_MULTIPLIER_NON_ZERO_ODD_NUMBER,
+                this,
+                true,
+                null,
+                bepaalExcludedFieldNames(getClass()));
     }
 }

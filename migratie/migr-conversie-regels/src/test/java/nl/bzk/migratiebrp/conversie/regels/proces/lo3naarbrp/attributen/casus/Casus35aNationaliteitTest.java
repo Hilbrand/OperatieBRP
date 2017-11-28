@@ -41,27 +41,27 @@ public class Casus35aNationaliteitTest extends AbstractCasusTest {
 
     private final BrpNationaliteitInhoud brpNederlands001 =
             new BrpNationaliteitInhoud(
-                new BrpNationaliteitCode(Short.parseShort(NATIONALITEIT_CODE)),
-                new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort("001")),
-                null,
-                null,
-                null,
-                null,
-                null);
+                    new BrpNationaliteitCode(NATIONALITEIT_CODE),
+                    new BrpRedenVerkrijgingNederlandschapCode("001"),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
     private final BrpNationaliteitInhoud brpNederlands002 =
             new BrpNationaliteitInhoud(
-                new BrpNationaliteitCode(Short.parseShort(NATIONALITEIT_CODE)),
-                new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort("002")),
-                new BrpRedenVerliesNederlandschapCode(Short.parseShort("033")),
-                null,
-                null,
-                null,
-                null);
+                    new BrpNationaliteitCode(NATIONALITEIT_CODE),
+                    new BrpRedenVerkrijgingNederlandschapCode("002"),
+                    new BrpRedenVerliesNederlandschapCode("033"),
+                    null,
+                    null,
+                    null,
+                    null);
     private final Lo3NationaliteitInhoud lo3Nederlands001 =
-            new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NATIONALITEIT_CODE), new Lo3RedenNederlandschapCode("001"), null, null);
+            new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NATIONALITEIT_CODE), new Lo3RedenNederlandschapCode("001"), null, null, null);
     private final Lo3NationaliteitInhoud lo3Nederlands002 =
-            new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NATIONALITEIT_CODE), new Lo3RedenNederlandschapCode("002"), null, null);
-    private final Lo3NationaliteitInhoud lo3Leeg = new Lo3NationaliteitInhoud(null, null, new Lo3RedenNederlandschapCode("033"), null);
+            new Lo3NationaliteitInhoud(new Lo3NationaliteitCode(NATIONALITEIT_CODE), new Lo3RedenNederlandschapCode("002"), null, null, null);
+    private final Lo3NationaliteitInhoud lo3Leeg = new Lo3NationaliteitInhoud(null, null, new Lo3RedenNederlandschapCode("033"), null, null);
     private final BrpTestObject<BrpNationaliteitInhoud> brp1 = new BrpTestObject<>();
     private final BrpTestObject<BrpNationaliteitInhoud> brp2 = new BrpTestObject<>();
 

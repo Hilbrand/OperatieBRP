@@ -132,7 +132,7 @@ BEGIN
 	SELECT CAST(ber1.message_id AS bigint), ber2.ontvangende_partij, ber2.id, SUBSTRING(ber2.bericht, 9, 4) FROM
 		mig_bericht AS ber1
 		INNER JOIN mig_proces_gerelateerd AS proces1 ON
-			ber1.naam IN ('Lg01', 'La01') AND ber1.richting = 'I' AND ber1.kanaal = 'VOSPG' AND
+			ber1.naam IN ('Lg01', 'La01') AND ber1.richting = 'I' AND ber1.kanaal = 'VOISC' AND
 			ber1.process_instance_id = proces1.process_instance_id AND
 			proces1.soort_gegeven = 'ADH'
 		LEFT JOIN mig_virtueel_proces_gerelateerd AS proces2 ON
@@ -207,7 +207,7 @@ BEGIN
 	gegeven_var := CURRVAL('mig_proces_gerelateerd_gegeven_seq');
 
 	-- bijhoudingsbericht zelf maken
-	INSERT INTO mig_bericht (message_id, ontvangende_partij, naam, richting, kanaal, process_instance_id, bericht) VALUES ('' || bericht_id, '06666', 'Lg01', 'I', 'VOSPG', process_instance_id_var, '00000000Lg01');
+	INSERT INTO mig_bericht (message_id, ontvangende_partij, naam, richting, kanaal, process_instance_id, bericht) VALUES ('' || bericht_id, '06666', 'Lg01', 'I', 'VOISC', process_instance_id_var, '00000000Lg01');
 
 	-- in sommige gevallen geen levering maken
 	IF ROUND(RANDOM() * 10) <> 4 THEN
@@ -241,7 +241,7 @@ BEGIN
 					END LOOP;
 
 
-					INSERT INTO mig_bericht (message_id, ontvangende_partij, naam, richting, kanaal, virtueel_proces_id, bericht) VALUES (get_random_bericht_id(), afnemer_var, 'Levering', 'U', 'VOSPG', virtueel_proces_id_var, '00000000' || berichtnummer_var);
+					INSERT INTO mig_bericht (message_id, ontvangende_partij, naam, richting, kanaal, virtueel_proces_id, bericht) VALUES (get_random_bericht_id(), afnemer_var, 'Levering', 'U', 'VOISC', virtueel_proces_id_var, '00000000' || berichtnummer_var);
 
 					count_ber = count_ber + 1;
 					IF count_ber >= max_ber THEN

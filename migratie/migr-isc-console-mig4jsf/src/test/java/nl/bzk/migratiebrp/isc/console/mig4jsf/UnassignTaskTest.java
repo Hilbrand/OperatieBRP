@@ -24,11 +24,11 @@ public class UnassignTaskTest extends AbstractTagTest {
         addTagAttribute("task", taskInstance);
 
         setupDatabase(
-            "/sql/mig-drop.sql",
-            "/sql/jbpm-drop.sql",
-            "/sql/jbpm-create.sql",
-            "/sql/mig-create.sql",
-            "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-jbpm_taskinstance.sql");
+                "/sql/mig-drop.sql",
+                "/sql/jbpm-drop.sql",
+                "/sql/jbpm-create.sql",
+                "/sql/mig-create.sql",
+                "/nl/bzk/migratiebrp/isc/console/mig4jsf/insert-jbpm_taskinstance.sql");
 
         final String SQL = "SELECT actorId_, start_ FROM jbpm_taskinstance WHERE id_ = 4567";
 

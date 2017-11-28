@@ -24,9 +24,7 @@ public final class JbpmSuspendCommand implements Command<Void> {
 
     /**
      * Default constructor.
-     *
-     * @param processInstanceId
-     *            Het proces instantie Id.
+     * @param processInstanceId Het proces instantie Id.
      */
     public JbpmSuspendCommand(final Long processInstanceId) {
         this.processInstanceId = processInstanceId;

@@ -7,33 +7,40 @@
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.zoeken;
 
 import java.util.List;
+
 import javax.inject.Inject;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonOpHistorischeGegevensVerzoekBericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.PersoonService;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.SynchronisatieBerichtService;
+
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Zoek persoon op actuele gegevens.
  */
-public final class ZoekPersoonOpHistorischeGegevensService implements
-        SynchronisatieBerichtService<ZoekPersoonOpHistorischeGegevensVerzoekBericht, ZoekPersoonAntwoordBericht>
-{
-    @Inject
-    private BrpDalService brpDalService;
+public final class ZoekPersoonOpHistorischeGegevensService
+        implements SynchronisatieBerichtService<ZoekPersoonOpHistorischeGegevensVerzoekBericht, ZoekPersoonAntwoordBericht> {
 
-    @Inject
-    private ZoekPersoonFilter filter;
+    private final PersoonService persoonDalService;
+    private final ZoekPersoonFilter filter;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see nl.bzk.migratiebrp.synchronisatie.runtime.service.SynchronisatieBerichtService#getVerzoekType()
+    /**
+     * Constructor.
+     * @param persoonDalService persoon dal service
+     * @param filter filter
      */
+    @Inject
+    public ZoekPersoonOpHistorischeGegevensService(final PersoonService persoonDalService,
+                                                   final ZoekPersoonFilter filter) {
+        this.persoonDalService = persoonDalService;
+        this.filter = filter;
+    }
+
     @Override
     public Class<ZoekPersoonOpHistorischeGegevensVerzoekBericht> getVerzoekType() {
         return ZoekPersoonOpHistorischeGegevensVerzoekBericht.class;
@@ -44,10 +51,7 @@ public final class ZoekPersoonOpHistorischeGegevensService implements
             noRollbackFor = IllegalArgumentException.class)
     public ZoekPersoonAntwoordBericht verwerkBericht(final ZoekPersoonOpHistorischeGegevensVerzoekBericht verzoek) throws BerichtSyntaxException {
         final List<Persoon> personen =
-                brpDalService.zoekPersonenOpHistorischeGegevens(
-                    ZoekPersoonServiceUtil.toLong(verzoek.getANummer()),
-                    ZoekPersoonServiceUtil.toInteger(verzoek.getBsn()),
-                    verzoek.getGeslachtsnaam());
+                persoonDalService.zoekPersonenOpHistorischeGegevens(verzoek.getANummer(), verzoek.getBsn(), verzoek.getGeslachtsnaam());
 
         final List<GevondenPersoon> gevondenPersonen = filter.filter(personen, verzoek.getAanvullendeZoekcriteria());
 
@@ -56,7 +60,7 @@ public final class ZoekPersoonOpHistorischeGegevensService implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.synchronisatie.runtime.service.SynchronisatieBerichtService#getServiceNaam()
      */
     @Override

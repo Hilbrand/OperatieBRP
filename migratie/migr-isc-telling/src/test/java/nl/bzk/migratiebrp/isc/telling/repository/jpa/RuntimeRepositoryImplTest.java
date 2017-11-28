@@ -32,7 +32,7 @@ public class RuntimeRepositoryImplTest extends AbstractDatabaseTest {
     }
 
     @Test(expected = org.springframework.transaction.UnexpectedRollbackException.class)
-    @InsertBefore({"/sql/data/soa_data.xml", "/sql/data/runtime_data.xml" })
+    @InsertBefore({"/sql/data/soa_data.xml", "/sql/data/runtime_data.xml"})
     public void testGeldigeRuntimeReedsGestart() {
 
         final Boolean resultaat = service.voegRuntimeToe(GELDIGE_RUNTIME_NAAM);

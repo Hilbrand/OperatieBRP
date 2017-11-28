@@ -19,7 +19,6 @@ public final class ExcelData {
 
     /**
      * Get headers.
-     * 
      * @return LO3 headers of a LO3 message
      */
     public String[] getHeaders() {
@@ -28,9 +27,7 @@ public final class ExcelData {
 
     /**
      * Set headers.
-     * 
-     * @param headers
-     *            LO3 headers of a LO3 message
+     * @param headers LO3 headers of a LO3 message
      */
     public void setHeaders(final String[] headers) {
         this.headers = ArrayUtils.clone(headers);
@@ -38,7 +35,6 @@ public final class ExcelData {
 
     /**
      * Get contents.
-     * 
      * @return The contents of a LO3 message
      */
     public List<Lo3CategorieWaarde> getCategorieLijst() {
@@ -47,9 +43,7 @@ public final class ExcelData {
 
     /**
      * Set contents.
-     * 
-     * @param categorieWaardeLijst
-     *            The contents of a LO3 message
+     * @param categorieWaardeLijst The contents of a LO3 message
      */
     public void setCategorieWaarden(final List<Lo3CategorieWaarde> categorieWaardeLijst) {
         categorieLijst = categorieWaardeLijst;
@@ -57,7 +51,6 @@ public final class ExcelData {
 
     /**
      * Is empty.
-     * 
      * @return true if empty, else false
      */
     public boolean isEmpty() {

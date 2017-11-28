@@ -23,9 +23,7 @@ public final class NaamUtil {
 
     /**
      * Bouwt een volledige naam op basis van de lo3Persoonslijst.
-     *
-     * @param lo3Persoonslijst
-     *            De persoonslijst.
+     * @param lo3Persoonslijst De persoonslijst.
      * @return Volledigenaam.
      */
     public static String createVolledigeNaam(final Lo3Persoonslijst lo3Persoonslijst) {
@@ -50,9 +48,7 @@ public final class NaamUtil {
     /**
      * Bouwt een lo3 categorie label op bestaande uit de categorie nummer en categorie naam. Voor weergave op stapel
      * niveau.
-     *
-     * @param catNr
-     *            lo3 categorie nummer.
+     * @param catNr lo3 categorie nummer.
      * @return label van de lo3 categorie
      */
     public static String createLo3CategorieStapelLabel(final int catNr) {
@@ -62,9 +58,7 @@ public final class NaamUtil {
 
     /**
      * Bouwt een lo3 categorie label op bestaande uit de categorie naam. Voor weergave op voorkomen niveau.
-     *
-     * @param catNr
-     *            lo3 categorie nummer.
+     * @param catNr lo3 categorie nummer.
      * @return label van de lo3 categorie
      */
     public static String createLo3CategorieLabel(final int catNr) {

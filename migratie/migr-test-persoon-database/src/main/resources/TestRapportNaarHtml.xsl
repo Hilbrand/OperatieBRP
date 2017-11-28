@@ -185,7 +185,7 @@
 	<xsl:template match="sqlControles">
     	<table>
     	   <xsl:for-each select="sqlControle">
-	           <tr><td><xsl:value-of select="@filename"/></td><td><xsl:apply-templates select="testStap" /></td></tr>
+	           <tr><td><xsl:value-of select="filename"/></td><td><xsl:apply-templates select="testStap" /></td></tr>
            </xsl:for-each>
 	    </table>
 	</xsl:template>

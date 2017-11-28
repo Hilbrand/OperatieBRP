@@ -6,1094 +6,795 @@
 
 package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
-import nl.bzk.migratiebrp.bericht.model.AkteOnbekendException;
-import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import nl.bzk.migratiebrp.bericht.model.lo3.AbstractCategorieGebaseerdParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import org.junit.Test;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.junit.Assert.*;
-
 /**
  * tbo2 bericht test.
  */
 public class Tb02BerichtTest {
 
+    // private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private Tb02Bericht maakBericht(final List<Lo3CategorieWaarde> waarden, final String aktenummer) {
+        final Tb02Bericht bericht = new Tb02Bericht();
+        try {
+            final Method parseInhoud = AbstractCategorieGebaseerdParsedLo3Bericht.class.getDeclaredMethod("parseCategorieen", List.class);
+            parseInhoud.setAccessible(true);
+            parseInhoud.invoke(bericht, waarden);
+        } catch (final ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, aktenummer);
+        bericht.setBronPartijCode("3333");
+        bericht.setDoelPartijCode("5555");
+        return bericht;
+    }
+
     @Test
     public void testGetGerelateerdeAnummers() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        assertNull(bericht.getGerelateerdeAnummers());
+        Tb02Bericht bericht = new Tb02Bericht();
+        assertEquals(0, bericht.getGerelateerdeInformatie().getaNummers().size());
+
+        bericht = maakBericht(maakLijst3ASluiting(), "3QA1234");
+        assertEquals(1, bericht.getGerelateerdeInformatie().getaNummers().size());
+        assertEquals("1234567890", bericht.getGerelateerdeInformatie().getaNummers().get(0));
     }
 
     @Test
     public void testGetWaarde() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        assertNotNull("Element moet aanwezig zijn", bericht.getWaarde(Lo3CategorieEnum.CATEGORIE_01, Lo3ElementEnum.ELEMENT_0110));
+        final Tb02Bericht bericht = maakBericht(maakLijst3ASluiting(), "3QA1234");
+
+        assertNotNull("Element moet aanwezig zijn", bericht.get(Lo3CategorieEnum.CATEGORIE_01, Lo3ElementEnum.ELEMENT_0110));
     }
 
     @Test
-    public void testParseInhoud() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
+    public void testParseFormat() throws Exception {
+        final List<Lo3CategorieWaarde> waarden = maakLijst3ASluiting();
+        final Tb02Bericht bericht = maakBericht(waarden, "3QA1234");
 
-        Method formatInhoud = bericht.getClass().getDeclaredMethod("formatInhoud");
+        final Method formatInhoud = AbstractCategorieGebaseerdParsedLo3Bericht.class.getDeclaredMethod("formatInhoud");
         formatInhoud.setAccessible(true);
         final List<Lo3CategorieWaarde> resultaat = (List<Lo3CategorieWaarde>) formatInhoud.invoke(bericht);
         assertEquals("De lijst die parse zet moet hetzelfde zijn als die format teruggeeft", waarden, resultaat);
     }
 
-    @Test
-    public void testFormatInhoud() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-
-        Method formatInhoud = bericht.getClass().getDeclaredMethod("formatInhoud");
-        formatInhoud.setAccessible(true);
-        final List<Lo3CategorieWaarde> resultaat = (List<Lo3CategorieWaarde>) formatInhoud.invoke(bericht);
-        assertEquals("De lijst die parse zet moet hetzelfde zijn als die format teruggeeft", waarden, resultaat);
+    //
+    // @Test
+    // public void testOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst3ASluiting(), "3QA1234");
+    //
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testNokOriginator() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst3ASluiting();
+    // waarden.get(1).addElement(Lo3ElementEnum.ELEMENT_8110, "5555");
+    // final Tb02Bericht bericht = maakBericht(waarden, "3QA1234");
+    // bericht.setBronPartijCode("5555");
+    //
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // LOGGER.info("Overtredingen: {}", overtredingen);
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals("Verzendende partij is geen GBA gemeente.", overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testNokRecipient() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst3ASluiting(), "3QA1234");
+    // bericht.setDoelPartijCode("4444");
+    //
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // LOGGER.info("Overtredingen: {}", overtredingen);
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals("Ontvangende partij is geen BRP gemeente.", overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testNokGemeenteMoetOvereenkomen() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst3ASluiting(), "3QA1234");
+    // bericht.setBronPartijCode("4444");
+    //
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // LOGGER.info("Overtredingen: {}", overtredingen);
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Niet alle voorkomens van 81.10 Registergemeente akte zijn gelijk (met de verzendende gemeente van het
+    // bericht).",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testNokAktenummerMoetOvereenkomen() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst3ASluiting(), "3QA1235");
+    //
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // LOGGER.info("Overtredingen: {}", overtredingen);
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals("Niet alle voorkomens van 81.20 Aktenummer zijn gelijk (met het aktenummer in de kop van het
+    // bericht).", overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testNokIngangsdatumInconsistent() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1CErkenning();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_8510, "20040102");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QC1234");
+    //
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // for (final String overtreding : overtredingen) {
+    // LOGGER.info("Overtreding: {}", overtreding);
+    // }
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals("Niet alle voorkomens van 85.10 Ingangsdatum geldigheid zijn gelijk.", overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testNokOnbekendeAkte() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst3ASluiting(), "4*X****");
+    //
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // for (final String overtreding : overtredingen) {
+    // LOGGER.info("Overtreding: {}", overtreding);
+    // }
+    // Assert.assertEquals(2, overtredingen.size());
+    // Assert.assertEquals("Aktenummer 4*X**** (in de kop van het bericht) is ongeldig voor een Tb02-bericht.",
+    // overtredingen.get(1));
+    // }
+    //
+    // @Test
+    // public void testNokSoortAkteControleNietOk() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = new ArrayList<>(maakLijst3ASluiting());
+    // waarden.add(new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_35, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "");
+    // put(Lo3ElementEnum.ELEMENT_0240, "");
+    // put(Lo3ElementEnum.ELEMENT_0310, "");
+    // put(Lo3ElementEnum.ELEMENT_0320, "");
+    // put(Lo3ElementEnum.ELEMENT_0330, "");
+    // put(Lo3ElementEnum.ELEMENT_0410, "");
+    // }
+    // }));
+    //
+    // final Tb02Bericht bericht = maakBericht(waarden, "3QA1234");
+    //
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // for (final String overtreding : overtredingen) {
+    // LOGGER.info("Overtreding: {}", overtreding);
+    // }
+    // Assert.assertEquals(1, overtredingen.size());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1HOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst1HGeslachtsnaamwijziging(), "1QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1HNok0210Gewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1HGeslachtsnaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0210, "Clara");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QH1234 moet(en) element 02.30 en/of 02.40 gewijzigd zijn en mogen elementen 02.10 en 02.20 niet
+    // gewijzigd zijn ten opzichte van categorie 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1HNok0220Gewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1HGeslachtsnaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0220, "P");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QH1234 moet(en) element 02.30 en/of 02.40 gewijzigd zijn en mogen elementen 02.10 en 02.20 niet
+    // gewijzigd zijn ten opzichte van categorie 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1HNok0230en0240Ongewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1HGeslachtsnaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0230, "van");
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QH1234 moet(en) element 02.30 en/of 02.40 gewijzigd zijn en mogen elementen 02.10 en 02.20 niet
+    // gewijzigd zijn ten opzichte van categorie 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1HNok0310Gewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1HGeslachtsnaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0310, "19700102");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QH1234 mogen elementen 03.10, 03.20 en 03.30 niet gewijzigd zijn ten opzichte van categorie
+    // 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1HNok0320Gewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1HGeslachtsnaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0320, "5555");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QH1234 mogen elementen 03.10, 03.20 en 03.30 niet gewijzigd zijn ten opzichte van categorie
+    // 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1HNok0330Gewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1HGeslachtsnaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QH1234 mogen elementen 03.10, 03.20 en 03.30 niet gewijzigd zijn ten opzichte van categorie
+    // 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1HNok0410Gewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1HGeslachtsnaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0410, "M");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals("Voor aktenummer 1QH1234 mag element 04.10 niet gewijzigd zijn ten opzichte van categorie
+    // 51.", overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1MOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst1MVoornaamwijziging(), "1QM1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1MNok0210Ongewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1MVoornaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0210, "Truus");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QM1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QM1234 moet element 02.10 gewijzigd zijn en mogen elementen 02.20, 02.30 en 02.40 niet
+    // gewijzigd zijn ten opzichte van categorie 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1MNok0220Gewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1MVoornaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0220, "P");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QM1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QM1234 moet element 02.10 gewijzigd zijn en mogen elementen 02.20, 02.30 en 02.40 niet
+    // gewijzigd zijn ten opzichte van categorie 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1MNok0230Gewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1MVoornaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0230, "van der");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QM1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QM1234 moet element 02.10 gewijzigd zijn en mogen elementen 02.20, 02.30 en 02.40 niet
+    // gewijzigd zijn ten opzichte van categorie 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1MNok0240Gewijzigd() throws Exception {
+    // final List<Lo3CategorieWaarde> waarden = maakLijst1MVoornaamwijziging();
+    // waarden.get(0).addElement(Lo3ElementEnum.ELEMENT_0240, "Plons");
+    // final Tb02Bericht bericht = maakBericht(waarden, "1QM1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertEquals(1, overtredingen.size());
+    // Assert.assertEquals(
+    // "Voor aktenummer 1QM1234 moet element 02.10 gewijzigd zijn en mogen elementen 02.20, 02.30 en 02.40 niet
+    // gewijzigd zijn ten opzichte van categorie 51.",
+    // overtredingen.get(0));
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1SOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst1SGeslachtswijziging(), "1QS1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen1COk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst1CErkenning(), "1QC1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // LOGGER.info("Overtredingen: {}", overtredingen);
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen2AOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst2AOverlijden(), "2QA1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen3AOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst3ASluiting(), "3QA1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen5AOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst5ASluiting(), "5QA1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen3BOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst3BBeeindiging(), "3QB1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // LOGGER.info("Overtredingen: {}", overtredingen);
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen5BOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst5BBeeindiging(), "5QB1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen3HOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst3HOmzetting(), "3QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // LOGGER.info("Overtredingen: {}", overtredingen);
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // @Test
+    // public void testControleerGroepen5HOk() throws Exception {
+    // final Tb02Bericht bericht = maakBericht(maakLijst5HOmzetting(), "5QH1234");
+    // final List<String> overtredingen = bericht.controleerTb02(maakPartijRegister());
+    // Assert.assertTrue(overtredingen.isEmpty());
+    // }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst1HGeslachtsnaamwijziging() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "123456789");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van der");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Waterkering");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19700101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "3333");
+    // put(Lo3ElementEnum.ELEMENT_0330, "1");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "1QH1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20150917");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19700101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "3333");
+    // put(Lo3ElementEnum.ELEMENT_0330, "1");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // }
+    // }));
+    // }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst1SGeslachtswijziging() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "123456789");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19700101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "3333");
+    // put(Lo3ElementEnum.ELEMENT_0330, "1");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "1QS1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20150917");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19700101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "3333");
+    // put(Lo3ElementEnum.ELEMENT_0330, "1");
+    // put(Lo3ElementEnum.ELEMENT_0410, "M");
+    // }
+    // }));
+    // }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst1MVoornaamwijziging() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19700101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "3333");
+    // put(Lo3ElementEnum.ELEMENT_0330, "1");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "1QM1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20150917");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Truus");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19700101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "3333");
+    // put(Lo3ElementEnum.ELEMENT_0330, "1");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // }
+    // }));
+    // }
+    //
+    private List<Lo3CategorieWaarde> maakLijst3ASluiting() {
+        return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+            {
+                put(Lo3ElementEnum.ELEMENT_0110, "1234567890");
+                put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+                put(Lo3ElementEnum.ELEMENT_0230, "van");
+                put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+                put(Lo3ElementEnum.ELEMENT_0310, "1970101");
+                put(Lo3ElementEnum.ELEMENT_0320, "0599");
+                put(Lo3ElementEnum.ELEMENT_0330, "6030");
+                put(Lo3ElementEnum.ELEMENT_0410, "V");
+            }
+        }), new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+            {
+                put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+                put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+                put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+                put(Lo3ElementEnum.ELEMENT_0320, "0626");
+                put(Lo3ElementEnum.ELEMENT_0330, "6030");
+                put(Lo3ElementEnum.ELEMENT_0410, "M");
+                put(Lo3ElementEnum.ELEMENT_0610, "20160101");
+                put(Lo3ElementEnum.ELEMENT_0620, "0626");
+                put(Lo3ElementEnum.ELEMENT_0630, "6030");
+                put(Lo3ElementEnum.ELEMENT_1510, "H");
+                put(Lo3ElementEnum.ELEMENT_8110, "3333");
+                put(Lo3ElementEnum.ELEMENT_8120, "3QA1234");
+                put(Lo3ElementEnum.ELEMENT_8510, "20150917");
+            }
+        }));
     }
-
-    @Test
-    public void testControleerBerichtOpCorrectheidMetCorrectBericht() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        bericht.controleerBerichtOpCorrectheid();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testControleerBerichtOpCorrectheidMetInCorrectBericht() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluitingFoutief();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        bericht.controleerBerichtOpCorrectheid();
-    }
-
-    @Test(expected = AkteOnbekendException.class)
-    public void testControleerBerichtOpCorrectheidMetFouteAkteInBericht() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3AQ1234");
-        bericht.controleerBerichtOpCorrectheid();
-    }
-
-    @Test
-    public void testGetSoortAkteCorrect() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        bericht.getSoortAkte();
-    }
-
-    @Test(expected = AkteOnbekendException.class)
-    public void testGetSoortAkteInCorrect() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3AQ1234");
-        bericht.getSoortAkte();
-    }
-
-    @Test
-    public void testControleerOfRegisterGemeenteOvereenkomtMetVerzendendeGemeente() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        bericht.setBronGemeente("3333");
-        bericht.controleerOfRegisterGemeenteOvereenkomtMetVerzendendeGemeente();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testControleerOfRegisterGemeenteOvereenkomtMetVerzendendeGemeenteMetFoutieveGemeente() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        bericht.setBronGemeente("4444");
-        bericht.controleerOfRegisterGemeenteOvereenkomtMetVerzendendeGemeente();
-    }
-
-    @Test
-    public void testIsAktenummerHetzelfdeAlsAktenummerInHeader() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        assertTrue(bericht.isAktenummerHetzelfdeAlsAktenummerInHeader());
-    }
-
-    @Test
-    public void testIsAktenummerHetzelfdeAlsAktenummerInHeaderAnderNummer() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA6543");
-        assertFalse(bericht.isAktenummerHetzelfdeAlsAktenummerInHeader());
-    }
-
-    @Test
-    public void testIsAktenummerHetzelfdeAlsAktenummerInHeaderAnderSoortAkte() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        parseInhoud.invoke(bericht, waarden);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QH1234");
-        assertFalse(bericht.isAktenummerHetzelfdeAlsAktenummerInHeader());
-    }
-
-    @Test
-    public void testIsIngangsdatumGelijkInMeegegevenAkte() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        parseInhoud.invoke(bericht, waarden);
-        assertTrue(bericht.isIngangsdatumGelijkInMeegegevenAkten());
-    }
-
-    @Test
-    public void testIsIngangsdatumGelijkInMeegegevenAkten() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstBetrokkenOuderMetNaamwijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QC1234");
-        parseInhoud.invoke(bericht, waarden);
-        assertTrue(bericht.isIngangsdatumGelijkInMeegegevenAkten());
-    }
-
-    @Test
-    public void testIsIngangsdatumOngelijkInMeegegevenAkten() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstBetrokkenOuderMetNaamwijzigingVerkeerdeAkten();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QC1234");
-        parseInhoud.invoke(bericht, waarden);
-        assertFalse(bericht.isIngangsdatumGelijkInMeegegevenAkten());
-    }
-
-    @Test
-    public void testParseInhoudOverbodigeCategorieen() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakOverbodigeCategorieen();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        parseInhoud.invoke(bericht, waarden);
-    }
-
-    @Test
-    public void testParseInhoudOnbekendeAkte() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakOverbodigeCategorieen();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QC1234");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test
-    public void testControleerGroep03OpWijzigingen3ACorrect() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstSluiting();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QA1234");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test
-    public void testControleerOntbinding() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstOntbinding();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QB1234");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testControleerOntbindingMetGeboortewijziging() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstOntbindingMetGeboortewijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QB1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testControleerOntbindingMetNaamwijziging() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstOntbindingMetNaamwijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QB1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testOntbindingMetVerschillendeSoortVerbintenissen() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstOntbindingVerschilSoortVerbintenis();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QB1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testOmzettingZonderOmzetting() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstOmzettingZonderVerschil();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "3QH1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test
-    public void testNaamwijziging1H() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstNaamwijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QH1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testNaamwijziging1HFoutiefVoornaamGewijzigd() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstNaamwijzigingMetgewijzigdeVoornnaam();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QH1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testNaamwijziging1HFoutiefgewijzigdeGeboorte() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstNaamwijzigingMetGewijzigdeGeboorteGegevens();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QH1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test
-    public void testVooraamwijziging1M() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstVoornaamwijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QM1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testVoornaamwijziging1MMetGeslachtswijziging() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstVoornaamwijzigingMetGeslachtswijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QM1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testVoornaamwijziging1MMetGeslachtsnaamwijziging() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstVoornaamwijzigingMetGeslachtsnaamwijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QM1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test
-    public void testGeslachtswijziging1S() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstGeslachtswijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QS1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test
-    public void testGeslachtswijziging1SMetVoornaamwijziging() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstGeslachtswijzigingMetVoornaamwijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QS1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testGeslachtswijziging1SMetGeslachtsnaamwijziging() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstGeslachtswijzigingMetGeslachtsnaamwijziging();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QS1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    @Test(expected = BerichtInhoudException.class)
-    public void testGeslachtswijziging1SOngewijzigd() throws Exception {
-        final Tb02Bericht bericht = new Tb02Bericht();
-        final List<Lo3CategorieWaarde> waarden = maakLijstGeslachtswijzigingOngewijzigd();
-        Method parseInhoud = bericht.getClass().getDeclaredMethod("parseInhoud", List.class);
-        parseInhoud.setAccessible(true);
-        bericht.setHeader(Lo3HeaderVeld.AKTENUMMER, "1QS1234");
-        bericht.setBronGemeente("3333");
-        parseInhoud.invoke(bericht, waarden);
-        bericht.controleerGroepenOpWijzigingen();
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstSluiting() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                        put(Lo3ElementEnum.ELEMENT_0610, "");
-                        put(Lo3ElementEnum.ELEMENT_0620, "");
-                        put(Lo3ElementEnum.ELEMENT_0630, "");
-                        put(Lo3ElementEnum.ELEMENT_1510, "");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "3QA1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstOntbinding() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0710, "20120101");
-                        put(Lo3ElementEnum.ELEMENT_0720, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0730, "1");
-                        put(Lo3ElementEnum.ELEMENT_0740, "GZ");
-                        put(Lo3ElementEnum.ELEMENT_1510, "H");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "3QB1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_55, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0610, "20120101");
-                        put(Lo3ElementEnum.ELEMENT_0620, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0630, "1");
-                        put(Lo3ElementEnum.ELEMENT_1510, "H");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstOntbindingVerschilSoortVerbintenis() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0710, "20120101");
-                        put(Lo3ElementEnum.ELEMENT_0720, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0730, "1");
-                        put(Lo3ElementEnum.ELEMENT_0740, "GZ");
-                        put(Lo3ElementEnum.ELEMENT_1510, "H");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "3QB1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_55, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0610, "20120101");
-                        put(Lo3ElementEnum.ELEMENT_0620, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0630, "1");
-                        put(Lo3ElementEnum.ELEMENT_1510, "P");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstOmzettingZonderVerschil() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0610, "20140101");
-                        put(Lo3ElementEnum.ELEMENT_0620, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0630, "1");
-                        put(Lo3ElementEnum.ELEMENT_1510, "H");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "3QB1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_55, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0610, "20120101");
-                        put(Lo3ElementEnum.ELEMENT_0620, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0630, "1");
-                        put(Lo3ElementEnum.ELEMENT_1510, "H");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstSluitingFoutief() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0120, "");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0610, "");
-                        put(Lo3ElementEnum.ELEMENT_0620, "");
-                        put(Lo3ElementEnum.ELEMENT_0630, "");
-                        put(Lo3ElementEnum.ELEMENT_8110, "");
-                        put(Lo3ElementEnum.ELEMENT_8120, "");
-                        put(Lo3ElementEnum.ELEMENT_8510, "");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstOntbindingMetGeboortewijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0710, "20120101");
-                        put(Lo3ElementEnum.ELEMENT_0720, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0730, "1");
-                        put(Lo3ElementEnum.ELEMENT_0740, "GZ");
-                        put(Lo3ElementEnum.ELEMENT_1510, "H");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "3QB1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_55, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900202");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0610, "20120101");
-                        put(Lo3ElementEnum.ELEMENT_0620, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0630, "1");
-                        put(Lo3ElementEnum.ELEMENT_1510, "H");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstOntbindingMetNaamwijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0710, "20120101");
-                        put(Lo3ElementEnum.ELEMENT_0720, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0730, "1");
-                        put(Lo3ElementEnum.ELEMENT_0740, "GZ");
-                        put(Lo3ElementEnum.ELEMENT_1510, "H");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "3QB1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_55, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "Hartog");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19900101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_0610, "20120101");
-                        put(Lo3ElementEnum.ELEMENT_0620, "2222");
-                        put(Lo3ElementEnum.ELEMENT_0630, "1");
-                        put(Lo3ElementEnum.ELEMENT_1510, "H");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstNaamwijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "123456789");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QH1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "in het");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Veld");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstNaamwijzigingMetgewijzigdeVoornnaam() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "123456789");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QH1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Truus");
-                        put(Lo3ElementEnum.ELEMENT_0230, "in het");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Veld");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstNaamwijzigingMetGewijzigdeGeboorteGegevens() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "123456789");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QH1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "in het");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Veld");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19800101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "4444");
-                        put(Lo3ElementEnum.ELEMENT_0330, "2");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstVoornaamwijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QM1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Truus");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstVoornaamwijzigingMetGeslachtswijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Henk");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "M");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QS1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Truus");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstVoornaamwijzigingMetGeslachtsnaamwijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Henk");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "M");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QS1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Truus");
-                        put(Lo3ElementEnum.ELEMENT_0230, "de");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstGeslachtswijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "123456789");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QS1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "M");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstGeslachtswijzigingOngewijzigd() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "123456789");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QS1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstGeslachtswijzigingMetVoornaamwijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "123456789");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QS1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Henk");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "M");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstGeslachtswijzigingMetGeslachtsnaamwijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "123456789");
-                        put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
-                        put(Lo3ElementEnum.ELEMENT_0230, "van");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "V");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QS1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0210, "Henk");
-                        put(Lo3ElementEnum.ELEMENT_0230, "de");
-                        put(Lo3ElementEnum.ELEMENT_0240, "Graaf");
-                        put(Lo3ElementEnum.ELEMENT_0310, "19700101");
-                        put(Lo3ElementEnum.ELEMENT_0320, "3333");
-                        put(Lo3ElementEnum.ELEMENT_0330, "1");
-                        put(Lo3ElementEnum.ELEMENT_0410, "M");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstBetrokkenOuderMetNaamwijziging() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QC1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.OUDER_1, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                        put(Lo3ElementEnum.ELEMENT_6210, "");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QC1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakLijstBetrokkenOuderMetNaamwijzigingVerkeerdeAkten() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QC1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150918");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.OUDER_1, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                        put(Lo3ElementEnum.ELEMENT_6210, "");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "1QC1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }));
-    }
-
-    private List<Lo3CategorieWaarde> maakOverbodigeCategorieen() {
-        return Arrays.asList(
-                new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_35, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0110, "");
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                    }
-                }),
-                new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
-                    {
-                        put(Lo3ElementEnum.ELEMENT_0240, "");
-                        put(Lo3ElementEnum.ELEMENT_0310, "");
-                        put(Lo3ElementEnum.ELEMENT_0320, "");
-                        put(Lo3ElementEnum.ELEMENT_0330, "");
-                        put(Lo3ElementEnum.ELEMENT_0410, "");
-                        put(Lo3ElementEnum.ELEMENT_0610, "");
-                        put(Lo3ElementEnum.ELEMENT_0620, "");
-                        put(Lo3ElementEnum.ELEMENT_0630, "");
-                        put(Lo3ElementEnum.ELEMENT_1510, "");
-                        put(Lo3ElementEnum.ELEMENT_8110, "3333");
-                        put(Lo3ElementEnum.ELEMENT_8120, "3QA1234");
-                        put(Lo3ElementEnum.ELEMENT_8510, "20150917");
-                    }
-                }));
-    }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst5ASluiting() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "1234567890");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "1970101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0599");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "M");
+    // put(Lo3ElementEnum.ELEMENT_0610, "20160101");
+    // put(Lo3ElementEnum.ELEMENT_0620, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0630, "6030");
+    // put(Lo3ElementEnum.ELEMENT_1510, "P");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "5QA1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20150917");
+    // }
+    // }));
+    // }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst3BBeeindiging() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "1234567890");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "1970101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0599");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "M");
+    // put(Lo3ElementEnum.ELEMENT_0710, "20180101");
+    // put(Lo3ElementEnum.ELEMENT_0720, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0730, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0740, "S");
+    // put(Lo3ElementEnum.ELEMENT_1510, "H");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "3QB1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20150917");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_55, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0610, "20160101");
+    // put(Lo3ElementEnum.ELEMENT_0620, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0630, "6030");
+    // put(Lo3ElementEnum.ELEMENT_1510, "H");
+    // }
+    // }));
+    // }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst5BBeeindiging() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "1234567890");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "1970101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0599");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "M");
+    // put(Lo3ElementEnum.ELEMENT_0710, "20180101");
+    // put(Lo3ElementEnum.ELEMENT_0720, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0730, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0740, "S");
+    // put(Lo3ElementEnum.ELEMENT_1510, "P");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "5QB1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20150917");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_55, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0610, "20160101");
+    // put(Lo3ElementEnum.ELEMENT_0620, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0630, "6030");
+    // put(Lo3ElementEnum.ELEMENT_1510, "P");
+    // }
+    // }));
+    // }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst3HOmzetting() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "1234567890");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "1970101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0599");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "M");
+    // put(Lo3ElementEnum.ELEMENT_0610, "20180101");
+    // put(Lo3ElementEnum.ELEMENT_0620, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0630, "6030");
+    // put(Lo3ElementEnum.ELEMENT_1510, "H");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "3QH1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20190917");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_55, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0610, "20160101");
+    // put(Lo3ElementEnum.ELEMENT_0620, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0630, "6030");
+    // put(Lo3ElementEnum.ELEMENT_1510, "P");
+    // }
+    // }));
+    // }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst5HOmzetting() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "1234567890");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "1970101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0599");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.HUWELIJK, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "M");
+    // put(Lo3ElementEnum.ELEMENT_0610, "20180101");
+    // put(Lo3ElementEnum.ELEMENT_0620, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0630, "6030");
+    // put(Lo3ElementEnum.ELEMENT_1510, "P");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "5QH1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20190917");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_55, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Karel");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Sluis");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19800101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0610, "20160101");
+    // put(Lo3ElementEnum.ELEMENT_0620, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0630, "6030");
+    // put(Lo3ElementEnum.ELEMENT_1510, "H");
+    // }
+    // }));
+    // }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst2AOverlijden() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "1234567890");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "1970101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0599");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.OVERLIJDEN, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0810, "20160917");
+    // put(Lo3ElementEnum.ELEMENT_0820, "2222");
+    // put(Lo3ElementEnum.ELEMENT_0830, "6030");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "2QA1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20160917");
+    // }
+    // }));
+    // }
+    //
+    // private List<Lo3CategorieWaarde> maakLijst1CErkenning() {
+    // return Arrays.asList(new Lo3CategorieWaarde(Lo3CategorieEnum.PERSOON, 0, 0, new HashMap<Lo3ElementEnum, String>()
+    // {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "123456789");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van der");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Waterkering");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19700101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "3333");
+    // put(Lo3ElementEnum.ELEMENT_0330, "1");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "1QC1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20040101");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_51, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0210, "Sarah");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Dijk");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19700101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "3333");
+    // put(Lo3ElementEnum.ELEMENT_0330, "1");
+    // put(Lo3ElementEnum.ELEMENT_0410, "V");
+    // }
+    // }), new Lo3CategorieWaarde(Lo3CategorieEnum.OUDER_1, 0, 0, new HashMap<Lo3ElementEnum, String>() {
+    // {
+    // put(Lo3ElementEnum.ELEMENT_0110, "3457725543");
+    // put(Lo3ElementEnum.ELEMENT_0120, "987654321");
+    // put(Lo3ElementEnum.ELEMENT_0210, "Peter");
+    // put(Lo3ElementEnum.ELEMENT_0230, "van der");
+    // put(Lo3ElementEnum.ELEMENT_0240, "Waterkering");
+    // put(Lo3ElementEnum.ELEMENT_0310, "19400101");
+    // put(Lo3ElementEnum.ELEMENT_0320, "0626");
+    // put(Lo3ElementEnum.ELEMENT_0330, "6030");
+    // put(Lo3ElementEnum.ELEMENT_0410, "M");
+    // put(Lo3ElementEnum.ELEMENT_6210, "20040101");
+    // put(Lo3ElementEnum.ELEMENT_8110, "3333");
+    // put(Lo3ElementEnum.ELEMENT_8120, "1QC1234");
+    // put(Lo3ElementEnum.ELEMENT_8510, "20040101");
+    // }
+    // }));
+    // }
 }

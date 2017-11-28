@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.bericht.model.lo3;
 
+import java.nio.charset.Charset;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.util.gbav.GBACharacterSet;
 import org.apache.commons.lang3.ArrayUtils;
@@ -26,13 +27,9 @@ public final class Lo3InhoudElement {
 
     /**
      * Maak een element.
-     *
-     * @param element
-     *            elementnummer (moet 4 cijfers zijn)
-     * @param inhoud
-     *            inhoud (unicode)
-     * @throws IllegalArgumentException
-     *             als het elementnummer niet uit vier cijfers bestaat
+     * @param element elementnummer (moet 4 cijfers zijn)
+     * @param inhoud inhoud (unicode)
+     * @throws IllegalArgumentException als het elementnummer niet uit vier cijfers bestaat
      */
     Lo3InhoudElement(final Lo3ElementEnum element, final String inhoud) {
         this.element = element.getElementNummer();
@@ -41,14 +38,14 @@ public final class Lo3InhoudElement {
         final byte[] teletexInhoud = asTeletex(this.inhoud);
 
         data = new byte[ELEMENTNUMMER_LENGTE + ELEMENT_LENGTE_LENGTE + teletexInhoud.length];
-        System.arraycopy(this.element.getBytes(), 0, data, 0, ELEMENTNUMMER_LENGTE);
-        System.arraycopy(String.format("%1$03d", teletexInhoud.length).getBytes(), 0, data, ELEMENTNUMMER_LENGTE, ELEMENT_LENGTE_LENGTE);
+        System.arraycopy(this.element.getBytes(Charset.forName("UTF-8")), 0, data, 0, ELEMENTNUMMER_LENGTE);
+        System.arraycopy(String.format("%1$03d", teletexInhoud.length).getBytes(Charset.forName("UTF-8")), 0, data, ELEMENTNUMMER_LENGTE,
+                ELEMENT_LENGTE_LENGTE);
         System.arraycopy(teletexInhoud, 0, data, ELEMENTNUMMER_LENGTE + ELEMENT_LENGTE_LENGTE, teletexInhoud.length);
     }
 
     /**
      * Geef de waarde van element.
-     *
      * @return element
      */
     public String getElement() {
@@ -57,7 +54,6 @@ public final class Lo3InhoudElement {
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return inhoud
      */
     public String getInhoud() {
@@ -66,7 +62,6 @@ public final class Lo3InhoudElement {
 
     /**
      * Geef de byte weergave van dit element.
-     *
      * @return teletex encoded byte weergave van dit element
      */
     public byte[] getBytes() {
@@ -75,7 +70,7 @@ public final class Lo3InhoudElement {
 
     private static byte[] asTeletex(final String inhoud) {
         if (inhoud == null || "".equals(inhoud)) {
-            return new byte[] {};
+            return new byte[]{};
         } else {
             return GBACharacterSet.convertTeletexStringToByteArray(GBACharacterSet.converteerUnicodeNaarTeletex(inhoud));
         }

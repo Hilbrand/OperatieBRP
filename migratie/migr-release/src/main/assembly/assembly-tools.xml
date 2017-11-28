@@ -15,6 +15,10 @@
             <directory>target/ggo-sql/sql</directory>
             <outputDirectory>/sql/ggo</outputDirectory>
         </fileSet>
+		<fileSet>
+            <directory>target/mailbox-sql/sql</directory>
+            <outputDirectory>/sql/mailbox</outputDirectory>
+        </fileSet>
         <fileSet>
             <directory>target/binaries</directory>
             <outputDirectory>/bin</outputDirectory>

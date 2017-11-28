@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="info">
+<Configuration status="info" shutdownHook="disable">
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout
@@ -8,9 +8,10 @@
 	</Appenders>
 
 	<Loggers>
-		<Root level="INFO">
+		<AsyncRoot level="INFO">
 			<AppenderRef ref="Console" />
-		</Root>
+		</AsyncRoot>
+		
+		<AsyncLogger name="com.atomikos" level="WARN" />
 	</Loggers>
-
 </Configuration>

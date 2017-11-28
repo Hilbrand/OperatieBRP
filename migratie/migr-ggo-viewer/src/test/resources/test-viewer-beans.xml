@@ -23,9 +23,7 @@
     <import resource="classpath:conversie-beans.xml" />
     <import resource="classpath:synchronisatie-beans-test.xml" />
     <import resource="classpath:excel-adapter-beans.xml" />
- 
-    <import resource="classpath:viewer-beans-mappers.xml" />
- 
+
     <!-- Configure from which .properties file Spring gets its information -->
     <context:property-placeholder location="classpath:ggo-viewer.properties" order="0" />
 
@@ -52,10 +50,10 @@
  -->
     <!-- Definitie van DataSource specifiek voor test -->
     <jdbc:embedded-database id="inMemoryDatabase">
-        <jdbc:script location="classpath:sql/hsqldb/HSQLDB.sql" />
-        <jdbc:script location="classpath:sql/hsqldb/4_brp-migratie-tijdelijk.sql" />
-        <jdbc:script location="classpath:sql/hsqldb/createProtocollering.sql" />
-        <jdbc:script location="classpath:sql/hsqldb/insertProtocollering.sql" />
+        <jdbc:script location="classpath:bmr/HSQLDB/HSQLDB.sql" encoding="UTF-8"/>
+        <jdbc:script location="classpath:bmr/HSQLDB/PENDING_BMR_CHANGES.sql" encoding="UTF-8"/>
+        <jdbc:script location="classpath:sql/hsqldb/createProtocollering.sql" encoding="UTF-8"/>
+        <jdbc:script location="classpath:sql/hsqldb/insertProtocollering.sql" encoding="UTF-8"/>
     </jdbc:embedded-database>
 
     <bean id="viewerJpaVendorAdapter"

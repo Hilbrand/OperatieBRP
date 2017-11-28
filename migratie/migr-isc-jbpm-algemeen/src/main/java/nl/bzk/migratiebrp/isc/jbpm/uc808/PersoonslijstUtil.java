@@ -23,11 +23,8 @@ public final class PersoonslijstUtil {
 
     /**
      * Bepaal het aantal stapels van een bepaalde categorie.
-     * 
-     * @param categorieWaarden
-     *            pl
-     * @param categorie
-     *            categorie
+     * @param categorieWaarden pl
+     * @param categorie categorie
      * @return aantal stapels
      */
     public static int getAantalStapels(final List<Lo3CategorieWaarde> categorieWaarden, final Lo3CategorieEnum categorie) {
@@ -44,11 +41,8 @@ public final class PersoonslijstUtil {
 
     /**
      * Bepaal het maximum aantal stapels voor een categorie over een set van pl-en.
-     * 
-     * @param categorieWaarden
-     *            pl-en
-     * @param categorie
-     *            categorie
+     * @param categorieWaarden pl-en
+     * @param categorie categorie
      * @return aantal
      */
     public static int getMaxAantalStapels(final List<List<Lo3CategorieWaarde>> categorieWaarden, final Lo3CategorieEnum categorie) {
@@ -66,14 +60,9 @@ public final class PersoonslijstUtil {
 
     /**
      * Geef de 'zoveelste' stapel van een bepaalde categorie uit een pl.
-     * 
-     * @param categorieWaarden
-     *            pl
-     * @param categorie
-     *            categorie
-     * @param stapel
-     *            'zoveelste'
-     * 
+     * @param categorieWaarden pl
+     * @param categorie categorie
+     * @param stapel 'zoveelste'
      * @return stapel (lege lijst als niet gevonden)
      */
     public static List<Lo3CategorieWaarde> getStapel(final List<Lo3CategorieWaarde> categorieWaarden, final Lo3CategorieEnum categorie, final int stapel) {

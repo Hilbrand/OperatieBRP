@@ -1,61 +1,36 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>nl.bzk.migratiebrp</groupId>
         <artifactId>migr-tools</artifactId>
-        <version>3.2.108-SNAPSHOT</version>
+        <version>145.3</version>
         <relativePath>../migr-tools</relativePath>
     </parent>
-    <groupId>nl.bzk.migratiebrp.tools</groupId>
+
     <artifactId>migr-tools-levering-vergelijker</artifactId>
-    <name>Migr - Tools - Levering - Vergelijker</name>
     <packaging>jar</packaging>
+    <name>Migr - Tools - Levering - Vergelijker</name>
 
-	<properties>
-		<m2e.jpa.activation>false</m2e.jpa.activation>
-	</properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <finalName>migr-tools-levering-vergelijker</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptors>
-                        <descriptor>src/main/assembly/assembly.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <properties>
+        <m2e.jpa.activation>false</m2e.jpa.activation>
+    </properties>
 
     <dependencies>
         <!-- Project -->
         <dependency>
-            <groupId>nl.bzk.migratiebrp.util</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-util-common</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>nl.bzk.migratiebrp.bericht</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-bericht-model</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>nl.bzk.migratiebrp.test</groupId>
+            <groupId>nl.bzk.migratiebrp</groupId>
             <artifactId>migr-test-common</artifactId>
         </dependency>
 
@@ -82,10 +57,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
@@ -102,14 +77,14 @@
         </dependency>
 
         <!--  JPA/Hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+        </dependency>
 
         <!-- Datasource related -->
         <dependency>
@@ -118,7 +93,7 @@
         </dependency>
 
         <dependency>
-			<groupId>com.mchange</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
         </dependency>
 
@@ -126,14 +101,6 @@
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
         </dependency>
-
-<!--
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-			<scope>test</scope>
-        </dependency>
-	-->
     </dependencies>
 </project>
 

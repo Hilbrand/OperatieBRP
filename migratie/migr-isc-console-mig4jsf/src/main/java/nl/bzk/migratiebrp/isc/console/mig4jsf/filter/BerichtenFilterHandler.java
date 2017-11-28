@@ -12,6 +12,8 @@ import com.sun.facelets.tag.TagConfig;
 import com.sun.facelets.tag.TagException;
 import com.sun.facelets.tag.TagHandler;
 import com.sun.facelets.tag.jsf.ComponentSupport;
+import java.util.EnumMap;
+import java.util.Map;
 import javax.el.ValueExpression;
 import javax.faces.component.ActionSource;
 import javax.faces.component.UIComponent;
@@ -22,22 +24,32 @@ import org.jboss.gravel.common.annotation.TldTag;
 /**
  * Handler voor berichten filter tag.
  */
-@TldTag(
-        name = "berichtenFilter",
-        description = "Create a filter for berichten.",
-        attributes = {@TldAttribute(name = "target", description = "An EL expression into which the filter should be stored.",
-                              required = true, deferredType = Filter.class),
-                      @TldAttribute(name = "kanaal", description = "The kanaal to be filtered.", required = false,
-                              deferredType = String.class),
-                      @TldAttribute(name = "richting", description = "The richting to be filtered.", required = false,
-                              deferredType = String.class),
-                      @TldAttribute(name = "bron", description = "The bron to be filtered.", required = false, deferredType = String.class),
-                      @TldAttribute(name = "doel", description = "The doel to be filtered.", required = false, deferredType = String.class),
-                      @TldAttribute(name = "type", description = "The type to be filtered.", required = false, deferredType = String.class),
-                      @TldAttribute(name = "berichtId", description = "The bericht id to be filtered.", required = false,
-                              deferredType = String.class),
-                      @TldAttribute(name = "correlatieId", description = "The correlatie id to be filtered.", required = false,
-                              deferredType = String.class) })
+@TldTag(name = "berichtenFilter", description = "Create a filter for berichten.", attributes = {@TldAttribute(name = "target",
+        description = "An EL expression into which the filter should be stored.", required = true, deferredType = Filter.class),
+        @TldAttribute(name = "kanaal",
+                description = "The kanaal to be filtered.",
+                required = false, deferredType = String.class),
+        @TldAttribute(name = "richting",
+                description = "The richting to be filtered.",
+                required = false, deferredType = String.class),
+        @TldAttribute(name = "bron",
+                description = "The bron to be filtered.",
+                required = false, deferredType = String.class),
+        @TldAttribute(name = "doel",
+                description = "The doel to be filtered.",
+                required = false, deferredType = String.class),
+        @TldAttribute(name = "type",
+                description = "The type to be filtered.",
+                required = false, deferredType = String.class),
+        @TldAttribute(name = "berichtId",
+                description = "The bericht id to be filtered.",
+                required = false, deferredType = String.class),
+        @TldAttribute(name = "processInstanceId",
+                description = "The process instance id to be filtered.",
+                required = false, deferredType = String.class),
+        @TldAttribute(name = "correlatieId",
+                description = "The correlatie id to be filtered.",
+                required = false, deferredType = String.class)})
 public final class BerichtenFilterHandler extends TagHandler {
     private final TagAttribute targetTagAttribute;
 
@@ -47,13 +59,12 @@ public final class BerichtenFilterHandler extends TagHandler {
     private final TagAttribute doelTagAttribute;
     private final TagAttribute typeTagAttribute;
     private final TagAttribute berichtIdTagAttribute;
+    private final TagAttribute processInstanceTagAttribute;
     private final TagAttribute correlatieIdTagAttribute;
 
     /**
      * Constructor waarbij de tag configuratie meegegeven kan worden.
-     * 
-     * @param config
-     *            Tag configuratie waarin o.a. migratie tags staan.
+     * @param config Tag configuratie waarin o.a. migratie tags staan.
      */
     public BerichtenFilterHandler(final TagConfig config) {
         super(config);
@@ -64,6 +75,7 @@ public final class BerichtenFilterHandler extends TagHandler {
         doelTagAttribute = getAttribute("doel");
         typeTagAttribute = getAttribute("type");
         berichtIdTagAttribute = getAttribute("berichtId");
+        processInstanceTagAttribute = getAttribute("processInstanceId");
         correlatieIdTagAttribute = getAttribute("correlatieId");
     }
 
@@ -78,15 +90,19 @@ public final class BerichtenFilterHandler extends TagHandler {
     }
 
     private ActionListener getListener(final FaceletContext ctx) {
-        return new BerichtenFilterActionListener(
-            getValueExpression(targetTagAttribute, ctx, Filter.class),
-            getValueExpression(kanaalTagAttribute, ctx, String.class),
-            getValueExpression(richtingTagAttribute, ctx, String.class),
-            getValueExpression(bronTagAttribute, ctx, String.class),
-            getValueExpression(doelTagAttribute, ctx, String.class),
-            getValueExpression(typeTagAttribute, ctx, String.class),
-            getValueExpression(berichtIdTagAttribute, ctx, String.class),
-            getValueExpression(correlatieIdTagAttribute, ctx, String.class));
+        final Map<FilterEnum, ValueExpression> waarden = new EnumMap<>(FilterEnum.class);
+        waarden.put(FilterEnum.KANAAL, getValueExpression(kanaalTagAttribute, ctx, String.class));
+        waarden.put(FilterEnum.RICHTING, getValueExpression(richtingTagAttribute, ctx, String.class));
+        waarden.put(FilterEnum.BRON, getValueExpression(bronTagAttribute, ctx, String.class));
+        waarden.put(FilterEnum.DOEL, getValueExpression(doelTagAttribute, ctx, String.class));
+        waarden.put(FilterEnum.TYPE, getValueExpression(typeTagAttribute, ctx, String.class));
+        waarden.put(FilterEnum.BERICHT_ID, getValueExpression(berichtIdTagAttribute, ctx, String.class));
+        waarden.put(FilterEnum.PROCESS_INSTANCE_ID, getValueExpression(processInstanceTagAttribute, ctx, String.class));
+        waarden.put(FilterEnum.CORRELATIE_ID, getValueExpression(correlatieIdTagAttribute, ctx, String.class));
+
+        return new BerichtenFilterActionListener(waarden, getValueExpression(targetTagAttribute, ctx, Filter.class));
+
+
     }
 
     private ValueExpression getValueExpression(final TagAttribute tagAttribute, final FaceletContext context, final Class<?> clazz) {

@@ -22,11 +22,12 @@
         -->
         <navigation-handler>org.jboss.gravel.navigation.GravelNavigationHandler</navigation-handler>
     </application>
-    
+
     <!-- Managed beans -->
     <managed-bean>
-      <managed-bean-name>taskComparator</managed-bean-name>
-      <managed-bean-class>nl.bzk.migratiebrp.isc.console.mig4jsf.util.TaskComparator</managed-bean-class>
-      <managed-bean-scope>application</managed-bean-scope>
+        <managed-bean-name>taskComparator</managed-bean-name>
+        <managed-bean-class>nl.bzk.migratiebrp.isc.console.mig4jsf.util.TaskComparator
+        </managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
     </managed-bean>
 </faces-config>

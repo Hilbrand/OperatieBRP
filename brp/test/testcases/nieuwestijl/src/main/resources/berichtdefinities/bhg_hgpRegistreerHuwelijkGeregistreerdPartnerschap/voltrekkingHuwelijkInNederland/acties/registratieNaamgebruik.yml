@@ -12,7 +12,7 @@ voltrekkingHuwelijkInNederland:
         objectSleutel: '646257353'
         naamgebruik:
           communicatieID: 'comid.voltrekkingHuwelijkInNederland.registratieNaamgebruik.naamgebruik'
-          code: '[]'
+          code: 'E'
           indicatieAfgeleid: 'N'
           predicaatCode: '[]'
           voornamen: '[]'

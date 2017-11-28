@@ -1,1 +1,0 @@
-<xml>${veld}, ${getal}</xml>

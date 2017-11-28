@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [indicatie.bijzondere_verblijfsrechtelijke_positie])
+GEWIJZIGD(oud, nieuw, [Persoon.Indicatie.BijzondereVerblijfsrechtelijkePositie.Waarde])

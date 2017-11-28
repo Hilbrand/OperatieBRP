@@ -23,9 +23,7 @@ public final class ZoekPersoonServiceUtil {
 
     /**
      * Converteer naar Long.
-     * 
-     * @param value
-     *            waarde
+     * @param value waarde
      * @return Long, null als waarde null of leeg is.
      */
     public static Long toLong(final String value) {
@@ -38,9 +36,7 @@ public final class ZoekPersoonServiceUtil {
 
     /**
      * Converteer naar Integer.
-     * 
-     * @param value
-     *            waarde
+     * @param value waarde
      * @return Integer, null als waarde null of leeg is.
      */
     public static Integer toInteger(final String value) {
@@ -53,11 +49,8 @@ public final class ZoekPersoonServiceUtil {
 
     /**
      * Maak een zoek persoon antwoord bericht op basis van de gevonden personen.
-     * 
-     * @param verzoek
-     *            het oorspronkelijke verzoek (voor correlatie)
-     * @param gevondenPersonen
-     *            de gevonden personen
+     * @param verzoek het oorspronkelijke verzoek (voor correlatie)
+     * @param gevondenPersonen de gevonden personen
      * @return het antwoord bericht
      */
     public static ZoekPersoonAntwoordBericht maakZoekPersoonAntwoord(final SyncBericht verzoek, final List<GevondenPersoon> gevondenPersonen) {

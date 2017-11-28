@@ -16,6 +16,7 @@ import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatie;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAutorisatie;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingLog;
+import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingProtocollering;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Test InitVullingRepository
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:synchronisatie-logging-beans-test.xml" })
+@ContextConfiguration(locations = {"classpath:synchronisatie-logging-beans-test.xml"})
 public class LoggingServiceTest {
 
     @Inject
@@ -51,7 +52,7 @@ public class LoggingServiceTest {
      */
     @Test
     public void testZoekLogOpAnummer() {
-        final Long anummer = 3832803548L;
+        final String anummer = "3832803548";
         final InitVullingLog log = service.zoekInitVullingLog(anummer);
         assertNotNull(log);
 
@@ -66,7 +67,7 @@ public class LoggingServiceTest {
     @Test
     @Transactional(value = "loggingTransactionManager", propagation = Propagation.REQUIRED)
     public void testBepaalEnOpslaanVerschillen() {
-        final Long anummer = 3832803548L;
+        final String anummer = "3832803548";
         final InitVullingLog log = service.zoekInitVullingLog(anummer);
         log.setBerichtNaTerugConversie("Dummy BRP XML bericht");
         service.bepalenEnOpslaanVerschillen(log);
@@ -82,7 +83,7 @@ public class LoggingServiceTest {
      */
     @Test
     public void testZoekNietBestaandLog() {
-        final Long anummer = 3832803549L;
+        final String anummer = "3832803549";
         final InitVullingLog log = service.zoekInitVullingLog(anummer);
         assertNull("Er zou geen log gevonden moeten zijn.", log);
     }
@@ -92,17 +93,17 @@ public class LoggingServiceTest {
      */
     @Test
     public void testZoekAutorisatieOpAfnemerCode() {
-        final Integer afnemerCode = 301;
-        InitVullingAutorisatie log = service.zoekInitVullingAutorisatie(afnemerCode);
+        final Long autorisatieId = 301L;
+        InitVullingAutorisatie log = service.zoekInitVullingAutorisatie(autorisatieId);
         assertNull(log);
 
         log = new InitVullingAutorisatie();
-        log.setAfnemerCode(afnemerCode);
+        log.setAutorisatieId(autorisatieId);
         service.persisteerInitVullingAutorisatie(log);
 
-        final InitVullingAutorisatie reReadlog = service.zoekInitVullingAutorisatie(afnemerCode);
+        final InitVullingAutorisatie reReadlog = service.zoekInitVullingAutorisatie(autorisatieId);
         assertNotNull(reReadlog);
-        assertEquals(log.getAfnemerCode(), afnemerCode);
+        assertEquals(log.getAutorisatieId(), autorisatieId);
     }
 
     /**
@@ -110,15 +111,30 @@ public class LoggingServiceTest {
      */
     @Test
     public void testZoekAfnemersIndicatieOpAnummer() {
-        final long anummer = 3832803548L;
+        final String anummer = "3832803548";
         InitVullingAfnemersindicatie log = service.zoekInitVullingAfnemerindicatie(anummer);
         assertNull(log);
 
-        log = new InitVullingAfnemersindicatie(anummer);
+        log = new InitVullingAfnemersindicatie(234);
         service.persisteerInitVullingAfnemerindicatie(log);
 
         final InitVullingAfnemersindicatie reReadlog = service.zoekInitVullingAfnemerindicatie(anummer);
         // Log wordt niet gevonden omdat er eerst op een afnemerindicatieregel wordt gezocht
         assertNull(reReadlog);
+    }
+
+    @Test
+    public void testZoekProtocolleringOpActiviteitId() {
+        final int activiteitId = 401;
+        InitVullingProtocollering log = service.zoekInitVullingProtocollering(activiteitId);
+        assertNull(log);
+
+        log = new InitVullingProtocollering();
+        log.setActiviteitId(activiteitId);
+        service.persisteerInitVullingProtocollering(log);
+
+        final InitVullingProtocollering reReadlog = service.zoekInitVullingProtocollering(activiteitId);
+        assertNotNull(reReadlog);
+        assertEquals(log.getActiviteitId(), activiteitId);
     }
 }

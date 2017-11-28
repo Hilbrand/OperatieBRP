@@ -33,6 +33,13 @@ public class IscBerichtenTest {
     }
 
     @Test
+    public void testUc811BerichtConversie() throws BerichtInhoudException, ClassNotFoundException, IOException {
+        final Uc811Bericht input = new Uc811Bericht();
+        input.setANummer(null);
+        Assert.assertNull(input.getAnummer());
+    }
+
+    @Test
     public void testOngeldigBericht() throws BerichtInhoudException, ClassNotFoundException, IOException {
         final OngeldigBericht input = new OngeldigBericht("BERICHT", "MELDING");
         testFormatAndParseBericht(input, true);
@@ -54,8 +61,7 @@ public class IscBerichtenTest {
     }
 
     private void testFormatAndParseBericht(final IscBericht bericht, final boolean skipParse) throws BerichtInhoudException, IOException,
-        ClassNotFoundException
-    {
+            ClassNotFoundException {
 
         bericht.setMessageId(MessageIdGenerator.generateId());
 

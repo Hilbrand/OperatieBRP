@@ -21,9 +21,10 @@
     </bean>
 
 	<jdbc:initialize-database data-source="syncDalDataSource">
-	    <jdbc:script location="classpath:sql/hsqldb/HSQLDB.sql" />
-	    <jdbc:script location="classpath:sql/hsqldb/4_brp-migratie-tijdelijk.sql" />
+		<!-- alg-test-dal/test/resources -->
+	    <jdbc:script location="classpath:bmr/HSQLDB/HSQLDB.sql" encoding="UTF-8"/>
+        <jdbc:script location="classpath:bmr/HSQLDB/PENDING_BMR_CHANGES.sql" encoding="UTF-8"/>
 	</jdbc:initialize-database>
 
-	<bean id="dbUnitBrpUtil" class="nl.bzk.migratiebrp.synchronisatie.dal.util.brpkern.DBUnitBrpUtil" />
+	<bean id="dbUnitBrpUtil" class="nl.bzk.algemeenbrp.test.dal.DBUnitBrpUtil" />
 </beans>

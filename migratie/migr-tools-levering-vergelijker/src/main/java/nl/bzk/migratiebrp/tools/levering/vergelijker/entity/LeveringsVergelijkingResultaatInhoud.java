@@ -64,7 +64,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public Integer getId() {
@@ -73,9 +72,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public void setId(final Integer id) {
         this.id = id;
@@ -83,7 +80,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van bijhouding bericht eref.
-     *
      * @return bijhouding bericht eref
      */
     public Long getBijhoudingBerichtEref() {
@@ -92,9 +88,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van bijhouding bericht eref.
-     *
-     * @param bijhoudingBerichtEref
-     *            bijhouding bericht eref
+     * @param bijhoudingBerichtEref bijhouding bericht eref
      */
     public void setBijhoudingBerichtEref(final Long bijhoudingBerichtEref) {
         this.bijhoudingBerichtEref = bijhoudingBerichtEref;
@@ -102,7 +96,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van bijhouding bericht id gbav.
-     *
      * @return bijhouding bericht id gbav
      */
     public Long getBijhoudingBerichtIdGbav() {
@@ -111,9 +104,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van bijhouding bericht id gbav.
-     *
-     * @param bijhoudingBerichtIdGbav
-     *            bijhouding bericht id gbav
+     * @param bijhoudingBerichtIdGbav bijhouding bericht id gbav
      */
     public void setBijhoudingBerichtIdGbav(final Long bijhoudingBerichtIdGbav) {
         this.bijhoudingBerichtIdGbav = bijhoudingBerichtIdGbav;
@@ -121,7 +112,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van bijhouding bericht id brp.
-     *
      * @return bijhouding bericht id brp
      */
     public Long getBijhoudingBerichtIdBrp() {
@@ -130,9 +120,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van bijhouding bericht id brp.
-     *
-     * @param bijhoudingBerichtIdBrp
-     *            bijhouding bericht id brp
+     * @param bijhoudingBerichtIdBrp bijhouding bericht id brp
      */
     public void setBijhoudingBerichtIdBrp(final Long bijhoudingBerichtIdBrp) {
         this.bijhoudingBerichtIdBrp = bijhoudingBerichtIdBrp;
@@ -140,7 +128,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van afnemer code.
-     *
      * @return afnemer code
      */
     public String getAfnemerCode() {
@@ -149,9 +136,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van afnemer code.
-     *
-     * @param afnemerCode
-     *            afnemer code
+     * @param afnemerCode afnemer code
      */
     public void setAfnemerCode(final String afnemerCode) {
         this.afnemerCode = afnemerCode;
@@ -159,7 +144,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van levering bericht id gbav.
-     *
      * @return levering bericht id gbav
      */
     public Long getLeveringBerichtIdGbav() {
@@ -168,9 +152,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van levering bericht id gbav.
-     *
-     * @param leveringBerichtIdGbav
-     *            levering bericht id gbav
+     * @param leveringBerichtIdGbav levering bericht id gbav
      */
     public void setLeveringBerichtIdGbav(final Long leveringBerichtIdGbav) {
         this.leveringBerichtIdGbav = leveringBerichtIdGbav;
@@ -178,7 +160,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van levering bericht id brp.
-     *
      * @return levering bericht id brp
      */
     public Long getLeveringBerichtIdBrp() {
@@ -187,9 +168,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van levering bericht id brp.
-     *
-     * @param leveringBerichtIdBrp
-     *            levering bericht id brp
+     * @param leveringBerichtIdBrp levering bericht id brp
      */
     public void setLeveringBerichtIdBrp(final Long leveringBerichtIdBrp) {
         this.leveringBerichtIdBrp = leveringBerichtIdBrp;
@@ -197,7 +176,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van stapel.
-     *
      * @return stapel
      */
     public Integer getStapel() {
@@ -206,9 +184,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van stapel.
-     *
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      */
     public void setStapel(final Integer stapel) {
         this.stapel = stapel;
@@ -216,7 +192,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van voorkomen.
-     *
      * @return voorkomen
      */
     public Integer getVoorkomen() {
@@ -225,9 +200,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van voorkomen.
-     *
-     * @param voorkomen
-     *            voorkomen
+     * @param voorkomen voorkomen
      */
     public void setVoorkomen(final Integer voorkomen) {
         this.voorkomen = voorkomen;
@@ -235,7 +208,6 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van categorie.
-     *
      * @return categorie
      */
     public Integer getCategorie() {
@@ -244,9 +216,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van categorie.
-     *
-     * @param categorie
-     *            categorie
+     * @param categorie categorie
      */
     public void setCategorie(final Integer categorie) {
         this.categorie = categorie;
@@ -254,26 +224,22 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Geef de waarde van rubriek.
-     *
      * @return rubriek
      */
-    public String getElement() {
+    public String getRubriek() {
         return rubriek;
     }
 
     /**
      * Zet de waarde van rubriek.
-     *
-     * @param rubriek
-     *            rubriek
+     * @param rubriek rubriek
      */
-    public void setElement(final String rubriek) {
+    public void setRubriek(final String rubriek) {
         this.rubriek = rubriek;
     }
 
     /**
      * Geef de waarde van bericht nummer.
-     *
      * @return bericht nummer
      */
     public String getBerichtNummer() {
@@ -282,9 +248,7 @@ public class LeveringsVergelijkingResultaatInhoud {
 
     /**
      * Zet de waarde van bericht nummer.
-     *
-     * @param berichtNummer
-     *            bericht nummer
+     * @param berichtNummer bericht nummer
      */
     public void setBerichtNummer(final String berichtNummer) {
         this.berichtNummer = berichtNummer;

@@ -14,12 +14,12 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.SimpleParser;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -30,9 +30,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.test.common.util.AutorisatieCsvConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.mozilla.universalchardet.UniversalDetector;
 
 /**
@@ -73,7 +70,7 @@ public final class CsvAutorisatieReader implements AutorisatieReader {
     }
 
     private List<Lo3Autorisatie> read(final BufferedReader reader) throws IOException {
-        final Map<Integer, List<Lo3AutorisatieInhoud>> collector = new TreeMap<>();
+        final Map<String, List<Lo3AutorisatieInhoud>> collector = new TreeMap<>();
 
         // Eerste regel negeren i.v.m. headers.
         reader.readLine();
@@ -83,9 +80,9 @@ public final class CsvAutorisatieReader implements AutorisatieReader {
         while (line != null && !"".equals(line)) {
             final Lo3AutorisatieInhoud autorisatie = parseCsv(line, ++index);
             if (autorisatie != null) {
-                final Integer afnemersindicatie = autorisatie.getAfnemersindicatie();
+                final String afnemersindicatie = autorisatie.getAfnemersindicatie();
                 if (!collector.containsKey(afnemersindicatie)) {
-                    collector.put(afnemersindicatie, new ArrayList<Lo3AutorisatieInhoud>());
+                    collector.put(afnemersindicatie, new ArrayList<>());
                 }
                 collector.get(afnemersindicatie).add(autorisatie);
             }
@@ -94,7 +91,7 @@ public final class CsvAutorisatieReader implements AutorisatieReader {
         }
 
         for (final List<Lo3AutorisatieInhoud> inhoudLijst : collector.values()) {
-            Collections.sort(inhoudLijst, new AutorisatieInhoudDatumIngangDescendingComparator());
+            inhoudLijst.sort(new AutorisatieInhoudDatumIngangDescendingComparator());
         }
 
         // Transform map to result
@@ -134,7 +131,7 @@ public final class CsvAutorisatieReader implements AutorisatieReader {
         final Lo3AutorisatieInhoud result = new Lo3AutorisatieInhoud();
 
         // "95.10 Afnemersindicatie"
-        result.setAfnemersindicatie(SimpleParser.parseInteger(values[AutorisatieCsvConstants.KOLOM_AFNEMERSINDICATIE]));
+        result.setAfnemersindicatie(values[AutorisatieCsvConstants.KOLOM_AFNEMERSINDICATIE]);
         // "95.20 Afnemernaam"
         result.setAfnemernaam(values[AutorisatieCsvConstants.KOLOM_AFNEMERNAAM]);
         // "99.98 Datum ingang"
@@ -142,7 +139,7 @@ public final class CsvAutorisatieReader implements AutorisatieReader {
         // "99.99 Datum einde"
         result.setDatumEinde(SimpleParser.parseLo3Datum(values[AutorisatieCsvConstants.KOLOM_DATUM_EINDE]));
         // "95.12 Indicatie geheimhouding"
-        result.setIndicatieGeheimhouding(SimpleParser.parseLo3IndicatieGeheimCode(values[AutorisatieCsvConstants.KOLOM_INDICATIE_GEHEIMHOUDING]));
+        result.setIndicatieGeheimhouding(SimpleParser.parseInteger(values[AutorisatieCsvConstants.KOLOM_INDICATIE_GEHEIMHOUDING]));
         // "95.13 Verstrekkingsbeperking"
         result.setVerstrekkingsbeperking(SimpleParser.parseInteger(values[AutorisatieCsvConstants.KOLOM_VERSTREKKINGSBEPERKING]));
 
@@ -187,8 +184,8 @@ public final class CsvAutorisatieReader implements AutorisatieReader {
         // "95.61 Voorwaarderegel ad hoc"
         result.setVoorwaarderegelAdHoc(values[AutorisatieCsvConstants.KOLOM_VOORWAARDEREGEL_AD_HOC - offset]);
         // "95.62 Plaatsingsbevoegdheid persoonslijst"
-        result.setPlaatsingsbevoegdheidPersoonslijst(SimpleParser.parseInteger(values[AutorisatieCsvConstants.KOLOM_PLAATSINGSBEVOEGDHEID_PERSOONSLIJST
-                                                                                      - offset]));
+        result.setPlaatsingsbevoegdheidPersoonslijst(
+                SimpleParser.parseInteger(values[AutorisatieCsvConstants.KOLOM_PLAATSINGSBEVOEGDHEID_PERSOONSLIJST - offset]));
         // "95.63 Afnemersverstrekking"
         result.setAfnemersverstrekking(values[AutorisatieCsvConstants.KOLOM_AFNEMERSVERSTREKKING - offset]);
         // "95.66 Adresvraag bevoegdheid"

@@ -20,9 +20,7 @@ public final class DataObject {
 
     /**
      * Registreer een header.
-     * 
-     * @param header
-     *            header
+     * @param header header
      */
     public void header(final String header) {
         headers.add(header);
@@ -30,9 +28,7 @@ public final class DataObject {
 
     /**
      * Registreer data.
-     * 
-     * @param deData
-     *            data
+     * @param deData data
      */
     public void data(final List<String> deData) {
         this.data.add(deData);
@@ -40,7 +36,6 @@ public final class DataObject {
 
     /**
      * Geef alle headers.
-     * 
      * @return headers
      */
     public List<String> getHeaders() {
@@ -49,7 +44,6 @@ public final class DataObject {
 
     /**
      * Geef alle data.
-     * 
      * @return data
      */
     public List<List<String>> getData() {
@@ -59,8 +53,8 @@ public final class DataObject {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("headers", headers)
-                                                                          .append("data", data)
-                                                                          .toString();
+                .append("headers", headers)
+                .append("data", data)
+                .toString();
     }
 }

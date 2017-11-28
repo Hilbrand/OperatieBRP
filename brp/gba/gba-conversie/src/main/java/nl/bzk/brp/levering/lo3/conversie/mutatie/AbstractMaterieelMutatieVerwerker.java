@@ -1,24 +1,19 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.conversie.mutatie;
 
+import java.util.Collection;
 import java.util.List;
-import nl.bzk.brp.levering.lo3.mapper.AbstractMaterieelMapper;
-import nl.bzk.brp.levering.lo3.mapper.ActieHisVolledigLocator;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.Actie;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
+import nl.bzk.brp.levering.lo3.mapper.AbstractMapper;
 import nl.bzk.brp.levering.lo3.mapper.OnderzoekMapper;
-import nl.bzk.brp.logging.Logger;
-import nl.bzk.brp.logging.LoggerFactory;
-import nl.bzk.brp.model.MaterieleHistorieSet;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.ElementEnum;
-import nl.bzk.brp.model.basis.MaterieelHistorisch;
-import nl.bzk.brp.model.basis.MaterieelVerantwoordbaar;
-import nl.bzk.brp.model.basis.ModelIdentificeerbaar;
-import nl.bzk.brp.model.basis.VerantwoordingTbvLeveringMutaties;
-import nl.bzk.brp.model.operationeel.kern.ActieModel;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
@@ -26,291 +21,258 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3CategorieInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder;
+import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.AbstractBrpGroepConverteerder;
+import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpAttribuutConverteerder;
 
 /**
  * Basis mutatie verwerker voor materiele historie sets.
- *
- * @param <L>
- *            lo3 categorie inhoud type
- * @param <G>
- *            brp groep type
- * @param <H>
- *            historie type
+ * @param <L> lo3 categorie inhoud type
+ * @param <G> brp groep type
  */
-public abstract class AbstractMaterieelMutatieVerwerker<L extends Lo3CategorieInhoud, G extends BrpGroepInhoud, H extends MaterieelHistorisch & MaterieelVerantwoordbaar<ActieModel> & ModelIdentificeerbaar<? extends Number>>
-        extends AbstractMutatieVerwerker
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger();
+public abstract class AbstractMaterieelMutatieVerwerker<L extends Lo3CategorieInhoud, G extends BrpGroepInhoud> extends AbstractMutatieVerwerker {
 
-    private final AbstractMaterieelMapper<?, H, G> mapper;
-    private final BrpGroepConverteerder<G, L> converteerder;
-    private final ElementEnum groepElement;
+    private final AbstractMapper<G> mapper;
+    private final AbstractBrpGroepConverteerder<G, L> converteerder;
+    private final HistorieNabewerking<L, G> historieNabewerking;
+    private final GroepElement groepElement;
+    //
+    /*
+     * squid:S1312 Loggers should be "private static final" and should share a naming convention
+     *
+     * False positive, dit is een abstract klasse waarin melding worden gelogged die betrekking hebben op de concrete subklasse. De subklasse geeft de juiste
+     * logger mee in de constructor.
+     */
+    private final Logger logger;
 
     /**
      * Constructor.
-     *
-     * @param mapper
-     *            mapper
-     * @param converteerder
-     *            converteerder
-     * @param groepElement
-     *            groep element
+     * @param mapper mapper
+     * @param converteerder converteerder
+     * @param attribuutConverteerder attributen converteerder
+     * @param groepElement groep element
+     * @param logger logger
      */
-    protected AbstractMaterieelMutatieVerwerker(
-        final AbstractMaterieelMapper<?, H, G> mapper,
-        final BrpGroepConverteerder<G, L> converteerder,
-        final ElementEnum groepElement)
-    {
+    protected AbstractMaterieelMutatieVerwerker(final AbstractMapper<G> mapper, final AbstractBrpGroepConverteerder<G, L> converteerder,
+                                                final BrpAttribuutConverteerder attribuutConverteerder, final HistorieNabewerking<L, G> historieNabewerking,
+                                                final GroepElement groepElement,
+                                                final Logger logger) {
+        super(attribuutConverteerder);
         this.mapper = mapper;
         this.converteerder = converteerder;
+        this.historieNabewerking = historieNabewerking;
         this.groepElement = groepElement;
+        this.logger = logger;
     }
 
     /**
      * Verwerk wijzigingen.
-     *
-     * @param wijzigingen
-     *            lo3 wijzigingen (output)
-     * @param historieSet
-     *            historie set
-     * @param acties
-     *            acties
-     * @param objectSleutels
-     *            object sleutels
-     * @param onderzoekMapper
-     *            onderzoek mapper
-     * @param actieHisVolledigLocator
-     *            actie locator
+     * @param wijzigingen lo3 wijzigingen (output)
+     * @param identiteitRecord identiteit record (van parent)
+     * @param historieSet historie set
+     * @param acties acties
+     * @param objectSleutels object sleutels
+     * @param onderzoekMapper onderzoek mapper
      */
-    public final void verwerk(
-        final Lo3Wijzigingen<L> wijzigingen,
-        final MaterieleHistorieSet<H> historieSet,
-        final List<Long> acties,
-        final List<Long> objectSleutels,
-        final OnderzoekMapper onderzoekMapper,
-        final ActieHisVolledigLocator actieHisVolledigLocator)
-    {
-        LOGGER.debug("verwerk({}): obv set", this.getClass().getSimpleName());
+    public final void verwerk(final Lo3Wijzigingen<L> wijzigingen, final MetaRecord identiteitRecord, final Collection<MetaRecord> historieSet,
+                              final List<Long> acties, final List<Long> objectSleutels, final OnderzoekMapper onderzoekMapper) {
+        logger.debug("verwerk({}): obv set", this.getClass().getSimpleName());
 
-        final MaterieleHistorieSet<H> relevanteHistorieSet = filterHistorieSet(historieSet, acties);
+        final Collection<MetaRecord> relevanteHistorieSet = filterHistorieSet(historieSet);
 
         // Inhoud
-        final H actueel = bepaalActueel(wijzigingen, relevanteHistorieSet, acties, onderzoekMapper, actieHisVolledigLocator);
-        final H beeindiging = bepaalBeeindiging(wijzigingen, relevanteHistorieSet, acties, onderzoekMapper, actieHisVolledigLocator);
-        final H vervalAlsActueel;
-        if (actueel == null && beeindiging == null) {
-            vervalAlsActueel = bepaalVerval(relevanteHistorieSet, acties, false);
+        final MetaRecord actueel = bepaalActueel(wijzigingen, identiteitRecord, relevanteHistorieSet, acties, onderzoekMapper);
+        final MetaRecord beeindiging = bepaalBeeindiging(wijzigingen, identiteitRecord, relevanteHistorieSet, acties, onderzoekMapper);
+        final MetaRecord vervalAlsActueel;
+        if ((actueel == null) && (beeindiging == null)) {
+            vervalAlsActueel = bepaalVerval(wijzigingen, identiteitRecord, relevanteHistorieSet, acties, onderzoekMapper, false);
         } else {
             vervalAlsActueel = null;
         }
-        final H verval = bepaalVerval(relevanteHistorieSet, acties, true);
+        final MetaRecord verval = bepaalVerval(wijzigingen, identiteitRecord, relevanteHistorieSet, acties, onderzoekMapper, true);
 
         final List<Long> voorkomenSleutels = bepaalVoorkomenSleutels(relevanteHistorieSet);
-        verwerk(
-            wijzigingen,
-            actueel,
-            beeindiging,
-            vervalAlsActueel,
-            verval,
-            acties,
-            objectSleutels,
-            voorkomenSleutels,
-            onderzoekMapper,
-            actieHisVolledigLocator);
+        verwerk(wijzigingen, identiteitRecord, actueel, beeindiging, vervalAlsActueel, verval, acties, objectSleutels, voorkomenSleutels, onderzoekMapper);
     }
 
     /**
      * Hook om een historie set te filteren voor een bepaalde mutatie verwerker.
-     *
-     * @param historieSet
-     *            historie set
-     * @param acties
-     *            acties
+     * @param historieSet historie set
      * @return gefilterde historie set
      */
-    protected MaterieleHistorieSet<H> filterHistorieSet(final MaterieleHistorieSet<H> historieSet, final List<Long> acties) {
+    protected Collection<MetaRecord> filterHistorieSet(final Collection<MetaRecord> historieSet) {
         // Hook
         return historieSet;
     }
 
     /**
      * Verwerk wijziging.
-     *
-     * @param wijzigingen
-     *            lo3 wijzigingen (output)
-     * @param actueel
-     *            actuele record
-     * @param beeindiging
-     *            beeindigde record
-     * @param vervalAlsActueel
-     *            vervallen record dat gebruik kan worden voor het actuele record
-     * @param verval
-     *            vervallen record
-     * @param acties
-     *            acties
-     * @param objectSleutels
-     *            object sleutels
-     * @param voorkomenSleutels
-     *            voorkomen sleutels
-     * @param onderzoekMapper
-     *            onderzoek mapper
-     * @param actieHisVolledigLocator
-     *            actie locator
+     * @param wijzigingen lo3 wijzigingen (output)
+     * @param identiteitRecord identiteit record (van parent)
+     * @param actueelRecord actuele record
+     * @param beeindigingRecord beeindigde record
+     * @param vervalAlsActueelRecord vervallen record dat gebruik kan worden voor het actuele record
+     * @param vervalRecord vervallen record
+     * @param acties acties
+     * @param objectSleutels object sleutels
+     * @param voorkomenSleutels voorkomen sleutels
+     * @param onderzoekMapper onderzoek mapper
      */
-    public final void verwerk(
-        final Lo3Wijzigingen<L> wijzigingen,
-        final H actueel,
-        final H beeindiging,
-        final H vervalAlsActueel,
-        final H verval,
-        final List<Long> acties,
-        final List<Long> objectSleutels,
-        final List<Long> voorkomenSleutels,
-        final OnderzoekMapper onderzoekMapper,
-        final ActieHisVolledigLocator actieHisVolledigLocator)
-    {
-        LOGGER.debug("verwerk({}): obv records", this.getClass().getSimpleName());
+    //
+    public final void verwerk(final Lo3Wijzigingen<L> wijzigingen, final MetaRecord identiteitRecord, final MetaRecord actueelRecord,
+                              final MetaRecord beeindigingRecord, final MetaRecord vervalAlsActueelRecord, final MetaRecord vervalRecord,
+                              final List<Long> acties,
+                              final List<Long> objectSleutels, final List<Long> voorkomenSleutels, final OnderzoekMapper onderzoekMapper) {
+        logger.debug("verwerk({}): obv records", this.getClass().getSimpleName());
         Lo3Categorie<L> actueleInhoud = wijzigingen.getActueleInhoud();
-        if (actueel != null) {
-            LOGGER.debug("verwerk({}): actueel={}", this.getClass().getSimpleName(), actueel);
-            actueleInhoud = verwerkVolledig(actueleInhoud, actueel, onderzoekMapper, actieHisVolledigLocator);
-            LOGGER.debug("verwerk({}): actueel; actueleInhoud -> {}", this.getClass().getSimpleName(), actueleInhoud);
-        } else if (beeindiging != null) {
-            LOGGER.debug("verwerk({}): beeindiging={}", this.getClass().getSimpleName(), beeindiging);
-            actueleInhoud = verwerkBeeindiging(actueleInhoud, beeindiging, onderzoekMapper, actieHisVolledigLocator);
-            LOGGER.debug("verwerk({}): beeindiging; actueleInhoud -> {}", this.getClass().getSimpleName(), actueleInhoud);
-        } else if (vervalAlsActueel != null) {
-            LOGGER.debug("verwerk({}): vervalAlsActueel={}", this.getClass().getSimpleName(), vervalAlsActueel);
-            actueleInhoud = verwerkVervalAlsActueel(actueleInhoud, vervalAlsActueel, onderzoekMapper, actieHisVolledigLocator);
-            LOGGER.debug("verwerk({}): vervalAlsActueel; actueleInhoud -> {}", this.getClass().getSimpleName(), actueleInhoud);
+        if (actueelRecord != null) {
+            logger.debug("verwerk({}): actueel={}", this.getClass().getSimpleName(), actueelRecord);
+            actueleInhoud = verwerkVolledig(actueleInhoud, identiteitRecord, actueelRecord, onderzoekMapper);
+            logger.debug("verwerk({}): actueel; actueleInhoud -> {}", this.getClass().getSimpleName(), actueleInhoud);
+        } else if (beeindigingRecord != null) {
+            logger.debug("verwerk({}): beeindiging={}", this.getClass().getSimpleName(), beeindigingRecord);
+            actueleInhoud = verwerkBeeindiging(actueleInhoud, identiteitRecord, beeindigingRecord, onderzoekMapper);
+            logger.debug("verwerk({}): beeindiging; actueleInhoud -> {}", this.getClass().getSimpleName(), actueleInhoud);
+        } else if (vervalAlsActueelRecord != null) {
+            logger.debug("verwerk({}): vervalAlsActueel={}", this.getClass().getSimpleName(), vervalAlsActueelRecord);
+            actueleInhoud = verwerkVervalAlsActueel(actueleInhoud, identiteitRecord, vervalAlsActueelRecord, onderzoekMapper);
+            logger.debug("verwerk({}): vervalAlsActueel; actueleInhoud -> {}", this.getClass().getSimpleName(), actueleInhoud);
         }
         wijzigingen.setActueleInhoud(actueleInhoud);
 
         Lo3Categorie<L> historischeInhoud = wijzigingen.getHistorischeInhoud();
-        if (verval != null) {
-            LOGGER.debug("verwerk({}): verval={}", this.getClass().getSimpleName(), verval);
-            historischeInhoud = verwerkVolledig(historischeInhoud, verval, onderzoekMapper, actieHisVolledigLocator);
-            LOGGER.debug("verwerk({}): historischeInhoud -> {}", this.getClass().getSimpleName(), historischeInhoud);
+        if (vervalRecord != null) {
+            logger.debug("verwerk({}): verval={}", this.getClass().getSimpleName(), vervalRecord);
+            historischeInhoud = verwerkVolledig(historischeInhoud, identiteitRecord, vervalRecord, onderzoekMapper);
+            logger.debug("verwerk({}): historischeInhoud -> {}", this.getClass().getSimpleName(), historischeInhoud);
         }
         wijzigingen.setHistorischeInhoud(historischeInhoud);
 
-        // Onderzoek, als er geen actueel record is, dan moeten we kijken of er onderzoeken zijn die met actie inhoud of
+        // Onderzoek, als er geen actueel record is, dan moeten we kijken of er onderzoeken zijn die
+        // met actie inhoud of
         // actie aanpassinggeldigheid
-        // aan deze administratieve handeling gekoppeld zijn. Zo ja, dan is er alleen een onderzoek gestart.
-        // Nota: als er een actueel record is, dan is via de onderzoek mapper ook het onderzoek aan die elementen
+        // aan deze administratieve handeling gekoppeld zijn. Zo ja, dan is er alleen een onderzoek
+        // gestart.
+        // Nota: als er een actueel record is, dan is via de onderzoek mapper ook het onderzoek aan
+        // die elementen
         // gekoppeld en dan is het onderzoek reeds verwerkt.
         // Nota: voor historische records geldt dit altijd.
-        if (actueel == null && beeindiging == null && vervalAlsActueel == null) {
+        if ((actueelRecord == null) && (beeindigingRecord == null) && (vervalAlsActueelRecord == null)) {
+            logger.debug("zoek onderzoek");
             final Lo3Onderzoek onderzoek = onderzoekMapper.bepaalActueelOnderzoek(acties, objectSleutels, voorkomenSleutels, groepElement);
+            logger.debug("onderzoek : {}", onderzoek);
             wijzigingen.setActueleOnderzoek(mergeOnderzoek(wijzigingen.getActueleOnderzoek(), onderzoek));
         }
 
-        if (verval == null) {
+        if (vervalRecord == null) {
             final Lo3Onderzoek onderzoek = onderzoekMapper.bepaalHistorischOnderzoek(acties, objectSleutels, voorkomenSleutels, groepElement);
             wijzigingen.setHistorischOnderzoek(mergeOnderzoek(wijzigingen.getHistorischeOnderzoek(), onderzoek));
         }
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* *** CONVERTEREN ********************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
+    /*
+     * *** CONVERTEREN
+     * *********************************************************************************************
+     */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
-    private Lo3Categorie<L> verwerkVolledig(
-        final Lo3Categorie<L> lo3Categorie,
-        final H brpHistorie,
-        final OnderzoekMapper onderzoekMapper,
-        final ActieHisVolledigLocator actieLocator)
-    {
-        LOGGER.debug("verwerkVolledig: actieInhoud={}", brpHistorie.getVerantwoordingInhoud().getID());
-        final BrpGroep<G> brpGroep = mapper.mapGroep(brpHistorie, onderzoekMapper, actieLocator);
+    private Lo3Categorie<L> verwerkVolledig(final Lo3Categorie<L> lo3Categorie, final MetaRecord identiteitRecord, final MetaRecord record,
+                                            final OnderzoekMapper onderzoekMapper) {
+        logger.debug("verwerkVolledig: actieInhoud={}", record.getActieInhoud().getId());
+        final BrpGroep<G> brpGroep = mapper.mapGroep(identiteitRecord, record, onderzoekMapper);
 
-        final L lo3Inhoud =
-                verwerkInhoud(
-                    lo3Categorie == null ? converteerder.maakNieuweInhoud() : lo3Categorie.getInhoud(),
-                    brpGroep.getInhoud(),
-                    brpHistorie,
-                    onderzoekMapper);
-        LOGGER.debug("verwerkVolledig: lo3Inhoud={}", lo3Inhoud);
-        final Lo3Historie lo3Historie = converteerHistorie(brpGroep.getHistorie(), brpGroep.getActieInhoud(), false);
-        LOGGER.debug("verwerkVolledig: lo3Historie={}", lo3Historie);
+        final L lo3Inhoud = verwerkInhoud(lo3Categorie == null ? converteerder.maakNieuweInhoud() : lo3Categorie.getInhoud(), brpGroep.getInhoud(),
+                record, onderzoekMapper);
+        logger.debug("verwerkVolledig: lo3Inhoud={}", lo3Inhoud);
+        Lo3Historie lo3Historie = converteerHistorie(brpGroep.getHistorie(), brpGroep.getActieInhoud(), false);
+        if (historieNabewerking != null) {
+            lo3Historie = historieNabewerking.bewerk(lo3Categorie, brpGroep, lo3Historie);
+        }
+
+        logger.debug("verwerkVolledig: lo3Historie={}", lo3Historie);
         Lo3Documentatie lo3Documentatie = converteerDocument(brpGroep.getActieInhoud());
-        LOGGER.debug("verwerkVolledig: lo3Documentatie (geconverteerd)={}", lo3Documentatie);
-        lo3Documentatie = verwerkInhoudInDocumentatie(brpHistorie, lo3Documentatie);
-        LOGGER.debug("verwerkVolledig: lo3Documentatie (inhoud verwerkt)={}", lo3Documentatie);
+        logger.debug("verwerkVolledig: lo3Documentatie (geconverteerd)={}", lo3Documentatie);
+        lo3Documentatie = verwerkInhoudInDocumentatie(lo3Documentatie);
+        logger.debug("verwerkVolledig: lo3Documentatie (inhoud verwerkt)={}", lo3Documentatie);
         lo3Documentatie = mergeRni(lo3Documentatie, lo3Categorie == null ? null : lo3Categorie.getDocumentatie());
-        LOGGER.debug("verwerkVolledig: lo3Documentatie (rni gemerged)={}", lo3Documentatie);
+        logger.debug("verwerkVolledig: lo3Documentatie (rni gemerged)={}", lo3Documentatie);
 
         return new Lo3Categorie<>(lo3Inhoud, lo3Documentatie, lo3Historie, null);
     }
 
     /**
      * Verwerk de inhoud.
-     *
-     * @param lo3Inhoud
-     *            huidige lo3 inhoud
-     * @param brpInhoud
-     *            te verwerken brp inhoud
-     * @param brpHistorie
-     *            het brp historie record waarop brpInhoud is gebaseerd
-     * @param onderzoekMapper
-     *            onderzoek mapper
+     * @param lo3Inhoud huidige lo3 inhoud
+     * @param brpInhoud te verwerken brp inhoud
+     * @param record het brp historie record waarop brpInhoud is gebaseerd
+     * @param onderzoekMapper onderzoek mapper
      * @return nieuwe lo3 inhoud met daarin de brp inhoud verwerkt
      */
-    protected L verwerkInhoud(final L lo3Inhoud, final G brpInhoud, final H brpHistorie, final OnderzoekMapper onderzoekMapper) {
+    
+    protected L verwerkInhoud(final L lo3Inhoud, final G brpInhoud, final MetaRecord record, final OnderzoekMapper onderzoekMapper) {
         // Hook, voor alternatieve implementatie
         return converteerder.vulInhoud(lo3Inhoud, brpInhoud, null);
     }
 
-    private Lo3Categorie<L> verwerkBeeindiging(
-        final Lo3Categorie<L> lo3Categorie,
-        final H actueel,
-        final OnderzoekMapper onderzoekMapper,
-        final ActieHisVolledigLocator actieLocator)
-    {
-        LOGGER.debug("verwerkBeeindiging({})", this.getClass().getName());
-        final BrpGroep<G> brpGroep = mapper.mapGroep(actueel, onderzoekMapper, actieLocator);
+    private Lo3Categorie<L> verwerkBeeindiging(final Lo3Categorie<L> lo3Categorie, final MetaRecord identiteitRecord, final MetaRecord actueel,
+                                               final OnderzoekMapper onderzoekMapper) {
+        logger.debug("verwerkBeeindiging({})", this.getClass().getName());
+        final BrpGroep<G> brpGroep = mapper.mapGroep(identiteitRecord, actueel, onderzoekMapper);
 
         final L inhoud = verwerkBeeindiging(lo3Categorie == null ? converteerder.maakNieuweInhoud() : lo3Categorie.getInhoud(), brpGroep.getInhoud());
-        final Lo3Historie lo3Historie = converteerHistorie(brpGroep.getHistorie(), brpGroep.getActieGeldigheid(), true);
+        Lo3Historie lo3Historie = converteerHistorie(brpGroep.getHistorie(), brpGroep.getActieGeldigheid(), true);
+        if (historieNabewerking != null) {
+            lo3Historie = historieNabewerking.bewerk(lo3Categorie, brpGroep, lo3Historie);
+        }
+
         Lo3Documentatie lo3Documentatie = converteerDocument(brpGroep.getActieGeldigheid());
-        lo3Documentatie = verwerkInhoudInDocumentatie(actueel, lo3Documentatie);
+        lo3Documentatie = verwerkInhoudInDocumentatie(lo3Documentatie);
         lo3Documentatie = mergeRni(lo3Documentatie, lo3Categorie == null ? null : lo3Categorie.getDocumentatie());
 
         return new Lo3Categorie<>(inhoud, lo3Documentatie, lo3Historie, null);
     }
 
     /**
-     * Verwerk de beeindiging. Deze methode dient overriden te worden als voor deze mutatie verwerker een beeindigd
-     * record wel inhoudelijke gegevens moet bevatten (bijvoorbeeld reden verlies bij een beeindigd nationaliteit
-     * record).
-     *
-     * @param lo3Inhoud
-     *            huidige lo3inhoud
-     * @param brpInhoud
-     *            te verwerken beeindigde brp inhoud
+     * Verwerk de beeindiging. Deze methode dient overriden te worden als voor deze mutatie
+     * verwerker een beeindigd record wel inhoudelijke gegevens moet bevatten (bijvoorbeeld reden
+     * verlies bij een beeindigd nationaliteit record).
+     * @param lo3Inhoud huidige lo3inhoud
+     * @param brpInhoud te verwerken beeindigde brp inhoud
      * @return nieuwe lo3 inhoud met daarin de beeindigde brp inhoud verwerkt
      */
+    //
+    /** brpInhoud wordt in de subclasses gebruikt */
     protected L verwerkBeeindiging(final L lo3Inhoud, final G brpInhoud) {
         // Hook
         return lo3Inhoud;
     }
 
-    private Lo3Categorie<L> verwerkVervalAlsActueel(
-        final Lo3Categorie<L> lo3Categorie,
-        final H verval,
-        final OnderzoekMapper onderzoekMapper,
-        final ActieHisVolledigLocator actieLocator)
-    {
-        LOGGER.debug("verwerkVervalAlsActueel({})", this.getClass().getName());
-        final BrpGroep<G> brpGroep = mapper.mapGroep(verval, onderzoekMapper, actieLocator);
+    private Lo3Categorie<L> verwerkVervalAlsActueel(final Lo3Categorie<L> lo3Categorie, final MetaRecord identiteitRecord, final MetaRecord verval,
+                                                    final OnderzoekMapper onderzoekMapper) {
+        logger.debug("verwerkVervalAlsActueel({})", this.getClass().getName());
+        final BrpGroep<G> brpGroep = mapper.mapGroep(identiteitRecord, verval, onderzoekMapper);
 
         final L inhoud = lo3Categorie == null ? converteerder.maakNieuweInhoud() : lo3Categorie.getInhoud();
-        final Lo3Historie lo3Historie = converteerHistorie(brpGroep.getHistorie(), brpGroep.getActieVerval(), false);
+        Lo3Historie lo3Historie = converteerHistorie(brpGroep.getHistorie(), brpGroep.getActieVerval(), false);
+        if (historieNabewerking != null) {
+            lo3Historie = historieNabewerking.bewerk(lo3Categorie, brpGroep, lo3Historie);
+        }
         Lo3Documentatie lo3Documentatie = converteerDocument(brpGroep.getActieVerval());
-        lo3Documentatie = verwerkInhoudInDocumentatie(verval, lo3Documentatie);
+        lo3Documentatie = verwerkInhoudInDocumentatie(lo3Documentatie);
         lo3Documentatie = mergeRni(lo3Documentatie, lo3Categorie == null ? null : lo3Categorie.getDocumentatie());
 
         return new Lo3Categorie<>(inhoud, lo3Documentatie, lo3Historie, null);
@@ -318,52 +280,55 @@ public abstract class AbstractMaterieelMutatieVerwerker<L extends Lo3CategorieIn
 
     /**
      * Hook: verwerk inhoud in documentatie.
-     *
-     * @param brpHistorie
-     *            brp historie
-     * @param documentatie
-     *            documentatie
+     * @param documentatie documentatie
      * @return (eventueel aangepaste) documentatie
      */
-    protected Lo3Documentatie verwerkInhoudInDocumentatie(final H brpHistorie, final Lo3Documentatie documentatie) {
+    protected Lo3Documentatie verwerkInhoudInDocumentatie(final Lo3Documentatie documentatie) {
         // Hook
         return documentatie;
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* *** BEPALEN ************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
+    /*
+     * *** BEPALEN
+     * *********************************************************************************************
+     * ****
+     */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
     /**
      * Bepaal het actuele record (record waarbij de actie inhoud voorkomt in acties).
-     *
-     * @param wijzigingen
-     *            lo3 wijzigingen
-     * @param historieSet
-     *            historie set
-     * @param acties
-     *            acties
+     * @param wijzigingen lo3 wijzigingen
+     * @param historieSet historie set
+     * @param acties acties
      * @return het actuele record, kan null zijn
      */
-    private H bepaalActueel(
-        final Lo3Wijzigingen<L> wijzigingen,
-        final MaterieleHistorieSet<H> historieSet,
-        final List<Long> acties,
-        final OnderzoekMapper onderzoekMapper,
-        final ActieHisVolledigLocator actieLocator)
-    {
-        H result = null;
-        for (final H historie : historieSet) {
-            final ActieModel actieInhoud = historie.getVerantwoordingInhoud();
+    private MetaRecord bepaalActueel(final Lo3Wijzigingen<L> wijzigingen, final MetaRecord identiteitRecord, final Collection<MetaRecord> historieSet,
+                                     final List<Long> acties, final OnderzoekMapper onderzoekMapper) {
+        MetaRecord result = null;
+        for (final MetaRecord historie : historieSet) {
+            final Actie actieInhoud = historie.getActieInhoud();
             if (actieInhoud != null) {
-                if (acties.contains(actieInhoud.getID())) {
-                    LOGGER.debug("actie {} is relevant gekoppeld als actie inhoud", actieInhoud.getID());
+                if (acties.contains(actieInhoud.getId())) {
+                    logger.debug("actie {} is relevant gekoppeld als actie inhoud", actieInhoud.getId());
                     result = historie;
                 } else {
-                    LOGGER.debug("Registreer actie inhoud");
-                    wijzigingen.registreerActieInhoud(actieInhoud, historie, verwerkVolledig(null, historie, onderzoekMapper, actieLocator));
+                    logger.debug("Registreer actie inhoud");
+                    wijzigingen.registreerActieInhoud(actieInhoud, historie, verwerkVolledig(null, identiteitRecord, historie, onderzoekMapper));
                 }
             }
         }
@@ -371,32 +336,23 @@ public abstract class AbstractMaterieelMutatieVerwerker<L extends Lo3CategorieIn
     }
 
     /**
-     * Bepaal het beeindigde record (record waarbij de actie aanpassing geldigheid voorkomt in acties).
-     *
-     * @param historieSet
-     *            historie set
-     * @param acties
-     *            acties
+     * Bepaal het beeindigde record (record waarbij de actie aanpassing geldigheid voorkomt in
+     * acties).
+     * @param historieSet historie set
+     * @param acties acties
      * @return het actuele record, kan null zijn
      */
-    private H bepaalBeeindiging(
-        final Lo3Wijzigingen<L> wijzigingen,
-        final MaterieleHistorieSet<H> historieSet,
-        final List<Long> acties,
-        final OnderzoekMapper onderzoekMapper,
-        final ActieHisVolledigLocator actieLocator)
-    {
-        for (final H historie : historieSet) {
-            final ActieModel actieAanpassingGeldigheid = historie.getVerantwoordingAanpassingGeldigheid();
+    private MetaRecord bepaalBeeindiging(final Lo3Wijzigingen<L> wijzigingen, final MetaRecord identiteitRecord, final Collection<MetaRecord> historieSet,
+                                         final List<Long> acties, final OnderzoekMapper onderzoekMapper) {
+        for (final MetaRecord historie : historieSet) {
+            final Actie actieAanpassingGeldigheid = historie.getActieAanpassingGeldigheid();
             if (actieAanpassingGeldigheid != null) {
-                if (acties.contains(actieAanpassingGeldigheid.getID())) {
+                if (acties.contains(actieAanpassingGeldigheid.getId())) {
                     return historie;
                 } else {
-                    LOGGER.debug("Registreer actie aanpassing geldigheid");
-                    wijzigingen.registreerActieAanpassingGeldigheid(
-                        actieAanpassingGeldigheid,
-                        historie,
-                        verwerkBeeindiging(null, historie, onderzoekMapper, actieLocator));
+                    logger.debug("Registreer actie aanpassing geldigheid");
+                    wijzigingen.registreerActieAanpassingGeldigheid(actieAanpassingGeldigheid, historie,
+                            verwerkBeeindiging(null, identiteitRecord, historie, onderzoekMapper));
                 }
             }
         }
@@ -405,48 +361,71 @@ public abstract class AbstractMaterieelMutatieVerwerker<L extends Lo3CategorieIn
 
     /**
      * Bepaal het vervallen record (record waarbij de actie verval voorkomt in acties).
-     *
-     * @param historieSet
-     *            historie set
-     * @param acties
-     *            acties
+     * @param historieSet historie set
+     * @param acties acties
      * @return het vervallen record, kan null zijn
      */
-    private H bepaalVerval(final MaterieleHistorieSet<H> historieSet, final List<Long> acties, final boolean gebruikVervalTbvLevMuts) {
-        H resultaat = null;
-        boolean resultaatHeeftAanpassingGeldigheid = true;
-        for (final H historie : historieSet) {
-            final ActieModel verantwoordingVerval = historie.getVerantwoordingVerval();
-            if (verantwoordingVerval != null && acties.contains(verantwoordingVerval.getID())) {
-                final ActieModel verantwoordingAanpassingGeldigheid = historie.getVerantwoordingAanpassingGeldigheid();
-                if (resultaat == null) {
-                    resultaat = historie;
-                    resultaatHeeftAanpassingGeldigheid = verantwoordingAanpassingGeldigheid != null;
+    private MetaRecord bepaalVerval(final Lo3Wijzigingen<L> wijzigingen, final MetaRecord identiteitRecord, final Collection<MetaRecord> historieSet,
+                                    final List<Long> acties, final OnderzoekMapper onderzoekMapper, final boolean gebruikVervalTbvLevMuts) {
+        final VervalGegevens vervalGegevens = new VervalGegevens();
+        for (final MetaRecord historie : historieSet) {
+            final Actie verantwoordingVerval = historie.getActieVerval();
+            if (verantwoordingVerval != null) {
+                if (acties.contains(verantwoordingVerval.getId())) {
+                    final Actie verantwoordingAanpassingGeldigheid = historie.getActieAanpassingGeldigheid();
+                    bepaalOfRecordIsVervallen(vervalGegevens, historie, verantwoordingAanpassingGeldigheid);
                 } else {
-                    if (resultaatHeeftAanpassingGeldigheid && verantwoordingAanpassingGeldigheid == null) {
-                        resultaat = historie;
-                        resultaatHeeftAanpassingGeldigheid = false;
-                    }
+                    wijzigingen.registreerActieVerval(verantwoordingVerval, historie,
+                            verwerkVervalAlsActueel(null, identiteitRecord, historie, onderzoekMapper));
                 }
-            }
 
-            if (gebruikVervalTbvLevMuts && historie instanceof VerantwoordingTbvLeveringMutaties) {
-                final ActieModel actieVervalTbvLevMuts = ((VerantwoordingTbvLeveringMutaties) historie).getVerantwoordingVervalTbvLeveringMutaties();
-
-                if (actieVervalTbvLevMuts != null && acties.contains(actieVervalTbvLevMuts.getID())) {
-                    final ActieModel verantwoordingAanpassingGeldigheid = historie.getVerantwoordingAanpassingGeldigheid();
-                    if (resultaat == null) {
-                        resultaat = historie;
-                        resultaatHeeftAanpassingGeldigheid = verantwoordingAanpassingGeldigheid != null;
-                    } else {
-                        if (resultaatHeeftAanpassingGeldigheid && verantwoordingAanpassingGeldigheid == null) {
-                            resultaat = historie;
-                            resultaatHeeftAanpassingGeldigheid = false;
-                        }
-                    }
+                if (gebruikVervalTbvLevMuts) {
+                    bepaalOfRecordIsVervallenTbvLevMuts(acties, vervalGegevens, historie);
                 }
             }
         }
-        return resultaat;
+        return vervalGegevens.getMetaRecord();
+    }
+
+    private void bepaalOfRecordIsVervallenTbvLevMuts(final List<Long> acties, final VervalGegevens vervalGegevens,
+                                                     final MetaRecord historie) {
+        final Actie actieVervalTbvLevMuts = historie.getActieVervalTbvLeveringMutaties();
+
+        if ((actieVervalTbvLevMuts != null) && acties.contains(actieVervalTbvLevMuts.getId())) {
+            final Actie verantwoordingAanpassingGeldigheid = historie.getActieAanpassingGeldigheid();
+            bepaalOfRecordIsVervallen(vervalGegevens, historie, verantwoordingAanpassingGeldigheid);
+        }
+    }
+
+    private void bepaalOfRecordIsVervallen(final VervalGegevens vervalGegevens, final MetaRecord historie,
+                                           final Actie verantwoordingAanpassingGeldigheid) {
+        if (vervalGegevens.getMetaRecord() == null) {
+            vervalGegevens.setMetaRecord(historie);
+            vervalGegevens.setResultaatHeeftAanpassingGeldigheid(verantwoordingAanpassingGeldigheid != null);
+        } else if (vervalGegevens.isResultaatHeeftAanpassingGeldigheid() && (verantwoordingAanpassingGeldigheid == null)) {
+            vervalGegevens.setMetaRecord(historie);
+            vervalGegevens.setResultaatHeeftAanpassingGeldigheid(false);
+        }
+    }
+
+    private static class VervalGegevens {
+        private MetaRecord metaRecord = null;
+        private boolean resultaatHeeftAanpassingGeldigheid = true;
+
+        private MetaRecord getMetaRecord() {
+            return metaRecord;
+        }
+
+        private void setMetaRecord(final MetaRecord metaRecord) {
+            this.metaRecord = metaRecord;
+        }
+
+        private boolean isResultaatHeeftAanpassingGeldigheid() {
+            return resultaatHeeftAanpassingGeldigheid;
+        }
+
+        private void setResultaatHeeftAanpassingGeldigheid(final boolean resultaatHeeftAanpassingGeldigheid) {
+            this.resultaatHeeftAanpassingGeldigheid = resultaatHeeftAanpassingGeldigheid;
+        }
     }
 }

@@ -7,15 +7,15 @@
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 import java.io.Serializable;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortDocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * BRP document.
@@ -25,94 +25,71 @@ public final class BrpDocumentInhoud extends AbstractBrpGroepInhoud implements S
     private static final long serialVersionUID = 1L;
 
     private final BrpSoortDocumentCode soortDocumentCode;
-    private final BrpString identificatie;
     private final BrpString aktenummer;
     private final BrpString omschrijving;
     private final BrpPartijCode partijCode;
 
     /**
      * Maakt een BrpDocument.
-     *
-     * @param soortDocumentCode
-     *            soort document
-     * @param identificatie
-     *            identificatie
-     * @param aktenummer
-     *            aktenummer
-     * @param omschrijving
-     *            omschrijving
-     * @param partijCode
-     *            partij
+     * @param soortDocumentCode soort document
+     * @param aktenummer aktenummer
+     * @param omschrijving omschrijving
+     * @param partijCode partij
      */
     public BrpDocumentInhoud(
-        @Element(name = "soortDocumentCode", required = false) final BrpSoortDocumentCode soortDocumentCode,
-        @Element(name = "identificatie", required = false) final BrpString identificatie,
-        @Element(name = "aktenummer", required = false) final BrpString aktenummer,
-        @Element(name = "omschrijving", required = false) final BrpString omschrijving,
-        @Element(name = "partijCode", required = false) final BrpPartijCode partijCode)
-    {
+            @Element(name = "soortDocumentCode") final BrpSoortDocumentCode soortDocumentCode,
+            @Element(name = "aktenummer") final BrpString aktenummer,
+            @Element(name = "omschrijving") final BrpString omschrijving,
+            @Element(name = "partijCode") final BrpPartijCode partijCode) {
         super();
         this.soortDocumentCode = soortDocumentCode;
-        this.identificatie = identificatie;
         this.aktenummer = aktenummer;
         this.omschrijving = omschrijving;
         this.partijCode = partijCode;
     }
 
-    /**
-     * {@inheritDoc}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isEenParameterGevuld(soortDocumentCode, identificatie, aktenummer, omschrijving, partijCode);
+        return !BrpValidatie.isEenParameterGevuld(soortDocumentCode, aktenummer, omschrijving, partijCode);
     }
 
     /**
-     * Geef de waarde van soort document code.
-     *
-     * @return the soortDocumentCode
+     * Geef de waarde van soort document code van BrpDocumentInhoud.
+     * @return de waarde van soort document code van BrpDocumentInhoud
      */
-    @Element(name = "soortDocumentCode", required = false)
+    @Element(name = "soortDocumentCode")
     public BrpSoortDocumentCode getSoortDocumentCode() {
         return soortDocumentCode;
     }
 
     /**
-     * Geef de waarde van identificatie.
-     *
-     * @return the identificatie
+     * Geef de waarde van aktenummer van BrpDocumentInhoud.
+     * @return de waarde van aktenummer van BrpDocumentInhoud
      */
-    @Element(name = "identificatie", required = false)
-    public BrpString getIdentificatie() {
-        return identificatie;
-    }
-
-    /**
-     * Geef de waarde van aktenummer.
-     *
-     * @return the aktenummer
-     */
-    @Element(name = "aktenummer", required = false)
+    @Element(name = "aktenummer")
     public BrpString getAktenummer() {
         return aktenummer;
     }
 
     /**
-     * Geef de waarde van omschrijving.
-     *
-     * @return the omschrijving
+     * Geef de waarde van omschrijving van BrpDocumentInhoud.
+     * @return de waarde van omschrijving van BrpDocumentInhoud
      */
-    @Element(name = "omschrijving", required = false)
+    @Element(name = "omschrijving")
     public BrpString getOmschrijving() {
         return omschrijving;
     }
 
     /**
-     * Geef de waarde van partij code.
-     *
-     * @return the partijCode
+     * Geef de waarde van partij code van BrpDocumentInhoud.
+     * @return de waarde van partij code van BrpDocumentInhoud
      */
-    @Element(name = "partijCode", required = false)
+    @Element(name = "partijCode")
     public BrpPartijCode getPartijCode() {
         return partijCode;
     }
@@ -127,30 +104,27 @@ public final class BrpDocumentInhoud extends AbstractBrpGroepInhoud implements S
         }
         final BrpDocumentInhoud castOther = (BrpDocumentInhoud) other;
         return new EqualsBuilder().append(soortDocumentCode, castOther.soortDocumentCode)
-                                  .append(identificatie, castOther.identificatie)
-                                  .append(aktenummer, castOther.aktenummer)
-                                  .append(omschrijving, castOther.omschrijving)
-                                  .append(partijCode, castOther.partijCode)
-                                  .isEquals();
+                .append(aktenummer, castOther.aktenummer)
+                .append(omschrijving, castOther.omschrijving)
+                .append(partijCode, castOther.partijCode)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(soortDocumentCode)
-                                    .append(identificatie)
-                                    .append(aktenummer)
-                                    .append(omschrijving)
-                                    .append(partijCode)
-                                    .toHashCode();
+                .append(aktenummer)
+                .append(omschrijving)
+                .append(partijCode)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("soortDocumentCode", soortDocumentCode)
-                                                                          .append("identificatie", identificatie)
-                                                                          .append("aktenummer", aktenummer)
-                                                                          .append("omschrijving", omschrijving)
-                                                                          .append("partijCode", partijCode)
-                                                                          .toString();
+                .append("aktenummer", aktenummer)
+                .append("omschrijving", omschrijving)
+                .append("partijCode", partijCode)
+                .toString();
     }
 }

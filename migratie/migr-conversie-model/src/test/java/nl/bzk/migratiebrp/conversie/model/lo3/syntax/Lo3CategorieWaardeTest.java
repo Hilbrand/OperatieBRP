@@ -8,12 +8,10 @@ package nl.bzk.migratiebrp.conversie.model.lo3.syntax;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-
 import org.junit.Test;
 
 /**

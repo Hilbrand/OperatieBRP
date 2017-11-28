@@ -13,9 +13,7 @@ public interface VerzendendeInstantieDao {
 
     /**
      * Bepaal de verzendende instantie voor een instantie.
-     * 
-     * @param instantie
-     *            instantie code
+     * @param instantie instantie code
      * @return verzendende instantie code
      */
     Long bepaalVerzendendeInstantie(long instantie);

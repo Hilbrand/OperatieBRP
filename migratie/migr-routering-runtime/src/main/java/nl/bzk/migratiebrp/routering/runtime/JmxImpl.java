@@ -11,15 +11,14 @@ import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.Session;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.jmx.UseDynamicDomain;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
@@ -31,24 +30,31 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  */
 @UseDynamicDomain
 @ManagedResource(objectName = "nl.bzk.migratiebrp.routering:name=ROUTERING", description = "JMX Service voor ROUTERING")
-public final class JmxImpl implements Jmx {
+public final class JmxImpl implements Jmx, ApplicationContextAware {
 
     private static final int REDELIVERY_RECEIVE_TIMEOUT = 1000;
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     /**
      * @return is routering gestart.
      */
     @ManagedAttribute(description = "Applicatie actief")
     public boolean isGestart() {
-        return Main.getContext().isActive();
+        return true;
     }
 
     @Override
     @ManagedOperation(description = "Applicatie afsluiten.")
     public void afsluiten() {
         LOGGER.info("Applicatie afsluiten (aanroep via JMX).");
-        Main.stop();
+        applicationContext.getBean(Main.BEAN_NAME, Main.class).stop();
     }
 
     @Override
@@ -56,8 +62,7 @@ public final class JmxImpl implements Jmx {
     @ManagedOperationParameters(@ManagedOperationParameter(name = "queueNaam",
             description = "Queue naam (let op: NIET de DLQ naam, maar de 'gewone' queue naam)"))
     public long redeliverDlq(final String queueNaam) throws IOException, URISyntaxException, JMSException {
-        final ApplicationContext context = Main.getContext();
-        final BrokerService broker = context.getBean("routeringCentrale", BrokerService.class);
+        final BrokerService broker = applicationContext.getBean("routeringCentrale", BrokerService.class);
 
         final ActiveMQConnectionFactory connectionFactory =
                 new ActiveMQConnectionFactory(broker.getTransportConnectors().get(0).getConnectUri() + "?jms.prefetchPolicy.all=1");
@@ -72,18 +77,13 @@ public final class JmxImpl implements Jmx {
     private long redeliverDlq(final JmsTemplate jmsTemplate, final String from, final String to) {
         LOGGER.info("Redelivering from {} to {}", from, to);
         jmsTemplate.setReceiveTimeout(REDELIVERY_RECEIVE_TIMEOUT);
-        Message message = null;
+        Message message;
 
         final AtomicLong counter = new AtomicLong();
         while ((message = jmsTemplate.receive(from)) != null) {
             LOGGER.info("Redelivering message: {}", message);
             final Message receivedMessage = message;
-            jmsTemplate.send(to, new MessageCreator() {
-                @Override
-                public Message createMessage(final Session session) throws JMSException {
-                    return receivedMessage;
-                }
-            });
+            jmsTemplate.send(to, session -> receivedMessage);
             counter.incrementAndGet();
         }
         LOGGER.info("Redelivered {} messages from {} to {}", counter.get(), from, to);

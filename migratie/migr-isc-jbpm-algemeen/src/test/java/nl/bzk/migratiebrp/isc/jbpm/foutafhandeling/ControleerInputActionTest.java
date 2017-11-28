@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.isc.jbpm.foutafhandeling;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden;
 import org.junit.Test;
 
@@ -17,8 +17,8 @@ public class ControleerInputActionTest {
 
     private FoutafhandelingPaden maakPaden() {
         final FoutafhandelingPaden result = new FoutafhandelingPaden();
-        result.put("end", "Afbreken", true, true, true);
-        result.put("restart", "Opnieuw", false, false, false);
+        result.put("end", "Afbreken", true, false);
+        result.put("restart", "Opnieuw", false, false);
         return result;
     }
 
@@ -26,11 +26,10 @@ public class ControleerInputActionTest {
     public void testGeenInput() {
         final Map<String, Object> result = new ControleerInputAction().execute(Collections.<String, Object>emptyMap());
 
-        Assert.assertEquals(4, result.size());
+        Assert.assertEquals(3, result.size());
         Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_BEHEERDER));
         Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_PF));
-        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_DEBLOKKERING));
-        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_ANTWOORD));
+        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_VB));
     }
 
     @Test
@@ -55,10 +54,9 @@ public class ControleerInputActionTest {
 
         final Map<String, Object> result = new ControleerInputAction().execute(params);
 
-        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(2, result.size());
         Assert.assertEquals(Boolean.TRUE, result.get(FoutafhandelingConstants.INDICATIE_PF));
-        Assert.assertEquals(Boolean.TRUE, result.get(FoutafhandelingConstants.INDICATIE_DEBLOKKERING));
-        Assert.assertEquals(Boolean.TRUE, result.get(FoutafhandelingConstants.INDICATIE_ANTWOORD));
+        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_VB));
 
     }
 
@@ -71,10 +69,9 @@ public class ControleerInputActionTest {
 
         final Map<String, Object> result = new ControleerInputAction().execute(params);
 
-        Assert.assertEquals(3, result.size());
+        Assert.assertEquals(2, result.size());
         Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_PF));
-        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_DEBLOKKERING));
-        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_ANTWOORD));
+        Assert.assertEquals(Boolean.FALSE, result.get(FoutafhandelingConstants.INDICATIE_VB));
     }
 
     @Test(expected = IllegalArgumentException.class)

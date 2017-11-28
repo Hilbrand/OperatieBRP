@@ -7,9 +7,11 @@
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.zoeken;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
@@ -19,14 +21,10 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerBrpNaarLo3Service;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.PersoonRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.BrpPersoonslijstMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -34,14 +32,11 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
-@Ignore("Cashed op een verify error. PowerMock dingetje; test herschrijven")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BrpPersoonslijstMapper.class, BrpPersoonslijst.class })
+@PrepareForTest({BrpPersoonslijstMapper.class, BrpPersoonslijst.class})
 public class ZoekPersoonFilterImplTest {
 
-    private PersoonRepository persoonRepository;
     private BrpPersoonslijstMapper brpPersoonslijstMapper;
     private ConverteerBrpNaarLo3Service converteerBrpNaarLo3Service;
     private ZoekPersoonFilterImpl subject;
@@ -49,13 +44,9 @@ public class ZoekPersoonFilterImplTest {
     @Before
     public void setup() {
         brpPersoonslijstMapper = PowerMockito.mock(BrpPersoonslijstMapper.class);
-        persoonRepository = Mockito.mock(PersoonRepository.class);
         converteerBrpNaarLo3Service = Mockito.mock(ConverteerBrpNaarLo3Service.class);
 
-        subject = new ZoekPersoonFilterImpl();
-        ReflectionTestUtils.setField(subject, "persoonRepository", persoonRepository);
-        ReflectionTestUtils.setField(subject, "brpPersoonslijstMapper", brpPersoonslijstMapper);
-        ReflectionTestUtils.setField(subject, "converteerBrpNaarLo3Service", converteerBrpNaarLo3Service);
+        subject = new ZoekPersoonFilterImpl(null, brpPersoonslijstMapper, converteerBrpNaarLo3Service);
     }
 
     @Test
@@ -134,14 +125,14 @@ public class ZoekPersoonFilterImplTest {
         final Persoon persoon = Mockito.mock(Persoon.class);
         final BrpPersoonslijst brpPersoonslijst = Mockito.mock(BrpPersoonslijst.class);
 
-        Mockito.when(persoonRepository.findOnderzoekenVoorPersoon(Matchers.same(persoon))).thenReturn(new ArrayList<Onderzoek>());
+        Mockito.when(persoon.getOnderzoeken()).thenReturn(new HashSet<>());
         Mockito.when(brpPersoonslijstMapper.mapNaarMigratie(Matchers.same(persoon), Matchers.any(BrpOnderzoekMapper.class))).thenReturn(brpPersoonslijst);
 
         final Lo3CategorieWaarde cat01 = new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_01, 0, 0);
         cat01.addElement(Lo3ElementEnum.ELEMENT_0210, voornamen);
         cat01.addElement(Lo3ElementEnum.ELEMENT_0230, voorvoegsel);
         cat01.addElement(Lo3ElementEnum.ELEMENT_0240, achternaam);
-        final List<Lo3CategorieWaarde> categorieen = Arrays.asList(cat01);
+        final List<Lo3CategorieWaarde> categorieen = Collections.singletonList(cat01);
         final Lo3Persoonslijst lo3Persoonslijst = new Lo3PersoonslijstParser().parse(categorieen);
 
         Mockito.when(converteerBrpNaarLo3Service.converteerBrpPersoonslijst(Matchers.same(brpPersoonslijst))).thenReturn(lo3Persoonslijst);
@@ -177,9 +168,8 @@ public class ZoekPersoonFilterImplTest {
     }
 
     private boolean callVoldoetAanFilter(final List<Lo3CategorieWaarde> categorieen, final List<Lo3CategorieWaarde> filter)
-        throws ReflectiveOperationException
-    {
-        final Method method = subject.getClass().getDeclaredMethod("voldoetAanFilter", new Class<?>[] {List.class, List.class });
+            throws ReflectiveOperationException {
+        final Method method = subject.getClass().getDeclaredMethod("voldoetAanFilter", new Class<?>[]{List.class, List.class});
         method.setAccessible(true);
 
         return (Boolean) method.invoke(subject, categorieen, filter);

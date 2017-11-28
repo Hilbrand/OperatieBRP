@@ -18,19 +18,15 @@ public final class NotFilter implements FilenameFilter {
 
     /**
      * Constructor.
-     * 
-     * @param delegate
-     *            delegate
+     * @param delegate delegate
      */
     public NotFilter(final FilenameFilter delegate) {
         this.delegate = delegate;
     }
 
     /**
-     * @param dir
-     *            dir
-     * @param name
-     *            name
+     * @param dir dir
+     * @param name name
      * @return true, als name null is of delegate.accept(dir,name) false teruggeeft
      */
     @Override

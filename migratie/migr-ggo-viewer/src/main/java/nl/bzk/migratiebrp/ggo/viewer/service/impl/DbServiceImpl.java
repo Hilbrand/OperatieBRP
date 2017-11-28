@@ -10,6 +10,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
@@ -18,13 +23,9 @@ import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoFoutRegel;
 import nl.bzk.migratiebrp.ggo.viewer.service.DbService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.PersoonRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
 
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,9 @@ public class DbServiceImpl implements DbService {
     private BrpDalService brpDalService;
 
     @Inject
+    private BrpPersoonslijstService brpPersoonslijstService;
+
+    @Inject
     private PersoonRepository persoonRepository;
 
     @Inject
@@ -46,21 +50,17 @@ public class DbServiceImpl implements DbService {
 
     /**
      * Zoekt de laatste BerichtLog uit de BRP.
-     *
-     * @param aNummer
-     *            Long
+     * @param aNummer String
      * @return lo3Persoonslijst
      */
     @Override
-    public final Lo3Bericht zoekLo3Bericht(final Long aNummer) {
+    public final Lo3Bericht zoekLo3Bericht(final String aNummer) {
         return brpDalService.zoekLo3PeroonslijstBerichtOpAnummer(aNummer);
     }
 
     /**
      * Haalt het Lg01 bericht uit de Lo3Bericht.
-     *
-     * @param lo3Bericht
-     *            de BerichtLog
+     * @param lo3Bericht de BerichtLog
      * @return lo3Persoonslijst
      */
     @Override
@@ -81,9 +81,7 @@ public class DbServiceImpl implements DbService {
 
     /**
      * Zoekt de (meest recente) berichtlog op op aNummer. Converteert de Set DB Logregels naar een List model-LogRegels
-     *
-     * @param lo3Bericht
-     *            de BerichtLog
+     * @param lo3Bericht de BerichtLog
      * @return de lijst met LogRegels, of null als niet gevonden
      */
     @Override
@@ -93,18 +91,16 @@ public class DbServiceImpl implements DbService {
 
     /**
      * Zoekt de BRP Persoonslijst op basis van ANummer.
-     *
-     * @param aNummer
-     *            Long
+     * @param aNummer String
      * @return brpPersoonslijst
      */
     @Override
-    public final BrpPersoonslijst zoekBrpPersoonsLijst(final Long aNummer) {
-        return brpDalService.zoekPersoonOpAnummer(aNummer);
+    public final BrpPersoonslijst zoekBrpPersoonsLijst(final String aNummer) {
+        return brpPersoonslijstService.zoekPersoonOpAnummer(aNummer);
     }
 
     @Override
-    public final Persoon zoekPersoon(final long administratienummer) {
+    public final Persoon zoekPersoon(final String administratienummer) {
         final List<Persoon> personen = persoonRepository.findByAdministratienummer(administratienummer, SoortPersoon.INGESCHREVENE, false);
 
         final Persoon result;

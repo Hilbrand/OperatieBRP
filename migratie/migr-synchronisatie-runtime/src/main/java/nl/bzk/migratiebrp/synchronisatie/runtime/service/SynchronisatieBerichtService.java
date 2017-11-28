@@ -12,36 +12,27 @@ import nl.bzk.migratiebrp.conversie.model.exceptions.OngeldigePersoonslijstExcep
 
 /**
  * Specificatie van de services die geboden worden door de SynchronisatieService.
- * 
- * @param <Verzoek>
- *            Verzoek bericht type dat wordt verwerkt.
- * @param <Antwoord>
- *            Antwoord bericht type dat wordt geproduceerd.
+ * @param <V> Verzoek bericht type dat wordt verwerkt.
+ * @param <A> Antwoord bericht type dat wordt geproduceerd.
  */
-public interface SynchronisatieBerichtService<Verzoek extends SyncBericht, Antwoord extends SyncBericht> {
+public interface SynchronisatieBerichtService<V extends SyncBericht, A extends SyncBericht> {
     /**
      * Geeft de verwerkte verzoek classe.
-     * 
      * @return De verwerkte verzoek classe.
      */
-    Class<Verzoek> getVerzoekType();
+    Class<V> getVerzoekType();
 
     /**
      * Verwerk het bericht en produceer een antwoord.
-     * 
-     * @param verzoek
-     *            Het verzoek bericht.
+     * @param verzoek Het verzoek bericht.
      * @return Het antwoord bericht.
-     * @throws BerichtSyntaxException
-     *             Als de syntax van het bericht niet goed is.
-     * @throws OngeldigePersoonslijstException
-     *             Als de persoonslijst ongeldig is.
+     * @throws BerichtSyntaxException Als de syntax van het bericht niet goed is.
+     * @throws OngeldigePersoonslijstException Als de persoonslijst ongeldig is.
      */
-    Antwoord verwerkBericht(Verzoek verzoek) throws OngeldigePersoonslijstException, BerichtSyntaxException;
+    A verwerkBericht(V verzoek) throws OngeldigePersoonslijstException, BerichtSyntaxException;
 
     /**
      * Geef de waarde van service naam.
-     *
      * @return de naam van de specifieke SynchronisatieBerichtService.
      */
     String getServiceNaam();

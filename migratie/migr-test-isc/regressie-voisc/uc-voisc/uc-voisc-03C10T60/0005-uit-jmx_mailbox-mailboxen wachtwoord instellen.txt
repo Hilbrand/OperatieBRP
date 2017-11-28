@@ -1,4 +1,4 @@
 nl.bzk.migratiebrp.mailbox:name=MAILBOX
 setMailboxWachtwoord
-3000200
+3000210
 6&S+1AF+

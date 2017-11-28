@@ -7,12 +7,12 @@
 package nl.bzk.migratiebrp.init.logging.runtime.listeners;
 
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.LeesUitBrpAntwoordBericht;
-import nl.bzk.migratiebrp.init.logging.runtime.listeners.handlers.LeesUitBrpAntwoordBerichtHandler;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.init.logging.runtime.listeners.handlers.AntwoordHandler;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,30 +23,31 @@ public final class TerugConversieMessageListener extends AbstractMessageListener
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private AntwoordHandler<LeesUitBrpAntwoordBericht> leesUitBrpAntwoordHandler;
+
+    /**
+     * Constructor.
+     * @param leesUitBrpAntwoordHandler leesUitBrpAntwoordHandler
+     */
     @Inject
-    private LeesUitBrpAntwoordBerichtHandler leesUitBrpAntwoordHandler;
+    public TerugConversieMessageListener(final AntwoordHandler<LeesUitBrpAntwoordBericht> leesUitBrpAntwoordHandler) {
+        this.leesUitBrpAntwoordHandler = leesUitBrpAntwoordHandler;
+    }
 
     @Override
     @Transactional(value = "loggingTransactionManager", propagation = Propagation.REQUIRED)
-    @SuppressWarnings("checkstyle:illegalcatch")
-    protected void verwerkBericht(final String bericht, final String messageId, final String correlationId) {
+    public void verwerkBericht(final String bericht, final String messageId, final String correlationId) {
         try {
             final SyncBericht syncBericht = SyncBerichtFactory.SINGLETON.getBericht(bericht);
-
-            // Initiele vulling: personen
             if (syncBericht instanceof LeesUitBrpAntwoordBericht) {
+                // Initiele vulling: personen
                 leesUitBrpAntwoordHandler.verwerk((LeesUitBrpAntwoordBericht) syncBericht, messageId, correlationId);
-
-                // SynchronisatieFout is vervallen. Bericht staat nu, na retry, op de DLQ.
-                // } else if (syncBericht instanceof SynchronisatieFoutBericht) {
-                // synchronisatieFoutHandler.verwerk((SynchronisatieFoutBericht) syncBericht, messageId, correlationId);
-
             } else {
                 LOG.warn("Geen verwerker voor bericht van type: {}\n{}", syncBericht.getClass().getName(), syncBericht);
             }
-        } catch (final Exception e) {
+        } catch (final RuntimeException e) {
             LOG.error("Error opgetreden bij het uitlezen van het response bericht.", e);
+            throw e;
         }
     }
-
 }

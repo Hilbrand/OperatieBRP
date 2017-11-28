@@ -28,8 +28,7 @@ public final class Lo3AutorisatieVergelijker {
             }
         } else {
             if (!equals(lokaalVerschillenLog, "afnemercode", expected.getAfnemersindicatie(), actual.getAfnemersindicatie())
-                | !Lo3StapelHelper.vergelijkStapels(lokaalVerschillenLog, expected.getAutorisatieStapel(), actual.getAutorisatieStapel()))
-            {
+                    | !Lo3StapelHelper.vergelijkStapels(lokaalVerschillenLog, expected.getAutorisatieStapel(), actual.getAutorisatieStapel())) {
                 equal = false;
             }
         }

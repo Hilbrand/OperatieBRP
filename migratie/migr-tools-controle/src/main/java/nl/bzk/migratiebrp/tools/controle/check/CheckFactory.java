@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.tools.controle.check;
 
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Factory.
@@ -18,9 +18,7 @@ public final class CheckFactory {
 
     /**
      * Create check.
-     *
-     * @param args
-     *            command line arguments
+     * @param args command line arguments
      * @return check
      */
     Check createCheck(final String[] args) {

@@ -18,9 +18,7 @@ public class SyncParameters {
 
     /**
      * Zet de 'initieleVulling' parameter.
-     * 
-     * @param initieleVulling
-     *            de 'initieleVulling' parameter
+     * @param initieleVulling de 'initieleVulling' parameter
      */
     public final void setInitieleVulling(final boolean initieleVulling) {
         this.initieleVulling = initieleVulling;
@@ -28,7 +26,6 @@ public class SyncParameters {
 
     /**
      * De 'initieleVulling' parameter.
-     * 
      * @return de 'initieleVulling' parameter
      */
     public final boolean isInitieleVulling() {

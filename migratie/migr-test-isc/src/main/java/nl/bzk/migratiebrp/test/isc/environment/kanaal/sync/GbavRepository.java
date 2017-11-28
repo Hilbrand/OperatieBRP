@@ -23,26 +23,30 @@ import nl.bzk.migratiebrp.util.common.JdbcConstants;
  */
 public final class GbavRepository {
 
-    /** Activiteit type voor LG01 cyclus. */
-    public static final int ACTIVITEIT_TYPE_LG01_CYCLUS = 102;
-    /** Activiteit type voor LG01 bericht. */
+    /**
+     * Activiteit type voor LG01 bericht.
+     */
     public static final int ACTIVITEIT_TYPE_LG01_BERICHT = 100;
-    /** Activiteit type voor spontaan levering. */
-    public static final int ACTIVITEIT_TYPE_SPONTAAN = 107;
-    /** Activiteit type voor leveringsbericht. */
-    public static final int ACTIVITEIT_TYPE_LEVERING_BERICHT = 101;
 
-    /** Activiteit subtype voor LG01 cyclus. */
+    /**
+     * Activiteit type voor LG01 cyclus.
+     */
+    public static final int ACTIVITEIT_TYPE_LG01_CYCLUS = 102;
+
+    /**
+     * Activiteit subtype voor LG01 cyclus.
+     */
     public static final int ACTIVITEIT_SUBTYPE_LG01_CYCLUS = 1305;
-    /** Activiteit subtype voor LG01 bericht. */
+    /**
+     * Activiteit subtype voor LG01 bericht.
+     */
     public static final int ACTIVITEIT_SUBTYPE_LG01_BERICHT = 1111;
-    /** Activiteit subtype voor spontaan levering. */
-    public static final int ACTIVITEIT_SUBTYPE_SPONTAAN = 1220;
-    /** Activiteit subtype voor leveringsbericht. */
-    public static final int ACTIVITEIT_SUBTYPE_LEVERING_BERICHT = 9999;
 
-    /** Toestand verwerkt. */
+    /**
+     * Toestand verwerkt.
+     */
     public static final int TOESTAND_VERWERKT = 8000;
+
 
     @Inject
     @Named("gbavDataSource")
@@ -50,30 +54,34 @@ public final class GbavRepository {
 
     /**
      * Activiteit toevoegen.
-     *
-     * @param moederId
-     *            moeder id
-     * @param activiteitType
-     *            activiteit type
-     * @param subActiviteitType
-     *            activiteit subtype
-     * @param toestand
-     *            toestand
+     * @param moederId moeder id
+     * @param activiteitType activiteit type
+     * @param subActiviteitType activiteit subtype
+     * @param toestand toestand
+     * @param plId persoonslijst ID
+     * @param communicatiePartner communicatie partner
+     * @param datum datum
      * @return activiteit id
-     * @throws SQLException
-     *             bij fouten
+     * @throws SQLException bij fouten
      */
-    public Integer insertActiviteit(final Integer moederId, final int activiteitType, final int subActiviteitType, final int toestand) throws SQLException {
+    public Integer insertActiviteit(
+            final Integer moederId,
+            final int activiteitType,
+            final int subActiviteitType,
+            final int toestand,
+            final int plId,
+            final String communicatiePartner,
+            final String datum) throws SQLException {
         final String idSql = "select nextval('activiteit_id_sequence')";
         final String insertActiviteitSql =
-                "insert into activiteit(activiteit_id, moeder_id, activiteit_type, activiteit_subtype, toestand, creatie_dt, start_dt, uiterlijke_actie_dt) "
-                        + "values(?, ?, ?, ?, ?, now(), now(), now())";
+                "insert into activiteit(activiteit_id, moeder_id, activiteit_type, activiteit_subtype, toestand, pl_id, "
+                        + "communicatie_partner, creatie_dt, start_dt, uiterlijke_actie_dt, laatste_actie_dt) "
+                        + "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (final Connection connection = gbavDataSource.getConnection();
-            final PreparedStatement idStatement = connection.prepareStatement(idSql);
-            final ResultSet idResult = idStatement.executeQuery();
-            final PreparedStatement activiteitStatement = connection.prepareStatement(insertActiviteitSql))
-        {
+        try (Connection connection = gbavDataSource.getConnection();
+             PreparedStatement idStatement = connection.prepareStatement(idSql);
+             ResultSet idResult = idStatement.executeQuery();
+             PreparedStatement activiteitStatement = connection.prepareStatement(insertActiviteitSql)) {
             idResult.next();
 
             final Integer id = idResult.getInt(JdbcConstants.COLUMN_1);
@@ -87,6 +95,24 @@ public final class GbavRepository {
             activiteitStatement.setInt(JdbcConstants.COLUMN_3, activiteitType);
             activiteitStatement.setInt(JdbcConstants.COLUMN_4, subActiviteitType);
             activiteitStatement.setInt(JdbcConstants.COLUMN_5, toestand);
+            activiteitStatement.setInt(JdbcConstants.COLUMN_6, plId);
+            if (communicatiePartner == null) {
+                activiteitStatement.setNull(JdbcConstants.COLUMN_7, Types.VARCHAR);
+            } else {
+                activiteitStatement.setString(JdbcConstants.COLUMN_7, communicatiePartner);
+            }
+
+            final Timestamp timestamp;
+            if (datum == null) {
+                timestamp = Timestamp.from(java.time.Instant.now());
+            } else {
+                timestamp = Timestamp.valueOf(datum);
+            }
+            activiteitStatement.setTimestamp(JdbcConstants.COLUMN_8, timestamp);
+            activiteitStatement.setTimestamp(JdbcConstants.COLUMN_9, timestamp);
+            activiteitStatement.setTimestamp(JdbcConstants.COLUMN_10, timestamp);
+            activiteitStatement.setTimestamp(JdbcConstants.COLUMN_11, timestamp);
+
             activiteitStatement.executeUpdate();
 
             return id;
@@ -96,30 +122,23 @@ public final class GbavRepository {
 
     /**
      * Zoek activiteit.
-     *
-     * @param moederId
-     *            moeder id
-     * @param activiteitType
-     *            activiteit type
-     * @param subActiviteitType
-     *            activiteit subtype
-     * @param toestand
-     *            toestand
+     * @param moederId moeder id
+     * @param activiteitType activiteit type
+     * @param subActiviteitType activiteit subtype
+     * @param toestand toestand
      * @return activiteit id
-     * @throws SQLException
-     *             bij fouten
+     * @throws SQLException bij fouten
      */
     public Integer findActiviteit(final Integer moederId, final int activiteitType, final int subActiviteitType, final int toestand) throws SQLException {
         final String sql = "SELECT activiteit_id FROM activiteit WHERE moeder_id = ? AND activiteit_type = ? AND activiteit_subtype = ? AND toestand = ?";
-        try (final Connection connection = gbavDataSource.getConnection();
-            final PreparedStatement statement = connection.prepareStatement(sql))
-        {
+        try (Connection connection = gbavDataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(JdbcConstants.COLUMN_1, moederId);
             statement.setInt(JdbcConstants.COLUMN_2, activiteitType);
             statement.setInt(JdbcConstants.COLUMN_3, subActiviteitType);
             statement.setInt(JdbcConstants.COLUMN_4, toestand);
 
-            try (final ResultSet result = statement.executeQuery()) {
+            try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
                     return result.getInt(JdbcConstants.COLUMN_1);
                 } else {
@@ -131,34 +150,30 @@ public final class GbavRepository {
 
     /**
      * Bericht toevoegen.
-     *
-     * @param inhoud
-     *            inhoud
-     * @param originatorOrRecipient
-     *            originator of recipient
-     * @param activiteitId
-     *            bericht activiteit id
-     * @param tijdstipVerzendingOntvangst
-     *            tijdstip verzending of ontvangst
-     * @throws SQLException
-     *             bij fouten
+     * @param inhoud inhoud
+     * @param originatorOrRecipient originator of recipient
+     * @param activiteitId bericht activiteit id
+     * @param tijdstipVerzendingOntvangst tijdstip verzending of ontvangst
+     * @throws SQLException bij fouten
      */
     public void insertBericht(final String inhoud, final String originatorOrRecipient, final Integer activiteitId, final Date tijdstipVerzendingOntvangst)
-        throws SQLException
-    {
+            throws SQLException {
+        final int startBerichtsoortNummerPos = 8;
+        final int eindBerichtsoortNummerPos = 12;
+
         final Timestamp timestampTijdstipVerzendingOntvangst =
                 tijdstipVerzendingOntvangst == null ? new Timestamp(System.currentTimeMillis()) : new Timestamp(tijdstipVerzendingOntvangst.getTime());
 
         final String sql =
-                "insert into lo3_bericht(lo3_bericht_id, aanduiding_in_uit, medium, bericht_data, kop_berichtsoort_nummer, originator_or_recipient, "
+                "insert into lo3_bericht(lo3_bericht_id, spg_mailbox_instantie, aanduiding_in_uit, medium, "
+                        + "bericht_data, kop_berichtsoort_nummer, originator_or_recipient, "
                         + "bericht_activiteit_id, creatie_dt, tijdstip_verzending_ontvangst, dispatch_sequence_number) "
-                        + "values(nextval('lo3_bericht_id_sequence'), 'I', 'N', ?, ?, ?, ?, ?, ?, currval('lo3_bericht_id_sequence'))";
-        try (final Connection connection = gbavDataSource.getConnection();
-            final PreparedStatement lo3BerichtStatement = connection.prepareStatement(sql))
-        {
+                        + "values(nextval('lo3_bericht_id_sequence'), 1, 'I', 'N', ?, ?, ?, ?, ?, ?, currval('lo3_bericht_id_sequence'))";
+        try (Connection connection = gbavDataSource.getConnection();
+             PreparedStatement lo3BerichtStatement = connection.prepareStatement(sql)) {
 
             lo3BerichtStatement.setString(JdbcConstants.COLUMN_1, inhoud);
-            lo3BerichtStatement.setString(JdbcConstants.COLUMN_2, inhoud.substring(8, 12));
+            lo3BerichtStatement.setString(JdbcConstants.COLUMN_2, inhoud.substring(startBerichtsoortNummerPos, eindBerichtsoortNummerPos));
             lo3BerichtStatement.setString(JdbcConstants.COLUMN_3, originatorOrRecipient);
             lo3BerichtStatement.setInt(JdbcConstants.COLUMN_4, activiteitId);
             lo3BerichtStatement.setTimestamp(JdbcConstants.COLUMN_5, timestampTijdstipVerzendingOntvangst);
@@ -169,40 +184,39 @@ public final class GbavRepository {
 
     /**
      * Toevoegen LO3 persoonslijst.
-     *
-     * @param bijhoudingOpschortDatum
-     *            opschort datum
-     * @param bijhoudingOpschortReden
-     *            opschort reden
-     * @param berichtActiviteitId
-     *            bericht activiteit id
-     * @param aNummer
-     *            a-nummer
+     * @param bijhoudingOpschortDatum opschort datum
+     * @param bijhoudingOpschortReden opschort reden
+     * @param berichtActiviteitId bericht activiteit id
+     * @param aNummer a-nummer
      * @return pl id
-     * @throws SQLException
-     *             bij fouten
+     * @throws SQLException bij fouten
      */
     public Integer insertLo3Pl(
-        final Integer bijhoudingOpschortDatum,
-        final String bijhoudingOpschortReden,
-        final Integer berichtActiviteitId,
-        final Long aNummer) throws SQLException
-    {
+            final Integer bijhoudingOpschortDatum,
+            final String bijhoudingOpschortReden,
+            final Integer berichtActiviteitId,
+            final Long aNummer,
+            final Long bsn) throws SQLException {
         try (Connection connection = gbavDataSource.getConnection();
-            final PreparedStatement idStatement = connection.prepareStatement("select nextval('lo3_pl_id_sequence')");
-            final PreparedStatement lo3PlStatement =
-                    connection.prepareStatement("insert into lo3_pl(pl_id, mutatie_activiteit_id, bijhouding_opschort_datum, "
-                                                + "bijhouding_opschort_reden, creatie_dt, mutatie_dt) values(?, ?, ?, ?, now(), now())");
-            final PreparedStatement lo3PlPersoonStatement =
-                    connection.prepareStatement("insert into lo3_pl_persoon(pl_id, persoon_type, stapel_nr, volg_nr, a_nr) " + "values(?, 'P', 0, 0, ?)"))
-        {
-            try (final ResultSet idResult = idStatement.executeQuery()) {
+             PreparedStatement idStatement = connection.prepareStatement("select nextval('lo3_pl_id_sequence')");
+             PreparedStatement lo3PlStatement =
+                     connection.prepareStatement(
+                             "insert into lo3_pl(pl_id, mutatie_activiteit_id, bijhouding_opschort_datum, "
+                                     + "bijhouding_opschort_reden, creatie_dt, mutatie_dt) values(?, ?, ?, ?, now(), now())");
+             PreparedStatement lo3PlPersoonStatement =
+                     connection.prepareStatement(
+                             "insert into lo3_pl_persoon(pl_id, persoon_type, stapel_nr, volg_nr, a_nr, burger_service_nr) " + "values(?, 'P', 0, 0, ?, ?)")) {
+            try (ResultSet idResult = idStatement.executeQuery()) {
                 idResult.next();
 
                 final Integer id = idResult.getInt(JdbcConstants.COLUMN_1);
 
                 lo3PlStatement.setInt(JdbcConstants.COLUMN_1, id);
-                lo3PlStatement.setInt(JdbcConstants.COLUMN_2, berichtActiviteitId);
+                if (berichtActiviteitId == null) {
+                    lo3PlStatement.setInt(JdbcConstants.COLUMN_2, Types.INTEGER);
+                } else {
+                    lo3PlStatement.setInt(JdbcConstants.COLUMN_2, berichtActiviteitId);
+                }
                 if (bijhoudingOpschortDatum == null) {
                     lo3PlStatement.setNull(JdbcConstants.COLUMN_3, Types.INTEGER);
                 } else {
@@ -213,6 +227,7 @@ public final class GbavRepository {
 
                 lo3PlPersoonStatement.setInt(JdbcConstants.COLUMN_1, id);
                 lo3PlPersoonStatement.setLong(JdbcConstants.COLUMN_2, aNummer);
+                lo3PlPersoonStatement.setLong(JdbcConstants.COLUMN_3, bsn);
                 lo3PlPersoonStatement.execute();
 
                 return id;
@@ -222,33 +237,26 @@ public final class GbavRepository {
 
     /**
      * Bijwerken LO3 persoonslijst.
-     *
-     * @param plId
-     *            pl id
-     * @param bijhoudingOpschortDatum
-     *            opschort datum
-     * @param bijhoudingOpschortReden
-     *            opschort reden
-     * @param berichtActiviteitId
-     *            bericht activiteit id
-     * @param aNummer
-     *            a-nummer
-     * @throws SQLException
-     *             bij fouten
+     * @param plId pl id
+     * @param bijhoudingOpschortDatum opschort datum
+     * @param bijhoudingOpschortReden opschort reden
+     * @param berichtActiviteitId bericht activiteit id
+     * @param aNummer a-nummer
+     * @throws SQLException bij fouten
      */
     public void updateLo3Pl(
-        final Integer plId,
-        final Integer bijhoudingOpschortDatum,
-        final String bijhoudingOpschortReden,
-        final Integer berichtActiviteitId,
-        final Long aNummer) throws SQLException
-    {
+            final Integer plId,
+            final Integer bijhoudingOpschortDatum,
+            final String bijhoudingOpschortReden,
+            final Integer berichtActiviteitId,
+            final Long aNummer,
+            final Long bsn) throws SQLException {
         final String sql =
                 "update lo3_pl set mutatie_activiteit_id = ?, bijhouding_opschort_datum = ?, bijhouding_opschort_reden = ?, mutatie_dt = now() where pl_id = ?";
         try (Connection connection = gbavDataSource.getConnection();
-            final PreparedStatement updatelo3PlStatement = connection.prepareStatement(sql);
-            final PreparedStatement updateLo3PlPersoonStatement = connection.prepareStatement("update lo3_pl_persoon set a_nr = ? where pl_id = ?"))
-        {
+             PreparedStatement updatelo3PlStatement = connection.prepareStatement(sql);
+             PreparedStatement updateLo3PlPersoonStatement = connection
+                     .prepareStatement("update lo3_pl_persoon set a_nr = ?, burger_service_nr = ? where pl_id = ?")) {
             updatelo3PlStatement.setInt(JdbcConstants.COLUMN_1, berichtActiviteitId);
             if (bijhoudingOpschortDatum == null) {
                 updatelo3PlStatement.setNull(JdbcConstants.COLUMN_2, Types.INTEGER);
@@ -260,9 +268,9 @@ public final class GbavRepository {
             updatelo3PlStatement.execute();
 
             updateLo3PlPersoonStatement.setLong(JdbcConstants.COLUMN_1, aNummer);
-            updateLo3PlPersoonStatement.setInt(JdbcConstants.COLUMN_2, plId);
+            updateLo3PlPersoonStatement.setLong(JdbcConstants.COLUMN_2, bsn);
+            updateLo3PlPersoonStatement.setInt(JdbcConstants.COLUMN_3, plId);
             updateLo3PlPersoonStatement.execute();
         }
     }
-
 }

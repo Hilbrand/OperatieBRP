@@ -2,8 +2,7 @@
 <dataset>
     <kern.admhnd/>
     <kern.regel/>
-    <kern.gedeblokkeerdemelding/>
-    <kern.admhndgedeblokkeerdemelding/>
+    <kern.admhndgedeblokkeerderegel/>
     <kern.actie/>
     <kern.doc/>
     <kern.rechtsgrond/>
@@ -24,9 +23,7 @@
     <kern.relatie/>
     <kern.betr/>
     <kern.his_betr/>
-    <kern.his_doc/>
     <kern.his_onderzoek/>
-    <kern.his_onderzoekafgeleidadminis/>
     <kern.his_ouderouderlijkgezag/>
     <kern.his_ouderouderschap/>
     <kern.his_partijonderzoek/>

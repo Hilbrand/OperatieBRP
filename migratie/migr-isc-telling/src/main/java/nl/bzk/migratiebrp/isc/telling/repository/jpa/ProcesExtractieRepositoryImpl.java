@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.isc.telling.repository.jpa;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,16 +22,16 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementatieklasse voor de Proces Extractie Repository.
  */
 @Repository
-public final class ProcesExtractieRepositoryImpl extends AbstractJpaRepository implements ProcesExtractieRepository {
+public final class ProcesExtractieRepositoryImpl implements ProcesExtractieRepository {
 
     private static final String TELLING_TRANSACTION_MANAGER = "tellingTransactionManager";
-
+    private static final Integer MAX_BATCH_SIZE = 1000;
     private static final String PARAMETER_TIJDSTIP = "tijdstip";
     private static final String PARAMETER_TE_UPDATE_IDS = "teUpdatenIds";
     private static final String SELECT_DEEL_TIJDSTIP = "SELECT pe FROM ProcesExtractie pe WHERE pe.startDatum <= :tijdstip ";
     private static final String COUNT_QUERY_GESTARTE_PROCESSEN = "SELECT count(*) FROM ProcesExtractie pe "
-                                                                 + "WHERE pe.startDatum < :tijdstip AND (pe.indicatieGestartGeteld = false "
-                                                                 + "OR pe.indicatieGestartGeteld is null)";
+            + "WHERE pe.startDatum < :tijdstip AND (pe.indicatieGestartGeteld = false "
+            + "OR pe.indicatieGestartGeteld is null)";
     private static final String COUNT_QUERY_BEEINDIGDE_PROCESSEN =
             "SELECT count(*) FROM ProcesExtractie pe WHERE pe.startDatum < :tijdstip AND pe.eindDatum is not null "
                     + "AND (pe.indicatieBeeindigdGeteld = false OR pe.indicatieBeeindigdGeteld is null)";
@@ -80,8 +81,8 @@ public final class ProcesExtractieRepositoryImpl extends AbstractJpaRepository i
         if (datumTot != null) {
             final Query selectQuery =
                     em.createQuery(SELECT_DEEL_TIJDSTIP
-                                   + " AND pe.eindDatum is not null "
-                                   + "AND (pe.indicatieBeeindigdGeteld = false or pe.indicatieBeeindigdGeteld is null)");
+                            + " AND pe.eindDatum is not null "
+                            + "AND (pe.indicatieBeeindigdGeteld = false or pe.indicatieBeeindigdGeteld is null)");
 
             if (limit != null) {
                 selectQuery.setMaxResults(limit);
@@ -90,7 +91,7 @@ public final class ProcesExtractieRepositoryImpl extends AbstractJpaRepository i
 
             return selectQuery.getResultList();
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -109,14 +110,14 @@ public final class ProcesExtractieRepositoryImpl extends AbstractJpaRepository i
 
             return selectQuery.getResultList();
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 
     @Override
     @Transactional(value = TELLING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRES_NEW)
     public boolean updateIndicatieGestartGeteldProcesExtracties(final List<Long> teUpdatenIds) {
-        if (teUpdatenIds != null && teUpdatenIds.size() > 0) {
+        if (teUpdatenIds != null && !teUpdatenIds.isEmpty()) {
             int beginIndex = 0;
             final int maxIndex = teUpdatenIds.size();
             int aantalGeupdate = 0;
@@ -128,7 +129,7 @@ public final class ProcesExtractieRepositoryImpl extends AbstractJpaRepository i
 
                 final Query updateQuery =
                         em.createQuery("UPDATE ProcesExtractie pe SET pe.indicatieGestartGeteld = true WHERE "
-                                       + "pe.procesInstantieId IN (:teUpdatenIds) ");
+                                + "pe.procesInstantieId IN (:teUpdatenIds) ");
                 updateQuery.setParameter(PARAMETER_TE_UPDATE_IDS, subLijstTeUpdatenIds);
 
                 aantalGeupdate += updateQuery.executeUpdate();
@@ -143,7 +144,7 @@ public final class ProcesExtractieRepositoryImpl extends AbstractJpaRepository i
     @Override
     @Transactional(value = TELLING_TRANSACTION_MANAGER, propagation = Propagation.REQUIRES_NEW)
     public boolean updateIndicatieBeeindigdGeteldProcesExtracties(final List<Long> teUpdatenIds) {
-        if (teUpdatenIds != null && teUpdatenIds.size() > 0) {
+        if (teUpdatenIds != null && !teUpdatenIds.isEmpty()) {
 
             int beginIndex = 0;
             final int maxIndex = teUpdatenIds.size();
@@ -156,7 +157,7 @@ public final class ProcesExtractieRepositoryImpl extends AbstractJpaRepository i
 
                 final Query updateQuery =
                         em.createQuery("UPDATE ProcesExtractie pe SET pe.indicatieBeeindigdGeteld = true "
-                                       + "WHERE pe.procesInstantieId IN (:teUpdatenIds) ");
+                                + "WHERE pe.procesInstantieId IN (:teUpdatenIds) ");
                 updateQuery.setParameter(PARAMETER_TE_UPDATE_IDS, subLijstTeUpdatenIds);
 
                 aantalGeupdate += updateQuery.executeUpdate();

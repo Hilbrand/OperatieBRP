@@ -14,21 +14,7 @@ public final class AfnemersIndicatieJbpmConstants {
     /**
      * Verwerken afnemersindicatie jbpm key voor persoonId.
      */
-    public static final String PERSOONID_KEY = "persoonId";
-
-    /**
-     * Verwerken afnemersindicatie jbpm key voor plaatsenDienstId.
-     */
-    public static final String PLAATSEN_DIENSTID_KEY = "plaatsenDienstId";
-    /**
-     * Verwerken afnemersindicatie jbpm key voor verwijderenDienstId.
-     */
-    public static final String VERWIJDEREN_DIENSTID_KEY = "verwijderenDienstId";
-
-    /**
-     * Verwerken afnemersindicatie jbpm key voor leveringsautorisatieId.
-     */
-    public static final String TOEGANGLEVERINGSAUTORISATIEID_KEY = "toegangLeveringsautorisatieId";
+    public static final String PERSOON_BSN = "persoonBsn";
 
     /**
      * Af01 foutreden jbpm key.
@@ -46,11 +32,6 @@ public final class AfnemersIndicatieJbpmConstants {
     public static final String AF0X_ANUMMER_KEY = "af0xANummer";
 
     /**
-     * Zoek persoon aNummer jbpm key.
-     */
-    // public static final String ZOEK_PERSOON_ANUMMER_KEY = "zoekPersoonANummer";
-
-    /**
      * Af01 foutreden B.
      */
     public static final String AF0X_FOUTREDEN_B = "B";
@@ -61,19 +42,9 @@ public final class AfnemersIndicatieJbpmConstants {
     public static final String AF0X_FOUTREDEN_G = "G";
 
     /**
-     * Af01 foutreden H.
-     */
-    public static final String AF0X_FOUTREDEN_H = "H";
-
-    /**
      * Af01 foutreden I.
      */
     public static final String AF0X_FOUTREDEN_I = "I";
-
-    /**
-     * Af01 foutreden R.
-     */
-    public static final String AF0X_FOUTREDEN_R = "R";
 
     /**
      * Af01 foutreden V.
@@ -90,8 +61,11 @@ public final class AfnemersIndicatieJbpmConstants {
      */
     public static final String AF0X_FOUTREDEN_X = "X";
 
+    /**
+     * Private constructor.
+     */
     private AfnemersIndicatieJbpmConstants() {
-        throw new AssertionError("Niet instantieerbaar");
+        // Private constructor.
     }
 
 }

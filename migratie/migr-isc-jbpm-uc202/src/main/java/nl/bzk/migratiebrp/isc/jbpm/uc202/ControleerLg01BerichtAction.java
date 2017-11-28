@@ -10,22 +10,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lg01Bericht;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Gemeente;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegister;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
 import nl.bzk.migratiebrp.bericht.model.sync.register.Stelsel;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaardeUtil;
-import nl.bzk.migratiebrp.isc.jbpm.common.Instantie;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler;
-import nl.bzk.migratiebrp.register.client.GemeenteService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.register.client.PartijService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,21 +35,27 @@ public final class ControleerLg01BerichtAction implements SpringAction {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    private static final String FOUT = "2b. Fout";
+    private static final String FOUT = "1b. Fout";
     private static final String FOUT_MSG_GBA_GEMEENTE = "Verzendende gemeente (originator) is niet een GBA gemeente.";
     private static final String FOUT_MSG_CENTRALE = "Ontvangende instantie (recipient) is niet een de centrale voorziening.";
     private static final String FOUT_MSG_INCONSISTENT = "Bericht payload is niet een geldig bericht (kop inconsistent met inhoud).";
     private static final String FOUT_MSG_ANR_KOP = "A-nummer kop incorrect.";
-    private static final String FOUT_MSG_VORIG_ANR_KOP = "Vorig a-nummer kop incorrect.";
-    private static final String FOUT_MSG_ORIGINATOR_KOP = "Originator kop incorrect.";
     private static final String FOUTMELDING_VARIABELE = "actieFoutmelding";
     private static final String WHITE_SPACE = " ";
 
-    @Inject
-    private GemeenteService gemeenteRegisterService;
+    private final PartijService partijRegisterService;
+    private final BerichtenDao berichtenDao;
 
+    /**
+     * Constructor.
+     * @param partijRegisterService partij register service
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public ControleerLg01BerichtAction(final PartijService partijRegisterService, final BerichtenDao berichtenDao) {
+        this.partijRegisterService = partijRegisterService;
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -58,7 +63,7 @@ public final class ControleerLg01BerichtAction implements SpringAction {
         final Long berichtId = (Long) parameters.get("input");
 
         final Lg01Bericht input = (Lg01Bericht) berichtenDao.leesBericht(berichtId);
-        final StringBuffer meldingen = new StringBuffer();
+        final StringBuilder meldingen = new StringBuilder();
         final Map<String, Object> result = new HashMap<>();
         if (!controleerOriginator(input)) {
             LOG.debug(FOUT_MSG_GBA_GEMEENTE);
@@ -80,46 +85,35 @@ public final class ControleerLg01BerichtAction implements SpringAction {
     }
 
     private boolean controleerRecipient(final Lg01Bericht lg01Bericht) {
-        final String recipient = lg01Bericht.getDoelGemeente();
-        return Instantie.Type.CENTRALE == Instantie.bepaalInstantieType(recipient);
+        final String recipient = lg01Bericht.getDoelPartijCode();
+
+        // Controle obv register of verzendende partij wel een GBA bijhouder is
+        final PartijRegister partijRegister = partijRegisterService.geefRegister();
+        final Partij partij = partijRegister.zoekPartijOpPartijCode(recipient);
+
+        return partij != null && partij.isCentraleVoorziening() && Stelsel.BRP == partij.getStelsel();
     }
 
     private boolean controleerOriginator(final Lg01Bericht lg01Bericht) {
-        final String originator = lg01Bericht.getBronGemeente();
+        final String originator = lg01Bericht.getBronPartijCode();
 
-        // Controle obv gemeente register of verzendende gemeente wel een GBA gemeente is
-        final GemeenteRegister gemeenteRegister = gemeenteRegisterService.geefRegister();
-        final Gemeente gemeente = gemeenteRegister.zoekGemeenteOpGemeenteCode(originator);
+        // Controle obv register of verzendende partij wel een GBA bijhouder is
+        final PartijRegister partijRegister = partijRegisterService.geefRegister();
+        final Partij partij = partijRegister.zoekPartijOpPartijCode(originator);
 
-        return gemeente != null && Stelsel.GBA == gemeente.getStelsel();
+        return partij != null && partij.isBijhouder() && Stelsel.GBA == partij.getStelsel();
     }
 
-    private boolean controleerLg01Bericht(final Lg01Bericht bericht, final StringBuffer meldingen) {
-        final String aNummerKop = bericht.getHeader(Lo3HeaderVeld.A_NUMMER);
-        final String vorigANummerKop = bericht.getHeader(Lo3HeaderVeld.OUD_A_NUMMER);
-        final String originator = bericht.getBronGemeente();
+    private boolean controleerLg01Bericht(final Lg01Bericht bericht, final StringBuilder meldingen) {
+        final String aNummerKop = bericht.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER);
 
         final List<Lo3CategorieWaarde> inhoud = bericht.getCategorieen();
         final String aNummerInhoud = Lo3CategorieWaardeUtil.getElementWaarde(inhoud, Lo3CategorieEnum.PERSOON, 0, 0, Lo3ElementEnum.ANUMMER);
-        final String vorigANummerInhoud = Lo3CategorieWaardeUtil.getElementWaarde(inhoud, Lo3CategorieEnum.PERSOON, 0, 0, Lo3ElementEnum.ELEMENT_2010);
-        final String gemeenteInhoud =
-                Lo3CategorieWaardeUtil.getElementWaarde(inhoud, Lo3CategorieEnum.VERBLIJFPLAATS, 0, 0, Lo3ElementEnum.GEMEENTE_VAN_INSCHRIJVING);
 
         boolean result = true;
         if (emptyAnummer(aNummerKop) || !aNummerKop.equals(aNummerInhoud)) {
             LOG.debug(FOUT_MSG_ANR_KOP);
             meldingen.append(WHITE_SPACE).append(FOUT_MSG_ANR_KOP);
-            result = false;
-        }
-        if (!emptyAnummer(vorigANummerKop) && !vorigANummerKop.equals(vorigANummerInhoud)) {
-            LOG.debug(FOUT_MSG_VORIG_ANR_KOP);
-            meldingen.append(WHITE_SPACE).append(FOUT_MSG_VORIG_ANR_KOP);
-            result = false;
-        }
-
-        if (originator == null || "".equals(originator) || !originator.equals(gemeenteInhoud)) {
-            LOG.debug(FOUT_MSG_ORIGINATOR_KOP);
-            meldingen.append(WHITE_SPACE).append(FOUT_MSG_ORIGINATOR_KOP);
             result = false;
         }
 

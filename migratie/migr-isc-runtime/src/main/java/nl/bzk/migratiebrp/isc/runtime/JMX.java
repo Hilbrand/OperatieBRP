@@ -13,11 +13,6 @@ package nl.bzk.migratiebrp.isc.runtime;
 public interface JMX {
 
     /**
-     * Object name to bind JMX object to.
-     */
-    String OBJECT_NAME = "nl.bzk.migratiebrp.isc:name=ISC";
-
-    /**
      * VOISC afsluiten.
      */
     void afsluiten();

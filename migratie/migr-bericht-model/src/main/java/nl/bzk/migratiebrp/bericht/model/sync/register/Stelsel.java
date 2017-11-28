@@ -10,8 +10,12 @@ package nl.bzk.migratiebrp.bericht.model.sync.register;
  * Stelsel.
  */
 public enum Stelsel {
-    /** GBA. */
+    /**
+     * GBA.
+     */
     GBA,
-    /** BRP. */
+    /**
+     * BRP.
+     */
     BRP;
 }

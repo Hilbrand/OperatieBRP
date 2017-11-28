@@ -6,8 +6,6 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 
-import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.conversie.model.Definitie;
 import nl.bzk.migratiebrp.conversie.model.Definities;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
@@ -30,19 +28,17 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 import nl.bzk.migratiebrp.conversie.regels.proces.AbstractVerblijfplaatsTest;
-
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Tests voor {@link nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.VerblijfplaatsConverteerder}.
- * 
  */
 public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest {
 
-    @Inject
-    private VerblijfplaatsConverteerder converteerder;
+    private VerblijfplaatsConverteerder converteerder = new VerblijfplaatsConverteerder(new Lo3AttribuutConverteerder(new ConversietabelFactoryImpl()));
     private TussenPersoonslijstBuilder tussenPersoonslijstBuilder;
 
     @Before
@@ -67,7 +63,7 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
 
     @Test
     @Definitie(Definities.DEF021)
-    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02 })
+    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02})
     public void testPuntAdres() {
         // Setup
         final Lo3VerblijfplaatsInhoud.Builder builder = puntAdresBuilder();
@@ -99,7 +95,7 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
 
     @Test
     @Definitie(Definities.DEF022)
-    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02 })
+    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02})
     public void testStraatnaamPuntGeenPuntAdres() {
         final Lo3VerblijfplaatsInhoud.Builder builder = puntAdresBuilder();
         builder.postcode(POSTCODE);
@@ -126,7 +122,7 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
 
     @Test
     @Definitie(Definities.DEF022)
-    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02 })
+    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02})
     public void testNederlandsAdres() {
         final Lo3VerblijfplaatsInhoud.Builder builder = nederlandsAdresBuilder();
 
@@ -147,7 +143,7 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
 
     @Test
     @Definitie(Definities.DEF022)
-    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02 })
+    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02})
     public void testNederlandsAdresWoonadresPunt() {
         final Lo3VerblijfplaatsInhoud.Builder builder = nederlandsAdresBuilder();
         builder.woonplaatsnaam(Lo3String.wrap("."));
@@ -168,7 +164,7 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
     }
 
     @Test
-    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB04 })
+    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB04})
     public void testImmigratie() {
         // Setup
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> verblijfplaatsStapel = maakStapel(immigratieBuilder());
@@ -193,8 +189,8 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
         final BrpMigratieInhoud migratieInhoud = migratie.getInhoud();
         Assert.assertEquals(BrpSoortMigratieCode.IMMIGRATIE, migratieInhoud.getSoortMigratieCode());
         Assert.assertEquals(BRP_LAND_OF_GEBIED_CODE_IMMIGRATIE, migratieInhoud.getLandOfGebiedCode());
-        Assert.assertEquals(BRP_AANGEVER_ADRESHOUDING_CODE_INGESCHREVENE, migratieInhoud.getAangeverMigratieCode());
-        Assert.assertEquals(BRP_REDEN_WIJZIGING_ADRES_PERSOON, migratieInhoud.getRedenWijzigingMigratieCode());
+        Assert.assertEquals(null, migratieInhoud.getAangeverMigratieCode());
+        Assert.assertEquals(null, migratieInhoud.getRedenWijzigingMigratieCode());
         Assert.assertNull(migratieInhoud.getBuitenlandsAdresRegel1());
         Assert.assertNull(migratieInhoud.getBuitenlandsAdresRegel2());
         Assert.assertNull(migratieInhoud.getBuitenlandsAdresRegel3());
@@ -206,7 +202,7 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
     }
 
     @Test
-    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB04 })
+    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB04})
     public void testImmigratieEerstLegeRegel() {
         // Setup
         final Lo3Categorie<Lo3VerblijfplaatsInhoud> nlVerblijfplaats = maakCategorie(nederlandsAdresBuilder());
@@ -233,8 +229,8 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
         final BrpMigratieInhoud migratieInhoud = migratie.getInhoud();
         Assert.assertEquals(BrpSoortMigratieCode.IMMIGRATIE, migratieInhoud.getSoortMigratieCode());
         Assert.assertEquals(BRP_LAND_OF_GEBIED_CODE_IMMIGRATIE, migratieInhoud.getLandOfGebiedCode());
-        Assert.assertEquals(BRP_AANGEVER_ADRESHOUDING_CODE_INGESCHREVENE, migratieInhoud.getAangeverMigratieCode());
-        Assert.assertEquals(BRP_REDEN_WIJZIGING_ADRES_PERSOON, migratieInhoud.getRedenWijzigingMigratieCode());
+        Assert.assertEquals(null, migratieInhoud.getAangeverMigratieCode());
+        Assert.assertEquals(null, migratieInhoud.getRedenWijzigingMigratieCode());
         Assert.assertNull(migratieInhoud.getBuitenlandsAdresRegel1());
         Assert.assertNull(migratieInhoud.getBuitenlandsAdresRegel2());
         Assert.assertNull(migratieInhoud.getBuitenlandsAdresRegel3());
@@ -246,7 +242,7 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
     }
 
     @Test
-    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB04 })
+    @Requirement({Requirements.CCA08_LB01, Requirements.CCA08_LB02, Requirements.CCA08_LB04})
     public void testImmigratieEerstMigratieRegelGevuldTweedeLeeg() {
         // Setup
         final Lo3Categorie<Lo3VerblijfplaatsInhoud> nlVerblijfplaats = maakCategorie(nederlandsAdresBuilder());
@@ -275,8 +271,8 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
         final BrpMigratieInhoud migratieInhoud = migratie.getInhoud();
         Assert.assertEquals(BrpSoortMigratieCode.IMMIGRATIE, migratieInhoud.getSoortMigratieCode());
         Assert.assertEquals(BRP_LAND_OF_GEBIED_CODE_IMMIGRATIE, migratieInhoud.getLandOfGebiedCode());
-        Assert.assertEquals(BRP_AANGEVER_ADRESHOUDING_CODE_INGESCHREVENE, migratieInhoud.getAangeverMigratieCode());
-        Assert.assertEquals(BRP_REDEN_WIJZIGING_ADRES_PERSOON, migratieInhoud.getRedenWijzigingMigratieCode());
+        Assert.assertEquals(null, migratieInhoud.getAangeverMigratieCode());
+        Assert.assertEquals(null, migratieInhoud.getRedenWijzigingMigratieCode());
         Assert.assertNull(migratieInhoud.getBuitenlandsAdresRegel1());
         Assert.assertNull(migratieInhoud.getBuitenlandsAdresRegel2());
         Assert.assertNull(migratieInhoud.getBuitenlandsAdresRegel3());
@@ -449,10 +445,10 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
         builder.vertrekUitNederland(LO3_DATUM_VESTIGING_IN_NL);
         final Lo3Categorie<Lo3VerblijfplaatsInhoud> verblijfplaatsCategorieHistorie =
                 Lo3StapelHelper.lo3Cat(
-                    builder.build(),
-                    Lo3StapelHelper.lo3Akt(2),
-                    Lo3StapelHelper.lo3His("O", LO3_DATUM_INSCHRIJVING.getIntegerWaarde(), LO3_DATUM_INSCHRIJVING.getIntegerWaarde()),
-                    new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 1));
+                        builder.build(),
+                        Lo3StapelHelper.lo3Akt(2),
+                        Lo3StapelHelper.lo3His("O", LO3_DATUM_INSCHRIJVING.getIntegerWaarde(), LO3_DATUM_INSCHRIJVING.getIntegerWaarde()),
+                        new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 1));
 
         final Lo3Stapel<Lo3VerblijfplaatsInhoud> verblijfplaatsStapel =
                 Lo3StapelHelper.lo3Stapel(verblijfplaatsCategorieHistorie, verblijfplaatsCategorie);
@@ -560,10 +556,10 @@ public class VerblijfplaatsConverteerderTest extends AbstractVerblijfplaatsTest 
 
     private Lo3Categorie<Lo3VerblijfplaatsInhoud> maakCategorie(final Lo3VerblijfplaatsInhoud.Builder builder) {
         return Lo3StapelHelper.lo3Cat(
-            builder.build(),
-            Lo3StapelHelper.lo3Akt(1),
-            Lo3StapelHelper.lo3His(LO3_DATUM_INSCHRIJVING.getIntegerWaarde()),
-            new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 0));
+                builder.build(),
+                Lo3StapelHelper.lo3Akt(1),
+                Lo3StapelHelper.lo3His(LO3_DATUM_INSCHRIJVING.getIntegerWaarde()),
+                new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_08, 0, 0));
     }
 
     private Lo3Stapel<Lo3VerblijfplaatsInhoud> maakStapel(final Lo3VerblijfplaatsInhoud.Builder builder) {

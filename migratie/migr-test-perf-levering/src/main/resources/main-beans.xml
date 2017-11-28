@@ -12,27 +12,27 @@
 		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
 	">
-	
+
 	<context:annotation-config />
 
     <!-- Queues -->
 
-    <bean name="leveringOntvangstQueue" class="org.springframework.jndi.JndiObjectFactoryBean">  
-        <property name="jndiTemplate" ref="jndiTemplate"/>  
-        <property name="jndiName" value="queue/levering.ontvangst" />  
+    <bean name="leveringOntvangstQueue" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiTemplate" ref="jndiTemplate"/>
+        <property name="jndiName" value="queue/levering.ontvangst" />
     </bean>
 
-    <bean name="vospgVerzendenQueue" class="org.springframework.jndi.JndiObjectFactoryBean">  
-        <property name="jndiTemplate" ref="jndiTemplate"/>  
-        <property name="jndiName" value="queue/vospg.verzenden" />  
+    <bean name="voiscVerzendenQueue" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiTemplate" ref="jndiTemplate"/>
+        <property name="jndiName" value="queue/voisc.verzenden" />
     </bean>
-    	
+
 	<!-- Test environment -->
-	
+
 	<bean name="testEnvironment" class="nl.bzk.migratiebrp.test.perf.levering.environment.TestEnvironment" />
-    
+
     <!-- ISC DB -->
-    
+
     <bean id="iscDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${isc.jdbc.driverClassName:org.postgresql.Driver}" />
         <property name="url" value="${isc.jdbc.url:jdbc:postgresql://localhost/soa}" />
@@ -64,12 +64,12 @@
         </property>
         <property name="jndiName" value="ConnectionFactory" />
     </bean>
-    
+
 	<!-- JMS -->
 
     <bean name="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="connectionFactory" />
         <property name="receiveTimeout" value="30000" />
-    </bean> 
+    </bean>
 
 </beans>

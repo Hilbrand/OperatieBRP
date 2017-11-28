@@ -43,23 +43,23 @@ public class LeveringsberichtenGenerator {
             maakLeveringsBerichtenZip(new File(baseDir + "-" + AANTAL_LEVERINGSBERICHTEN, "5k"), 5, AANTAL_LEVERINGSBERICHTEN);
             maakLeveringsBerichtenZip(new File(baseDir + "-" + AANTAL_LEVERINGSBERICHTEN, "10k"), 10, AANTAL_LEVERINGSBERICHTEN);
             maakLeveringsBerichtenZipGemengdeGrootte(
-                new File(baseDir + "-" + AANTAL_LEVERINGSBERICHTEN, "gemengd"),
-                AANTAL_LEVERINGSBERICHTEN);
+                    new File(baseDir + "-" + AANTAL_LEVERINGSBERICHTEN, "gemengd"),
+                    AANTAL_LEVERINGSBERICHTEN);
         } else {
             if (args.length == 1) {
                 // Afwijkende grootte.
                 final Integer grootte = Integer.valueOf(args[0]);
                 maakLeveringsBerichtenZip(
-                    new File(baseDir + "-" + AANTAL_LEVERINGSBERICHTEN, grootte + "k"),
-                    grootte,
-                    AANTAL_LEVERINGSBERICHTEN);
+                        new File(baseDir + "-" + AANTAL_LEVERINGSBERICHTEN, grootte + "k"),
+                        grootte,
+                        AANTAL_LEVERINGSBERICHTEN);
             } else if (args.length == 2) {
                 final Integer grootte = Integer.valueOf(args[0]);
                 final Integer aantal = Integer.valueOf(args[1]);
                 maakLeveringsBerichtenZip(new File(baseDir + "-" + AANTAL_LEVERINGSBERICHTEN, grootte + "k"), grootte, aantal);
             } else {
                 System.out.println("Ongeldig aantal parameters meegegeven. Aanroep: LeveringsberichtenGenerator "
-                                   + "<grootte in kb> <aantal leveringsberichten>");
+                        + "<grootte in kb> <aantal leveringsberichten>");
                 System.exit(1);
             }
         }
@@ -71,7 +71,7 @@ public class LeveringsberichtenGenerator {
         directory.mkdirs();
 
         try (
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(directory, "berichten.zip")))) {
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(directory, "berichten.zip")))) {
             final ZipOutputStream zip = new ZipOutputStream(os);
             zip.setLevel(9);
 
@@ -112,7 +112,7 @@ public class LeveringsberichtenGenerator {
         directory.mkdirs();
 
         try (
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(directory, "berichten.zip")))) {
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(directory, "berichten.zip")))) {
             final ZipOutputStream zip = new ZipOutputStream(os);
             zip.setLevel(9);
 

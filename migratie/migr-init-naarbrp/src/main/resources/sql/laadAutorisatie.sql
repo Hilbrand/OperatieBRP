@@ -1,18 +1,4 @@
 INSERT INTO initvul.initvullingresult_aut (
-		afnemer_code,
-		conversie_resultaat
-)
-	SELECT 
-		afnemer_code,
-		'TE_VERZENDEN'
-	FROM 
-		public.lo3_autorisatie 
-	GROUP BY 
-		afnemer_code 
-	ORDER BY 
-		afnemer_code ASC;
-
-INSERT INTO initvul.initvullingresult_aut_regel (
         autorisatie_id,
         afnemer_code,
         afnemer_naam,
@@ -40,11 +26,12 @@ INSERT INTO initvul.initvullingresult_aut_regel (
         voorwaarde_regel_adhoc,
         adres_rubrieken,
         voorwaarde_regel_adres,
-        afnemers_verstrekkingen
+        afnemers_verstrekkingen,
+        conversie_resultaat
 )
     SELECT
         aut.autorisatie_id,
-        aut.afnemer_code,
+        lpad(cast(aut.afnemer_code as VARCHAR(6)), 6, '0'),
         aut.afnemer_naam,
         aut.geheimhouding_ind,
         aut.verstrekkings_beperking,
@@ -70,7 +57,8 @@ INSERT INTO initvul.initvullingresult_aut_regel (
         voorwaarde_regel_adhoc.voorwaarde_regel,
         aut.adres_rubrieken,
         voorwaarde_regel_adres.voorwaarde_regel,
-        aut.afnemers_verstrekkingen
+        aut.afnemers_verstrekkingen,
+        'TE_VERZENDEN'
     FROM lo3_autorisatie aut
         LEFT OUTER JOIN lo3_voorwaarde_regel_aut voorwaarde_regel_spontaan
             ON aut.autorisatie_id = voorwaarde_regel_spontaan.autorisatie_id AND voorwaarde_regel_spontaan.voorwaarde_type = '4'

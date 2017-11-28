@@ -6,11 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Deze class representeert een LO3 String waarde.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class Lo3String extends AbstractLo3Element {
@@ -18,9 +18,7 @@ public final class Lo3String extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3String object.
-     * 
-     * @param waarde
-     *            de string waarde
+     * @param waarde de string waarde
      */
     public Lo3String(final String waarde) {
         this(waarde, null);
@@ -28,24 +26,18 @@ public final class Lo3String extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3String object met onderzoek.
-     * 
-     * @param waarde
-     *            de string waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag null zijn.
+     * @param waarde de string waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag null zijn.
      */
     public Lo3String(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Wrap een bestaande String in een Lo3String object.
-     * 
-     * @param waarde
-     *            De te wrappen String, mag null zijn.
+     * @param waarde De te wrappen String, mag null zijn.
      * @return Een Lo3String object, of null als de waarde null was.
      */
     public static Lo3String wrap(final String waarde) {
@@ -57,9 +49,7 @@ public final class Lo3String extends AbstractLo3Element {
 
     /**
      * Unwrap een Lo3String object om de String waarde terug te krijgen.
-     * 
-     * @param lo3String
-     *            De Lo3String, mag null zijn.
+     * @param lo3String De Lo3String, mag null zijn.
      * @return Een String object, of null als de Lo3String null was.
      */
     public static String unwrap(final Lo3String lo3String) {

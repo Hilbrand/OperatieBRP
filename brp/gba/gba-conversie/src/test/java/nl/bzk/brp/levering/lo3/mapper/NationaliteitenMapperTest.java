@@ -6,104 +6,85 @@
 
 package nl.bzk.brp.levering.lo3.mapper;
 
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.actie;
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.maakIngeschrevene;
+
+import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.util.common.DatumUtil;
+import nl.bzk.brp.domain.leveringmodel.Actie;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.TestVerantwoording;
 import nl.bzk.brp.gba.dataaccess.VerConvRepository;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.NationaliteitcodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Nationaliteit;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.predikaatview.kern.PersoonHisVolledigView;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonNationaliteitHisVolledigImplBuilder;
+import nl.bzk.brp.levering.lo3.support.MetaObjectUtil;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNationaliteitInhoud;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class NationaliteitenMapperTest {
+public class NationaliteitenMapperTest extends AbstractMapperTestBasis {
 
-    private final NationaliteitenMapper mapper = new NationaliteitenMapper();
+    private final NationaliteitMapper singleMapper = new NationaliteitMapper();
+    private final NationaliteitenMapper mapper = new NationaliteitenMapper(singleMapper);
 
     @Before
     public void setupSingleMapper() throws ReflectiveOperationException {
-        final NationaliteitMapper singleMapper = new NationaliteitMapper();
         ReflectionTestUtils.setField(singleMapper, "verConvRepository", Mockito.mock(VerConvRepository.class, Mockito.RETURNS_DEFAULTS));
-        ReflectionTestUtils.setField(mapper, "nationaliteitMapper", singleMapper);
-    }
-
-    @Test
-    public void testLeeg() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final List<BrpStapel<BrpNationaliteitInhoud>> brpInhoud =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
-
-        Assert.assertTrue(brpInhoud.size() == 0);
-    }
-
-    @Test
-    @Ignore("Vanwege NullPointerException in PersoonNationaliteitComparator")
-    public void testGeenWaarde() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        builder.voegPersoonNationaliteitToe(new PersoonNationaliteitHisVolledigImplBuilder(new Nationaliteit(null, null, null, null)).nieuwStandaardRecord(
-                                                                                                                                         MapperTestUtil.maakActieModel(
-                                                                                                                                             20131211000000L,
-                                                                                                                                             20131212,
-                                                                                                                                             20131213))
-                                                                                                                                     .eindeRecord()
-                                                                                                                                     .build());
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final List<BrpStapel<BrpNationaliteitInhoud>> brpInhoud =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
-
-        Assert.assertNotNull(brpInhoud);
-        Assert.assertTrue(brpInhoud.size() == 1);
-        Assert.assertNull(brpInhoud.get(0).get(0).getInhoud().getNationaliteitCode());
     }
 
     @Test
     public void testSucces() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        maak(builder).voegPersoonNationaliteitToe(
-                         new PersoonNationaliteitHisVolledigImplBuilder(new Nationaliteit(new NationaliteitcodeAttribuut("77"), null, null, null)).nieuwStandaardRecord(
-                                                                                                                                                      MapperTestUtil.maakActieModel(
-                                                                                                                                                          20131211000000L,
-                                                                                                                                                          20131212,
-                                                                                                                                                          null))
-                                                                                                                                                  .redenVerlies(
-                                                                                                                                                      (short) 66)
-                                                                                                                                                  .eindeRecord()
-                                                                                                                                                  .build());
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final List<BrpStapel<BrpNationaliteitInhoud>> brpInhoud =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+
+        final ZonedDateTime tsReg = ZonedDateTime.of(2013, 12, 11, 0, 0, 0, 0, DatumUtil.BRP_ZONE_ID);
+        final AdministratieveHandeling handelingInhoud = AdministratieveHandeling.converter().converteer(TestVerantwoording
+                .maakAdministratieveHandeling(111, "000034", tsReg, SoortAdministratieveHandeling
+                        .GBA_AFVOEREN_PL)
+                .metObject(TestVerantwoording.maakActieBuilder(10, SoortActie.CONVERSIE_GBA, tsReg, "000001", 20131212)
+                ).build());
+        final Actie actie2 = handelingInhoud.getActies().iterator().next();
+
+        final MetaObject.Builder builder =
+                maakIngeschrevene(
+                        Arrays.asList(
+                                () -> MetaObjectUtil.maakPersoonNationaliteit(actie, "0001", "016", null),
+                                () -> MetaObjectUtil.maakPersoonNationaliteit(actie2, "0077" , null, "066")),
+                        java.util.Collections.emptyList());
+
+        final List<BrpStapel<BrpNationaliteitInhoud>> brpInhoud = doMapping(mapper, builder);
 
         Assert.assertNotNull(brpInhoud);
         Assert.assertTrue(brpInhoud.size() == 2);
         Assert.assertTrue(brpInhoud.get(0).size() == 1);
 
-        // Assert.assertEquals((short) 1, brpInhoud.get(0).get(0).getInhoud().getNationaliteitCode().getCode());
-        // Assert.assertEquals((short) 16, brpInhoud.get(0).get(0).getInhoud().getRedenVerkrijgingNederlandschapCode()
-        // .getCode());
-        // Assert.assertNull(brpInhoud.get(0).get(0).getInhoud().getRedenVerliesNederlandschapCode());
-        //
-        // Assert.assertEquals((short) 77, brpInhoud.get(1).get(0).getInhoud().getNationaliteitCode().getCode());
-        // Assert.assertEquals((short) 66, brpInhoud.get(1).get(0).getInhoud().getRedenVerliesNederlandschapCode()
-        // .getCode());
-        // Assert.assertNull(brpInhoud.get(1).get(0).getInhoud().getRedenVerkrijgingNederlandschapCode());
+         Assert.assertEquals("0001", brpInhoud.get(0).get(0).getInhoud().getNationaliteitCode().getWaarde());
+         Assert.assertEquals("016", brpInhoud.get(0).get(0).getInhoud().getRedenVerkrijgingNederlandschapCode().getWaarde());
+         Assert.assertNull(brpInhoud.get(0).get(0).getInhoud().getRedenVerliesNederlandschapCode());
+
+         Assert.assertEquals("0077" , brpInhoud.get(1).get(0).getInhoud().getNationaliteitCode().getWaarde());
+         Assert.assertEquals("066", brpInhoud.get(1).get(0).getInhoud().getRedenVerliesNederlandschapCode().getWaarde());
+         Assert.assertNull(brpInhoud.get(1).get(0).getInhoud().getRedenVerkrijgingNederlandschapCode());
     }
 
-    public static PersoonHisVolledigImplBuilder maak(final PersoonHisVolledigImplBuilder builder) {
-        // @formatter:off
-        return builder.voegPersoonNationaliteitToe(
-                new PersoonNationaliteitHisVolledigImplBuilder(
-                        new Nationaliteit(new NationaliteitcodeAttribuut("1"), null, null, null))
-                        .nieuwStandaardRecord(MapperTestUtil.maakActieModel(20131211000000L, 20131212, null))
-                        .redenVerkrijging((short) 16)
-                        .eindeRecord().build());
-        // @formatter:on
+    @Test
+    public void testLeeg() {
+        final List<BrpStapel<BrpNationaliteitInhoud>> brpInhoud = doMapping(mapper, maakIngeschrevene());
+        Assert.assertTrue(brpInhoud.size() == 0);
+    }
+
+    @Test
+    public void testGeenWaarde() {
+        final MetaObject.Builder builder = maakIngeschrevene(() -> MetaObjectUtil.maakPersoonNationaliteit(actie, null, "016", null));
+        final List<BrpStapel<BrpNationaliteitInhoud>> brpInhoud = doMapping(mapper, builder);
+
+        Assert.assertNotNull(brpInhoud);
+        Assert.assertTrue(brpInhoud.size() == 1);
+        Assert.assertNull(brpInhoud.get(0).get(0).getInhoud().getNationaliteitCode());
     }
 }

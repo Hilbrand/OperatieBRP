@@ -15,9 +15,7 @@ public final class ExactVergelijking implements Vergelijking {
 
     /**
      * Constructor.
-     * 
-     * @param value
-     *            extracte string
+     * @param value extracte string
      */
     public ExactVergelijking(final String value) {
         this.value = value;

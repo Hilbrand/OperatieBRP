@@ -33,7 +33,6 @@ public class CoverageTest extends DbConversieTestConfiguratie {
 
     /**
      * Geef de waarde van casus filter.
-     *
      * @return the casus filter
      */
     public FilenameFilter getCasusFilter() {

@@ -6,13 +6,12 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert de inhoud van de groep BRP Dienst Attendering.
@@ -26,9 +25,7 @@ public final class BrpDienstAttenderingInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maak een BrpDienstAttenderingInhoud object.
-     *
-     * @param attenderingscriterium
-     *            attenderingscriterium
+     * @param attenderingscriterium attenderingscriterium
      */
     public BrpDienstAttenderingInhoud(@Element(name = "attenderingscriterium", required = false) final String attenderingscriterium) {
         super();
@@ -36,9 +33,8 @@ public final class BrpDienstAttenderingInhoud extends AbstractBrpGroepInhoud {
     }
 
     /**
-     * Geef de waarde van attenderings criterium.
-     *
-     * @return attenderings criterium
+     * Geef de waarde van attenderingscriterium van BrpDienstAttenderingInhoud.
+     * @return de waarde van attenderingscriterium van BrpDienstAttenderingInhoud
      */
     public String getAttenderingscriterium() {
         return attenderingscriterium;
@@ -66,6 +62,11 @@ public final class BrpDienstAttenderingInhoud extends AbstractBrpGroepInhoud {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("attenderingscriterium", attenderingscriterium).toString();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud#isLeeg()
+     */
     @Override
     public boolean isLeeg() {
         return attenderingscriterium == null;

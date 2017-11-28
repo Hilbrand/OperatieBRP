@@ -44,7 +44,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 
 /**
  * Helper class om Lo3Element om te zetten naar hun String representatie.
- *
  */
 public final class Lo3Format {
 
@@ -54,9 +53,7 @@ public final class Lo3Format {
 
     /**
      * Format een Integer.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Integer value) {
@@ -65,9 +62,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3Integer.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3Integer value) {
@@ -76,9 +71,7 @@ public final class Lo3Format {
 
     /**
      * Format een Long.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Long value) {
@@ -87,9 +80,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3Long.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3Long value) {
@@ -98,9 +89,7 @@ public final class Lo3Format {
 
     /**
      * Format een Character.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Character value) {
@@ -109,9 +98,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3Character.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3Character value) {
@@ -120,9 +107,7 @@ public final class Lo3Format {
 
     /**
      * Format een String.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final String value) {
@@ -131,9 +116,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3String.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3String value) {
@@ -142,9 +125,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AdellijkeTitelPredikaatCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AdellijkeTitelPredikaatCode value) {
@@ -153,9 +134,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3Datum.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3Datum value) {
@@ -164,9 +143,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3GemeenteCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3GemeenteCode value) {
@@ -175,9 +152,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3LandCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3LandCode value) {
@@ -186,9 +161,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3Geslachtsaanduiding.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3Geslachtsaanduiding value) {
@@ -197,9 +170,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AanduidingNaamgebruikCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AanduidingNaamgebruikCode value) {
@@ -208,9 +179,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3IndicatieGezagMinderjarige.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3IndicatieGezagMinderjarige value) {
@@ -219,9 +188,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3IndicatieCurateleregister.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3IndicatieCurateleregister value) {
@@ -230,9 +197,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3RedenOntbindingHuwelijkOfGpCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3RedenOntbindingHuwelijkOfGpCode value) {
@@ -241,9 +206,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3SoortVerbintenis.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3SoortVerbintenis value) {
@@ -252,9 +215,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3RedenOpschortingBijhoudingCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3RedenOpschortingBijhoudingCode value) {
@@ -263,9 +224,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3IndicatieGeheimCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3IndicatieGeheimCode value) {
@@ -274,9 +233,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3Datumtijdstempel.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3Datumtijdstempel value) {
@@ -285,9 +242,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3IndicatiePKVolledigGeconverteerdCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3IndicatiePKVolledigGeconverteerdCode value) {
@@ -296,9 +251,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AanduidingEuropeesKiesrecht.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AanduidingEuropeesKiesrecht value) {
@@ -307,9 +260,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AanduidingUitgeslotenKiesrecht.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AanduidingUitgeslotenKiesrecht value) {
@@ -318,9 +269,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3NationaliteitCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3NationaliteitCode value) {
@@ -329,9 +278,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3RedenNederlandschapCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3RedenNederlandschapCode value) {
@@ -340,9 +287,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AanduidingBijzonderNederlandschap.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AanduidingBijzonderNederlandschap value) {
@@ -351,9 +296,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3SoortNederlandsReisdocument.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3SoortNederlandsReisdocument value) {
@@ -362,9 +305,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AutoriteitVanAfgifteNederlandsReisdocument.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AutoriteitVanAfgifteNederlandsReisdocument value) {
@@ -373,9 +314,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AanduidingInhoudingVermissingNederlandsReisdocument.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AanduidingInhoudingVermissingNederlandsReisdocument value) {
@@ -384,9 +323,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3Signalering.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3Signalering value) {
@@ -395,9 +332,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AanduidingVerblijfstitelCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AanduidingVerblijfstitelCode value) {
@@ -406,9 +341,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3FunctieAdres.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3FunctieAdres value) {
@@ -417,9 +350,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3Huisnummer.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3Huisnummer value) {
@@ -428,9 +359,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AanduidingHuisnummer.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AanduidingHuisnummer value) {
@@ -439,9 +368,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3AangifteAdreshouding.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3AangifteAdreshouding value) {
@@ -450,9 +377,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3IndicatieDocument.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3IndicatieDocument value) {
@@ -461,9 +386,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3RNIDeelnemerCode.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3RNIDeelnemerCode value) {
@@ -472,9 +395,7 @@ public final class Lo3Format {
 
     /**
      * Format een Lo3IndicatieOnjuist.
-     *
-     * @param value
-     *            lo3 waarde
+     * @param value lo3 waarde
      * @return lo3 string weergave, null als value null was
      */
     public static String format(final Lo3IndicatieOnjuist value) {

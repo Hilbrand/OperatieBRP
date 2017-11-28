@@ -22,10 +22,8 @@ public final class VoorvoegselScheidingstekenPaar {
     private final BrpCharacter scheidingsteken;
 
     /**
-     * @param voorvoegsel
-     *            het BRP voorvoegsel
-     * @param scheidingsteken
-     *            het BRP scheidingsteken
+     * @param voorvoegsel het BRP voorvoegsel
+     * @param scheidingsteken het BRP scheidingsteken
      */
     public VoorvoegselScheidingstekenPaar(final BrpString voorvoegsel, final BrpCharacter scheidingsteken) {
         this.voorvoegsel = voorvoegsel;
@@ -34,7 +32,6 @@ public final class VoorvoegselScheidingstekenPaar {
 
     /**
      * Geef de waarde van voorvoegsel.
-     *
      * @return het voorvoegsel
      */
     public BrpString getVoorvoegsel() {
@@ -43,7 +40,6 @@ public final class VoorvoegselScheidingstekenPaar {
 
     /**
      * Geef de waarde van scheidingsteken.
-     *
      * @return het scheidingsteken
      */
     public BrpCharacter getScheidingsteken() {
@@ -70,8 +66,8 @@ public final class VoorvoegselScheidingstekenPaar {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("voorvoegsel", voorvoegsel)
-                                                                          .append("scheidingsteken", scheidingsteken)
-                                                                          .toString();
+                .append("scheidingsteken", scheidingsteken)
+                .toString();
     }
 
 }

@@ -15,7 +15,7 @@ import nl.bzk.migratiebrp.bericht.model.GerelateerdeInformatie;
  * Basis Brp bericht.
  * @param <T> soort resultaat
  */
-public abstract class AbstractBrpBericht<T> extends AbstractBericht implements BrpBericht, Serializable {
+public abstract class AbstractBrpBericht<T extends Serializable> extends AbstractBericht implements BrpBericht, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,11 +25,8 @@ public abstract class AbstractBrpBericht<T> extends AbstractBericht implements B
 
     /**
      * Constructor.
-     *
-     * @param berichtType
-     *            berichtType
-     * @param inhoud
-     *            inhoud van bericht
+     * @param berichtType berichtType
+     * @param inhoud inhoud van bericht
      */
     public AbstractBrpBericht(final String berichtType, final T inhoud) {
         this.berichtType = berichtType;
@@ -48,7 +45,7 @@ public abstract class AbstractBrpBericht<T> extends AbstractBericht implements B
 
     @Override
     public final GerelateerdeInformatie getGerelateerdeInformatie() {
-        return new GerelateerdeInformatie(null, Collections.<String>emptyList(), Collections.<String>emptyList());
+        return new GerelateerdeInformatie(null, Collections.emptyList(), Collections.emptyList());
     }
 
     /**

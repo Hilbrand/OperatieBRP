@@ -14,8 +14,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.transaction.Transaction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.springframework.transaction.jta.TransactionFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -30,7 +30,6 @@ public final class TransactionFilter implements Filter {
     private TransactionFactory transactionFactory;
 
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
 
         Transaction transaction = null;
@@ -69,6 +68,7 @@ public final class TransactionFilter implements Filter {
 
     @Override
     public void destroy() {
+        // No-op
     }
 
 }

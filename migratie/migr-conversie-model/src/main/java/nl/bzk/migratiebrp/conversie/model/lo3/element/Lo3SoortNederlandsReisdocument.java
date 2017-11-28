@@ -6,25 +6,20 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * Deze class representeert de LO3 Soort Nederlands reisdocument (35.10). Deze soort verwijst binnen LO3 naar een
  * Nederlands reisdocument in Tabel 48 (zie LO3.7).
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
- * 
- * 
  */
 public final class Lo3SoortNederlandsReisdocument extends AbstractLo3Element {
     private static final long serialVersionUID = 1L;
 
     /**
      * Maakt een Lo3SoortNederlandsReisdocument object.
-     * 
-     * @param waarde
-     *            de LO3 Soort Nederlands Reisdocument
+     * @param waarde de LO3 Soort Nederlands Reisdocument
      */
     public Lo3SoortNederlandsReisdocument(final String waarde) {
         this(waarde, null);
@@ -32,15 +27,11 @@ public final class Lo3SoortNederlandsReisdocument extends AbstractLo3Element {
 
     /**
      * Maake een Lo3SoortNederlandsReisdocument object met onderzoek.
-     * 
-     * @param waarde
-     *            de LO3 Soort Nederlands Reisdocument
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde de LO3 Soort Nederlands Reisdocument
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
     public Lo3SoortNederlandsReisdocument(@Element(name = "waarde", required = false) final String waarde, @Element(name = "onderzoek",
-            required = false) final Lo3Onderzoek onderzoek)
-    {
+            required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 }

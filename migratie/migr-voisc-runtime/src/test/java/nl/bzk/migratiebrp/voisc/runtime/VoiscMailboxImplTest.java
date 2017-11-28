@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.voisc.runtime;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.RichtingType;
 import nl.bzk.migratiebrp.voisc.database.entities.Bericht;
@@ -16,14 +16,16 @@ import nl.bzk.migratiebrp.voisc.database.entities.Mailbox;
 import nl.bzk.migratiebrp.voisc.database.entities.StatusEnum;
 import nl.bzk.migratiebrp.voisc.database.repository.BerichtRepository;
 import nl.bzk.migratiebrp.voisc.database.repository.MailboxRepository;
+import nl.bzk.migratiebrp.voisc.mailbox.client.Connection;
+import nl.bzk.migratiebrp.voisc.mailbox.client.MailboxClient;
+import nl.bzk.migratiebrp.voisc.mailbox.client.exception.ConnectionException;
 import nl.bzk.migratiebrp.voisc.runtime.exceptions.VoiscMailboxException;
 import nl.bzk.migratiebrp.voisc.runtime.exceptions.VoiscQueueException;
-import nl.bzk.migratiebrp.voisc.spd.MailboxClient;
-import nl.bzk.migratiebrp.voisc.spd.constants.MessagesCodes;
-import nl.bzk.migratiebrp.voisc.spd.constants.SpdConstants;
+import nl.bzk.migratiebrp.voisc.spd.SpdConstants;
 import nl.bzk.migratiebrp.voisc.spd.exception.MailboxServerPasswordException;
+import nl.bzk.migratiebrp.voisc.spd.exception.MessagesCodes;
 import nl.bzk.migratiebrp.voisc.spd.exception.SpdProtocolException;
-import nl.bzk.migratiebrp.voisc.spd.exception.SslPasswordException;
+import nl.bzk.migratiebrp.voisc.spd.exception.VoaException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,9 +34,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VoiscMailboxImplTest {
@@ -47,6 +47,8 @@ public class VoiscMailboxImplTest {
     private BerichtRepository berichtRepository;
     @Mock
     private VoiscQueue archiveringService;
+    @Mock
+    private Connection connection;
 
     @InjectMocks
     private VoiscMailboxImpl subject;
@@ -64,46 +66,46 @@ public class VoiscMailboxImplTest {
     @Test(expected = VoiscMailboxException.class)
     public void testConnectToMailboxServerFailure() throws VoiscMailboxException {
         // Setup
-        Mockito.doThrow(new SslPasswordException(MessagesCodes.ERRMSG_VOSPG_SSL_INCORRECT_CERT_PASSWORD)).when(mailboxClient).connect();
+        Mockito.doThrow(new ConnectionException(MessagesCodes.ERRMSG_VOSPG_SSL_INCORRECT_CERT_PASSWORD, null)).when(mailboxClient).connect();
 
         // Execute
         subject.connectToMailboxServer();
     }
 
     @Test
-    public void testLogin() throws VoiscMailboxException, SpdProtocolException, MailboxServerPasswordException {
+    public void testLogin() throws VoiscMailboxException, VoaException {
         // Setup
         final Mailbox mailbox = new Mailbox();
         mailbox.setMailboxpwd("password");
 
         final Calendar laatsteWijzigingPwd = Calendar.getInstance();
         laatsteWijzigingPwd.add(Calendar.DAY_OF_MONTH, -59);
-        mailbox.setLaatsteWijzigingPwd(laatsteWijzigingPwd.getTime());
+        mailbox.setLaatsteWijzigingPwd(new Timestamp(laatsteWijzigingPwd.getTimeInMillis()));
 
         // Execute
-        subject.login(mailbox);
+        subject.login(connection, mailbox);
 
         // Verify
-        Mockito.verify(mailboxClient, Mockito.times(1)).logOn(mailbox);
+        Mockito.verify(mailboxClient, Mockito.times(1)).logOn(connection, mailbox);
         Mockito.verifyNoMoreInteractions(mailboxClient, mailboxRepository, berichtRepository);
     }
 
     @Test
-    public void testLoginMetWachtwoordChange() throws SpdProtocolException, MailboxServerPasswordException, VoiscMailboxException {
+    public void testLoginMetWachtwoordChange() throws VoaException, VoiscMailboxException {
         // Setup
         final Mailbox mailbox = new Mailbox();
         mailbox.setMailboxpwd("password");
         final Calendar laatsteWijzigingPwd = Calendar.getInstance();
         laatsteWijzigingPwd.add(Calendar.DAY_OF_MONTH, -61);
-        mailbox.setLaatsteWijzigingPwd(laatsteWijzigingPwd.getTime());
+        mailbox.setLaatsteWijzigingPwd(new Timestamp(laatsteWijzigingPwd.getTimeInMillis()));
 
         // Execute
-        subject.login(mailbox);
+        subject.login(connection, mailbox);
 
         // Verify
-        Mockito.verify(mailboxClient, Mockito.times(1)).logOn(mailbox);
+        Mockito.verify(mailboxClient, Mockito.times(1)).logOn(connection, mailbox);
         final ArgumentCaptor<String> newPasswordCaptor = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(mailboxClient, Mockito.times(1)).changePassword(Matchers.eq(mailbox), newPasswordCaptor.capture());
+        Mockito.verify(mailboxClient, Mockito.times(1)).changePassword(Matchers.eq(connection), Matchers.eq(mailbox), newPasswordCaptor.capture());
         Mockito.verify(mailboxRepository, Mockito.times(1)).save(mailbox);
 
         Mockito.verifyNoMoreInteractions(mailboxClient, mailboxRepository, berichtRepository);
@@ -113,18 +115,20 @@ public class VoiscMailboxImplTest {
     }
 
     @Test(expected = VoiscMailboxException.class)
-    public void testLoginMetWachtwoordChangeFailure() throws SpdProtocolException, MailboxServerPasswordException, VoiscMailboxException {
+    public void testLoginMetWachtwoordChangeFailure() throws VoaException, MailboxServerPasswordException, VoiscMailboxException {
         // Setup
         final Mailbox mailbox = new Mailbox();
         mailbox.setMailboxpwd("password");
         final Calendar laatsteWijzigingPwd = Calendar.getInstance();
         laatsteWijzigingPwd.add(Calendar.DAY_OF_MONTH, -61);
-        mailbox.setLaatsteWijzigingPwd(laatsteWijzigingPwd.getTime());
+        mailbox.setLaatsteWijzigingPwd(new Timestamp(laatsteWijzigingPwd.getTimeInMillis()));
 
-        Mockito.doThrow(new SpdProtocolException("9999")).when(mailboxClient).changePassword(Matchers.eq(mailbox), Matchers.anyString());
+        Mockito.doThrow(new SpdProtocolException(MessagesCodes.ERRMSG_SSL_INCORRECT_KEYSTORE_PASSWORD))
+                .when(mailboxClient)
+                .changePassword(Matchers.eq(connection), Matchers.eq(mailbox), Matchers.anyString());
 
         // Execute
-        subject.login(mailbox);
+        subject.login(connection, mailbox);
     }
 
     @Test(expected = VoiscMailboxException.class)
@@ -134,35 +138,36 @@ public class VoiscMailboxImplTest {
         mailbox.setMailboxpwd(null);
 
         // Execute
-        subject.login(mailbox);
+        subject.login(connection, mailbox);
     }
 
     @Test(expected = VoiscMailboxException.class)
-    public void testLoginMailboxServerPasswordException() throws SpdProtocolException, MailboxServerPasswordException, VoiscMailboxException {
+    public void testLoginMailboxServerPasswordException() throws VoaException, VoiscMailboxException {
         // Setup
         final Mailbox mailbox = new Mailbox();
         mailbox.setMailboxpwd("password");
 
-        Mockito.doThrow(new MailboxServerPasswordException("9999")).when(mailboxClient).logOn(mailbox);
+        Mockito.doThrow(new MailboxServerPasswordException(MessagesCodes.ERRMSG_SSL_INCORRECT_KEYSTORE_PASSWORD)).when(mailboxClient)
+                .logOn(connection, mailbox);
 
         // Execute
-        subject.login(mailbox);
+        subject.login(connection, mailbox);
     }
 
     @Test(expected = VoiscMailboxException.class)
-    public void testLoginSpdProtocolException() throws SpdProtocolException, MailboxServerPasswordException, VoiscMailboxException {
+    public void testLoginSpdProtocolException() throws VoaException, VoiscMailboxException {
         // Setup
         final Mailbox mailbox = new Mailbox();
         mailbox.setMailboxpwd("password");
 
-        Mockito.doThrow(new SpdProtocolException("9999")).when(mailboxClient).logOn(mailbox);
+        Mockito.doThrow(new SpdProtocolException(MessagesCodes.ERRMSG_SSL_INCORRECT_KEYSTORE_PASSWORD)).when(mailboxClient).logOn(connection, mailbox);
 
         // Execute
-        subject.login(mailbox);
+        subject.login(connection, mailbox);
     }
 
     @Test
-    public void testSendMessageToMailbox() throws SpdProtocolException, VoiscQueueException {
+    public void testSendMessageToMailbox() throws VoaException, VoiscQueueException {
         // Setup
         final Bericht bericht1 = new Bericht(); // Ok
         bericht1.setRecipient("3000250");
@@ -175,24 +180,24 @@ public class VoiscMailboxImplTest {
 
         Mockito.when(mailboxRepository.getMailboxByNummer("3000250")).thenReturn(new Mailbox());
         final Mailbox blockedMailbox = new Mailbox();
-        blockedMailbox.setStartBlokkering(new Date(System.currentTimeMillis() - 1000));
+        blockedMailbox.setStartBlokkering(new Timestamp(System.currentTimeMillis() - 1000));
         Mockito.when(mailboxRepository.getMailboxByNummer("3000260")).thenReturn(blockedMailbox);
 
-        Mockito.doThrow(new SpdProtocolException("9999")).when(mailboxClient).putMessage(bericht3);
+        Mockito.doThrow(new SpdProtocolException(MessagesCodes.ERRMSG_SSL_INCORRECT_KEYSTORE_PASSWORD)).when(mailboxClient).putMessage(connection, bericht3);
 
         // Execute
         final Mailbox mailbox = new Mailbox();
         mailbox.setMailboxnr("0518010");
         final List<Bericht> messagesToSend = Arrays.asList(bericht1, bericht2, bericht3, bericht4);
-        subject.sendMessagesToMailbox(mailbox, messagesToSend);
+        subject.sendMessagesToMailbox(connection, mailbox, messagesToSend);
 
         // Verify
         Mockito.verify(mailboxRepository, Mockito.times(3)).getMailboxByNummer("3000250");
         Mockito.verify(mailboxRepository, Mockito.times(1)).getMailboxByNummer("3000260");
 
-        Mockito.verify(mailboxClient, Mockito.times(1)).putMessage(bericht1);
-        Mockito.verify(mailboxClient, Mockito.times(1)).putMessage(bericht3);
-        Mockito.verify(mailboxClient, Mockito.times(1)).putMessage(bericht4);
+        Mockito.verify(mailboxClient, Mockito.times(1)).putMessage(connection, bericht1);
+        Mockito.verify(mailboxClient, Mockito.times(1)).putMessage(connection, bericht3);
+        Mockito.verify(mailboxClient, Mockito.times(1)).putMessage(connection, bericht4);
 
         Mockito.verify(berichtRepository, Mockito.times(1)).save(bericht1);
         Mockito.verify(berichtRepository, Mockito.times(1)).save(bericht2);
@@ -209,69 +214,64 @@ public class VoiscMailboxImplTest {
     }
 
     @Test
-    public void testReceiveMessagesFromMailbox() throws SpdProtocolException, VoiscQueueException {
+    public void testReceiveMessagesFromMailbox() throws VoaException, VoiscQueueException {
         // Setup
         final Mailbox mailbox = new Mailbox();
         mailbox.setLimitNumber(67);
 
         Mockito.when(
-            mailboxClient.listMessages(
-                Matchers.anyInt(),
-                Matchers.anyListOf(Integer.class),
-                Matchers.eq(67),
-                Matchers.eq("012"),
-                Matchers.eq(SpdConstants.PRIORITY)))
-               .thenAnswer(new Answer<Integer>()
-        {
+                mailboxClient.listMessages(
+                        Matchers.eq(connection),
+                        Matchers.anyInt(),
+                        Matchers.anyListOf(Integer.class),
+                        Matchers.eq(67),
+                        Matchers.eq("012"),
+                        Matchers.eq(SpdConstants.Priority.defaultValue())))
+                .thenAnswer(invocation -> {
+                    final int nextSeqNr = (int) invocation.getArguments()[1];
 
-                   @Override
-                   public Integer answer(final InvocationOnMock invocation) throws SpdProtocolException {
-                       final int nextSeqNr = (int) invocation.getArguments()[0];
+                    // We weten dat het type van het tweede argument een lijst van integers is, echter geeft
+                    // getArguments
+                    // een Object terug die we niet type safe kunnen converteren.
+                    @SuppressWarnings("unchecked") final List<Integer> seqNummers = (List<Integer>) invocation.getArguments()[2];
 
-                       // We weten dat het type van het tweede argument een lijst van integers is, echter geeft
-                       // getArguments
-                       // een Object terug die we niet type safe kunnen converteren.
-                       @SuppressWarnings("unchecked")
-                       final List<Integer> seqNummers = (List<Integer>) invocation.getArguments()[1];
+                    if (nextSeqNr == 0) {
+                        // Eerste call
+                        seqNummers.add(14); // ok
+                        seqNummers.add(23); // error
+                        seqNummers.add(28); // null
+                        seqNummers.add(37); // ok
 
-                       if (nextSeqNr == 0) {
-                           // Eerste call
-                           seqNummers.add(14); // ok
-                           seqNummers.add(23); // error
-                           seqNummers.add(28); // null
-                           seqNummers.add(37); // ok
+                        return 43;
+                    } else if (nextSeqNr == 43) {
+                        // Tweede call
+                        seqNummers.add(52); // ok
 
-                           return 43;
-                       } else if (nextSeqNr == 43) {
-                           // Tweede call
-                           seqNummers.add(52); // ok
+                        return 67;
 
-                           return 67;
+                    } else if (nextSeqNr == 67) {
+                        // Derde call
 
-                       } else if (nextSeqNr == 67) {
-                           // Derde call
+                        throw new SpdProtocolException(MessagesCodes.ERRMSG_SSL_INCORRECT_KEYSTORE_PASSWORD);
+                    }
 
-                           throw new SpdProtocolException("9999");
-                       }
-
-                       Assert.fail();
-                       return 0;
-                   }
-               });
+                    Assert.fail();
+                    return 0;
+                });
 
         final Bericht bericht14 = new Bericht();
         final Bericht bericht37 = new Bericht();
         final Bericht bericht52 = new Bericht();
 
-        Mockito.when(mailboxClient.getMessage(14)).thenReturn(bericht14);
-        Mockito.when(mailboxClient.getMessage(23)).thenThrow(new SpdProtocolException("9999"));
-        Mockito.when(mailboxClient.getMessage(28)).thenReturn(null);
-        Mockito.when(mailboxClient.getMessage(37)).thenReturn(bericht37);
-        Mockito.when(mailboxClient.getMessage(52)).thenReturn(bericht52);
+        Mockito.when(mailboxClient.getMessage(connection, 14)).thenReturn(bericht14);
+        Mockito.when(mailboxClient.getMessage(connection, 23)).thenThrow(new SpdProtocolException(MessagesCodes.ERRMSG_SSL_INCORRECT_KEYSTORE_PASSWORD));
+        Mockito.when(mailboxClient.getMessage(connection, 28)).thenReturn(null);
+        Mockito.when(mailboxClient.getMessage(connection, 37)).thenReturn(bericht37);
+        Mockito.when(mailboxClient.getMessage(connection, 52)).thenReturn(bericht52);
 
         // Execute
         try {
-            subject.receiveMessagesFromMailbox(mailbox);
+            subject.receiveMessagesFromMailbox(connection, mailbox);
             Assert.fail("VoiscMailboxException verwacht");
         } catch (final VoiscMailboxException e) {
             Assert.assertTrue(true);
@@ -287,21 +287,21 @@ public class VoiscMailboxImplTest {
     }
 
     @Test
-    public void testLogout() throws SpdProtocolException {
+    public void testLogout() throws VoaException {
         // Execute
-        subject.logout();
+        subject.logout(connection);
 
         // Verify
-        Mockito.verify(mailboxClient, Mockito.times(1)).logOff();
+        Mockito.verify(mailboxClient, Mockito.times(1)).logOff(connection);
     }
 
     @Test
-    public void testLogoutSpdProtocolException() throws SpdProtocolException {
+    public void testLogoutSpdProtocolException() throws VoaException {
         // Setup
-        Mockito.doThrow(new SpdProtocolException("9999")).when(mailboxClient).logOff();
+        Mockito.doThrow(new SpdProtocolException(MessagesCodes.ERRMSG_SSL_INCORRECT_KEYSTORE_PASSWORD)).when(mailboxClient).logOff(connection);
 
         // Execute
-        subject.logout();
+        subject.logout(connection);
     }
 
 }

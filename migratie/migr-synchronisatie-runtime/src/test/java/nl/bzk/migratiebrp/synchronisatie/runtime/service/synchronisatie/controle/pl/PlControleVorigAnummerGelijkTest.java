@@ -30,26 +30,26 @@ public class PlControleVorigAnummerGelijkTest {
 
     @Test
     public void test() {
-        Assert.assertTrue(subject.controleer(maakContext((Long) null), maakPl((Long) null)));
-        Assert.assertTrue(subject.controleer(maakContext(1L), maakPl((Long) null)));
-        Assert.assertTrue(subject.controleer(maakContext(1L, 2L), maakPl(1L, 3L)));
+        Assert.assertTrue(subject.controleer(maakContext((String) null), maakPl((String) null)));
+        Assert.assertTrue(subject.controleer(maakContext("1"), maakPl((String) null)));
+        Assert.assertTrue(subject.controleer(maakContext("1", "2"), maakPl("1", "3")));
 
-        Assert.assertFalse(subject.controleer(maakContext((Long) null), maakPl(1L)));
-        Assert.assertFalse(subject.controleer(maakContext(2L), maakPl(1L)));
+        Assert.assertFalse(subject.controleer(maakContext((String) null), maakPl("1")));
+        Assert.assertFalse(subject.controleer(maakContext("2"), maakPl("1")));
 
-        Assert.assertTrue(subject.controleer(maakContext(3L, 2L), maakPl(2L)));
-        Assert.assertTrue(subject.controleer(maakContext(3L, 2L, 1L), maakPl(2L, 1L)));
+        Assert.assertTrue(subject.controleer(maakContext("3", "2"), maakPl("2")));
+        Assert.assertTrue(subject.controleer(maakContext("3", "2", "1"), maakPl("2", "1")));
 
-        Assert.assertFalse(subject.controleer(maakContext(2L), maakPl(3L, 2L)));
-        Assert.assertFalse(subject.controleer(maakContext(2L, 1L), maakPl(3L, 2L, 1L)));
+        Assert.assertFalse(subject.controleer(maakContext("2"), maakPl("3", "2")));
+        Assert.assertFalse(subject.controleer(maakContext("2", "1"), maakPl("3", "2", "1")));
 
     }
 
-    private VerwerkingsContext maakContext(final Long... vorigAnummers) {
+    private VerwerkingsContext maakContext(final String... vorigAnummers) {
         return new VerwerkingsContext(null, null, null, maakPl(vorigAnummers));
     }
 
-    private BrpPersoonslijst maakPl(final Long... vorigAnummers) {
+    private BrpPersoonslijst maakPl(final String... vorigAnummers) {
         final BrpPersoonslijstBuilder builder = new BrpPersoonslijstBuilder();
 
         if (vorigAnummers != null) {
@@ -59,9 +59,9 @@ public class PlControleVorigAnummerGelijkTest {
                 final Integer datumAanvang = 20000131 - i;
                 final Integer datumEinde = i == 0 ? null : 20000132 - i;
                 groepen.add(BrpStapelHelper.groep(
-                    BrpStapelHelper.nummerverwijzing(vorigAnummers[i], null, null, null),
-                    BrpStapelHelper.his(datumAanvang, datumEinde, datumAanvang, datumEinde),
-                    BrpStapelHelper.act(1, datumAanvang)));
+                        BrpStapelHelper.nummerverwijzing(vorigAnummers[i], null, null, null),
+                        BrpStapelHelper.his(datumAanvang, datumEinde, datumAanvang, datumEinde),
+                        BrpStapelHelper.act(1, datumAanvang)));
             }
 
             builder.nummerverwijzingStapel(BrpStapelHelper.stapel(groepen.toArray(new BrpGroep[groepen.size()])));

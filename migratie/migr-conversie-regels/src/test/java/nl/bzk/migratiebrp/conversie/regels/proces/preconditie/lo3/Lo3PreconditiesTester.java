@@ -6,9 +6,17 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import org.springframework.stereotype.Component;
 
-@Component
+
 public class Lo3PreconditiesTester extends AbstractLo3Precondities {
 
+    /**
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
+     */
+    public Lo3PreconditiesTester(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
 }

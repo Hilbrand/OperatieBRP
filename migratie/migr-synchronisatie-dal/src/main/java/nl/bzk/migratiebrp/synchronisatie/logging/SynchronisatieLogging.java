@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.synchronisatie.logging;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
 
 /**
  * Logging van controle, resultaten en beslissing tijdens de synchronisatie.
@@ -41,9 +41,7 @@ public final class SynchronisatieLogging {
 
     /**
      * Melding toevoegen.
-     *
-     * @param melding
-     *            melding
+     * @param melding melding
      */
     public static void addMelding(final String melding) {
         CONTEXT.get().append(melding);
@@ -51,9 +49,7 @@ public final class SynchronisatieLogging {
 
     /**
      * Beslissing toevoegen.
-     *
-     * @param beslissing
-     *            beslissing
+     * @param beslissing beslissing
      */
     public static void addBeslissing(final SynchronisatieBeslissing beslissing) {
         CONTEXT.get().beslissing(beslissing);
@@ -61,9 +57,7 @@ public final class SynchronisatieLogging {
 
     /**
      * Resultaat toevoegen.
-     *
-     * @param resultaat
-     *            resultaat
+     * @param resultaat resultaat
      */
     public static void setResultaat(final StatusType resultaat) {
         CONTEXT.get().resultaat(resultaat);
@@ -71,9 +65,7 @@ public final class SynchronisatieLogging {
 
     /**
      * Resultaat Delta toevoegen.
-     *
-     * @param resultaat
-     *            resultaat
+     * @param resultaat resultaat
      */
     public static void addDeltaResultaat(final SoortAdministratieveHandeling resultaat) {
         CONTEXT.get().deltaResultaat(resultaat);
@@ -81,7 +73,6 @@ public final class SynchronisatieLogging {
 
     /**
      * Retourneer de opgebouwde melding.
-     *
      * @return melding
      */
     public static String getMelding() {
@@ -97,11 +88,9 @@ public final class SynchronisatieLogging {
 
     /**
      * Voeg een beslissing toe aan de beslisboom en zet tegelijk de laatste beslissing.
-     *
-     * @param beslissing
-     *            beslissing
+     * @param beslissing beslissing
      */
-    protected void beslissing(final SynchronisatieBeslissing beslissing) {
+    void beslissing(final SynchronisatieBeslissing beslissing) {
         if (beslisboom.length() != 0) {
             beslisboom.append(",");
         }
@@ -111,20 +100,17 @@ public final class SynchronisatieLogging {
 
     /**
      * Voeg het resultaat toe van de verwerking (voeg ook de beslisboom toe aan het resulterende bericht).
-     *
-     * @param resultaat
-     *            resultaat
+     * @param resultaat resultaat
      */
-    protected void resultaat(final StatusType resultaat) {
+    void resultaat(final StatusType resultaat) {
         beslisResultaat = resultaat.toString();
     }
 
     /**
      * Geef het complete bericht.
-     *
      * @return bericht
      */
-    protected String getString() {
+    String getString() {
         if (deltaResultaat.length() > 0) {
             sb.insert(0, maakDeltaTotaalResultaat() + NEXTLINE);
         }
@@ -136,11 +122,9 @@ public final class SynchronisatieLogging {
 
     /**
      * Zet het resultaat van IST binnen relateren.
-     *
-     * @param resultaat
-     *            het resultaat van IST binnen relateren
+     * @param resultaat het resultaat van IST binnen relateren
      */
-    protected void deltaResultaat(final SoortAdministratieveHandeling resultaat) {
+    void deltaResultaat(final SoortAdministratieveHandeling resultaat) {
         if (deltaResultaat.length() != 0) {
             deltaResultaat.append(NEXTITEM);
         }

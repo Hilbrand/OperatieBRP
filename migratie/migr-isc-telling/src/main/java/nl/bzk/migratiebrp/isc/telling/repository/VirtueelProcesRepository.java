@@ -15,9 +15,7 @@ public interface VirtueelProcesRepository {
 
     /**
      * Verwijder virtuele processen voor een bepaalde datum.
-     * 
-     * @param datumTot
-     *            datum tot
+     * @param datumTot datum tot
      * @return aantal verwijderde virtuele processen
      */
     int verwijder(Timestamp datumTot);

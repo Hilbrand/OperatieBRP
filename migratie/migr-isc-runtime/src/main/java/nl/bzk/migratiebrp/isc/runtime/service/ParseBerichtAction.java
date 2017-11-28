@@ -6,15 +6,16 @@
 
 package nl.bzk.migratiebrp.isc.runtime.service;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.Bericht;
 import nl.bzk.migratiebrp.bericht.model.BerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.notificatie.factory.NotificatieBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -32,11 +33,14 @@ public final class ParseBerichtAction implements Action {
     @Override
     public void setKanaal(final String kanaal) {
         switch (kanaal) {
-            case "VOSPG":
+            case "VOISC":
                 berichtFactory = new Lo3BerichtFactory();
                 break;
             case "SYNC":
                 berichtFactory = SyncBerichtFactory.SINGLETON;
+                break;
+            case "NOTIFICATIE":
+                berichtFactory = NotificatieBerichtFactory.SINGLETON;
                 break;
             default:
                 throw new IllegalArgumentException("Kanaal '" + kanaal + "' onbekend.");
@@ -61,13 +65,12 @@ public final class ParseBerichtAction implements Action {
         // LO3 Bericht verrijken
         if (bericht instanceof Lo3Bericht) {
             final Lo3Bericht lo3Bericht = (Lo3Bericht) bericht;
-            lo3Bericht.setBronGemeente(message.getOriginator());
-            lo3Bericht.setDoelGemeente(message.getRecipient());
+            lo3Bericht.setBronPartijCode(message.getOriginator());
+            lo3Bericht.setDoelPartijCode(message.getRecipient());
         }
 
         message.setBericht(bericht);
         LOG.debug("[Bericht: {}]: parse ok", message.getBerichtId());
         return true;
     }
-
 }

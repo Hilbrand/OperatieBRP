@@ -10,7 +10,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
@@ -33,13 +36,24 @@ public class Lo3InhoudTest {
                     + "0000008106091000405990920008199001011010001W102000405991030008199001011110001.72100"
                     + "01G851000819900101861000819900102";
 
+    @Test
+    public void testVolgordeElementen() {
+        assertEquals("0110012011201160",
+                Lo3Inhoud.converteerNaarLo3Inhoud(
+                        Arrays.asList(
+                                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_01, -1, -1,
+                                        ImmutableMap.of(Lo3ElementEnum.ELEMENT_0120, "1234567890", Lo3ElementEnum.ELEMENT_0110, "1234567891")),
+                                new Lo3CategorieWaarde(Lo3CategorieEnum.CATEGORIE_08, -1, -1,
+                                        ImmutableMap.of(Lo3ElementEnum.ELEMENT_1160, "1234AA", Lo3ElementEnum.ELEMENT_1120, "3"))
+                        )
+                ).stream().map(Lo3InhoudCategorie::getElementen).flatMap(List::stream).map(Lo3InhoudElement::getElement).collect(Collectors.joining()));
+    }
+
     /**
      * Test dat een lg01 bericht met daarin een element met veldlengte 0 resulteert in het ontbreken van het element als
      * resultaat van de {Lo3PersoonslijstParser}. Het resultaat van de
      * {@link nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud#parseInhoud(String)} dient een lege string terug te geven
      * aangezien dat gegeven nodig is voor zoekcriteria (bij bijvoorbeeld het plaatsen van afnemersindicaties).
-     * 
-     * @throws BerichtSyntaxException
      */
     @Test
     public void testLeegElement() throws BerichtSyntaxException {
@@ -63,12 +77,11 @@ public class Lo3InhoudTest {
      * Test dat een lg01 bericht met daarin een categorie met een verkeerde veldlengte resulteert in een
      * BerichtSyntaxException. In dit geval: voornaam 'Jeroen' is 6 karakters lang, terwijl er een veldlengte van 8
      * karakters is gespecificeerd.
-     * 
-     * @throws BerichtSyntaxException
      */
     @Test(expected = BerichtSyntaxException.class)
     public void testOngeldigeCategorieVeldLengte() throws BerichtSyntaxException {
-        final String lg =
+        final String
+                lg =
                 "00911011780110010531964598501200098200647130210008Jeroen0240006Kooper03100081966082103200040014033000460300410001M6110001V821000405188220008199409308230003PKA851000819920808861000819940930021550210011Greet Marga0240005Olijk03100081942083103200040013033000460300410001V621000819660821821000405188220008199409308230002PK851000819660821861000819940930031500210005Klaas0240006Kooper03100081938111803200040013033000460300410001M621000819660821821000405188220008199409308230002PK85100081966082186100081994093004086051000400016310003001821000405188220008199409308230002PK851000819660821861000819940930070776810008199409306910004051870100010801000400038020017201207011435010008710001P08235091000406260920008199806221010001W1030008199806221110010S vd Oyeln1115038Baron Schimmelpenninck van der Oyelaan11200021611600062252EB1170011Voorschoten11800160626010010016001119001606262000100160017210001T851000820110316861000820110317";
 
         Lo3Inhoud.parseInhoud(lg);

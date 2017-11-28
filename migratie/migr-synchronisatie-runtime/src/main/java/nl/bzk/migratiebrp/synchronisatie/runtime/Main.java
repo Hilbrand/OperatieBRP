@@ -6,61 +6,65 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime;
 
-import java.util.Calendar;
-import nl.bzk.migratiebrp.util.common.Version;
+import nl.bzk.algemeenbrp.util.common.Version;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.spring.PropertiesPropertySource;
 import nl.bzk.migratiebrp.util.common.logging.FunctioneleMelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.commons.cli.ParseException;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.ClassPathResource;
+
+import java.util.Calendar;
 
 /**
- * Basis runtime. Start de spring container; de spring container bevat componenten die een live thread opstarten (JMS
- * queue poller).
+ * Basis runtime. Start de spring container; de spring container bevat componenten die een live
+ * thread opstarten (JMS queue poller).
  */
 public final class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger();
-    private static ConfigurableApplicationContext context;
 
-    private Main() {
-        throw new AssertionError("Niet instantieerbaar.");
+    public static final String BEAN_NAME = "main";
+
+    private final Modus modus;
+    private GenericXmlApplicationContext context;
+    private final PropertySource<?> configuration;
+
+    /**
+     * Constructor.
+     * @param modus modus (iv of synchronisatie)
+     * @param configuration configuratie
+     */
+    public Main(final Modus modus, final PropertySource<?> configuration) {
+        this.modus = modus;
+        this.configuration = configuration;
+        if (this.modus == null) {
+            throw new IllegalArgumentException("Modus verplicht");
+        }
+        if (this.configuration == null) {
+            throw new IllegalArgumentException("Configuratie verplicht");
+        }
     }
 
     /**
-     * Run.
-     *
-     * Het enige argument wat wordt ondersteund is het argument -config Hiermee kan een property file worden aangegeven
-     * die wordt ingelezen als System properties.
-     *
-     * De configuratie in de spring bean definities is als volgt {$prop:default}. Hiermee kan een zinnige default worden
-     * gezet voor properties.
-     *
-     * @param args
-     *            argumenten.
-     * @throws Exception
-     *             exception
+     * Start de applicatie.
+     * @param args argumenten
      */
-    @SuppressWarnings("checkstyle:illegalcatch")
-    public static void main(final String[] args) throws Exception {
-        final Version version = Version.readVersion("nl.bzk.migratiebrp.synchronisatie", "migr-synchronisatie-runtime");
-        LOG.info(
-            FunctioneleMelding.SYNC_STARTEN_APPLICATIE,
-            "Starten applicatie ({}) ...\nComponenten:\n{}",
-            version.toString(),
-            version.toDetailsString());
+    public static void main(final String[] args) {
         // create Options object
         final Options options = new Options();
-        final Option modusOption = new Option("modus", true, "'synchronisatie' of 'initielevulling'");
+        final Option modusOption = new Option("modus", true, "'SYNCHRONISATIE' of 'INITIELEVULLING'");
         options.addOption(modusOption);
 
         final CommandLineParser parser = new DefaultParser();
@@ -72,39 +76,84 @@ public final class Main {
                 throw new IllegalArgumentException("Modus niet opgegeven.");
             }
 
-            final String modus = cmd.getOptionValue(modusOption.getOpt());
-            final String configLocation;
-            if ("synchronisatie".equalsIgnoreCase(modus)) {
-                configLocation = "classpath:synchronisatie.xml";
-            } else if ("initielevulling".equalsIgnoreCase(modus)) {
-                configLocation = "classpath:initielevulling.xml";
-            } else {
-                throw new IllegalArgumentException("Ongeldige modus opgegeven..");
-            }
+            final Modus modus = Modus.valueOf(cmd.getOptionValue(modusOption.getOpt()).toUpperCase());
 
-            LOG.info("Starting application context (config={})", configLocation);
-            context = new ClassPathXmlApplicationContext(configLocation);
-            LOG.info(FunctioneleMelding.SYNC_APPLICATIE_GESTART, "Applicatie ({}) gestart om {}", version.toString(), Calendar.getInstance().getTime());
-        } catch (final Exception e) {
+            LOG.info("Starting application (modus={})", modus);
+            new Main(modus, new PropertiesPropertySource("configuratie", new ClassPathResource(modus.getProperties()))).start();
+        } catch (final ParseException | IllegalArgumentException e) {
+            LOG.debug("Fout tijdens uitvoeren", e);
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("java -jar synchronisatie-runtime.jar nl.bzk.migratiebrp.synchronisatie.runtime.Main", options);
-            throw e;
+            System.exit(1);
         }
     }
 
     /**
-     * Geef de applicatie context.
-     *
-     * @return applicatie context
+     * Start de applicatie.
      */
-    public static ConfigurableApplicationContext getContext() {
-        return context;
+    public void start() {
+        final Version version = Version.readVersion("nl.bzk.migratiebrp.synchronisatie", "migr-synchronisatie-runtime");
+        LOG.info(FunctioneleMelding.SYNC_STARTEN_APPLICATIE, "Starten applicatie ({}) ...\nComponenten:\n{}", version.toString(), version
+                .toDetailsString());
+
+        final DefaultListableBeanFactory parentBeanFactory = new DefaultListableBeanFactory();
+        parentBeanFactory.registerSingleton(BEAN_NAME, this);
+        final GenericApplicationContext parentContext = new GenericApplicationContext(parentBeanFactory);
+        parentContext.refresh();
+
+        context = new GenericXmlApplicationContext();
+        context.setParent(parentContext);
+        context.load(modus.getConfiguratie());
+        context.getEnvironment().getPropertySources().addLast(configuration);
+        context.refresh();
+
+        // Try to shutdown neatly even if stop() is not called
+        context.registerShutdownHook();
+
+        LOG.info(FunctioneleMelding.SYNC_APPLICATIE_GESTART, "Applicatie ({}) gestart om {}", version.toString(), Calendar.getInstance().getTime());
     }
 
     /**
      * Stop de applicatie.
      */
-    public static void stop() {
+    public void stop() {
         context.close();
+    }
+
+    /**
+     * Modus van de synchronisatie service.
+     */
+    public enum Modus {
+        /**
+         * Initiele vulling.
+         */
+        INITIELEVULLING("initielevulling.xml", "initielevulling.properties"),
+
+        /**
+         * Synchronisatie.
+         */
+        SYNCHRONISATIE("synchronisatie.xml", "synchronisatie.properties");
+
+
+        private final String configuratie;
+        private final String properties;
+
+        /**
+         * Constructor.
+         * @param configuratie spring configuratie
+         * @param properties properties
+         */
+        Modus(final String configuratie, final String properties) {
+            this.configuratie = configuratie;
+            this.properties = properties;
+        }
+
+        public String getConfiguratie() {
+            return configuratie;
+        }
+
+        public String getProperties() {
+            return properties;
+        }
     }
 }

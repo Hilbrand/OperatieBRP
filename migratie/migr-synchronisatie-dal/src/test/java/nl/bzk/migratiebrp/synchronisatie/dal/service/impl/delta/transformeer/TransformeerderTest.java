@@ -14,15 +14,16 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
@@ -44,10 +45,15 @@ public class TransformeerderTest {
         SynchronisatieLogging.init();
         persoonOud = new Persoon(SoortPersoon.INGESCHREVENE);
         persoonNieuw = new Persoon(SoortPersoon.INGESCHREVENE);
+        final Timestamp datumTijdRegistratie = new Timestamp(System.currentTimeMillis());
         final AdministratieveHandeling administratieveHandeling =
-                new AdministratieveHandeling(new Partij("partij", 0), SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
-        administratieveHandeling.setDatumTijdRegistratie(new Timestamp(System.currentTimeMillis()));
-        persoonNieuw.setAdministratieveHandeling(administratieveHandeling);
+                new AdministratieveHandeling(new Partij("partij", "000000"), SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL, datumTijdRegistratie);
+        administratieveHandeling.setDatumTijdRegistratie(datumTijdRegistratie);
+        persoonNieuw.addPersoonAfgeleidAdministratiefHistorie(new PersoonAfgeleidAdministratiefHistorie(
+                (short) 1,
+                persoonNieuw,
+                administratieveHandeling,
+                datumTijdRegistratie));
         context = new DeltaBepalingContext(persoonNieuw, persoonOud, null, false);
         transformeerder = Transformeerder.maakTransformeerder();
     }
@@ -61,8 +67,8 @@ public class TransformeerderTest {
         assertSame(verschilGroep, result.get(0));
 
         assertEquals(
-            "Resultaat: null (null)\nBeslissingen: \nPersoonIDHistorie (DW-002-ACT) PersoonIDHistorie.waarde RIJ_TOEGEVOEGD",
-            SynchronisatieLogging.getMelding());
+                "Resultaat: null (null)\nBeslissingen: \nPersoonIDHistorie (DW-002-ACT) PersoonIDHistorie.waarde RIJ_TOEGEVOEGD",
+                SynchronisatieLogging.getMelding());
     }
 
     @Test
@@ -74,14 +80,12 @@ public class TransformeerderTest {
         assertNotSame(verschilGroep, result.get(0));
         assertEquals(4, result.get(0).size());
 
-        assertEquals(
-            "Resultaat: null (null)\n"
-                     + "Beslissingen: \n"
-                     + "PersoonIDHistorie (DW-001) PersoonIDHistorie.actieVerval ELEMENT_NIEUW\n"
-                     + "PersoonIDHistorie (DW-001) PersoonIDHistorie.actieVervalTbvLeveringMutaties ELEMENT_NIEUW\n"
-                     + "PersoonIDHistorie (DW-001) PersoonIDHistorie.datumTijdVerval ELEMENT_NIEUW\n"
-                     + "PersoonIDHistorie (DW-001) PersoonIDHistorie.indicatieVoorkomenTbvLeveringMutaties ELEMENT_NIEUW",
-            SynchronisatieLogging.getMelding());
+        assertEquals("Resultaat: null (null)\n"
+                + "Beslissingen: \n"
+                + "PersoonIDHistorie (DW-001) PersoonIDHistorie.actieVerval ELEMENT_NIEUW\n"
+                + "PersoonIDHistorie (DW-001) PersoonIDHistorie.actieVervalTbvLeveringMutaties ELEMENT_NIEUW\n"
+                + "PersoonIDHistorie (DW-001) PersoonIDHistorie.datumTijdVerval ELEMENT_NIEUW\n"
+                + "PersoonIDHistorie (DW-001) PersoonIDHistorie.indicatieVoorkomenTbvLeveringMutaties ELEMENT_NIEUW", SynchronisatieLogging.getMelding());
     }
 
     @Test
@@ -99,15 +103,13 @@ public class TransformeerderTest {
         assertEquals(VerschilType.ELEMENT_NIEUW, result.get(0).get(3).getVerschilType());
         assertEquals(VerschilType.ELEMENT_NIEUW, result.get(0).get(4).getVerschilType());
 
-        assertEquals(
-            "Resultaat: null (null)\n"
-                     + "Beslissingen: \n"
-                     + "PersoonIDHistorie (DW-003) Persoon.historieSet RIJ_TOEGEVOEGD\n"
-                     + "PersoonIDHistorie (DW-003) PersoonIDHistorie.actieVerval ELEMENT_NIEUW\n"
-                     + "PersoonIDHistorie (DW-003) PersoonIDHistorie.actieVervalTbvLeveringMutaties ELEMENT_NIEUW\n"
-                     + "PersoonIDHistorie (DW-003) PersoonIDHistorie.datumTijdVerval ELEMENT_NIEUW\n"
-                     + "PersoonIDHistorie (DW-003) PersoonIDHistorie.indicatieVoorkomenTbvLeveringMutaties ELEMENT_NIEUW",
-            SynchronisatieLogging.getMelding());
+        assertEquals("Resultaat: null (null)\n"
+                + "Beslissingen: \n"
+                + "PersoonIDHistorie (DW-003) Persoon.historieSet RIJ_TOEGEVOEGD\n"
+                + "PersoonIDHistorie (DW-003) PersoonIDHistorie.actieVerval ELEMENT_NIEUW\n"
+                + "PersoonIDHistorie (DW-003) PersoonIDHistorie.actieVervalTbvLeveringMutaties ELEMENT_NIEUW\n"
+                + "PersoonIDHistorie (DW-003) PersoonIDHistorie.datumTijdVerval ELEMENT_NIEUW\n"
+                + "PersoonIDHistorie (DW-003) PersoonIDHistorie.indicatieVoorkomenTbvLeveringMutaties ELEMENT_NIEUW", SynchronisatieLogging.getMelding());
     }
 
     private VerschilGroep maakVerschilGroep(final VerschilType verschilType) {
@@ -126,7 +128,8 @@ public class TransformeerderTest {
 
     private BRPActie maakActieVervalTbvLeveringMutaties() {
         final AdministratieveHandeling admHnd =
-                new AdministratieveHandeling(new Partij("testPartij", 606), SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
+                new AdministratieveHandeling(new Partij("testPartij", "000606"), SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL, new Timestamp(
+                        System.currentTimeMillis()));
         admHnd.setDatumTijdRegistratie(new Timestamp(System.currentTimeMillis()));
         return new BRPActie(SoortActie.CONVERSIE_GBA, admHnd, admHnd.getPartij(), admHnd.getDatumTijdRegistratie());
     }

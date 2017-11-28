@@ -19,7 +19,6 @@ import nl.bzk.migratiebrp.util.common.Kopieer;
 
 /**
  * Persistent klasse voor de berichten database tabel.
- * 
  */
 @Entity
 @Table(name = "mig_virtueel_proces")
@@ -37,7 +36,6 @@ public class ProcesVirtueel implements Serializable {
 
     /**
      * Geef de waarde van id.
-     *
      * @return id
      */
     public final Long getId() {
@@ -46,9 +44,7 @@ public class ProcesVirtueel implements Serializable {
 
     /**
      * Zet de waarde van id.
-     *
-     * @param id
-     *            id
+     * @param id id
      */
     public final void setId(final Long id) {
         this.id = id;
@@ -56,7 +52,6 @@ public class ProcesVirtueel implements Serializable {
 
     /**
      * Geef de waarde van tijdstip.
-     *
      * @return tijdstip
      */
     public final Timestamp getTijdstip() {

@@ -6,11 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractNietIngeschrevenPersoonHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
@@ -21,24 +21,18 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Onder
  * worden op een verzameling van {@link PersoonGeslachtsaanduidingHistorie} en vice versa.
  */
 public final class PersoonGeslachtsaanduidingMapper extends
-        AbstractNietIngeschrevenPersoonHistorieMapperStrategie<BrpGeslachtsaanduidingInhoud, PersoonGeslachtsaanduidingHistorie>
-{
+        AbstractNietIngeschrevenPersoonHistorieMapperStrategie<BrpGeslachtsaanduidingInhoud, PersoonGeslachtsaanduidingHistorie> {
 
     /**
      * Maakt een PersoonGeslachtsaanduidingMapper object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public PersoonGeslachtsaanduidingMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
     }
 
@@ -48,14 +42,6 @@ public final class PersoonGeslachtsaanduidingMapper extends
     @Override
     protected void voegHistorieToeAanEntiteit(final PersoonGeslachtsaanduidingHistorie historie, final Persoon persoon) {
         persoon.addPersoonGeslachtsaanduidingHistorie(historie);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PersoonGeslachtsaanduidingHistorie historie, final Persoon persoon) {
-        persoon.setGeslachtsaanduiding(historie.getGeslachtsaanduiding());
     }
 
     /**
@@ -90,16 +76,16 @@ public final class PersoonGeslachtsaanduidingMapper extends
     @Override
     protected void mapOnderzoekHuwelijkspartner(final BrpGeslachtsaanduidingInhoud groepInhoud, final PersoonGeslachtsaanduidingHistorie historie) {
         getOnderzoekMapper().mapOnderzoek(
-            historie,
-            groepInhoud.getGeslachtsaanduidingCode(),
-            Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE);
+                historie,
+                groepInhoud.getGeslachtsaanduidingCode(),
+                Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE);
     }
 
     @Override
     protected void mapOnderzoekGeregistreerdPartner(final BrpGeslachtsaanduidingInhoud groepInhoud, final PersoonGeslachtsaanduidingHistorie historie) {
         getOnderzoekMapper().mapOnderzoek(
-            historie,
-            groepInhoud.getGeslachtsaanduidingCode(),
-            Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE);
+                historie,
+                groepInhoud.getGeslachtsaanduidingCode(),
+                Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE);
     }
 }

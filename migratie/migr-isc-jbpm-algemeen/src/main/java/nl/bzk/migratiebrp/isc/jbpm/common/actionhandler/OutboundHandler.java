@@ -15,13 +15,9 @@ public interface OutboundHandler {
 
     /**
      * Handle the outbound message.
-     *
-     * @param serviceName
-     *            service to send the outbound message to
-     * @param bodyContent
-     *            message content
-     * @param attributes
-     *            message attributes
+     * @param serviceName service to send the outbound message to
+     * @param bodyContent message content
+     * @param attributes message attributes
      */
     void handleMessage(String serviceName, String bodyContent, Map<String, Object> attributes);
 }

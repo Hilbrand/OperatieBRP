@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import org.simpleframework.xml.Element;
 
 /**
  * Deze class representeert een BRP Character waarde.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class BrpCharacter extends AbstractBrpAttribuutMetOnderzoek {
@@ -19,9 +19,7 @@ public final class BrpCharacter extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpCharacter object .
-     * 
-     * @param waarde
-     *            de character waarde
+     * @param waarde de character waarde
      */
     public BrpCharacter(final Character waarde) {
         this(waarde, null);
@@ -29,26 +27,19 @@ public final class BrpCharacter extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Maakt een BrpCharacter object met onderzoek.
-     * 
-     * @param waarde
-     *            de character waarde
-     * @param onderzoek
-     *            het onderzoek waar deze waarde onder valt. Mag NULL zijn.
+     * @param waarde de character waarde
+     * @param onderzoek het onderzoek waar deze waarde onder valt. Mag NULL zijn.
      */
     public BrpCharacter(
-        @Element(name = "waarde", required = false) final Character waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final Character waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 
     /**
      * Wrap de waarde en onderzoek naar een BrpCharacter.
-     * 
-     * @param waarde
-     *            de character waarde
-     * @param onderzoek
-     *            het Lo3 onderzoek
+     * @param waarde de character waarde
+     * @param onderzoek het Lo3 onderzoek
      * @return BrpCharacter object met daarin waarde en onderzoek
      */
     public static BrpCharacter wrap(final Character waarde, final Lo3Onderzoek onderzoek) {
@@ -60,9 +51,7 @@ public final class BrpCharacter extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Unwrap een BrpCharacter object om de Character waarde terug te krijgen.
-     * 
-     * @param attribuut
-     *            De BrpCharacter, mag null zijn.
+     * @param attribuut De BrpCharacter, mag null zijn.
      * @return Een Character object, of null als de BrpCharacter null was.
      */
     public static Character unwrap(final BrpCharacter attribuut) {
@@ -71,7 +60,7 @@ public final class BrpCharacter extends AbstractBrpAttribuutMetOnderzoek {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.conversie.model.brp.BrpAttribuutMetOnderzoek#getWaarde()
      */
     @Override
@@ -82,7 +71,6 @@ public final class BrpCharacter extends AbstractBrpAttribuutMetOnderzoek {
 
     /**
      * Geeft een kopie van het attribuut terug zonder onderzoek.
-     * 
      * @return Geeft een kopie van het attribuut terug zonder onderzoek
      */
     public BrpCharacter verwijderOnderzoek() {

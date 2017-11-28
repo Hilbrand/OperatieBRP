@@ -6,15 +6,16 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 
-import java.util.ArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
@@ -37,9 +38,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieGezagMinderjarig
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGezagMinderjarige;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
@@ -50,23 +49,18 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenRelatie;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.After;
 import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
 public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
 
-    @Inject
-    private OuderConverteerder ouderConverteerder;
-
+    private final List<ExpectedBetrokkene> expectedBetrokkenen = new LinkedList<>();
+    private final OuderConverteerder ouderConverteerder = new OuderConverteerder(new Lo3AttribuutConverteerder(new ConversietabelFactoryImpl()));
     private Lo3OuderInhoud.Builder ouderBuilder;
-    private final List<ExpectedBetrokkene> expectedBetrokkenen = new ArrayList<>();
     private int expectedAantalIstOuderGroepen;
     private int expectedAantalIstGezagsverhoudingGroepen;
     private boolean isOuder2;
@@ -74,8 +68,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
     @Before
     public void setUp() {
         ouderBuilder = new Lo3OuderInhoud.Builder();
-        ouderBuilder.anummer(Lo3Long.wrap(A_NUMMER));
-        ouderBuilder.burgerservicenummer(Lo3Integer.wrap(BSN));
+        ouderBuilder.anummer(Lo3String.wrap(A_NUMMER));
+        ouderBuilder.burgerservicenummer(Lo3String.wrap(BSN));
         ouderBuilder.voornamen(Lo3String.wrap(VOORNAAM));
         ouderBuilder.geslachtsnaam(Lo3String.wrap(GESLACHTSNAAM));
         ouderBuilder.geboortedatum(new Lo3Datum(DATUM_GEBOORTE));
@@ -95,20 +89,18 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
     }
 
     private Lo3Categorie<Lo3OuderInhoud> maakOuderCategorie(
-        final Lo3OuderInhoud inhoud,
-        final Lo3Documentatie documentatie,
-        final Lo3Historie historie,
-        final Lo3Herkomst herkomst)
-    {
+            final Lo3OuderInhoud inhoud,
+            final Lo3Documentatie documentatie,
+            final Lo3Historie historie,
+            final Lo3Herkomst herkomst) {
         return new Lo3Categorie<>(inhoud, documentatie, historie, herkomst);
     }
 
     private Lo3Categorie<Lo3GezagsverhoudingInhoud> maakGezagsverhoudingCategorie(
-        final Lo3GezagsverhoudingInhoud inhoud,
-        final Lo3Documentatie documentatie,
-        final Lo3Historie historie,
-        final Lo3Herkomst herkomst)
-    {
+            final Lo3GezagsverhoudingInhoud inhoud,
+            final Lo3Documentatie documentatie,
+            final Lo3Historie historie,
+            final Lo3Herkomst herkomst) {
         return new Lo3Categorie<>(inhoud, documentatie, historie, herkomst);
     }
 
@@ -333,6 +325,15 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
      * Cat52-1 gevuld, niet onjuist, 6210 A, 8510 A<br>
      * Cat52-2 gevuld, niet onjuist, 6210 STD, 8510 C<br>
      * Cat52-3 gevuld, niet onjuist, 6210 STD, 8510 STD<br>
+     *
+     * Cat02 gevuld, niet onjuist, 6210 A, 8510 B<br>
+     * -----------------------------------------------------
+     * Cat52-2 gevuld, niet onjuist, 6210 STD, 8510 C<br>
+     * -----------------------------------------------------
+     * Cat52-1 gevuld, niet onjuist, 6210 A, 8510 A<br>
+     * -----------------------------------------------------
+     * Cat52-3 gevuld, niet onjuist, 6210 STD, 8510 STD<br>
+     *
      * <br>
      * Verwacht:<br>
      * - 2 stapel voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02, Cat52-2<br>
@@ -344,7 +345,7 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
 
         // Cat02
         final Lo3OuderInhoud actInhoud = ouderBuilder.build();
-        final Lo3Historie actHistorie = maakActueleHistorie();
+        final Lo3Historie actHistorie = maakHistorie(false, DATUM_GELDIGHEID_3, DATUM_OPNEMING_3);
         final Lo3Documentatie actDoc = maakAkte();
         final Lo3Categorie<Lo3OuderInhoud> actOuder = maakOuderCategorie(actInhoud, actDoc, actHistorie, herkomsten[0]);
 
@@ -357,14 +358,14 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
 
         // Cat52-2
         ouderBuilder.burgerservicenummer(null);
-        ouderBuilder.familierechtelijkeBetrekking(Lo3Datum.NULL_DATUM);
+        ouderBuilder.familierechtelijkeBetrekking(new Lo3Datum(0));
         final Lo3OuderInhoud histInhoud2 = ouderBuilder.build();
         final Lo3Documentatie histDoc2 = maakAkte(Lo3String.wrap("3A"));
-        final Lo3Historie histHistorie2 = maakHistorie(false, DATUM_GELDIGHEID_3, DATUM_OPNEMING_3);
+        final Lo3Historie histHistorie2 = maakActueleHistorie();
         final Lo3Categorie<Lo3OuderInhoud> histOuder2 = maakOuderCategorie(histInhoud2, histDoc2, histHistorie2, herkomsten[2]);
 
         // Cat52-3
-        ouderBuilder.geboortedatum(Lo3Datum.NULL_DATUM);
+//        ouderBuilder.geboortedatum(new Lo3Datum(0));
         final Lo3OuderInhoud histInhoud3 = ouderBuilder.build();
         final Lo3Documentatie histDoc3 = maakAkte(Lo3String.wrap("4A"));
         final Lo3Historie histHistorie3 = maakHistorie(false, DATUM_STANDAARD, DATUM_OPNEMING_4);
@@ -372,15 +373,29 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
 
         final ExpectedBetrokkene expectedBetrokkene = new ExpectedBetrokkene();
         expectedBetrokkene.gpGroepen.add(new ExpectedOuderGroep(actInhoud, actDoc, actHistorie));
-        expectedBetrokkene.relatieGroepen.add(new ExpectedOuderGroep(histInhoud1, histDoc1, histHistorie1));
+        expectedBetrokkene.relatieGroepen.add(new ExpectedOuderGroep(actInhoud, actDoc, actHistorie));
 
         final ExpectedBetrokkene expectedBetrokkene1 = new ExpectedBetrokkene();
-        expectedBetrokkene1.gpGroepen.add(new ExpectedOuderGroep(histInhoud2, histDoc2, histHistorie2));
-        // expectedBetrokkene1.gpGroepen.add(new ExpectedOuderGroep(maakLegeInhoud(), histDoc1, histHistorie1));
-        expectedBetrokkene1.relatieGroepen.add(new ExpectedOuderGroep(histInhoud3, histDoc3, histHistorie3));
-        expectedBetrokkene1.relatieGroepen.add(new ExpectedOuderGroep(null, histDoc1, histHistorie1));
+        final Lo3Historie histHistorie2exp = maakHistorie(false, 0, DATUM_OPNEMING);
+        expectedBetrokkene1.gpGroepen.add(new ExpectedOuderGroep(histInhoud1, histDoc1, histHistorie1));
+        expectedBetrokkene1.relatieGroepen.add(new ExpectedOuderGroep(histInhoud1, histDoc1, histHistorie1));
+        expectedBetrokkene1.relatieGroepen.add(new ExpectedOuderGroep(null, histDoc2, histHistorie2exp));
 
+        final ExpectedBetrokkene expectedBetrokkene2 = new ExpectedBetrokkene();
+        final Lo3Historie actHistorieExp = maakHistorie(false, DATUM_FAMILIERECHTELIJKE_BETREKKING, DATUM_OPNEMING_3);
+        expectedBetrokkene2.gpGroepen.add(new ExpectedOuderGroep(histInhoud2, histDoc2, histHistorie2));
+        expectedBetrokkene2.relatieGroepen.add(new ExpectedOuderGroep(histInhoud2, histDoc2, histHistorie2));
+        expectedBetrokkene2.relatieGroepen.add(new ExpectedOuderGroep(null, actDoc, actHistorieExp));
+
+        final ExpectedBetrokkene expectedBetrokkene3 = new ExpectedBetrokkene();
+        final Lo3Historie histHistorie1Exp = maakHistorie(false, DATUM_FAMILIERECHTELIJKE_BETREKKING, DATUM_OPNEMING_2);
+        expectedBetrokkene3.gpGroepen.add(new ExpectedOuderGroep(histInhoud3, histDoc3, histHistorie3));
+        expectedBetrokkene3.relatieGroepen.add(new ExpectedOuderGroep(histInhoud3, histDoc3, histHistorie3));
+        expectedBetrokkene3.relatieGroepen.add(new ExpectedOuderGroep(null, histDoc1, histHistorie1Exp));
+
+        expectedBetrokkenen.add(expectedBetrokkene3);
         expectedBetrokkenen.add(expectedBetrokkene1);
+        expectedBetrokkenen.add(expectedBetrokkene2);
         expectedBetrokkenen.add(expectedBetrokkene);
 
         expectedAantalIstOuderGroepen = 4;
@@ -395,7 +410,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
      * Cat52-1 gevuld, niet onjuist, 6210 C, 8510 D<br>
      * <br>
      * Verwacht:<br>
-     * - 2 stapels voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1<br>
+     * - 2 stapels voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1
+     * <br>
      * - 2 stapels voor ouderstapel gevuld vanuit Cat02 en Cat51-1<br>
      */
     @Test
@@ -409,8 +425,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
         final Lo3Categorie<Lo3OuderInhoud> actOuder = maakOuderCategorie(actInhoud, actDoc, actHistorie, herkomsten[0]);
 
         // Cat52-1
-        ouderBuilder.anummer(Lo3Long.wrap(A_NUMMER_2));
-        ouderBuilder.burgerservicenummer(Lo3Integer.wrap(BSN_2));
+        ouderBuilder.anummer(Lo3String.wrap(A_NUMMER_2));
+        ouderBuilder.burgerservicenummer(Lo3String.wrap(BSN_2));
         ouderBuilder.voornamen(Lo3String.wrap(VOORNAAM_2));
         ouderBuilder.geboortedatum(new Lo3Datum(DATUM_GEBOORTE_2));
         ouderBuilder.geslachtsnaam(Lo3String.wrap(GESLACHTSNAAM_2));
@@ -440,72 +456,6 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
     }
 
     /**
-     * Situatie 6: Meerdere ouders in 1 stapel (2 voorkomens per ouders.)<br>
-     * Test: Dit test het splitsen van de verschillende ouders en relatiegegevens, niet-leeg voorkomen stap 2<br>
-     * Input:<br>
-     * Cat02 gevuld, niet onjuist, 6210 A, 8510 C<br>
-     * Cat52-1 gevuld, niet onjuist, 6210 A, 8510 A<br>
-     * Cat52-2 gevuld, niet onjuist, 6210 B, 8510 D<br>
-     * Cat52-3 gevuld, niet onjuist, 6210 B, 8510 B<br>
-     * <br>
-     * Verwacht:<br>
-     * - 2 stapels voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-2<br>
-     * - 2 stapels voor ouderstapel gevuld vanuit Cat52-1 en Cat52-3<br>
-     */
-    @Test
-    public void testMeerdereOuderMeerdereVoorkomens() {
-        final Lo3Herkomst[] herkomsten = maakLo3Herkomsten(4);
-
-        // Cat02
-        final Lo3OuderInhoud actInhoud = ouderBuilder.build();
-        final Lo3Historie actHistorie = maakActueleHistorie();
-        final Lo3Documentatie actDoc = maakAkte();
-        final Lo3Categorie<Lo3OuderInhoud> actOuder = maakOuderCategorie(actInhoud, actDoc, actHistorie, herkomsten[0]);
-
-        // Cat52-1
-        ouderBuilder.anummer(null);
-        final Lo3OuderInhoud histInhoud1 = ouderBuilder.build();
-        final Lo3Documentatie histDoc1 = maakAkte(Lo3String.wrap("2A"));
-        final Lo3Historie histHistorie1 = maakHistorie(false, DATUM_FAMILIERECHTELIJKE_BETREKKING, DATUM_FAMILIERECHTELIJKE_BETREKKING);
-        final Lo3Categorie<Lo3OuderInhoud> histOuder1 = maakOuderCategorie(histInhoud1, histDoc1, histHistorie1, herkomsten[1]);
-
-        // Cat52-2
-        ouderBuilder.anummer(Lo3Long.wrap(A_NUMMER_2));
-        ouderBuilder.burgerservicenummer(Lo3Integer.wrap(BSN_2));
-        ouderBuilder.voornamen(Lo3String.wrap(VOORNAAM_2));
-        ouderBuilder.geboortedatum(new Lo3Datum(DATUM_GEBOORTE_2));
-        ouderBuilder.geslachtsnaam(Lo3String.wrap(GESLACHTSNAAM_2));
-        ouderBuilder.familierechtelijkeBetrekking(new Lo3Datum(DATUM_FAMILIERECHTELIJKE_BETREKKING_2));
-        final Lo3OuderInhoud histInhoud2 = ouderBuilder.build();
-        final Lo3Documentatie histDoc2 = maakAkte(Lo3String.wrap("3A"));
-        final Lo3Historie histHistorie2 = maakHistorie(false, DATUM_GELDIGHEID_2, DATUM_OPNEMING_2);
-        final Lo3Categorie<Lo3OuderInhoud> histOuder2 = maakOuderCategorie(histInhoud2, histDoc2, histHistorie2, herkomsten[2]);
-
-        // Cat52-3
-        ouderBuilder.anummer(null);
-        final Lo3OuderInhoud histInhoud3 = ouderBuilder.build();
-        final Lo3Documentatie histDoc3 = maakAkte(Lo3String.wrap("4A"));
-        final Lo3Historie histHistorie3 = maakHistorie(false, DATUM_FAMILIERECHTELIJKE_BETREKKING_2, DATUM_FAMILIERECHTELIJKE_BETREKKING_2);
-        final Lo3Categorie<Lo3OuderInhoud> histOuder3 = maakOuderCategorie(histInhoud3, histDoc3, histHistorie3, herkomsten[3]);
-
-        final ExpectedBetrokkene expectedBetrokkene = new ExpectedBetrokkene();
-        expectedBetrokkene.gpGroepen.add(new ExpectedOuderGroep(actInhoud, actDoc, actHistorie));
-        expectedBetrokkene.relatieGroepen.add(new ExpectedOuderGroep(histInhoud1, histDoc1, histHistorie1));
-
-        final ExpectedBetrokkene expectedBetrokkene1 = new ExpectedBetrokkene();
-        expectedBetrokkene1.gpGroepen.add(new ExpectedOuderGroep(histInhoud2, histDoc2, histHistorie2));
-        // expectedBetrokkene1.gpGroepen.add(new ExpectedOuderGroep(maakLegeInhoud(), histDoc1, histHistorie1));
-        expectedBetrokkene1.relatieGroepen.add(new ExpectedOuderGroep(histInhoud3, histDoc3, histHistorie3));
-        expectedBetrokkene1.relatieGroepen.add(new ExpectedOuderGroep(null, histDoc1, histHistorie1));
-
-        expectedBetrokkenen.add(expectedBetrokkene1);
-        expectedBetrokkenen.add(expectedBetrokkene);
-        expectedAantalIstOuderGroepen = 4;
-
-        converteerEnCheck(new Lo3Stapel<>(Arrays.asList(histOuder3, histOuder2, histOuder1, actOuder)));
-    }
-
-    /**
      * Situatie 7: 3 voorkomens met dezelfde 62.10 waarvan 1 voorkomen onjuist is<br>
      * Test: Dit test het opschonen van onjuiste voorkomen en relatiegegevens, niet-leeg voorkomen stap 2<br>
      * Input:<br>
@@ -528,7 +478,7 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
         final Lo3Categorie<Lo3OuderInhoud> actOuder = maakOuderCategorie(actInhoud, actDoc, actHistorie, herkomsten[0]);
 
         // Cat52-1
-        ouderBuilder.anummer(Lo3Long.wrap(A_NUMMER_2));
+        ouderBuilder.anummer(Lo3String.wrap(A_NUMMER_2));
         final Lo3OuderInhoud histInhoud1 = ouderBuilder.build();
         final Lo3Documentatie histDoc1 = maakAkte(Lo3String.wrap("2A"));
         final Lo3Historie histHistorie1 = maakHistorie(true, DATUM_GELDIGHEID_2, DATUM_OPNEMING_2);
@@ -680,7 +630,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
      * Cat52-1 gevuld, niet onjuist, 6210 C, 8510 D<br>
      * <br>
      * Verwacht:<br>
-     * - 2 stapels voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1<br>
+     * - 2 stapels voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1
+     * <br>
      * - 2 stapels voor ouderstapel gevuld vanuit Cat02 en Cat52-1<br>
      */
     @Test
@@ -756,6 +707,7 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
     /*
      * Gezagsverhouding tests
      */
+
     /**
      * Situatie 1: 2 verschillende ouders + 1 gezagsverhouding <br>
      * Test: Dit test of gezagsverhouding aan de actuele ouder wordt gekoppeld<br>
@@ -764,7 +716,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
      * Cat52-1 gevuld, niet onjuist, 6210 B, 8510 B<br>
      * Cat11 3210 1 8510 A<br>
      * Verwacht:<br>
-     * - 2 stapel voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1<br>
+     * - 2 stapel voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1
+     * <br>
      * - 2 stapels voor ouderstapel gevuld vanuit Cat02 en Cat52-1<br>
      * - 2 stapels voor oudergezag gevuld met true voor cat02 en false voor Cat52-1
      */
@@ -780,8 +733,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
         final Lo3Categorie<Lo3OuderInhoud> actOuder = maakOuderCategorie(actInhoud, actDoc, actHistorie, ouderHerkomsten[0]);
 
         // Cat52-1
-        ouderBuilder.anummer(Lo3Long.wrap(A_NUMMER_2));
-        ouderBuilder.burgerservicenummer(Lo3Integer.wrap(BSN_2));
+        ouderBuilder.anummer(Lo3String.wrap(A_NUMMER_2));
+        ouderBuilder.burgerservicenummer(Lo3String.wrap(BSN_2));
         ouderBuilder.geboortedatum(new Lo3Datum(DATUM_GEBOORTE_2));
         ouderBuilder.voornamen(Lo3String.wrap(VOORNAAM_2));
         ouderBuilder.geslachtsnaam(Lo3String.wrap(GESLACHTSNAAM_2));
@@ -813,7 +766,6 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
         // expectedBetrokkene1.gpGroepen.add(new ExpectedOuderGroep(maakLegeInhoud(), actDoc, afsluitendeHistorie));
         expectedBetrokkene1.relatieGroepen.add(new ExpectedOuderGroep(histInhoud1, histDoc1, histHistorie1));
         expectedBetrokkene1.relatieGroepen.add(new ExpectedOuderGroep(null, actDoc, afsluitendeHistorie));
-        expectedBetrokkene1.gezagsverhoudingGroepen.add(new ExpectedGezagsverhoudingGroep(null, gezagActDoc, gezagActHist));
 
         expectedBetrokkenen.add(expectedBetrokkene1);
         expectedBetrokkenen.add(expectedBetrokkene);
@@ -832,7 +784,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
      * Cat11 3210 leeg 8510 A<br>
      * Cat61-1 3210 1 8510 B<br>
      * Verwacht:<br>
-     * - 2 stapel voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1<br>
+     * - 2 stapel voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1
+     * <br>
      * - 2 stapels voor ouderstapel gevuld vanuit Cat02 en Cat52-1<br>
      * - 2 stapels voor oudergezag gevuld met false voor cat02 en true voor Cat52-1
      */
@@ -848,8 +801,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
         final Lo3Categorie<Lo3OuderInhoud> actOuder = maakOuderCategorie(actInhoud, actDoc, actHistorie, ouderHerkomsten[0]);
 
         // Cat52-1
-        ouderBuilder.anummer(Lo3Long.wrap(A_NUMMER_2));
-        ouderBuilder.burgerservicenummer(Lo3Integer.wrap(BSN_2));
+        ouderBuilder.anummer(Lo3String.wrap(A_NUMMER_2));
+        ouderBuilder.burgerservicenummer(Lo3String.wrap(BSN_2));
         ouderBuilder.geboortedatum(new Lo3Datum(DATUM_GEBOORTE_2));
         ouderBuilder.voornamen(Lo3String.wrap(VOORNAAM_2));
         ouderBuilder.geslachtsnaam(Lo3String.wrap(GESLACHTSNAAM_2));
@@ -908,7 +861,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
      * Cat11 3210 leeg 8510 A<br>
      * Cat61 3210 1 A > 8510 > B<br>
      * Verwacht:<br>
-     * - 2 stapel voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1<br>
+     * - 2 stapel voor identificatie-, samengesteldenaam-, geslacht- en geboortestapel gevuld vanuit Cat02 en Cat52-1
+     * <br>
      * - 2 stapels voor ouderstapel gevuld vanuit Cat02 en Cat52-1<br>
      * - 2 stapels voor oudergezag gevuld met false voor cat02 en true voor Cat52-1
      */
@@ -924,8 +878,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
         final Lo3Categorie<Lo3OuderInhoud> actOuder = maakOuderCategorie(actInhoud, actDoc, actHistorie, ouderHerkomsten[0]);
 
         // Cat52-1
-        ouderBuilder.anummer(Lo3Long.wrap(A_NUMMER_2));
-        ouderBuilder.burgerservicenummer(Lo3Integer.wrap(BSN_2));
+        ouderBuilder.anummer(Lo3String.wrap(A_NUMMER_2));
+        ouderBuilder.burgerservicenummer(Lo3String.wrap(BSN_2));
         ouderBuilder.geboortedatum(new Lo3Datum(DATUM_GEBOORTE_2));
         ouderBuilder.voornamen(Lo3String.wrap(VOORNAAM_2));
         ouderBuilder.geslachtsnaam(Lo3String.wrap(GESLACHTSNAAM_2));
@@ -1177,22 +1131,13 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
             final TussenGroep<BrpOuderInhoud> groep = stapel.get(index);
             final ExpectedOuderGroep expectedGroep = expectedGroepen.get(index);
             assertNotNull(groep);
-            if (expectedGroep.inhoud != null) {
-                if (expectedGroep.inhoud.isLeeg()) {
-                    Assert.assertFalse(BrpBoolean.unwrap(groep.getInhoud().getIndicatieOuder()));
-                } else {
-                    assertTrue(BrpBoolean.unwrap(groep.getInhoud().getIndicatieOuder()));
-                }
-            } else {
-                assertNull(groep.getInhoud().getIndicatieOuder());
-            }
             final Lo3Historie expectedHistorie;
             if (expectedGroep.inhoud != null) {
                 expectedHistorie =
                         new Lo3Historie(
-                            expectedGroep.historie.getIndicatieOnjuist(),
-                            expectedGroep.inhoud.getFamilierechtelijkeBetrekking(),
-                            expectedGroep.historie.getDatumVanOpneming());
+                                expectedGroep.historie.getIndicatieOnjuist(),
+                                expectedGroep.inhoud.getFamilierechtelijkeBetrekking(),
+                                expectedGroep.historie.getDatumVanOpneming());
             } else {
                 expectedHistorie = expectedGroep.historie;
             }
@@ -1263,8 +1208,10 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
             if (expectedGroep.inhoud.getGeboortedatum() == null) {
                 assertNull(groep.getInhoud().getGeboortedatum());
             } else {
-                assertEquals("Geboortedatum komt niet overeen", BrpDatum.fromLo3Datum(expectedGroep.inhoud.getGeboortedatum()), groep.getInhoud()
-                                                                                                                                     .getGeboortedatum());
+                assertEquals(
+                        "Geboortedatum komt niet overeen",
+                        BrpDatum.fromLo3Datum(expectedGroep.inhoud.getGeboortedatum()),
+                        groep.getInhoud().getGeboortedatum());
             }
             assertEquals("Geboorte stapel historie klopt niet", expectedGroep.historie, groep.getHistorie());
             assertEquals("Geboorte stapel documentatie klopt niet", expectedGroep.documentatie, groep.getDocumentatie());
@@ -1315,8 +1262,8 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
             final ExpectedOuderGroep expectedGroep = expectedGroepen.get(index);
 
             assertNotNull(groep);
-            assertEquals(Lo3Long.unwrap(expectedGroep.inhoud.getaNummer()), BrpLong.unwrap(groep.getInhoud().getAdministratienummer()));
-            assertEquals(Lo3Integer.unwrap(expectedGroep.inhoud.getBurgerservicenummer()), BrpInteger.unwrap(groep.getInhoud().getBurgerservicenummer()));
+            assertEquals(Lo3String.unwrap(expectedGroep.inhoud.getaNummer()), BrpString.unwrap(groep.getInhoud().getAdministratienummer()));
+            assertEquals(Lo3String.unwrap(expectedGroep.inhoud.getBurgerservicenummer()), BrpString.unwrap(groep.getInhoud().getBurgerservicenummer()));
             assertEquals("Identificatienummers stapel historie klopt niet", expectedGroep.historie, groep.getHistorie());
             assertEquals("Identificatienummers stapel documentatie klopt niet", expectedGroep.documentatie, groep.getDocumentatie());
         }
@@ -1324,7 +1271,7 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.AbstractRelatieConverteerderTest#getCategorie()
      */
@@ -1368,15 +1315,15 @@ public class OuderConverteerderTest extends AbstractRelatieConverteerderTest {
         @Override
         public String toString() {
             return new ToStringBuilder(this).append("ouderHeeftGezag", ouderHeeftGezag)
-                                            .append("historie", historie)
-                                            .append("documentatie", documentatie)
-                                            .toString();
+                    .append("historie", historie)
+                    .append("documentatie", documentatie)
+                    .toString();
         }
     }
 
     private static final class ExpectedBetrokkene {
-        private final List<ExpectedOuderGroep> gpGroepen = new ArrayList<>();
-        private final List<ExpectedOuderGroep> relatieGroepen = new ArrayList<>();
-        private final List<ExpectedGezagsverhoudingGroep> gezagsverhoudingGroepen = new ArrayList<>();
+        private final List<ExpectedOuderGroep> gpGroepen = new LinkedList<>();
+        private final List<ExpectedOuderGroep> relatieGroepen = new LinkedList<>();
+        private final List<ExpectedGezagsverhoudingGroep> gezagsverhoudingGroepen = new LinkedList<>();
     }
 }

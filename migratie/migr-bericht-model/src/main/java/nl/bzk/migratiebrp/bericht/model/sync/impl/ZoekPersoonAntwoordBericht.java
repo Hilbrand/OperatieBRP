@@ -35,9 +35,7 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een storebericht te maken.
-     *
-     * @param zoekPersoonAntwoordType
-     *            het zoekPersoonAntwoord type
+     * @param zoekPersoonAntwoordType het zoekPersoonAntwoord type
      */
     public ZoekPersoonAntwoordBericht(final ZoekPersoonAntwoordType zoekPersoonAntwoordType) {
         super("ZoekPersoonAntwoord");
@@ -55,9 +53,7 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Zet de status {@link StatusType} op het bericht.
-     *
-     * @param status
-     *            De te zetten status {@link StatusType}.
+     * @param status De te zetten status {@link StatusType}.
      */
     public void setStatus(final StatusType status) {
         zoekPersoonAntwoordType.setStatus(status);
@@ -65,7 +61,6 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Geeft de status {@link StatusType} van het bericht terug.
-     *
      * @return De status {@link StatusType} van het bericht.
      */
     public StatusType getStatus() {
@@ -74,7 +69,6 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Geeft het resultaat {@link ZoekPersoonResultaatType} van het bericht terug.
-     *
      * @return Het resultaat {@link ZoekPersoonResultaatType} van het bericht.
      */
     public ZoekPersoonResultaatType getResultaat() {
@@ -83,9 +77,7 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Zet het resultaat {@link ZoekPersoonResultaatType} op het bericht.
-     *
-     * @param resultaat
-     *            Het te zetten resultaat {@link ZoekPersoonResultaatType}.
+     * @param resultaat Het te zetten resultaat {@link ZoekPersoonResultaatType}.
      */
     public void setResultaat(final ZoekPersoonResultaatType resultaat) {
         zoekPersoonAntwoordType.setResultaat(resultaat);
@@ -93,11 +85,9 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Zet de waarde van persoon id.
-     *
-     * @param persoonId
-     *            het id van de uniek gevonden persoon
+     * @param persoonId het id van de uniek gevonden persoon
      */
-    public void setPersoonId(final Integer persoonId) {
+    public void setPersoonId(final Long persoonId) {
         if (zoekPersoonAntwoordType.getUniekGevondenPersoon() == null) {
             zoekPersoonAntwoordType.setUniekGevondenPersoon(new UniekGevondenPersoon());
         }
@@ -106,18 +96,15 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Geef de waarde van persoon id.
-     *
      * @return het id van de uniek gevonden persoon
      */
-    public Integer getPersoonId() {
+    public Long getPersoonId() {
         return zoekPersoonAntwoordType.getUniekGevondenPersoon() == null ? null : zoekPersoonAntwoordType.getUniekGevondenPersoon().getPersoonId();
     }
 
     /**
      * Zet de waarde van anummer.
-     *
-     * @param anummer
-     *            het anummer van de uniek gevonden persoon
+     * @param anummer het anummer van de uniek gevonden persoon
      */
     public void setAnummer(final String anummer) {
         if (zoekPersoonAntwoordType.getUniekGevondenPersoon() == null) {
@@ -128,7 +115,6 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Geef de waarde van anummer.
-     *
      * @return het anummer van de uniek gevonden persoon
      */
     public String getAnummer() {
@@ -138,9 +124,7 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Zet de waarde van gemeente.
-     *
-     * @param gemeente
-     *            de bijhoudingsgemeente van de uniek gevonden persoon
+     * @param gemeente de bijhoudingsgemeente van de uniek gevonden persoon
      */
     public void setGemeente(final String gemeente) {
         if (zoekPersoonAntwoordType.getUniekGevondenPersoon() == null) {
@@ -151,11 +135,10 @@ public final class ZoekPersoonAntwoordBericht extends AbstractSyncBerichtZonderG
 
     /**
      * Geef de waarde van gemeente.
-     *
      * @return de gemeente van de uniek gevonden persoon
      */
     public String getGemeente() {
-        return zoekPersoonAntwoordType.getUniekGevondenPersoon() == null ? null : zoekPersoonAntwoordType.getUniekGevondenPersoon()
-                                                                                                         .getBijhoudingsgemeente();
+        return zoekPersoonAntwoordType.getUniekGevondenPersoon() == null ? null
+                : zoekPersoonAntwoordType.getUniekGevondenPersoon().getBijhoudingsgemeente();
     }
 }

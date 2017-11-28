@@ -6,12 +6,13 @@
 
 package nl.bzk.migratiebrp.util.common.operatie;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import java.util.concurrent.TimeUnit;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 /**
  * Ondersteunt het (beperkt) herhalen van operaties, optioneel met vertraging, totdat de operatie successvol is, of
@@ -37,6 +38,7 @@ public class Herhaal {
      * De standaard wacht-strategie: Willekeurig tussen 0 en 2 keer de basis vertraging.
      */
     public static final Strategie STANDAARD_STRATEGIE = Strategie.WILLEKEURIG;
+    public static final int INT_2 = 2;
 
     /**
      * De strategie voor het bepalen van de vertraging tussen herhaalde pogingen.
@@ -57,7 +59,8 @@ public class Herhaal {
         WILLEKEURIG {
             @Override
             public long berekenWachttijd(final long basis, final int poging) {
-                return Math.round(basis * Math.random() * 2);
+                SecureRandom random = new SecureRandom();
+                return Math.round(basis * random.nextDouble() * INT_2);
             }
         },
         /**
@@ -77,18 +80,15 @@ public class Herhaal {
         EXPONENTIEEL {
             @Override
             public long berekenWachttijd(final long basis, final int poging) {
-                return Math.round(basis * Math.pow(2, poging - 1));
+                return Math.round(basis * Math.pow(INT_2, poging - 1D));
             }
         };
 
         /**
          * Bereken de wachttijd voor de vertraging strategie op basis van een basis wachttijd en het aantal al
          * ondernomen pogingen.
-         *
-         * @param basis
-         *            De basis wachttijd
-         * @param poging
-         *            Het aantal al ondernomen pogingen.
+         * @param basis De basis wachttijd
+         * @param poging Het aantal al ondernomen pogingen.
          * @return De wachttijd voor de volgede poging.
          */
         abstract long berekenWachttijd(final long basis, final int poging);
@@ -104,13 +104,9 @@ public class Herhaal {
 
     /**
      * Maak een Herhaal object aan met gegeven basis vertraging, maximum aantal pogingen, en een wachtstrategie.
-     *
-     * @param basisVertragingMillis
-     *            Het basis aantal milliseconden om te wachten tussen pogingen.
-     * @param maximumAantalPogingen
-     *            Het maximum aantal pogingen om te doen alvorens op te geven.
-     * @param strategie
-     *            De wachtstrategie om te gebruiken tussen de pogingen.
+     * @param basisVertragingMillis Het basis aantal milliseconden om te wachten tussen pogingen.
+     * @param maximumAantalPogingen Het maximum aantal pogingen om te doen alvorens op te geven.
+     * @param strategie De wachtstrategie om te gebruiken tussen de pogingen.
      */
     public Herhaal(final long basisVertragingMillis, final int maximumAantalPogingen, final Strategie strategie) {
         this.basisVertragingMillis = basisVertragingMillis;
@@ -121,14 +117,10 @@ public class Herhaal {
     /**
      * Herhaal de operatie met de standaard instellinging. Dat wil zeggen probeer het maximaal 10 keer met tussen elke
      * poging een willekeurige vertraging tussen de 0 en 2 seconden.
-     *
-     * @param operatie
-     *            De operatie om uit te voeren.
-     * @param <R>
-     *            Het return-type van de operatie
+     * @param operatie De operatie om uit te voeren.
+     * @param <R> Het return-type van de operatie
      * @return Het resultaat van de geslaagde uitvoering van de operatie.
-     * @throws HerhaalException
-     *             Als alle pogingen falen.
+     * @throws HerhaalException Als alle pogingen falen.
      */
     public static <R> R herhaalOperatie(final Callable<R> operatie) throws HerhaalException {
         return STANDAARD.herhaal(operatie);
@@ -137,11 +129,8 @@ public class Herhaal {
     /**
      * Herhaal de operatie met de standaard instellinging. Dat wil zeggen probeer het maximaal 10 keer met tussen elke
      * poging een willekeurige vertraging tussen de 0 en 2 seconden.
-     *
-     * @param operatie
-     *            De operatie om uit te voeren.
-     * @throws HerhaalException
-     *             Als alle pogingen falen.
+     * @param operatie De operatie om uit te voeren.
+     * @throws HerhaalException Als alle pogingen falen.
      */
     public static void herhaalOperatie(final Runnable operatie) throws HerhaalException {
         STANDAARD.herhaal(operatie);
@@ -149,7 +138,6 @@ public class Herhaal {
 
     /**
      * Geeft het maximum aantal pogingen terug.
-     *
      * @return Het maximum aantal pogingen.
      */
     public final int getMaximumAantalPogingen() {
@@ -158,16 +146,11 @@ public class Herhaal {
 
     /**
      * Herhaal de operatie met de instellinging van de Herhaal instantie.
-     *
-     * @param operatie
-     *            De operatie om uit te voeren.
-     * @param <R>
-     *            Het return-type van de operatie
+     * @param operatie De operatie om uit te voeren.
+     * @param <R> Het return-type van de operatie
      * @return Het resultaat van de geslaagde uitvoering van de operatie.
-     * @throws HerhaalException
-     *             Als alle pogingen falen.
+     * @throws HerhaalException Als alle pogingen falen.
      */
-    @SuppressWarnings("checkstyle:illegalcatch")
     public final <R> R herhaal(final Callable<R> operatie) throws HerhaalException {
         int pogingNummer = 1;
         final List<Exception> pogingExcepties = new ArrayList<>(maximumAantalPogingen);
@@ -208,26 +191,21 @@ public class Herhaal {
 
     /**
      * Herhaal de operatie met de instellinging van de Herhaal instantie.
-     *
-     * @param operatie
-     *            De operatie om uit te voeren.
-     * @throws HerhaalException
-     *             Als alle pogingen falen.
+     * @param operatie De operatie om uit te voeren.
+     * @throws HerhaalException Als alle pogingen falen.
      */
     public final void herhaal(final Runnable operatie) throws HerhaalException {
-        herhaal(new Callable<Object>() {
-            @Override
-            public Object call() {
-                operatie.run();
-                return null;
-            }
+        herhaal(() -> {
+            operatie.run();
+            return null;
         });
     }
 
     private static void wacht(final long milliseconden) {
         try {
-            Thread.sleep(milliseconden);
+            TimeUnit.MILLISECONDS.sleep(milliseconden);
         } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
             LOG.info("Wachten verstoord", e);
         }
     }

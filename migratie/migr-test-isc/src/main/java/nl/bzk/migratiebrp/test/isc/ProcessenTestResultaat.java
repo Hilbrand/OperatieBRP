@@ -8,10 +8,11 @@ package nl.bzk.migratiebrp.test.isc;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 
 /**
  * Test resultaat: processen.
@@ -29,17 +30,16 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Constructor.
-     * 
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
+     * @param thema thema
+     * @param naam naam
      */
     protected ProcessenTestResultaat(final String thema, final String naam) {
         super(thema, naam);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.test.common.resultaat.TestResultaat#isSucces()
      */
     @Override
@@ -49,7 +49,6 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van resultaat.
-     *
      * @return resultaat
      */
     public TestStap getResultaat() {
@@ -58,9 +57,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van resultaat.
-     *
-     * @param resultaat
-     *            resultaat
+     * @param resultaat resultaat
      */
     public void setResultaat(final TestStap resultaat) {
         this.resultaat = resultaat;
@@ -68,7 +65,6 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van bestanden.
-     *
      * @return bestanden
      */
     public List<Bestand> getBestanden() {
@@ -77,9 +73,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van bestanden.
-     *
-     * @param bestanden
-     *            bestanden
+     * @param bestanden bestanden
      */
     public void setBestanden(final List<Bestand> bestanden) {
         this.bestanden = bestanden;
@@ -87,9 +81,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Bestand toevoegen.
-     * 
-     * @param bestandsnaam
-     *            bestand
+     * @param bestandsnaam bestand
      */
     public void addBestand(final String bestandsnaam) {
         if (bestanden == null) {
@@ -101,7 +93,6 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van processen.
-     *
      * @return processen
      */
     public List<Long> getProcessen() {
@@ -110,9 +101,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van processen.
-     *
-     * @param processen
-     *            processen
+     * @param processen processen
      */
     public void setProcessen(final List<Long> processen) {
         this.processen = processen;
@@ -120,9 +109,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
     /**
      * Voeg 1 proces toe aan de processen.
-     * 
-     * @param proces
-     *            proces
+     * @param proces proces
      */
     public void addProcess(final Long proces) {
         if (processen == null) {
@@ -149,11 +136,8 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
         /**
          * Constructor.
-         * 
-         * @param volgnummer
-         *            volgnummer
-         * @param bestand
-         *            bestand
+         * @param volgnummer volgnummer
+         * @param bestand bestand
          */
         private Bestand(final String volgnummer, final String bestand) {
             super();
@@ -163,7 +147,6 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
         /**
          * Geef de waarde van volgnummer.
-         *
          * @return volgnummer
          */
         public String getVolgnummer() {
@@ -172,9 +155,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
         /**
          * Zet de waarde van volgnummer.
-         *
-         * @param volgnummer
-         *            volgnummer
+         * @param volgnummer volgnummer
          */
         public void setVolgnummer(final String volgnummer) {
             this.volgnummer = volgnummer;
@@ -182,7 +163,6 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
         /**
          * Geef de waarde van bestand.
-         *
          * @return bestand
          */
         public String getBestand() {
@@ -191,9 +171,7 @@ public final class ProcessenTestResultaat extends TestResultaat {
 
         /**
          * Zet de waarde van bestand.
-         *
-         * @param bestand
-         *            bestand
+         * @param bestand bestand
          */
         public void setBestand(final String bestand) {
             this.bestand = bestand;

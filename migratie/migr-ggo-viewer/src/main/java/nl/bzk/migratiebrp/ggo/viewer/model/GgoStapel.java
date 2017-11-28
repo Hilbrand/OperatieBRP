@@ -22,9 +22,7 @@ public class GgoStapel implements Serializable {
 
     /**
      * Constructor bij geen omschrijving.
-     * 
-     * @param label
-     *            Het label.
+     * @param label Het label.
      */
     public GgoStapel(final String label) {
         this.label = label;
@@ -34,7 +32,6 @@ public class GgoStapel implements Serializable {
 
     /**
      * Geef de waarde van label.
-     *
      * @return label
      */
     public final String getLabel() {
@@ -43,7 +40,6 @@ public class GgoStapel implements Serializable {
 
     /**
      * Geef de waarde van omschrijving.
-     *
      * @return omschrijving
      */
     public final String getOmschrijving() {
@@ -52,7 +48,6 @@ public class GgoStapel implements Serializable {
 
     /**
      * Geef de waarde van voorkomens.
-     *
      * @return voorkomens
      */
     public final List<GgoVoorkomen> getVoorkomens() {
@@ -61,17 +56,14 @@ public class GgoStapel implements Serializable {
 
     /**
      * Zet de waarde van omschrijving.
-     *
-     * @param omschrijving
-     *            the omschrijving to set
+     * @param omschrijving the omschrijving to set
      */
     public final void setOmschrijving(final String omschrijving) {
         this.omschrijving = omschrijving;
     }
 
     /**
-     * @param voorkomen
-     *            Het voorkomen dat wordt toegevoegd aan de lijst van voorkomens van deze stapel.
+     * @param voorkomen Het voorkomen dat wordt toegevoegd aan de lijst van voorkomens van deze stapel.
      */
     public final void addVoorkomen(final GgoVoorkomen voorkomen) {
         voorkomens.add(voorkomen);

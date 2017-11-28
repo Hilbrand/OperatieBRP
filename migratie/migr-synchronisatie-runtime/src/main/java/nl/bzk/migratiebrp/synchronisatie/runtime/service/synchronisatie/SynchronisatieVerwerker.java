@@ -6,9 +6,9 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpAntwoordBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpVerzoekBericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
 import nl.bzk.migratiebrp.synchronisatie.runtime.service.synchronisatie.exception.SynchronisatieVerwerkerException;
 
 /**
@@ -18,15 +18,11 @@ public interface SynchronisatieVerwerker {
 
     /**
      * Verwerk een synchronisatie.
-     * 
-     * @param verzoek
-     *            synchronisatie verzoek
-     * @param loggingBericht
-     *            logging bericht
+     * @param verzoek synchronisatie verzoek
+     * @param loggingBericht logging bericht
      * @return antwoord
-     * @throws SynchronisatieVerwerkerException
-     *             bij verwerkings fouten
+     * @throws SynchronisatieVerwerkerException bij verwerkings fouten
      */
     SynchroniseerNaarBrpAntwoordBericht verwerk(SynchroniseerNaarBrpVerzoekBericht verzoek, Lo3Bericht loggingBericht)
-        throws SynchronisatieVerwerkerException;
+            throws SynchronisatieVerwerkerException;
 }

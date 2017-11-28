@@ -7,8 +7,10 @@
 package nl.bzk.migratiebrp.voisc.runtime;
 
 import java.util.List;
+
 import nl.bzk.migratiebrp.voisc.database.entities.Bericht;
 import nl.bzk.migratiebrp.voisc.database.entities.Mailbox;
+import nl.bzk.migratiebrp.voisc.mailbox.client.Connection;
 import nl.bzk.migratiebrp.voisc.runtime.exceptions.VoiscMailboxException;
 
 /**
@@ -18,47 +20,39 @@ public interface VoiscMailbox {
 
     /**
      * Maakt verbinding via SSL met de mailboxserver.
-     *
-     * @throws VoiscMailboxException
-     *             when the connect fails
+     * @return De gemaakte SSL connectie met de mailboxserver
+     * @throws VoiscMailboxException when the connect fails
      */
-    void connectToMailboxServer() throws VoiscMailboxException;
+    Connection connectToMailboxServer() throws VoiscMailboxException;
 
     /**
      * Login to mailbox.
-     *
-     * @param mailbox
-     *            De mailbox waarop ingelogd gaat worden.
-     * @throws VoiscMailboxException
-     *             when the login fails
-     *
+     * @param connection De SSL connectie met de mailboxserver
+     * @param mailbox De mailbox waarop ingelogd gaat worden.
+     * @throws VoiscMailboxException when the login fails
      */
-    void login(Mailbox mailbox) throws VoiscMailboxException;
+    void login(Connection connection, Mailbox mailbox) throws VoiscMailboxException;
 
     /**
      * send all messages to mailbox, which need to be sent.
-     *
-     * @param mailbox
-     *            Mailbox from which the messages are received and stored
-     * @param messages
-     *            Een lijst van alle berichten die verstuurd moeten worden
+     * @param connection De SSL connectie met de mailboxserver
+     * @param mailbox Mailbox from which the messages are received and stored
+     * @param messages Een lijst van alle berichten die verstuurd moeten worden
      */
-    void sendMessagesToMailbox(Mailbox mailbox, List<Bericht> messages);
+    void sendMessagesToMailbox(Connection connection, Mailbox mailbox, List<Bericht> messages);
 
     /**
      * Receive and store the messages from mailbox.
-     *
-     * @param mailbox
-     *            Mailbox from which the messages are received and stored
-     * @throws VoiscMailboxException
-     *             bij fouten bij het opvragen van de lijst van berichten
+     * @param connection De SSL connectie met de mailboxserver
+     * @param mailbox Mailbox from which the messages are received and stored
+     * @throws VoiscMailboxException bij fouten bij het opvragen van de lijst van berichten
      */
-    void receiveMessagesFromMailbox(Mailbox mailbox) throws VoiscMailboxException;
+    void receiveMessagesFromMailbox(Connection connection, Mailbox mailbox) throws VoiscMailboxException;
 
     /**
      * Logout mailbox and shut down SSL-connection.
-     *
+     * @param connection De SSL connectie met de mailboxserver
      */
-    void logout();
+    void logout(Connection connection);
 
 }

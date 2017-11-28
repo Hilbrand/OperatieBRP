@@ -15,9 +15,9 @@ import nl.bzk.migratiebrp.bericht.model.sync.generated.AntwoordFormaatType;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class LeesUitBrpVerzoekBerichtTest extends AbstractSyncBerichtTest {
+public class LeesUitBrpVerzoekBerichtTest extends AbstractSyncBerichtTestBasis {
 
-    private static final Long ANUMMER = Long.valueOf(1352456245L);
+    private static final String ANUMMER = "1352456245";
     private static final String TECHNISCHE_SLEUTEL = "objectPersoon";
 
     @Test

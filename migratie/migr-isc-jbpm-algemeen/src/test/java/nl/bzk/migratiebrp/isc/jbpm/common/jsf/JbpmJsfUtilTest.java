@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.isc.jbpm.common.jsf;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -15,26 +16,29 @@ import org.jbpm.jsf.JbpmJsfContext;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(FacesContext.class)
 public class JbpmJsfUtilTest {
 
-    
+    private void setFacesContext(FacesContext context) {
+        try {
+            Method setter = FacesContext.class.getDeclaredMethod("setCurrentInstance", new Class<?>[]{FacesContext.class});
+            setter.setAccessible(true);
+            setter.invoke(null, context);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Could not set facescontext", e);
+        }
+    }
+
+
     @Test
     public void testGetTaskInstance() {
-        PowerMockito.mockStatic(FacesContext.class);
         final FacesContext facesContext = Mockito.mock(FacesContext.class);
+        setFacesContext(facesContext);
         final ExternalContext externalContext = Mockito.mock(ExternalContext.class);
         final Map<String, Object> requestMap = Mockito.mock(Map.class);
         final TaskInstance task = Mockito.mock(TaskInstance.class);
 
-        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
         Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
         Mockito.when(externalContext.getRequestMap()).thenReturn(requestMap);
         Mockito.when(requestMap.get("task")).thenReturn(task);
@@ -42,36 +46,33 @@ public class JbpmJsfUtilTest {
         Assert.assertEquals(task, JbpmJsfUtil.getTaskInstance());
     }
 
-    
+
     @Test
     public void getJbpmContext() {
-        PowerMockito.mockStatic(FacesContext.class);
         final FacesContext facesContext = Mockito.mock(FacesContext.class);
+        setFacesContext(facesContext);
         final ExternalContext externalContext = Mockito.mock(ExternalContext.class);
         final Map<String, Object> requestMap = Mockito.mock(Map.class);
         final JbpmJsfContext jbpmJsfContext = Mockito.mock(JbpmJsfContext.class);
-        final JbpmContext JbpmContext = Mockito.mock(JbpmContext.class);
+        final JbpmContext jbpmContext = Mockito.mock(JbpmContext.class);
 
-        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
         Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
         Mockito.when(externalContext.getRequestMap()).thenReturn(requestMap);
         Mockito.when(requestMap.get("org.jbpm.jsf.CONTEXT")).thenReturn(jbpmJsfContext);
-        Mockito.when(jbpmJsfContext.getJbpmContext()).thenReturn(JbpmContext);
+        Mockito.when(jbpmJsfContext.getJbpmContext()).thenReturn(jbpmContext);
 
-        Assert.assertEquals(JbpmContext, JbpmJsfUtil.getJbpmContext());
+        Assert.assertEquals(jbpmContext, JbpmJsfUtil.getJbpmContext());
     }
 
-    
+
     @Test(expected = RuntimeException.class)
     public void getJbpmContextIllegalArgumentException() {
-        PowerMockito.mockStatic(FacesContext.class);
         final FacesContext facesContext = Mockito.mock(FacesContext.class);
+        setFacesContext(facesContext);
         final ExternalContext externalContext = Mockito.mock(ExternalContext.class);
         final Map<String, Object> requestMap = Mockito.mock(Map.class);
         final JbpmJsfContext jbpmJsfContext = Mockito.mock(JbpmJsfContext.class);
-        // final JbpmContext JbpmContext = Mockito.mock(JbpmContext.class);
 
-        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
         Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
         Mockito.when(externalContext.getRequestMap()).thenReturn(requestMap);
         Mockito.when(requestMap.get("org.jbpm.jsf.CONTEXT")).thenReturn(jbpmJsfContext);
@@ -80,18 +81,16 @@ public class JbpmJsfUtilTest {
         JbpmJsfUtil.getJbpmContext();
     }
 
-    
+
     @Test(expected = RuntimeException.class)
     public void getJbpmContextSecurityException() {
-        PowerMockito.mockStatic(FacesContext.class);
         final FacesContext facesContext = Mockito.mock(FacesContext.class);
+        setFacesContext(facesContext);
         final ExternalContext externalContext = Mockito.mock(ExternalContext.class);
         final Map<String, Object> requestMap = Mockito.mock(Map.class);
         final JbpmJsfContext jbpmJsfContext = Mockito.mock(JbpmJsfContext.class);
-        // final JbpmContext JbpmContext = Mockito.mock(JbpmContext.class);
 
-        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
-        Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
+       Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
         Mockito.when(externalContext.getRequestMap()).thenReturn(requestMap);
         Mockito.when(requestMap.get("org.jbpm.jsf.CONTEXT")).thenReturn(jbpmJsfContext);
         Mockito.when(jbpmJsfContext.getJbpmContext()).thenThrow(SecurityException.class);
@@ -99,17 +98,15 @@ public class JbpmJsfUtilTest {
         JbpmJsfUtil.getJbpmContext();
     }
 
-    
+
     @Test(expected = RuntimeException.class)
     public void getJbpmContextIllegalAccessException() {
-        PowerMockito.mockStatic(FacesContext.class);
         final FacesContext facesContext = Mockito.mock(FacesContext.class);
+        setFacesContext(facesContext);
         final ExternalContext externalContext = Mockito.mock(ExternalContext.class);
         final Map<String, Object> requestMap = Mockito.mock(Map.class);
         final JbpmJsfContext jbpmJsfContext = Mockito.mock(JbpmJsfContext.class);
-        // final JbpmContext JbpmContext = Mockito.mock(JbpmContext.class);
 
-        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
         Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
         Mockito.when(externalContext.getRequestMap()).thenReturn(requestMap);
         Mockito.when(requestMap.get("org.jbpm.jsf.CONTEXT")).thenReturn(jbpmJsfContext);
@@ -118,17 +115,15 @@ public class JbpmJsfUtilTest {
         JbpmJsfUtil.getJbpmContext();
     }
 
-    
+
     @Test(expected = RuntimeException.class)
     public void getJbpmContextInvocationTargetException() {
-        PowerMockito.mockStatic(FacesContext.class);
         final FacesContext facesContext = Mockito.mock(FacesContext.class);
+        setFacesContext(facesContext);
         final ExternalContext externalContext = Mockito.mock(ExternalContext.class);
         final Map<String, Object> requestMap = Mockito.mock(Map.class);
         final JbpmJsfContext jbpmJsfContext = Mockito.mock(JbpmJsfContext.class);
-        // final JbpmContext JbpmContext = Mockito.mock(JbpmContext.class);
 
-        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
         Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
         Mockito.when(externalContext.getRequestMap()).thenReturn(requestMap);
         Mockito.when(requestMap.get("org.jbpm.jsf.CONTEXT")).thenReturn(jbpmJsfContext);
@@ -137,18 +132,16 @@ public class JbpmJsfUtilTest {
         JbpmJsfUtil.getJbpmContext();
     }
 
-    
+
     @Test(expected = RuntimeException.class)
     public void getJbpmContextNoSuchMethodException() {
-        PowerMockito.mockStatic(FacesContext.class);
         final FacesContext facesContext = Mockito.mock(FacesContext.class);
+        setFacesContext(facesContext);
         final ExternalContext externalContext = Mockito.mock(ExternalContext.class);
         final Map<String, Object> requestMap = Mockito.mock(Map.class);
         final JbpmJsfContext jbpmJsfContext = Mockito.mock(JbpmJsfContext.class);
-        // final JbpmContext JbpmContext = Mockito.mock(JbpmContext.class);
 
-        Mockito.when(FacesContext.getCurrentInstance()).thenReturn(facesContext);
-        Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
+       Mockito.when(facesContext.getExternalContext()).thenReturn(externalContext);
         Mockito.when(externalContext.getRequestMap()).thenReturn(requestMap);
         Mockito.when(requestMap.get("org.jbpm.jsf.CONTEXT")).thenReturn(jbpmJsfContext);
         Mockito.when(jbpmJsfContext.getJbpmContext()).thenThrow(NoSuchMethodException.class);

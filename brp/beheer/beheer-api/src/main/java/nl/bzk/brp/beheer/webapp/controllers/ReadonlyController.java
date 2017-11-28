@@ -1,14 +1,16 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.controllers;
 
 import java.io.Serializable;
 import java.util.Map;
+
 import nl.bzk.brp.beheer.webapp.controllers.ErrorHandler.NotFoundException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -36,7 +38,7 @@ public interface ReadonlyController<V, I extends Serializable> {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    V get(@PathVariable("id") final I id) throws NotFoundException;
+    V get(@PathVariable("id") I id) throws NotFoundException;
 
     /**
      * Haal een lijst van items op.
@@ -47,5 +49,5 @@ public interface ReadonlyController<V, I extends Serializable> {
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    Page<V> list(@RequestParam final Map<String, String> parameters, @PageableDefault(size = 10) final Pageable pageable);
+    Page<V> list(@RequestParam Map<String, String> parameters, @PageableDefault(size = 10) Pageable pageable);
 }

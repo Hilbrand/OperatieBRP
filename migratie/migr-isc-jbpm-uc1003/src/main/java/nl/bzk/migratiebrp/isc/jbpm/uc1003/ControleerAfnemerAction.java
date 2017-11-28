@@ -9,16 +9,15 @@ package nl.bzk.migratiebrp.isc.jbpm.uc1003;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Autorisatie;
-import nl.bzk.migratiebrp.isc.jbpm.common.Instantie;
-import nl.bzk.migratiebrp.isc.jbpm.common.Instantie.Type;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler;
-import nl.bzk.migratiebrp.register.client.AutorisatieService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.register.client.PartijService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,15 +30,22 @@ public final class ControleerAfnemerAction implements SpringAction {
 
     private static final String FOUT = "1d. Ongeldige afnemer (beeindigen)";
     private static final String FOUT_MSG_GBA_VERZENDER_NIET_AFNEMER = "Verzendende partij (originator) is niet een GBA afnemer.";
-    private static final String FOUT_MSG_GBA_VERZENDER_NIET_GEAUTORISEERD = "Verzendende partij (originator) heeft geen geldige autorisatie.";
     private static final String FOUT_MSG_GBA_ONTVANGER_NIET_CENTRAAL = "Ontvangende partij (recipient) is niet de centrale voorziening.";
     private static final String FOUTMELDING_VARIABELE = "actieFoutmelding";
 
-    @Inject
-    private BerichtenDao berichtenDao;
+    private final BerichtenDao berichtenDao;
+    private final PartijService partijRegisterService;
 
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     * @param partijRegisterService partij register service
+     */
     @Inject
-    private AutorisatieService autorisatieService;
+    public ControleerAfnemerAction(final BerichtenDao berichtenDao, final PartijService partijRegisterService) {
+        this.berichtenDao = berichtenDao;
+        this.partijRegisterService = partijRegisterService;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -49,22 +55,9 @@ public final class ControleerAfnemerAction implements SpringAction {
         final Lo3Bericht input = (Lo3Bericht) berichtenDao.leesBericht(berichtId);
 
         final Map<String, Object> result = new HashMap<>();
-        final String originator = input.getBronGemeente();
-        final String recipient = input.getDoelGemeente();
-        boolean valide = controleerInstanties(originator, recipient, result);
-
-        if (valide) {
-            final Autorisatie autorisatie = autorisatieService.geefRegister().zoekAutorisatieOpPartijCode(originator);
-            valide = controleerAutorisatie(autorisatie, input.getBerichtType(), result);
-
-            if (valide) {
-                // vul context met gevonden autorisatie, nodig voor laatste stap, plaatsen/verwijderen afnemersindicatie
-                // verzoek.
-                result.put(AfnemersIndicatieJbpmConstants.TOEGANGLEVERINGSAUTORISATIEID_KEY, autorisatie.getToegangLeveringsautorisatieId());
-                result.put(AfnemersIndicatieJbpmConstants.PLAATSEN_DIENSTID_KEY, autorisatie.getPlaatsenAfnemersindicatieDienstId());
-                result.put(AfnemersIndicatieJbpmConstants.VERWIJDEREN_DIENSTID_KEY, autorisatie.getVerwijderenAfnemersindicatieDienstId());
-            }
-        }
+        final String originator = input.getBronPartijCode();
+        final String recipient = input.getDoelPartijCode();
+        controleerInstanties(originator, recipient, result);
 
         LOG.debug("result: {}", result);
         return result;
@@ -72,32 +65,19 @@ public final class ControleerAfnemerAction implements SpringAction {
 
     private boolean controleerInstanties(final String originator, final String recipient, final Map<String, Object> result) {
         boolean resultaat = true;
+        PartijRegister partijRegister = partijRegisterService.geefRegister();
+        Partij verzendendePartij = partijRegister.zoekPartijOpPartijCode(originator);
+        Partij ontvangendePartij = partijRegister.zoekPartijOpPartijCode(recipient);
 
-        if (Type.AFNEMER != Instantie.bepaalInstantieType(originator)) {
+        if (!verzendendePartij.isAfnemer()) {
             result.put(FOUTMELDING_VARIABELE, FOUT_MSG_GBA_VERZENDER_NIET_AFNEMER);
             result.put(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY, AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_X);
             result.put(SpringActionHandler.TRANSITION_RESULT, FOUT);
             resultaat = false;
         }
 
-        if (Type.CENTRALE != Instantie.bepaalInstantieType(recipient)) {
+        if (!ontvangendePartij.isCentraleVoorziening()) {
             result.put(FOUTMELDING_VARIABELE, FOUT_MSG_GBA_ONTVANGER_NIET_CENTRAAL);
-            result.put(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY, AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_X);
-            result.put(SpringActionHandler.TRANSITION_RESULT, FOUT);
-            resultaat = false;
-        }
-
-        return resultaat;
-    }
-
-    private boolean controleerAutorisatie(final Autorisatie autorisatie, final String berichtType, final Map<String, Object> result) {
-        boolean resultaat = true;
-
-        if (autorisatie == null
-            || "Ap01".equalsIgnoreCase(berichtType) && autorisatie.getPlaatsenAfnemersindicatieDienstId() == null
-            || "Av01".equalsIgnoreCase(berichtType) && autorisatie.getVerwijderenAfnemersindicatieDienstId() == null)
-        {
-            result.put(FOUTMELDING_VARIABELE, FOUT_MSG_GBA_VERZENDER_NIET_GEAUTORISEERD);
             result.put(AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_KEY, AfnemersIndicatieJbpmConstants.AF0X_FOUTREDEN_X);
             result.put(SpringActionHandler.TRANSITION_RESULT, FOUT);
             resultaat = false;

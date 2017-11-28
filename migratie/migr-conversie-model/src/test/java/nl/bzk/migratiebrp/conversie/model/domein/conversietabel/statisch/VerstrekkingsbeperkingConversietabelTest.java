@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpProtocolleringsniveauCode;
-
 import org.junit.Assert;
 import org.junit.Test;
 

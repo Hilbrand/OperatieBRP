@@ -7,19 +7,20 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.impl;
 
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.LoggingContext;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConversieHook;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConversieStap;
 import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerBrpNaarLo3Service;
+import nl.bzk.migratiebrp.conversie.regels.proces.NullHook;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.BrpBepalenAdellijkeTitel;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.BrpBepalenMaterieleHistorie;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.BrpConverteerder;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.BrpOnderzoekLo3;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.BrpSorterenLo3;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.LoggingContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,20 +31,32 @@ import org.springframework.stereotype.Service;
 public class ConverteerBrpNaarLo3ServiceImpl implements ConverteerBrpNaarLo3Service {
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private final BrpBepalenMaterieleHistorie brpBepalenMaterieleHistorie;
+    private final BrpConverteerder brpConverteerder;
+    private final BrpOnderzoekLo3 brpOnderzoekLo3;
+    private final BrpSorterenLo3 brpSorterenLo3;
+    private final BrpBepalenAdellijkeTitel brpBepalenAdellijkeTitel;
+
+    /**
+     * constructor.
+     * @param bepalenMaterieleHistorie
+     * @param brpConverteerder
+     * @param onderzoekLo3
+     * @param sorterenLo3
+     */
     @Inject
-    private BrpBepalenMaterieleHistorie brpBepalenMaterieleHistorie;
-    @Inject
-    private BrpConverteerder brpConverteerder;
-    @Inject
-    private BrpBepalenAdellijkeTitel brpBepalenAdellijkeTitel;
-    @Inject
-    private BrpOnderzoekLo3 brpOnderzoekLo3;
-    @Inject
-    private BrpSorterenLo3 brpSorterenLo3;
+    public ConverteerBrpNaarLo3ServiceImpl(final BrpBepalenMaterieleHistorie bepalenMaterieleHistorie, final BrpConverteerder brpConverteerder,
+                                           final BrpOnderzoekLo3 onderzoekLo3, final BrpSorterenLo3 sorterenLo3) {
+        this.brpBepalenMaterieleHistorie = bepalenMaterieleHistorie;
+        this.brpConverteerder = brpConverteerder;
+        this.brpOnderzoekLo3 = onderzoekLo3;
+        this.brpSorterenLo3 = sorterenLo3;
+        this.brpBepalenAdellijkeTitel = new BrpBepalenAdellijkeTitel();
+    }
 
     /**
      * Converteert een BrpPersoonslijst naar een Lo3Persoonslijst. Hiervoor worden de volgende stappen uitgevoerd:
-     * 
+     *
      * <ul>
      * <li>stap 1: bepalen gegevens in gegevens set</li>
      * <li>stap 2: bepalen materiele historie</li>
@@ -51,23 +64,18 @@ public class ConverteerBrpNaarLo3ServiceImpl implements ConverteerBrpNaarLo3Serv
      * <li>stap 4: adellijke titel / predikaat bijwerken voor geslacht</li>
      * <li>Stap 5: Sorteren</li>
      * </ul>
-     * 
-     * @param teConverterenPersoonslijst
-     *            de te converteren BRP persoonslijst
+     * @param teConverterenPersoonslijst de te converteren BRP persoonslijst
      * @return een Lo3Persoonslijst
      */
     @Override
     public final Lo3Persoonslijst converteerBrpPersoonslijst(final BrpPersoonslijst teConverterenPersoonslijst) {
-        return converteerBrpPersoonslijst(teConverterenPersoonslijst, ConversieHook.NULL_HOOK);
+        return converteerBrpPersoonslijst(teConverterenPersoonslijst, new NullHook());
     }
 
     /**
      * Converteert een BrpPersoonslijst naar een Lo3Persoonslijst.
-     * 
-     * @param teConverterenPersoonslijst
-     *            de te converteren BRP persoonslijst
-     * @param hook
-     *            hook
+     * @param teConverterenPersoonslijst de te converteren BRP persoonslijst
+     * @param hook hook
      * @return een Lo3Persoonslijst
      */
     public final Lo3Persoonslijst converteerBrpPersoonslijst(final BrpPersoonslijst teConverterenPersoonslijst, final ConversieHook hook) {

@@ -6,41 +6,52 @@
 
 package nl.bzk.migratiebrp.init.logging.runtime.listeners.handlers;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.AfnemersindicatieAntwoordRecordType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.AfnemersindicatiesAntwoordBericht;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatie;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
+import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingAfnemersindicatieStapel;
 import org.springframework.stereotype.Component;
 
 /**
  * Handler voor het {@link AfnemersindicatiesAntwoordBericht}.
  */
 @Component
-public final class AfnemersindicatieAntwoordHandler extends AbstractInitVullingLogHandler {
+public final class AfnemersindicatieAntwoordHandler extends BasisInitVullingLogHandler implements AntwoordHandler<AfnemersindicatiesAntwoordBericht> {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    /**
-     * Verwerk het bericht.
-     *
-     * @param antwoordBericht
-     *            bericht
-     * @param messageId
-     *            message id
-     * @param correlationId
-     *            correlation id
-     */
+    @Override
     public void verwerk(final AfnemersindicatiesAntwoordBericht antwoordBericht, final String messageId, final String correlationId) {
-        final Long administratienummer = extractIdentifier(correlationId);
+        final String administratienummer = extractIdentifier(correlationId);
         final InitVullingAfnemersindicatie initvullingAfnemersindicatie = getLoggingService().zoekInitVullingAfnemerindicatie(administratienummer);
         if (initvullingAfnemersindicatie == null) {
-            LOG.warn("[msg-id {}] Kon geen initvulling afnemersindicatie log vinden voor administratienummer: {}", messageId, administratienummer);
+            LOG.error("[msg-id {}] Kon geen initvulling afnemersindicatie log vinden voor administratienummer: {}", messageId, administratienummer);
         } else {
-            initvullingAfnemersindicatie.setConversieResultaat(antwoordBericht.getStatus().toString());
-            initvullingAfnemersindicatie.setFoutmelding(antwoordBericht.getFoutmelding());
-            initvullingAfnemersindicatie.verwerkResultaat(antwoordBericht.getLogging());
+            initvullingAfnemersindicatie.setBerichtResultaat("VERWERKT");
+            for (AfnemersindicatieAntwoordRecordType afnemerindicatieAntwoord : antwoordBericht.getAfnemersindicaties()) {
+                InitVullingAfnemersindicatieStapel
+                        afnemerindicatieLog =
+                        zoekStapel(initvullingAfnemersindicatie, (short) afnemerindicatieAntwoord.getStapelNummer());
+                if (afnemerindicatieLog == null) {
+                    LOG.error("[msg-id {}] Kon geen initvulling afnemersindicatie stapel log vinden voor administratienummer: {}, stapelnummer: {}", messageId,
+                            administratienummer, afnemerindicatieAntwoord.getStapelNummer());
+                } else {
+                    afnemerindicatieLog.setConversieResultaat(afnemerindicatieAntwoord.getStatus().toString());
+                    afnemerindicatieLog.setConversieMelding(afnemerindicatieAntwoord.getFoutmelding());
+                }
+            }
             getLoggingService().persisteerInitVullingAfnemerindicatie(initvullingAfnemersindicatie);
         }
+    }
+
+    private InitVullingAfnemersindicatieStapel zoekStapel(InitVullingAfnemersindicatie initvullingAfnemersindicatie, short stapelNummer) {
+        for (InitVullingAfnemersindicatieStapel stapel : initvullingAfnemersindicatie.getStapels()) {
+            if (stapel.getStapelPk().getStapelNr() == stapelNummer) {
+                return stapel;
+            }
+        }
+        return null;
     }
 }

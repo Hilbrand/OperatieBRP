@@ -8,32 +8,38 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class BrpIstRelatieGroepInhoudTest {
+    @Test
+    public void test(){
+        final BrpIstRelatieGroepInhoud inhoud = this.createInhoud();
+        Assert.assertEquals(20000101,inhoud.getRubriek6210DatumIngangFamilierechtelijkeBetrekking().getWaarde().intValue());
+    }
 
     public static BrpIstRelatieGroepInhoud createInhoud() {
         return new BrpIstRelatieGroepInhoud(
-            BrpIstStandaardGroepInhoudTest.createInhoud(),
-            new BrpInteger(20000101),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+                BrpIstStandaardGroepInhoudTestUtil.createInhoud(),
+                new BrpInteger(20000101),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 
     public static BrpStapel<BrpIstRelatieGroepInhoud> createStapel() {

@@ -9,11 +9,12 @@ package nl.bzk.migratiebrp.test.db;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import nl.bzk.algemeenbrp.util.xml.annotation.Attribute;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementMap;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.ElementMap;
 
 /**
  * Test rsultaten voor de conversie software en test SQL-scripts op de DB.
@@ -21,9 +22,10 @@ import org.simpleframework.xml.ElementMap;
 public final class DbConversieTestResultaat extends TestResultaat {
 
     @ElementList(name = "conversieResultaten", entry = "conversieResultaat", type = DbConversieTestConversieResultaat.class, required = false)
-    private List<DbConversieTestConversieResultaat> conversieResultaten = new LinkedList<>();
+    private final List<DbConversieTestConversieResultaat> conversieResultaten = new LinkedList<>();
 
-    @ElementMap(name = "sqlControles", entry = "sqlControle", key = "filename", attribute = true, inline = false, required = false)
+    @ElementMap(name = "sqlControles", entry = "sqlControle", key = "filename", keyType = String.class, valueType = TestStap.class, attribute = false,
+            inline = false, required = false)
     private Map<String, TestStap> sqlControles;
 
     @Attribute(name = "aantalResultaten", required = false)
@@ -31,23 +33,18 @@ public final class DbConversieTestResultaat extends TestResultaat {
 
     /**
      * Constructor.
-     * 
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
+     * @param thema thema
+     * @param naam naam
      */
     protected DbConversieTestResultaat(
-        @Attribute(name = "thema", required = false) final String thema,
-        @Attribute(name = "naam", required = false) final String naam)
-    {
+            @Attribute(name = "thema", required = false) final String thema,
+            @Attribute(name = "naam", required = false) final String naam) {
         super(thema, naam);
         aantalResultaten = 1;
     }
 
     /**
      * Geef de waarde van sql controles.
-     *
      * @return sql controles
      */
     public Map<String, TestStap> getSqlControles() {
@@ -56,9 +53,7 @@ public final class DbConversieTestResultaat extends TestResultaat {
 
     /**
      * Sets the sql controles.
-     *
-     * @param sqlControles
-     *            the sql controles
+     * @param sqlControles the sql controles
      */
     public void setSqlControles(final Map<String, TestStap> sqlControles) {
         this.sqlControles = sqlControles;
@@ -66,15 +61,15 @@ public final class DbConversieTestResultaat extends TestResultaat {
 
     /**
      * Voegt een conversie resultaat toe aan de bestaande set.
-     * 
-     * @param conversieResult
-     *            nieuw conversieresultaat.
+     * @param conversieResult nieuw conversieresultaat.
      */
     public void addConversieResultaat(final DbConversieTestConversieResultaat conversieResult) {
         conversieResultaten.add(conversieResult);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.test.common.resultaat.TestResultaat#isSucces()
      */
     @Override
@@ -93,7 +88,6 @@ public final class DbConversieTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van aantal resultaten.
-     *
      * @return aantal resultaten
      */
     public int getAantalResultaten() {
@@ -102,9 +96,7 @@ public final class DbConversieTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van aantal resultaten.
-     *
-     * @param aantalResultaten
-     *            aantal resultaten
+     * @param aantalResultaten aantal resultaten
      */
     public void setAantalResultaten(final int aantalResultaten) {
         this.aantalResultaten = aantalResultaten;

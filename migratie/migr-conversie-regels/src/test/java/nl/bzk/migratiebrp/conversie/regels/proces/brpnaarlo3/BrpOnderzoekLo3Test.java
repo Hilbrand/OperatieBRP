@@ -34,10 +34,14 @@ public class BrpOnderzoekLo3Test {
     public void testGeenOnderzoek() {
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(
-                        new Lo3Datum(DATUM, null),
-                        new Lo3GemeenteCode(GEM_CODE, null),
-                        new Lo3LandCode(GEM_CODE, null)), maakDocumentatie(), Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, null), new Lo3GemeenteCode(GEM_CODE, null),
+                                                        new Lo3LandCode(GEM_CODE, null)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -50,9 +54,16 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoek1 = new Lo3Onderzoek(new Lo3Integer(GEG_IN_ONDERZ_2, null), new Lo3Datum(20131212), null);
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, null), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, null)), maakDocumentatie(), Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, null),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, null)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -66,9 +77,16 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoek1 = new Lo3Onderzoek(new Lo3Integer(GEG_IN_ONDERZ, null), new Lo3Datum(20131212), null);
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, onderzoek1), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, onderzoek1)), maakDocumentatie(), Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, onderzoek1),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, onderzoek1)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -83,9 +101,16 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoek2 = new Lo3Onderzoek(new Lo3Integer("60830", null), new Lo3Datum(20131111), null);
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, null), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, onderzoek2)), maakDocumentatie(), Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, null),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, onderzoek2)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -102,9 +127,17 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoekCategorie = new Lo3Onderzoek(new Lo3Integer("68610", null), new Lo3Datum(20131111), null);
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, null), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, null)), maakDocumentatie(), onderzoekCategorie, Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, null),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, null)),
+                                                maakDocumentatie(),
+                                                onderzoekCategorie,
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -118,9 +151,16 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoek1 = new Lo3Onderzoek(new Lo3Integer("0", null), new Lo3Datum(20131212), null);
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, null), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, null)), maakDocumentatie(), Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, null),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, null)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -135,9 +175,16 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoek1 = new Lo3Onderzoek(new Lo3Integer("0", null), new Lo3Datum(20131212), null);
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, onderzoek1), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, onderzoek1)), maakDocumentatie(), Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, onderzoek1),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, onderzoek1)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -153,9 +200,16 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoek2 = new Lo3Onderzoek(new Lo3Integer("0", null), new Lo3Datum(20131111), null);
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, null), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, onderzoek2)), maakDocumentatie(), Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, null),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, onderzoek2)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -172,9 +226,16 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoek2 = new Lo3Onderzoek(new Lo3Integer("0", null), new Lo3Datum(20131111), new Lo3Datum(20131210));
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, null), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, onderzoek2)), maakDocumentatie(), Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, null),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, onderzoek2)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -191,9 +252,16 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoek2 = new Lo3Onderzoek(new Lo3Integer("0", null), new Lo3Datum(20131111), new Lo3Datum(20131222));
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, null), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, onderzoek2)), maakDocumentatie(), Lo3Historie.NULL_HISTORIE, null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, null),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, onderzoek2)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, null, null),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);
@@ -202,8 +270,8 @@ public class BrpOnderzoekLo3Test {
         Assert.assertNotSame(onderzoek1, overlijden.getOnderzoek());
         Assert.assertNotSame(onderzoek2, overlijden.getOnderzoek());
         Assert.assertEquals(
-            new Lo3Onderzoek(new Lo3Integer(GEG_IN_ONDERZ, null), new Lo3Datum(20131111), new Lo3Datum(20131222)),
-            overlijden.getOnderzoek());
+                new Lo3Onderzoek(new Lo3Integer(GEG_IN_ONDERZ, null), new Lo3Datum(20131111), new Lo3Datum(20131222)),
+                overlijden.getOnderzoek());
     }
 
     @Test
@@ -212,11 +280,16 @@ public class BrpOnderzoekLo3Test {
         final Lo3Onderzoek onderzoek2 = new Lo3Onderzoek(new Lo3Integer("0", null), new Lo3Datum(20131111), null);
         final Lo3Persoonslijst in =
                 new Lo3PersoonslijstBuilder().overlijdenStapel(
-                    new Lo3Stapel<>(Arrays.asList(new Lo3Categorie<>(new Lo3OverlijdenInhoud(new Lo3Datum(DATUM, null), new Lo3GemeenteCode(
-                        GEM_CODE,
-                        onderzoek1), new Lo3LandCode(GEM_CODE, null)), maakDocumentatie(), new Lo3Historie(null, new Lo3Datum(DATUM, null), new Lo3Datum(
-                        "20121214",
-                        onderzoek2)), null)))).build();
+                        new Lo3Stapel<>(
+                                Arrays.asList(
+                                        new Lo3Categorie<>(
+                                                new Lo3OverlijdenInhoud(
+                                                        new Lo3Datum(DATUM, null),
+                                                        new Lo3GemeenteCode(GEM_CODE, onderzoek1),
+                                                        new Lo3LandCode(GEM_CODE, null)),
+                                                maakDocumentatie(),
+                                                new Lo3Historie(null, new Lo3Datum(DATUM, null), new Lo3Datum("20121214", onderzoek2)),
+                                                null)))).build();
         final Lo3Persoonslijst out = brpOnderzoekLo3.converteer(in);
 
         final Lo3Categorie<Lo3OverlijdenInhoud> overlijden = out.getOverlijdenStapel().get(0);

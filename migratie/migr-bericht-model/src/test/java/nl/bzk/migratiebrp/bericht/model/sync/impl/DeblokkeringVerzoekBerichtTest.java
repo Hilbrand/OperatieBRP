@@ -16,8 +16,8 @@ import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.DeblokkeringVerzoekType;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -27,7 +27,7 @@ public class DeblokkeringVerzoekBerichtTest {
 
     private static final String PROCES_ID = "1232";
     private static final String A_NUMMER = "1234567890";
-    private static final String GEMEENTE_REGISTRATIE = "0600";
+    private static final String GEMEENTE_REGISTRATIE = "060001";
 
     private static final Logger LOG = LoggerFactory.getLogger();
 

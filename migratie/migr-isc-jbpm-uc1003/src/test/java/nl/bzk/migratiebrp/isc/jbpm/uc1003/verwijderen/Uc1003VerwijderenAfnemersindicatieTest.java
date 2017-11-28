@@ -7,10 +7,9 @@
 package nl.bzk.migratiebrp.isc.jbpm.uc1003.verwijderen;
 
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf03Bericht;
-import nl.bzk.migratiebrp.bericht.model.lo3.impl.Vb01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.AdHocZoekPersoonVerzoekBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwijderAfnemersindicatieVerzoekBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.ZoekPersoonOpActueleGegevensVerzoekBericht;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.AbstractUc1003Test;
 import org.junit.After;
 import org.junit.Assert;
@@ -39,12 +38,12 @@ public class Uc1003VerwijderenAfnemersindicatieTest extends AbstractUc1003Test {
     @Before
     public void startProces() {
         // Start
-        startProcess(VerwijderenAfnIndTestUtil.maakAv01Bericht("580001", "1234567890"));
+        startProcess(VerwijderenAfnIndTestUtil.maakAv01Bericht("059901", "1234567890"));
 
         // Zoek Persoon
         controleerBerichten(0, 0, 1);
-        final ZoekPersoonOpActueleGegevensVerzoekBericht zoekPersoonVerzoek = getBericht(ZoekPersoonOpActueleGegevensVerzoekBericht.class);
-        signalSync(maakZoekPersoonAntwoordBericht(zoekPersoonVerzoek, 1));
+        final AdHocZoekPersoonVerzoekBericht adHocZoekPersoonVerzoekBericht = getBericht(AdHocZoekPersoonVerzoekBericht.class);
+        signalSync(maakAdHocZoekPersoonAntwoordBericht(adHocZoekPersoonVerzoekBericht, 1));
     }
 
     @After
@@ -74,10 +73,9 @@ public class Uc1003VerwijderenAfnemersindicatieTest extends AbstractUc1003Test {
         checkVariabele(FOUT_AFHANDELING_FOUT, "uc1003.verwijderen.afgebroken");
         signalHumanTask(END);
 
-        // Verwacht 1 output bericht (pf) om de ap01/av01 cyclus netjes af te ronden
-        controleerBerichten(0, 2, 0);
+        // Verwacht 1 output bericht (Pf03) om de ap01/av01 cyclus netjes af te ronden
+        controleerBerichten(0, 1, 0);
         getBericht(Pf03Bericht.class);
-        getBericht(Vb01Bericht.class);
     }
 
     @Test
@@ -93,9 +91,8 @@ public class Uc1003VerwijderenAfnemersindicatieTest extends AbstractUc1003Test {
         checkVariabele(FOUT_AFHANDELING_FOUT, "uc1003.verwijderen.foutiefbericht");
         signalHumanTask(END);
 
-        // Verwacht 2 output bericht (Pf03 en Vb01) om de ap01/av01 cyclus netjes af te ronden
-        controleerBerichten(0, 2, 0);
+        // Verwacht 1 output bericht (Pf03) om de ap01/av01 cyclus netjes af te ronden
+        controleerBerichten(0, 1, 0);
         getBericht(Pf03Bericht.class);
-        getBericht(Vb01Bericht.class);
     }
 }

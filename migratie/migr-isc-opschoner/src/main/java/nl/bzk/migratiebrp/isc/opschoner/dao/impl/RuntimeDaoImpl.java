@@ -9,6 +9,8 @@ package nl.bzk.migratiebrp.isc.opschoner.dao.impl;
 import java.net.UnknownHostException;
 import java.sql.Date;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.opschoner.dao.RuntimeDao;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -17,8 +19,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public final class RuntimeDaoImpl implements RuntimeDao {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private final JdbcTemplate template;
+
+    /**
+     * Constructor.
+     * @param template jdbc template
+     */
     @Inject
-    private JdbcTemplate template;
+    public RuntimeDaoImpl(final JdbcTemplate template) {
+        this.template = template;
+    }
 
     @Override
     public void voegRuntimeToe(final String runtimeNaam) {
@@ -27,10 +39,11 @@ public final class RuntimeDaoImpl implements RuntimeDao {
         try {
             clientNaam = java.net.InetAddress.getLocalHost().toString();
         } catch (final UnknownHostException e) {
+            LOGGER.debug("Onbekende local host", e);
             clientNaam = "Onbekend";
         }
 
-        final Object[] parameters = new Object[] {runtimeNaam, new Date(System.currentTimeMillis()), clientNaam };
+        final Object[] parameters = new Object[]{runtimeNaam, new Date(System.currentTimeMillis()), clientNaam};
 
         final String query = "insert into mig_runtime (runtime_naam, startdatum, client_naam) values (?, ?, ?)";
         template.update(query, parameters);
@@ -40,7 +53,7 @@ public final class RuntimeDaoImpl implements RuntimeDao {
     @Override
     public void verwijderRuntime(final String runtimeNaam) {
 
-        final Object[] parameters = new Object[] {runtimeNaam };
+        final Object[] parameters = new Object[]{runtimeNaam};
 
         final String query = "delete from mig_runtime where runtime_naam = ?";
         template.update(query, parameters);

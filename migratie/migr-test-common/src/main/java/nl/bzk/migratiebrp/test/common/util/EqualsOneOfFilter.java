@@ -15,9 +15,7 @@ public class EqualsOneOfFilter extends CompositeFilter {
 
     /**
      * Default constructor.
-     * 
-     * @param filenames
-     *            De te accepteren filters.
+     * @param filenames De te accepteren filters.
      */
     public EqualsOneOfFilter(final String... filenames) {
         super(Type.OR, createFilenameFilters(filenames));

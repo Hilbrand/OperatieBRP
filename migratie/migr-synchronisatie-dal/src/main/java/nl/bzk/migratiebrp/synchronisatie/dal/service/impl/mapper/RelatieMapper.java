@@ -7,11 +7,21 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.Map;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RelatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpBetrokkenheid;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpRelatie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortBetrokkenheidCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpIstGroepInhoud;
@@ -19,17 +29,10 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstGezagsVerhoudingGroepI
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstHuwelijkOfGpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIstRelatieGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpRelatieInhoud;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
+import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RelatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
@@ -37,7 +40,6 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Onder
 
 /**
  * Deze mapper mapped de BrpRelatieInhoud op Relatie en RelatieHistorie uit het BRP operationele model.
- *
  */
 public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRelatieInhoud, RelatieHistorie, Relatie> {
 
@@ -47,19 +49,14 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
 
     /**
      * Maakt een RelatieMapper object.
-     *
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public RelatieMapper(
-        final DynamischeStamtabelRepository dynamischeStamtabelRepository,
-        final BRPActieFactory brpActieFactory,
-        final OnderzoekMapper onderzoekMapper)
-    {
+            final DynamischeStamtabelRepository dynamischeStamtabelRepository,
+            final BRPActieFactory brpActieFactory,
+            final OnderzoekMapper onderzoekMapper) {
         super(dynamischeStamtabelRepository, brpActieFactory, onderzoekMapper);
         this.dynamischeStamtabelRepository = dynamischeStamtabelRepository;
         this.brpActieFactory = brpActieFactory;
@@ -67,32 +64,26 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
 
     /**
      * Mapped gegevens die niet in een stapel voorkomen en specifiek zijn voor een BrpRelatie.
-     *
-     * @param migratieRelatie
-     *            de BrpRelatie uit het migratie model
-     * @param relatie
-     *            de Relatie entiteit uit het operationele BRP gegevensmodel
-     * @param persoon
-     *            de ik-persoon waarmee de ik-betrokkenheid wordt aangemaakt
-     * @param stapelsPerCategorie
-     *            map van ist stapels per categorie
+     * @param migratieRelatie de BrpRelatie uit het migratie model
+     * @param relatie de Relatie entiteit uit het operationele BRP gegevensmodel
+     * @param persoon de ik-persoon waarmee de ik-betrokkenheid wordt aangemaakt
+     * @param stapelsPerCategorie map van ist stapels per categorie
      */
     public void mapStapelEnOverigeRelatieGegevens(
-        final BrpRelatie migratieRelatie,
-        final Relatie relatie,
-        final Persoon persoon,
-        final Map<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie)
-    {
+            final BrpRelatie migratieRelatie,
+            final Relatie relatie,
+            final Persoon persoon,
+            final Map<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie) {
         // ik-betrokkenheid is impliciet verwerkt in BrpRelatie
         final Betrokkenheid ikBetrokkenheid = new Betrokkenheid(SoortBetrokkenheid.parseCode(migratieRelatie.getRolCode().getWaarde()), relatie);
         final BetrokkenheidIdentiteitMapper betrokkenheidIdentiteitMapper =
                 new BetrokkenheidIdentiteitMapper(dynamischeStamtabelRepository, brpActieFactory, getOnderzoekMapper());
-        betrokkenheidIdentiteitMapper.mapVanMigratie(migratieRelatie.getIkBetrokkenheid().getIdentiteitStapel(), ikBetrokkenheid);
+        betrokkenheidIdentiteitMapper.mapVanMigratie(migratieRelatie.getIkBetrokkenheid().getIdentiteitStapel(), ikBetrokkenheid, null);
 
         if (SoortBetrokkenheid.OUDER == ikBetrokkenheid.getSoortBetrokkenheid() && !migratieRelatie.getBetrokkenheden().isEmpty()) {
             final BetrokkenheidOuderMapper betrokkenheidOuderMapper =
                     new BetrokkenheidOuderMapper(dynamischeStamtabelRepository, brpActieFactory, getOnderzoekMapper());
-            betrokkenheidOuderMapper.mapVanMigratie(migratieRelatie.getBetrokkenheden().get(0).getOuderStapel(), ikBetrokkenheid);
+            betrokkenheidOuderMapper.mapVanMigratie(migratieRelatie.getBetrokkenheden().get(0).getOuderStapel(), ikBetrokkenheid, null);
         }
 
         persoon.addBetrokkenheid(ikBetrokkenheid);
@@ -100,7 +91,7 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
         relatie.addBetrokkenheid(ikBetrokkenheid);
 
         for (final BrpBetrokkenheid migratieBetrokkenheid : migratieRelatie.getBetrokkenheden()) {
-            new BetrokkenheidMapper(dynamischeStamtabelRepository, brpActieFactory, getOnderzoekMapper()).mapVanMigratie(migratieBetrokkenheid, relatie);
+            verwerkMigratieBetrokkenheid(relatie, migratieBetrokkenheid);
         }
 
         // valideer gemeentecode
@@ -109,7 +100,7 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
 
         // map historie
         if (migratieRelatie.getRelatieStapel() != null) {
-            mapVanMigratie(migratieRelatie.getRelatieStapel(), relatie);
+            mapVanMigratie(migratieRelatie.getRelatieStapel(), relatie, null);
         }
 
         // Map IST
@@ -119,11 +110,37 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
         mapOnderzoekOpSoortVerbintenis(relatie, migratieRelatie);
     }
 
+    private void verwerkMigratieBetrokkenheid(final Relatie relatie, final BrpBetrokkenheid migratieBetrokkenheid) {
+        final Element objecttype;
+        final BrpSoortBetrokkenheidCode rol = migratieBetrokkenheid.getRol();
+        if (BrpSoortBetrokkenheidCode.KIND.equals(rol)) {
+            objecttype = Element.GERELATEERDEKIND_PERSOON;
+        } else if (BrpSoortBetrokkenheidCode.OUDER.equals(rol)) {
+            objecttype = Element.GERELATEERDEOUDER_PERSOON;
+        } else if (BrpSoortBetrokkenheidCode.PARTNER.equals(rol)) {
+            switch (relatie.getSoortRelatie()) {
+                case GEREGISTREERD_PARTNERSCHAP:
+                    objecttype = Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON;
+                    break;
+                case HUWELIJK:
+                    objecttype = Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON;
+                    break;
+                default:
+                    throw new IllegalStateException(String.format("Soort relatie is onbekend (%s)", relatie.getSoortRelatie()));
+            }
+        } else {
+            throw new IllegalStateException(String.format("Onbekende rol van betrokkenheid (%s)", rol));
+        }
+        new BetrokkenheidMapper(dynamischeStamtabelRepository, brpActieFactory, getOnderzoekMapper()).mapVanMigratie(
+                migratieBetrokkenheid,
+                relatie,
+                objecttype);
+    }
+
     private void mapIstGegevens(
-        final Relatie relatie,
-        final BrpRelatie migratieRelatie,
-        final Map<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie)
-    {
+            final Relatie relatie,
+            final BrpRelatie migratieRelatie,
+            final Map<Lo3CategorieEnum, Map<Integer, Stapel>> stapelsPerCategorie) {
         final BrpStapel<BrpIstRelatieGroepInhoud> ouder1Stapel = migratieRelatie.getIstOuder1Stapel();
         final BrpStapel<BrpIstRelatieGroepInhoud> ouder2Stapel = migratieRelatie.getIstOuder2Stapel();
         final BrpStapel<BrpIstHuwelijkOfGpGroepInhoud> huwelijkOfGpStapel = migratieRelatie.getIstHuwelijkOfGpStapel();
@@ -148,10 +165,9 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
     }
 
     private <T extends AbstractBrpIstGroepInhoud> void mapIstStapel(
-        final BrpStapel<T> migratieStapel,
-        final Relatie relatie,
-        final Map<Integer, Stapel> istStapels)
-    {
+            final BrpStapel<T> migratieStapel,
+            final Relatie relatie,
+            final Map<Integer, Stapel> istStapels) {
         final Integer migratieStapelNr = migratieStapel.get(0).getInhoud().getStapel();
         if (istStapels.containsKey(migratieStapelNr)) {
             relatie.addStapel(istStapels.get(migratieStapelNr));
@@ -162,37 +178,8 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
      * {@inheritDoc}
      */
     @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpRelatieInhoud> brpStapel, final Relatie entiteit) {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected void voegHistorieToeAanEntiteit(final RelatieHistorie historie, final Relatie entiteit) {
         entiteit.addRelatieHistorie(historie);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void kopieerActueleGroepNaarEntiteit(final RelatieHistorie historie, final Relatie entiteit) {
-        entiteit.setBuitenlandsePlaatsAanvang(historie.getBuitenlandsePlaatsAanvang());
-        entiteit.setBuitenlandsePlaatsEinde(historie.getBuitenlandsePlaatsEinde());
-        entiteit.setBuitenlandseRegioAanvang(historie.getBuitenlandseRegioAanvang());
-        entiteit.setBuitenlandseRegioEinde(historie.getBuitenlandseRegioEinde());
-        entiteit.setDatumAanvang(historie.getDatumAanvang());
-        entiteit.setDatumEinde(historie.getDatumEinde());
-        entiteit.setGemeenteAanvang(historie.getGemeenteAanvang());
-        entiteit.setGemeenteEinde(historie.getGemeenteEinde());
-        entiteit.setLandOfGebiedAanvang(historie.getLandOfGebiedAanvang());
-        entiteit.setLandOfGebiedEinde(historie.getLandOfGebiedEinde());
-        entiteit.setOmschrijvingLocatieAanvang(historie.getOmschrijvingLocatieAanvang());
-        entiteit.setOmschrijvingLocatieEinde(historie.getOmschrijvingLocatieEinde());
-        entiteit.setRedenBeeindigingRelatie(historie.getRedenBeeindigingRelatie());
-        entiteit.setWoonplaatsnaamAanvang(historie.getWoonplaatsnaamAanvang());
-        entiteit.setWoonplaatsnaamEinde(historie.getWoonplaatsnaamEinde());
     }
 
     /**
@@ -225,7 +212,8 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
     }
 
     private void mapOnderzoek(final BrpRelatieInhoud groepInhoud, final RelatieHistorie historie, final Relatie relatie) {
-        switch (relatie.getSoortRelatie()) {
+        final SoortRelatie soortRelatie = relatie.getSoortRelatie();
+        switch (soortRelatie) {
             case GEREGISTREERD_PARTNERSCHAP:
                 mapOnderzoekGeregistreerdPartnerschap(groepInhoud, historie);
                 break;
@@ -243,10 +231,7 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
     private void mapOnderzoekGeregistreerdPartnerschap(final BrpRelatieInhoud groepInhoud, final RelatieHistorie historie) {
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getDatumAanvang(), Element.GEREGISTREERDPARTNERSCHAP_DATUMAANVANG);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getDatumEinde(), Element.GEREGISTREERDPARTNERSCHAP_DATUMEINDE);
-        getOnderzoekMapper().mapOnderzoek(
-            historie,
-            groepInhoud.getBuitenlandsePlaatsAanvang(),
-            Element.GEREGISTREERDPARTNERSCHAP_BUITENLANDSEPLAATSAANVANG);
+        getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getBuitenlandsePlaatsAanvang(), Element.GEREGISTREERDPARTNERSCHAP_BUITENLANDSEPLAATSAANVANG);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getBuitenlandsePlaatsEinde(), Element.GEREGISTREERDPARTNERSCHAP_BUITENLANDSEPLAATSEINDE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getBuitenlandseRegioAanvang(), Element.GEREGISTREERDPARTNERSCHAP_BUITENLANDSEREGIOAANVANG);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getBuitenlandseRegioEinde(), Element.GEREGISTREERDPARTNERSCHAP_BUITENLANDSEREGIOEINDE);
@@ -254,10 +239,7 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getGemeenteCodeEinde(), Element.GEREGISTREERDPARTNERSCHAP_GEMEENTEEINDECODE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getLandOfGebiedCodeAanvang(), Element.GEREGISTREERDPARTNERSCHAP_LANDGEBIEDAANVANGCODE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getLandOfGebiedCodeEinde(), Element.GEREGISTREERDPARTNERSCHAP_LANDGEBIEDEINDECODE);
-        getOnderzoekMapper().mapOnderzoek(
-            historie,
-            groepInhoud.getOmschrijvingLocatieAanvang(),
-            Element.GEREGISTREERDPARTNERSCHAP_OMSCHRIJVINGLOCATIEAANVANG);
+        getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getOmschrijvingLocatieAanvang(), Element.GEREGISTREERDPARTNERSCHAP_OMSCHRIJVINGLOCATIEAANVANG);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getOmschrijvingLocatieEinde(), Element.GEREGISTREERDPARTNERSCHAP_OMSCHRIJVINGLOCATIEEINDE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getWoonplaatsnaamAanvang(), Element.GEREGISTREERDPARTNERSCHAP_WOONPLAATSNAAMAANVANG);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getWoonplaatsnaamEinde(), Element.GEREGISTREERDPARTNERSCHAP_WOONPLAATSNAAMEINDE);
@@ -285,48 +267,50 @@ public final class RelatieMapper extends AbstractHistorieMapperStrategie<BrpRela
     private void mapOnderzoekFamilierechtelijkeBetrekking(final BrpRelatieInhoud groepInhoud, final RelatieHistorie historie) {
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getDatumAanvang(), Element.FAMILIERECHTELIJKEBETREKKING_DATUMAANVANG);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getDatumEinde(), Element.FAMILIERECHTELIJKEBETREKKING_DATUMEINDE);
-        getOnderzoekMapper().mapOnderzoek(
-            historie,
-            groepInhoud.getBuitenlandsePlaatsAanvang(),
-            Element.FAMILIERECHTELIJKEBETREKKING_BUITENLANDSEPLAATSAANVANG);
-        getOnderzoekMapper().mapOnderzoek(
-            historie,
-            groepInhoud.getBuitenlandsePlaatsEinde(),
-            Element.FAMILIERECHTELIJKEBETREKKING_BUITENLANDSEPLAATSEINDE);
-        getOnderzoekMapper().mapOnderzoek(
-            historie,
-            groepInhoud.getBuitenlandseRegioAanvang(),
-            Element.FAMILIERECHTELIJKEBETREKKING_BUITENLANDSEREGIOAANVANG);
+        getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getBuitenlandsePlaatsAanvang(), Element.FAMILIERECHTELIJKEBETREKKING_BUITENLANDSEPLAATSAANVANG);
+        getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getBuitenlandsePlaatsEinde(), Element.FAMILIERECHTELIJKEBETREKKING_BUITENLANDSEPLAATSEINDE);
+        getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getBuitenlandseRegioAanvang(), Element.FAMILIERECHTELIJKEBETREKKING_BUITENLANDSEREGIOAANVANG);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getBuitenlandseRegioEinde(), Element.FAMILIERECHTELIJKEBETREKKING_BUITENLANDSEREGIOEINDE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getGemeenteCodeAanvang(), Element.FAMILIERECHTELIJKEBETREKKING_GEMEENTEAANVANGCODE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getGemeenteCodeEinde(), Element.FAMILIERECHTELIJKEBETREKKING_GEMEENTEEINDECODE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getLandOfGebiedCodeAanvang(), Element.FAMILIERECHTELIJKEBETREKKING_LANDGEBIEDAANVANGCODE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getLandOfGebiedCodeEinde(), Element.FAMILIERECHTELIJKEBETREKKING_LANDGEBIEDEINDECODE);
         getOnderzoekMapper().mapOnderzoek(
-            historie,
-            groepInhoud.getOmschrijvingLocatieAanvang(),
-            Element.FAMILIERECHTELIJKEBETREKKING_OMSCHRIJVINGLOCATIEAANVANG);
-        getOnderzoekMapper().mapOnderzoek(
-            historie,
-            groepInhoud.getOmschrijvingLocatieEinde(),
-            Element.FAMILIERECHTELIJKEBETREKKING_OMSCHRIJVINGLOCATIEEINDE);
+                historie,
+                groepInhoud.getOmschrijvingLocatieAanvang(),
+                Element.FAMILIERECHTELIJKEBETREKKING_OMSCHRIJVINGLOCATIEAANVANG);
+        getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getOmschrijvingLocatieEinde(), Element.FAMILIERECHTELIJKEBETREKKING_OMSCHRIJVINGLOCATIEEINDE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getWoonplaatsnaamAanvang(), Element.FAMILIERECHTELIJKEBETREKKING_WOONPLAATSNAAMAANVANG);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getWoonplaatsnaamEinde(), Element.FAMILIERECHTELIJKEBETREKKING_WOONPLAATSNAAMEINDE);
         getOnderzoekMapper().mapOnderzoek(historie, groepInhoud.getRedenEindeRelatieCode(), Element.FAMILIERECHTELIJKEBETREKKING_REDENEINDECODE);
     }
 
     private void mapOnderzoekOpSoortVerbintenis(final Relatie relatie, final BrpRelatie migratieRelatie) {
-        final Element elementInOnderzoek;
-        if (SoortRelatie.FAMILIERECHTELIJKE_BETREKKING.equals(relatie.getSoortRelatie())) {
-            elementInOnderzoek = Element.FAMILIERECHTELIJKEBETREKKING_SOORTCODE;
-        } else if (SoortRelatie.HUWELIJK.equals(relatie.getSoortRelatie())) {
-            elementInOnderzoek = Element.HUWELIJK_SOORTCODE;
-        } else if (SoortRelatie.GEREGISTREERD_PARTNERSCHAP.equals(relatie.getSoortRelatie())) {
-            elementInOnderzoek = Element.GEREGISTREERDPARTNERSCHAP_SOORTCODE;
-        } else {
-            throw new IllegalStateException(ONBEKENDE_OF_ONJUISTE_SOORT_RELATIE);
+        final Lo3Onderzoek onderzoek = migratieRelatie.getSoortRelatieCode().getOnderzoek();
+        if (onderzoek != null) {
+            final Lo3Herkomst lo3Herkomst = onderzoek.getLo3Herkomst();
+            RelatieHistorie historieVoorOnderzoek = null;
+            for (final RelatieHistorie relatieHistorie : relatie.getRelatieHistorieSet()) {
+                final Lo3Voorkomen historieLo3Herkomst = relatieHistorie.getActieInhoud().getLo3Voorkomen();
+                if (lo3Herkomst.getCategorie().getCategorie().equals(historieLo3Herkomst.getCategorie())
+                        && lo3Herkomst.getStapel() == historieLo3Herkomst.getStapelvolgnummer()
+                        && lo3Herkomst.getVoorkomen() == historieLo3Herkomst.getVoorkomenvolgnummer()) {
+                    historieVoorOnderzoek = relatieHistorie;
+                }
+            }
+
+            if (SoortRelatie.FAMILIERECHTELIJKE_BETREKKING.equals(relatie.getSoortRelatie())) {
+                getOnderzoekMapper().mapOnderzoek(relatie, migratieRelatie.getSoortRelatieCode(), Element.FAMILIERECHTELIJKEBETREKKING_SOORTCODE);
+            } else if (SoortRelatie.HUWELIJK.equals(relatie.getSoortRelatie())) {
+                getOnderzoekMapper().mapOnderzoek(historieVoorOnderzoek, migratieRelatie.getSoortRelatieCode(), Element.HUWELIJK_STANDAARD);
+                getOnderzoekMapper().mapOnderzoek(relatie, migratieRelatie.getSoortRelatieCode(), Element.HUWELIJK_SOORTCODE);
+            } else if (SoortRelatie.GEREGISTREERD_PARTNERSCHAP.equals(relatie.getSoortRelatie())) {
+                getOnderzoekMapper().mapOnderzoek(historieVoorOnderzoek, migratieRelatie.getSoortRelatieCode(), Element.GEREGISTREERDPARTNERSCHAP_STANDAARD);
+                getOnderzoekMapper().mapOnderzoek(relatie, migratieRelatie.getSoortRelatieCode(), Element.GEREGISTREERDPARTNERSCHAP_SOORTCODE);
+            } else {
+                throw new IllegalStateException(ONBEKENDE_OF_ONJUISTE_SOORT_RELATIE);
+            }
         }
-        getOnderzoekMapper().mapOnderzoek(relatie, migratieRelatie.getSoortRelatieCode(), elementInOnderzoek);
     }
 
     private void valideerGemeenteCodeVanGroepen(final BrpSoortRelatieCode brpSoortRelatieCode, final BrpStapel<BrpRelatieInhoud> relatieStapel) {

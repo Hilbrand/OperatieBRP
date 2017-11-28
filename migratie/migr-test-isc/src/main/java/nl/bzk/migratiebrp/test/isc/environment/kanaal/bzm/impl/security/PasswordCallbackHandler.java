@@ -10,7 +10,6 @@ import java.io.IOException;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import org.apache.ws.security.WSPasswordCallback;
 
 /**
  * Callback class die wordt gebruikt in de {@link org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor
@@ -25,11 +24,11 @@ public class PasswordCallbackHandler implements CallbackHandler {
             throw new IllegalArgumentException("Kan antwoordbericht niet ondertekenen daar er geen wachtwoord callback beschikbaar is.");
         }
 
-        if (callbacks[0] instanceof WSPasswordCallback) {
-            final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
-            pc.setPassword(SecurityProperties.getPrivateKeystorePassword());
-        } else {
-            throw new UnsupportedCallbackException(callbacks[0]);
-        }
+//        if (callbacks[0] instanceof WSPasswordCallback) {
+//            final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+//            pc.setPassword(SecurityProperties.getPrivateKeystorePassword());
+//        } else {
+        throw new UnsupportedCallbackException(callbacks[0]);
+//        }
     }
 }

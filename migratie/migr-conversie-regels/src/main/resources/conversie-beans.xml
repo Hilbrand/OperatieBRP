@@ -21,6 +21,8 @@
     <util:map id="historieVariantMap" key-type="java.lang.Class">
         <entry key="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNummerverwijzingInhoud"
                value-ref="lo3HistorieConversieVariantLB23"/>
+        <entry key="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBuitenlandsPersoonsnummerInhoud"
+               value-ref="lo3HistorieConversieVariantLB22"/>
         <entry key="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNaamgebruikInhoud"
                value-ref="lo3HistorieConversieVariantLB22"/>
         <entry key="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud"
@@ -29,6 +31,8 @@
                value-ref="lo3HistorieConversieVariantLB22"/>
         <entry key="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBehandeldAlsNederlanderIndicatieInhoud"
                value-ref="lo3HistorieConversieVariantLB23"/>
+        <entry key="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnverwerktDocumentAanwezigIndicatieInhoud"
+               value-ref="lo3HistorieConversieVariantLB24"/>
         <entry key="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud"
                value-ref="lo3HistorieConversieVariantLB24"/>
         <entry key="nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud"

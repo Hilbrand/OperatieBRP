@@ -6,8 +6,8 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.transformeer;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AbstractMaterieleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AbstractMaterieleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
@@ -31,16 +31,14 @@ public final class TransformatieDw023 extends AbstractTransformatie {
         for (final Verschil verschil : verschillen) {
             final EntiteitSleutel verschilSleutel = (EntiteitSleutel) verschil.getSleutel();
             if (AbstractMaterieleHistorie.ACTIE_AANPASSING_GELDIGHEID.equals(verschilSleutel.getVeld())
-                && VerschilType.ELEMENT_AANGEPAST.equals(verschil.getVerschilType()))
-            {
+                    && VerschilType.ELEMENT_AANGEPAST.equals(verschil.getVerschilType())) {
                 /*
                  * Een verschil binnen een actie wordt geinterpreteerd als een ELEMENT_AANGEPAST van het historisch
                  * voorkomen (de eigenaar).
                  */
                 isAagGewijzigd = true;
             } else if (!AbstractMaterieleHistorie.DATUM_EINDE_GELDIGHEID.equals(verschilSleutel.getVeld())
-                       || !VerschilType.ELEMENT_AANGEPAST.equals(verschil.getVerschilType()))
-            {
+                    || !VerschilType.ELEMENT_AANGEPAST.equals(verschil.getVerschilType())) {
                 isOverigeWijziging = true;
             }
         }
@@ -49,10 +47,9 @@ public final class TransformatieDw023 extends AbstractTransformatie {
 
     @Override
     public VerschilGroep execute(
-        final VerschilGroep verschilGroep,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final DeltaBepalingContext deltaBepalingContext)
-    {
+            final VerschilGroep verschilGroep,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final DeltaBepalingContext deltaBepalingContext) {
         return maakMRijEnNieuweRijVerschilVoorVerschilGroep(verschilGroep, actieVervalTbvLeveringMuts, false, true, deltaBepalingContext);
     }
 

@@ -21,8 +21,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -39,32 +39,30 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
-import nl.bzk.brp.bijhouding.business.dto.bijhouding.BijhoudingResultaat;
-import nl.bzk.brp.bijhouding.business.service.BijhoudingsBerichtVerwerker;
-import nl.bzk.brp.bijhouding.business.stappen.context.BijhoudingBerichtContext;
-import nl.bzk.brp.blobifier.service.BlobifierService;
-import nl.bzk.brp.expressietaal.Context;
-import nl.bzk.brp.expressietaal.Expressie;
-import nl.bzk.brp.expressietaal.ExpressieType;
-import nl.bzk.brp.expressietaal.Keyword;
-import nl.bzk.brp.expressietaal.expressies.functies.FunctieExpressie;
-import nl.bzk.brp.expressietaal.expressies.functies.Functieberekening;
-import nl.bzk.brp.expressietaal.parser.BRPExpressies;
-import nl.bzk.brp.expressietaal.parser.ParserResultaat;
-import nl.bzk.brp.levering.business.bepalers.SleutelrubriekGewijzigdBepaler;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.PartijCodeAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Partij;
-import nl.bzk.brp.model.basis.BerichtIdentificeerbaar;
-import nl.bzk.brp.model.basis.CommunicatieIdMap;
-import nl.bzk.brp.model.bericht.ber.BerichtBericht;
-import nl.bzk.brp.model.bericht.kern.PersoonBericht;
-import nl.bzk.brp.model.bijhouding.BijhoudingsBericht;
-import nl.bzk.brp.model.bijhouding.RegistreerOverlijdenBericht;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.AdministratieveHandelingModel;
-import nl.bzk.brp.model.validatie.Melding;
-import nl.bzk.brp.webservice.business.service.ObjectSleutelService;
-import nl.bzk.brp.webservice.business.stappen.BerichtenIds;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.BijhoudingResultaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.services.objectsleutel.ObjectSleutelService;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.LoggingContext;
+import nl.bzk.brp.bijhouding.bericht.model.BijhoudingAntwoordBericht;
+import nl.bzk.brp.bijhouding.bericht.model.BijhoudingVerzoekBericht;
+import nl.bzk.brp.bijhouding.bericht.model.MeldingElement;
+import nl.bzk.brp.bijhouding.business.BijhoudingService;
+import nl.bzk.brp.bijhouding.business.BijhoudingServiceImpl;
+import nl.bzk.brp.domain.expressie.Expressie;
+import nl.bzk.brp.domain.expressie.ExpressieException;
+import nl.bzk.brp.domain.expressie.functie.Functie;
+import nl.bzk.brp.domain.expressie.functie.FunctieFactory;
+import nl.bzk.brp.domain.expressie.parser.ExpressieParser;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
+import nl.bzk.brp.service.algemeen.expressie.ExpressieService;
+import nl.bzk.migratiebrp.bericht.model.brp.factory.BrpBerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.brp.impl.RegistreerOverlijdenBijhouding;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.exceptions.Lo3SyntaxException;
@@ -78,12 +76,7 @@ import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerLo3NaarBrpService;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.PreconditiesService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.PersoonslijstPersisteerResultaat;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.SyncParameters;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
@@ -96,23 +89,17 @@ import nl.bzk.migratiebrp.test.dal.TestCasusOutputStap;
 import nl.bzk.migratiebrp.test.sleutelrubrieken.ConversieTestResultaat.TestBijhoudingResultaat;
 import nl.bzk.migratiebrp.test.sleutelrubrieken.brp.FunctieGewijzigd;
 import nl.bzk.migratiebrp.util.common.JdbcConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.LoggingContext;
 import nl.bzk.migratiebrp.util.excel.ExcelAdapter;
 import nl.bzk.migratiebrp.util.excel.ExcelAdapterException;
 import nl.bzk.migratiebrp.util.excel.ExcelAdapterImpl;
 import nl.bzk.migratiebrp.util.excel.ExcelData;
-import org.apache.poi.util.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
-import org.jibx.runtime.JiBXException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -128,34 +115,34 @@ public final class ConversieTestCasus extends TestCasus {
 
     private static final int MILLIS_IN_SECOND = 1000;
 
-    // private static final TestCasusOutputStap STAP_LO3_NAAR_BRP = TestCasusOutputStap.STAP_BRP;
     private static final String SUFFIX_SOORTEN_ADM_HAND = "soorten-admhnd";
 
-    private static final ExcelAdapter           EXCEL_ADAPTER = new ExcelAdapterImpl();
-    private static final Lo3PersoonslijstParser LO3_PARSER    = new Lo3PersoonslijstParser();
+    private static final ExcelAdapter EXCEL_ADAPTER = new ExcelAdapterImpl();
+    private static final Lo3PersoonslijstParser LO3_PARSER = new Lo3PersoonslijstParser();
 
     @Inject
     private ConverteerNaarExpressieService converteerNaarExpressieService;
 
-    private Lo3SyntaxControle           syntaxControle;
-    private PreconditiesService         preconditieService;
+    private Lo3SyntaxControle syntaxControle;
+    private PreconditiesService preconditieService;
     private ConverteerLo3NaarBrpService converteerLo3NaarBrpService;
-    private BrpDalService               brpDalService;
-    private SyncParameters              syncParameters;
-    private DataSource                  migratieDataSource;
-    private EntityManager               migratieEntityManager;
+    private BrpPersoonslijstService persoonslijstService;
+    private SyncParameters syncParameters;
+    private DataSource migratieDataSource;
+    private EntityManager migratieEntityManager;
 
-    private PlatformTransactionManager     transactionManagerMaster;
-    private BlobifierService               blobifierService;
-    private SleutelrubriekGewijzigdBepaler sleutelrubriekGewijzigdBepaler;
+    private PlatformTransactionManager transactionManagerMaster;
+
+    private nl.bzk.brp.service.algemeen.blob.PersoonslijstService persoonsgegevensService;
+
+    private ExpressieService expressieService;
 
     private EntityManager brpEntityManager;
-    private String        serializer;
+    private String serializer;
 
-    private BijhoudingsBerichtVerwerker bijhoudingsBerichtVerwerker;
-    private ObjectSleutelService        objectSleutelService;
+    private ObjectSleutelService objectSleutelService;
 
-    private final File   inputFile;
+    private final File inputFile;
     private final String inputSleutelRubrieken;
 
     /**
@@ -214,11 +201,6 @@ public final class ConversieTestCasus extends TestCasus {
         return new Object() {
 
             @Inject
-            public void setBijhoudingsBerichtVerwerker(final BijhoudingsBerichtVerwerker bijhoudingsBerichtVerwerker) {
-                ConversieTestCasus.this.bijhoudingsBerichtVerwerker = bijhoudingsBerichtVerwerker;
-            }
-
-            @Inject
             public void setObjectSleutelService(final ObjectSleutelService objectSleutelService) {
                 ConversieTestCasus.this.objectSleutelService = objectSleutelService;
             }
@@ -233,9 +215,9 @@ public final class ConversieTestCasus extends TestCasus {
 
         // Override functie gewijzigd voor debug
         @SuppressWarnings("unchecked")
-        final Dictionary<Keyword, Functieberekening> functieMapping =
-            (Dictionary<Keyword, Functieberekening>) getStaticField(FunctieExpressie.class, "KEYWORD_MAPPING");
-        functieMapping.put(Keyword.GEWIJZIGD, new FunctieGewijzigd());
+        final FunctieFactory factory = (FunctieFactory) getStaticField(FunctieFactory.class, "INSTANCE");
+        final Map<String, Functie> functieMapping = (Map<String, Functie>) ReflectionTestUtils.getField(factory, "keywordMapping");
+        functieMapping.put("GEWIJZIGD", new FunctieGewijzigd());
 
         try {
             Logging.initContext();
@@ -302,7 +284,6 @@ public final class ConversieTestCasus extends TestCasus {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
-
     private void initierenDatabase(final ConversieTestResultaat result) {
         initierenBrpDatabase(migratieDataSource);
 
@@ -355,7 +336,7 @@ public final class ConversieTestCasus extends TestCasus {
     /**
      * Test conversie lo3 naar brp.
      *
-     * @param inputSleutelRubrieken
+     * @param sleutelRubrieken
      *            lo3
      * @param result
      *            result
@@ -367,11 +348,11 @@ public final class ConversieTestCasus extends TestCasus {
             Logging.initContext();
             final Lo3Herkomst herkomst = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_35, -1, -1);
             final String attenderingsCriterium = converteerNaarExpressieService.converteerSleutelRubrieken(sleutelRubrieken, herkomst);
-            System.out.println("attenderingscriterium: " + attenderingsCriterium);
+            LOG.info("attenderingscriterium: " + attenderingsCriterium);
             final String htmlAttenderingsCriterium = debugOutputString(attenderingsCriterium, TestCasusOutputStap.STAP_BRP, null);
             // Controleer verwachting
             final String expectedPlatteTekst = leesVerwachteString(TestCasusOutputStap.STAP_BRP, null);
-            System.out.println("attenderingscriterium.expected: " + expectedPlatteTekst);
+            LOG.info("attenderingscriterium.expected: " + expectedPlatteTekst);
             if (expectedPlatteTekst != null) {
                 if (!expectedPlatteTekst.equals(attenderingsCriterium)) {
                     result.setLo3NaarBrp(new TestStap(TestStatus.NOK, "Er zijn inhoudelijke verschillen", htmlAttenderingsCriterium, null));
@@ -412,7 +393,6 @@ public final class ConversieTestCasus extends TestCasus {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
-
     private Bijhouding initierenBijhouding(final ConversieTestResultaat result) {
         final Bijhouding bijhouding = new Bijhouding();
 
@@ -446,12 +426,17 @@ public final class ConversieTestCasus extends TestCasus {
 
             if (bzmBijhoudingFile.exists() && bzmBijhoudingFile.isFile() && bzmBijhoudingFile.canRead()) {
                 LOG.info("Bijhouding door middel van BZM bericht");
-                final AdministratieveHandelingModel administratieveHandeling =
-                        initierenBzmBijhouding(bzmBijhoudingFile, result, bijhouding.getPersoonId());
-                bijhouding.setAdministratieveHandelingId(administratieveHandeling.getID());
+                final Long administratieveHandelingId = initierenBzmBijhouding(bzmBijhoudingFile, result, bijhouding.getPersoonId());
+                bijhouding.setAdministratieveHandelingId(administratieveHandelingId);
+                // Lees persoon
+                final Persoonslijst persoonsgegevens = persoonsgegevensService.getById(bijhouding.getPersoonId());
+
+                // Lees administratieve handeling
+                final nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling administratieveHandeling =
+                        bepaalAdministratieveHandeling(persoonsgegevens, administratieveHandelingId);
                 LOG.info("Bijhouding; administratieve handelingen={}", bijhouding.getAdministratieveHandelingIds());
 
-                controleerSoortenAdministratieveHandeling(administratieveHandeling.getSoort().getWaarde().toString(), result);
+                controleerSoortenAdministratieveHandeling(administratieveHandeling.getSoort().name(), result);
             } else if (lo3BijhoudingFile.exists() && lo3BijhoudingFile.isFile() && lo3BijhoudingFile.canRead()) {
                 LOG.info("Bijhouden door middel van GBA synchronisatie");
                 final PersoonslijstPersisteerResultaat gbaBijhouding = initierenPersoon(lo3BijhoudingFile, 0, Lo3BerichtenBron.SYNCHRONISATIE);
@@ -592,12 +577,15 @@ public final class ConversieTestCasus extends TestCasus {
 
             // Controleer precondities
             final Lo3Persoonslijst schoneLo3Persoonslijst;
+
+
             try {
                 schoneLo3Persoonslijst = preconditieService.verwerk(lo3Persoonslijst);
             } catch (final OngeldigePersoonslijstException e) {
                 debugOutputXmlEnHtml(Logging.getLogging(), TestCasusOutputStap.STAP_ROND, "-precondities");
                 throw e;
             }
+
             // LOG.info("Lo3 persoonslijst: {}", lo3Pl);
 
             final BrpPersoonslijst brpPl = converteerLo3NaarBrpService.converteerLo3Persoonslijst(schoneLo3Persoonslijst);
@@ -607,29 +595,35 @@ public final class ConversieTestCasus extends TestCasus {
             final Lo3Bericht lo3Bericht = new Lo3Bericht("persoon", bron, new Timestamp(System.currentTimeMillis()), "ExcelData", true);
             LOG.info("Logging: {}", lo3Bericht);
 
-            final boolean isAnummerWijziging;
-            final long anummerTeVervangenPersoon;
-            if (isAnummerWijziging(excelData.getHeaders())) {
-                isAnummerWijziging = true;
-                anummerTeVervangenPersoon = Long.parseLong(excelData.getHeaders()[4]);
-            } else {
-                isAnummerWijziging = false;
-                anummerTeVervangenPersoon = brpPl.getActueelAdministratienummer();
+            final DefaultTransactionDefinition persisteerTransactionDefinition = new DefaultTransactionDefinition();
+            persisteerTransactionDefinition.setName("Testcase-persisteerPersoonslijst");
+            persisteerTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            final TransactionStatus persisteerTransaction = transactionManagerMaster.getTransaction(persisteerTransactionDefinition);
+
+            PersoonslijstPersisteerResultaat result = null;
+            try {
+                result = persoonslijstService.persisteerPersoonslijst(brpPl, lo3Bericht);
+            } catch (Exception e) {
+                persisteerTransaction.setRollbackOnly();
+            } finally {
+                if (persisteerTransaction.isRollbackOnly()) {
+                    LOG.info("Rollback persisteer transactie");
+                    transactionManagerMaster.rollback(persisteerTransaction);
+                } else {
+                    LOG.info("Commit persisteer transactie");
+                    transactionManagerMaster.commit(persisteerTransaction);
+                }
             }
 
-            LOG.info("A-nummer wijziging? {}", isAnummerWijziging);
-            LOG.info("A-nummer te vervangen persoon: {}", anummerTeVervangenPersoon);
-
-            final PersoonslijstPersisteerResultaat result =
-                    brpDalService.persisteerPersoonslijst(brpPl, anummerTeVervangenPersoon, isAnummerWijziging, lo3Bericht);
             LOG.info("Result: {}", result);
-            LOG.info("Persoon: {}", result.getPersoon());
-            LOG.info("Administratieve handeling(en): {}", result.getAdministratieveHandelingen());
+            if (result != null) {
+                LOG.info("Persoon: {}", result.getPersoon());
+                LOG.info("Administratieve handeling(en): {}", result.getAdministratieveHandelingen());
 
-            LOG.info("Persoon.id: {}", result.getPersoon().getId());
-            // final PersoonHisVolledig persoonHisVolledig = blobifierService.leesBlob(result.getKey().getId());
-            // LOG.info("PersoonHisVolledig: {}", persoonHisVolledig);
-
+                LOG.info("Persoon.id: {}", result.getPersoon().getId());
+                // final PersoonHisVolledig persoonHisVolledig = blobifierService.leesBlob(result.getKey().getId());
+                // LOG.info("PersoonHisVolledig: {}", persoonHisVolledig);
+            }
             return result;
         } finally {
             LoggingContext.reset();
@@ -637,78 +631,60 @@ public final class ConversieTestCasus extends TestCasus {
         }
     }
 
-    private boolean isAnummerWijziging(final String[] headers) {
-        return headers.length == 5 && "Lg01".equals(headers[1]) && isAnummer(headers[3]) && isAnummer(headers[4]);
-    }
-
-    private boolean isAnummer(final String value) {
-        try {
-            if (value != null && !"".equals(value) && Long.parseLong(value) > 0) {
-                return true;
-            }
-        } catch (final NumberFormatException e) {
-            // Ignore
-            LOG.debug("NumberFormatException bij a-nummer", e);
-        }
-        return false;
-    }
-
-    private AdministratieveHandelingModel initierenBzmBijhouding(final File bijhoudingFile, final ConversieTestResultaat result, final Integer persoonId) {
+    private Long initierenBzmBijhouding(final File bijhoudingFile, final ConversieTestResultaat result, final Long persoonId) {
         try (FileInputStream fis = new FileInputStream(bijhoudingFile)) {
 
-            final BijhoudingsBericht bericht = (BijhoudingsBericht) leesXmlString(fis, RegistreerOverlijdenBericht.class);
-            final Integer partijCode = Integer.valueOf(bericht.getStuurgegevens().getZendendePartijCode());
-            final String objectSleutel = objectSleutelService.genereerObjectSleutelString(persoonId, partijCode);
-            vervangObjectSleutel(bericht, objectSleutel);
+            final BijhoudingVerzoekBericht bericht = (BijhoudingVerzoekBericht) leesXmlString(fis, RegistreerOverlijdenBijhouding.class);
 
-            final BijhoudingBerichtContext context =
-                    new BijhoudingBerichtContext(
-                        new BerichtenIds(1L, 1L),
-                        new Partij(null, null, new PartijCodeAttribuut(partijCode), null, null, null, null, null, null),
-                        null,
-                        bericht.getCommunicatieIdMap());
+            final BijhoudingService bijhoudingservice = new BijhoudingServiceImpl(null,
+                    null, null, null, null, null, null, null);
+            final BijhoudingAntwoordBericht bijhoudingResultaat = bijhoudingservice.verwerkBrpBericht(bericht);
 
-            final BijhoudingResultaat bijhoudingResultaat = bijhoudingsBerichtVerwerker.verwerkBericht(bericht, context);
+            // final BijhoudingBerichtContext context =
+            // new BijhoudingBerichtContext(
+            // new BerichtenIds(1L, 1L),
+            // new Partij(null, null, new PartijCodeAttribuut(partijCode), null, null, null, null, null, null),
+            // null,
+            // bericht.getCommunicatieIdMap());
+            //
+            // final BijhoudingResultaat bijhoudingResultaat = bijhoudingsBerichtVerwerker.verwerkBrpBericht(bericht,
+            // context);
             LOG.info("Bijhouding resultaat: {}", bijhoudingResultaat);
 
             if (bijhoudingResultaat.getMeldingen() != null && !bijhoudingResultaat.getMeldingen().isEmpty()) {
-                for (final Melding melding : bijhoudingResultaat.getMeldingen()) {
-                    LOG.info("Melding: {} - {}", melding.getSoort(), melding.getMeldingTekst());
+                for (final MeldingElement melding : bijhoudingResultaat.getMeldingen()) {
+                    LOG.info("Melding: {} - {}", melding.getSoortNaam(), melding.getMelding());
                 }
             }
 
-            if (!bijhoudingResultaat.isSuccesvol()) {
+            if (BijhoudingResultaat.DEELS_UITGESTELD.getNaam().equals(bijhoudingResultaat.getResultaat().getVerwerking().getWaarde())) {
                 throw new IllegalStateException("Bijhouding mislukt");
             }
-            LOG.info("Administratieve handeling: {}", bijhoudingResultaat.getAdministratieveHandeling());
-            return bijhoudingResultaat.getAdministratieveHandeling();
+            LOG.info("Administratieve handeling: {}", bijhoudingResultaat.getAdministratieveHandelingID());
+            return bijhoudingResultaat.getAdministratieveHandelingID();
 
+            // return null;
         } catch (final IOException e) {
             final Foutmelding fout = new Foutmelding("Fout tijdens initieren (persoonMutatie).", e);
             final String htmlFout = debugOutputXmlEnHtml(fout, TestCasusOutputStap.STAP_ROND, SUFFIX_EXCEPTION);
             result.setBijhouding(new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (initieren persoonMutatie)", htmlFout, null));
         }
-
         return null;
     }
 
-    private void vervangObjectSleutel(final BerichtBericht bericht, final String objeSleutel) {
-        final CommunicatieIdMap idMap = bericht.getCommunicatieIdMap();
-        for (final List<BerichtIdentificeerbaar> idList : idMap.values()) {
-            if (idList != null && idList.get(0) != null && idList.get(0) instanceof PersoonBericht) {
-                final PersoonBericht pb = (PersoonBericht) idList.get(0);
-                pb.setObjectSleutel(objeSleutel);
-            }
-        }
-    }
-
-    private static Object leesXmlString(final InputStream xmlInputStrem, final Class<?> clazz) {
+    // private void vervangObjectSleutel(final Bericht bericht, final String objeSleutel) {
+    // final CommunicatieIdMap idMap = bericht.getCommunicatieIdMap();
+    // for (final List<BerichtIdentificeerbaar> idList : idMap.values()) {
+    // if (idList != null && idList.get(0) != null && idList.get(0) instanceof PersoonBericht) {
+    // final PersoonBericht pb = (PersoonBericht) idList.get(0);
+    // pb.setObjectSleutel(objeSleutel);
+    // }
+    // }
+    // }
+    private static Object leesXmlString(final InputStream xmlInputStream, final Class<?> clazz) {
         try {
-            final IBindingFactory bfact = BindingDirectory.getFactory(clazz);
-
-            final IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
-            return uctx.unmarshalDocument(xmlInputStrem, null);
-        } catch (final JiBXException e) {
+            return BrpBerichtFactory.SINGLETON.getBericht(IOUtils.toString(xmlInputStream));
+        } catch (final IOException e) {
             LOG.info("Probleem bij lees xml string. Returning null.", e);
         }
         return null;
@@ -719,8 +695,7 @@ public final class ConversieTestCasus extends TestCasus {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
-
-    private void blobify(final Integer persoonId, final ConversieTestResultaat result, final String suffix) {
+    private void blobify(final Long persoonId, final ConversieTestResultaat result, final String suffix) {
         if (persoonId == null) {
             return;
         }
@@ -731,7 +706,7 @@ public final class ConversieTestCasus extends TestCasus {
         final TransactionStatus blobifyTransaction = transactionManagerMaster.getTransaction(blobifyTransactionDefinition);
 
         try {
-            blobifierService.blobify(persoonId, true);
+            persoonsgegevensService.getById(persoonId);
         } catch (final Exception e) {
             LOG.warn("Fout tijdens blobificeren", e);
             blobifyTransaction.setRollbackOnly();
@@ -799,9 +774,8 @@ public final class ConversieTestCasus extends TestCasus {
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
-
     private void testUitvoerenAttenderingsCriterium(
-        final Integer persoonId,
+        final Long persoonId,
         final Long administratieveHandelingId,
         final String brpAttenderingsCriterium,
         final TestBijhoudingResultaat result)
@@ -817,26 +791,24 @@ public final class ConversieTestCasus extends TestCasus {
         final TransactionStatus testcaseTransaction = transactionManagerMaster.getTransaction(testcaseTransactionDefinition);
         try {
             // Lees persoon
-            final PersoonHisVolledig persoonHisVolledig = blobifierService.leesBlob(persoonId);
+            final Persoonslijst persoonsgegevens = persoonsgegevensService.getById(persoonId);
 
             // Lees administratieve handeling
-            final AdministratieveHandelingModel administratieveHandeling =
-                    brpEntityManager.find(AdministratieveHandelingModel.class, administratieveHandelingId);
+            final nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling administratieveHandeling =
+                    bepaalAdministratieveHandeling(persoonsgegevens, administratieveHandelingId);
             if (administratieveHandeling == null) {
-                throw new IllegalArgumentException("Administratieve handeling kon niet uit de database worden gelezen.");
+                throw new IllegalArgumentException("Administratieve handeling kon niet gevonden worden in persoonsgegevens.");
             }
-            result.setSoortAdministratieveHandeling(administratieveHandeling.getSoort().getWaarde().toString());
+            result.setSoortAdministratieveHandeling(administratieveHandeling.getSoort().toString());
 
             // Parse expressie
             LOG.info("Expressie = {}", brpAttenderingsCriterium);
-            final Context expressieContext = new Context();
-            expressieContext.declareer("oud", ExpressieType.PERSOON);
-            expressieContext.declareer("nieuw", ExpressieType.PERSOON);
-            final ParserResultaat parserResultaat = BRPExpressies.parse(brpAttenderingsCriterium, expressieContext);
-            final Expressie expressie = parserResultaat.getExpressie();
-            if (expressie == null) {
-                LOG.info("Expressie foutmelding = {}", parserResultaat.getFoutmelding());
-                throw new IllegalArgumentException("BRP expressie kan niet geparsed worden: " + parserResultaat.getFoutmelding());
+            final Expressie expressie;
+            try {
+                expressie = ExpressieParser.parse(brpAttenderingsCriterium);
+            } catch (ExpressieException e) {
+                LOG.info("Expressie foutmelding = {}", e.getMessage());
+                throw new IllegalArgumentException("BRP expressie kan niet geparsed worden: " + e.getMessage(), e);
             }
             LOG.info("Expressie parser resultaat = {}", expressie);
 
@@ -845,7 +817,7 @@ public final class ConversieTestCasus extends TestCasus {
             final boolean resultaat;
             try {
                 // Uitvoeren expressie
-                resultaat = sleutelrubriekGewijzigdBepaler.bepaalAttributenGewijzigd(persoonHisVolledig, administratieveHandeling, expressie, null);
+                resultaat = expressieService.bepaalPersoonGewijzigd(persoonsgegevens.beeldVan().vorigeHandeling(), persoonsgegevens, expressie);
             } finally {
                 FunctieGewijzigd.setLogger(null);
             }
@@ -871,6 +843,19 @@ public final class ConversieTestCasus extends TestCasus {
         }
     }
 
+    private nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling bepaalAdministratieveHandeling(
+        final Persoonslijst persoonsgegevens,
+        final Long administratieveHandelingId)
+    {
+        for (final nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling administratieveHandeling : persoonsgegevens.getAdministratieveHandelingen()) {
+            if (administratieveHandeling.getId().equals(administratieveHandelingId)) {
+                return administratieveHandeling;
+            }
+        }
+
+        return null;
+    }
+
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
     /* ************************************************************************************************************* */
@@ -881,7 +866,8 @@ public final class ConversieTestCasus extends TestCasus {
      * Lokale data class voor de test.
      */
     private static final class Bijhouding {
-        private Integer persoonId;
+
+        private Long persoonId;
         private List<Long> administratieveHandelingIds;
 
         /**
@@ -889,7 +875,7 @@ public final class ConversieTestCasus extends TestCasus {
          *
          * @return persoon id
          */
-        public Integer getPersoonId() {
+        public Long getPersoonId() {
             return persoonId;
         }
 
@@ -899,7 +885,7 @@ public final class ConversieTestCasus extends TestCasus {
          * @param persoonId
          *            persoon id
          */
-        public void setPersoonId(final Integer persoonId) {
+        public void setPersoonId(final Long persoonId) {
             this.persoonId = persoonId;
         }
 
@@ -983,14 +969,14 @@ public final class ConversieTestCasus extends TestCasus {
         }
 
         /**
-         * Zet de waarde van brp dal service.
+         * Zet de waarde van brp persoonslijst service.
          *
-         * @param injectBrpDalService
-         *            brp dal service
+         * @param injectBrpPersoonslijstService
+         *            brp persoonslijst service
          */
         @Inject
-        public void setBrpDalService(final BrpDalService injectBrpDalService) {
-            brpDalService = injectBrpDalService;
+        public void setBrpPersoonslijstService(final BrpPersoonslijstService injectBrpPersoonslijstService) {
+            persoonslijstService = injectBrpPersoonslijstService;
         }
 
         /**
@@ -1034,14 +1020,14 @@ public final class ConversieTestCasus extends TestCasus {
     private class BeanForBrpLeveringAutowire {
 
         /**
-         * Zet de waarde van blobifier service.
+         * Zet de waarde van persoonsgegevens service.
          *
-         * @param injectBlobifierService
-         *            blobifier service
+         * @param injectPersoonsgegevensService
+         *            persoonsgegevens service
          */
         @Inject
-        public void setBlobifierService(final BlobifierService injectBlobifierService) {
-            blobifierService = injectBlobifierService;
+        public void setPersoonsgegevensService(final nl.bzk.brp.service.algemeen.blob.PersoonslijstService injectPersoonsgegevensService) {
+            persoonsgegevensService = injectPersoonsgegevensService;
         }
 
         /**
@@ -1051,7 +1037,7 @@ public final class ConversieTestCasus extends TestCasus {
          *            transaction manager master
          */
         @Inject
-        @Named("lezenSchrijvenTransactionManager")
+        @Named("masterTransactionManager")
         public void setTransactionManagerMaster(final PlatformTransactionManager injectTransactionManagerMaster) {
             transactionManagerMaster = injectTransactionManagerMaster;
         }
@@ -1059,12 +1045,12 @@ public final class ConversieTestCasus extends TestCasus {
         /**
          * Zet de waarde van sleutelrubriek gewijzigd bepaler.
          *
-         * @param injectSleutelrubriekGewijzigdBepaler
+         * @param injectExpressieService
          *            sleutelrubriek gewijzigd bepaler
          */
         @Inject
-        public void setBlobifierService(final SleutelrubriekGewijzigdBepaler injectSleutelrubriekGewijzigdBepaler) {
-            sleutelrubriekGewijzigdBepaler = injectSleutelrubriekGewijzigdBepaler;
+        public void setSleutelrubriekGewijzigdBepaler(final ExpressieService injectExpressieService) {
+            expressieService = injectExpressieService;
         }
 
         /**
@@ -1073,7 +1059,7 @@ public final class ConversieTestCasus extends TestCasus {
          * @param injectBrpEntityManager
          *            entity manager
          */
-        @PersistenceContext(unitName = "nl.bzk.brp.alleenlezen")
+        @PersistenceContext(unitName = "nl.bzk.brp.master")
         public void setEntityManager(final EntityManager injectBrpEntityManager) {
             brpEntityManager = injectBrpEntityManager;
         }

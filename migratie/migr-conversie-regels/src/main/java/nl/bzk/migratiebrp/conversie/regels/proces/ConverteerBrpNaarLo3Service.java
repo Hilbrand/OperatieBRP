@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public interface ConverteerBrpNaarLo3Service {
     /**
      * Converteert een BrpPersoonslijst naar een Lo3Persoonslijst. Hiervoor worden de volgende stappen uitgevoerd:
-     * 
+     *
      * <ul>
      * <li>stap 1: bepalen gegevens in gegevens set</li>
      * <li>stap 2: bepalen materiele historie</li>
@@ -29,9 +29,7 @@ public interface ConverteerBrpNaarLo3Service {
      * <li>Stap 8: Opschorten in geval van emigratie</li>
      * <li>Stap 9: Sorteren</li>
      * </ul>
-     * 
-     * @param teConverterenPersoonslijst
-     *            de te converteren BRP persoonslijst
+     * @param teConverterenPersoonslijst de te converteren BRP persoonslijst
      * @return een Lo3Persoonslijst
      */
     Lo3Persoonslijst converteerBrpPersoonslijst(final BrpPersoonslijst teConverterenPersoonslijst);

@@ -23,18 +23,14 @@ public final class AdellijkeTitelPredikaatPaar {
     private final BrpGeslachtsaanduidingCode geslachtsaanduiding;
 
     /**
-     * @param adellijkeTitel
-     *            de adellijke titel
-     * @param predikaat
-     *            het predikaat
-     * @param geslachtsaanduiding
-     *            de geslachtsaanduiding, mag niet null zijn
+     * @param adellijkeTitel de adellijke titel
+     * @param predikaat het predikaat
+     * @param geslachtsaanduiding de geslachtsaanduiding, mag niet null zijn
      */
     public AdellijkeTitelPredikaatPaar(
-        final BrpCharacter adellijkeTitel,
-        final BrpCharacter predikaat,
-        final BrpGeslachtsaanduidingCode geslachtsaanduiding)
-    {
+            final BrpCharacter adellijkeTitel,
+            final BrpCharacter predikaat,
+            final BrpGeslachtsaanduidingCode geslachtsaanduiding) {
         if (geslachtsaanduiding == null) {
             throw new NullPointerException("geslachtsaanduiding mag niet null zijn");
         }
@@ -45,7 +41,6 @@ public final class AdellijkeTitelPredikaatPaar {
 
     /**
      * Geef de waarde van adellijke titel.
-     *
      * @return de adellijke titel, of null
      */
     public BrpCharacter getAdellijkeTitel() {
@@ -54,7 +49,6 @@ public final class AdellijkeTitelPredikaatPaar {
 
     /**
      * Geef de waarde van predikaat.
-     *
      * @return het predikaat, of null
      */
     public BrpCharacter getPredikaat() {
@@ -63,7 +57,6 @@ public final class AdellijkeTitelPredikaatPaar {
 
     /**
      * Geef de waarde van geslachtsaanduiding.
-     *
      * @return de geslachtsaanduiding waarop de title of predikaat betrekking heeft
      */
     public BrpGeslachtsaanduidingCode getGeslachtsaanduiding() {
@@ -80,9 +73,9 @@ public final class AdellijkeTitelPredikaatPaar {
         }
         final AdellijkeTitelPredikaatPaar castOther = (AdellijkeTitelPredikaatPaar) other;
         return new EqualsBuilder().append(adellijkeTitel, castOther.adellijkeTitel)
-                                  .append(predikaat, castOther.predikaat)
-                                  .append(geslachtsaanduiding, castOther.geslachtsaanduiding)
-                                  .isEquals();
+                .append(predikaat, castOther.predikaat)
+                .append(geslachtsaanduiding, castOther.geslachtsaanduiding)
+                .isEquals();
     }
 
     @Override
@@ -93,9 +86,9 @@ public final class AdellijkeTitelPredikaatPaar {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("adellijkeTitel", adellijkeTitel)
-                                                                          .append("predikaat", predikaat)
-                                                                          .append("geslachtsaanduiding", geslachtsaanduiding)
-                                                                          .toString();
+                .append("predikaat", predikaat)
+                .append("geslachtsaanduiding", geslachtsaanduiding)
+                .toString();
     }
 
 }

@@ -11,18 +11,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import org.junit.Before;
+import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RelatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.StapelVoorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RelatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.StapelVoorkomen;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaVergelijkerResultaat;
@@ -32,16 +36,12 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.decorators.StapelDecorator;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.decorators.StapelVoorkomenDecorator;
 
-import org.junit.Before;
-import org.junit.Test;
-
 /**
  * Unittests voor {@link IstStapelVerschilVerwerker}.
  */
 public class IstStapelVerschilVerwerkerTest extends AbstractDeltaTest {
 
     private Persoon bestaandePersoon;
-    private Persoon nieuwePersoon;
     private VergelijkerResultaat vergelijkerResultaat;
     private DeltaBepalingContext context;
     private IstStapelVerschilVerwerker verwerker;
@@ -49,10 +49,18 @@ public class IstStapelVerschilVerwerkerTest extends AbstractDeltaTest {
     @Before
     public void setUp() {
         bestaandePersoon = maakPersoon(true);
-        nieuwePersoon = maakPersoon(false);
+        final Persoon nieuwePersoon = maakPersoon(false);
+        voegAnummerToeAanPersoon(bestaandePersoon, "1234567890");
+        voegAnummerToeAanPersoon(nieuwePersoon, "0987654321");
         vergelijkerResultaat = new DeltaVergelijkerResultaat();
         context = new DeltaBepalingContext(nieuwePersoon, bestaandePersoon, null, false);
         verwerker = new IstStapelVerschilVerwerker();
+    }
+
+    private void voegAnummerToeAanPersoon(final Persoon persoon, final String anummer) {
+        final PersoonIDHistorie idHistorie = new PersoonIDHistorie(persoon);
+        idHistorie.setAdministratienummer(anummer);
+        persoon.addPersoonIDHistorie(idHistorie);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -144,20 +152,20 @@ public class IstStapelVerschilVerwerkerTest extends AbstractDeltaTest {
 
         final Verschil verwijderdVerschil =
                 new Verschil(
-                    new IstSleutel(bestaandeStapel, null, true),
-                    StapelDecorator.decorate(bestaandeStapel),
-                    null,
-                    VerschilType.ELEMENT_VERWIJDERD,
-                    null,
-                    null);
+                        new IstSleutel(bestaandeStapel, null, true),
+                        StapelDecorator.decorate(bestaandeStapel),
+                        null,
+                        VerschilType.ELEMENT_VERWIJDERD,
+                        null,
+                        null);
         final Verschil nieuwVerschil =
                 new Verschil(
-                    new IstSleutel(nieuweStapel, null, false),
-                    null,
-                    StapelDecorator.decorate(nieuweStapel),
-                    VerschilType.ELEMENT_NIEUW,
-                    null,
-                    null);
+                        new IstSleutel(nieuweStapel, null, false),
+                        null,
+                        StapelDecorator.decorate(nieuweStapel),
+                        VerschilType.ELEMENT_NIEUW,
+                        null,
+                        null);
 
         vergelijkerResultaat.voegToeOfVervangVerschil(verwijderdVerschil);
         vergelijkerResultaat.voegToeOfVervangVerschil(nieuwVerschil);
@@ -176,7 +184,7 @@ public class IstStapelVerschilVerwerkerTest extends AbstractDeltaTest {
         bestaandePersoon.addStapel(bestaandeStapel);
 
         final Verschil verschil =
-                new Verschil(new IstSleutel(bestaandeStapel, Stapel.RELATIES, true), relatie, null, VerschilType.RIJ_VERWIJDERD, null, null);
+                new Verschil(new IstSleutel(bestaandeStapel, Stapel.VELD_RELATIES, true), relatie, null, VerschilType.RIJ_VERWIJDERD, null, null);
         vergelijkerResultaat.voegToeOfVervangVerschil(verschil);
 
         verwerker.verwerkWijzigingen(vergelijkerResultaat, context);
@@ -193,7 +201,7 @@ public class IstStapelVerschilVerwerkerTest extends AbstractDeltaTest {
         assertTrue(bestaandeStapel.getRelaties().isEmpty());
 
         final Verschil verschil =
-                new Verschil(new IstSleutel(nieuweStapel, Stapel.RELATIES, true), null, relatie, VerschilType.RIJ_TOEGEVOEGD, null, null);
+                new Verschil(new IstSleutel(nieuweStapel, Stapel.VELD_RELATIES, true), null, relatie, VerschilType.RIJ_TOEGEVOEGD, null, null);
         vergelijkerResultaat.voegToeOfVervangVerschil(verschil);
 
         verwerker.verwerkWijzigingen(vergelijkerResultaat, context);
@@ -265,8 +273,8 @@ public class IstStapelVerschilVerwerkerTest extends AbstractDeltaTest {
         final StapelDecorator sd0 = StapelDecorator.decorate(stapel0);
         final StapelDecorator sd1 = StapelDecorator.decorate(stapel1);
         final StapelDecorator sd2 = StapelDecorator.decorate(stapel2);
-        final Verschil verschil0 = new Verschil(new IstSleutel(stapel0, Stapel.VOLGNUMMER, true), sd0, sd1, VerschilType.ELEMENT_AANGEPAST, null, null);
-        final Verschil verschil1 = new Verschil(new IstSleutel(stapel1, Stapel.VOLGNUMMER, true), sd1, sd2, VerschilType.ELEMENT_AANGEPAST, null, null);
+        final Verschil verschil0 = new Verschil(new IstSleutel(stapel0, Stapel.VELD_VOLGNUMMER, true), sd0, sd1, VerschilType.ELEMENT_AANGEPAST, null, null);
+        final Verschil verschil1 = new Verschil(new IstSleutel(stapel1, Stapel.VELD_VOLGNUMMER, true), sd1, sd2, VerschilType.ELEMENT_AANGEPAST, null, null);
 
         bestaandePersoon.addStapel(stapel0);
         bestaandePersoon.addStapel(stapel1);
@@ -292,7 +300,7 @@ public class IstStapelVerschilVerwerkerTest extends AbstractDeltaTest {
 
         final StapelDecorator sd0 = StapelDecorator.decorate(stapel0);
         final StapelDecorator sd1 = StapelDecorator.decorate(stapel1);
-        final Verschil verschil0 = new Verschil(new IstSleutel(stapel0, Stapel.VOLGNUMMER, true), sd0, sd1, VerschilType.ELEMENT_AANGEPAST, null, null);
+        final Verschil verschil0 = new Verschil(new IstSleutel(stapel0, Stapel.VELD_VOLGNUMMER, true), sd0, sd1, VerschilType.ELEMENT_AANGEPAST, null, null);
 
         bestaandePersoon.addStapel(stapel0);
         bestaandePersoon.addStapel(stapel1);
@@ -349,11 +357,16 @@ public class IstStapelVerschilVerwerkerTest extends AbstractDeltaTest {
         final StapelVoorkomen sv0 = new StapelVoorkomen(stapelOud0, 0, maakAdministratieveHandeling(DATUMTIJD_STEMPEL_OUD));
         sv0.setDatumAanvang(DATUM_NIEUW);
 
-
         bestaandePersoon.addStapel(stapelOud0);
 
         final Verschil verschil0 =
-                new Verschil(new IstSleutel(sv0, Stapel.STAPEL_VOORKOMENS, false), null, StapelVoorkomenDecorator.decorate(sv0), VerschilType.RIJ_TOEGEVOEGD, null, null);
+                new Verschil(
+                        new IstSleutel(sv0, Stapel.STAPEL_VOORKOMENS, false),
+                        null,
+                        StapelVoorkomenDecorator.decorate(sv0),
+                        VerschilType.RIJ_TOEGEVOEGD,
+                        null,
+                        null);
 
         vergelijkerResultaat.voegToeOfVervangVerschil(verschil0);
         verwerker.verwerkWijzigingen(vergelijkerResultaat, context);

@@ -6,6 +6,7 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.common;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,12 +17,15 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.sql.DataSource;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.Bericht;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageId;
@@ -33,26 +37,23 @@ import nl.bzk.migratiebrp.bericht.model.isc.IscBericht;
 import nl.bzk.migratiebrp.bericht.model.isc.factory.IscBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.notificatie.NotificatieBericht;
+import nl.bzk.migratiebrp.bericht.model.notificatie.factory.NotificatieBerichtFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Autorisatie;
-import nl.bzk.migratiebrp.bericht.model.sync.register.AutorisatieRegister;
-import nl.bzk.migratiebrp.bericht.model.sync.register.AutorisatieRegisterImpl;
-import nl.bzk.migratiebrp.bericht.model.sync.register.Gemeente;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegister;
-import nl.bzk.migratiebrp.bericht.model.sync.register.GemeenteRegisterImpl;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Partij;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegisterImpl;
+import nl.bzk.migratiebrp.bericht.model.sync.register.Rol;
 import nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.EsbActionHandler;
 import nl.bzk.migratiebrp.isc.jbpm.common.actionhandler.OutboundHandler;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
+import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao.Direction;
 import nl.bzk.migratiebrp.isc.jbpm.common.jsf.FoutafhandelingPaden;
-import nl.bzk.migratiebrp.register.client.AutorisatieService;
-import nl.bzk.migratiebrp.register.client.GemeenteService;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.register.client.PartijService;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.jdbc.ReturningWork;
 import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmContext;
 import org.jbpm.context.exe.ContextInstance;
@@ -63,12 +64,11 @@ import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
 import org.jbpm.job.Job;
 import org.jbpm.jpdl.xml.JpdlXmlReader;
-import org.jbpm.jpdl.xml.Problem;
-import org.jbpm.jpdl.xml.ProblemListener;
 import org.jbpm.msg.MessageService;
 import org.jbpm.svc.Service;
 import org.jbpm.svc.ServiceFactory;
 import org.jbpm.svc.Services;
+import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -94,23 +94,24 @@ import org.xml.sax.InputSource;
 @Transactional(value = "iscTransactionManager")
 @Rollback(value = false)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
-@ContextConfiguration({"classpath:test-datasource.xml",
-                       "classpath:test-jta.xml",
-                       "classpath:isc-jbpm-algemeen.xml",
-                       "classpath:test-outbound.xml",
-                       "classpath*:isc-jbpm-usecase-beans.xml" })
+@ContextConfiguration({"classpath:test-datasource.xml", "classpath:test-jta.xml", "classpath:isc-jbpm-algemeen.xml", "classpath:test-outbound.xml",
+        "classpath*:isc-jbpm-usecase-beans.xml"})
 public abstract class AbstractJbpmTest {
 
-    /** Aantal herhaling geconfigureerd voor BRP. */
+    /**
+     * Aantal herhaling geconfigureerd voor BRP.
+     */
     public static final int BRP_MAX_HERHALINGEN = 2;
-    /** Aantal herhaling geconfigureerd voor VOSPG. */
-    public static final int VOSPG_MAX_HERHALINGEN = 5;
+    /**
+     * Aantal herhaling geconfigureerd voor VOISC.
+     */
+    public static final int VOISC_MAX_HERHALINGEN = 5;
 
     protected static final Logger LOG = LoggerFactory.getLogger();
 
     private static final int BRP_TIMEOUT = 4;
-    private static final int VOSPG_TIMEOUT = 8;
-    private static final int LOCK_TIMEOUT = 1;
+    private static final int VOISC_TIMEOUT = 8;
+    private static final int LEVERING_TIMEOUT = 15;
 
     private static final TestcaseOutputter MIGR_TEST_ISC_OUTPUTTER = new TestcaseOutputter();
 
@@ -126,9 +127,10 @@ public abstract class AbstractJbpmTest {
     @Autowired
     private BerichtenDao berichtenDao;
 
-    private final List<Lo3Bericht> vospgBerichten = new ArrayList<>();
+    private final List<Lo3Bericht> voiscBerichten = new ArrayList<>();
     private final List<BrpBericht> brpBerichten = new ArrayList<>();
     private final List<SyncBericht> syncBerichten = new ArrayList<>();
+    private final List<NotificatieBericht> notificatieBerichten = new ArrayList<>();
 
     private final Map<String, Long> correlatie = new HashMap<>();
 
@@ -144,11 +146,11 @@ public abstract class AbstractJbpmTest {
         this.processDefinitionXml = processDefinitionXml;
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
     @SuppressWarnings("unchecked")
     private JbpmContext createJbpmContext() {
@@ -173,16 +175,13 @@ public abstract class AbstractJbpmTest {
             statement.execute("delete from mig_configuratie");
             statement.execute("insert into mig_configuratie(configuratie, waarde) values ('brp.timeout', '" + BRP_TIMEOUT + " hours')");
             statement.execute("insert into mig_configuratie(configuratie, waarde) values ('brp.herhalingen', '" + BRP_MAX_HERHALINGEN + "')");
-            statement.execute("insert into mig_configuratie(configuratie, waarde) values ('vospg.timeout', '" + VOSPG_TIMEOUT + " hours')");
-            statement.execute("insert into mig_configuratie(configuratie, waarde) values ('vospg.herhalingen', '" + VOSPG_MAX_HERHALINGEN + "')");
-            statement.execute("insert into mig_configuratie(configuratie, waarde) values ('lock.timeout', '" + LOCK_TIMEOUT + " hours')");
+            statement.execute("insert into mig_configuratie(configuratie, waarde) values ('voisc.timeout', '" + VOISC_TIMEOUT + " hours')");
+            statement.execute("insert into mig_configuratie(configuratie, waarde) values ('voisc.herhalingen', '" + VOISC_MAX_HERHALINGEN + "')");
+            statement.execute("insert into mig_configuratie(configuratie, waarde) values ('levering.timeout', '" + LEVERING_TIMEOUT + " minutes')");
 
             statement.close();
 
-        } catch (final
-            IOException
-            | SQLException e)
-        {
+        } catch (final IOException | SQLException e) {
             Assert.fail("Kon database setup niet uitvoeren: " + e.getMessage());
         }
 
@@ -201,13 +200,7 @@ public abstract class AbstractJbpmTest {
 
                 // Setup process definition
                 final JpdlXmlReader jpdlReader =
-                        new JpdlXmlReader(new InputSource(this.getClass().getResourceAsStream(processDefXml)), new ProblemListener()
-                {
-                            @Override
-                            public void addProblem(final Problem problem) {
-                                LOG.error(problem.toString());
-                            }
-                        });
+                        new JpdlXmlReader(new InputSource(this.getClass().getResourceAsStream(processDefXml)), problem -> LOG.error(problem.toString()));
                 final ProcessDefinition processDefinition = jpdlReader.readProcessDefinition();
                 jbpmContext.deployProcessDefinition(processDefinition);
                 // Take first to do test on
@@ -215,16 +208,6 @@ public abstract class AbstractJbpmTest {
                     processName = processDefinition.getName();
                 }
             }
-
-            // Setup database
-            // final Session session = (Session)
-            // jbpmContext.getServices().getPersistenceService().getCustomSession(Session.class);
-            // final Connection connection = session.doReturningWork(new ReturningWork<Connection>() {
-            // @Override
-            // public Connection execute(final Connection connection) throws SQLException {
-            // return connection;
-            // }
-            // });
 
         } finally {
             jbpmContext.close();
@@ -258,12 +241,7 @@ public abstract class AbstractJbpmTest {
         try {
             // Drop database
             final Session session = (Session) jbpmContext.getServices().getPersistenceService().getCustomSession(Session.class);
-            final Connection connection = session.doReturningWork(new ReturningWork<Connection>() {
-                @Override
-                public Connection execute(final Connection connection) throws SQLException {
-                    return connection;
-                }
-            });
+            final Connection connection = session.doReturningWork(connection1 -> connection1);
 
             try {
                 final Statement statement = connection.createStatement();
@@ -278,33 +256,26 @@ public abstract class AbstractJbpmTest {
         }
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
     private Long bewaarBericht(final Bericht bericht, final JbpmContext jbpmContext) {
         // Sla bericht op op de 'esb'-manier.
-        final String SQL =
-                "insert into mig_bericht(tijdstip, correlation_id, "
-                           + "verzendende_partij, ontvangende_partij, bericht, naam, kanaal) "
-                           + "values(?, ?, ?, ?, ?, ?, ?)";
+        final String SQL = "insert into mig_bericht(tijdstip, correlation_id, " + "verzendende_partij, ontvangende_partij, bericht, naam, kanaal) "
+                + "values(?, ?, ?, ?, ?, ?, ?)";
 
         final Long berichtId;
         final Session session = (Session) jbpmContext.getServices().getPersistenceService().getCustomSession(Session.class);
-        final Connection connection = session.doReturningWork(new ReturningWork<Connection>() {
-            @Override
-            public Connection execute(final Connection connection) throws SQLException {
-                return connection;
-            }
-        });
+        final Connection connection = session.doReturningWork(connection1 -> connection1);
         // jbpmContext.getConnection()
         try (final PreparedStatement statement = connection.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
             statement.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
             statement.setString(2, bericht.getCorrelationId());
-            statement.setString(3, bericht instanceof Lo3Bericht ? ((Lo3Bericht) bericht).getBronGemeente() : null);
-            statement.setString(4, bericht instanceof Lo3Bericht ? ((Lo3Bericht) bericht).getDoelGemeente() : null);
+            statement.setString(3, bericht instanceof Lo3Bericht ? ((Lo3Bericht) bericht).getBronPartijCode() : null);
+            statement.setString(4, bericht instanceof Lo3Bericht ? ((Lo3Bericht) bericht).getDoelPartijCode() : null);
             statement.setString(5, bericht.format());
             statement.setString(6, bericht.getBerichtType());
             statement.setString(7, getKanaal(bericht));
@@ -314,10 +285,7 @@ public abstract class AbstractJbpmTest {
             rs.next();
             berichtId = rs.getLong(1);
 
-        } catch (final
-            SQLException
-            | BerichtInhoudException e)
-        {
+        } catch (final SQLException | BerichtInhoudException e) {
             throw new RuntimeException("Probleem bij opslaan bericht", e);
         }
 
@@ -351,29 +319,45 @@ public abstract class AbstractJbpmTest {
         }
     }
 
+    @Transactional(value = "iscTransactionManager")
+    protected long saveBericht(final String kanaal, final Direction richting, final String messageId, final String bericht, final String berichtType) {
+        final JbpmContext jbpmContext = createJbpmContext();
+
+        try {
+            // Save bericht op via 'normale' dao.
+            final long berichtId = berichtenDao.bewaar(kanaal, richting, messageId, null, bericht, null, null, null, null);
+            berichtenDao.updateNaam(berichtId, berichtType);
+            return berichtId;
+        } finally {
+            jbpmContext.close();
+        }
+    }
+
     private String getKanaal(final Bericht bericht) {
         if (bericht instanceof SyncBericht) {
             return "SYNC";
         } else if (bericht instanceof Lo3Bericht) {
-            return "VOSPG";
+            return "VOISC";
         } else if (bericht instanceof BrpBericht) {
             return "BRP";
         } else if (bericht instanceof IscBericht) {
             return "ISC";
+        } else if (bericht instanceof NotificatieBericht) {
+            return "NOTIFICATIE";
         } else {
             throw new IllegalArgumentException("Onbekend type bericht");
         }
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+
+
     /**
      * Start het proces met als 'input' variabele het meegegeven bericht.
-     *
-     * @param bericht
      */
     @Transactional(value = "iscTransactionManager")
     public void startProcess(final Bericht bericht) {
@@ -397,8 +381,8 @@ public abstract class AbstractJbpmTest {
             LOG.info("Process instance: {}", processInstanceId);
 
             /*
-             * De variabele mapping moet overeen komen met het starten van een JBPM process in de jboss-esb.xml <mapping
-             * esb="BODY_CONTENT" bpm="input" />
+             * De variabele mapping moet overeen komen met het starten van een JBPM process in de
+             * jboss-esb.xml <mapping esb="BODY_CONTENT" bpm="input" />
              */
             processInstance.getContextInstance().setVariable("input", berichtId);
 
@@ -412,9 +396,7 @@ public abstract class AbstractJbpmTest {
 
     /**
      * Start het proces met als 'input' variabele de meegegeven inputVar.
-     *
-     * @param inputVar
-     *            Object
+     * @param inputVar Object
      */
     @Transactional(value = "iscTransactionManager")
     public void startProcess(final Object inputVar) {
@@ -427,10 +409,35 @@ public abstract class AbstractJbpmTest {
 
             processInstanceId = processInstance.getId();
             /*
-             * De variabele mapping moet overeen komen met het starten van een JBPM process in de jboss-esb.xml <mapping
-             * esb="BODY_CONTENT" bpm="input" />
+             * De variabele mapping moet overeen komen met het starten van een JBPM process in de
+             * jboss-esb.xml <mapping esb="BODY_CONTENT" bpm="input" />
              */
             processInstance.getContextInstance().setVariable("input", inputVar);
+            processInstance.signal();
+        } finally {
+            jbpmContext.close();
+        }
+    }
+
+    /**
+     * Start het proces met als 'input' variabele de meegegeven inputVar.
+     * @param variables Object
+     */
+    @Transactional(value = "iscTransactionManager")
+    public void startProcess(final Map<String, Object> variables) {
+        final JbpmContext jbpmContext = createJbpmContext();
+        try {
+            final ProcessInstance processInstance = jbpmContext.newProcessInstanceForUpdate(processName);
+            jbpmContext.save(processInstance);
+            final Session session = (Session) jbpmContext.getServices().getPersistenceService().getCustomSession(Session.class);
+            session.flush();
+
+            processInstanceId = processInstance.getId();
+
+            for (final Map.Entry<String, Object> variable : variables.entrySet()) {
+                processInstance.getContextInstance().setVariable(variable.getKey(), variable.getValue());
+            }
+
             processInstance.signal();
         } finally {
             jbpmContext.close();
@@ -456,15 +463,21 @@ public abstract class AbstractJbpmTest {
     }
 
     @Transactional(value = "iscTransactionManager")
-    public void signalVospg(final Bericht bericht) {
-        Assert.assertTrue("signalVospg moet worden aangeroepen met een Lo3Bericht", bericht instanceof Lo3Bericht);
-        signalProcess(bericht, "vospgBericht");
+    public void signalVoisc(final Bericht bericht) {
+        Assert.assertTrue("signalVoisc moet worden aangeroepen met een Lo3Bericht", bericht instanceof Lo3Bericht);
+        signalProcess(bericht, "voiscBericht");
     }
 
     @Transactional(value = "iscTransactionManager")
     public void signalSync(final Bericht bericht) {
         Assert.assertTrue("signalSync moet worden aangeroepen met een SyncBericht", bericht instanceof SyncBericht);
         signalProcess(bericht, "syncBericht");
+    }
+
+    @Transactional(value = "iscTransactionManager")
+    public void signalNotificatie(final Bericht bericht) {
+        Assert.assertTrue("signalNotificatie moet worden aangeroepen met een NotificatieBericht", bericht instanceof NotificatieBericht);
+        signalProcess(bericht, "notificatieBericht");
     }
 
     @Transactional(value = "iscTransactionManager")
@@ -502,8 +515,8 @@ public abstract class AbstractJbpmTest {
 
             token.signal();
         } catch (final Throwable t /*
-                                    * catch Throwable toegevoegd om de stacktrace te krijgen wanneer er in test iets
-                                    * fout gaat
+                                    * catch Throwable toegevoegd om de stacktrace te krijgen wanneer
+                                    * er in test iets fout gaat
                                     */) {
             t.printStackTrace();
             throw new RuntimeException(t);
@@ -545,6 +558,21 @@ public abstract class AbstractJbpmTest {
     }
 
     @Transactional(value = "iscTransactionManager")
+    public void controleerNode(final String nodeName) {
+        final JbpmContext jbpmContext = createJbpmContext();
+
+        try {
+            final ProcessInstance processInstance = jbpmContext.loadProcessInstance(processInstanceId);
+            final Token token = processInstance.getRootToken();
+            final Node node = token.getNode();
+            Assert.assertEquals("Proces was niet in de verwachte node", nodeName, node.getName());
+        } finally {
+
+            jbpmContext.close();
+        }
+    }
+
+    @Transactional(value = "iscTransactionManager")
     public boolean processHumanTask() {
         final JbpmContext jbpmContext = createJbpmContext();
 
@@ -564,8 +592,8 @@ public abstract class AbstractJbpmTest {
 
             jbpmContext.close();
         }
-
     }
+
 
     @Transactional(value = "iscTransactionManager")
     public void signalHumanTask(final String transition) {
@@ -578,24 +606,25 @@ public abstract class AbstractJbpmTest {
             final ProcessInstance processInstance = jbpmContext.loadProcessInstance(processInstanceId);
             final ProcessInstance subProcessInstance = processInstance.getRootToken().getSubProcessInstance();
 
-            final ContextInstance contextInstance =
-                    subProcessInstance == null ? processInstance.getContextInstance() : subProcessInstance.getContextInstance();
+            final Token token = subProcessInstance == null ? processInstance.getRootToken() : subProcessInstance.getRootToken();
+
+            final Session hibernateSession = (Session) jbpmContext.getServices().getPersistenceService().getCustomSession(Session.class);
+            final List<TaskInstance> taskList =
+                    hibernateSession.createQuery("from org.jbpm.taskmgmt.exe.TaskInstance ti where ti.token = :token").setParameter("token", token).list();
+
+            Assert.assertEquals(1, taskList.size());
+            final TaskInstance taskInstance = taskList.iterator().next();
 
             // Controleer foutpaden
-            final FoutafhandelingPaden foutafhandelingPaden = (FoutafhandelingPaden) contextInstance.getVariable("foutafhandelingPaden");
+            final FoutafhandelingPaden foutafhandelingPaden = (FoutafhandelingPaden) taskInstance.getVariable("foutafhandelingPaden");
             LOG.info("signalHumanTask: foutafhandelingPaden={}", foutafhandelingPaden);
             if (!foutafhandelingPaden.getSelectItems().containsValue(transition)) {
-                throw new IllegalArgumentException(
-                    "Transitie '" + transition + "' onbekend (paden=" + foutafhandelingPaden.getSelectItems().values() + ").");
+                throw new IllegalArgumentException("Transitie '" + transition + "' onbekend (paden=" + foutafhandelingPaden.getSelectItems().values() + ").");
             }
 
-            contextInstance.setVariable("restart", transition);
-
-            if (subProcessInstance == null) {
-                processInstance.signal();
-            } else {
-                subProcessInstance.signal();
-            }
+            taskInstance.start();
+            taskInstance.setVariable("restart", transition);
+            taskInstance.end();
 
         } finally {
 
@@ -619,24 +648,22 @@ public abstract class AbstractJbpmTest {
         }
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
     /**
-     * Geef de waarde van vospg berichten.
-     *
-     * @return vospg berichten
+     * Geef de waarde van voisc berichten.
+     * @return voisc berichten
      */
-    public List<Lo3Bericht> getVospgBerichten() {
-        return vospgBerichten;
+    public List<Lo3Bericht> getVoiscBerichten() {
+        return voiscBerichten;
     }
 
     /**
      * Geef de waarde van brp berichten.
-     *
      * @return brp berichten
      */
     public List<BrpBericht> getBrpBerichten() {
@@ -645,18 +672,25 @@ public abstract class AbstractJbpmTest {
 
     /**
      * Geef de waarde van sync berichten.
-     *
      * @return sync berichten
      */
     public List<SyncBericht> getSyncBerichten() {
         return syncBerichten;
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /**
+     * Geef de waarde van notificatie berichten.
+     * @return notificatie berichten
+     */
+    public List<NotificatieBericht> getNotificatieBerichten() {
+        return notificatieBerichten;
+    }
+
+     /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
     private static void testBerichtFormat(final Bericht bericht) {
 
@@ -674,12 +708,14 @@ public abstract class AbstractJbpmTest {
                 parsed = BrpBerichtFactory.SINGLETON.getBericht(formatted);
             } else if (bericht instanceof Lo3Bericht) {
                 parsed = new Lo3BerichtFactory().getBericht(formatted);
-                ((Lo3Bericht) parsed).setBronGemeente(((Lo3Bericht) bericht).getBronGemeente());
-                ((Lo3Bericht) parsed).setDoelGemeente(((Lo3Bericht) bericht).getDoelGemeente());
+                ((Lo3Bericht) parsed).setBronPartijCode(((Lo3Bericht) bericht).getBronPartijCode());
+                ((Lo3Bericht) parsed).setDoelPartijCode(((Lo3Bericht) bericht).getDoelPartijCode());
             } else if (bericht instanceof SyncBericht) {
                 parsed = SyncBerichtFactory.SINGLETON.getBericht(formatted);
             } else if (bericht instanceof IscBericht) {
                 parsed = IscBerichtFactory.SINGLETON.getBericht(formatted);
+            } else if (bericht instanceof NotificatieBericht) {
+                parsed = NotificatieBerichtFactory.SINGLETON.getBericht(formatted);
             } else {
                 throw new AssertionError("Onbekend bericht type.");
             }
@@ -695,16 +731,22 @@ public abstract class AbstractJbpmTest {
         }
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
-    protected void controleerBerichten(final int brp, final int vospg, final int sync) {
+
+    protected void controleerBerichten(final int brp, final int voisc, final int sync) {
+        controleerBerichten(brp, voisc, sync, 0);
+    }
+
+    protected void controleerBerichten(final int brp, final int voisc, final int sync, final int notificatie) {
         Assert.assertEquals(brp + " BRP berichten verwacht", brp, getBrpBerichten().size());
-        Assert.assertEquals(vospg + " VOSPG berichten verwacht", vospg, getVospgBerichten().size());
+        Assert.assertEquals(voisc + " VOISC berichten verwacht", voisc, getVoiscBerichten().size());
         Assert.assertEquals(sync + " sync berichten verwacht", sync, getSyncBerichten().size());
+        Assert.assertEquals(notificatie + " notificatie berichten verwacht", notificatie, getNotificatieBerichten().size());
     }
 
     @SuppressWarnings("unchecked")
@@ -717,7 +759,7 @@ public abstract class AbstractJbpmTest {
                 return (T) syncBericht;
             } else {
                 throw new AssertionError(
-                    "Bericht is niet van verwacht type (verwacht=" + berichtClass.getName() + ", ontvangen=" + syncBericht.getClass().getName() + ")");
+                        "Bericht is niet van verwacht type (verwacht=" + berichtClass.getName() + ", ontvangen=" + syncBericht.getClass().getName() + ")");
             }
         } else if (BrpBericht.class.isAssignableFrom(berichtClass)) {
             Assert.assertTrue("Geen brp berichten aanwezig", !getBrpBerichten().isEmpty());
@@ -727,17 +769,28 @@ public abstract class AbstractJbpmTest {
                 return (T) brpBericht;
             } else {
                 throw new AssertionError(
-                    "Bericht is niet van verwacht type (verwacht=" + berichtClass.getName() + ", ontvangen=" + brpBericht.getClass().getName() + ")");
+                        "Bericht is niet van verwacht type (verwacht=" + berichtClass.getName() + ", ontvangen=" + brpBericht.getClass().getName() + ")");
             }
         } else if (Lo3Bericht.class.isAssignableFrom(berichtClass)) {
-            Assert.assertTrue("Geen vospg berichten aanwezig", !getVospgBerichten().isEmpty());
-            final Lo3Bericht lo3Bericht = getVospgBerichten().remove(0);
+            Assert.assertTrue("Geen voisc berichten aanwezig", !getVoiscBerichten().isEmpty());
+            final Lo3Bericht lo3Bericht = getVoiscBerichten().remove(0);
             if (berichtClass.isInstance(lo3Bericht)) {
                 MIGR_TEST_ISC_OUTPUTTER.outputGetBericht(lo3Bericht);
                 return (T) lo3Bericht;
             } else {
                 throw new AssertionError(
-                    "Bericht is niet van verwacht type (verwacht=" + berichtClass.getName() + ", ontvangen=" + lo3Bericht.getClass().getName() + ")");
+                        "Bericht is niet van verwacht type (verwacht=" + berichtClass.getName() + ", ontvangen=" + lo3Bericht.getClass().getName() + ")");
+            }
+        } else if (NotificatieBericht.class.isAssignableFrom(berichtClass)) {
+            Assert.assertTrue("Geen notificatie berichten aanwezig", !getNotificatieBerichten().isEmpty());
+            final NotificatieBericht notificatieBericht = getNotificatieBerichten().remove(0);
+            if (berichtClass.isInstance(notificatieBericht)) {
+                MIGR_TEST_ISC_OUTPUTTER.outputGetBericht(notificatieBericht);
+                return (T) notificatieBericht;
+            } else {
+                throw new AssertionError(
+                        "Bericht is niet van verwacht type (verwacht=" + berichtClass.getName() + ", ontvangen=" + notificatieBericht.getClass().getName()
+                                + ")");
             }
         } else {
             throw new IllegalArgumentException();
@@ -749,8 +802,8 @@ public abstract class AbstractJbpmTest {
         final int maxAantalHerhalingen;
         if ("BRP".equalsIgnoreCase(kanaal)) {
             maxAantalHerhalingen = BRP_MAX_HERHALINGEN;
-        } else if ("VOSPG".equalsIgnoreCase(kanaal)) {
-            maxAantalHerhalingen = VOSPG_MAX_HERHALINGEN;
+        } else if ("VOISC".equalsIgnoreCase(kanaal)) {
+            maxAantalHerhalingen = VOISC_MAX_HERHALINGEN;
         } else {
             throw new IllegalArgumentException("onbekend kanaal: " + kanaal);
         }
@@ -773,20 +826,30 @@ public abstract class AbstractJbpmTest {
         if ("BRP".equalsIgnoreCase(kanaal)) {
             Assert.assertEquals(aantalBerichten + " " + kanaal + " berichten verwacht", aantalBerichten, getBrpBerichten().size());
             if (andereKanalenLeeg) {
-                Assert.assertEquals(0 + " " + "VOSPG" + " berichten verwacht", 0, getVospgBerichten().size());
+                Assert.assertEquals(0 + " " + "VOISC" + " berichten verwacht", 0, getVoiscBerichten().size());
                 Assert.assertEquals(0 + " " + "SYNC" + " berichten verwacht", 0, getSyncBerichten().size());
+                Assert.assertEquals(0 + " " + "NOTIFICATIE" + " berichten verwacht", 0, getNotificatieBerichten().size());
             }
-        } else if ("VOSPG".equalsIgnoreCase(kanaal)) {
-            Assert.assertEquals(aantalBerichten + " " + kanaal + " berichten verwacht", aantalBerichten, getVospgBerichten().size());
+        } else if ("VOISC".equalsIgnoreCase(kanaal)) {
+            Assert.assertEquals(aantalBerichten + " " + kanaal + " berichten verwacht", aantalBerichten, getVoiscBerichten().size());
             if (andereKanalenLeeg) {
                 Assert.assertEquals(0 + " " + "BRP" + " berichten verwacht", 0, getBrpBerichten().size());
                 Assert.assertEquals(0 + " " + "SYNC" + " berichten verwacht", 0, getSyncBerichten().size());
+                Assert.assertEquals(0 + " " + "NOTIFICATIE" + " berichten verwacht", 0, getNotificatieBerichten().size());
             }
         } else if ("SYNC".equalsIgnoreCase(kanaal)) {
             Assert.assertEquals(aantalBerichten + " " + kanaal + " berichten verwacht", aantalBerichten, getSyncBerichten().size());
             if (andereKanalenLeeg) {
                 Assert.assertEquals(0 + " " + "BRP" + " berichten verwacht", 0, getBrpBerichten().size());
-                Assert.assertEquals(0 + " " + "VOSPG" + " berichten verwacht", 0, getVospgBerichten().size());
+                Assert.assertEquals(0 + " " + "VOISC" + " berichten verwacht", 0, getVoiscBerichten().size());
+                Assert.assertEquals(0 + " " + "NOTIFICATIE" + " berichten verwacht", 0, getNotificatieBerichten().size());
+            }
+        } else if ("NOTIFICATIE".equalsIgnoreCase(kanaal)) {
+            Assert.assertEquals(aantalBerichten + " " + kanaal + " berichten verwacht", aantalBerichten, getNotificatieBerichten().size());
+            if (andereKanalenLeeg) {
+                Assert.assertEquals(0 + " " + "BRP" + " berichten verwacht", 0, getBrpBerichten().size());
+                Assert.assertEquals(0 + " " + "VOISC" + " berichten verwacht", 0, getVoiscBerichten().size());
+                Assert.assertEquals(0 + " " + "SYNC" + " berichten verwacht", 0, getSyncBerichten().size());
             }
         } else {
             throw new IllegalArgumentException("onbekend kanaal: " + kanaal);
@@ -794,11 +857,12 @@ public abstract class AbstractJbpmTest {
         // @formatter:on
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+
 
     @Transactional(value = "iscTransactionManager")
     protected void executeInJbpmContext(final JbpmWorker worker) {
@@ -814,11 +878,12 @@ public abstract class AbstractJbpmTest {
         public void execute(JbpmContext context, Long processInstanceId);
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+
 
     @AfterClass
     public static void disableOutputter() {
@@ -838,19 +903,17 @@ public abstract class AbstractJbpmTest {
 
     /**
      * Zet de waarde van output berichten.
-     *
-     * @param outputDirectory
-     *            output berichten
+     * @param outputDirectory output berichten
      */
     protected static void setOutputBerichten(final String outputDirectory) {
         MIGR_TEST_ISC_OUTPUTTER.enableOutput(outputDirectory);
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
     @Before
     public void setupRefToStaticTestOutboundHandler() {
@@ -874,11 +937,14 @@ public abstract class AbstractJbpmTest {
                 case "BRP-Outbound":
                     kanaal = "BRP";
                     break;
-                case "VOSPG-Outbound":
-                    kanaal = "VOSPG";
+                case "VOISC-Outbound":
+                    kanaal = "VOISC";
                     break;
                 case "Sync-Outbound":
                     kanaal = "SYNC";
+                    break;
+                case "Notificatie-Outbound":
+                    kanaal = "NOTIFICATIE";
                     break;
                 case "Voisc-Outbound":
                     kanaal = "VOISC";
@@ -890,12 +956,7 @@ public abstract class AbstractJbpmTest {
             // Zet het kanaal erbij om te testen goed te laten verlopen
             final Session session =
                     (Session) testRef.jbpmConfiguration.getCurrentJbpmContext().getServices().getPersistenceService().getCustomSession(Session.class);
-            final Connection connection = session.doReturningWork(new ReturningWork<Connection>() {
-                @Override
-                public Connection execute(final Connection connection) throws SQLException {
-                    return connection;
-                }
-            });
+            final Connection connection = session.doReturningWork(connection1 -> connection1);
             try {
                 final PreparedStatement statement = connection.prepareStatement("update mig_bericht set kanaal = ? where id = ?");
                 statement.setString(1, kanaal);
@@ -916,11 +977,14 @@ public abstract class AbstractJbpmTest {
                 case "BRP-Outbound":
                     testRef.brpBerichten.add((BrpBericht) bericht);
                     break;
-                case "VOSPG-Outbound":
-                    testRef.vospgBerichten.add((Lo3Bericht) bericht);
+                case "VOISC-Outbound":
+                    testRef.voiscBerichten.add((Lo3Bericht) bericht);
                     break;
                 case "Sync-Outbound":
                     testRef.syncBerichten.add((SyncBericht) bericht);
+                    break;
+                case "Notificatie-Outbound":
+                    testRef.notificatieBerichten.add((NotificatieBericht) bericht);
                     break;
                 default:
                     throw new RuntimeException("Onbekende ESB Handler service voor test: " + serviceName);
@@ -928,27 +992,28 @@ public abstract class AbstractJbpmTest {
         }
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
-    private GemeenteRegister gemeenteRegister;
+    private PartijRegister partijRegister;
 
-    protected void setGemeenteRegister(final GemeenteRegister gemeenteRegister) {
-        this.gemeenteRegister = gemeenteRegister;
+    protected void setPartijRegister(final PartijRegister partijRegister) {
+        this.partijRegister = partijRegister;
     }
 
     @Before
-    public void setupGemeenteService() {
-        TestGemeenteService.testRef = this;
-        final List<Gemeente> gemeenten = new ArrayList<>();
-        gemeenten.add(new Gemeente("0599", "580599", null));
-        gemeenten.add(new Gemeente("0429", "580429", null));
-        gemeenten.add(new Gemeente("0699", "580699", intToDate(20090101)));
-        gemeenten.add(new Gemeente("0717", "580717", null));
-        gemeenteRegister = new GemeenteRegisterImpl(gemeenten);
+    public void setupPartijService() {
+        TestPartijService.testRef = this;
+        final List<Partij> partijen = new ArrayList<>();
+        partijen.add(new Partij("059901", "0599", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("042901", "0429", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("069901", "0699", intToDate(20090101), Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("071701", "0717", null, Arrays.asList(Rol.BIJHOUDINGSORGAAN_COLLEGE, Rol.AFNEMER)));
+        partijen.add(new Partij("199902", null, intToDate(20090101), Collections.emptyList()));
+        partijRegister = new PartijRegisterImpl(partijen);
     }
 
     protected Date intToDate(final int date) {
@@ -959,15 +1024,15 @@ public abstract class AbstractJbpmTest {
         }
     }
 
-    public static final class TestGemeenteService implements GemeenteService {
+    public static final class TestPartijService implements PartijService {
 
         static AbstractJbpmTest testRef;
 
         @Override
-        public GemeenteRegister geefRegister() {
-            Assert.assertNotNull(testRef.gemeenteRegister);
-            MIGR_TEST_ISC_OUTPUTTER.outputGemeenteRegister(testRef.gemeenteRegister);
-            return testRef.gemeenteRegister;
+        public PartijRegister geefRegister() {
+            Assert.assertNotNull(testRef.partijRegister);
+            MIGR_TEST_ISC_OUTPUTTER.outputPartijRegister(testRef.partijRegister);
+            return testRef.partijRegister;
         }
 
         @Override
@@ -977,48 +1042,28 @@ public abstract class AbstractJbpmTest {
         @Override
         public void clearRegister() {
         }
-    }
-
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-
-    private AutorisatieRegister autorisatieRegister;
-
-    protected void setAutorisatieRegister(final AutorisatieRegister autorisatieRegister) {
-        this.autorisatieRegister = autorisatieRegister;
-    }
-
-    @Before
-    public void setupAutorisatieService() {
-        TestAutorisatieService.testRef = this;
-        final List<Autorisatie> autorisaties = new ArrayList<>();
-        autorisaties.add(new Autorisatie("580001", 100034, 200001, 200002, null, null));
-        autorisaties.add(new Autorisatie("580002", 100035, null, null, 200003, null));
-        autorisatieRegister = new AutorisatieRegisterImpl(autorisaties);
-    }
-
-    public static final class TestAutorisatieService implements AutorisatieService {
-
-        static AbstractJbpmTest testRef;
 
         @Override
-        public AutorisatieRegister geefRegister() {
-            Assert.assertNotNull(testRef.autorisatieRegister);
-            MIGR_TEST_ISC_OUTPUTTER.outputAutorisatieRegister(testRef.autorisatieRegister);
-            return testRef.autorisatieRegister;
+        public String getLaatsteBericht() {
+            return null;
         }
 
         @Override
-        public void refreshRegister() {
+        public Date getLaatsteOntvangst() {
+            return null;
         }
 
         @Override
-        public void clearRegister() {
+        public String getRegisterAsString() {
+            return null;
         }
     }
+
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
+    /* ******************************************************************************************* */
 
     /**
      * Dummy message service factory.

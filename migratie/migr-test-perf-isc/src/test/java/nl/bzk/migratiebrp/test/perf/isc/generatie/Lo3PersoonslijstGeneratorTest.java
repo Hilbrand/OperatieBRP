@@ -106,11 +106,11 @@ public class Lo3PersoonslijstGeneratorTest {
                 final String propertiesFilename = filename + ".properties";
 
                 try (
-                    FileOutputStream fos = new FileOutputStream(new File(directory, filename))) {
+                        FileOutputStream fos = new FileOutputStream(new File(directory, filename))) {
                     IOUtils.write(lg01.format(), fos);
                 }
                 try (
-                    FileWriter writer = new FileWriter(new File(directory, propertiesFilename))) {
+                        FileWriter writer = new FileWriter(new File(directory, propertiesFilename))) {
                     writer.write("lo3Gemeente=");
                     writer.write(pl.getVerblijfplaatsStapel().getLaatsteElement().getInhoud().getGemeenteInschrijving().getWaarde());
                     writer.write("\nbrpGemeente=3000200");
@@ -135,7 +135,7 @@ public class Lo3PersoonslijstGeneratorTest {
         directory.mkdirs();
 
         try (
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(directory, "berichten.zip")))) {
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(new File(directory, "berichten.zip")))) {
             final ZipOutputStream zip = new ZipOutputStream(os);
             zip.setLevel(9);
 
@@ -151,7 +151,7 @@ public class Lo3PersoonslijstGeneratorTest {
                 lg01.setHeader(Lo3HeaderVeld.A_NUMMER, String.valueOf(pl.getActueelAdministratienummer()));
                 lg01.setHeader(Lo3HeaderVeld.DATUM_TIJD, "20130712132012000");
 
-                final String filename = String.format("%05d-uit-vospg-pl-%10d.txt", i, pl.getActueelAdministratienummer());
+                final String filename = String.format("%05d-uit-voisc-pl-%10d.txt", i, pl.getActueelAdministratienummer());
 
                 final ZipEntry entry = new ZipEntry(filename);
                 zip.putNextEntry(entry);

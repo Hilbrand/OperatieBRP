@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.common;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.If01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.OnbekendBericht;

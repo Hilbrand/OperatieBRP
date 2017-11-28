@@ -10,10 +10,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.dal.AbstractTestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
@@ -25,6 +26,7 @@ public final class LeveringMutatieberichtTestCasusFactory extends AbstractTestCa
     private final AutowireCapableBeanFactory migratieAutowireBeanFactory;
     private final AutowireCapableBeanFactory brpLeveringAutowireBeanFactory;
     private final AutowireCapableBeanFactory brpBijhoudingAutowireBeanFactory;
+    private final TestSkipper skipper;
 
     /**
      * Constructor.
@@ -39,11 +41,13 @@ public final class LeveringMutatieberichtTestCasusFactory extends AbstractTestCa
     protected LeveringMutatieberichtTestCasusFactory(
         final AutowireCapableBeanFactory migratieAutowireBeanFactory,
         final AutowireCapableBeanFactory brpLeveringAutowireBeanFactory,
-        final AutowireCapableBeanFactory brpBijhoudingAutowireBeanFactory)
+        final AutowireCapableBeanFactory brpBijhoudingAutowireBeanFactory,
+        final TestSkipper skipper)
     {
         this.migratieAutowireBeanFactory = migratieAutowireBeanFactory;
         this.brpLeveringAutowireBeanFactory = brpLeveringAutowireBeanFactory;
         this.brpBijhoudingAutowireBeanFactory = brpBijhoudingAutowireBeanFactory;
+        this.skipper = skipper;
     }
 
     @Override
@@ -56,6 +60,7 @@ public final class LeveringMutatieberichtTestCasusFactory extends AbstractTestCa
         final List<TestCasus> result = new ArrayList<>();
         final LeveringMutatieberichtTestCasus testCasus =
                 new LeveringMutatieberichtTestCasus(getThema(), input.getName(), getOutputFolder(), getExpectedFolder(), input);
+        testCasus.setSkipper(skipper);
         migratieAutowireBeanFactory.autowireBean(testCasus.getBeanForMigratieAutowire());
         brpLeveringAutowireBeanFactory.autowireBean(testCasus.getBeanForBrpLeveringAutowire());
         brpBijhoudingAutowireBeanFactory.autowireBean(testCasus.getBeanForBrpBijhoudingAutowire());

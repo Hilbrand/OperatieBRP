@@ -24,13 +24,9 @@ public final class JbpmSqlHelper {
 
     /**
      * Execute sql.
-     *
-     * @param jbpmContext
-     *            jbpm context
-     * @param sql
-     *            sql
-     * @param <T>
-     *            result type
+     * @param jbpmContext jbpm context
+     * @param sql sql
+     * @param <T> result type
      * @return result
      */
     public static <T> T execute(final JbpmContext jbpmContext, final Sql<T> sql) {
@@ -48,31 +44,26 @@ public final class JbpmSqlHelper {
 
     /**
      * Sql interface.
-     *
-     * @param <T>
-     *            result type
+     * @param <T> result type
      */
     public interface Sql<T> {
         /**
          * Use to given connection to execute sql.
-         *
-         * @param connection
-         *            connection
+         * @param connection connection
          * @return result
-         * @throws SQLException
-         *             on sql errors
+         * @throws SQLException on sql errors
          */
         T execute(final Connection connection) throws SQLException;
     }
 
     /**
      * Worker.
-     *
-     * @param <T>
-     *            result type
+     * @param <T> result type
      */
     private static final class Worker<T> implements Work {
-        /** result. */
+        /**
+         * result.
+         */
         private T result;
         private final Sql<T> sql;
 
@@ -87,7 +78,6 @@ public final class JbpmSqlHelper {
 
         /**
          * Gets the result.
-         *
          * @return the result
          */
         T getResult() {

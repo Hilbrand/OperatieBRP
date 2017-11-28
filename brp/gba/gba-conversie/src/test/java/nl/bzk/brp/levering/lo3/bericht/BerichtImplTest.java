@@ -6,22 +6,36 @@
 
 package nl.bzk.brp.levering.lo3.bericht;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortSynchronisatie;
+import nl.bzk.algemeenbrp.util.common.DatumUtil;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.leveringmodel.Actie;
+import nl.bzk.brp.domain.leveringmodel.AdministratieveHandeling;
+import nl.bzk.brp.domain.leveringmodel.MetaObject;
+import nl.bzk.brp.domain.leveringmodel.TestVerantwoording;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
 import nl.bzk.brp.levering.lo3.conversie.ConversieCache;
 import nl.bzk.brp.levering.lo3.conversie.Converteerder;
 import nl.bzk.brp.levering.lo3.filter.Filter;
 import nl.bzk.brp.levering.lo3.format.Formatter;
-import nl.bzk.brp.model.algemeen.stamgegeven.ber.SoortSynchronisatie;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.AdministratieveHandelingModel;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
-import org.jibx.runtime.JiBXException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Answers;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -38,16 +52,30 @@ public class BerichtImplTest {
     private Filter filter;
     @Mock
     private Formatter formatter;
-    @Mock
-    private PersoonHisVolledig persoon;
-    @Mock(answer = Answers.RETURNS_MOCKS)
-    private AdministratieveHandelingModel administratieveHandeling;
+
+    private Persoonslijst            persoon;
+    private AdministratieveHandeling administratieveHandeling;
 
     private BerichtImpl subject;
 
     @Before
-    public void setup() {
-        subject = new BerichtImpl(SoortBericht.AG01, converteerder, filter, formatter, persoon, null, administratieveHandeling);
+    public void setup() throws ReflectiveOperationException {
+
+        final ZonedDateTime tsReg = ZonedDateTime.of(1920, 1, 3, 0, 0, 0, 0, DatumUtil.BRP_ZONE_ID);
+        administratieveHandeling = AdministratieveHandeling.converter().converteer(TestVerantwoording
+            .maakAdministratieveHandeling(-21L, "000034", tsReg, SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL)
+            .metObject(TestVerantwoording.maakActieBuilder(-21L, SoortActie.BEEINDIGING_VOORNAAM, tsReg, "000001", null)
+            ).build());
+        final Actie actieInhoud = administratieveHandeling.getActies().iterator().next();
+
+        final MetaObject.Builder basispersoon = MetaObject.maakBuilder();
+        basispersoon.metObjectElement(ElementHelper.getObjectElement(Element.PERSOON.getId())).metId(4645);
+
+        final Set<AdministratieveHandeling> administratieveHandelingen = new HashSet<>();
+        administratieveHandelingen.add(administratieveHandeling);
+        persoon = new Persoonslijst(basispersoon.build(), 0L);
+
+        subject = new BerichtImpl(SoortBericht.AG01, converteerder, filter, formatter, persoon, null, administratieveHandeling, null);
     }
 
     @Test
@@ -57,33 +85,39 @@ public class BerichtImplTest {
         final List<String> rubrieken = new ArrayList<>();
         final List<Lo3CategorieWaarde> gefilterdeCategorieen = new ArrayList<>();
 
-        Mockito.when(converteerder.converteer(persoon, null, administratieveHandeling, conversieCache)).thenReturn(ongefilterdeCategorieen);
+        Mockito.when(converteerder.converteer(persoon, null, administratieveHandeling, null, conversieCache)).thenReturn(ongefilterdeCategorieen);
         Mockito.when(
             filter.filter(
                 Matchers.eq(persoon),
-                Matchers.isNull(List.class),
+                Matchers.anyListOf(Stapel.class),
                 Matchers.eq(administratieveHandeling),
+                Matchers.eq(null),
                 Matchers.same(ongefilterdeCategorieen),
-                Matchers.same(rubrieken))).thenReturn(gefilterdeCategorieen);
-        Mockito.when(formatter.maakPlatteTekst(Matchers.eq(persoon), Matchers.same(ongefilterdeCategorieen), Matchers.same(gefilterdeCategorieen)))
+                Matchers.same(rubrieken)))
+               .thenReturn(gefilterdeCategorieen);
+        Mockito.when(
+            formatter.maakPlatteTekst(
+                Matchers.eq(persoon),
+                Matchers.eq(null),
+                Matchers.same(ongefilterdeCategorieen),
+                Matchers.same(gefilterdeCategorieen)))
                .thenReturn(INHOUD);
 
-        Assert.assertEquals(SoortSynchronisatie.VOLLEDIGBERICHT, subject.geefSoortSynchronisatie());
-        Assert.assertEquals("Ag01", subject.geefSoortBericht());
+        // Assert.assertEquals(SoortSynchronisatie.VOLLEDIGBERICHT, subject.geefSoortSynchronisatie());
+        assertEquals("Ag01", subject.geefSoortBericht());
 
         subject.converteerNaarLo3(conversieCache);
         Assert.assertFalse(subject.filterRubrieken(rubrieken));
-        Assert.assertEquals(INHOUD, subject.maakUitgaandBericht());
-
+        assertEquals(INHOUD, subject.maakUitgaandBericht());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testJibxName() {
-        subject.JiBX_getName();
+    @Test
+    public void getPersoonsgegevens() {
+        assertThat(subject.getPersoonsgegevens(), instanceOf(Persoonslijst.class));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testMarshal() throws JiBXException {
-        subject.marshal(null);
+    @Test
+    public void getSynchronisatie() {
+        assertEquals(SoortSynchronisatie.VOLLEDIG_BERICHT, subject.getSoortSynchronisatie());
     }
 }

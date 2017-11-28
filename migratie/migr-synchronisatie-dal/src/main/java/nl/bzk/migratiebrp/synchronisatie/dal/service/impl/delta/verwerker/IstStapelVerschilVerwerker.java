@@ -10,16 +10,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AanduidingOuder;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingOuder;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
@@ -32,8 +32,8 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.decorators.Stape
 
 /**
  * Verwerker van de gevonden verschillen tussen de bestaande en de nieuwe versie van de {@link Stapel} objecten van een
- * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon}. Deze class is stateful en moet voor
- * elke lijst van verschillen op de {@link Stapel} objecten opnieuw worden geconstrueerd.
+ * {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon}. Deze class is stateful en moet voor elke lijst van
+ * verschillen op de {@link Stapel} objecten opnieuw worden geconstrueerd.
  */
 public final class IstStapelVerschilVerwerker {
 
@@ -42,18 +42,18 @@ public final class IstStapelVerschilVerwerker {
 
     /**
      * Verwerk alle wijzigingen die gevonden zijn mbt tot IST-stapels ({@link Stapel}).
-     *
-     * @param vergelijkerResultaat
-     *            {@link VergelijkerResultaat} object met daarin de lijst met verschillen
-     * @param context
-     *            de context van deltabepaling.
+     * @param vergelijkerResultaat {@link VergelijkerResultaat} object met daarin de lijst met verschillen
+     * @param context de context van deltabepaling.
      */
     public void verwerkWijzigingen(final VergelijkerResultaat vergelijkerResultaat, final DeltaBepalingContext context) {
         final PersoonDecorator bestaandePersoon = PersoonDecorator.decorate(context.getBestaandePersoon());
         final PersoonDecorator nieuwePersoon = PersoonDecorator.decorate(context.getNieuwePersoon());
 
         // Stapels verwijderen
-        verwijderStapels(bestaandePersoon, vergelijkerResultaat.getVerschillen(VerschilType.RIJ_VERWIJDERD, null), context.getActieVervalTbvLeveringMuts());
+        verwijderStapels(
+                bestaandePersoon,
+                vergelijkerResultaat.getVerschillen(VerschilType.RIJ_VERWIJDERD, null),
+                context.getActieVervalTbvLeveringMuts());
 
         // StapelVoorkomens die verwijderd en opnieuw zijn toegevoegd als de stapel wel matched, maar de inhoud verder
         // niet
@@ -81,19 +81,20 @@ public final class IstStapelVerschilVerwerker {
     }
 
     private void verwijderGemarkeerdeVoorkomens() {
-        for (StapelDecorator stapel : teVerwijderenVoorkomensPerStapel.keySet()) {
+        final Iterator<StapelDecorator> stapelDecoratorIterator = teVerwijderenVoorkomensPerStapel.keySet().iterator();
+        while (stapelDecoratorIterator.hasNext()) {
+            final StapelDecorator stapel = stapelDecoratorIterator.next();
             for (StapelVoorkomenDecorator voorkomen : teVerwijderenVoorkomensPerStapel.get(stapel)) {
                 stapel.verwijderVoorkomen(voorkomen);
             }
-            teVerwijderenVoorkomensPerStapel.remove(stapel);
+            stapelDecoratorIterator.remove();
         }
     }
 
     private void toevoegenStapels(
-        final VergelijkerResultaat vergelijkerResultaat,
-        final PersoonDecorator bestaandePersoon,
-        final PersoonDecorator nieuwePersoon)
-    {
+            final VergelijkerResultaat vergelijkerResultaat,
+            final PersoonDecorator bestaandePersoon,
+            final PersoonDecorator nieuwePersoon) {
         final Set<Verschil> toegevoegdeStapels = vergelijkerResultaat.getVerschillen(VerschilType.RIJ_TOEGEVOEGD, null);
         for (final Verschil verschil : toegevoegdeStapels) {
             final StapelDecorator nieuweStapel = StapelDecorator.decorate((Stapel) verschil.getNieuweWaarde());
@@ -135,12 +136,12 @@ public final class IstStapelVerschilVerwerker {
     }
 
     private void verwijderenRelaties(final VergelijkerResultaat vergelijkerResultaat, final PersoonDecorator bestaandePersoon) {
-        final Set<Verschil> verwijderdeRijen = vergelijkerResultaat.getVerschillen(VerschilType.RIJ_VERWIJDERD, Stapel.RELATIES);
+        final Set<Verschil> verwijderdeRijen = vergelijkerResultaat.getVerschillen(VerschilType.RIJ_VERWIJDERD, Stapel.VELD_RELATIES);
         toevoegenVerwijderenRelaties(verwijderdeRijen, bestaandePersoon, false);
     }
 
     private void toevoegenRelaties(final VergelijkerResultaat vergelijkerResultaat, final PersoonDecorator bestaandePersoon) {
-        final Set<Verschil> toegevoegdeRijen = vergelijkerResultaat.getVerschillen(VerschilType.RIJ_TOEGEVOEGD, Stapel.RELATIES);
+        final Set<Verschil> toegevoegdeRijen = vergelijkerResultaat.getVerschillen(VerschilType.RIJ_TOEGEVOEGD, Stapel.VELD_RELATIES);
         toevoegenVerwijderenRelaties(toegevoegdeRijen, bestaandePersoon, true);
     }
 
@@ -158,10 +159,9 @@ public final class IstStapelVerschilVerwerker {
     }
 
     private void verwijderStapels(
-        final PersoonDecorator bestaandePersoon,
-        final Set<Verschil> verwijderdeStapels,
-        final BRPActie actieVervalTbvLeveringMuts)
-    {
+            final PersoonDecorator bestaandePersoon,
+            final Set<Verschil> verwijderdeStapels,
+            final BRPActie actieVervalTbvLeveringMuts) {
         for (final Verschil verschil : verwijderdeStapels) {
             final StapelDecorator stapel = zoekStapelBijPersoon(bestaandePersoon, verschil);
 
@@ -193,12 +193,11 @@ public final class IstStapelVerschilVerwerker {
     }
 
     private void verplaatsStapel(
-        final VergelijkerResultaat vergelijkerResultaat,
-        final PersoonDecorator bestaandePersoon,
-        final Verschil verplaatsingVerschil,
-        final StapelDecorator startStapel,
-        final DummyStapel vorigeDummyStapel)
-    {
+            final VergelijkerResultaat vergelijkerResultaat,
+            final PersoonDecorator bestaandePersoon,
+            final Verschil verplaatsingVerschil,
+            final StapelDecorator startStapel,
+            final DummyStapel vorigeDummyStapel) {
         vergelijkerResultaat.verwijderVerschil(verplaatsingVerschil);
 
         final StapelDecorator bronStapel = zoekStapelBijPersoon(bestaandePersoon, verplaatsingVerschil);
@@ -216,7 +215,7 @@ public final class IstStapelVerschilVerwerker {
             kopieHuidigeStapel = new DummyStapel(doelStapel);
             wasDoelStapelLeeg = teVerwijderenStapels.remove(doelStapel);
         }
-        Set<StapelVoorkomenDecorator> teverwijderenVoorkomens;
+        final Set<StapelVoorkomenDecorator> teverwijderenVoorkomens;
         if (vorigeDummyStapel == null) {
             teverwijderenVoorkomens = doelStapel.setVoorkomensEnRelaties(bronStapel.getVoorkomens(), bronStapel.getRelaties(), false);
         } else {
@@ -232,7 +231,7 @@ public final class IstStapelVerschilVerwerker {
 
         if (!wasDoelStapelLeeg) {
             final Verschil verschil =
-                    vergelijkerResultaat.zoekVerschil(new IstSleutel(doelStapel.getStapel(), Stapel.VOLGNUMMER, true), VerschilType.ELEMENT_AANGEPAST);
+                    vergelijkerResultaat.zoekVerschil(new IstSleutel(doelStapel.getStapel(), Stapel.VELD_VOLGNUMMER, true), VerschilType.ELEMENT_AANGEPAST);
             if (verschil == null) {
                 throw new IllegalStateException("Fout tijdens verplaatsen inhoud stapels. Geen verschil gevonden terwijl doelstapel niet leeg was.");
             }

@@ -34,9 +34,7 @@ public final class ProcessInstanceUtil {
 
     /**
      * Geef de 'root' process instance voor een process instance.
-     *
-     * @param processInstance
-     *            process instance
+     * @param processInstance process instance
      * @return 'root' process instance
      */
     public static ProcessInstance getRootProcessInstance(final ProcessInstance processInstance) {
@@ -58,11 +56,8 @@ public final class ProcessInstanceUtil {
     /**
      * Geef alle process instances (inclusief de gegeven instance, sub instances en gerelateerde instances) voor een
      * proces instance.
-     *
-     * @param context
-     *            context
-     * @param processInstance
-     *            proces instance
+     * @param context context
+     * @param processInstance proces instance
      * @return lijst van proces instances
      */
     public static List<ProcessInstance> getProcessInstances(final JbpmContext context, final ProcessInstance processInstance) {
@@ -74,17 +69,12 @@ public final class ProcessInstanceUtil {
     /**
      * Geef alle process instances (inclusief de gegeven instance, sub instances en gerelateerde instances) voor een
      * proces instance.
-     *
-     * @param graphSession
-     *            GraphSession
-     * @param session
-     *            Session
-     * @param processInstance
-     *            proces instance
+     * @param graphSession GraphSession
+     * @param session Session
+     * @param processInstance proces instance
      * @return lijst van proces instances
      */
-    public static List<ProcessInstance> getProcessInstances(final GraphSession graphSession, final Session session, final ProcessInstance processInstance)
-    {
+    public static List<ProcessInstance> getProcessInstances(final GraphSession graphSession, final Session session, final ProcessInstance processInstance) {
         final Set<Long> instanceIds = new HashSet<>();
 
         // find related sub processes from this root process
@@ -98,17 +88,15 @@ public final class ProcessInstanceUtil {
     }
 
     private static void addAllSubProcessInstances(
-        final GraphSession graphSession,
-        final Session session,
-        final Long processInstanceId,
-        final Set<Long> instanceIds)
-    {
+            final GraphSession graphSession,
+            final Session session,
+            final Long processInstanceId,
+            final Set<Long> instanceIds) {
         // alleen toevoegen en sub verwerken als dat al niet gedaan is
         if (instanceIds.add(processInstanceId)) {
             final ProcessInstance processInstance = graphSession.getProcessInstance(processInstanceId);
 
-            @SuppressWarnings("unchecked")
-            final List<Token> tokens = processInstance.findAllTokens();
+            @SuppressWarnings("unchecked") final List<Token> tokens = processInstance.findAllTokens();
             for (final Token token : tokens) {
                 final List<Long> subProcessInstanceIds = findSubProcessInstanceIds(session, token.getId());
                 for (final Long subProcessInstanceId : subProcessInstanceIds) {
@@ -126,7 +114,9 @@ public final class ProcessInstanceUtil {
             final List<Long> relatedInstanceIds = findRelationProcessInstanceIds(session, instanceId);
             for (final Long relatedInstanceId : relatedInstanceIds) {
                 final ProcessInstance relatedProcesInstance = getRootProcessInstance(graphSession.getProcessInstance(relatedInstanceId));
-                addAllSubProcessInstances(graphSession, session, relatedProcesInstance.getId(), instanceIds);
+                if (relatedProcesInstance != null) {
+                    addAllSubProcessInstances(graphSession, session, relatedProcesInstance.getId(), instanceIds);
+                }
             }
         }
     }
@@ -141,7 +131,6 @@ public final class ProcessInstanceUtil {
 
     /**
      * Find process instance id's that have the given token (id) and super process token.
-     *
      * @return list of process instance id's (empty list if nothing found)
      */
     private static List<Long> findSubProcessInstanceIds(final Session session, final Long tokenId) {
@@ -179,9 +168,7 @@ public final class ProcessInstanceUtil {
 
     /**
      * Find process instance id's that have the given process instance id as proces relation.
-     *
-     * @param processInstanceId
-     *            process instance id
+     * @param processInstanceId process instance id
      * @return list of related process instance id's (empty list if nothing found)
      */
     private static List<Long> findRelationProcessInstanceIds(final Session session, final Long processInstanceId) {
@@ -210,13 +197,9 @@ public final class ProcessInstanceUtil {
 
         /**
          * Constructor.
-         *
-         * @param sql
-         *            sql
-         * @param processInstanceId
-         *            process instance id
-         * @param result
-         *            resultaat
+         * @param sql sql
+         * @param processInstanceId process instance id
+         * @param result resultaat
          */
         public GerelateerdeProcesInstantiesWork(final String sql, final Long processInstanceId, final List<Long> result) {
             this.sql = sql;

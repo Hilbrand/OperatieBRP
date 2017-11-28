@@ -17,7 +17,6 @@ import nl.bzk.migratiebrp.util.common.Kopieer;
 
 /**
  * Persistent klasse voor de processen tellingen database tabel.
- * 
  */
 @Entity
 @Table(name = "mig_telling_bericht")
@@ -45,7 +44,6 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Geef de waarde van bericht type.
-     *
      * @return bericht type
      */
     public final String getBerichtType() {
@@ -54,9 +52,7 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Zet de waarde van bericht type.
-     *
-     * @param berichtType
-     *            bericht type
+     * @param berichtType bericht type
      */
     public final void setBerichtType(final String berichtType) {
         this.berichtType = berichtType;
@@ -64,7 +60,6 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Geef de waarde van datum.
-     *
      * @return datum
      */
     public final Timestamp getDatum() {
@@ -73,9 +68,7 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Zet de waarde van datum.
-     *
-     * @param datum
-     *            datum
+     * @param datum datum
      */
     public final void setDatum(final Timestamp datum) {
         this.datum = Kopieer.timestamp(datum);
@@ -83,7 +76,6 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Geef de waarde van aantal ingaand.
-     *
      * @return aantal ingaand
      */
     public final Integer getAantalIngaand() {
@@ -92,9 +84,7 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Zet de waarde van aantal ingaand.
-     *
-     * @param aantalIngaand
-     *            aantal ingaand
+     * @param aantalIngaand aantal ingaand
      */
     public final void setAantalIngaand(final Integer aantalIngaand) {
         this.aantalIngaand = aantalIngaand;
@@ -102,7 +92,6 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Geef de waarde van aantal uitgaand.
-     *
      * @return aantal uitgaand
      */
     public final Integer getAantalUitgaand() {
@@ -111,9 +100,7 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Zet de waarde van aantal uitgaand.
-     *
-     * @param aantalUitgaand
-     *            aantal uitgaand
+     * @param aantalUitgaand aantal uitgaand
      */
     public final void setAantalUitgaand(final Integer aantalUitgaand) {
         this.aantalUitgaand = aantalUitgaand;
@@ -121,7 +108,6 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public final String getKanaal() {
@@ -130,9 +116,7 @@ public class BerichtTelling implements Serializable {
 
     /**
      * Zet de waarde van kanaal.
-     *
-     * @param kanaal
-     *            kanaal
+     * @param kanaal kanaal
      */
     public final void setKanaal(final String kanaal) {
         this.kanaal = kanaal;

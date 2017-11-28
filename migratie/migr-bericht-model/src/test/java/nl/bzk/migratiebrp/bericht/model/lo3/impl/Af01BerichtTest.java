@@ -9,12 +9,12 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 import java.io.IOException;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
-import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTest;
+import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTestBasis;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Af01BerichtTest extends AbstractLo3BerichtTest {
+public class Af01BerichtTest extends AbstractLo3BerichtTestBasis {
 
     private static final String A_NUMMER = "9876543210";
     private static final String BRON_GEMEENTE = "0600";
@@ -35,22 +35,22 @@ public class Af01BerichtTest extends AbstractLo3BerichtTest {
         final Af01Bericht af01Bericht = new Af01Bericht();
         af01Bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "B");
         af01Bericht.setHeader(Lo3HeaderVeld.A_NUMMER, A_NUMMER);
-        af01Bericht.setBronGemeente(BRON_GEMEENTE);
-        af01Bericht.setDoelGemeente(DOEL_GEMEENTE);
+        af01Bericht.setBronPartijCode(BRON_GEMEENTE);
+        af01Bericht.setDoelPartijCode(DOEL_GEMEENTE);
         af01Bericht.setMessageId(MessageIdGenerator.generateId());
 
         testFormatAndParseBericht(af01Bericht);
 
         Assert.assertEquals("Af01", af01Bericht.getBerichtType());
         Assert.assertNull(af01Bericht.getStartCyclus());
-        Assert.assertEquals(A_NUMMER, af01Bericht.getHeader(Lo3HeaderVeld.A_NUMMER));
-        Assert.assertEquals("B", af01Bericht.getHeader(Lo3HeaderVeld.FOUTREDEN));
+        Assert.assertEquals(A_NUMMER, af01Bericht.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
+        Assert.assertEquals("B", af01Bericht.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
 
         final Af01Bericht controleBericht = new Af01Bericht();
         controleBericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "B");
         controleBericht.setHeader(Lo3HeaderVeld.A_NUMMER, A_NUMMER);
-        controleBericht.setBronGemeente(BRON_GEMEENTE);
-        controleBericht.setDoelGemeente(DOEL_GEMEENTE);
+        controleBericht.setBronPartijCode(BRON_GEMEENTE);
+        controleBericht.setDoelPartijCode(DOEL_GEMEENTE);
         controleBericht.setMessageId(af01Bericht.getMessageId());
 
         Assert.assertTrue(af01Bericht.equals(af01Bericht));

@@ -7,7 +7,7 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.IOException;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
@@ -33,15 +33,15 @@ public class NullBerichtTest {
     @Test
     public void testGetterEnSetters() {
         final NullBericht nullBericht = new NullBericht();
-        nullBericht.setBronGemeente(BRON_GEMEENTE);
-        nullBericht.setDoelGemeente(DOEL_GEMEENTE);
+        nullBericht.setBronPartijCode(BRON_GEMEENTE);
+        nullBericht.setDoelPartijCode(DOEL_GEMEENTE);
         nullBericht.setCorrelationId(CORRELATION_ID);
         nullBericht.setMessageId(MESSAGE_ID);
         Assert.assertEquals(CORRELATION_ID, nullBericht.getCorrelationId());
         Assert.assertEquals(MESSAGE_ID, nullBericht.getMessageId());
-        Assert.assertEquals(BRON_GEMEENTE, nullBericht.getBronGemeente());
-        Assert.assertEquals(DOEL_GEMEENTE, nullBericht.getDoelGemeente());
-        Assert.assertEquals(null, nullBericht.getHeader(Lo3HeaderVeld.GEMEENTE));
+        Assert.assertEquals(BRON_GEMEENTE, nullBericht.getBronPartijCode());
+        Assert.assertEquals(DOEL_GEMEENTE, nullBericht.getDoelPartijCode());
+        Assert.assertEquals(null, nullBericht.getHeaderWaarde(Lo3HeaderVeld.GEMEENTE));
     }
 
     @Test(expected = IllegalArgumentException.class)

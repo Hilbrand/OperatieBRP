@@ -14,21 +14,12 @@ import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringActionHandler;
 import nl.bzk.migratiebrp.isc.jbpm.uc1003.AfnemersIndicatieJbpmConstants;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ControleerPlaatsenAfnemersindicatieActionTest {
 
-    private ControleerPlaatsenAfnemersindicatieAction subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new ControleerPlaatsenAfnemersindicatieAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private ControleerPlaatsenAfnemersindicatieAction subject = new ControleerPlaatsenAfnemersindicatieAction(berichtenDao);
 
     @Test
     public void testGeplaatst() {

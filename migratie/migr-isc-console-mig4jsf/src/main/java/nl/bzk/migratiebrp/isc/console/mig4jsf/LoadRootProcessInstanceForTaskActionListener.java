@@ -25,11 +25,8 @@ public final class LoadRootProcessInstanceForTaskActionListener extends Abstract
 
     /**
      * Constructor.
-     *
-     * @param taskIdExpression
-     *            task id expression
-     * @param targetExpression
-     *            target expression
+     * @param taskIdExpression task id expression
+     * @param targetExpression target expression
      */
     public LoadRootProcessInstanceForTaskActionListener(final ValueExpression taskIdExpression, final ValueExpression targetExpression) {
         super("loadRootProcessInstanceForTask");

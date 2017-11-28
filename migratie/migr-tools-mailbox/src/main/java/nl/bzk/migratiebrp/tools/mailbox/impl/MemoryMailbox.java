@@ -13,11 +13,8 @@ public class MemoryMailbox extends AbstractMailbox {
 
     /**
      * Default constructor.
-     * 
-     * @param factory
-     *            De gebruikte mailboxfactory
-     * @param mailboxnr
-     *            Het mailbox nummer
+     * @param factory De gebruikte mailboxfactory
+     * @param mailboxnr Het mailbox nummer
      */
     protected MemoryMailbox(final MailboxFactory factory, final String mailboxnr) {
         super(factory, mailboxnr);
@@ -25,14 +22,16 @@ public class MemoryMailbox extends AbstractMailbox {
 
     @Override
     public void open() throws MailboxException {
+        setStatus(MailboxStatus.STATUS_OPEN);
     }
 
     @Override
     public void save() throws MailboxException {
+        // Niet geïmplementeerd.
     }
 
     @Override
     public void close() {
+        // Niet geïmplementeerd.
     }
-
 }

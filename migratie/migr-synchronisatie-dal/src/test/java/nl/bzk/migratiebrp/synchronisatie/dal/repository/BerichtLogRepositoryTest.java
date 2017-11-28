@@ -20,8 +20,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import nl.bzk.migratiebrp.synchronisatie.dal.AbstractDatabaseTest;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.DBUnit.InsertBefore;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.test.dal.DBUnit.InsertBefore;
 
 import org.junit.Test;
 import org.springframework.test.annotation.Rollback;
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Test BerichtLogRepository
  */
-@Rollback(value = true)
+@Rollback()
 @Transactional(transactionManager = "syncDalTransactionManager")
 public class BerichtLogRepositoryTest extends AbstractDatabaseTest {
 
@@ -41,7 +41,7 @@ public class BerichtLogRepositoryTest extends AbstractDatabaseTest {
      * Zoekt log record anummer(s), op basis van 'vanaf' en 'tot'.
      */
     @Test
-    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml" })
+    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml"})
     public void testFind3LogANummersVanafTotZonderGemeentecode() {
         try {
             final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -49,13 +49,13 @@ public class BerichtLogRepositoryTest extends AbstractDatabaseTest {
             final Date datumVanaf = dateFormat.parse("20120101");
             final Date datumTot = dateFormat.parse("20121231");
 
-            final Set<Long> anummers = berichtLogRepository.findLaatsteBerichtLogAnrs(datumVanaf, datumTot);
+            final Set<String> anummers = berichtLogRepository.findLaatsteBerichtLogAnrs(datumVanaf, datumTot);
             assertNotNull(anummers);
             assertEquals("Er moeten 3 anummers gevonden worden.", 4, anummers.size());
-            assertTrue("De set anummers bevat niet het verwachte anummer", anummers.contains(123456789L));
-            assertTrue("De set anummers bevat niet het verwachte anummer", anummers.contains(123456790L));
-            assertTrue("De set anummers bevat niet het verwachte anummer", anummers.contains(123456791L));
-            assertTrue("De set anummers bevat niet het verwachte anummer", anummers.contains(987654321L));
+            assertTrue("De set anummers bevat niet het verwachte anummer", anummers.contains("0123456789"));
+            assertTrue("De set anummers bevat niet het verwachte anummer", anummers.contains("0123456790"));
+            assertTrue("De set anummers bevat niet het verwachte anummer", anummers.contains("0123456791"));
+            assertTrue("De set anummers bevat niet het verwachte anummer", anummers.contains("0987654321"));
         } catch (final ParseException e) {
             fail("Er zou geen fout op moeten treden.");
         }
@@ -65,7 +65,7 @@ public class BerichtLogRepositoryTest extends AbstractDatabaseTest {
      * Zoekt log record anummer(s) op een datum zonder logs.
      */
     @Test
-    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml" })
+    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml"})
     public void testNoANummersFoundVanafTotZonderGemeente() {
         try {
             final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -73,7 +73,7 @@ public class BerichtLogRepositoryTest extends AbstractDatabaseTest {
             final Date datumVanaf = dateFormat.parse("20121231");
             final Date datumTot = dateFormat.parse("20121231");
 
-            final Set<Long> anummers = berichtLogRepository.findLaatsteBerichtLogAnrs(datumVanaf, datumTot);
+            final Set<String> anummers = berichtLogRepository.findLaatsteBerichtLogAnrs(datumVanaf, datumTot);
 
             assertNotNull(anummers);
             assertTrue("De lijst zou leeg moeten zijn.", anummers.isEmpty());
@@ -86,9 +86,9 @@ public class BerichtLogRepositoryTest extends AbstractDatabaseTest {
      * Zoekt en vindt een BerichtLog op basis van het anummer.
      */
     @Test
-    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml" })
+    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml"})
     public void testFindLaatsteBerichtLogVoorANummer() {
-        final Long bestaandANummer = 123456789L;
+        final String bestaandANummer = "0123456789";
         final Lo3Bericht bericht = berichtLogRepository.findLaatsteLo3PersoonslijstBerichtVoorANummer(bestaandANummer);
         assertNotNull(bericht);
         assertEquals(Long.valueOf(4), bericht.getId());
@@ -99,9 +99,9 @@ public class BerichtLogRepositoryTest extends AbstractDatabaseTest {
      * Zoekt en vindt een BerichtLog op basis van het anummer.
      */
     @Test
-    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml" })
+    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml"})
     public void testFindLaatsteBerichtLogVoorANummerBerichtNietGevonden() {
-        final Lo3Bericht bericht = berichtLogRepository.findLaatsteLo3PersoonslijstBerichtVoorANummer(987654321L);
+        final Lo3Bericht bericht = berichtLogRepository.findLaatsteLo3PersoonslijstBerichtVoorANummer("987654321");
         assertNull(bericht);
     }
 
@@ -109,9 +109,9 @@ public class BerichtLogRepositoryTest extends AbstractDatabaseTest {
      * Zoekt, maar vindt geen BerichtLog op basis van het anummer.
      */
     @Test
-    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml" })
+    @InsertBefore(value = {"PersoonTestData.xml", "BerichtLogTestData.xml"})
     public void testFindLaatsteBerichtLogVoorANummerZonderBerichtLog() {
-        final Long nietBestaandANummer = 12345L;
+        final String nietBestaandANummer = "12345";
         final Lo3Bericht bericht = berichtLogRepository.findLaatsteLo3PersoonslijstBerichtVoorANummer(nietBestaandANummer);
 
         assertNull(bericht);

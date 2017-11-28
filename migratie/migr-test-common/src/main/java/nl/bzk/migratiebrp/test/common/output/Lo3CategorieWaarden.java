@@ -8,9 +8,10 @@ package nl.bzk.migratiebrp.test.common.output;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.xml.annotation.ElementList;
+import nl.bzk.algemeenbrp.util.xml.annotation.Root;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
 
 /**
  * Wrapper class om een List van Lo3CategorieWaarde-n te kunnen lezen en schrijven.
@@ -28,19 +29,15 @@ public final class Lo3CategorieWaarden {
 
     /**
      * Constructor.
-     * 
-     * @param categorieen
-     *            categorieen
+     * @param categorieen categorieen
      */
     public Lo3CategorieWaarden(
-        @ElementList(inline = true, entry = "categorie", type = Lo3CategorieWaarde.class, required = false) final List<Lo3CategorieWaarde> categorieen)
-    {
+            @ElementList(inline = true, entry = "categorie", type = Lo3CategorieWaarde.class, required = false) final List<Lo3CategorieWaarde> categorieen) {
         this.categorieen = categorieen;
     }
 
     /**
      * Geef de waarde van categorieen.
-     *
      * @return categorieen
      */
     @ElementList(inline = true, entry = "categorie", type = Lo3CategorieWaarde.class, required = false)

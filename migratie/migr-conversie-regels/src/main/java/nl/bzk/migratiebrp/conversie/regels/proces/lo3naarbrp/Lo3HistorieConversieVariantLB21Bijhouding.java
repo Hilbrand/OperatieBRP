@@ -7,9 +7,11 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp;
 
 import java.util.List;
+import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
+import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.Lo3AttribuutConverteerder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +20,16 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Lo3HistorieConversieVariantLB21Bijhouding extends Lo3HistorieConversieVariantLB21 {
+
+
+    /**
+     * constructor.
+     * @param converteerder Lo3AttribuutConverteerder
+     */
+    @Inject
+    public Lo3HistorieConversieVariantLB21Bijhouding(final Lo3AttribuutConverteerder converteerder) {
+        super(converteerder);
+    }
 
     @Override
     protected final <T extends BrpGroepInhoud> boolean isActueleGroep(final TussenGroep<T> huidigeLo3Groep, final List<TussenGroep<T>> lo3Groepen) {
@@ -39,7 +51,9 @@ public class Lo3HistorieConversieVariantLB21Bijhouding extends Lo3HistorieConver
     private <T extends BrpGroepInhoud> boolean isCat08Actueler(final List<TussenGroep<T>> lo3Groepen) {
         final TussenGroep<T> cat07 = bepaalActueelvoorCategorie(lo3Groepen, Lo3CategorieEnum.CATEGORIE_07);
         final TussenGroep<T> cat08 = bepaalActueelvoorCategorie(lo3Groepen, Lo3CategorieEnum.CATEGORIE_08);
-
+        if (cat07 == null || cat08 == null) {
+            return false;
+        }
         return cat08.getHistorie().getIngangsdatumGeldigheid().compareTo(cat07.getHistorie().getIngangsdatumGeldigheid()) > 0;
     }
 

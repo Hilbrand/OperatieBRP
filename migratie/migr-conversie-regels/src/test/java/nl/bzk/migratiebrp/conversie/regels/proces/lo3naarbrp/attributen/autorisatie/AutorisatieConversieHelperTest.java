@@ -10,13 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.autorisatie.Lo3AutorisatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGeheimCode;
 import nl.bzk.migratiebrp.conversie.regels.AbstractComponentTest;
 import org.junit.Test;
 
@@ -89,11 +88,11 @@ public class AutorisatieConversieHelperTest extends AbstractComponentTest {
 
     public static Lo3AutorisatieInhoud maakAutorisatie() {
         final Lo3AutorisatieInhoud lo3Autorisatie = new Lo3AutorisatieInhoud();
-        lo3Autorisatie.setIndicatieGeheimhouding(new Lo3IndicatieGeheimCode(0));
+        lo3Autorisatie.setIndicatieGeheimhouding(0);
         lo3Autorisatie.setVerstrekkingsbeperking(0);
         lo3Autorisatie.setAdresvraagBevoegdheid(0);
         lo3Autorisatie.setAfnemernaam("afnemernaam");
-        lo3Autorisatie.setAfnemersindicatie(100220);
+        lo3Autorisatie.setAfnemersindicatie("100220");
         lo3Autorisatie.setAfnemersverstrekking("852018 852102");
         lo3Autorisatie.setBerichtaanduiding(0);
         lo3Autorisatie.setConditioneleVerstrekking(0);

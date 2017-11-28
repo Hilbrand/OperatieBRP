@@ -6,14 +6,14 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -27,44 +27,44 @@ public final class BrpSamengesteldeNaamMapper extends AbstractBrpMapper<PersoonS
     protected BrpSamengesteldeNaamInhoud mapInhoud(final PersoonSamengesteldeNaamHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         final BrpPredicaatCode predicaat =
                 BrpMapperUtil.mapBrpPredicaatCode(
-                    historie.getPredicaat(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_PREDICAATCODE, true));
+                        historie.getPredicaat(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_PREDICAATCODE, true));
         final BrpString voornamen =
                 BrpString.wrap(historie.getVoornamen(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_VOORNAMEN, true));
         final BrpString voorvoegsel =
                 BrpString.wrap(
-                    historie.getVoorvoegsel(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_VOORVOEGSEL, true));
+                        historie.getVoorvoegsel(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_VOORVOEGSEL, true));
         final BrpCharacter scheidingsteken =
                 BrpCharacter.wrap(
-                    historie.getScheidingsteken(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN, true));
+                        historie.getScheidingsteken(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN, true));
         final BrpAdellijkeTitelCode adellijkeTitel;
         adellijkeTitel =
                 BrpMapperUtil.mapBrpAdellijkeTitelCode(
-                    historie.getAdellijkeTitel(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_ADELLIJKETITELCODE, true));
+                        historie.getAdellijkeTitel(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_ADELLIJKETITELCODE, true));
         final BrpString geslachtsnaamstam =
                 BrpString.wrap(
-                    historie.getGeslachtsnaamstam(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_GESLACHTSNAAMSTAM, true));
+                        historie.getGeslachtsnaamstam(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_GESLACHTSNAAMSTAM, true));
         final BrpBoolean indNamenreeks =
                 BrpBoolean.wrap(
-                    historie.getIndicatieNamenreeks(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_INDICATIENAMENREEKS, true));
+                        historie.getIndicatieNamenreeks(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_INDICATIENAMENREEKS, true));
         final BrpBoolean indAfgeleid =
                 BrpBoolean.wrap(
-                    historie.getIndicatieAfgeleid(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_INDICATIEAFGELEID, true));
+                        historie.getIndicatieAfgeleid(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_SAMENGESTELDENAAM_INDICATIEAFGELEID, true));
 
         return new BrpSamengesteldeNaamInhoud(
-            predicaat,
-            voornamen,
-            voorvoegsel,
-            scheidingsteken,
-            adellijkeTitel,
-            geslachtsnaamstam,
-            indNamenreeks,
-            indAfgeleid);
+                predicaat,
+                voornamen,
+                voorvoegsel,
+                scheidingsteken,
+                adellijkeTitel,
+                geslachtsnaamstam,
+                indNamenreeks,
+                indAfgeleid);
     }
 }

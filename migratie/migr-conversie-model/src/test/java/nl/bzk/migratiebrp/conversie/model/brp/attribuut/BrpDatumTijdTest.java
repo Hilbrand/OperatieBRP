@@ -7,7 +7,6 @@
 package nl.bzk.migratiebrp.conversie.model.brp.attribuut;
 
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datumtijdstempel;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,6 +26,7 @@ public class BrpDatumTijdTest {
     public void testFromDatum() {
         BrpDatumTijd.fromDatum(null, null);
     }
+
     @Test
     public void testBrpDatumTijd() {
         Assert.assertTrue(BrpDatumTijd.fromDatum(19800102, null).compareTo(BrpDatumTijd.fromDatum(19800102, null)) == 0);

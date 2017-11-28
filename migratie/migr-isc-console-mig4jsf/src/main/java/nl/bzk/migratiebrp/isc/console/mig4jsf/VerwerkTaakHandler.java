@@ -23,10 +23,10 @@ import org.jbpm.jsf.core.impl.UpdatesHashMap;
         name = "verwerkTaak",
         description = "Verwerk een taak.",
         attributes = {@TldAttribute(name = "id", description = "The id of the task to complete.", required = true, deferredType = Long.class),
-                      @TldAttribute(name = "transition", description = "The transition to take.", required = true, deferredType = String.class),
-                      @TldAttribute(name = "comment", description = "An EL expression that returns the comment text to add.", required = false,
-                              deferredType = String.class),
-                      @TldAttribute(name = "variableMap", description = "The variable map to apply.", required = true, deferredType = UpdatesHashMap.class) })
+                @TldAttribute(name = "transition", description = "The transition to take.", required = true, deferredType = String.class),
+                @TldAttribute(name = "comment", description = "An EL expression that returns the comment text to add.", required = false,
+                        deferredType = String.class),
+                @TldAttribute(name = "variableMap", description = "The variable map to apply.", required = true, deferredType = UpdatesHashMap.class)})
 public final class VerwerkTaakHandler extends AbstractHandler {
     private final TagAttribute idTagAttribute;
     private final TagAttribute transitionTagAttribute;
@@ -35,9 +35,7 @@ public final class VerwerkTaakHandler extends AbstractHandler {
 
     /**
      * Constructor waarbij de tag configuratie meegegeven kan worden.
-     * 
-     * @param config
-     *            Tag configuratie waarin o.a. migratie tags staan.
+     * @param config Tag configuratie waarin o.a. migratie tags staan.
      */
     public VerwerkTaakHandler(final TagConfig config) {
         super(config);

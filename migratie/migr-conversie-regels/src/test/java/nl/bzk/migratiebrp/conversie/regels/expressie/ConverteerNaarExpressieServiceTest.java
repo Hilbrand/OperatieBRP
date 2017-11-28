@@ -58,23 +58,40 @@ public class ConverteerNaarExpressieServiceTest {
     public void testSleutelRubriekenLijst() {
         final String attenderingsCriterium = converteerNaarExpressieService.converteerSleutelRubrieken("08.11.10", herkomst);
         Assert.assertFalse(attenderingsCriterium.length() == 0);
-        Assert.assertEquals("GEWIJZIGD(oud, nieuw, [adressen], [afgekorte_naam_openbare_ruimte])", attenderingsCriterium);
+        Assert.assertEquals("GEWIJZIGD(oud, nieuw, [Persoon.Adres.AfgekorteNaamOpenbareRuimte])", attenderingsCriterium);
+    }
+
+    @Test
+    public void testSleutelRubriekenAdellijkeTitelPredicaat() {
+        final String attenderingsCriterium = converteerNaarExpressieService.converteerSleutelRubrieken("01.02.20", herkomst);
+        Assert.assertFalse(attenderingsCriterium.length() == 0);
+        Assert.assertEquals(
+                "GEWIJZIGD(oud, nieuw, [Persoon.SamengesteldeNaam.AdellijkeTitelCode]) OF GEWIJZIGD(oud, nieuw, [Persoon.SamengesteldeNaam.PredicaatCode])",
+                attenderingsCriterium);
+    }
+
+    @Test
+    public void testSleutelRubriekenAdellijkeTitelPredicaatMetVoornaam() {
+        final String attenderingsCriterium = converteerNaarExpressieService.converteerSleutelRubrieken("01.02.10#01.02.20", herkomst);
+        Assert.assertFalse(attenderingsCriterium.length() == 0);
+        Assert.assertEquals(
+                "GEWIJZIGD(oud, nieuw, [Persoon.SamengesteldeNaam.Voornamen]) OF GEWIJZIGD(oud, nieuw, [Persoon.SamengesteldeNaam.AdellijkeTitelCode]) OF "
+                        + "GEWIJZIGD(oud, nieuw, [Persoon.SamengesteldeNaam.PredicaatCode])",
+                attenderingsCriterium);
     }
 
     @Test
     public void testSleutelRubriekenFunctieKinderen() {
         final String attenderingsCriterium = converteerNaarExpressieService.converteerSleutelRubrieken("09.02.10", herkomst);
         Assert.assertFalse(attenderingsCriterium.length() == 0);
-        Assert.assertEquals("GEWIJZIGD(KINDEREN(oud), KINDEREN(nieuw), [samengestelde_naam.voornamen])", attenderingsCriterium);
+        Assert.assertEquals("GEWIJZIGD(oud, nieuw, [GerelateerdeKind.Persoon.SamengesteldeNaam.Voornamen])", attenderingsCriterium);
     }
 
     @Test
     public void testSleutelRubriekenFunctieGerelateerdeBetrokkenheden() {
         final String attenderingsCriterium = converteerNaarExpressieService.converteerSleutelRubrieken("02.62.10", herkomst);
         Assert.assertFalse(attenderingsCriterium.length() == 0);
-        Assert.assertEquals(
-            "GEWIJZIGD(GERELATEERDE_BETROKKENHEDEN(oud,\"KIND\",\"FAMILIERECHTELIJKE_BETREKKING\",\"OUDER\"), GERELATEERDE_BETROKKENHEDEN(nieuw,\"KIND\",\"FAMILIERECHTELIJKE_BETREKKING\",\"OUDER\"), [ouderschap.datum_aanvang_geldigheid])",
-            attenderingsCriterium);
+        Assert.assertEquals("GEWIJZIGD(oud, nieuw, [GerelateerdeOuder.Ouderschap.DatumAanvangGeldigheid])", attenderingsCriterium);
     }
 
     @Test
@@ -82,8 +99,9 @@ public class ConverteerNaarExpressieServiceTest {
         final String attenderingsCriterium = converteerNaarExpressieService.converteerSleutelRubrieken("08.13.20", herkomst);
         Assert.assertFalse(attenderingsCriterium.length() == 0);
         Assert.assertEquals(
-            "GEWIJZIGD(ALS(oud.migratie.soort=\"E\",oud.migratie.datum_aanvang_geldigheid,NULL), ALS(nieuw.migratie.soort=\"E\",nieuw.migratie.datum_aanvang_geldigheid,NULL))",
-            attenderingsCriterium);
+                "GEWIJZIGD(MAP(FILTER(oud.Persoon.Migratie, x, x.SoortCode E= \"E\"), y, y.DatumAanvangGeldigheid), MAP(FILTER(nieuw.Persoon"
+                        + ".Migratie, x, x.SoortCode E= \"E\"), y, y.DatumAanvangGeldigheid))",
+                attenderingsCriterium);
     }
 
     @Test
@@ -93,9 +111,32 @@ public class ConverteerNaarExpressieServiceTest {
     }
 
     @Test
+    public void testSleutelRubriekenMeerdereActies() {
+        final String attenderingsCriterium = converteerNaarExpressieService.converteerSleutelRubrieken("01.88.10#04.88.10#06.88.10", herkomst);
+        Assert.assertFalse(attenderingsCriterium.length() == 0);
+        Assert.assertEquals(
+                "GEWIJZIGD(ACTIE(oud.Persoon.Identificatienummers.ActieInhoud, [Actie.PartijCode]), ACTIE(nieuw.Persoon.Identificatienummers.ActieInhoud,"
+                        + " [Actie.PartijCode])) OF GEWIJZIGD(ACTIE(oud.Persoon.SamengesteldeNaam.ActieInhoud, [Actie.PartijCode]), ACTIE(nieuw"
+                        + ".Persoon.SamengesteldeNaam.ActieInhoud, [Actie.PartijCode])) OF GEWIJZIGD(ACTIE(oud.Persoon.Geboorte.ActieInhoud, [Actie"
+                        + ".PartijCode]), ACTIE(nieuw.Persoon.Geboorte.ActieInhoud, [Actie.PartijCode])) OF GEWIJZIGD(ACTIE(oud.Persoon"
+                        + ".Geslachtsaanduiding.ActieInhoud, [Actie.PartijCode]), ACTIE(nieuw.Persoon.Geslachtsaanduiding.ActieInhoud, [Actie"
+                        + ".PartijCode])) OF GEWIJZIGD(ACTIE(oud.Persoon.Nummerverwijzing.ActieInhoud, [Actie.PartijCode]), ACTIE(nieuw.Persoon"
+                        + ".Nummerverwijzing.ActieInhoud, [Actie.PartijCode])) OF GEWIJZIGD(ACTIE(oud.Persoon.Naamgebruik.ActieInhoud, [Actie"
+                        + ".PartijCode]), ACTIE(nieuw.Persoon.Naamgebruik.ActieInhoud, [Actie.PartijCode])) OF GEWIJZIGD(ACTIE(oud.Persoon"
+                        + ".Nationaliteit.ActieInhoud, [Actie.PartijCode]), ACTIE(nieuw.Persoon.Nationaliteit.ActieInhoud, [Actie.PartijCode])) OF "
+                        + "GEWIJZIGD(ACTIE(oud.Persoon.Indicatie.BehandeldAlsNederlander.ActieInhoud, [Actie.PartijCode]), ACTIE(nieuw.Persoon.Indicatie"
+                        + ".BehandeldAlsNederlander.ActieInhoud, [Actie.PartijCode])) OF GEWIJZIGD(ACTIE(oud.Persoon.Indicatie"
+                        + ".VastgesteldNietNederlander.ActieInhoud, [Actie.PartijCode]), ACTIE(nieuw.Persoon.Indicatie.VastgesteldNietNederlander"
+                        + ".ActieInhoud, [Actie.PartijCode])) OF GEWIJZIGD(ACTIE(oud.Persoon.Indicatie.Staatloos.ActieInhoud, [Actie.PartijCode]), "
+                        + "ACTIE(nieuw.Persoon.Indicatie.Staatloos.ActieInhoud, [Actie.PartijCode])) OF GEWIJZIGD(ACTIE(oud.Persoon.Overlijden"
+                        + ".ActieInhoud, [Actie.PartijCode]), ACTIE(nieuw.Persoon.Overlijden.ActieInhoud, [Actie.PartijCode]))",
+                attenderingsCriterium);
+    }
+
+    @Test
     public void testVoorwaarderegel() {
         final String voorwaarderegel = "KV 07.67.10";
-        final String expressieExpected = "bijhouding.nadere_bijhoudingsaard <> \"A\"";
+        final String expressieExpected = "NIET(Persoon.Bijhouding.NadereBijhoudingsaardCode A= \"A\")";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaarderegel);
 
@@ -105,7 +146,7 @@ public class ConverteerNaarExpressieServiceTest {
     @Test
     public void testKVVoorwaardeRegel() {
         final String voorwaarderegel = "KV 01.01.10";
-        final String expressieExpected = "NIET IS_NULL(identificatienummers.administratienummer)";
+        final String expressieExpected = "KV(Persoon.Identificatienummers.Administratienummer)";
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaarderegel);
 
         Assert.assertEquals(expressieExpected, expressie);
@@ -123,15 +164,19 @@ public class ConverteerNaarExpressieServiceTest {
     public void testComplexeVoorwaardeRegel() {
         final String voorwaardeRegel =
                 "(08.09.10 GA1 0881 OFVGL 0882 OFVGL 0888 OFVGL 0889 OFVGL 0893 OFVGL 0899 OFVGL 0907 OFVGL 0917 OFVGL 0928 "
-                                       + "OFVGL 0935 OFVGL 0938 OFVGL 0944 OFVGL 0946 OFVGL 0951 OFVGL 0957 OFVGL 0962 OFVGL 0965 OFVGL 0971 OFVGL 0981 OFVGL 0983 OFVGL 0984 "
-                                       + "OFVGL 0986 OFVGL 0988 OFVGL 0994 OFVGL 1507 OFVGL 1640 OFVGL 1641 OFVGL 1669 OFVGL 1711 OFVGL 1729 OFVGL 1883 OFVGL 1894 OFVGL 1903) "
-                                       + "ENVWD 08.10.10 OGA1 \"B\" ENVWD KNV 07.67.10";
-        final String expressieVerwacht =
-                "bijhouding.bijhoudingspartij IN {88101, 88201, 88801, 88901, 89301, 89901, 90701, 91701, 92801, 93501, 93801, "
-                                         + "94401, 94601, 95101, 95701, 96201, 96501, 97101, 98101, 98301, 98401, 98601, 98801, 99401, 150701, 164001, 164101, 166901, 171101, "
-                                         + "172901, 188301, 189401, 190301} "
-                                         + "EN (ER_IS(RMAP(adressen, x, x.soort), v, NIET(v = \"B\")) OF AANTAL(RMAP(adressen, x, x.soort)) = 0) "
-                                         + "EN bijhouding.nadere_bijhoudingsaard = \"A\"";
+                        + "OFVGL 0935 OFVGL 0938 OFVGL 0944 OFVGL 0946 OFVGL 0951 OFVGL 0957 OFVGL 0962 OFVGL 0965 OFVGL 0971 OFVGL 0981 OFVGL 0983 OFVGL 0984 "
+                        + "OFVGL 0986 OFVGL 0988 OFVGL 0994 OFVGL 1507 OFVGL 1640 OFVGL 1641 OFVGL 1669 OFVGL 1711 OFVGL 1729 OFVGL 1883 OFVGL 1894 OFVGL "
+                        + "1903) "
+                        + "ENVWD 08.10.10 OGA1 \"B\" ENVWD KNV 07.67.10";
+        final String
+                expressieVerwacht =
+                "Persoon.Bijhouding.PartijCode EIN {\"088101\", \"088201\", \"088801\", \"088901\", \"089301\", \"089901\", \"090701\", \"091701\", "
+                        + "\"092801\", \"093501\", \"093801\", "
+                        + "\"094401\", \"094601\", \"095101\", \"095701\", \"096201\", \"096501\", \"097101\", \"098101\", \"098301\", \"098401\", "
+                        + "\"098601\", \"098801\", \"099401\", \"150701\", \"164001\", \"164101\", "
+                        + "\"166901\", \"171101\", \"172901\", \"188301\", \"189401\", \"190301\"} "
+                        + "EN NIET(Persoon.Adres.SoortCode A= \"B\") "
+                        + "EN Persoon.Bijhouding.NadereBijhoudingsaardCode E= \"A\"";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
 
@@ -142,20 +187,26 @@ public class ConverteerNaarExpressieServiceTest {
     public void testComplexeVoorwaardeRegel2() {
         final String voorwaardeRegel =
                 "(08.09.10 GA1 0881 OFVGL 0882 OFVGL 0888 OFVGL 0889 OFVGL 0893 OFVGL 0899 OFVGL 0907 OFVGL 0917 OFVGL 0928 "
-                                       + "OFVGL 0935 OFVGL 0938 OFVGL 0944 OFVGL 0946 OFVGL 0951 OFVGL 0957 OFVGL 0962 OFVGL 0965 OFVGL 0971 OFVGL 0981 OFVGL 0983 OFVGL 0984 "
-                                       + "OFVGL 0986 OFVGL 0988 OFVGL 0994 OFVGL 1507 OFVGL 1640 OFVGL 1641 OFVGL 1669 OFVGL 1711 OFVGL 1729 OFVGL 1883 OFVGL 1894 OFVGL 1903) "
-                                       + "ENVWD 08.10.10 OGA1 \"B\" ENVWD KNV 07.67.10 OFVWD (08.09.10 GA1 0889 OFVGL 0893 OFVGL 0899 OFVGL 0907 "
-                                       + "OFVGL 0917 OFVGL 0928 "
-                                       + "OFVGL 0935 OFVGL 0938 OFVGL 0944 OFVGL 0946 OFVGL 0951 OFVGL 0957 OFVGL 0962 OFVGL 0965 OFVGL 0971 OFVGL 0981 OFVGL 0983 OFVGL 0984 "
-                                       + "OFVGL 0986 OFVGL 0988 OFVGL 0994 OFVGL 1507 OFVGL 1640 OFVGL 1641 OFVGL 1669 OFVGL 1711 OFVGL 1729)";
-        final String expressieVerwacht =
-                "bijhouding.bijhoudingspartij IN {88101, 88201, 88801, 88901, 89301, 89901, 90701, 91701, 92801, 93501, 93801, "
-                                         + "94401, 94601, 95101, 95701, 96201, 96501, 97101, 98101, 98301, 98401, 98601, 98801, 99401, 150701, 164001, 164101, 166901, 171101, "
-                                         + "172901, 188301, 189401, 190301} "
-                                         + "EN (ER_IS(RMAP(adressen, x, x.soort), v, NIET(v = \"B\")) OF AANTAL(RMAP(adressen, x, x.soort)) = 0) "
-                                         + "EN bijhouding.nadere_bijhoudingsaard = \"A\" "
-                                         + "OF bijhouding.bijhoudingspartij IN {88901, 89301, 89901, 90701, 91701, 92801, 93501, 93801, 94401, 94601, 95101, 95701, "
-                                         + "96201, 96501, 97101, 98101, 98301, 98401, 98601, 98801, 99401, 150701, 164001, 164101, 166901, 171101, 172901}";
+                        + "OFVGL 0935 OFVGL 0938 OFVGL 0944 OFVGL 0946 OFVGL 0951 OFVGL 0957 OFVGL 0962 OFVGL 0965 OFVGL 0971 OFVGL 0981 OFVGL 0983 OFVGL 0984 "
+                        + "OFVGL 0986 OFVGL 0988 OFVGL 0994 OFVGL 1507 OFVGL 1640 OFVGL 1641 OFVGL 1669 OFVGL 1711 OFVGL 1729 OFVGL 1883 OFVGL 1894 OFVGL "
+                        + "1903) "
+                        + "ENVWD 08.10.10 OGA1 \"B\" ENVWD KNV 07.67.10 OFVWD (08.09.10 GA1 0889 OFVGL 0893 OFVGL 0899 OFVGL 0907 "
+                        + "OFVGL 0917 OFVGL 0928 "
+                        + "OFVGL 0935 OFVGL 0938 OFVGL 0944 OFVGL 0946 OFVGL 0951 OFVGL 0957 OFVGL 0962 OFVGL 0965 OFVGL 0971 OFVGL 0981 OFVGL 0983 OFVGL 0984 "
+                        + "OFVGL 0986 OFVGL 0988 OFVGL 0994 OFVGL 1507 OFVGL 1640 OFVGL 1641 OFVGL 1669 OFVGL 1711 OFVGL 1729)";
+        final String
+                expressieVerwacht =
+                "Persoon.Bijhouding.PartijCode EIN {\"088101\", \"088201\", \"088801\", \"088901\", \"089301\", \"089901\", \"090701\", \"091701\", "
+                        + "\"092801\", \"093501\", \"093801\", "
+                        + "\"094401\", \"094601\", \"095101\", \"095701\", \"096201\", \"096501\", \"097101\", \"098101\", \"098301\", \"098401\", "
+                        + "\"098601\", \"098801\", \"099401\", \"150701\", \"164001\", \"164101\", "
+                        + "\"166901\", \"171101\", \"172901\", \"188301\", \"189401\", \"190301\"} "
+                        + "EN NIET(Persoon.Adres.SoortCode A= \"B\") "
+                        + "EN Persoon.Bijhouding.NadereBijhoudingsaardCode E= \"A\" "
+                        + "OF Persoon.Bijhouding.PartijCode EIN {\"088901\", \"089301\", \"089901\", \"090701\", \"091701\", \"092801\", \"093501\", "
+                        + "\"093801\", \"094401\", \"094601\", \"095101\", "
+                        + "\"095701\", \"096201\", \"096501\", \"097101\", \"098101\", \"098301\", \"098401\", \"098601\", \"098801\", \"099401\", "
+                        + "\"150701\", \"164001\", \"164101\", \"166901\", \"171101\", \"172901\"}";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
 
@@ -166,9 +217,7 @@ public class ConverteerNaarExpressieServiceTest {
     public void testEenDeelsOnvertaaldeVoorwaarde() {
         final String voorwaardeRegel = "08.10.30 GDOGA 19.89.30 + 001511 ENVWD KV 08.10.30";
         final String expressieVerwacht =
-                "ALLE(RMAP(adressen, x, x.datum_aanvang_geldigheid), v, ((JAAR(v) > JAAR(VANDAAG() + ^15/11/0)) "
-                                         + "OF (JAAR(v) = JAAR(VANDAAG() + ^15/11/0) EN MAAND(v) >= MAAND(VANDAAG() + ^15/11/0)))) "
-                                         + "EN ER_IS(RMAP(adressen, x, x.datum_aanvang_geldigheid), v, NIET IS_NULL(v))";
+                "Persoon.Adres.DatumAanvangAdreshouding A>= VANDAAG() + ^15/11/? " + "EN KV(Persoon.Adres.DatumAanvangAdreshouding)";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
 
@@ -179,14 +228,20 @@ public class ConverteerNaarExpressieServiceTest {
     public void testTeVeelSpaties() {
         final String voorwaardeRegel =
                 "08.09.10 GA1 0881 OFVGL 0882 OFVGL 0888 OFVGL 0897 OFVGL 0899 OFVGL 0902 OFVGL 0905 OFVGL 0906 OFVGL "
-                                       + "0913 OFVGL 0917 OFVGL 0928 OFVGL 0933 OFVGL 0935 OFVGL 0936 OFVGL 0938 OFVGL 0951 OFVGL 0957 OFVGL 0962 OFVGL 0965 OFVGL "
-                                       + "0968 OFVGL 0971 OFVGL 0974 OFVGL 0981 OFVGL 0986 OFVGL 0990 OFVGL 0994 OFVGL 1669 OFVGL 1679 ENVWD 08.10.10 OGAA \"B\" ENVWD "
-                                       + "KNV 07.67.10 ENVWD (KNV 13.38.10 OFVWD 13.38.20 KDA   19.89.20 + 00000000)";
-        final String expressieVerwacht =
-                "bijhouding.bijhoudingspartij IN {88101, 88201, 88801, 89701, 89901, 90201, 90501, 90601, 91301, 91701, "
-                                         + "92801, 93301, 93501, 93601, 93801, 95101, 95701, 96201, 96501, 96801, 97101, 97401, 98101, 98601, 99001, 99401, 166901, 167901} "
-                                         + "EN ALLE(RMAP(adressen, x, x.soort), v, NIET(v = \"B\")) EN bijhouding.nadere_bijhoudingsaard = \"A\" "
-                                         + "EN (IS_NULL(uitsluiting_kiesrecht.uitsluiting_kiesrecht) OF uitsluiting_kiesrecht.datum_voorzien_einde_uitsluiting_kiesrecht < SELECTIE_DATUM() + ^0/0/0)";
+                        + "0913 OFVGL 0917 OFVGL 0928 OFVGL 0933 OFVGL 0935 OFVGL 0936 OFVGL 0938 OFVGL "
+                        + "0951 OFVGL 0957 OFVGL 0962 OFVGL 0965 OFVGL "
+                        + "0968 OFVGL 0971 OFVGL 0974 OFVGL 0981 OFVGL 0986 OFVGL 0990 OFVGL 0994 OFVGL "
+                        + "1669 OFVGL 1679 ENVWD 08.10.10 OGAA \"B\" ENVWD "
+                        + "KNV 07.67.10 ENVWD (KNV 13.38.10 OFVWD 13.38.20 KDA   19.89.20 + 00000000)";
+        final String
+                expressieVerwacht =
+                "Persoon.Bijhouding.PartijCode EIN {\"088101\", \"088201\", \"088801\", \"089701\", \"089901\", \"090201\", \"090501\", \"090601\", "
+                        + "\"091301\", \"091701\", "
+                        + "\"092801\", \"093301\", \"093501\", \"093601\", \"093801\", \"095101\", \"095701\", \"096201\", \"096501\", \"096801\", \"097101\", "
+                        + "\"097401\", \"098101\", \"098601\", \"099001\", \"099401\", \"166901\", \"167901\"} "
+                        + "EN NIET(Persoon.Adres.SoortCode E= \"B\") EN Persoon.Bijhouding.NadereBijhoudingsaardCode E= \"A\" "
+                        + "EN (KNV(Persoon.UitsluitingKiesrecht.Indicatie) OF "
+                        + "Persoon.UitsluitingKiesrecht.DatumVoorzienEinde A< SELECTIE_DATUM() + ^0/0/0)";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
 
@@ -207,16 +262,19 @@ public class ConverteerNaarExpressieServiceTest {
     public void testMeerDanTienEnkelvoudigeVoorwaarden() {
         final String voorwaardeRegel =
                 "KV 01.01.10 OFVWD KV 01.01.20 OFVWD "
-                                       + "KV 01.02.10 OFVWD KV 01.02.20 OFVWD KV 01.02.30 OFVWD KV 01.02.40 OFVWD "
-                                       + "KV 01.03.10 OFVWD KV 01.03.20 OFVWD KV 01.03.30 "
-                                       + "OFVWD KV 01.04.10 "
-                                       + "OFVWD KV 01.20.10 OFVWD KV 01.20.20";
-        final String expressieVerwacht =
-                "NIET IS_NULL(identificatienummers.administratienummer) OF NIET IS_NULL(identificatienummers.burgerservicenummer) OF "
-                                         + "NIET IS_NULL(samengestelde_naam.voornamen) OF (NIET IS_NULL(samengestelde_naam.adellijke_titel) OF NIET IS_NULL(samengestelde_naam.predicaat)) OF NIET IS_NULL(samengestelde_naam.voorvoegsel) OF NIET IS_NULL(samengestelde_naam.geslachtsnaamstam) OF "
-                                         + "NIET IS_NULL(geboorte.datum) OF NIET IS_NULL(geboorte.woonplaatsnaam) OF NIET IS_NULL(geboorte.land_gebied) OF "
-                                         + "NIET IS_NULL(geslachtsaanduiding.geslachtsaanduiding) OF "
-                                         + "NIET IS_NULL(nummerverwijzing.vorige_administratienummer) OF NIET IS_NULL(nummerverwijzing.volgende_administratienummer)";
+                        + "KV 01.02.10 OFVWD KV 01.02.20 OFVWD KV 01.02.30 OFVWD KV 01.02.40 OFVWD "
+                        + "KV 01.03.10 OFVWD KV 01.03.20 OFVWD KV 01.03.30 "
+                        + "OFVWD KV 01.04.10 "
+                        + "OFVWD KV 01.20.10 OFVWD KV 01.20.20";
+        final String
+                expressieVerwacht =
+                "KV(Persoon.Identificatienummers.Administratienummer) OF KV(Persoon.Identificatienummers.Burgerservicenummer) OF KV(Persoon.SamengesteldeNaam"
+                        + ".Voornamen) OF (KV(Persoon.SamengesteldeNaam.AdellijkeTitelCode) OF KV(Persoon.SamengesteldeNaam.PredicaatCode)) OF (KV(Persoon"
+                        + ".SamengesteldeNaam.Voorvoegsel) OF KV(Persoon.SamengesteldeNaam.Scheidingsteken)) OF KV(Persoon.SamengesteldeNaam"
+                        + ".Geslachtsnaamstam) OF KV(Persoon.Geboorte.Datum) OF (KV(Persoon.Geboorte.GemeenteCode) OF KV(Persoon.Geboorte.BuitenlandsePlaats)"
+                        + " OF KV(Persoon.Geboorte.OmschrijvingLocatie) OF KV(Persoon.Geboorte.Woonplaatsnaam)) OF KV(Persoon.Geboorte.LandGebiedCode) OF KV"
+                        + "(Persoon.Geslachtsaanduiding.Code) OF KV(Persoon.Nummerverwijzing.VorigeAdministratienummer) OF KV(Persoon.Nummerverwijzing"
+                        + ".VolgendeAdministratienummer)";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
 
@@ -226,7 +284,7 @@ public class ConverteerNaarExpressieServiceTest {
     @Test
     public void testOntbekendeSpatieRondOperator() {
         final String voorwaardeRegel = "08.11.60 GA1 \"2261*\" OFVGL \"2262*\"OFVGL \"2263*\" OFVGL\"2264*\" OFVGL \"2265*\" ";
-        final String expressieVerwacht = "ER_IS(RMAP(adressen, x, x.postcode), v, v IN {\"2261*\", \"2262*\", \"2263*\", \"2264*\", \"2265*\"})";
+        final String expressieVerwacht = "Persoon.Adres.Postcode EIN% {\"2261*\", \"2262*\", \"2263*\", \"2264*\", \"2265*\"}";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
 
@@ -236,7 +294,7 @@ public class ConverteerNaarExpressieServiceTest {
     @Test
     public void testVeelTeVeelHaakjes() {
         final String voorwaardeRegel = "(01.03.10 KD1 (19.89.30 - 0063))";
-        final String expressieVerwacht = "JAAR(geboorte.datum) < JAAR(VANDAAG() - ^63/0/0)";
+        final String expressieVerwacht = "Persoon.Geboorte.Datum E< VANDAAG() - ^63/?/?";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
         Assert.assertEquals(expressieVerwacht, expressie);
@@ -245,7 +303,7 @@ public class ConverteerNaarExpressieServiceTest {
     @Test
     public void testTeVeelHaakjes() {
         final String voorwaardeRegel = "01.03.10 KD1 (19.89.30 - 0063)";
-        final String expressieVerwacht = "JAAR(geboorte.datum) < JAAR(VANDAAG() - ^63/0/0)";
+        final String expressieVerwacht = "Persoon.Geboorte.Datum E< VANDAAG() - ^63/?/?";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
         Assert.assertEquals(expressieVerwacht, expressie);
@@ -254,7 +312,7 @@ public class ConverteerNaarExpressieServiceTest {
     @Test
     public void testMatopZonderSpaties() {
         final String voorwaardeRegel = "01.03.10 KD1 (19.89.30-0063)";
-        final String expressieVerwacht = "JAAR(geboorte.datum) < JAAR(VANDAAG() - ^63/0/0)";
+        final String expressieVerwacht = "Persoon.Geboorte.Datum E< VANDAAG() - ^63/?/?";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
         Assert.assertEquals(expressieVerwacht, expressie);
@@ -269,7 +327,7 @@ public class ConverteerNaarExpressieServiceTest {
     @Test
     public void testHaakjeEnQuoteInWaarde() {
         final String voorwaardeRegel = "01.02.40 GA1 \"A(CHT/\"ERNAAM\"";
-        final String expressieVerwacht = "samengestelde_naam.geslachtsnaamstam = \"A(CHT/\"ERNAAM\"";
+        final String expressieVerwacht = "Persoon.SamengesteldeNaam.Geslachtsnaamstam E= \"A(CHT/\"ERNAAM\"";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
         Assert.assertEquals(expressieVerwacht, expressie);
@@ -278,7 +336,7 @@ public class ConverteerNaarExpressieServiceTest {
     @Test
     public void testSpatiesEnOperatorInWaarde() {
         final String voorwaardeRegel = "01.02.40GA1\"GA1\"";
-        final String expressieVerwacht = "samengestelde_naam.geslachtsnaamstam = \"GA1\"";
+        final String expressieVerwacht = "Persoon.SamengesteldeNaam.Geslachtsnaamstam E= \"GA1\"";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
         Assert.assertEquals(expressieVerwacht, expressie);
@@ -293,9 +351,10 @@ public class ConverteerNaarExpressieServiceTest {
     @Test
     public void testInWildcard() {
         final String voorwaardeRegel =
-                "08.11.60 OGA1 \"1024/*\" ENVGL \"1025/*\" ENVGL \"1026/*\" ENVGL \"1027/*\" ENVGL \"1028/*\" ENVGL \"1034/*\" ENVGL \"1035/*\" ENVGL \"2521/*\"";
+                "08.11.60 OGA1 \"1024/*\" ENVGL \"1025/*\" ENVGL \"1026/*\" ENVGL \"1027/*\" ENVGL \"1028/*\" ENVGL \"1034/*\" ENVGL \"1035/*\" ENVGL " +
+                        "\"2521/*\"";
         final String expressieVerwacht =
-                "(ER_IS(RMAP(adressen, x, x.postcode), v, NIET(v IN% {\"1024*\", \"1025*\", \"1026*\", \"1027*\", \"1028*\", \"1034*\", \"1035*\", \"2521*\"})) OF AANTAL(RMAP(adressen, x, x.postcode)) = 0)";
+                "NIET(Persoon.Adres.Postcode AIN% {\"1024*\", \"1025*\", \"1026*\", \"1027*\", \"1028*\", \"1034*\", \"1035*\", \"2521*\"})";
 
         final String expressie = converteerNaarExpressieService.converteerVoorwaardeRegel(voorwaardeRegel);
         Assert.assertEquals(expressieVerwacht, expressie);

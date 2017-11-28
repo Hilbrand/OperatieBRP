@@ -6,15 +6,16 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNaamgebruikHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikGeslachtsnaamstam;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPredicaatCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNaamgebruikInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNaamgebruikHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -28,38 +29,38 @@ public final class BrpNaamgebruikMapper extends AbstractBrpMapper<PersoonNaamgeb
     protected BrpNaamgebruikInhoud mapInhoud(final PersoonNaamgebruikHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         final BrpNaamgebruikCode naamgebruik =
                 BrpMapperUtil.mapBrpNaamgebruikCode(
-                    historie.getNaamgebruik(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_CODE, true));
+                        historie.getNaamgebruik(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_CODE, true));
         final BrpBoolean indAfgeleid =
                 BrpMapperUtil.mapBrpBoolean(
-                    historie.getIndicatieNaamgebruikAfgeleid(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_INDICATIEAFGELEID, true));
+                        historie.getIndicatieNaamgebruikAfgeleid(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_INDICATIEAFGELEID, true));
         final BrpPredicaatCode predicaat;
         predicaat =
                 BrpMapperUtil.mapBrpPredicaatCode(
-                    historie.getPredicaat(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_PREDICAATCODE, true));
+                        historie.getPredicaat(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_PREDICAATCODE, true));
         final BrpAdellijkeTitelCode adellijkeTitel;
         adellijkeTitel =
                 BrpMapperUtil.mapBrpAdellijkeTitelCode(
-                    historie.getAdellijkeTitel(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_ADELLIJKETITELCODE, true));
+                        historie.getAdellijkeTitel(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_ADELLIJKETITELCODE, true));
         final BrpString voornamen =
                 BrpString.wrap(
-                    historie.getVoornamenNaamgebruik(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_VOORNAMEN, true));
+                        historie.getVoornamenNaamgebruik(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_VOORNAMEN, true));
         final BrpString voorvoegsel =
                 BrpString.wrap(
-                    historie.getVoorvoegselNaamgebruik(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_VOORVOEGSEL, true));
+                        historie.getVoorvoegselNaamgebruik(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_VOORVOEGSEL, true));
         final BrpCharacter scheidingsteken =
                 BrpCharacter.wrap(
-                    historie.getScheidingstekenNaamgebruik(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_SCHEIDINGSTEKEN, true));
-        final BrpString geslachtsnaamstam =
-                BrpString.wrap(
-                    historie.getGeslachtsnaamstamNaamgebruik(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_GESLACHTSNAAMSTAM, true));
+                        historie.getScheidingstekenNaamgebruik(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_NAAMGEBRUIK_SCHEIDINGSTEKEN, true));
+        final BrpNaamgebruikGeslachtsnaamstam geslachtsnaamstam =
+                BrpNaamgebruikGeslachtsnaamstam.wrap(
+                        historie.getGeslachtsnaamstamNaamgebruik(),
+                        brpOnderzoekMapper.bepaalOnderzoeken(historie, Element.PERSOON_NAAMGEBRUIK_GESLACHTSNAAMSTAM, true));
 
         return new BrpNaamgebruikInhoud(naamgebruik, indAfgeleid, predicaat, adellijkeTitel, voornamen, voorvoegsel, scheidingsteken, geslachtsnaamstam);
     }

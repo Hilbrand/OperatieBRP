@@ -19,20 +19,30 @@ import java.util.regex.Pattern;
 public final class TestBericht {
 
     // Constantes voor de standaard/variabele gemeente instellingen.
-    /** Default bron gemeente. */
+    /**
+     * Default bron gemeente.
+     */
     public static final String STANDAARD_BRON_GEMEENTE = "0599";
-    /** Default doel gemeente. */
+    /**
+     * Default doel gemeente.
+     */
     public static final String STANDAARD_DOEL_GEMEENTE = "0600";
-    /** Sleutel Lo3 gemeente. */
+    /**
+     * Sleutel Lo3 gemeente.
+     */
     public static final String SLEUTEL_LO3_GEMEENTE = "lo3Gemeente";
-    /** Sleutel brp gemeente. */
+    /**
+     * Sleutel brp gemeente.
+     */
     public static final String SLEUTEL_BRP_GEMEENTE = "brpGemeente";
-    /** Property bestand. */
+    /**
+     * Property bestand.
+     */
     public static final String GEMEENTE_INSTELLINGEN_BESTAND = "gemeente.properties";
 
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile(
-        "([0-9]*)-([0-9]*)?(IN|UIT)([0-9]*)?-(BRP|VOSPG|SYNC|HAND|TRANS|NODECHECK|VOISC|GEMEENTE|MAILBOX|CLEANDB|SQL_BRP|SQL_ISC|TIMEOUT_JMS)?(-.*)?",
-        Pattern.CASE_INSENSITIVE);
+            "([0-9]*)-([0-9]*)?(IN|UIT)([0-9]*)?-(BRP|SYNC|HAND|TRANS|NODECHECK|VOISC|GEMEENTE|MAILBOX|CLEANDB|SQL_BRP|SQL_ISC|TIMEOUT_JMS)?(-.*)?",
+            Pattern.CASE_INSENSITIVE);
 
     private final Integer volgnummer;
     private final Boolean uitgaand;
@@ -44,13 +54,9 @@ public final class TestBericht {
 
     /**
      * Constructor.
-     *
-     * @param berichtInhoud
-     *            inhoud van het bericht
-     * @param filename
-     *            bestandsnaam
-     * @param fileDir
-     *            directory waar het bestand zich bevindt
+     * @param berichtInhoud inhoud van het bericht
+     * @param filename bestandsnaam
+     * @param fileDir directory waar het bestand zich bevindt
      */
     public TestBericht(final String berichtInhoud, final String filename, final String fileDir) {
         final Matcher matcher = FILE_NAME_PATTERN.matcher(filename);
@@ -97,7 +103,6 @@ public final class TestBericht {
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public String getKanaal() {
@@ -106,7 +111,6 @@ public final class TestBericht {
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return inhoud
      */
     public String getInhoud() {
@@ -120,7 +124,6 @@ public final class TestBericht {
 
     /**
      * Geef de waarde van lo3 gemeente.
-     *
      * @return lo3 gemeente
      */
     public String getLo3Gemeente() {
@@ -129,7 +132,6 @@ public final class TestBericht {
 
     /**
      * Geef de waarde van brp gemeente.
-     *
      * @return brp gemeente
      */
     public String getBrpGemeente() {
@@ -138,9 +140,7 @@ public final class TestBericht {
 
     /**
      * Zet de waarde van lo3 gemeente.
-     *
-     * @param lo3Gemeente
-     *            lo3 gemeente
+     * @param lo3Gemeente lo3 gemeente
      */
     public void setLo3Gemeente(final String lo3Gemeente) {
         this.lo3Gemeente = lo3Gemeente;
@@ -148,9 +148,7 @@ public final class TestBericht {
 
     /**
      * Zet de waarde van brp gemeente.
-     *
-     * @param brpGemeente
-     *            brp gemeente
+     * @param brpGemeente brp gemeente
      */
     public void setBrpGemeente(final String brpGemeente) {
         this.brpGemeente = brpGemeente;

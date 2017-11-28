@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortRelatieCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.SoortVerbintenisConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3SoortVerbintenisEnum;
+
 import org.junit.Test;
 
 public class SoortVerbintenisConversietabelTest {
@@ -21,8 +22,8 @@ public class SoortVerbintenisConversietabelTest {
         final SoortVerbintenisConversietabel tabel = new SoortVerbintenisConversietabel();
         assertNull(tabel.converteerNaarBrp(null));
         assertEquals(
-            BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP,
-            tabel.converteerNaarBrp(Lo3SoortVerbintenisEnum.GEREGISTREERD_PARTNERSCHAP.asElement()));
+                BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP,
+                tabel.converteerNaarBrp(Lo3SoortVerbintenisEnum.GEREGISTREERD_PARTNERSCHAP.asElement()));
         assertEquals(BrpSoortRelatieCode.HUWELIJK, tabel.converteerNaarBrp(Lo3SoortVerbintenisEnum.HUWELIJK.asElement()));
     }
 
@@ -36,8 +37,8 @@ public class SoortVerbintenisConversietabelTest {
         final SoortVerbintenisConversietabel tabel = new SoortVerbintenisConversietabel();
         assertNull(tabel.converteerNaarLo3(null));
         assertEquals(
-            Lo3SoortVerbintenisEnum.GEREGISTREERD_PARTNERSCHAP.asElement(),
-            tabel.converteerNaarLo3(BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP));
+                Lo3SoortVerbintenisEnum.GEREGISTREERD_PARTNERSCHAP.asElement(),
+                tabel.converteerNaarLo3(BrpSoortRelatieCode.GEREGISTREERD_PARTNERSCHAP));
         assertEquals(Lo3SoortVerbintenisEnum.HUWELIJK.asElement(), tabel.converteerNaarLo3(BrpSoortRelatieCode.HUWELIJK));
     }
 

@@ -9,37 +9,34 @@ package nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNlReisdocument;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.ConversieMapEntry;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch.AbstractSoortNlReisdocumentConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortNederlandsReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.SoortNlReisdocument;
 
 /**
  * De conversietabel om 'Lo3 Soort Nederlands reisdocument'-code (GBA Tabel 48) te converteren naar de 'BRP Soort
  * Nederlands reisdocument'-code en vice versa.
- * 
  */
 public final class SoortNlReisdocumentConversietabel extends AbstractSoortNlReisdocumentConversietabel {
 
     /**
      * Maakt een SoortNlReisdocumentConversietabel object.
-     * 
-     * @param soortNlReisdocumentLijst
-     *            de lijst met SoortNlReisdocument conversies.
+     * @param soortNlReisdocumentLijst de lijst met SoortNlReisdocument conversies.
      */
     public SoortNlReisdocumentConversietabel(final List<SoortNlReisdocument> soortNlReisdocumentLijst) {
         super(converteerSoortNlReisdocumentLijst(soortNlReisdocumentLijst));
     }
 
     private static List<Map.Entry<Lo3SoortNederlandsReisdocument, BrpSoortNederlandsReisdocumentCode>> converteerSoortNlReisdocumentLijst(
-        final List<SoortNlReisdocument> soortNlReisdocumentLijst)
-    {
+            final List<SoortNlReisdocument> soortNlReisdocumentLijst) {
         final List<Map.Entry<Lo3SoortNederlandsReisdocument, BrpSoortNederlandsReisdocumentCode>> result = new ArrayList<>();
         for (final SoortNlReisdocument soortNlReisdocument : soortNlReisdocumentLijst) {
             result.add(new ConversieMapEntry<>(
-                new Lo3SoortNederlandsReisdocument(soortNlReisdocument.getLo3NederlandsReisdocument()),
-                new BrpSoortNederlandsReisdocumentCode(soortNlReisdocument.getSoortNederlandsReisdocument().getCode())));
+                    new Lo3SoortNederlandsReisdocument(soortNlReisdocument.getLo3NederlandsReisdocument()),
+                    new BrpSoortNederlandsReisdocumentCode(soortNlReisdocument.getSoortNederlandsReisdocument().getCode())));
         }
         return result;
     }

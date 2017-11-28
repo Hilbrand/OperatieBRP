@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.test.perf.isc;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+
 import nl.bzk.migratiebrp.test.dal.AbstractTestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
 import nl.bzk.migratiebrp.test.perf.isc.environment.TestEnvironment;
@@ -22,9 +23,7 @@ public final class ProcessenTestCasusFactory extends AbstractTestCasusFactory {
 
     /**
      * Constructor.
-     * 
-     * @param environment
-     *            omgeving
+     * @param environment omgeving
      */
     protected ProcessenTestCasusFactory(final TestEnvironment environment) {
         this.environment = environment;
@@ -32,13 +31,8 @@ public final class ProcessenTestCasusFactory extends AbstractTestCasusFactory {
 
     @Override
     public List<TestCasus> leesTestCasussen(final File input) {
-        return Collections.<TestCasus>singletonList(new ProcessenTestCasus(
-            getThema(),
-            input.getName(),
-            getOutputFolder(),
-            getExpectedFolder(),
-            input,
-            environment));
+        return Collections.<TestCasus>singletonList(
+                new ProcessenTestCasus(getThema(), input.getName(), getOutputFolder(), getExpectedFolder(), input, environment));
     }
 
 }

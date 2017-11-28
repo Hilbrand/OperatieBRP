@@ -6,39 +6,30 @@
 
 package nl.bzk.migratiebrp.init.logging.runtime.listeners.handlers;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpAntwoordBericht;
 import nl.bzk.migratiebrp.init.logging.model.domein.entities.InitVullingLog;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.springframework.stereotype.Component;
 
 /**
  * Handler voor het {@link SynchroniseerNaarBrpAntwoordBericht}.
  */
 @Component
-public final class SynchroniseerNaarBrpAntwoordHandler extends AbstractInitVullingLogHandler {
+public final class SynchroniseerNaarBrpAntwoordHandler extends BasisInitVullingLogHandler implements AntwoordHandler<SynchroniseerNaarBrpAntwoordBericht> {
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    /**
-     * Verwerk het bericht.
-     *
-     * @param antwoord
-     *            bericht
-     * @param messageId
-     *            message id
-     * @param correlationId
-     *            correlation id
-     */
+    @Override
     public void verwerk(final SynchroniseerNaarBrpAntwoordBericht antwoord, final String messageId, final String correlationId) {
-        final Long administratienummer = extractIdentifier(correlationId);
-        final InitVullingLog log = getLoggingService().zoekInitVullingLog(administratienummer);
-        if (log == null) {
+        final String administratienummer = extractIdentifier(correlationId);
+        final InitVullingLog initVullingLog = getLoggingService().zoekInitVullingLog(administratienummer);
+        if (initVullingLog == null) {
             LOG.warn(KON_GEEN_LOG_VINDEN_VOOR_MESSAGE_ID_CORRELATION_ID, messageId, correlationId);
         } else {
             LOG.debug("Status in antwoordbericht {}", antwoord.getStatus().toString());
-            fillLog(log, null, antwoord.getStatus().toString());
-            getLoggingService().bepalenEnOpslaanVerschillen(log);
+            initVullingLog.setConversieResultaat(antwoord.getStatus().toString());
+            getLoggingService().persisteerInitVullingLog(initVullingLog);
         }
     }
-
 }

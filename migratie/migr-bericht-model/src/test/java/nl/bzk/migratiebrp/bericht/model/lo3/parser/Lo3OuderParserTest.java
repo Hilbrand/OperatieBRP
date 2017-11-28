@@ -8,7 +8,7 @@ package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -37,17 +37,17 @@ public class Lo3OuderParserTest extends AbstractParserTest {
 
         final Lo3OuderInhoud ouderInhoud =
                 new Lo3OuderInhoud(
-                    maakLo3Long(WAARDE_ELEMENT_0110, onderzoek),
-                    maakLo3Integer(WAARDE_ELEMENT_0120, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
-                    new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
-                    maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_0310, onderzoek),
-                    new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
-                    new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
-                    new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
-                    maakDatum(WAARDE_ELEMENT_6210, onderzoek));
+                        maakLo3String(WAARDE_ELEMENT_0110, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0120, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0210, onderzoek),
+                        new Lo3AdellijkeTitelPredikaatCode(WAARDE_ELEMENT_0220, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0230, onderzoek),
+                        maakLo3String(WAARDE_ELEMENT_0240, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_0310, onderzoek),
+                        new Lo3GemeenteCode(WAARDE_ELEMENT_0320, onderzoek),
+                        new Lo3LandCode(WAARDE_ELEMENT_0330, onderzoek),
+                        new Lo3Geslachtsaanduiding(WAARDE_ELEMENT_0410, onderzoek),
+                        maakDatum(WAARDE_ELEMENT_6210, onderzoek));
 
         final Lo3Categorie<Lo3OuderInhoud> categorieInhoudCategorie =
                 new Lo3Categorie<>(ouderInhoud, documentatie, onderzoek, historie, new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_02, 0, 0));
@@ -170,7 +170,7 @@ public class Lo3OuderParserTest extends AbstractParserTest {
     @Test
     public void testOuderParserGeenWaarden() {
         final Lo3OuderParser parser = new Lo3OuderParser();
-        final Lo3Stapel<Lo3OuderInhoud> parsedInhoud = parser.parse(new ArrayList<Lo3CategorieWaarde>());
+        final Lo3Stapel<Lo3OuderInhoud> parsedInhoud = parser.parse(new ArrayList<>());
         Assert.assertNull(parsedInhoud);
     }
 

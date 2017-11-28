@@ -6,14 +6,26 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.BrpType;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekOnbekendExceptie;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.RubriekWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Criterium;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.ElementWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.EnWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.KNVOperator;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.KVOperator;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.OfWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.StandaardOperator;
 import org.springframework.stereotype.Component;
 
 /**
  * Voorwaarde regel KV rubriek en KNV rubriek. Uitgezonderd de rubriek 07.67.10
- *
  */
 @Component
 public class KomtVoorVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
@@ -23,77 +35,180 @@ public class KomtVoorVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
      */
     private static final String REGEX_PATROON = "^(KV|KNV).*";
     private static final int VOLGORDE = 110;
+    private static final String KV = "KV";
+    private static final String KNV = "KNV";
+    private static final int DEEL_FACTOR_INVERSE = 2;
+    private final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler;
 
     /**
      * Maakt nieuwe voorwaarderegel aan.
+     * @param gbaRubriekNaarBrpTypeVertaler rubriekvertaler
      */
-    public KomtVoorVoorwaardeRegel() {
+    @Inject
+    public KomtVoorVoorwaardeRegel(final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler) {
         super(VOLGORDE, REGEX_PATROON);
+        this.gbaRubriekNaarBrpTypeVertaler = gbaRubriekNaarBrpTypeVertaler;
     }
 
     @Override
-    public final String getBrpExpressie(final String voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
-        final String[] delen = voorwaardeRegel.split(" ");
-        final StringBuilder result = new StringBuilder();
+    public final Expressie getBrpExpressie(final RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
+        final String[] delen = voorwaardeRegel.getLo3Expressie().split(" ");
+        final Expressie result;
         try {
             final BrpType[] brpTypen = vertaalRubriekNaarBrpTypen(delen[1]);
             if (brpTypen.length == 1) {
-                verwerkVoorwaarde(delen, brpTypen[0], result, voorwaardeRegel);
+                result = verwerkVoorwaarde(delen, brpTypen[0], voorwaardeRegel.getLo3Expressie());
             } else {
-                final StringBuilder voorwaardeBuilder = new StringBuilder();
-                for (final BrpType brpType : brpTypen) {
-                    voorwaardeBuilder.append('(');
-                    verwerkVoorwaarde(delen, brpType, voorwaardeBuilder, voorwaardeRegel);
-                    switch (delen[0]) {
-                        case "KV":
-                            voorwaardeBuilder.append(") OF ");
-                            break;
-                        case "KNV":
-                            voorwaardeBuilder.append(") EN ");
-                            break;
-                        default:
-                            throw new GbaVoorwaardeOnvertaalbaarExceptie(voorwaardeRegel);
-                    }
-                }
-                result.append(voorwaardeBuilder.toString().replaceAll("\\ (OF|EN)\\ $", ""));
+                final List<Expressie> expressies = maakDeelExpressies(voorwaardeRegel, delen, brpTypen);
+                result = stelSamengesteldeVoorwaardeSamen(voorwaardeRegel, delen[0], expressies);
             }
         } catch (final GbaRubriekOnbekendExceptie groe) {
-            throw new GbaVoorwaardeOnvertaalbaarExceptie(voorwaardeRegel, groe);
+            throw new GbaVoorwaardeOnvertaalbaarExceptie(voorwaardeRegel.getLo3Expressie(), groe);
         }
 
-        return result.toString();
+        return result;
     }
 
-    private BrpType[] vertaalRubriekNaarBrpTypen(final String rubriek) throws GbaRubriekOnbekendExceptie {
-        final BrpType[] result;
-        if (rubriek.matches("04\\.05\\.10")) {
-            // Uitzondering voor nationaliteit
-            result = getGbaRubriekNaarBrpTypeVertaler().vertaalGbaRubriekNaarBrpType(rubriek + ".voorkomens");
-        } else {
-            result = getGbaRubriekNaarBrpTypeVertaler().vertaalGbaRubriekNaarBrpType(rubriek);
+    private List<Expressie> maakDeelExpressies(final RubriekWaarde voorwaardeRegel, final String[] delen, final BrpType[] brpTypen)
+            throws GbaVoorwaardeOnvertaalbaarExceptie {
+        final List<Expressie> expressies = new ArrayList<>();
+        for (final BrpType brpType : brpTypen) {
+            expressies.add(verwerkVoorwaarde(delen, brpType, voorwaardeRegel.getLo3Expressie()));
+        }
+        return expressies;
+    }
+
+    private Expressie stelSamengesteldeVoorwaardeSamen(final RubriekWaarde voorwaardeRegel, final String operator, final List<Expressie> expressies)
+            throws GbaVoorwaardeOnvertaalbaarExceptie {
+        final Expressie result;
+
+        switch (operator) {
+            case KV:
+                result = stelSamengesteldeVoorwaardeKVSamen(expressies);
+                break;
+            case KNV:
+                result = stelSamengesteldeVoorwaardeKNVSamen(expressies);
+                break;
+            default:
+                throw new GbaVoorwaardeOnvertaalbaarExceptie(voorwaardeRegel.getLo3Expressie());
         }
         return result;
     }
 
-    private void verwerkVoorwaarde(final String[] delen, final BrpType brpType, final StringBuilder result, final String voorwaardeRegel)
-        throws GbaVoorwaardeOnvertaalbaarExceptie
-    {
-        final String selWaarde = delen[0] + brpType.isLijst();
-        switch (selWaarde) {
-            case "KVfalse":
-                result.append(String.format("NIET IS_NULL(%s)", brpType.getType()));
+    private Expressie stelSamengesteldeVoorwaardeKVSamen(final List<Expressie> expressies) {
+        final Expressie result;
+        final List<Expressie> ofExpressies = verwerkInverseExpressiesVoorKV(expressies);
+        if (ofExpressies.size() == 1) {
+            result = ofExpressies.get(0);
+        } else {
+            result = new OfWaarde(ofExpressies.toArray(new Expressie[ofExpressies.size()]));
+        }
+        return result;
+    }
+
+    private Expressie stelSamengesteldeVoorwaardeKNVSamen(final List<Expressie> expressies) {
+        final Expressie result;
+        final List<Expressie> enExpressies = verwerkInverseExpressieVoorKNV(expressies);
+        result = new EnWaarde(enExpressies.toArray(new Expressie[enExpressies.size()]));
+        return result;
+    }
+
+    private List<Expressie> verwerkInverseExpressiesVoorKV(List<Expressie> expressies) {
+        final List<Expressie> ofExpressies = new ArrayList<>();
+        if (expressies.size() % DEEL_FACTOR_INVERSE == 0) {
+            for (int x = 0; x < expressies.size(); x = x + DEEL_FACTOR_INVERSE) {
+                if (expressies.get(x + 1).getCriteria().get(0).getOperator() instanceof KNVOperator) {
+                    ofExpressies.add(new EnWaarde(expressies.get(x), expressies.get(x + 1)));
+                } else {
+                    ofExpressies.add(expressies.get(x));
+                    ofExpressies.add(expressies.get(x + 1));
+
+                }
+            }
+        } else {
+            ofExpressies.addAll(expressies);
+        }
+        return ofExpressies;
+    }
+
+    private List<Expressie> verwerkInverseExpressieVoorKNV(List<Expressie> expressies) {
+        final List<Expressie> enExpressies = new ArrayList<>();
+        if (expressies.size() % DEEL_FACTOR_INVERSE == 0) {
+            for (int x = 0; x < expressies.size(); x = x + DEEL_FACTOR_INVERSE) {
+                if (expressies.get(x + 1).getCriteria().get(0).getOperator() instanceof KVOperator) {
+                    enExpressies.add(new OfWaarde(expressies.get(x), expressies.get(x + 1)));
+                } else {
+                    enExpressies.add(expressies.get(x));
+                    enExpressies.add(expressies.get(x + 1));
+
+                }
+            }
+        } else {
+            enExpressies.addAll(expressies);
+        }
+        return enExpressies;
+    }
+
+    private BrpType[] vertaalRubriekNaarBrpTypen(final String rubriek) throws GbaRubriekOnbekendExceptie {
+        final BrpType[] tijdelijkResultaat;
+        if (rubriek.matches("04\\.05\\.10")) {
+            // Uitzondering voor nationaliteit
+            tijdelijkResultaat = gbaRubriekNaarBrpTypeVertaler.vertaalGbaRubriekNaarBrpType(rubriek + ".voorkomens");
+        } else {
+            tijdelijkResultaat = gbaRubriekNaarBrpTypeVertaler.vertaalGbaRubriekNaarBrpType(rubriek);
+        }
+        final List<BrpType> brpTypeLijst = new ArrayList<>();
+        for (final BrpType brpType : tijdelijkResultaat) {
+            brpTypeLijst.add(brpType);
+        }
+        return brpTypeLijst.toArray(new BrpType[brpTypeLijst.size()]);
+    }
+
+    private Expressie verwerkVoorwaarde(final String[] delen, final BrpType brpType, final String voorwaardeRegel)
+            throws GbaVoorwaardeOnvertaalbaarExceptie {
+        String operator = delen[0];
+        if (brpType.isInverse()) {
+            switch (operator) {
+                case KV:
+                    operator = KNV;
+                    break;
+                case KNV:
+                    operator = KV;
+                    break;
+                default:
+            }
+        }
+        final Expressie resultaat;
+        switch (operator) {
+            case KV:
+                resultaat = verwerkKvVoorwaarde(brpType);
                 break;
-            case "KNVfalse":
-                result.append(String.format("IS_NULL(%s)", brpType.getType()));
-                break;
-            case "KVtrue":
-                result.append(String.format("ER_IS(%s, v, NIET IS_NULL(v))", brpType.getType()));
-                break;
-            case "KNVtrue":
-                result.append(String.format("ALLE(%s, v, IS_NULL(v))", brpType.getType()));
+            case KNV:
+                resultaat = verwerkKnvVoorwaarde(brpType);
                 break;
             default:
                 throw new GbaVoorwaardeOnvertaalbaarExceptie(voorwaardeRegel);
         }
+        return resultaat;
+    }
+
+    private Expressie verwerkKnvVoorwaarde(BrpType brpType) {
+        Expressie resultaat;
+        if (brpType.getType().contains("MAP")) {
+            resultaat = new ElementWaarde(new Criterium(brpType.getType(), new StandaardOperator("NIET(%1$s E<> NULL)"), null));
+        } else {
+            resultaat = new ElementWaarde(new Criterium(brpType.getType(), new KNVOperator(), null));
+        }
+        return resultaat;
+    }
+
+    private Expressie verwerkKvVoorwaarde(BrpType brpType) {
+        Expressie resultaat;
+        if (brpType.getType().contains("MAP")) {
+            resultaat = new ElementWaarde(new Criterium(brpType.getType(), new StandaardOperator("%1$s E<> NULL"), null));
+        } else {
+            resultaat = new ElementWaarde(new Criterium(brpType.getType(), new KVOperator(), null));
+        }
+        return resultaat;
     }
 }

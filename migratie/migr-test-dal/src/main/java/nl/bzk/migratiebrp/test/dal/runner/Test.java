@@ -25,9 +25,7 @@ public final class Test {
 
     /**
      * Creates a composite test.
-     * 
-     * @param name
-     *            name
+     * @param name name
      */
     Test(final String name) {
         this(name, null);
@@ -35,11 +33,8 @@ public final class Test {
 
     /**
      * Creates an atomic test.
-     * 
-     * @param name
-     *            name
-     * @param testCasus
-     *            testcasus
+     * @param name name
+     * @param testCasus testcasus
      */
     Test(final String name, final TestCasus testCasus) {
         this.testCasus = testCasus;
@@ -53,9 +48,7 @@ public final class Test {
 
     /**
      * Add a child (only usefull for suites).
-     * 
-     * @param child
-     *            child
+     * @param child child
      */
     public void addChild(final Test child) {
         children.add(child);
@@ -65,7 +58,6 @@ public final class Test {
 
     /**
      * Geef de suite.
-     *
      * @return suite
      */
     public boolean isSuite() {
@@ -74,7 +66,6 @@ public final class Test {
 
     /**
      * Geef de test.
-     *
      * @return test
      */
     public boolean isTest() {
@@ -83,7 +74,6 @@ public final class Test {
 
     /**
      * Geef de waarde van description.
-     *
      * @return description
      */
     public Description getDescription() {
@@ -92,7 +82,6 @@ public final class Test {
 
     /**
      * Geef de waarde van test casus.
-     *
      * @return test casus
      */
     public TestCasus getTestCasus() {
@@ -101,7 +90,6 @@ public final class Test {
 
     /**
      * Geef de waarde van children.
-     *
      * @return children
      */
     public List<Test> getChildren() {

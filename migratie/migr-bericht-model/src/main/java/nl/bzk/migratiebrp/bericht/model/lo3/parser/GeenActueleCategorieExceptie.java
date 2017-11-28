@@ -18,9 +18,7 @@ public class GeenActueleCategorieExceptie extends ParseException {
     /**
      * Maakt een GeenActueleCategorieExceptie, die aangeeft dat er geen actuele categorie werd gevonden tijdens het
      * parsen.
-     *
-     * @param categorie
-     *            De categorie waarin het onverwachte element werd gevonden
+     * @param categorie De categorie waarin het onverwachte element werd gevonden
      */
     public GeenActueleCategorieExceptie(final Lo3CategorieEnum categorie) {
         super(String.format("Geen actuele categorie %d (%s).", categorie.getCategorieAsInt(), categorie.getLabel()));

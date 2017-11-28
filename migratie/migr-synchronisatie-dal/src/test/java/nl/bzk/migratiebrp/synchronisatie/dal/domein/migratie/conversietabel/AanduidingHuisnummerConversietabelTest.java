@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingBijHuisnummerCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.AanduidingHuisnummerConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingHuisnummerEnum;
+
 import org.junit.Test;
 
 public class AanduidingHuisnummerConversietabelTest {

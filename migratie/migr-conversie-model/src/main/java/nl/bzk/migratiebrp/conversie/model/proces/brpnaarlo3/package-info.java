@@ -5,7 +5,7 @@
  */
 
 /**
- * Tijdelijke BRP groepen voor de conversie van BRP -> LO3.
+ * Tijdelijke BRP groepen voor de conversie van BRP -&lt; LO3.
  */
 package nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3;
 

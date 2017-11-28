@@ -8,9 +8,8 @@
  * Levert de noodzakelijk classes om een BRP-Model te maken voor autorisaties.
  * <p>
  * Een BRP 'autorisatie' bestaat uit BRP groepen. Deze groepen zijn hier gespecificeerd.
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.model.brp.autorisatie
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie;
 

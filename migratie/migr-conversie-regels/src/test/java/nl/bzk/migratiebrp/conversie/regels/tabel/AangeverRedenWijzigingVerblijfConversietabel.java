@@ -14,7 +14,7 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblij
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.AangeverRedenWijzigingVerblijfPaar;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AangifteAdreshouding;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 
 public class AangeverRedenWijzigingVerblijfConversietabel implements Conversietabel<Lo3AangifteAdreshouding, AangeverRedenWijzigingVerblijfPaar> {
 
@@ -24,26 +24,26 @@ public class AangeverRedenWijzigingVerblijfConversietabel implements Conversieta
                     put(new Lo3AangifteAdreshouding("A"), new AangeverRedenWijzigingVerblijfPaar(null, new BrpRedenWijzigingVerblijfCode('A')));
                     put(new Lo3AangifteAdreshouding("B"), new AangeverRedenWijzigingVerblijfPaar(null, new BrpRedenWijzigingVerblijfCode('M')));
                     put(new Lo3AangifteAdreshouding("G"), new AangeverRedenWijzigingVerblijfPaar(
-                        new BrpAangeverCode('G'),
-                        new BrpRedenWijzigingVerblijfCode('P')));
+                            new BrpAangeverCode('G'),
+                            new BrpRedenWijzigingVerblijfCode('P')));
                     put(new Lo3AangifteAdreshouding("H"), new AangeverRedenWijzigingVerblijfPaar(
-                        new BrpAangeverCode('H'),
-                        new BrpRedenWijzigingVerblijfCode('P')));
+                            new BrpAangeverCode('H'),
+                            new BrpRedenWijzigingVerblijfCode('P')));
                     put(new Lo3AangifteAdreshouding("I"), new AangeverRedenWijzigingVerblijfPaar(
-                        new BrpAangeverCode('I'),
-                        new BrpRedenWijzigingVerblijfCode('P')));
+                            new BrpAangeverCode('I'),
+                            new BrpRedenWijzigingVerblijfCode('P')));
                     put(new Lo3AangifteAdreshouding("K"), new AangeverRedenWijzigingVerblijfPaar(
-                        new BrpAangeverCode('K'),
-                        new BrpRedenWijzigingVerblijfCode('P')));
+                            new BrpAangeverCode('K'),
+                            new BrpRedenWijzigingVerblijfCode('P')));
                     put(new Lo3AangifteAdreshouding("M"), new AangeverRedenWijzigingVerblijfPaar(
-                        new BrpAangeverCode('M'),
-                        new BrpRedenWijzigingVerblijfCode('P')));
+                            new BrpAangeverCode('M'),
+                            new BrpRedenWijzigingVerblijfCode('P')));
                     put(new Lo3AangifteAdreshouding("O"), new AangeverRedenWijzigingVerblijfPaar(
-                        new BrpAangeverCode('O'),
-                        new BrpRedenWijzigingVerblijfCode('P')));
+                            new BrpAangeverCode('O'),
+                            new BrpRedenWijzigingVerblijfCode('P')));
                     put(new Lo3AangifteAdreshouding("P"), new AangeverRedenWijzigingVerblijfPaar(
-                        new BrpAangeverCode('P'),
-                        new BrpRedenWijzigingVerblijfCode('P')));
+                            new BrpAangeverCode('P'),
+                            new BrpRedenWijzigingVerblijfCode('P')));
                     put(new Lo3AangifteAdreshouding("T"), new AangeverRedenWijzigingVerblijfPaar(null, new BrpRedenWijzigingVerblijfCode('B')));
                     put(new Lo3AangifteAdreshouding("W"), new AangeverRedenWijzigingVerblijfPaar(null, new BrpRedenWijzigingVerblijfCode('I')));
                     put(new Lo3AangifteAdreshouding("."), new AangeverRedenWijzigingVerblijfPaar(null, null));
@@ -52,7 +52,7 @@ public class AangeverRedenWijzigingVerblijfConversietabel implements Conversieta
 
     @Override
     public AangeverRedenWijzigingVerblijfPaar converteerNaarBrp(final Lo3AangifteAdreshouding input) {
-        if (!Validatie.isElementGevuld(input)) {
+        if (!Lo3Validatie.isElementGevuld(input)) {
             return null;
         }
 
@@ -80,7 +80,7 @@ public class AangeverRedenWijzigingVerblijfConversietabel implements Conversieta
 
     @Override
     public boolean valideerLo3(final Lo3AangifteAdreshouding input) {
-        return !Validatie.isElementGevuld(input) || LO3_NAAR_AANGEVER_REDEN_WIJZIGING.containsKey(input);
+        return !Lo3Validatie.isElementGevuld(input) || LO3_NAAR_AANGEVER_REDEN_WIJZIGING.containsKey(input);
     }
 
     @Override

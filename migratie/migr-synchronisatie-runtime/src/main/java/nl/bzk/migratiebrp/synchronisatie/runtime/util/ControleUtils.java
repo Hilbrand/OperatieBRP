@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime.util;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Enumeratie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Enumeratie;
 
 /**
  * Klasse voor generieke specifieke equals implementaties.
@@ -19,11 +19,8 @@ public final class ControleUtils {
 
     /**
      * Controleert twee object op een null-safe manier.
-     *
-     * @param object1
-     *            Object 1
-     * @param object2
-     *            Object 2
+     * @param object1 Object 1
+     * @param object2 Object 2
      * @return True indien beide objecten gelijk zijn of beide null zijn, false in alle andere gevallen.
      */
     public static boolean equalsNullSafe(final Object object1, final Object object2) {
@@ -36,9 +33,7 @@ public final class ControleUtils {
 
     /**
      * Haalt null-safe de code uit een enumeratie.
-     *
-     * @param enumeratie
-     *            De enumeratie waaruit we de code halen.
+     * @param enumeratie De enumeratie waaruit we de code halen.
      * @return De code uit de enumeratie.
      */
     public static String geefNullSafeCodeUitEnumeratie(final Enumeratie enumeratie) {

@@ -41,7 +41,7 @@ public class TellingenRuntimeServiceImplTest {
     private static Timestamp datumTot;
     private static final Integer MAXIMALE_BATCH_GROOTTE = 5000;
     private static final String BERICHT_TYPE = "Lg01";
-    private static final String KANAAL = "VOSPG";
+    private static final String KANAAL = "VOISC";
     private static final String GENEGEERD = "herhalingGenegeerd";
     private static final String PROCES = "uc202";
     private static Timestamp startDatum;
@@ -58,7 +58,6 @@ public class TellingenRuntimeServiceImplTest {
     @Mock
     private RuntimeRepository runtimeRepositoryService;
 
-    @InjectMocks
     private TellingenRuntimeServiceImpl service;
 
     @Before
@@ -82,6 +81,7 @@ public class TellingenRuntimeServiceImplTest {
         calendar.set(Calendar.MILLISECOND, 0);
         startDatum = new Timestamp(calendar.getTimeInMillis());
         MockitoAnnotations.initMocks(this);
+        service = new TellingenRuntimeServiceImpl(berichtRepositoryService,procesExtractieRepositoryService,berichtTellingenRepositoryService,procesTellingenRepositoryService,runtimeRepositoryService);
     }
 
     @Test
@@ -94,10 +94,10 @@ public class TellingenRuntimeServiceImplTest {
         verify(runtimeRepositoryService, times(1)).voegRuntimeToe(RUNTIME_NAAM);
         Mockito.verifyNoMoreInteractions(runtimeRepositoryService);
         Mockito.verifyZeroInteractions(
-            procesExtractieRepositoryService,
-            berichtRepositoryService,
-            berichtTellingenRepositoryService,
-            procesTellingenRepositoryService);
+                procesExtractieRepositoryService,
+                berichtRepositoryService,
+                berichtTellingenRepositoryService,
+                procesTellingenRepositoryService);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class TellingenRuntimeServiceImplTest {
         when(runtimeRepositoryService.voegRuntimeToe(RUNTIME_NAAM)).thenReturn(true);
         when(berichtRepositoryService.telInTellingTeVerwerkenBerichten(datumTot)).thenReturn(0L);
         when(berichtRepositoryService.selecteerInTellingTeVerwerkenBerichten(datumTot, MAXIMALE_BATCH_GROOTTE)).thenReturn(
-            new ArrayList<Bericht>());
+                new ArrayList<Bericht>());
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -120,9 +120,9 @@ public class TellingenRuntimeServiceImplTest {
         verify(runtimeRepositoryService, times(1)).verwijderRuntime(RUNTIME_NAAM);
         Mockito.verifyNoMoreInteractions(runtimeRepositoryService);
         Mockito.verifyZeroInteractions(
-            procesExtractieRepositoryService,
-            berichtTellingenRepositoryService,
-            procesTellingenRepositoryService);
+                procesExtractieRepositoryService,
+                berichtTellingenRepositoryService,
+                procesTellingenRepositoryService);
     }
 
     @Test
@@ -192,13 +192,13 @@ public class TellingenRuntimeServiceImplTest {
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(2L);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenBeeindigdeProcessen(datumTot)).thenReturn(1L);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 2)).thenReturn(
-            procesExtractieGestartLijst);
+                procesExtractieGestartLijst);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieBeeindigdLijst);
+                procesExtractieBeeindigdLijst);
         when(procesTellingenRepositoryService.haalProcesTellingOp(PROCES, KANAAL, BERICHT_TYPE, startDatum)).thenReturn(procesTelling);
         when(procesExtractieRepositoryService.updateIndicatieGestartGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(true);
         when(procesExtractieRepositoryService.updateIndicatieBeeindigdGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(
-            true);
+                true);
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -328,12 +328,12 @@ public class TellingenRuntimeServiceImplTest {
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(2L);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenBeeindigdeProcessen(datumTot)).thenReturn(1L);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 2)).thenReturn(
-            procesExtractieGestartLijst);
+                procesExtractieGestartLijst);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieBeeindigdLijst);
+                procesExtractieBeeindigdLijst);
         when(procesExtractieRepositoryService.updateIndicatieGestartGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(true);
         when(procesExtractieRepositoryService.updateIndicatieBeeindigdGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(
-            true);
+                true);
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -395,13 +395,13 @@ public class TellingenRuntimeServiceImplTest {
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(2L);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenBeeindigdeProcessen(datumTot)).thenReturn(1L);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 2)).thenReturn(
-            procesExtractieGestartLijst);
+                procesExtractieGestartLijst);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieBeeindigdLijst);
+                procesExtractieBeeindigdLijst);
         when(procesTellingenRepositoryService.haalProcesTellingOp(PROCES, KANAAL, BERICHT_TYPE, startDatum)).thenReturn(procesTelling);
         when(procesExtractieRepositoryService.updateIndicatieGestartGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(true);
         when(procesExtractieRepositoryService.updateIndicatieBeeindigdGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(
-            true);
+                true);
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -516,12 +516,12 @@ public class TellingenRuntimeServiceImplTest {
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(2L);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenBeeindigdeProcessen(datumTot)).thenReturn(1L);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 2)).thenReturn(
-            procesExtractieGestartLijst);
+                procesExtractieGestartLijst);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieBeeindigdLijst);
+                procesExtractieBeeindigdLijst);
         when(procesExtractieRepositoryService.updateIndicatieGestartGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(true);
         when(procesExtractieRepositoryService.updateIndicatieBeeindigdGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(
-            true);
+                true);
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -566,7 +566,7 @@ public class TellingenRuntimeServiceImplTest {
         when(berichtRepositoryService.telInTellingTeVerwerkenBerichten(datumTot)).thenReturn(5001L);
         when(berichtRepositoryService.selecteerInTellingTeVerwerkenBerichten(datumTot, 5000)).thenReturn(berichtenLijst.subList(0, 5000));
         when(berichtRepositoryService.selecteerInTellingTeVerwerkenBerichten(datumTot, 1)).thenReturn(
-            berichtenLijst.subList(5000, berichtenLijst.size()));
+                berichtenLijst.subList(5000, berichtenLijst.size()));
         when(berichtRepositoryService.updateIndicatieGeteldBerichten(Matchers.anyListOf(Long.class))).thenReturn(true);
         when(berichtTellingenRepositoryService.haalBerichtTellingOp(BERICHT_TYPE, KANAAL, datumTot)).thenReturn(berichtTelling);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(0L);
@@ -615,16 +615,16 @@ public class TellingenRuntimeServiceImplTest {
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(5001L);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenBeeindigdeProcessen(datumTot)).thenReturn(5001L);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 5000)).thenReturn(
-            procesExtractieGestartLijst.subList(0, 5000));
+                procesExtractieGestartLijst.subList(0, 5000));
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieGestartLijst.subList(5000, procesExtractieGestartLijst.size()));
+                procesExtractieGestartLijst.subList(5000, procesExtractieGestartLijst.size()));
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 5000)).thenReturn(
-            procesExtractieBeeindigdLijst.subList(0, 5000));
+                procesExtractieBeeindigdLijst.subList(0, 5000));
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieBeeindigdLijst.subList(5000, procesExtractieBeeindigdLijst.size()));
+                procesExtractieBeeindigdLijst.subList(5000, procesExtractieBeeindigdLijst.size()));
         when(procesExtractieRepositoryService.updateIndicatieGestartGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(true);
         when(procesExtractieRepositoryService.updateIndicatieBeeindigdGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(
-            true);
+                true);
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -709,11 +709,11 @@ public class TellingenRuntimeServiceImplTest {
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(2L);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenBeeindigdeProcessen(datumTot)).thenReturn(1L);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 2)).thenReturn(
-            procesExtractieGestartLijst);
+                procesExtractieGestartLijst);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieBeeindigdLijst);
+                procesExtractieBeeindigdLijst);
         when(procesExtractieRepositoryService.updateIndicatieGestartGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(
-            false);
+                false);
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -761,12 +761,12 @@ public class TellingenRuntimeServiceImplTest {
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(2L);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenBeeindigdeProcessen(datumTot)).thenReturn(1L);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 2)).thenReturn(
-            procesExtractieGestartLijst);
+                procesExtractieGestartLijst);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieBeeindigdLijst);
+                procesExtractieBeeindigdLijst);
         when(procesExtractieRepositoryService.updateIndicatieGestartGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(true);
         when(procesExtractieRepositoryService.updateIndicatieBeeindigdGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(
-            false);
+                false);
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -801,7 +801,7 @@ public class TellingenRuntimeServiceImplTest {
         when(berichtRepositoryService.telInTellingTeVerwerkenBerichten(datumTot)).thenReturn(1L);
         when(berichtRepositoryService.selecteerInTellingTeVerwerkenBerichten(datumTot, 1)).thenReturn(berichtenLijst);
         when(berichtRepositoryService.updateIndicatieGeteldBerichten(Matchers.anyListOf(Long.class))).thenThrow(
-            new HibernateException("Exceptie"));
+                new HibernateException("Exceptie"));
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -850,11 +850,11 @@ public class TellingenRuntimeServiceImplTest {
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(2L);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenBeeindigdeProcessen(datumTot)).thenReturn(1L);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 2)).thenReturn(
-            procesExtractieGestartLijst);
+                procesExtractieGestartLijst);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieBeeindigdLijst);
+                procesExtractieBeeindigdLijst);
         when(procesExtractieRepositoryService.updateIndicatieGestartGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenThrow(
-            new HibernateException("Exceptie"));
+                new HibernateException("Exceptie"));
 
         service.werkLopendeTellingenBij(datumTot);
 
@@ -902,12 +902,12 @@ public class TellingenRuntimeServiceImplTest {
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenGestarteProcessen(datumTot)).thenReturn(2L);
         when(procesExtractieRepositoryService.telInTellingTeVerwerkenBeeindigdeProcessen(datumTot)).thenReturn(1L);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenGestarteProcesInstanties(datumTot, 2)).thenReturn(
-            procesExtractieGestartLijst);
+                procesExtractieGestartLijst);
         when(procesExtractieRepositoryService.selecteerInTellingTeVerwerkenBeeindigdeProcesInstanties(datumTot, 1)).thenReturn(
-            procesExtractieBeeindigdLijst);
+                procesExtractieBeeindigdLijst);
         when(procesExtractieRepositoryService.updateIndicatieGestartGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenReturn(true);
         when(procesExtractieRepositoryService.updateIndicatieBeeindigdGeteldProcesExtracties(Matchers.anyListOf(Long.class))).thenThrow(
-            new HibernateException("Exceptie"));
+                new HibernateException("Exceptie"));
 
         service.werkLopendeTellingenBij(datumTot);
 

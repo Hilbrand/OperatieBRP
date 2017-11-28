@@ -7,7 +7,7 @@
 package nl.bzk.migratiebrp.conversie.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,10 +18,7 @@ import java.util.List;
  * bestaat immutable zijn is deze class immutable en dus thread safe.
  *
  * Nota: de elementen moeten van oud naar nieuw worden gesorteerd.
- *
- *
- * @param <T>
- *            het type element in de stapel
+ * @param <T> het type element in de stapel
  */
 public class Stapel<T> implements Iterable<T> {
 
@@ -29,19 +26,15 @@ public class Stapel<T> implements Iterable<T> {
 
     /**
      * Maakt een Stapel object.
-     *
-     * @param elementen
-     *            de lijst met elementen voor deze stapel, mag niet leeg of null zijn
-     * @throws IllegalArgumentException
-     *             als elementen een lege lijst is
-     * @throws NullPointerException
-     *             als elementen null is
+     * @param elementen de lijst met elementen voor deze stapel, mag niet leeg of null zijn
+     * @throws IllegalArgumentException als elementen een lege lijst is
+     * @throws NullPointerException als elementen null is
      */
     protected Stapel(final List<T> elementen) {
         if (elementen == null) {
             throw new NullPointerException("elementen mag niet null zijn");
         }
-        this.delegate = Collections.unmodifiableList(new ArrayList<>(elementen));
+        this.delegate = new ArrayList<>(elementen);
         if (this.delegate.isEmpty()) {
             throw new IllegalArgumentException("de stapel mag niet leeg zijn");
         }
@@ -49,9 +42,8 @@ public class Stapel<T> implements Iterable<T> {
 
     /**
      * Geef de waarde van laatste element.
-     *
-     * @return het laatste element uit deze stapel, kan niet null zijn. Het is niet gegarandeerd dat dit het actuele
-     *         element is, dat is afhankelijk van hoe de stapel gesorteerd is.
+     * @return het laatste element uit deze stapel, kan niet null zijn. Het is niet gegarandeerd dat dit het actuele element is, dat is afhankelijk van hoe de
+     * stapel gesorteerd is.
      */
     public final T getLaatsteElement() {
         // invariant: stapel mag niet leeg zijn
@@ -59,8 +51,7 @@ public class Stapel<T> implements Iterable<T> {
     }
 
     /**
-     * @param element
-     *            het element in de lijst waarvan het vorige element wordt geretourneerd
+     * @param element het element in de lijst waarvan het vorige element wordt geretourneerd
      * @return het vorige element of null als deze niet gevonden kan worden
      */
     public final T getVorigElement(final T element) {
@@ -73,12 +64,9 @@ public class Stapel<T> implements Iterable<T> {
 
     /**
      * Returns the element at the specified position in this list.
-     *
-     * @param index
-     *            index of the element to return
+     * @param index index of the element to return
      * @return the element at the specified position in this list
-     * @throws IndexOutOfBoundsException
-     *             if the index is out of range (index < 0 || index >= size())
+     * @throws IndexOutOfBoundsException if the index is out of range {@code index < 0 || index >= size()}
      */
     public final T get(final int index) {
         return this.delegate.get(index);
@@ -86,7 +74,6 @@ public class Stapel<T> implements Iterable<T> {
 
     /**
      * Geef de empty.
-     *
      * @return true if this list contains no elements.
      */
     public final boolean isEmpty() {
@@ -94,15 +81,15 @@ public class Stapel<T> implements Iterable<T> {
     }
 
     /**
-     * @return the number of elements in this list. If this list contains more than Integer.MAX_VALUE elements, returns
-     *         Integer.MAX_VALUE.
+     * @return the number of elements in this list. If this list contains more than Integer.MAX_VALUE elements, returns Integer.MAX_VALUE.
      */
     public final int size() {
         return this.delegate.size();
     }
 
-    /*
-     * Start block that is designed for extension. Subclasses are allowed to override hashCode, equals and toString()
+    /**
+     * Start block that is designed for extension. Subclasses are allowed to override hashCode, equals and toString().
+     * @return String weergave van object
      */
     @Override
     public String toString() {
@@ -116,11 +103,7 @@ public class Stapel<T> implements Iterable<T> {
 
     @Override
     public boolean equals(final Object other) {
-        if (other == null) {
-            return false;
-        }
-
-        if (!(other instanceof Stapel)) {
+        if (other == null ||  this.getClass() != other.getClass()) {
             return false;
         }
 
@@ -133,18 +116,26 @@ public class Stapel<T> implements Iterable<T> {
      */
 
     /* Protected methods */
+
     /**
      * Geef de waarde van elementen.
-     *
      * @return elementen
      */
     protected final List<T> getElementen() {
-        return new ArrayList<>(this.delegate);
+        return new ArrayList<>(delegate);
     }
 
     @Override
     public final Iterator<T> iterator() {
         return this.delegate.iterator();
+    }
+
+    /**
+     * Sorteerd de stapel met meegegeven {@link Comparator}.
+     * @param comparator de comparator waarmee de stapel gesorteerd moet worden
+     */
+    protected void sorteer(final Comparator<? super T> comparator) {
+        delegate.sort(comparator);
     }
 
 }

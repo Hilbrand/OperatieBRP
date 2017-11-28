@@ -16,14 +16,22 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Rubriek naar expressie mapping.
+ * Rubriek naar brpExpressie mapping.
  */
 public final class RubriekMapping {
 
-    /** Mapping. */
+    /**
+     * Mapping.
+     */
     private static final Map<String, List<Expressie>> MAPPING = readMapping();
 
-    /** Lees mapping uit '/vertaling/rubrieken.properties'. */
+    private RubriekMapping() {
+        // prevent instantiation
+    }
+
+    /**
+     * Lees mapping uit '/vertaling/rubrieken.properties'.
+     */
     private static Map<String, List<Expressie>> readMapping() {
         final Map<String, List<Expressie>> result = new HashMap<>();
         final Properties properties = new Properties();
@@ -41,7 +49,16 @@ public final class RubriekMapping {
             final String[] elementen = mapping.split("#");
             final List<Expressie> expressies = new ArrayList<>();
             for (final String element : elementen) {
-                final String[] onderdelen = element.split("\\|", 2);
+                final String brpElement;
+                boolean inverse;
+                if (element.startsWith("!")) {
+                    brpElement = element.substring(1);
+                    inverse = true;
+                } else {
+                    brpElement = element;
+                    inverse = false;
+                }
+                final String[] onderdelen = brpElement.split("\\|", 2);
                 final String parent;
                 final String expressie;
 
@@ -52,7 +69,7 @@ public final class RubriekMapping {
                     parent = onderdelen[0];
                     expressie = onderdelen[1];
                 }
-                expressies.add(new Expressie(parent, expressie));
+                expressies.add(new Expressie(parent, expressie, inverse));
             }
             result.put(rubriek, Collections.unmodifiableList(expressies));
         }
@@ -61,9 +78,7 @@ public final class RubriekMapping {
 
     /**
      * Geef de expressies voor een rubiek.
-     *
-     * @param rubriek
-     *            rubriek
+     * @param rubriek rubriek
      * @return lijst van expressies, null als niet gevonden
      */
     public static List<Expressie> getExpressiesVoorRubriek(final String rubriek) {
@@ -71,26 +86,37 @@ public final class RubriekMapping {
     }
 
     /**
+     * Geef aan of de rubriek aanwezig is in de mapping.
+     * @param rubriek rubriek
+     * @return indicatie of er een mapping aanwezig is
+     */
+    public static boolean isErEenExpressieVoorRubriek(final String rubriek) {
+        return MAPPING.containsKey(rubriek);
+    }
+
+    /**
      * Expressie.
      */
     public static final class Expressie {
         private final String parent;
-        private final String expressie;
+        private final String brpExpressie;
+        private final boolean kvInverse;
 
         /**
          * Maakt nieuwe Expressie object.
-         * @param parent expressie van de ouder van een element
-         * @param expressie de expressie voor een element
+         * @param parent brpExpressie van de ouder van een element
+         * @param expressie de brpExpressie voor een element
+         * @param kvInverse of bij KV element KNV moet worden
          */
-        Expressie(final String parent, final String expressie) {
+        Expressie(final String parent, final String expressie, final boolean kvInverse) {
             super();
             this.parent = parent;
-            this.expressie = expressie;
+            this.brpExpressie = expressie;
+            this.kvInverse = kvInverse;
         }
 
         /**
          * Parent (null, als dit direct een waarde op 'persoon' is).
-         *
          * @return parent
          */
         public String getParent() {
@@ -98,13 +124,19 @@ public final class RubriekMapping {
         }
 
         /**
-         * Basis expressie.
-         *
-         * @return basis expressie
+         * Basis brpExpressie.
+         * @return basis brpExpressie
          */
         public String getExpressie() {
-            return expressie;
+            return brpExpressie;
         }
 
+        /**
+         * Indicatie of element bij KV inverse moet worden meegenomen.
+         * @return indicatie
+         */
+        public boolean getKvInverse() {
+            return kvInverse;
+        }
     }
 }

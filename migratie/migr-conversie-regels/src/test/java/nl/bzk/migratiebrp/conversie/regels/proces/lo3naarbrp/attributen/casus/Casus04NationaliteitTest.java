@@ -31,13 +31,13 @@ import org.junit.Test;
 
 public class Casus04NationaliteitTest extends AbstractCasusTest {
 
-    private static final BrpNationaliteitCode NATIONALITEIT_CODE = new BrpNationaliteitCode(Short.parseShort("1234"));
+    private static final BrpNationaliteitCode NATIONALITEIT_CODE = new BrpNationaliteitCode("1234");
 
     private final List<Lo3Categorie<Lo3NationaliteitInhoud>> categorieen = new ArrayList<>();
 
     private final BrpNationaliteitInhoud brpDuits = new BrpNationaliteitInhoud(NATIONALITEIT_CODE, null, null, null, null, null, null);
-    private final Lo3NationaliteitInhoud lo3Duits = new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("1234"), null, null, null);
-    private final Lo3NationaliteitInhoud lo3Leeg = new Lo3NationaliteitInhoud(null, null, null, null);
+    private final Lo3NationaliteitInhoud lo3Duits = new Lo3NationaliteitInhoud(new Lo3NationaliteitCode("1234"), null, null, null, null);
+    private final Lo3NationaliteitInhoud lo3Leeg = new Lo3NationaliteitInhoud(null, null, null, null, null);
     private final BrpTestObject<BrpNationaliteitInhoud> brp1 = new BrpTestObject<>();
 
     {

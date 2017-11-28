@@ -24,7 +24,9 @@ import nl.bzk.migratiebrp.util.common.operatie.StopHerhalingExceptionWrapper;
  */
 public class NodeCheckKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "nodecheck";
 
     /**
@@ -32,10 +34,10 @@ public class NodeCheckKanaal extends LazyLoadingKanaal {
      */
     public NodeCheckKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-db-isc.xml",
-            "classpath:infra-jms-isc.xml",
-            "classpath:infra-jbpm.xml"));
+                "classpath:configuratie.xml",
+                "classpath:infra-db-isc.xml",
+                "classpath:infra-jms-isc.xml",
+                "classpath:infra-jbpm.xml"));
     }
 
     /**
@@ -104,11 +106,8 @@ public class NodeCheckKanaal extends LazyLoadingKanaal {
 
             /**
              * Constructor.
-             *
-             * @param berichtId
-             *            Id van het bericht
-             * @param node
-             *            De verwachte node
+             * @param berichtId Id van het bericht
+             * @param node De verwachte node
              */
             public NodeCheckActie(final String berichtId, final String node) {
                 this.berichtId = berichtId;
@@ -134,7 +133,6 @@ public class NodeCheckKanaal extends LazyLoadingKanaal {
 
             /**
              * Geef de waarde van result.
-             *
              * @return result
              */
             public Bericht getResult() {

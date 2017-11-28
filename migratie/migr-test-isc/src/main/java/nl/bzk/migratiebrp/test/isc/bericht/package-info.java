@@ -5,9 +5,9 @@
  */
 
 /**
- * 
+ *
  */
 /**
- * 
+ *
  */
 package nl.bzk.migratiebrp.test.isc.bericht;

@@ -16,7 +16,6 @@ import nl.bzk.migratiebrp.util.common.Kopieer;
 
 /**
  * Persistent klasse voor de processen extractie database tabel.
- * 
  */
 @Entity
 @Table(name = "mig_extractie_proces")
@@ -62,7 +61,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van proces instantie id.
-     *
      * @return proces instantie id
      */
     public final Long getProcesInstantieId() {
@@ -71,9 +69,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van proces instantie id.
-     *
-     * @param procesInstantieId
-     *            proces instantie id
+     * @param procesInstantieId proces instantie id
      */
     public final void setProcesInstantieId(final Long procesInstantieId) {
         this.procesInstantieId = procesInstantieId;
@@ -81,7 +77,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van procesnaam.
-     *
      * @return procesnaam
      */
     public final String getProcesnaam() {
@@ -90,7 +85,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van bericht type.
-     *
      * @return bericht type
      */
     public final String getBerichtType() {
@@ -99,9 +93,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van bericht type.
-     *
-     * @param berichtType
-     *            bericht type
+     * @param berichtType bericht type
      */
     public final void setBerichtType(final String berichtType) {
         this.berichtType = berichtType;
@@ -109,9 +101,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van procesnaam.
-     *
-     * @param procesnaam
-     *            procesnaam
+     * @param procesnaam procesnaam
      */
     public final void setProcesnaam(final String procesnaam) {
         this.procesnaam = procesnaam;
@@ -119,7 +109,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van foutreden.
-     *
      * @return foutreden
      */
     public final String getFoutreden() {
@@ -128,9 +117,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van foutreden.
-     *
-     * @param foutreden
-     *            foutreden
+     * @param foutreden foutreden
      */
     public final void setFoutreden(final String foutreden) {
         this.foutreden = foutreden;
@@ -138,7 +125,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van start datum.
-     *
      * @return start datum
      */
     public final Timestamp getStartDatum() {
@@ -147,9 +133,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van start datum.
-     *
-     * @param startDatum
-     *            start datum
+     * @param startDatum start datum
      */
     public final void setStartDatum(final Timestamp startDatum) {
         this.startDatum = Kopieer.timestamp(startDatum);
@@ -157,7 +141,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van wacht start datum.
-     *
      * @return wacht start datum
      */
     public final Timestamp getWachtStartDatum() {
@@ -166,9 +149,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van wacht start datum.
-     *
-     * @param wachtStartDatum
-     *            wacht start datum
+     * @param wachtStartDatum wacht start datum
      */
     public final void setWachtStartDatum(final Timestamp wachtStartDatum) {
         this.wachtStartDatum = Kopieer.timestamp(wachtStartDatum);
@@ -176,7 +157,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van wacht eind datum.
-     *
      * @return wacht eind datum
      */
     public final Timestamp getWachtEindDatum() {
@@ -185,9 +165,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van wacht eind datum.
-     *
-     * @param wachtEindDatum
-     *            wacht eind datum
+     * @param wachtEindDatum wacht eind datum
      */
     public final void setWachtEindDatum(final Timestamp wachtEindDatum) {
         this.wachtEindDatum = Kopieer.timestamp(wachtEindDatum);
@@ -195,7 +173,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van eind datum.
-     *
      * @return eind datum
      */
     public final Timestamp getEindDatum() {
@@ -204,9 +181,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van eind datum.
-     *
-     * @param eindDatum
-     *            eind datum
+     * @param eindDatum eind datum
      */
     public final void setEindDatum(final Timestamp eindDatum) {
         this.eindDatum = Kopieer.timestamp(eindDatum);
@@ -214,7 +189,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van indicatie gestart geteld.
-     *
      * @return indicatie gestart geteld
      */
     public final Boolean getIndicatieGestartGeteld() {
@@ -223,9 +197,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van indicatie gestart geteld.
-     *
-     * @param indicatieGestartGeteld
-     *            indicatie gestart geteld
+     * @param indicatieGestartGeteld indicatie gestart geteld
      */
     public final void setIndicatieGestartGeteld(final Boolean indicatieGestartGeteld) {
         this.indicatieGestartGeteld = indicatieGestartGeteld;
@@ -233,7 +205,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van indicatie beeindigd geteld.
-     *
      * @return indicatie beeindigd geteld
      */
     public final Boolean getIndicatieBeeindigdGeteld() {
@@ -242,9 +213,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van indicatie beeindigd geteld.
-     *
-     * @param indicatieBeeindigdGeteld
-     *            indicatie beeindigd geteld
+     * @param indicatieBeeindigdGeteld indicatie beeindigd geteld
      */
     public final void setIndicatieBeeindigdGeteld(final Boolean indicatieBeeindigdGeteld) {
         this.indicatieBeeindigdGeteld = indicatieBeeindigdGeteld;
@@ -252,7 +221,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van kanaal.
-     *
      * @return kanaal
      */
     public final String getKanaal() {
@@ -261,9 +229,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van kanaal.
-     *
-     * @param kanaal
-     *            kanaal
+     * @param kanaal kanaal
      */
     public final void setKanaal(final String kanaal) {
         this.kanaal = kanaal;
@@ -271,7 +237,6 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Geef de waarde van anummer.
-     *
      * @return anummer
      */
     public final String getAnummer() {
@@ -280,9 +245,7 @@ public class ProcesExtractie implements Serializable {
 
     /**
      * Zet de waarde van anummer.
-     *
-     * @param anummer
-     *            anummer
+     * @param anummer anummer
      */
     public final void setAnummer(final String anummer) {
         this.anummer = anummer;

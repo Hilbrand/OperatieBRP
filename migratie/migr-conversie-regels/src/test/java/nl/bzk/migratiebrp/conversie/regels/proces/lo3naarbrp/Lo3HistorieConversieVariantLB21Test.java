@@ -17,10 +17,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActieBron;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBijhoudingsaardCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
@@ -29,6 +31,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RNIDeelnemerCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
+import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
 import org.junit.Test;
 
 public class Lo3HistorieConversieVariantLB21Test extends AbstractLo3HistorieConversieVariantTest {
@@ -186,12 +189,14 @@ public class Lo3HistorieConversieVariantLB21Test extends AbstractLo3HistorieConv
 
         final Map<Long, BrpActie> actieCache = new HashMap<>();
 
-        conversie.maakActie(doc, his, her, actieCache, BrpSoortActieCode.CONVERSIE_GBA);
+        final TussenGroep<BrpBijhoudingInhoud> tussenGroep = new TussenGroep<>(
+                new BrpBijhoudingInhoud(new BrpPartijCode("000001"), BrpBijhoudingsaardCode.NIET_INGEZETENE, BrpNadereBijhoudingsaardCode.ACTUEEL), his, doc, her);
+        conversie.maakActie(tussenGroep, actieCache, BrpSoortActieCode.CONVERSIE_GBA);
 
         assertEquals(1, actieCache.size());
         final BrpActie actie = actieCache.get(1L); // op key
 
-        assertEquals(new BrpPartijCode(0), actie.getPartijCode());
+        assertEquals(new BrpPartijCode("000000"), actie.getPartijCode());
 
         assertEquals(1, actie.getActieBronnen().size());
         final BrpActieBron actieBron1 = actie.getActieBronnen().get(0);
@@ -205,25 +210,27 @@ public class Lo3HistorieConversieVariantLB21Test extends AbstractLo3HistorieConv
 
         final Lo3Documentatie doc =
                 new Lo3Documentatie(
-                    1L,
-                    new Lo3GemeenteCode("1234"),
-                    Lo3String.wrap("AB1234"),
-                    new Lo3GemeenteCode("1234"),
-                    new Lo3Datum(19970202),
-                    Lo3String.wrap("Omschrijving document"),
-                    Lo3RNIDeelnemerCode.STANDAARD,
-                    Lo3String.wrap(OMSCHRIJVING_VERDRAG));
+                        1L,
+                        new Lo3GemeenteCode("1234"),
+                        Lo3String.wrap("AB1234"),
+                        new Lo3GemeenteCode("1234"),
+                        new Lo3Datum(19970202),
+                        Lo3String.wrap("Omschrijving document"),
+                        Lo3RNIDeelnemerCode.STANDAARD,
+                        Lo3String.wrap(OMSCHRIJVING_VERDRAG));
         final Lo3Historie his = new Lo3Historie(null, new Lo3Datum(19900101), new Lo3Datum(19980202));
         final Lo3Herkomst her = new Lo3Herkomst(Lo3CategorieEnum.CATEGORIE_01, 2, 3);
 
         final Map<Long, BrpActie> actieCache = new HashMap<>();
 
-        conversie.maakActie(doc, his, her, actieCache, BrpSoortActieCode.CONVERSIE_GBA);
+        final TussenGroep<BrpBijhoudingInhoud> tussenGroep = new TussenGroep<>(
+                new BrpBijhoudingInhoud(new BrpPartijCode("000001"), BrpBijhoudingsaardCode.NIET_INGEZETENE, BrpNadereBijhoudingsaardCode.ACTUEEL), his, doc, her);
+        conversie.maakActie(tussenGroep, actieCache, BrpSoortActieCode.CONVERSIE_GBA);
 
         assertEquals(1, actieCache.size());
         final BrpActie actie = actieCache.get(1L); // op key
 
-        assertEquals(new BrpPartijCode(0), actie.getPartijCode());
+        assertEquals(new BrpPartijCode("000000"), actie.getPartijCode());
 
         assertEquals(2, actie.getActieBronnen().size());
         final BrpActieBron actieBron1 = actie.getActieBronnen().get(0);
@@ -236,14 +243,10 @@ public class Lo3HistorieConversieVariantLB21Test extends AbstractLo3HistorieConv
         assertNotNull(actieBron2.getDocumentStapel());
         assertEquals(1, actieBron2.getDocumentStapel().size());
         assertEquals(new BrpString("AB1234", null), actieBron2.getDocumentStapel().get(0).getInhoud().getAktenummer());
-        assertEquals(BrpDatumTijd.fromDatumTijdMillis(19980202010000000L, null), actieBron2.getDocumentStapel()
-                                                                                           .get(0)
-                                                                                           .getHistorie()
-                                                                                           .getDatumTijdRegistratie());
     }
 
     private void converteer() {
-        setResultaat(conversie.converteer(getInvoer(), new HashMap<Long, BrpActie>()));
+        setResultaat(conversie.converteer(getInvoer(), new HashMap<>()));
         Collections.reverse(getResultaat());
     }
 }

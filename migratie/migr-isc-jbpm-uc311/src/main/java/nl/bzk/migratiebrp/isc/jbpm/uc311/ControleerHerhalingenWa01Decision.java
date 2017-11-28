@@ -7,9 +7,11 @@
 package nl.bzk.migratiebrp.isc.jbpm.uc311;
 
 import java.util.Map;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringDecision;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.stereotype.Component;
 

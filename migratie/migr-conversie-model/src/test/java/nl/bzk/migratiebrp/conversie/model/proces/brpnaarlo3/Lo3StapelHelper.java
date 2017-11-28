@@ -7,10 +7,11 @@
 package nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.conversie.model.Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -24,10 +25,12 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KiesrechtInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KindInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3NationaliteitInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OuderInhoud;
+import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3OverlijdenInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3ReisdocumentInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerblijfplaatsInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerblijfstitelInhoud;
+import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerwijzingInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingEuropeesKiesrechtEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingUitgeslotenKiesrechtEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3IndicatieCurateleregisterEnum;
@@ -70,8 +73,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortVerbintenis;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 public final class Lo3StapelHelper {
 
@@ -98,23 +99,21 @@ public final class Lo3StapelHelper {
         localStringBuilder.append(String.format(mesg, LABEL_EXPECTED, LABEL_ACTUAL, expected, actual));
 
         if (!Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getPersoonStapel(), actual.getPersoonStapel())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getNationaliteitStapels(), actual.getNationaliteitStapels())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getOverlijdenStapel(), actual.getOverlijdenStapel())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getInschrijvingStapel(), actual.getInschrijvingStapel())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getVerblijfplaatsStapel(), actual.getVerblijfplaatsStapel())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getVerblijfstitelStapel(), actual.getVerblijfstitelStapel())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getReisdocumentStapels(), actual.getReisdocumentStapels())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getKiesrechtStapel(), actual.getKiesrechtStapel()))
-        {
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getNationaliteitStapels(), actual.getNationaliteitStapels())
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getOverlijdenStapel(), actual.getOverlijdenStapel())
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getInschrijvingStapel(), actual.getInschrijvingStapel())
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getVerblijfplaatsStapel(), actual.getVerblijfplaatsStapel())
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getVerblijfstitelStapel(), actual.getVerblijfstitelStapel())
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getReisdocumentStapels(), actual.getReisdocumentStapels())
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getKiesrechtStapel(), actual.getKiesrechtStapel())) {
             equal = false;
         }
 
         if (!Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getOuder1Stapel(), actual.getOuder1Stapel())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getOuder2Stapel(), actual.getOuder2Stapel())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getHuwelijkOfGpStapels(), actual.getHuwelijkOfGpStapels())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getKindStapels(), actual.getKindStapels())
-            | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getGezagsverhoudingStapel(), actual.getGezagsverhoudingStapel()))
-        {
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getOuder2Stapel(), actual.getOuder2Stapel())
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getHuwelijkOfGpStapels(), actual.getHuwelijkOfGpStapels())
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getKindStapels(), actual.getKindStapels())
+                | !Lo3StapelHelper.vergelijkStapels(localStringBuilder, expected.getGezagsverhoudingStapel(), actual.getGezagsverhoudingStapel())) {
             equal = false;
         }
 
@@ -139,17 +138,13 @@ public final class Lo3StapelHelper {
 
     /**
      * Vergelijk LO3 stapel lijsten. Doet zoveel mogelijk vergelijkingen en is 'fail-slow'.
-     *
-     * @param expected
-     *            verwachte lo3 stapel
-     * @param actual
-     *            te controleren lo3 stapel
+     * @param expected verwachte lo3 stapel
+     * @param actual te controleren lo3 stapel
      */
     public static <T extends Lo3CategorieInhoud> boolean vergelijkStapels(
-        final StringBuilder stringBuilder,
-        final List<Lo3Stapel<T>> expected,
-        final List<Lo3Stapel<T>> actual)
-    {
+            final StringBuilder stringBuilder,
+            final List<Lo3Stapel<T>> expected,
+            final List<Lo3Stapel<T>> actual) {
         boolean equal = true;
         final StringBuilder localStringBuilder = new StringBuilder();
         final String mesg = "Vergelijk stapel lijsten:" + FORMAT_EXPECTED_ACTUAL;
@@ -160,10 +155,10 @@ public final class Lo3StapelHelper {
 
         if (expected.size() != actual.size()) {
             localStringBuilder.append(
-                String.format(
-                    "vergelijk stapel lijsten: lijsten bevatten niet even veel stapels (expected=%s, actual=%s)%n",
-                    expected.size(),
-                    actual.size()));
+                    String.format(
+                            "vergelijk stapel lijsten: lijsten bevatten niet even veel stapels (expected=%s, actual=%s)%n",
+                            expected.size(),
+                            actual.size()));
             equal = false;
         }
         for (int index = 0; index < expected.size(); index++) {
@@ -185,11 +180,8 @@ public final class Lo3StapelHelper {
 
     /**
      * Vergelijk LO3 stapels. Doet zoveel mogelijk vergelijkingen en is 'fail-slow'.
-     *
-     * @param expected
-     *            verwachte lo3 stapel
-     * @param actual
-     *            te controleren lo3 stapel
+     * @param expected verwachte lo3 stapel
+     * @param actual te controleren lo3 stapel
      */
     public static <T extends Lo3CategorieInhoud> void vergelijk(final Lo3Stapel<T> expected, final Lo3Stapel<T> actual) {
         final StringBuilder sb = new StringBuilder();
@@ -209,10 +201,9 @@ public final class Lo3StapelHelper {
     }
 
     public static <T extends Lo3CategorieInhoud> boolean vergelijkStapels(
-        final StringBuilder stringBuilder,
-        final Lo3Stapel<T> expected,
-        final Lo3Stapel<T> actual)
-    {
+            final StringBuilder stringBuilder,
+            final Lo3Stapel<T> expected,
+            final Lo3Stapel<T> actual) {
         boolean equal = true;
         final StringBuilder localStringBuilder = new StringBuilder();
         final String mesg = "Vergelijk stapels:" + FORMAT_EXPECTED_ACTUAL;
@@ -226,10 +217,10 @@ public final class Lo3StapelHelper {
         } else {
             if (expected.size() != actual.size()) {
                 localStringBuilder.append(
-                    String.format(
-                        "vergelijk stapels: stapels bevatten niet even veel categorieen (expected=%s, actual=%s)%n",
-                        expected.size(),
-                        actual.size()));
+                        String.format(
+                                "vergelijk stapels: stapels bevatten niet even veel categorieen (expected=%s, actual=%s)%n",
+                                expected.size(),
+                                actual.size()));
                 equal = false;
             }
 
@@ -254,10 +245,9 @@ public final class Lo3StapelHelper {
     }
 
     private static <T extends Lo3CategorieInhoud> boolean vergelijkCategorieen(
-        final StringBuilder stringBuilder,
-        final Lo3Categorie<T> expected,
-        final Lo3Categorie<T> actual)
-    {
+            final StringBuilder stringBuilder,
+            final Lo3Categorie<T> expected,
+            final Lo3Categorie<T> actual) {
         boolean equal = true;
         final StringBuilder localStringBuilder = new StringBuilder();
         String mesg = "Vergelijk categorieen:" + FORMAT_EXPECTED_ACTUAL;
@@ -313,13 +303,7 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     private static <T extends Lo3CategorieInhoud> void sortList(final List<Lo3Stapel<T>> list) {
-        Collections.sort(list, new Comparator<Lo3Stapel<T>>() {
-
-            @Override
-            public int compare(final Lo3Stapel<T> o1, final Lo3Stapel<T> o2) {
-                return o1.toString().compareTo(o2.toString());
-            }
-        });
+        list.sort(Comparator.comparing(Stapel::toString));
     }
 
     private static <T extends Lo3CategorieInhoud> List<Lo3Categorie<T>> getGesorteerdeCategorieen(final Lo3Stapel<T> stapel) {
@@ -328,7 +312,7 @@ public final class Lo3StapelHelper {
         if (categorieen.size() > 1) {
             final Lo3Categorie<T> actueel = categorieen.remove(categorieen.size() - 1);
 
-            Collections.sort(categorieen, new Comparator<Lo3Categorie<T>>() {
+            categorieen.sort(new Comparator<Lo3Categorie<T>>() {
 
                 /** Sorteer op datum ingang geldigheid, datum opneming. */
                 @Override
@@ -354,15 +338,14 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3Documentatie lo3Documentatie(
-        final Long id,
-        final String gemeenteAkte,
-        final String nummerAkte,
-        final String gemeenteDocument,
-        final Integer datumDocument,
-        final String beschrijvingDocument,
-        final String rniDeelnemerCode,
-        final String omschrijvingVerdrag)
-    {
+            final Long id,
+            final String gemeenteAkte,
+            final String nummerAkte,
+            final String gemeenteDocument,
+            final Integer datumDocument,
+            final String beschrijvingDocument,
+            final String rniDeelnemerCode,
+            final String omschrijvingVerdrag) {
 
         final Lo3GemeenteCode gemAkte = gemeenteAkte == null ? null : new Lo3GemeenteCode(gemeenteAkte);
         final Lo3GemeenteCode gemDocument = gemeenteDocument == null ? null : new Lo3GemeenteCode(gemeenteDocument);
@@ -370,24 +353,23 @@ public final class Lo3StapelHelper {
         final Lo3RNIDeelnemerCode rniDeelnemer = rniDeelnemerCode == null ? null : new Lo3RNIDeelnemerCode(rniDeelnemerCode);
 
         return new Lo3Documentatie(
-            id,
-            gemAkte,
-            Lo3String.wrap(nummerAkte),
-            gemDocument,
-            datumDoc,
-            Lo3String.wrap(beschrijvingDocument),
-            rniDeelnemer,
-            Lo3String.wrap(omschrijvingVerdrag));
+                id,
+                gemAkte,
+                Lo3String.wrap(nummerAkte),
+                gemDocument,
+                datumDoc,
+                Lo3String.wrap(beschrijvingDocument),
+                rniDeelnemer,
+                Lo3String.wrap(omschrijvingVerdrag));
     }
 
     public static Lo3Documentatie lo3Documentatie(
-        final Long id,
-        final String gemeenteAkte,
-        final String nummerAkte,
-        final String gemeenteDocument,
-        final Integer datumDocument,
-        final String beschrijvingDocument)
-    {
+            final Long id,
+            final String gemeenteAkte,
+            final String nummerAkte,
+            final String gemeenteDocument,
+            final Integer datumDocument,
+            final String beschrijvingDocument) {
 
         return Lo3StapelHelper.lo3Documentatie(id, gemeenteAkte, nummerAkte, gemeenteDocument, datumDocument, beschrijvingDocument, null, null);
     }
@@ -447,31 +429,26 @@ public final class Lo3StapelHelper {
     }
 
     public static <T extends Lo3CategorieInhoud> Lo3Categorie<T> lo3Cat(
-        final T inhoud,
-        final Lo3Documentatie documentatie,
-        final Lo3Historie historie,
-        final Lo3Herkomst lo3Herkomst)
-    {
+            final T inhoud,
+            final Lo3Documentatie documentatie,
+            final Lo3Historie historie,
+            final Lo3Herkomst lo3Herkomst) {
         return Lo3StapelHelper.lo3Cat(inhoud, documentatie, null, historie, lo3Herkomst);
     }
 
     public static <T extends Lo3CategorieInhoud> Lo3Categorie<T> lo3Cat(
-        final T inhoud,
-        final Lo3Documentatie documentatie,
-        final Lo3Onderzoek onderzoek,
-        final Lo3Historie historie,
-        final Lo3Herkomst lo3Herkomst)
-    {
+            final T inhoud,
+            final Lo3Documentatie documentatie,
+            final Lo3Onderzoek onderzoek,
+            final Lo3Historie historie,
+            final Lo3Herkomst lo3Herkomst) {
         return new Lo3Categorie<>(inhoud, documentatie, onderzoek, historie, lo3Herkomst);
     }
 
     /**
      * Maakt een actuele categorie met standaard historie en akte component.
-     *
-     * @param inhoud
-     *            inhoud van de categorie
-     * @param categorie
-     *            categorie nummer
+     * @param inhoud inhoud van de categorie
+     * @param categorie categorie nummer
      * @return een actuele categorie met standaard historie en een akte
      */
     public static <T extends Lo3CategorieInhoud> Lo3Categorie<T> lo3Cat(final T inhoud, final Lo3CategorieEnum categorie) {
@@ -480,11 +457,8 @@ public final class Lo3StapelHelper {
 
     /**
      * Maakt een categorie met standaard historie en akte en opgegeven herkomst.
-     *
-     * @param inhoud
-     *            inhoud van de categorie
-     * @param herkomst
-     *            herkomst
+     * @param inhoud inhoud van de categorie
+     * @param herkomst herkomst
      * @return een categorie met standaard historie en akte en de opgegeven herkomst.
      */
     public static <T extends Lo3CategorieInhoud> Lo3Categorie<T> lo3Cat(final T inhoud, final Lo3Herkomst herkomst) {
@@ -493,11 +467,8 @@ public final class Lo3StapelHelper {
 
     /**
      * Maakt een onjuiste categorie met standaard datum ingang geldigheid,datum opneming en akte en opgegeven herkomst.
-     *
-     * @param inhoud
-     *            inhoud van de categorie
-     * @param herkomst
-     *            herkomst
+     * @param inhoud inhoud van de categorie
+     * @param herkomst herkomst
      * @return een categorie met standaard historie en akte en de opgegeven herkomst.
      */
     public static <T extends Lo3CategorieInhoud> Lo3Categorie<T> lo3OnjuistCat(final T inhoud, final Lo3Herkomst herkomst) {
@@ -546,16 +517,15 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3InschrijvingInhoud lo3Inschrijving(
-        final Integer ingangBlokkering,
-        final Integer opschortingBijhouding,
-        final String redenOpschortingBijhouding,
-        final Integer eersteInschrijving,
-        final String gemeentePK,
-        final Integer indicatieGeheim,
-        final Integer versienummer,
-        final Long datumtijdstempel,
-        final Boolean pkVolledig)
-    {
+            final Integer ingangBlokkering,
+            final Integer opschortingBijhouding,
+            final String redenOpschortingBijhouding,
+            final Integer eersteInschrijving,
+            final String gemeentePK,
+            final Integer indicatieGeheim,
+            final Integer versienummer,
+            final Long datumtijdstempel,
+            final Boolean pkVolledig) {
 
         final Lo3Datum datumIngangBlokkering = Lo3StapelHelper.datum(ingangBlokkering);
         final Lo3Datum datumOpschortingBijhouding = Lo3StapelHelper.datum(opschortingBijhouding);
@@ -571,17 +541,54 @@ public final class Lo3StapelHelper {
         final Lo3Integer versieNr = Lo3Integer.wrap(versienummer);
 
         return new Lo3InschrijvingInhoud(
-            datumIngangBlokkering,
-            datumOpschortingBijhouding,
-            redenOpschortingBijhoudingCode,
-            datumEersteInschrijving,
-            gemeentePKCode,
-            indicatieGeheimCode,
-            null,
-            null,
-            versieNr,
-            tijdstempel,
-            indicatiePKVolledigGeconverteerdCode);
+                datumIngangBlokkering,
+                datumOpschortingBijhouding,
+                redenOpschortingBijhoudingCode,
+                datumEersteInschrijving,
+                gemeentePKCode,
+                indicatieGeheimCode,
+                null,
+                null,
+                versieNr,
+                tijdstempel,
+                indicatiePKVolledigGeconverteerdCode);
+    }
+
+    /* ************************************************************************************************************* */
+    /* ************************************************************************************************************* */
+    /* ************************************************************************************************************* */
+    /* ************************************************************************************************************* */
+    /* ************************************************************************************************************* */
+
+
+    public static Lo3VerwijzingInhoud lo3Verwijzing(
+            final Long aNummer,
+            final Integer burgerservicenummer,
+            final String voornamen,
+            final String adellijkeTitelPredikaatCode,
+            final String voorvoegselGeslachtsnaam,
+            final String geslachtsnaam,
+            final Integer geboortedatum,
+            final String geboorteGemeenteCode,
+            final String geboorteLandCode,
+            final String gemeenteInschrijvingCode,
+            final Integer datumInschrijving,
+            final Integer indicatieGeheimCode) {
+
+        return new Lo3VerwijzingInhoud(
+                Lo3Long.wrap(aNummer),
+                Lo3Integer.wrap(burgerservicenummer),
+                Lo3String.wrap(voornamen),
+                adellijkeTitelPredikaatCode == null ? null : new Lo3AdellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode),
+                Lo3String.wrap(voorvoegselGeslachtsnaam),
+                Lo3String.wrap(geslachtsnaam),
+                Lo3StapelHelper.datum(geboortedatum),
+                geboorteGemeenteCode == null ? null : new Lo3GemeenteCode(geboorteGemeenteCode),
+                geboorteLandCode == null ? null : new Lo3LandCode(geboorteLandCode),
+                gemeenteInschrijvingCode == null ? null : new Lo3GemeenteCode(gemeenteInschrijvingCode),
+                Lo3StapelHelper.datum(datumInschrijving),
+                indicatieGeheimCode == null ? null : new Lo3IndicatieGeheimCode(indicatieGeheimCode)
+        );
     }
 
     /* ************************************************************************************************************* */
@@ -591,17 +598,16 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3KiesrechtInhoud lo3Kiesrecht(
-        final Boolean aanduidingEuropeesKiesrecht,
-        final Integer datumEuropeesKiesrecht,
-        final Integer einddatumUitsluitingEuropeesKiesrecht,
-        final Boolean aanduidingUitgeslotenKiesrecht,
-        final Integer einddatumUitsluitingKiesrecht)
-    {
+            final Boolean aanduidingEuropeesKiesrecht,
+            final Integer datumEuropeesKiesrecht,
+            final Integer einddatumUitsluitingEuropeesKiesrecht,
+            final Boolean aanduidingUitgeslotenKiesrecht,
+            final Integer einddatumUitsluitingKiesrecht) {
 
         final Lo3AanduidingEuropeesKiesrecht aandEuropeesKiesrecht =
                 aanduidingEuropeesKiesrecht == null ? null
-                                                    : aanduidingEuropeesKiesrecht ? Lo3AanduidingEuropeesKiesrechtEnum.ONTVANGT_OPROEP.asElement()
-                                                                                  : Lo3AanduidingEuropeesKiesrechtEnum.UITGESLOTEN.asElement();
+                        : aanduidingEuropeesKiesrecht ? Lo3AanduidingEuropeesKiesrechtEnum.ONTVANGT_OPROEP.asElement()
+                                : Lo3AanduidingEuropeesKiesrechtEnum.UITGESLOTEN.asElement();
         final Lo3Datum datEuropeesKiesrecht = Lo3StapelHelper.datum(datumEuropeesKiesrecht);
         final Lo3Datum eindUitsluitingEuropeesKiesrecht = Lo3StapelHelper.datum(einddatumUitsluitingEuropeesKiesrecht);
         final Lo3AanduidingUitgeslotenKiesrecht aandUitgeslotenKiesrecht =
@@ -609,11 +615,11 @@ public final class Lo3StapelHelper {
         final Lo3Datum eindUitsluitingKiesrecht = Lo3StapelHelper.datum(einddatumUitsluitingKiesrecht);
 
         return new Lo3KiesrechtInhoud(
-            aandEuropeesKiesrecht,
-            datEuropeesKiesrecht,
-            eindUitsluitingEuropeesKiesrecht,
-            aandUitgeslotenKiesrecht,
-            eindUitsluitingKiesrecht);
+                aandEuropeesKiesrecht,
+                datEuropeesKiesrecht,
+                eindUitsluitingEuropeesKiesrecht,
+                aandUitgeslotenKiesrecht,
+                eindUitsluitingKiesrecht);
     }
 
     /* ************************************************************************************************************* */
@@ -623,59 +629,57 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3PersoonInhoud lo3Persoon(
-        final Long aNummer,
-        final String voornamen,
-        final String geslachtsnaam,
-        final Integer geboortedatum,
-        final String geboorteGemeenteCode,
-        final String geboorteLandCode,
-        final String geslachtsaanduiding)
-    {
+            final String aNummer,
+            final String voornamen,
+            final String geslachtsnaam,
+            final Integer geboortedatum,
+            final String geboorteGemeenteCode,
+            final String geboorteLandCode,
+            final String geslachtsaanduiding) {
         return Lo3StapelHelper.lo3Persoon(
-            aNummer,
-            null,
-            voornamen,
-            null,
-            null,
-            geslachtsnaam,
-            geboortedatum,
-            geboorteGemeenteCode,
-            geboorteLandCode,
-            geslachtsaanduiding,
-            null,
-            null,
-            "E");
+                aNummer,
+                null,
+                voornamen,
+                null,
+                null,
+                geslachtsnaam,
+                geboortedatum,
+                geboorteGemeenteCode,
+                geboorteLandCode,
+                geslachtsaanduiding,
+                null,
+                null,
+                "E");
     }
 
     public static Lo3PersoonInhoud lo3Persoon(
-        final Long aNummer,
-        final Integer burgerservicenummer,
-        final String voornamen,
-        final String adellijkeTitelPredikaatCode,
-        final String voorvoegselGeslachtsnaam,
-        final String geslachtsnaam,
-        final Integer geboortedatum,
-        final String geboorteGemeenteCode,
-        final String geboorteLandCode,
-        final String geslachtsaanduiding,
-        final Long vorigANummer,
-        final Long volgendANummer,
-        final String aanduidingNaamgebruikCode)
-    {
+            final String aNummer,
+            final String burgerservicenummer,
+            final String voornamen,
+            final String adellijkeTitelPredikaatCode,
+            final String voorvoegselGeslachtsnaam,
+            final String geslachtsnaam,
+            final Integer geboortedatum,
+            final String geboorteGemeenteCode,
+            final String geboorteLandCode,
+            final String geslachtsaanduiding,
+            final String vorigANummer,
+            final String volgendANummer,
+            final String aanduidingNaamgebruikCode) {
         return new Lo3PersoonInhoud(
-            Lo3Long.wrap(aNummer),
-            Lo3Integer.wrap(burgerservicenummer),
-            Lo3String.wrap(voornamen),
-            adellijkeTitelPredikaatCode == null ? null : new Lo3AdellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode),
-            Lo3String.wrap(voorvoegselGeslachtsnaam),
-            Lo3String.wrap(geslachtsnaam),
-            Lo3StapelHelper.datum(geboortedatum),
-            geboorteGemeenteCode == null ? null : new Lo3GemeenteCode(geboorteGemeenteCode),
-            geboorteLandCode == null ? null : new Lo3LandCode(geboorteLandCode),
-            geslachtsaanduiding == null ? null : new Lo3Geslachtsaanduiding(geslachtsaanduiding),
-            Lo3Long.wrap(vorigANummer),
-            Lo3Long.wrap(volgendANummer),
-            aanduidingNaamgebruikCode == null ? null : new Lo3AanduidingNaamgebruikCode(aanduidingNaamgebruikCode));
+                Lo3String.wrap(aNummer),
+                Lo3String.wrap(burgerservicenummer),
+                Lo3String.wrap(voornamen),
+                adellijkeTitelPredikaatCode == null ? null : new Lo3AdellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode),
+                Lo3String.wrap(voorvoegselGeslachtsnaam),
+                Lo3String.wrap(geslachtsnaam),
+                Lo3StapelHelper.datum(geboortedatum),
+                geboorteGemeenteCode == null ? null : new Lo3GemeenteCode(geboorteGemeenteCode),
+                geboorteLandCode == null ? null : new Lo3LandCode(geboorteLandCode),
+                geslachtsaanduiding == null ? null : new Lo3Geslachtsaanduiding(geslachtsaanduiding),
+                Lo3String.wrap(vorigANummer),
+                Lo3String.wrap(volgendANummer),
+                aanduidingNaamgebruikCode == null ? null : new Lo3AanduidingNaamgebruikCode(aanduidingNaamgebruikCode));
     }
 
     /* ************************************************************************************************************* */
@@ -685,17 +689,18 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3NationaliteitInhoud lo3Nationaliteit(
-        final String nationaliteitCode,
-        final String redenVerkrijgingNederlandschapCode,
-        final String redenVerliesNederlandschapCode,
-        final String aanduidingBijzonderNederlandschap)
-    {
+            final String nationaliteitCode,
+            final String redenVerkrijgingNederlandschapCode,
+            final String redenVerliesNederlandschapCode,
+            final String aanduidingBijzonderNederlandschap,
+            final String euPersoonsnummer) {
 
         return new Lo3NationaliteitInhoud(
-            nationaliteitCode == null ? null : new Lo3NationaliteitCode(nationaliteitCode),
-            redenVerkrijgingNederlandschapCode == null ? null : new Lo3RedenNederlandschapCode(redenVerkrijgingNederlandschapCode),
-            redenVerliesNederlandschapCode == null ? null : new Lo3RedenNederlandschapCode(redenVerliesNederlandschapCode),
-            aanduidingBijzonderNederlandschap == null ? null : new Lo3AanduidingBijzonderNederlandschap(aanduidingBijzonderNederlandschap));
+                nationaliteitCode == null ? null : new Lo3NationaliteitCode(nationaliteitCode),
+                redenVerkrijgingNederlandschapCode == null ? null : new Lo3RedenNederlandschapCode(redenVerkrijgingNederlandschapCode),
+                redenVerliesNederlandschapCode == null ? null : new Lo3RedenNederlandschapCode(redenVerliesNederlandschapCode),
+                aanduidingBijzonderNederlandschap == null ? null : new Lo3AanduidingBijzonderNederlandschap(aanduidingBijzonderNederlandschap),
+                euPersoonsnummer == null ? null : new Lo3String(euPersoonsnummer));
     }
 
     /* ************************************************************************************************************* */
@@ -705,54 +710,52 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3OuderInhoud lo3Ouder(
-        final Long aNummer,
-        final String voornamen,
-        final String geslachtsnaam,
-        final Integer geboortedatum,
-        final String geboorteGemeenteCode,
-        final String geboorteLandCode,
-        final String geslachtsaanduiding,
-        final Integer familierechtelijkeBetrekking)
-    {
+            final String aNummer,
+            final String voornamen,
+            final String geslachtsnaam,
+            final Integer geboortedatum,
+            final String geboorteGemeenteCode,
+            final String geboorteLandCode,
+            final String geslachtsaanduiding,
+            final Integer familierechtelijkeBetrekking) {
         return Lo3StapelHelper.lo3Ouder(
-            aNummer,
-            null,
-            voornamen,
-            null,
-            null,
-            geslachtsnaam,
-            geboortedatum,
-            geboorteGemeenteCode,
-            geboorteLandCode,
-            geslachtsaanduiding,
-            familierechtelijkeBetrekking);
+                aNummer,
+                null,
+                voornamen,
+                null,
+                null,
+                geslachtsnaam,
+                geboortedatum,
+                geboorteGemeenteCode,
+                geboorteLandCode,
+                geslachtsaanduiding,
+                familierechtelijkeBetrekking);
     }
 
     public static Lo3OuderInhoud lo3Ouder(
-        final Long aNummer,
-        final Integer burgerservicenummer,
-        final String voornamen,
-        final String adellijkeTitelPredikaatCode,
-        final String voorvoegselGeslachtsnaam,
-        final String geslachtsnaam,
-        final Integer geboortedatum,
-        final String geboorteGemeenteCode,
-        final String geboorteLandCode,
-        final String geslachtsaanduiding,
-        final Integer familierechtelijkeBetrekking)
-    {
+            final String aNummer,
+            final String burgerservicenummer,
+            final String voornamen,
+            final String adellijkeTitelPredikaatCode,
+            final String voorvoegselGeslachtsnaam,
+            final String geslachtsnaam,
+            final Integer geboortedatum,
+            final String geboorteGemeenteCode,
+            final String geboorteLandCode,
+            final String geslachtsaanduiding,
+            final Integer familierechtelijkeBetrekking) {
         return new Lo3OuderInhoud(
-            Lo3Long.wrap(aNummer),
-            Lo3Integer.wrap(burgerservicenummer),
-            Lo3String.wrap(voornamen),
-            adellijkeTitelPredikaatCode == null ? null : new Lo3AdellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode),
-            Lo3String.wrap(voorvoegselGeslachtsnaam),
-            Lo3String.wrap(geslachtsnaam),
-            Lo3StapelHelper.datum(geboortedatum),
-            Lo3StapelHelper.gemeente(geboorteGemeenteCode),
-            Lo3StapelHelper.land(geboorteLandCode),
-            geslachtsaanduiding == null ? null : new Lo3Geslachtsaanduiding(geslachtsaanduiding),
-            Lo3StapelHelper.datum(familierechtelijkeBetrekking));
+                Lo3String.wrap(aNummer),
+                Lo3String.wrap(burgerservicenummer),
+                Lo3String.wrap(voornamen),
+                adellijkeTitelPredikaatCode == null ? null : new Lo3AdellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode),
+                Lo3String.wrap(voorvoegselGeslachtsnaam),
+                Lo3String.wrap(geslachtsnaam),
+                Lo3StapelHelper.datum(geboortedatum),
+                Lo3StapelHelper.gemeente(geboorteGemeenteCode),
+                Lo3StapelHelper.land(geboorteLandCode),
+                geslachtsaanduiding == null ? null : new Lo3Geslachtsaanduiding(geslachtsaanduiding),
+                Lo3StapelHelper.datum(familierechtelijkeBetrekking));
     }
 
     /* ************************************************************************************************************* */
@@ -762,95 +765,93 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3VerblijfplaatsInhoud lo3Verblijfplaats(
-        final String gemeenteInschrijving,
-        final Integer datumInschrijving,
-        final Integer aanvangAdreshouding,
-        final String straatnaam,
-        final Integer huisnummer,
-        final String postcode,
-        final String aangifteAdreshouding)
-    {
+            final String gemeenteInschrijving,
+            final Integer datumInschrijving,
+            final Integer aanvangAdreshouding,
+            final String straatnaam,
+            final Integer huisnummer,
+            final String postcode,
+            final String aangifteAdreshouding) {
         return Lo3StapelHelper.lo3Verblijfplaats(
-            gemeenteInschrijving,
-            datumInschrijving,
-            "W",
-            null,
-            aanvangAdreshouding,
-            straatnaam,
-            null,
-            huisnummer,
-            null,
-            null,
-            null,
-            postcode,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            aangifteAdreshouding,
-            null);
+                gemeenteInschrijving,
+                datumInschrijving,
+                "W",
+                null,
+                aanvangAdreshouding,
+                straatnaam,
+                null,
+                huisnummer,
+                null,
+                null,
+                null,
+                postcode,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                aangifteAdreshouding,
+                null);
     }
 
     public static Lo3VerblijfplaatsInhoud lo3Verblijfplaats(
-        final String gemeenteInschrijving,
-        final Integer datumInschrijving,
-        final String functieAdres,
-        final String gemeenteDeel,
-        final Integer aanvangAdreshouding,
-        final String straatnaam,
-        final String naamOpenbareRuimte,
-        final Integer huisnummer,
-        final Character huisletter,
-        final String huisnummertoevoeging,
-        final String aanduidingHuisnummer,
-        final String postcode,
-        final String woonplaatsnaam,
-        final String identificatiecodeVerblijfplaats,
-        final String identificatiecodeNummeraanduiding,
-        final String locatieBeschrijving,
-        final String landAdresBuitenland,
-        final Integer vertrekUitNederland,
-        final String adresBuitenland1,
-        final String adresBuitenland2,
-        final String adresBuitenland3,
-        final String landVanwaarIngeschreven,
-        final Integer vestigingInNederland,
-        final String aangifteAdreshouding,
-        final Integer indicatieDocument)
-    {
+            final String gemeenteInschrijving,
+            final Integer datumInschrijving,
+            final String functieAdres,
+            final String gemeenteDeel,
+            final Integer aanvangAdreshouding,
+            final String straatnaam,
+            final String naamOpenbareRuimte,
+            final Integer huisnummer,
+            final Character huisletter,
+            final String huisnummertoevoeging,
+            final String aanduidingHuisnummer,
+            final String postcode,
+            final String woonplaatsnaam,
+            final String identificatiecodeVerblijfplaats,
+            final String identificatiecodeNummeraanduiding,
+            final String locatieBeschrijving,
+            final String landAdresBuitenland,
+            final Integer vertrekUitNederland,
+            final String adresBuitenland1,
+            final String adresBuitenland2,
+            final String adresBuitenland3,
+            final String landVanwaarIngeschreven,
+            final Integer vestigingInNederland,
+            final String aangifteAdreshouding,
+            final Integer indicatieDocument) {
         return new Lo3VerblijfplaatsInhoud(
-            Lo3StapelHelper.gemeente(gemeenteInschrijving),
-            Lo3StapelHelper.datum(datumInschrijving),
-            functieAdres == null ? null : new Lo3FunctieAdres(functieAdres),
-            Lo3String.wrap(gemeenteDeel),
-            Lo3StapelHelper.datum(aanvangAdreshouding),
-            Lo3String.wrap(straatnaam),
-            Lo3String.wrap(naamOpenbareRuimte),
-            huisnummer == null ? null : new Lo3Huisnummer(huisnummer),
-            Lo3Character.wrap(huisletter),
-            Lo3String.wrap(huisnummertoevoeging),
-            aanduidingHuisnummer == null ? null : new Lo3AanduidingHuisnummer(aanduidingHuisnummer),
-            Lo3String.wrap(postcode),
-            Lo3String.wrap(woonplaatsnaam),
-            Lo3String.wrap(identificatiecodeVerblijfplaats),
-            Lo3String.wrap(identificatiecodeNummeraanduiding),
-            Lo3String.wrap(locatieBeschrijving),
-            Lo3StapelHelper.land(landAdresBuitenland),
-            Lo3StapelHelper.datum(vertrekUitNederland),
-            Lo3String.wrap(adresBuitenland1),
-            Lo3String.wrap(adresBuitenland2),
-            Lo3String.wrap(adresBuitenland3),
-            Lo3StapelHelper.land(landVanwaarIngeschreven),
-            Lo3StapelHelper.datum(vestigingInNederland),
-            aangifteAdreshouding == null ? null : new Lo3AangifteAdreshouding(aangifteAdreshouding),
-            indicatieDocument == null ? null : new Lo3IndicatieDocument(indicatieDocument));
+                Lo3StapelHelper.gemeente(gemeenteInschrijving),
+                Lo3StapelHelper.datum(datumInschrijving),
+                functieAdres == null ? null : new Lo3FunctieAdres(functieAdres),
+                Lo3String.wrap(gemeenteDeel),
+                Lo3StapelHelper.datum(aanvangAdreshouding),
+                Lo3String.wrap(straatnaam),
+                Lo3String.wrap(naamOpenbareRuimte),
+                huisnummer == null ? null : new Lo3Huisnummer(huisnummer),
+                Lo3Character.wrap(huisletter),
+                Lo3String.wrap(huisnummertoevoeging),
+                aanduidingHuisnummer == null ? null : new Lo3AanduidingHuisnummer(aanduidingHuisnummer),
+                Lo3String.wrap(postcode),
+                Lo3String.wrap(woonplaatsnaam),
+                Lo3String.wrap(identificatiecodeVerblijfplaats),
+                Lo3String.wrap(identificatiecodeNummeraanduiding),
+                Lo3String.wrap(locatieBeschrijving),
+                Lo3StapelHelper.land(landAdresBuitenland),
+                Lo3StapelHelper.datum(vertrekUitNederland),
+                Lo3String.wrap(adresBuitenland1),
+                Lo3String.wrap(adresBuitenland2),
+                Lo3String.wrap(adresBuitenland3),
+                Lo3StapelHelper.land(landVanwaarIngeschreven),
+                Lo3StapelHelper.datum(vestigingInNederland),
+                aangifteAdreshouding == null ? null : new Lo3AangifteAdreshouding(aangifteAdreshouding),
+                indicatieDocument == null ? null : new Lo3IndicatieDocument(indicatieDocument));
     }
 
     /* ************************************************************************************************************* */
@@ -860,26 +861,25 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3KindInhoud lo3Kind(
-        final Long aNummer,
-        final Integer burgerservicenummer,
-        final String voornamen,
-        final String adellijkeTitelPredikaatCode,
-        final String voorvoegselGeslachtsnaam,
-        final String geslachtsnaam,
-        final Integer geboortedatum,
-        final String geboorteGemeenteCode,
-        final String geboorteLandCode)
-    {
+            final String aNummer,
+            final String burgerservicenummer,
+            final String voornamen,
+            final String adellijkeTitelPredikaatCode,
+            final String voorvoegselGeslachtsnaam,
+            final String geslachtsnaam,
+            final Integer geboortedatum,
+            final String geboorteGemeenteCode,
+            final String geboorteLandCode) {
         return new Lo3KindInhoud(
-            Lo3Long.wrap(aNummer),
-            Lo3Integer.wrap(burgerservicenummer),
-            Lo3String.wrap(voornamen),
-            adellijkeTitelPredikaatCode == null ? null : new Lo3AdellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode),
-            Lo3String.wrap(voorvoegselGeslachtsnaam),
-            Lo3String.wrap(geslachtsnaam),
-            geboortedatum == null ? null : new Lo3Datum(geboortedatum),
-            geboorteGemeenteCode == null ? null : new Lo3GemeenteCode(geboorteGemeenteCode),
-            geboorteLandCode == null ? null : new Lo3LandCode(geboorteLandCode));
+                Lo3String.wrap(aNummer),
+                Lo3String.wrap(burgerservicenummer),
+                Lo3String.wrap(voornamen),
+                adellijkeTitelPredikaatCode == null ? null : new Lo3AdellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode),
+                Lo3String.wrap(voorvoegselGeslachtsnaam),
+                Lo3String.wrap(geslachtsnaam),
+                geboortedatum == null ? null : new Lo3Datum(geboortedatum),
+                geboorteGemeenteCode == null ? null : new Lo3GemeenteCode(geboorteGemeenteCode),
+                geboorteLandCode == null ? null : new Lo3LandCode(geboorteLandCode));
 
     }
 
@@ -890,28 +890,27 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3HuwelijkOfGpInhoud lo3HuwelijkOfGp(
-        final Long aNummer,
-        final Integer burgerservicenummer,
-        final String voornamen,
-        final String adellijkeTitelPredikaatCode,
-        final String voorvoegselGeslachtsnaam,
-        final String geslachtsnaam,
-        final Integer geboortedatum,
-        final String geboorteGemeenteCode,
-        final String geboorteLandCode,
-        final String geslachtsaanduiding,
-        final Integer datumSluitingHuwelijkOfAangaanGp,
-        final String gemeenteCodeSluitingHuwelijkOfAangaanGp,
-        final String landCodeSluitingHuwelijkOfAangaanGp,
-        final Integer datumOntbindingHuwelijkOfGp,
-        final String gemeenteCodeOntbindingHuwelijkOfGp,
-        final String landCodeOntbindingHuwelijkOfGp,
-        final String redenOntbindingHuwelijkOfGpCode,
-        final String soortVerbintenis)
-    {
+            final String aNummer,
+            final String burgerservicenummer,
+            final String voornamen,
+            final String adellijkeTitelPredikaatCode,
+            final String voorvoegselGeslachtsnaam,
+            final String geslachtsnaam,
+            final Integer geboortedatum,
+            final String geboorteGemeenteCode,
+            final String geboorteLandCode,
+            final String geslachtsaanduiding,
+            final Integer datumSluitingHuwelijkOfAangaanGp,
+            final String gemeenteCodeSluitingHuwelijkOfAangaanGp,
+            final String landCodeSluitingHuwelijkOfAangaanGp,
+            final Integer datumOntbindingHuwelijkOfGp,
+            final String gemeenteCodeOntbindingHuwelijkOfGp,
+            final String landCodeOntbindingHuwelijkOfGp,
+            final String redenOntbindingHuwelijkOfGpCode,
+            final String soortVerbintenis) {
         final Lo3HuwelijkOfGpInhoud.Builder builder = new Lo3HuwelijkOfGpInhoud.Builder();
-        builder.aNummer(Lo3Long.wrap(aNummer));
-        builder.burgerservicenummer(Lo3Integer.wrap(burgerservicenummer));
+        builder.aNummer(Lo3String.wrap(aNummer));
+        builder.burgerservicenummer(Lo3String.wrap(burgerservicenummer));
         builder.voornamen(Lo3String.wrap(voornamen));
         builder.adellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode == null ? null : new Lo3AdellijkeTitelPredikaatCode(adellijkeTitelPredikaatCode));
         builder.voorvoegselGeslachtsnaam(Lo3String.wrap(voorvoegselGeslachtsnaam));
@@ -922,15 +921,15 @@ public final class Lo3StapelHelper {
         builder.geslachtsaanduiding(geslachtsaanduiding == null ? null : new Lo3Geslachtsaanduiding(geslachtsaanduiding));
         builder.datumSluitingHuwelijkOfAangaanGp(datumSluitingHuwelijkOfAangaanGp == null ? null : new Lo3Datum(datumSluitingHuwelijkOfAangaanGp));
         builder.gemeenteCodeSluitingHuwelijkOfAangaanGp(
-            gemeenteCodeSluitingHuwelijkOfAangaanGp == null ? null : new Lo3GemeenteCode(gemeenteCodeSluitingHuwelijkOfAangaanGp));
+                gemeenteCodeSluitingHuwelijkOfAangaanGp == null ? null : new Lo3GemeenteCode(gemeenteCodeSluitingHuwelijkOfAangaanGp));
         builder.landCodeSluitingHuwelijkOfAangaanGp(
-            landCodeSluitingHuwelijkOfAangaanGp == null ? null : new Lo3LandCode(landCodeSluitingHuwelijkOfAangaanGp));
+                landCodeSluitingHuwelijkOfAangaanGp == null ? null : new Lo3LandCode(landCodeSluitingHuwelijkOfAangaanGp));
         builder.datumOntbindingHuwelijkOfGp(datumOntbindingHuwelijkOfGp == null ? null : new Lo3Datum(datumOntbindingHuwelijkOfGp));
         builder.gemeenteCodeOntbindingHuwelijkOfGp(
-            gemeenteCodeOntbindingHuwelijkOfGp == null ? null : new Lo3GemeenteCode(gemeenteCodeOntbindingHuwelijkOfGp));
+                gemeenteCodeOntbindingHuwelijkOfGp == null ? null : new Lo3GemeenteCode(gemeenteCodeOntbindingHuwelijkOfGp));
         builder.landCodeOntbindingHuwelijkOfGp(landCodeOntbindingHuwelijkOfGp == null ? null : new Lo3LandCode(landCodeOntbindingHuwelijkOfGp));
         builder.redenOntbindingHuwelijkOfGpCode(
-            redenOntbindingHuwelijkOfGpCode == null ? null : new Lo3RedenOntbindingHuwelijkOfGpCode(redenOntbindingHuwelijkOfGpCode));
+                redenOntbindingHuwelijkOfGpCode == null ? null : new Lo3RedenOntbindingHuwelijkOfGpCode(redenOntbindingHuwelijkOfGpCode));
         builder.soortVerbintenis(soortVerbintenis == null ? null : new Lo3SoortVerbintenis(soortVerbintenis));
 
         return builder.build();
@@ -943,14 +942,13 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3VerblijfstitelInhoud lo3Verblijfstitel(
-        final String aanduidingVerblijfstitelCode,
-        final Integer datumEindeVerblijfstitel,
-        final Integer datumAanvangVerblijfsTitel)
-    {
+            final String aanduidingVerblijfstitelCode,
+            final Integer datumEindeVerblijfstitel,
+            final Integer datumAanvangVerblijfsTitel) {
         return new Lo3VerblijfstitelInhoud(
-            aanduidingVerblijfstitelCode == null ? null : new Lo3AanduidingVerblijfstitelCode(aanduidingVerblijfstitelCode),
-            Lo3StapelHelper.datum(datumEindeVerblijfstitel),
-            Lo3StapelHelper.datum(datumAanvangVerblijfsTitel));
+                aanduidingVerblijfstitelCode == null ? null : new Lo3AanduidingVerblijfstitelCode(aanduidingVerblijfstitelCode),
+                Lo3StapelHelper.datum(datumEindeVerblijfstitel),
+                Lo3StapelHelper.datum(datumAanvangVerblijfsTitel));
     }
 
     /* ************************************************************************************************************* */
@@ -960,28 +958,43 @@ public final class Lo3StapelHelper {
     /* ************************************************************************************************************* */
 
     public static Lo3ReisdocumentInhoud lo3Reisdocument(
-        final String soortNederlandsReisdocument,
-        final String nummerNederlandsReisdocument,
-        final Integer datumUitgifteNederlandsReisdocument,
-        final String autoriteitVanAfgifteNederlandsReisdocument,
-        final Integer datumEindeGeldigheidNederlandsReisdocument,
-        final Integer datumInhoudingVermissingNederlandsReisdocument,
-        final String aanduidingInhoudingNederlandsReisdocument,
-        final Integer signalering,
-        final Integer aanduidingBezitBuitenlandsReisdocument)
-    {
+            final String soortNederlandsReisdocument,
+            final String nummerNederlandsReisdocument,
+            final Integer datumUitgifteNederlandsReisdocument,
+            final String autoriteitVanAfgifteNederlandsReisdocument,
+            final Integer datumEindeGeldigheidNederlandsReisdocument,
+            final Integer datumInhoudingVermissingNederlandsReisdocument,
+            final String aanduidingInhoudingNederlandsReisdocument,
+            final Integer signalering) {
         return new Lo3ReisdocumentInhoud(
-            soortNederlandsReisdocument == null ? null : new Lo3SoortNederlandsReisdocument(soortNederlandsReisdocument),
-            Lo3String.wrap(nummerNederlandsReisdocument),
-            Lo3StapelHelper.datum(datumUitgifteNederlandsReisdocument),
-            autoriteitVanAfgifteNederlandsReisdocument == null ? null
-                                                               : new Lo3AutoriteitVanAfgifteNederlandsReisdocument(
-                                                                   autoriteitVanAfgifteNederlandsReisdocument),
-            Lo3StapelHelper.datum(datumEindeGeldigheidNederlandsReisdocument),
-            Lo3StapelHelper.datum(datumInhoudingVermissingNederlandsReisdocument),
-            aanduidingInhoudingNederlandsReisdocument == null ? null
-                                                              : new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(
-                                                                  aanduidingInhoudingNederlandsReisdocument),
-            signalering == null ? null : new Lo3Signalering(signalering));
+                soortNederlandsReisdocument == null ? null : new Lo3SoortNederlandsReisdocument(soortNederlandsReisdocument),
+                Lo3String.wrap(nummerNederlandsReisdocument),
+                Lo3StapelHelper.datum(datumUitgifteNederlandsReisdocument),
+                autoriteitVanAfgifteNederlandsReisdocument == null ? null
+                        : new Lo3AutoriteitVanAfgifteNederlandsReisdocument(
+                                autoriteitVanAfgifteNederlandsReisdocument),
+                Lo3StapelHelper.datum(datumEindeGeldigheidNederlandsReisdocument),
+                Lo3StapelHelper.datum(datumInhoudingVermissingNederlandsReisdocument),
+                aanduidingInhoudingNederlandsReisdocument == null ? null
+                        : new Lo3AanduidingInhoudingVermissingNederlandsReisdocument(
+                                aanduidingInhoudingNederlandsReisdocument),
+                signalering == null ? null : new Lo3Signalering(signalering));
     }
+
+    /* ************************************************************************************************************* */
+    /* ************************************************************************************************************* */
+    /* ************************************************************************************************************* */
+    /* ************************************************************************************************************* */
+    /* ************************************************************************************************************* */
+
+    public static Lo3OverlijdenInhoud lo3Overlijden(final Integer datumOverlijden, final String gemeenteCodeOverlijden, final String landCodeOverlijden) {
+        final Lo3OverlijdenInhoud.Builder builder = new Lo3OverlijdenInhoud.Builder();
+
+        builder.setDatum(datumOverlijden == null ? null : new Lo3Datum(datumOverlijden));
+        builder.setGemeenteCode(gemeenteCodeOverlijden == null ? null : new Lo3GemeenteCode(gemeenteCodeOverlijden));
+        builder.setLandCode(landCodeOverlijden == null ? null : new Lo3LandCode(landCodeOverlijden));
+
+        return builder.build();
+    }
+
 }

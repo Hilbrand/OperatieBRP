@@ -20,11 +20,8 @@ public class OnverwachteElementenExceptie extends ParseException {
     /**
      * Maakt een OnverwachteElementenExceptie, die aangeeft dat er een onverwacht element werd gevonden tijdens het
      * parsen.
-     * 
-     * @param categorie
-     *            De categorie waarin het onverwachte element werd gevonden
-     * @param elementen
-     *            de onverwachte elementen
+     * @param categorie De categorie waarin het onverwachte element werd gevonden
+     * @param elementen de onverwachte elementen
      */
     public OnverwachteElementenExceptie(final Lo3CategorieEnum categorie, final Map<Lo3ElementEnum, String> elementen) {
         super(String.format("Onverwachte elementen voor categorie %s: %s", categorie, elementen));

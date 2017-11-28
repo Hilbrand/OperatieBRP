@@ -27,28 +27,48 @@ public class VoiscJMXImplTest {
     @Test
     public void berichtenVerzendenNaarIsc() {
         subject.berichtenVerzendenNaarIsc();
-
         Mockito.verify(voiscService, Mockito.timeout(1000)).berichtenVerzendenNaarIsc();
+    }
+
+    @Test
+    public void berichtenVerzendenNaarIscException() {
+        Mockito.doThrow(new IllegalArgumentException()).when(voiscService).berichtenVerzendenNaarIsc();
+        subject.berichtenVerzendenNaarIsc();
     }
 
     @Test
     public void berichtenVerzendenNaarEnOntvangenVanMailbox() {
         subject.berichtenVerzendenNaarEnOntvangenVanMailbox();
-
         Mockito.verify(voiscService, Mockito.timeout(1000)).berichtenVerzendenNaarEnOntvangenVanMailbox();
+    }
+
+    @Test
+    public void berichtenVerzendenNaarEnOntvangenVanMailboxException() {
+        Mockito.doThrow(IllegalArgumentException.class).when(voiscService).berichtenVerzendenNaarEnOntvangenVanMailbox();
+        subject.berichtenVerzendenNaarEnOntvangenVanMailbox();
     }
 
     @Test
     public void opschonenVoiscBerichten() {
         subject.opschonenVoiscBerichten();
-
         Mockito.verify(voiscService, Mockito.timeout(1000)).opschonenVoiscBerichten(Matchers.any(Date.class));
+    }
+
+    @Test
+    public void opschonenVoiscBerichtenException() {
+        Mockito.when(voiscService.opschonenVoiscBerichten(Matchers.any(Date.class))).thenThrow(new IllegalArgumentException());
+        subject.opschonenVoiscBerichten();
     }
 
     @Test
     public void herstellenVoiscBerichten() {
         subject.herstellenVoiscBerichten();
-
         Mockito.verify(voiscService, Mockito.timeout(1000)).herstellenVoiscBerichten(Matchers.any(Date.class));
+    }
+
+    @Test
+    public void herstellenVoiscBerichtenException() {
+        Mockito.when(voiscService.herstellenVoiscBerichten(Matchers.any(Date.class))).thenThrow(new IllegalArgumentException());
+        subject.herstellenVoiscBerichten();
     }
 }

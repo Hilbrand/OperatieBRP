@@ -12,16 +12,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.common.sql.SqlUtil;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * SQL Helper.
@@ -30,97 +28,43 @@ public final class SqlHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    private static final String DATABASE_ISC = "ISC";
-    private static final String DATABASE_BRP = "BRP";
-    private static final String DATABASE_GBAV = "GBAV";
-    private static final String DATABASE_VOISC = "VOISC";
-
     private static final int CHECK_SQL_EXISTS_HERHALINGEN = 10;
     private static final int CHECK_SQL_EXISTS_TIMEOUT = 1000;
 
-    @Inject
-    @Named("iscDataSource")
-    private DataSource iscDataSource;
-
-    @Inject
-    @Named("brpDataSource")
-    private DataSource brpDataSource;
-
-    @Inject
-    @Named("gbavDataSource")
-    private DataSource gbavDataSource;
-
-    @Inject
-    @Named("voiscDataSource")
-    private DataSource voiscDataSource;
-
-    private final Map<String, SqlData> checkSqlMap = new HashMap<>();
+    private static final Map<String, SqlData> CHECK_SQL_MAP = new HashMap<>();
 
     /**
      * Uitvoeren SQL.
-     *
-     * @param database
-     *            database naam
-     * @param script
-     *            sql
-     * @param continueOnError
-     *            doorgaan bij SQL fouten
+     * @param datasource database datasource
+     * @param script sql
+     * @param continueOnError doorgaan bij SQL fouten
      */
-    public void uitvoerenSql(final String database, final String script, final boolean continueOnError) {
-        final DataSource dataSource = getDatasource(database);
-        SqlUtil.executeSqlScript(dataSource, script, continueOnError);
+    public void uitvoerenSql(final DataSource datasource, final String script, final boolean continueOnError) {
+        SqlUtil.executeSqlScript(datasource, script, continueOnError);
     }
 
     /**
      * Registreer een sql om later te checken.
-     *
-     * @param berichtReferentie
-     *            bericht referentie
-     * @param database
-     *            database naam
-     * @param sql
-     *            sql
+     * @param berichtReferentie bericht referentie
+     * @param dataSource database dataSource
+     * @param sql sql
      */
-    public void checkSql(final String berichtReferentie, final String database, final String sql) {
-        checkSqlMap.put(berichtReferentie, new SqlData(database, sql));
-    }
-
-    private DataSource getDatasource(final String database) {
-        final DataSource dataSource;
-        switch (database.trim().toUpperCase()) {
-            case DATABASE_BRP:
-                dataSource = brpDataSource;
-                break;
-            case DATABASE_ISC:
-                dataSource = iscDataSource;
-                break;
-            case DATABASE_GBAV:
-                dataSource = gbavDataSource;
-                break;
-            case DATABASE_VOISC:
-                dataSource = voiscDataSource;
-                break;
-            default:
-                throw new IllegalArgumentException("Database '" + database + "' voor sql niet ondersteund.");
-        }
-        return dataSource;
+    public void checkSql(final String berichtReferentie, final DataSource dataSource, final String sql) {
+        CHECK_SQL_MAP.put(berichtReferentie, new SqlData(dataSource, sql));
     }
 
     /**
      * Lees een resultset uit.
-     *
-     * @param bericht
-     *            verwacht bericht (gebruikt voor referentie om sql geregistreerd met {@link #checkSql} op te zoeken)
+     * @param bericht verwacht bericht (gebruikt voor referentie om sql geregistreerd met {@link #checkSql} op te zoeken)
      * @return ontvangen bericht
-     * @throws KanaalException
-     *             bij fouten
+     * @throws KanaalException bij fouten
      */
     public Bericht checkSqlResult(final Bericht bericht) throws KanaalException {
-        if (!checkSqlMap.containsKey(bericht.getCorrelatieReferentie())) {
+        if (!CHECK_SQL_MAP.containsKey(bericht.getCorrelatieReferentie())) {
             throw new KanaalException("check_sql_result resultaat verwachting niet gecorreleerd aan check_sql_xxx sql bericht");
         }
 
-        final SqlData check = checkSqlMap.get(bericht.getCorrelatieReferentie());
+        final SqlData check = CHECK_SQL_MAP.get(bericht.getCorrelatieReferentie());
         final String result = readSql(check.database, check.sql);
 
         final Bericht ontvangenBericht = new Bericht();
@@ -134,33 +78,26 @@ public final class SqlHelper {
      *
      * Geef het resultaat terug in het volgende xml formaat:
      *
-     * <pre>
-     * &lt;resultaat count="2">
-     *    &lt;rij>&lt;kolomA>kolomAWaarde&lt;/kolomA>&lt;kolomB>kolomBWaarde&lt;/kolomB>&lt;rij>
-     *    &lt;rij>&lt;kolomA>kolomAWaarde&lt;/kolomA>&lt;kolomB>kolomBWaarde&lt;/kolomB>&lt;rij>
-     * &lt;/resultaat>
-     * </pre>
+     * {@literal
+     * <resultaat count="2">
+     * <rij><kolomA>kolomAWaarde</kolomA><kolomB>kolomBWaarde</kolomB><rij>
+     * <rij><kolomA>kolomAWaarde</kolomA><kolomB>kolomBWaarde</kolomB><rij>
+     * </resultaat>
+     * }
      *
      * Waarbij het attribuut count wordt gevuld met het totaal aan gelezen rijen en per rij een rij element wordt
      * getoegevoegd met per kolom een element met de kolomnaam en de waarde.
-     *
-     * @param database
-     *            database
-     * @param sql
-     *            uit te voeren sql
+     * @param dataSource database dataSource
+     * @param sql uit te voeren sql
      * @return resultaat in gegeven XML formaat.
-     * @throws KanaalException
-     *             In het geval er iets misgaat.
+     * @throws KanaalException In het geval er iets misgaat.
      */
-    public String readSql(final String database, final String sql) throws KanaalException {
-        final DataSource dataSource = getDatasource(database);
-
+    public String readSql(final DataSource dataSource, final String sql) throws KanaalException {
         // @formatter:off
         try (
                 Connection connection = dataSource.getConnection();
                 Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(sql))
-        {
+                ResultSet resultSet = statement.executeQuery(sql)) {
             // @formatter:on
             final StringBuilder dataXml = new StringBuilder();
             int count = 0;
@@ -174,7 +111,7 @@ public final class SqlHelper {
 
                     final Object columnValue = resultSet.getObject(columnIndex);
                     if (columnValue != null) {
-                        dataXml.append(columnValue.toString());
+                        dataXml.append(StringEscapeUtils.escapeXml11(columnValue.toString()));
                     }
 
                     dataXml.append("</").append(columnName).append('>');
@@ -197,24 +134,18 @@ public final class SqlHelper {
     /**
      * Leest een object uit de database op basis van een select query (bijvoorbeeld een ID). Let op: Deze methode lees
      * alleen het resultaat uit de eerst kolom van de eerste rij!
-     * 
-     * @param database
-     *            De te gebruiken database.
-     * @param sql
-     *            De uit te voeren sql.
+     * @param dataSource De te gebruiken database dataSource.
+     * @param sql De uit te voeren sql.
      * @return Het opgehaalde Object.
-     * @throws KanaalException
-     *             Exceptie op het moment dat er iets misgaat.
+     * @throws KanaalException Exceptie op het moment dat er iets misgaat.
      */
-    public Object readSingleSelectSqlReturnObject(final String database, final String sql) throws KanaalException {
-        final DataSource dataSource = getDatasource(database);
+    public Object readSingleSelectSqlReturnObject(final DataSource dataSource, final String sql) throws KanaalException {
 
         // @formatter:off
         try (
                 Connection connection = dataSource.getConnection();
                 Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(sql))
-        {
+                ResultSet resultSet = statement.executeQuery(sql)) {
 
             if (resultSet.next()) {
                 return resultSet.getObject(1);
@@ -229,18 +160,15 @@ public final class SqlHelper {
 
     /**
      * Controleer dat een SQL resultaat geeft. Loopt een aantal keer als er geen resultaat wordt gevonden
-     *
-     * @param bericht
-     *            verwacht bericht (gebruikt voor referentie om sql geregistreerd met {@link #checkSql} op te zoeken)
+     * @param bericht verwacht bericht (gebruikt voor referentie om sql geregistreerd met {@link #checkSql} op te zoeken)
      * @return true, als er een resultaat is
-     * @throws KanaalException
-     *             bij fouten
+     * @throws KanaalException bij fouten
      */
     public boolean checkSqlExists(final Bericht bericht) throws KanaalException {
-        if (!checkSqlMap.containsKey(bericht.getCorrelatieReferentie())) {
+        if (!CHECK_SQL_MAP.containsKey(bericht.getCorrelatieReferentie())) {
             throw new KanaalException("check_sql_exists resultaat verwachting niet gecorreleerd aan check_sql_xxx sql bericht");
         }
-        final SqlData check = checkSqlMap.get(bericht.getCorrelatieReferentie());
+        final SqlData check = CHECK_SQL_MAP.get(bericht.getCorrelatieReferentie());
 
         int count = 0;
         while (count < CHECK_SQL_EXISTS_HERHALINGEN) {
@@ -250,7 +178,7 @@ public final class SqlHelper {
                     return true;
                 }
 
-                Thread.sleep(CHECK_SQL_EXISTS_TIMEOUT * count);
+                TimeUnit.MILLISECONDS.sleep(CHECK_SQL_EXISTS_TIMEOUT * count);
             } catch (final InterruptedException e1) {
                 LOG.debug("sleep() interrupted.", e1);
             }
@@ -259,13 +187,11 @@ public final class SqlHelper {
         return false;
     }
 
-    private boolean readSqlExists(final String database, final String sql) throws KanaalException {
-        final DataSource dataSource = getDatasource(database);
+    private boolean readSqlExists(final DataSource dataSource, final String sql) throws KanaalException {
         // @formatter:off
         try (Connection connection = dataSource.getConnection();
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(sql))
-        {
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
             // @formatter:on
             return resultSet.next();
         } catch (final SQLException e) {
@@ -275,25 +201,10 @@ public final class SqlHelper {
 
     /**
      * Clean database.
-     *
-     * @param database
-     *            database naam
+     * @param dataSource database dataSource
+     * @param scriptResource uit te voeren resource
      */
-    public void opschonenDatabase(final String database) {
-        final DataSource dataSource;
-        final String scriptResource;
-        switch (database.trim().toUpperCase()) {
-            case DATABASE_BRP:
-                dataSource = brpDataSource;
-                scriptResource = "/sql/cleandb_brp.sql";
-                break;
-            case DATABASE_ISC:
-                dataSource = iscDataSource;
-                scriptResource = "/sql/cleandb_isc.sql";
-                break;
-            default:
-                throw new IllegalArgumentException("Optie '" + database + "' voor cleandb niet ondersteund.");
-        }
+    void opschonenDatabase(final DataSource dataSource, final String scriptResource) {
         SqlUtil.executeSqlFile(dataSource, scriptResource);
     }
 
@@ -301,18 +212,15 @@ public final class SqlHelper {
      * SQL Data.
      */
     private static final class SqlData {
-        private final String database;
+        private final DataSource database;
         private final String sql;
 
         /**
          * Constructor.
-         *
-         * @param database
-         *            database
-         * @param sql
-         *            sql
+         * @param database database
+         * @param sql sql
          */
-        public SqlData(final String database, final String sql) {
+        SqlData(final DataSource database, final String sql) {
             this.database = database;
             this.sql = sql;
         }

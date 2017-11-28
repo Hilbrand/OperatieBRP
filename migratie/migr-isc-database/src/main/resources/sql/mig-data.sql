@@ -1,6 +1,6 @@
-INSERT INTO mig_configuratie(configuratie, waarde) VALUES ('vospg.timeout', '24 hours');
-INSERT INTO mig_configuratie(configuratie, waarde) VALUES ('vospg.herhalingen', '5');
-INSERT INTO mig_configuratie(configuratie, waarde) VALUES ('lock.timeout', '1 hours');
+INSERT INTO mig_configuratie(configuratie, waarde) VALUES ('voisc.timeout', '24 hours');
+INSERT INTO mig_configuratie(configuratie, waarde) VALUES ('voisc.herhalingen', '5');
+INSERT INTO mig_configuratie(configuratie, waarde) VALUES ('levering.timeout', '15 minutes');
 
 INSERT INTO mig_verzender(instantiecode, verzendende_instantiecode) VALUES (3,3000220);
 INSERT INTO mig_verzender(instantiecode, verzendende_instantiecode) VALUES (5,3000220);

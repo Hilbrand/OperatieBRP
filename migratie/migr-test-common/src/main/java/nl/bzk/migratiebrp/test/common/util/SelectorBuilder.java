@@ -14,11 +14,8 @@ public final class SelectorBuilder {
 
     /**
      * Voegt een criteria toe aan de selector waarbij het meegegven veld exact de waarde moet bevatten.
-     * 
-     * @param key
-     *            veld naam waarop geselecteerd moet worden
-     * @param value
-     *            waarde van het veld waarop geselecteerd moet worden
+     * @param key veld naam waarop geselecteerd moet worden
+     * @param value waarde van het veld waarop geselecteerd moet worden
      */
     public void addEqualsCriteria(final String key, final String value) {
         addCriteria(key, "=", value);
@@ -27,13 +24,9 @@ public final class SelectorBuilder {
     /**
      * Voegt een criteria toen aan de selector. Hier kan de worden meegeven hoe het opgegeven veld en de waarde
      * vergeleken dient te worden.
-     * 
-     * @param key
-     *            veld naam waarop geselecteerd moet worden
-     * @param comparator
-     *            de manier waarop de waarde van het opgegeven veld moet overeenkomen met de opgegeven waarde
-     * @param value
-     *            waarde van het veld waarop geselecteerd moet worden
+     * @param key veld naam waarop geselecteerd moet worden
+     * @param comparator de manier waarop de waarde van het opgegeven veld moet overeenkomen met de opgegeven waarde
+     * @param value waarde van het veld waarop geselecteerd moet worden
      */
     public void addCriteria(final String key, final String comparator, final String value) {
         if (buffer.length() != 0) {
@@ -45,7 +38,6 @@ public final class SelectorBuilder {
 
     /**
      * Geef de empty.
-     *
      * @return empty
      */
     public boolean isEmpty() {

@@ -1,1 +1,0 @@
-ER_IS(RMAP(afnemerindicaties, x, x.afnemer), v, v = 250001 OVGL 300001)

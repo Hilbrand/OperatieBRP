@@ -11,6 +11,7 @@
             location="classpath:datasource.properties"/>
 
     <import resource="synchronisatie-dal.xml"/>
+    <import resource="classpath:/test-dal-beans.xml"/>
 
     <context:component-scan base-package="nl.bzk.migratiebrp.test"/>
     <context:component-scan base-package="nl.bzk.migratiebrp.init.logging.verschilanalyse"/>
@@ -42,7 +43,7 @@
     <beans profile="!memoryDS">
         <bean id="syncDalDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
             <property name="uniqueResourceName">
-                <bean class="nl.bzk.migratiebrp.util.common.UniqueName">
+                <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName">
                     <property name="baseName" value="syncDalDatabase"/>
                 </bean>
             </property>
@@ -72,8 +73,8 @@
     <beans profile="memoryDS">
         <!-- In memory profile -->
         <jdbc:initialize-database data-source="syncDalDataSource">
-            <jdbc:script location="classpath:sql/hsqldb/HSQLDB.sql"/>
-            <jdbc:script location="classpath:sql/hsqldb/4_brp-migratie-tijdelijk.sql"/>
+            <jdbc:script location="classpath:bmr/HSQLDB/HSQLDB.sql" encoding="UTF-8"/>
+            <jdbc:script location="classpath:bmr/HSQLDB/PENDING_BMR_CHANGES.sql" encoding="UTF-8"/>
         </jdbc:initialize-database>
 
 
@@ -83,7 +84,7 @@
                  | Tijdens jUnit testen kan de ApplicationContext meerdere keren worden geinstantieerd.
                  | Elke keer dient een unique naam gebruikt te worden, anders gaat Atomikos fout.
                   -->
-                <bean class="nl.bzk.migratiebrp.util.common.UniqueName">
+                <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName">
                     <property name="baseName" value="syncDalDatabase"/>
                 </bean>
             </property>

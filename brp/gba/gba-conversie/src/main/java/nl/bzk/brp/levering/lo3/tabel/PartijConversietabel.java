@@ -1,18 +1,16 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.tabel;
 
-import java.text.DecimalFormat;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
-
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch.AbstractPartijConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
@@ -24,7 +22,6 @@ public final class PartijConversietabel extends AbstractPartijConversietabel {
 
     /**
      * Maakt een PartijConversietabel object.
-     *
      * @param collection de lijst met brp gemeenten
      */
     public PartijConversietabel(final Collection<Gemeente> collection) {
@@ -36,22 +33,19 @@ public final class PartijConversietabel extends AbstractPartijConversietabel {
      * BRP waarde {@link BrpPartijCode}.
      */
     private static final class Converter extends AbstractLijstConverter<Gemeente, Lo3GemeenteCode, BrpPartijCode> {
-
-        private static final DecimalFormat GEMEENTE_CODE_FORMAT = new DecimalFormat("0000");
-
         @Override
         protected Lo3GemeenteCode maakLo3Waarde(final Gemeente gemeente) {
-            return new Lo3GemeenteCode(GEMEENTE_CODE_FORMAT.format(gemeente.getCode().getWaarde()));
+            return new Lo3GemeenteCode(gemeente.getCode());
         }
 
         @Override
         protected BrpPartijCode maakBrpWaarde(final Gemeente gemeente) {
-            return new BrpPartijCode(gemeente.getPartij().getCode().getWaarde());
+            return new BrpPartijCode(gemeente.getPartij().getCode());
         }
 
         @Override
         protected void toevoegenStatischeVertalingen(final List<Entry<Lo3GemeenteCode, BrpPartijCode>> resultaat) {
-            resultaat.add(new SimpleEntry<Lo3GemeenteCode, BrpPartijCode>(Lo3GemeenteCode.RNI, BrpPartijCode.MINISTER));
+            resultaat.add(new SimpleEntry<>(Lo3GemeenteCode.RNI, BrpPartijCode.MINISTER));
 
         }
 

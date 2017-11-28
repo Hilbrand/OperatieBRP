@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNaamgebruikCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.NaamgebruikConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.codes.Lo3AanduidingNaamgebruikCodeEnum;
+
 import org.junit.Test;
 
 public class NaamgebruikConversietabelTest {
@@ -23,11 +24,11 @@ public class NaamgebruikConversietabelTest {
         assertEquals(BrpNaamgebruikCode.E, tabel.converteerNaarBrp(Lo3AanduidingNaamgebruikCodeEnum.EIGEN_GESLACHTSNAAM.asElement()));
         assertEquals(BrpNaamgebruikCode.P, tabel.converteerNaarBrp(Lo3AanduidingNaamgebruikCodeEnum.GESLACHTSNAAM_PARTNER.asElement()));
         assertEquals(
-            BrpNaamgebruikCode.V,
-            tabel.converteerNaarBrp(Lo3AanduidingNaamgebruikCodeEnum.GESLACHTNAAM_PARTER_VOOR_EIGEN_GESLACHTSNAAM.asElement()));
+                BrpNaamgebruikCode.V,
+                tabel.converteerNaarBrp(Lo3AanduidingNaamgebruikCodeEnum.GESLACHTNAAM_PARTER_VOOR_EIGEN_GESLACHTSNAAM.asElement()));
         assertEquals(
-            BrpNaamgebruikCode.N,
-            tabel.converteerNaarBrp(Lo3AanduidingNaamgebruikCodeEnum.GESLACHTNAAM_PARTER_NA_EIGEN_GESLACHTSNAAM.asElement()));
+                BrpNaamgebruikCode.N,
+                tabel.converteerNaarBrp(Lo3AanduidingNaamgebruikCodeEnum.GESLACHTNAAM_PARTER_NA_EIGEN_GESLACHTSNAAM.asElement()));
     }
 
     @Test
@@ -37,11 +38,11 @@ public class NaamgebruikConversietabelTest {
         assertEquals(Lo3AanduidingNaamgebruikCodeEnum.EIGEN_GESLACHTSNAAM.asElement(), tabel.converteerNaarLo3(BrpNaamgebruikCode.E));
         assertEquals(Lo3AanduidingNaamgebruikCodeEnum.GESLACHTSNAAM_PARTNER.asElement(), tabel.converteerNaarLo3(BrpNaamgebruikCode.P));
         assertEquals(
-            Lo3AanduidingNaamgebruikCodeEnum.GESLACHTNAAM_PARTER_VOOR_EIGEN_GESLACHTSNAAM.asElement(),
-            tabel.converteerNaarLo3(BrpNaamgebruikCode.V));
+                Lo3AanduidingNaamgebruikCodeEnum.GESLACHTNAAM_PARTER_VOOR_EIGEN_GESLACHTSNAAM.asElement(),
+                tabel.converteerNaarLo3(BrpNaamgebruikCode.V));
         assertEquals(
-            Lo3AanduidingNaamgebruikCodeEnum.GESLACHTNAAM_PARTER_NA_EIGEN_GESLACHTSNAAM.asElement(),
-            tabel.converteerNaarLo3(BrpNaamgebruikCode.N));
+                Lo3AanduidingNaamgebruikCodeEnum.GESLACHTNAAM_PARTER_NA_EIGEN_GESLACHTSNAAM.asElement(),
+                tabel.converteerNaarLo3(BrpNaamgebruikCode.N));
     }
 
 }

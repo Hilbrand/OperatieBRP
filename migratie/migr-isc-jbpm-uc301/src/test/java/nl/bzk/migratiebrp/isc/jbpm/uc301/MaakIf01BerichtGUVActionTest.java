@@ -21,27 +21,18 @@ import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.InMemoryBerichtenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class MaakIf01BerichtGUVActionTest {
 
-    private MaakIf01BerichtGUVAction subject;
-    private BerichtenDao berichtenDao;
-
-    @Before
-    public void setup() {
-        subject = new MaakIf01BerichtGUVAction();
-        berichtenDao = new InMemoryBerichtenDao();
-        ReflectionTestUtils.setField(subject, "berichtenDao", berichtenDao);
-    }
+    private BerichtenDao berichtenDao = new InMemoryBerichtenDao();
+    private MaakIf01BerichtGUVAction subject = new MaakIf01BerichtGUVAction(berichtenDao);
 
     @Test
     public void testNietGevonden() throws BerichtSyntaxException, BerichtInhoudException {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("1234");
-        ii01Bericht.setDoelGemeente("5678");
+        ii01Bericht.setBronPartijCode("1234");
+        ii01Bericht.setDoelPartijCode("5678");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.ANUMMER, "1234567891");
 
         final ZoekPersoonAntwoordBericht antwoord = new ZoekPersoonAntwoordBericht();
@@ -57,25 +48,25 @@ public class MaakIf01BerichtGUVActionTest {
 
         final If01Bericht if01Bericht = (If01Bericht) berichtenDao.leesBericht((Long) result.get("if01Bericht"));
         Assert.assertNotNull(if01Bericht);
-        Assert.assertEquals("1234", if01Bericht.getDoelGemeente());
-        Assert.assertEquals("5678", if01Bericht.getBronGemeente());
+        Assert.assertEquals("1234", if01Bericht.getDoelPartijCode());
+        Assert.assertEquals("5678", if01Bericht.getBronPartijCode());
         Assert.assertEquals(ii01Bericht.getCategorieen(), if01Bericht.getCategorieen());
-        Assert.assertEquals("G", if01Bericht.getHeader(Lo3HeaderVeld.FOUTREDEN));
-        Assert.assertEquals("0000000000", if01Bericht.getHeader(Lo3HeaderVeld.A_NUMMER));
-        Assert.assertEquals("0000", if01Bericht.getHeader(Lo3HeaderVeld.GEMEENTE));
+        Assert.assertEquals("G", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
+        Assert.assertEquals("0000000000", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
+        Assert.assertEquals("0000", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.GEMEENTE));
     }
 
     @Test
     public void testVerhuisd() throws BerichtSyntaxException, BerichtInhoudException {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("1234");
-        ii01Bericht.setDoelGemeente("5678");
+        ii01Bericht.setBronPartijCode("1234");
+        ii01Bericht.setDoelPartijCode("5678");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.ANUMMER, "1234567891");
 
         final ZoekPersoonAntwoordBericht antwoord = new ZoekPersoonAntwoordBericht();
         antwoord.setStatus(StatusType.OK);
         antwoord.setResultaat(ZoekPersoonResultaatType.GEVONDEN);
-        antwoord.setPersoonId(1);
+        antwoord.setPersoonId(1L);
         antwoord.setAnummer("8172387435");
         antwoord.setGemeente("1900");
 
@@ -88,19 +79,19 @@ public class MaakIf01BerichtGUVActionTest {
 
         final If01Bericht if01Bericht = (If01Bericht) berichtenDao.leesBericht((Long) result.get("if01Bericht"));
         Assert.assertNotNull(if01Bericht);
-        Assert.assertEquals("1234", if01Bericht.getDoelGemeente());
-        Assert.assertEquals("5678", if01Bericht.getBronGemeente());
+        Assert.assertEquals("1234", if01Bericht.getDoelPartijCode());
+        Assert.assertEquals("5678", if01Bericht.getBronPartijCode());
         Assert.assertEquals(ii01Bericht.getCategorieen(), if01Bericht.getCategorieen());
-        Assert.assertEquals("V", if01Bericht.getHeader(Lo3HeaderVeld.FOUTREDEN));
-        Assert.assertEquals("8172387435", if01Bericht.getHeader(Lo3HeaderVeld.A_NUMMER));
-        Assert.assertEquals("1900", if01Bericht.getHeader(Lo3HeaderVeld.GEMEENTE));
+        Assert.assertEquals("V", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
+        Assert.assertEquals("8172387435", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
+        Assert.assertEquals("1900", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.GEMEENTE));
     }
 
     @Test
     public void testNietUniek() throws BerichtSyntaxException, BerichtInhoudException {
         final Ii01Bericht ii01Bericht = new Ii01Bericht();
-        ii01Bericht.setBronGemeente("1234");
-        ii01Bericht.setDoelGemeente("5678");
+        ii01Bericht.setBronPartijCode("1234");
+        ii01Bericht.setDoelPartijCode("5678");
         ii01Bericht.set(Lo3CategorieEnum.PERSOON, Lo3ElementEnum.ANUMMER, "1234567891");
 
         final ZoekPersoonAntwoordBericht antwoord = new ZoekPersoonAntwoordBericht();
@@ -116,11 +107,11 @@ public class MaakIf01BerichtGUVActionTest {
 
         final If01Bericht if01Bericht = (If01Bericht) berichtenDao.leesBericht((Long) result.get("if01Bericht"));
         Assert.assertNotNull(if01Bericht);
-        Assert.assertEquals("1234", if01Bericht.getDoelGemeente());
-        Assert.assertEquals("5678", if01Bericht.getBronGemeente());
+        Assert.assertEquals("1234", if01Bericht.getDoelPartijCode());
+        Assert.assertEquals("5678", if01Bericht.getBronPartijCode());
         Assert.assertEquals(ii01Bericht.getCategorieen(), if01Bericht.getCategorieen());
-        Assert.assertEquals("U", if01Bericht.getHeader(Lo3HeaderVeld.FOUTREDEN));
-        Assert.assertEquals("0000000000", if01Bericht.getHeader(Lo3HeaderVeld.A_NUMMER));
-        Assert.assertEquals("0000", if01Bericht.getHeader(Lo3HeaderVeld.GEMEENTE));
+        Assert.assertEquals("U", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.FOUTREDEN));
+        Assert.assertEquals("0000000000", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.A_NUMMER));
+        Assert.assertEquals("0000", if01Bericht.getHeaderWaarde(Lo3HeaderVeld.GEMEENTE));
     }
 }

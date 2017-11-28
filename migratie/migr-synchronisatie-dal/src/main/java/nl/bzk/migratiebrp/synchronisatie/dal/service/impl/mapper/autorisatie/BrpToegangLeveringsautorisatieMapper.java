@@ -7,14 +7,12 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ToegangLeveringsautorisatieHistorie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpToegangLeveringsautorisatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.ToegangLeveringsautorisatieHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.AbstractBrpMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.BrpMapperUtil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,32 +20,27 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public final class BrpToegangLeveringsautorisatieMapper extends
-        AbstractBrpMapper<ToegangLeveringsautorisatieHistorie, BrpToegangLeveringsautorisatieInhoud>
-{
+        AbstractBrpMapper<ToegangLeveringsautorisatieHistorie, BrpToegangLeveringsautorisatieInhoud> {
 
     /**
      * Map een database entiteit toegang leveringsautorisatie naar een BRP conversie model object.
-     *
-     * @param toegangLeveringsautorisatieHistorieSet
-     *            database entiteit
+     * @param toegangLeveringsautorisatieHistorieSet database entiteit
      * @return conversie model object
      */
     public BrpStapel<BrpToegangLeveringsautorisatieInhoud> mapToegangLeveringsautorisatie(
-        final Set<ToegangLeveringsautorisatieHistorie> toegangLeveringsautorisatieHistorieSet)
-    {
+            final Set<ToegangLeveringsautorisatieHistorie> toegangLeveringsautorisatieHistorieSet) {
         return map(toegangLeveringsautorisatieHistorieSet, null);
     }
 
     @Override
     protected BrpToegangLeveringsautorisatieInhoud mapInhoud(
-        final ToegangLeveringsautorisatieHistorie historie,
-        final BrpOnderzoekMapper brpOnderzoekMapper)
-    {
+            final ToegangLeveringsautorisatieHistorie historie,
+            final BrpOnderzoekMapper brpOnderzoekMapper) {
         return new BrpToegangLeveringsautorisatieInhoud(
-            historie.getAfleverpunt(),
-            BrpMapperUtil.mapDatum(historie.getDatumIngang()),
-            BrpMapperUtil.mapDatum(historie.getDatumEinde()),
-            historie.getIndicatieGeblokkeerd(),
-            historie.getNaderePopulatiebeperking());
+                historie.getAfleverpunt(),
+                BrpMapperUtil.mapDatum(historie.getDatumIngang()),
+                BrpMapperUtil.mapDatum(historie.getDatumEinde()),
+                historie.getIndicatieGeblokkeerd(),
+                historie.getNaderePopulatiebeperking());
     }
 }

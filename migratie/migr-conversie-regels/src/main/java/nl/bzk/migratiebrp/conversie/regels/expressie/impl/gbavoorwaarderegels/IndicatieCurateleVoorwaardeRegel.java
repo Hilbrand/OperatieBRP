@@ -9,34 +9,42 @@ package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieCurateleregister;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.RubriekWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
 import org.springframework.stereotype.Component;
 
 /**
  * Vertaald GBA voorwaarde regels van type indicatie onder curatele; hiervoor wordt een conversie tabel gebruikt.
  */
 @Component
-public final class IndicatieCurateleVoorwaardeRegel extends AbstractIndicatieVoorwaardeRegel {
+public final class IndicatieCurateleVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
 
-    /**
-     * Rubriek voor deze indicatie.
-     */
-    public static final String RUBRIEK = "(11|51).33.10";
+    private static final String REGEX_PATROON = "^(11|51)\\.33\\.10.*";
+    private static final int VOLGORDE = 500;
 
-    @Inject
-    private ConversietabelFactory conversieTabelFactory;
+    private final IndicatieVoorwaardeRegelUtil indicatieVoorwaardeRegelUtil;
 
     /**
      * Maakt nieuwe voorwaarderegel aan.
+     * @param conversieTabelFactory conversie tabel factory
+     * @param gbaRubriekNaarBrpTypeVertaler rubriekvertaler
      */
-    public IndicatieCurateleVoorwaardeRegel() {
-        super(RUBRIEK);
+    @Inject
+    public IndicatieCurateleVoorwaardeRegel(
+            final ConversietabelFactory conversieTabelFactory,
+            final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler) {
+        super(VOLGORDE, REGEX_PATROON);
+        indicatieVoorwaardeRegelUtil = new IndicatieVoorwaardeRegelUtil(gbaRubriekNaarBrpTypeVertaler, waarde ->
+                conversieTabelFactory.createIndicatieCurateleConversietabel()
+                        .converteerNaarBrp(new Lo3IndicatieCurateleregister(waarde.replaceAll("\"", ""), null))
+                        .getWaarde()
+        );
     }
 
     @Override
-    protected Boolean vertaalIndicatieVanWaarde(final String ruweWaarde) {
-        final String zonderAanhalingstekens = ruweWaarde.replaceAll("\"", "");
-        return conversieTabelFactory.createIndicatieCurateleConversietabel()
-                                    .converteerNaarBrp(new Lo3IndicatieCurateleregister(zonderAanhalingstekens, null))
-                                    .getWaarde();
+    public Expressie getBrpExpressie(final RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
+        return indicatieVoorwaardeRegelUtil.getBrpExpressie(voorwaardeRegel);
     }
 }

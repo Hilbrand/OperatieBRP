@@ -30,7 +30,7 @@ public class ProtocolleringServiceTest {
 
     @Test
     public void testZoekProtocollering() {
-        final Protocollering protocollering = new Protocollering("test", new Timestamp(System.currentTimeMillis()), 123456789L, true);
+        final Protocollering protocollering = new Protocollering("test", new Timestamp(System.currentTimeMillis()), "123456789", true);
         Mockito.when(protocolleringRepository.save(Matchers.any(Protocollering.class))).thenReturn(protocollering);
         final Protocollering gepersisteerdeProtocollering = protocolleringService.persisteerProtocollering(protocollering);
 

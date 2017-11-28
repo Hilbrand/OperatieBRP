@@ -11,18 +11,32 @@ package nl.bzk.migratiebrp.tools.mailbox;
  */
 public enum SpdOperations {
 
-    /** Logon. */
+    /**
+     * Logon.
+     */
     LOGON,
-    /** Logoff. */
+    /**
+     * Logoff.
+     */
     LOGOFF,
-    /** List messages. */
+    /**
+     * List messages.
+     */
     LIST_MESGS,
-    /** Get message. */
+    /**
+     * Get message.
+     */
     GET_MESG,
-    /** Put message. */
+    /**
+     * Put message.
+     */
     PUT_MESG,
-    /** Change password. */
+    /**
+     * Change password.
+     */
     CHG_PWD,
-    /** No-op(eration). */
+    /**
+     * No-op(eration).
+     */
     NO_OP
 }

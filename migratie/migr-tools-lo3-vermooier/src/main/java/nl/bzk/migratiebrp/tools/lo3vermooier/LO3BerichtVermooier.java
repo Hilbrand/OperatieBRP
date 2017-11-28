@@ -13,15 +13,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+
+import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 
 /**
  * Lo3 bericht vermooier.
  */
 public final class LO3BerichtVermooier {
-
-    private static final Logger LOGGER = LogManager.getLogManager().getLogger(LO3BerichtVermooier.class.getName());
 
     private LO3BerichtVermooier() {
         // Niet instantieerbaar
@@ -39,34 +37,35 @@ public final class LO3BerichtVermooier {
             }
             return tekst.toString();
         }
-        LOGGER.severe("Bestand bestaat niet of is een directory.");
+        System.err.println("Bestand bestaat niet of is een directory.");
         return null;
     }
 
-    // 00000000Gv0112345678900009201055011001026357892850210010Jan
-    // Willem0230002de0240005Cries04011051000400010401105100040056
-
     /**
      * Main.
-     *
-     * @param args
-     *            argumenten
-     * @throws IOException
-     *             bij lees fouten
+     * @param args argumenten
+     * @throws IOException bij lees fouten
+     * @throws BerichtSyntaxException bij bericht syntax fouten
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException, BerichtSyntaxException {
         final String bestandsnaam;
-        if (args.length == 1) {
+        if (args != null && args.length == 1) {
             bestandsnaam = args[0];
         } else {
-            LOGGER.warning("Geen bericht opgegeven, default naar bericht.txt");
+            System.out.println("Geen bericht opgegeven, default naar bericht.txt");
             bestandsnaam = "bericht.txt";
         }
 
-        final String tekst = readFile(bestandsnaam);
+        final String tekst;
+        final File file = new File(bestandsnaam);
+        if (file.exists()) {
+            tekst = readFile(bestandsnaam);
+        } else {
+            tekst = bestandsnaam;
+        }
 
         if (tekst != null) {
-            new LO3BerichtParser(tekst).print();
+            new Lo3BerichtPrinter(tekst).print();
         }
     }
 }

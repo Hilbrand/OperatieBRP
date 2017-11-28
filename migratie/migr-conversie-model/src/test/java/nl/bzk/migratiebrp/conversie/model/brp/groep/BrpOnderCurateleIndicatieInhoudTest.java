@@ -8,13 +8,20 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class BrpOnderCurateleIndicatieInhoudTest {
+    @Test
+    public void test(){
+        final BrpOnderCurateleIndicatieInhoud inhoud = createInhoud();
+        Assert.assertFalse(inhoud.heeftIndicatie());
+    }
+
     public static BrpOnderCurateleIndicatieInhoud createInhoud() {
         return new BrpOnderCurateleIndicatieInhoud(new BrpBoolean(Boolean.FALSE), null, null);
     }

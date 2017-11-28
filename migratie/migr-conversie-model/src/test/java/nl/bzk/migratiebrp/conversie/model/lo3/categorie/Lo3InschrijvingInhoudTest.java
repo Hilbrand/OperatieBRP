@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datumtijdstempel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
-
 import org.junit.Test;
 
 public class Lo3InschrijvingInhoudTest {

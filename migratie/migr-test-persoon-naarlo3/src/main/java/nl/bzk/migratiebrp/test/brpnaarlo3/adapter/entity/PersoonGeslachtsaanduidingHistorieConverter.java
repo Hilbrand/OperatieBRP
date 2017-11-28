@@ -8,12 +8,14 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -50,7 +52,7 @@ public final class PersoonGeslachtsaanduidingHistorieConverter extends AbstractE
                 persoon = context.getPersoon(Integer.parseInt(value));
                 break;
             case HEADER_GESLACHTS_AANDUIDING:
-                geslachtsaanduiding = Geslachtsaanduiding.parseId(Short.valueOf(value));
+                geslachtsaanduiding = Geslachtsaanduiding.parseId(Integer.valueOf(value));
                 break;
             case HEADER_DATUM_AANVANG_GELDIGHEID:
                 datumAanvangGeldigheid = Integer.valueOf(value);

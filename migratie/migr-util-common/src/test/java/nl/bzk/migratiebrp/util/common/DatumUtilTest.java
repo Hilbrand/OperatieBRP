@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Date;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.junit.Before;
@@ -61,7 +61,7 @@ public class DatumUtilTest {
             constructors[0].setAccessible(true);
             constructors[0].newInstance((Object[]) null);
             Assert.fail();
-        }catch(InvocationTargetException e){
+        } catch (InvocationTargetException e) {
             Assert.assertTrue(e.getCause() instanceof UnsupportedOperationException);
             throw e.getCause();
         }

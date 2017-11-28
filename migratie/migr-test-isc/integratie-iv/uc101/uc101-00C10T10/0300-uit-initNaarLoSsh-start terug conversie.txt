@@ -1,1 +1,0 @@
-cd ~; cd migr-init-naarlo3; ./runLo3QueueVulling.sh

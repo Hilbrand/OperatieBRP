@@ -6,6 +6,8 @@
 
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.LeverwijzeSelectie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortSelectie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingBijHuisnummerCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
@@ -16,15 +18,18 @@ import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.AanduidingEuropeesKiesrechtConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.AanduidingHuisnummerConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.AanduidingUitgeslotenKiesrechtConversietabel;
-import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.FunctieAdresConversietabel;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.BerichtaanduidingConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.GeslachtsaanduidingConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.IndicatieCurateleConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.IndicatieDocumentConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.IndicatieGeheimConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.IndicatiePKConversietabel;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.LeverwijzeSelectieConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.NaamgebruikConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.RegelConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.SignaleringConversietabel;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.SoortAdresConversietabel;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.SoortSelectieConversietabel;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.statisch.SoortVerbintenisConversietabel;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingEuropeesKiesrecht;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingHuisnummer;
@@ -42,7 +47,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3SoortVerbintenis;
 /**
  * Gedeeltelijke implementatie van de conversietabel factory waarin de statische conversietabellen zijn geimplementeerd.
  */
-@SuppressWarnings("checkstyle:classfanoutcomplexity")
+
 public abstract class AbstractConversietabelFactory implements ConversietabelFactory {
     /* grote fan out complexity omdat alle conversietabellen via deze class worden aangemaakt. */
 
@@ -58,7 +63,7 @@ public abstract class AbstractConversietabelFactory implements ConversietabelFac
 
     @Override
     public final Conversietabel<Lo3FunctieAdres, BrpSoortAdresCode> createFunctieAdresConversietabel() {
-        return new FunctieAdresConversietabel();
+        return new SoortAdresConversietabel();
     }
 
     @Override
@@ -110,4 +115,20 @@ public abstract class AbstractConversietabelFactory implements ConversietabelFac
     public final Conversietabel<Character, String> createRegelConversietabel() {
         return new RegelConversietabel();
     }
+
+    @Override
+    public final Conversietabel<Integer, SoortSelectie> createSoortSelectieConversietabel() {
+        return new SoortSelectieConversietabel();
+    }
+
+    @Override
+    public final Conversietabel<Integer, Boolean> createBerichtaanduidingConversietabel() {
+        return new BerichtaanduidingConversietabel();
+    }
+
+    @Override
+    public final Conversietabel<String, LeverwijzeSelectie> createMediumSelectieConversietabel() {
+        return new LeverwijzeSelectieConversietabel();
+    }
+
 }

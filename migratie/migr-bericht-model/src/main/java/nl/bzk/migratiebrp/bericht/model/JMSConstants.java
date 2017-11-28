@@ -41,6 +41,11 @@ public final class JMSConstants {
      */
     public static final String BERICHT_RECIPIENT = "voaRecipient";
 
+    /**
+     * JMS property waarop de notification request wordt gezet.
+     */
+    public static final String REQUEST_NON_RECEIPT_NOTIFICATION = "voaRequestNonReceiptNotification";
+
     private JMSConstants() {
         throw new AssertionError("Niet instantieerbaar");
     }

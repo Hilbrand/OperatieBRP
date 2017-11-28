@@ -11,12 +11,9 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaat
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Geslachtsaanduiding;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -24,8 +21,8 @@ public class Lo3GroepUtilTest {
 
     private Lo3OuderInhoud.Builder builder() {
         final Lo3OuderInhoud.Builder builder = new Lo3OuderInhoud.Builder();
-        builder.anummer(Lo3Long.wrap(1069532945L));
-        builder.burgerservicenummer(Lo3Integer.wrap(179543489));
+        builder.anummer(Lo3String.wrap("1069532945"));
+        builder.burgerservicenummer(Lo3String.wrap("179543489"));
 
         builder.voornamen(Lo3String.wrap("Jaap"));
         builder.adellijkeTitelPredikaatCode(new Lo3AdellijkeTitelPredikaatCode("P"));

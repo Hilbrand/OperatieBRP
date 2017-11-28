@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import nl.bzk.migratiebrp.test.dal.AbstractTestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
+import nl.bzk.migratiebrp.test.dal.TestSkipper;
 
 /**
  * Test casus factory: processen.
@@ -18,26 +19,23 @@ import nl.bzk.migratiebrp.test.dal.TestCasus;
 public final class ProcessenTestCasusFactory extends AbstractTestCasusFactory {
 
     private final TestEnvironment environment;
+    private final TestSkipper skipper;
 
     /**
      * Constructor.
-     *
-     * @param environment
-     *            omgeving
+     * @param environment omgeving
      */
-    public ProcessenTestCasusFactory(final TestEnvironment environment) {
+    public ProcessenTestCasusFactory(final TestEnvironment environment, final TestSkipper skipper) {
         this.environment = environment;
+        this.skipper = skipper;
     }
 
     @Override
     public List<TestCasus> leesTestCasussen(final File input) {
-        return Collections.<TestCasus>singletonList(new ProcessenTestCasus(
-            getThema(),
-            input.getName(),
-            getOutputFolder(),
-            getExpectedFolder(),
-            input,
-            environment));
+        final TestCasus testCasus = new ProcessenTestCasus(getThema(), input.getName(), getOutputFolder(), getExpectedFolder(), input, environment);
+        testCasus.setSkipper(skipper);
+
+        return Collections.<TestCasus>singletonList(testCasus);
     }
 
 }

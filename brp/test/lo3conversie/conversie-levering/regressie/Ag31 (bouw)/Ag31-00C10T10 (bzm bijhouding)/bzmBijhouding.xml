@@ -1,35 +1,47 @@
-<brp:bhg_vbaCorrigeerAdres xmlns:brp="http://www.bzk.nl/brp/brp0200">
-   <brp:stuurgegevens brp:communicatieID="identificatie00B">
-      <brp:zendendePartij>199902</brp:zendendePartij>
+<?xml version="1.0" encoding="UTF-8"?>
+<brp:bhg_hgpCorrigeerHuwelijkGeregistreerdPartnerschap xmlns:brp="http://www.bzk.nl/brp/brp0200">
+   <brp:stuurgegevens brp:communicatieID="comid.stuurgegevens">
+      <brp:zendendePartij>062601</brp:zendendePartij>
       <brp:zendendeSysteem>Migratie testtooling</brp:zendendeSysteem>
-      <brp:referentienummer>2e306ee0-c174-11e3-8a33-0800200c9a66</brp:referentienummer>
-      <brp:tijdstipVerzending>2014-04-11T12:34:05.123</brp:tijdstipVerzending>
+      <brp:referentienummer>00000000-0000-0000-0042-200000000104</brp:referentienummer>
+      <brp:tijdstipVerzending>2016-05-12T16:16:40.829+02:00</brp:tijdstipVerzending>
    </brp:stuurgegevens>
-   <brp:parameters brp:communicatieID="identificatie01B">
+   <brp:parameters brp:communicatieID="comid.parameters">
       <brp:verwerkingswijze>Bijhouding</brp:verwerkingswijze>
    </brp:parameters>
-   <brp:correctieAdres brp:objecttype="AdministratieveHandeling" brp:communicatieID="identificatie02B">
-      <brp:partijCode>059901</brp:partijCode>            
+   <brp:correctieHuwelijk brp:communicatieID="comid.correctieHuwelijk" brp:objecttype="AdministratieveHandeling">
+      <brp:partijCode>062601</brp:partijCode>
+      <brp:toelichtingOntlening>Onjuiste registratie plaats huwelijk.</brp:toelichtingOntlening>
+      <brp:bronnen>
+         <brp:bron brp:communicatieID="comid.correctieHuwelijk.bron1" brp:objecttype="AdministratieveHandelingBron">
+            <brp:document brp:communicatieID="comid.correctieHuwelijk.bron1.document" brp:objecttype="Document">
+               <brp:soortNaam>Huwelijksakte</brp:soortNaam>
+               <brp:aktenummer>3AA0001</brp:aktenummer>
+               <brp:partijCode>062601</brp:partijCode>
+            </brp:document>
+         </brp:bron>
+      </brp:bronnen>
       <brp:acties>
-         <brp:correctieAdres brp:objecttype="Actie" brp:communicatieID="identificatie03B">
-            <brp:datumAanvangGeldigheid>1998-06-22</brp:datumAanvangGeldigheid>
-            <brp:datumEindeGeldigheid>2011-03-16</brp:datumEindeGeldigheid>
-            <brp:persoon brp:objecttype="Persoon" brp:objectSleutel="$$objectSleutel$$" brp:communicatieID="identificatie04B">
-               <brp:adressen>
-                  <brp:adres brp:objecttype="PersoonAdres" brp:communicatieID="identificatie05B">
-                     <brp:soortCode>W</brp:soortCode>
-                     <brp:redenWijzigingCode>B</brp:redenWijzigingCode>
-                     <brp:datumAanvangAdreshouding>1998-06-22</brp:datumAanvangAdreshouding>
-                     <brp:identificatiecodeAdresseerbaarObject>0626010010016001</brp:identificatiecodeAdresseerbaarObject>
-                     <brp:identificatiecodeNummeraanduiding>0626010010016001</brp:identificatiecodeNummeraanduiding>                    
-                     <brp:gemeenteCode>0626</brp:gemeenteCode>
-                     <brp:naamOpenbareRuimte>Baron Schimmelpenninck van der Oyelaan</brp:naamOpenbareRuimte>
-                     <brp:woonplaatsnaam>Voorschoten</brp:woonplaatsnaam>
-                     <brp:landGebiedCode>6030</brp:landGebiedCode>
-                  </brp:adres>
-               </brp:adressen>
-            </brp:persoon>
-         </brp:correctieAdres>
+         <brp:correctievervalRelatie brp:communicatieID="comid.correctieHuwelijk.correctievervalRelatie" brp:objecttype="Actie">
+            <brp:bronnen>
+               <brp:bron brp:communicatieID="comid.correctieHuwelijk.correctievervalRelatie.bron1" brp:objecttype="ActieBron" brp:referentieID="comid.correctieHuwelijk.bron1"/>
+            </brp:bronnen>
+            <brp:huwelijk brp:communicatieID="comid.correctieHuwelijk.correctievervalRelatie.huwelijk" brp:objecttype="Relatie" brp:objectSleutel="$$datumAanvang=20050330$$">
+               <brp:relatie brp:communicatieID="comid.correctieHuwelijk.correctievervalRelatie.relatie" brp:voorkomenSleutel="$$actueel$$" />
+            </brp:huwelijk>
+         </brp:correctievervalRelatie>
+         <brp:correctieregistratieRelatie brp:communicatieID="comid.correctieHuwelijk.correctieregistratieRelatie" brp:objecttype="Actie">
+            <brp:bronnen>
+               <brp:bron brp:communicatieID="comid.correctieHuwelijk.correctieregistratieRelatie.bron2" brp:objecttype="ActieBron" brp:referentieID="comid.correctieHuwelijk.bron1"/>
+            </brp:bronnen>
+            <brp:huwelijk brp:communicatieID="comid.correctieHuwelijk.correctieregistratieRelatie.huwelijk" brp:objecttype="Relatie" brp:objectSleutel="$$datumAanvang=20050330$$">
+               <brp:relatie brp:communicatieID="comid.correctieHuwelijk.correctieregistratieRelatie.relatie">
+                  <brp:datumAanvang>2005-03-30</brp:datumAanvang>
+                  <brp:gemeenteAanvangCode>0599</brp:gemeenteAanvangCode>
+                  <brp:landGebiedAanvangCode>6030</brp:landGebiedAanvangCode>
+               </brp:relatie>
+            </brp:huwelijk>
+         </brp:correctieregistratieRelatie>
       </brp:acties>
-   </brp:correctieAdres>
-</brp:bhg_vbaCorrigeerAdres>
+   </brp:correctieHuwelijk>
+</brp:bhg_hgpCorrigeerHuwelijkGeregistreerdPartnerschap>

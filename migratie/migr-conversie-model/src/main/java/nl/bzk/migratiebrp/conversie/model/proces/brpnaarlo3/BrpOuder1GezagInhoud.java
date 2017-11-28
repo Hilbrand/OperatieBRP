@@ -7,7 +7,7 @@
 package nl.bzk.migratiebrp.conversie.model.proces.brpnaarlo3;
 
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpGroepInhoud;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Deze class representeert het ouderlijk gezag van ouder 1.
- * 
+ *
  * Deze class is immutable en threadsafe.
  */
 public final class BrpOuder1GezagInhoud extends AbstractBrpGroepInhoud {
@@ -24,9 +24,7 @@ public final class BrpOuder1GezagInhoud extends AbstractBrpGroepInhoud {
 
     /**
      * Maakt een BrpOuder1GezagInhoud object.
-     * 
-     * @param ouderHeeftGezag
-     *            true als de ouder gezag heeft, false indien geen gezag, null indien onbekend
+     * @param ouderHeeftGezag true als de ouder gezag heeft, false indien geen gezag, null indien onbekend
      */
     public BrpOuder1GezagInhoud(final BrpBoolean ouderHeeftGezag) {
         this.ouderHeeftGezag = ouderHeeftGezag;
@@ -39,13 +37,12 @@ public final class BrpOuder1GezagInhoud extends AbstractBrpGroepInhoud {
      */
     @Override
     public boolean isLeeg() {
-        return !Validatie.isAttribuutGevuld(ouderHeeftGezag);
+        return !BrpValidatie.isAttribuutGevuld(ouderHeeftGezag);
     }
 
     /**
-     * Geef de waarde van ouder heeft gezag.
-     *
-     * @return ouder heeft gezag
+     * Geef de waarde van ouder heeft gezag van BrpOuder1GezagInhoud.
+     * @return de waarde van ouder heeft gezag van BrpOuder1GezagInhoud
      */
     public BrpBoolean getOuderHeeftGezag() {
         return ouderHeeftGezag;
@@ -71,7 +68,7 @@ public final class BrpOuder1GezagInhoud extends AbstractBrpGroepInhoud {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("ouderHeeftGezag", ouderHeeftGezag)
-                                                                          .toString();
+                .append("ouderHeeftGezag", ouderHeeftGezag)
+                .toString();
     }
 }

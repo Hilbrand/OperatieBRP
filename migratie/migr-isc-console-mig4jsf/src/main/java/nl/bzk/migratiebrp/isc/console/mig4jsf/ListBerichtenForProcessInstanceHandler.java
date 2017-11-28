@@ -23,14 +23,14 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "listBerichtenForProcessInstance", description = "Read a list of berichten from a process instance.",
         attributes = {@TldAttribute(name = "target",
-                              description = "An EL expression into which the berichten instance list should be stored.", required = true,
-                              deferredType = List.class),
-                      @TldAttribute(name = "processInstance", description = "The process instance whose task instances are to be read.",
-                              required = true, deferredType = ProcessInstance.class),
-                      @TldAttribute(name = "pager", description = "An EL expression of the PagerBean to be used.", required = true,
-                              deferredType = PagerBean.class),
-                      @TldAttribute(name = "filter", description = "An EL expression of the filter to be used.", required = true,
-                              deferredType = Filter.class) })
+                description = "An EL expression into which the berichten instance list should be stored.", required = true,
+                deferredType = List.class),
+                @TldAttribute(name = "processInstance", description = "The process instance whose task instances are to be read.",
+                        required = true, deferredType = ProcessInstance.class),
+                @TldAttribute(name = "pager", description = "An EL expression of the PagerBean to be used.", required = true,
+                        deferredType = PagerBean.class),
+                @TldAttribute(name = "filter", description = "An EL expression of the filter to be used.", required = true,
+                        deferredType = Filter.class)})
 public final class ListBerichtenForProcessInstanceHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute processInstanceTagAttribute;
@@ -39,9 +39,7 @@ public final class ListBerichtenForProcessInstanceHandler extends AbstractHandle
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public ListBerichtenForProcessInstanceHandler(final TagConfig config) {
         super(config);
@@ -54,9 +52,9 @@ public final class ListBerichtenForProcessInstanceHandler extends AbstractHandle
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new ListBerichtenForProcessInstanceActionListener(
-            getValueExpression(processInstanceTagAttribute, ctx, ProcessInstance.class),
-            getValueExpression(targetTagAttribute, ctx, List.class),
-            getValueExpression(pagerTagAttribute, ctx, PagerBean.class),
-            getValueExpression(filterTagAttribute, ctx, Filter.class));
+                getValueExpression(processInstanceTagAttribute, ctx, ProcessInstance.class),
+                getValueExpression(targetTagAttribute, ctx, List.class),
+                getValueExpression(pagerTagAttribute, ctx, PagerBean.class),
+                getValueExpression(filterTagAttribute, ctx, Filter.class));
     }
 }

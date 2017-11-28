@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Virtueel proces.
  */
-@SuppressWarnings("checkstyle:designforextension")
+
 public class VirtueelProces implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long id;
@@ -23,7 +23,6 @@ public class VirtueelProces implements Serializable {
 
     /**
      * Geef het ID.
-     *
      * @return het ID.
      */
     public Long getId() {
@@ -32,9 +31,7 @@ public class VirtueelProces implements Serializable {
 
     /**
      * Zet het ID.
-     *
-     * @param id
-     *            Het te zetten ID
+     * @param id Het te zetten ID
      */
     public void setId(final Long id) {
         this.id = id;
@@ -42,7 +39,6 @@ public class VirtueelProces implements Serializable {
 
     /**
      * Geef het tijdstip.
-     *
      * @return het tijdstip.
      */
     public Timestamp getTijdstip() {
@@ -51,9 +47,7 @@ public class VirtueelProces implements Serializable {
 
     /**
      * Zet het tijdstip.
-     *
-     * @param tijdstip
-     *            Het te zetten tijdstip
+     * @param tijdstip Het te zetten tijdstip
      */
     public void setTijdstip(final Timestamp tijdstip) {
         this.tijdstip = tijdstip == null ? null : new Timestamp(tijdstip.getTime());
@@ -61,7 +55,6 @@ public class VirtueelProces implements Serializable {
 
     /**
      * Geef de set met gerelateerde gegevens.
-     *
      * @return de gerelateerde gegevens.
      */
     public List<VirtueelGerelateerdeGegevens> getGerelateerdeGegevens() {
@@ -70,9 +63,7 @@ public class VirtueelProces implements Serializable {
 
     /**
      * Zet de set met gerelateerde gegevens.
-     *
-     * @param gerelateerdeGegevens
-     *            De te zetten set met gerelateerde gegevens
+     * @param gerelateerdeGegevens De te zetten set met gerelateerde gegevens
      */
     public void setGerelateerdeGegevens(final List<VirtueelGerelateerdeGegevens> gerelateerdeGegevens) {
         this.gerelateerdeGegevens = gerelateerdeGegevens;

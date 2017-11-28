@@ -7,10 +7,8 @@
 package nl.bzk.migratiebrp.init.logging.model.domein.entities;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -20,7 +18,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * Initi&euml;le vulling afnemersindicatierstapel entity.
  */
 @Embeddable
-@SuppressWarnings("checkstyle:designforextension")
 public class InitVullingAfnemersindicatieStapelPk implements Serializable {
     /**
      * default serial.
@@ -37,15 +34,13 @@ public class InitVullingAfnemersindicatieStapelPk implements Serializable {
      * Default JPA constructor.
      */
     public InitVullingAfnemersindicatieStapelPk() {
+        // No operation, default JPA constructor.
     }
 
     /**
      * Maakt een InitVullingAfnemersindicatieRegelPk object.
-     *
-     * @param plId
-     *            de PL id
-     * @param stapelNr
-     *            het stapelnummer
+     * @param plId de PL id
+     * @param stapelNr het stapelnummer
      */
     public InitVullingAfnemersindicatieStapelPk(final long plId, final short stapelNr) {
         setPlId(plId);
@@ -54,7 +49,6 @@ public class InitVullingAfnemersindicatieStapelPk implements Serializable {
 
     /**
      * Geef de waarde van pl id.
-     *
      * @return the plId
      */
     public Long getPlId() {
@@ -63,9 +57,7 @@ public class InitVullingAfnemersindicatieStapelPk implements Serializable {
 
     /**
      * Zet de waarde van pl id.
-     *
-     * @param plId
-     *            the plId to set
+     * @param plId the plId to set
      */
     public void setPlId(final Long plId) {
         this.plId = plId;
@@ -73,7 +65,6 @@ public class InitVullingAfnemersindicatieStapelPk implements Serializable {
 
     /**
      * Geef de waarde van stapel nr.
-     *
      * @return the stapelNr
      */
     public short getStapelNr() {
@@ -82,9 +73,7 @@ public class InitVullingAfnemersindicatieStapelPk implements Serializable {
 
     /**
      * Zet de waarde van stapel nr.
-     *
-     * @param stapelNr
-     *            the stapelNr to set
+     * @param stapelNr the stapelNr to set
      */
     public void setStapelNr(final short stapelNr) {
         this.stapelNr = stapelNr;
@@ -95,13 +84,11 @@ public class InitVullingAfnemersindicatieStapelPk implements Serializable {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof InitVullingAfnemersindicatieStapelPk)) {
+        if (other == null || (this.getClass() != other.getClass())) {
             return false;
         }
         final InitVullingAfnemersindicatieStapelPk castOther = (InitVullingAfnemersindicatieStapelPk) other;
-        return new EqualsBuilder().append(getPlId(), castOther.getPlId())
-                                  .append(getStapelNr(), castOther.getStapelNr())
-                                  .isEquals();
+        return new EqualsBuilder().append(getPlId(), castOther.getPlId()).append(getStapelNr(), castOther.getStapelNr()).isEquals();
     }
 
     @Override
@@ -111,9 +98,7 @@ public class InitVullingAfnemersindicatieStapelPk implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("plId", getPlId())
-                                                                          .append("stapelNr", getStapelNr())
-                                                                          .toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString()).append("plId", getPlId())
+                .append("stapelNr", getStapelNr()).toString();
     }
 }

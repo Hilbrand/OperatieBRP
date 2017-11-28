@@ -15,9 +15,7 @@ public interface PermissionService {
     /**
      * Controleer de permissions van de gebruiker. PL-en van de eigen gemeente en die van gerelateerden mogen bekeken
      * worden. Gebruikers in de rol 'ROLE_ADMIN' mogen alle PL-en inzien.
-     * 
-     * @param lo3Persoonslijst
-     *            Lo3Persoonslijst waar de rechten voor gecontroleerd moeten worden.
+     * @param lo3Persoonslijst Lo3Persoonslijst waar de rechten voor gecontroleerd moeten worden.
      * @return boolean True als de gebruiker rechten heeft de PL te bekijken.
      */
     boolean hasPermissionOnPl(final Lo3Persoonslijst lo3Persoonslijst);

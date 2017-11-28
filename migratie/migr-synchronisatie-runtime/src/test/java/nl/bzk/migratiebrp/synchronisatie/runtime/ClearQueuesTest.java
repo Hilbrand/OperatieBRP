@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 // JBOSS: @ContextConfiguration(locations = { "classpath:/runtime-test-jboss.xml" })
 // HORNETQ: @ContextConfiguration(locations = { "classpath:/runtime-test-hornetq.xml" })
 // LOCAL: @ContextConfiguration(locations = { "classpath:/runtime-test-infra.xml" })
-@ContextConfiguration(locations = {"classpath:/runtime-test-infra.xml" })
+@ContextConfiguration(locations = {"classpath:/runtime-test-infra.xml"})
 public class ClearQueuesTest {
 
     private JmsTemplate jmsTemplate;
@@ -35,9 +35,7 @@ public class ClearQueuesTest {
 
     /**
      * Zet de waarde van connection factory.
-     *
-     * @param connectionFactory
-     *            connection factory
+     * @param connectionFactory connection factory
      */
     @Inject
     @Named("queueConnectionFactory")

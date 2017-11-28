@@ -14,7 +14,7 @@ import org.jbpm.graph.exe.ProcessInstance;
 /**
  * Proces fout.
  */
-@SuppressWarnings("checkstyle:designforextension")
+
 public class Fout implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -23,14 +23,13 @@ public class Fout implements Serializable {
     private String proces;
     private ProcessInstance processInstance;
     private String procesInitGemeente;
-    private String procesDoelGemeente;
+    private String procesDoelPartijCode;
     private String code;
     private String melding;
     private String resolutie;
 
     /**
      * Geeft het ID.
-     * 
      * @return het ID
      */
     public Long getId() {
@@ -39,9 +38,7 @@ public class Fout implements Serializable {
 
     /**
      * Zet het ID.
-     * 
-     * @param id
-     *            Het te zetten ID
+     * @param id Het te zetten ID
      */
     public void setId(final Long id) {
         this.id = id;
@@ -49,7 +46,6 @@ public class Fout implements Serializable {
 
     /**
      * Geeft het tijdstip.
-     * 
      * @return het tijdstip
      */
     public Date getTijdstip() {
@@ -58,9 +54,7 @@ public class Fout implements Serializable {
 
     /**
      * Zet het tijdstip.
-     * 
-     * @param tijdstip
-     *            Het te zetten tijdstip
+     * @param tijdstip Het te zetten tijdstip
      */
     public void setTijdstip(final Date tijdstip) {
         this.tijdstip = tijdstip == null ? null : new Date(tijdstip.getTime());
@@ -68,7 +62,6 @@ public class Fout implements Serializable {
 
     /**
      * Geeft het proces.
-     * 
      * @return het proces
      */
     public String getProces() {
@@ -77,9 +70,7 @@ public class Fout implements Serializable {
 
     /**
      * Zet het proces.
-     * 
-     * @param proces
-     *            Het te zetten proces
+     * @param proces Het te zetten proces
      */
     public void setProces(final String proces) {
         this.proces = proces;
@@ -87,7 +78,6 @@ public class Fout implements Serializable {
 
     /**
      * Geeft de proces instantie.
-     * 
      * @return de proces instantie
      */
     public ProcessInstance getProcessInstance() {
@@ -96,9 +86,7 @@ public class Fout implements Serializable {
 
     /**
      * Zet de proces instantie.
-     * 
-     * @param processInstance
-     *            De te zetten proces instantie
+     * @param processInstance De te zetten proces instantie
      */
     public void setProcessInstance(final ProcessInstance processInstance) {
         this.processInstance = processInstance;
@@ -106,7 +94,6 @@ public class Fout implements Serializable {
 
     /**
      * Geeft de initiator gemeente van het proces.
-     * 
      * @return de initiator gemeente van het proces
      */
     public String getProcesInitGemeente() {
@@ -115,36 +102,30 @@ public class Fout implements Serializable {
 
     /**
      * Zet de initiator gemeente van het proces.
-     * 
-     * @param procesInitGemeente
-     *            De te zetten initiator gemeente.
+     * @param procesInitGemeente De te zetten initiator gemeente.
      */
     public void setProcesInitGemeente(final String procesInitGemeente) {
         this.procesInitGemeente = procesInitGemeente;
     }
 
     /**
-     * Geeft de doelgemeente van het proces.
-     * 
-     * @return de doelgemeente van het proces
+     * Geeft de doelPartijCode van het proces.
+     * @return de doelPartijCode van het proces
      */
-    public String getProcesDoelGemeente() {
-        return procesDoelGemeente;
+    public String getProcesDoelPartijCode() {
+        return procesDoelPartijCode;
     }
 
     /**
-     * Zet de doelgemeente van het proces.
-     * 
-     * @param procesDoelGemeente
-     *            De te zetten doelgemeente
+     * Zet de doelPartijCode van het proces.
+     * @param procesDoelPartijCode De te zetten doelPartijCode
      */
-    public void setProcesDoelGemeente(final String procesDoelGemeente) {
-        this.procesDoelGemeente = procesDoelGemeente;
+    public void setProcesDoelPartijCode(final String procesDoelPartijCode) {
+        this.procesDoelPartijCode = procesDoelPartijCode;
     }
 
     /**
      * Geeft de foutcode.
-     * 
      * @return de foutcode
      */
     public String getCode() {
@@ -153,9 +134,7 @@ public class Fout implements Serializable {
 
     /**
      * Zet de foutcode.
-     * 
-     * @param code
-     *            De te zetten foutcode
+     * @param code De te zetten foutcode
      */
     public void setCode(final String code) {
         this.code = code;
@@ -163,7 +142,6 @@ public class Fout implements Serializable {
 
     /**
      * Geeft de foutmelding.
-     * 
      * @return de foutmelding
      */
     public String getMelding() {
@@ -172,9 +150,7 @@ public class Fout implements Serializable {
 
     /**
      * Zet de foutmelding.
-     * 
-     * @param melding
-     *            De te zetten foutmelding
+     * @param melding De te zetten foutmelding
      */
     public void setMelding(final String melding) {
         this.melding = melding;
@@ -182,7 +158,6 @@ public class Fout implements Serializable {
 
     /**
      * Geeft de resolutie.
-     * 
      * @return de resolutie
      */
     public String getResolutie() {
@@ -191,9 +166,7 @@ public class Fout implements Serializable {
 
     /**
      * Zet de resolutie.
-     * 
-     * @param resolutie
-     *            De te zetten resolutie
+     * @param resolutie De te zetten resolutie
      */
     public void setResolutie(final String resolutie) {
         this.resolutie = resolutie;

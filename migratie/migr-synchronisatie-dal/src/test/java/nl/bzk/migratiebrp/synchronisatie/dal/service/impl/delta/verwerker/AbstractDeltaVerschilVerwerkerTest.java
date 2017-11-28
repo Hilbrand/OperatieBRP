@@ -9,25 +9,26 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.verwerker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
+import org.junit.Before;
+import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortAdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaVergelijkerResultaat;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.util.DeltaRootEntiteitModus;
-
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Test het verwerken van verschillen op een entiteit.
@@ -89,7 +90,9 @@ public class AbstractDeltaVerschilVerwerkerTest {
 
     private final static class TestData {
         private final AdministratieveHandeling administratieveHandeling =
-                new AdministratieveHandeling(new Partij("partij", 0), SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL);
+                new AdministratieveHandeling(new Partij("partij", "000000"),
+                        SoortAdministratieveHandeling.GBA_BIJHOUDING_ACTUEEL,
+                        new Timestamp(System.currentTimeMillis()));
         private final Persoon persoon;
         private final AbstractDeltaVerschilVerwerker verwerker;
         private final Set<PersoonNationaliteit> persoonNationaliteitSet;
@@ -99,9 +102,9 @@ public class AbstractDeltaVerschilVerwerkerTest {
         private TestData() {
             persoon = new Persoon(SoortPersoon.INGESCHREVENE);
             persoon.setAdministratieveHandeling(administratieveHandeling);
-            final Nationaliteit nationaliteit1 = new Nationaliteit("1", (short) 1);
+            final Nationaliteit nationaliteit1 = new Nationaliteit("1", "0001");
             nationaliteit1.setId(1);
-            final Nationaliteit nationaliteit2 = new Nationaliteit("2", (short) 2);
+            final Nationaliteit nationaliteit2 = new Nationaliteit("2", "0002");
             nationaliteit2.setId(2);
             persoonNationaliteit1 = new PersoonNationaliteit(persoon, nationaliteit1);
             persoonNationaliteit2 = new PersoonNationaliteit(persoon, nationaliteit2);

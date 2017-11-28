@@ -11,14 +11,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.AanduidingInhoudingVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.AangifteAdreshouding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.AdellijkeTitelPredikaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RNIDeelnemer;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenOntbindingHuwelijkPartnerschap;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.RedenOpschorting;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.SoortNlReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel.entity.VoorvoegselConversie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AangifteAdreshouding;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdellijkeTitelPredikaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RNIDeelnemer;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenOntbindingHuwelijkPartnerschap;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenOpschorting;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNlReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.VoorvoegselConversie;
 import nl.bzk.migratiebrp.synchronisatie.dal.repository.ConversietabelRepository;
 
 import org.springframework.stereotype.Repository;
@@ -37,8 +37,7 @@ public final class ConversietabelRepositoryImpl implements ConversietabelReposit
      */
     @Override
     public List<AdellijkeTitelPredikaat> findAllAdellijkeTitelPredikaat() {
-        return em.createQuery("from AdellijkeTitelPredikaat", AdellijkeTitelPredikaat.class)
-                 .getResultList();
+        return em.createQuery("from AdellijkeTitelPredikaat", AdellijkeTitelPredikaat.class).getResultList();
     }
 
     /**
@@ -46,7 +45,9 @@ public final class ConversietabelRepositoryImpl implements ConversietabelReposit
      */
     @Override
     public List<AangifteAdreshouding> findAllAangifteAdreshouding() {
-        return em.createQuery("from AangifteAdreshouding", AangifteAdreshouding.class).getResultList();
+        return em.createQuery(
+                "from AangifteAdreshouding a left join fetch a.aangever left join fetch a.redenWijzigingVerblijf",
+                AangifteAdreshouding.class).getResultList();
     }
 
     /**
@@ -54,8 +55,9 @@ public final class ConversietabelRepositoryImpl implements ConversietabelReposit
      */
     @Override
     public List<AanduidingInhoudingVermissingReisdocument> findAllAanduidingInhoudingVermissingReisdocument() {
-        return em.createQuery("from AanduidingInhoudingVermissingReisdocument", AanduidingInhoudingVermissingReisdocument.class)
-                 .getResultList();
+        return em.createQuery(
+                "from AanduidingInhoudingVermissingReisdocument a join fetch a.aanduidingInhoudingOfVermissingReisdocument",
+                AanduidingInhoudingVermissingReisdocument.class).getResultList();
     }
 
     /**
@@ -63,8 +65,8 @@ public final class ConversietabelRepositoryImpl implements ConversietabelReposit
      */
     @Override
     public List<RedenOntbindingHuwelijkPartnerschap> findAllRedenOntbindingHuwelijkPartnerschap() {
-        return em.createQuery("from RedenOntbindingHuwelijkPartnerschap", RedenOntbindingHuwelijkPartnerschap.class)
-                 .getResultList();
+        return em.createQuery("from RedenOntbindingHuwelijkPartnerschap r join fetch r.redenBeeindigingRelatie", RedenOntbindingHuwelijkPartnerschap.class)
+                .getResultList();
     }
 
     /**
@@ -80,7 +82,10 @@ public final class ConversietabelRepositoryImpl implements ConversietabelReposit
      */
     @Override
     public List<RNIDeelnemer> findAllRNIDeelnemer() {
-        return em.createQuery("from RNIDeelnemer", RNIDeelnemer.class).getResultList();
+        return em.createQuery(
+                "from RNIDeelnemer d join fetch d.partij p left join fetch p.partijRolSet left join fetch p.hisPartijen "
+                        + "left join fetch p.partijBijhoudingHistorieSet",
+                RNIDeelnemer.class).getResultList();
     }
 
     /**
@@ -88,7 +93,7 @@ public final class ConversietabelRepositoryImpl implements ConversietabelReposit
      */
     @Override
     public List<SoortNlReisdocument> findAllSoortNlReisdocument() {
-        return em.createQuery("from SoortNlReisdocument", SoortNlReisdocument.class).getResultList();
+        return em.createQuery("from SoortNlReisdocument s join fetch s.soortNederlandsReisdocument", SoortNlReisdocument.class).getResultList();
     }
 
     /**

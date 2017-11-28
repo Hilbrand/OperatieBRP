@@ -2,7 +2,6 @@ Meta:
 @sprintnummer           82
 @epic                   POC Bijhouding
 @auteur                 dihoe
-@jiraIssue              TEAMBRP-3818,TEAMBRP-3820,TEAMBRP-3954
 @status                 Onderhanden
 
 Narrative:
@@ -14,7 +13,7 @@ legt het huwelijk vast.
 
 Given leveringsautorisatie uit /levering_autorisaties/postcode_gebied_heemstede_2100-2129_en_afnemerindicatie
 
-Given bijhoudingautorisatie uit /bijhoudingsautorisaties/Gemeente_Tiel.txt, /bijhoudingsautorisaties/Gemeente_Alkmaar.txt,
+Gemeente BRP 1, /bijhoudingsautorisaties/Gemeente_Alkmaar.txt,
 /bijhoudingsautorisaties/Gemeente_Utrecht.txt
 
 Given bijhoudingsverzoek voor partij 'Gemeente Tiel'

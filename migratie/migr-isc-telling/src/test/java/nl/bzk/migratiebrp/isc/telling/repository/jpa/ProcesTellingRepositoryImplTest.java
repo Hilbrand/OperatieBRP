@@ -13,13 +13,11 @@ import nl.bzk.migratiebrp.isc.telling.entiteit.ProcesTelling;
 import nl.bzk.migratiebrp.isc.telling.repository.ProcesTellingenRepository;
 import nl.bzk.migratiebrp.isc.telling.util.DBUnit.InsertBefore;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class ProcesTellingRepositoryImplTest extends AbstractDatabaseTest {
 
-    private static final String KANAAL = "VOSPG";
+    private static final String KANAAL = "VOISC";
     private static final String BERICHT_TYPE = "Lg01";
     private static final String GELDIGE_PROCES_NAAM = "uc309";
     private static final String ONGELDIGE_PROCES_NAAM = "foutafhandeling";

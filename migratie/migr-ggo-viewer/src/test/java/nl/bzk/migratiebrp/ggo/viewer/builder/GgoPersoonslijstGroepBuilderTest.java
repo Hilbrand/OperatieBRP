@@ -140,7 +140,7 @@ public class GgoPersoonslijstGroepBuilderTest {
     private List<GgoVoorkomenVergelijking> createVerschillen(final int aantal) {
         final List<GgoVoorkomenVergelijking> matches = new ArrayList<>();
         for (int i = 0; i < aantal; i++) {
-            matches.add(new GgoVoorkomenVergelijking(new VoorkomenMatch(1), (long) i, "changed"));
+            matches.add(new GgoVoorkomenVergelijking(new VoorkomenMatch(1), String.valueOf(i), "changed"));
         }
         return matches;
     }

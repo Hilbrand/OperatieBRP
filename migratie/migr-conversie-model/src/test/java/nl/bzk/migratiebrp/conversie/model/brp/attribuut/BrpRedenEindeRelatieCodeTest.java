@@ -13,17 +13,16 @@ import static org.junit.Assert.assertNull;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
 import org.junit.Test;
 
 public class BrpRedenEindeRelatieCodeTest {
-    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), Lo3Datum.NULL_DATUM, null);
+    private final Lo3Onderzoek onderzoek = new Lo3Onderzoek(Lo3Integer.wrap(10000), new Lo3Datum(0), null);
 
     @Test
     public void testVerwijderOnderzoek() throws Exception {
         BrpRedenEindeRelatieCode code = new BrpRedenEindeRelatieCode(new Character('S'), onderzoek);
         assertNotNull(code.getOnderzoek());
-        BrpRedenEindeRelatieCode newCode = code.verwijderOnderzoek();
+        final BrpRedenEindeRelatieCode newCode = code.verwijderOnderzoek();
         assertNotNull(code.getOnderzoek());
         assertNull(newCode.getOnderzoek());
         code = new BrpRedenEindeRelatieCode(null, onderzoek);
@@ -38,14 +37,14 @@ public class BrpRedenEindeRelatieCodeTest {
 
     @Test
     public void testWrapMetWaardeEnZonderOnderzoek() throws Exception {
-        BrpRedenEindeRelatieCode result = BrpRedenEindeRelatieCode.wrap(new Character('V'), null);
+        final BrpRedenEindeRelatieCode result = BrpRedenEindeRelatieCode.wrap(new Character('V'), null);
         assertNull(result.getOnderzoek());
         assertEquals('V', result.getWaarde().charValue());
     }
 
     @Test
     public void testWrapZonderWaardeEnMetOnderzoek() throws Exception {
-        BrpRedenEindeRelatieCode result = BrpRedenEindeRelatieCode.wrap(null, onderzoek);
+        final BrpRedenEindeRelatieCode result = BrpRedenEindeRelatieCode.wrap(null, onderzoek);
         assertNotNull(result.getOnderzoek());
         assertNull(result.getWaarde());
     }

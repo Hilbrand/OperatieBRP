@@ -21,7 +21,6 @@ import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
 
 /**
  * Validator voor de BRP persoonslijst.
- * 
  */
 public final class BrpPersoonslijstValidator {
 
@@ -31,11 +30,9 @@ public final class BrpPersoonslijstValidator {
 
     /**
      * Valideer de inhoud voor ieder van de meegegeven stapels.
-     * 
-     * @param stapels
-     *            de lijst van de te valideren stapels
+     * @param stapels de lijst van de te valideren stapels
      */
-    protected static void valideerInhoud(final List<? extends BrpStapel<?>> stapels) {
+    static void valideerInhoud(final List<? extends BrpStapel<?>> stapels) {
         for (final BrpStapel<?> stapel : stapels) {
             valideerInhoud(stapel);
         }
@@ -43,11 +40,9 @@ public final class BrpPersoonslijstValidator {
 
     /**
      * Valideer de inhoud voor iedere van de meegegeven istStapels.
-     * 
-     * @param stapels
-     *            de lijst van de te valideren IST-stapels
+     * @param stapels de lijst van de te valideren IST-stapels
      */
-    protected static void valideerIstInhoud(final List<? extends BrpStapel<? extends AbstractBrpIstGroepInhoud>> stapels) {
+    static void valideerIstInhoud(final List<? extends BrpStapel<? extends AbstractBrpIstGroepInhoud>> stapels) {
         if (stapels == null) {
             return;
         }
@@ -56,11 +51,9 @@ public final class BrpPersoonslijstValidator {
 
     /**
      * Valideer de inhoud van de meegegeven stapel.
-     * 
-     * @param stapel
-     *            de te valideren stapel
+     * @param stapel de te valideren stapel
      */
-    protected static void valideerInhoud(final BrpStapel<?> stapel) {
+    static void valideerInhoud(final BrpStapel<?> stapel) {
         if (stapel != null) {
             stapel.valideer();
         }
@@ -68,17 +61,13 @@ public final class BrpPersoonslijstValidator {
 
     /**
      * Valideer dat als het gaat om geprivilegieerde er ook een actuele nationaliteit is.
-     * 
-     * @param bijzondereVerblijfsrechtelijkePositieIndicatieStapel
-     *            de te valideren bijzondereVerblijfsrechtelijkePositieIndicatie stapel, of null
-     * @param nationaliteitStapels
-     *            de nationaliteitstapels
+     * @param bijzondereVerblijfsrechtelijkePositieIndicatieStapel de te valideren bijzondereVerblijfsrechtelijkePositieIndicatie stapel, of null
+     * @param nationaliteitStapels de nationaliteitstapels
      */
     @Preconditie(SoortMeldingCode.PRE017)
     public static void valideerGeprivilegieerde(
-        final BrpStapel<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud> bijzondereVerblijfsrechtelijkePositieIndicatieStapel,
-        final List<BrpStapel<BrpNationaliteitInhoud>> nationaliteitStapels)
-    {
+            final BrpStapel<BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud> bijzondereVerblijfsrechtelijkePositieIndicatieStapel,
+            final List<BrpStapel<BrpNationaliteitInhoud>> nationaliteitStapels) {
         if (bijzondereVerblijfsrechtelijkePositieIndicatieStapel != null && bijzondereVerblijfsrechtelijkePositieIndicatieStapel.bevatActueel()) {
             for (final BrpStapel<BrpNationaliteitInhoud> nationaliteitStapel : nationaliteitStapels) {
                 if (nationaliteitStapel.bevatActueel()) {
@@ -91,9 +80,7 @@ public final class BrpPersoonslijstValidator {
 
     /**
      * Valideert dat er altijd een actuele geslachtsnaam is in de samengesteldenaam stapel.
-     * 
-     * @param samengesteldeNaamStapel
-     *            de te valideren samengestelde naam stapel
+     * @param samengesteldeNaamStapel de te valideren samengestelde naam stapel
      */
     @Preconditie(SoortMeldingCode.PRE043)
     public static void valideerActueleGeslachtsnaam(final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaamStapel) {
@@ -105,17 +92,13 @@ public final class BrpPersoonslijstValidator {
     /**
      * Valideer dat de indicaties 'Behandeld als Nederlander' en 'Vastgesteld niet Nederlander' niet gelijktijdig geldig
      * zijn.
-     * 
-     * @param behandeldAlsNederlanderIndicatieStapel
-     *            de te valideren 'Behandeld als Nederlander' stapel
-     * @param vastgesteldNietNederlanderIndicatieStapel
-     *            de te valideren 'Vastgesteld niet Nederlander' stapel
+     * @param behandeldAlsNederlanderIndicatieStapel de te valideren 'Behandeld als Nederlander' stapel
+     * @param vastgesteldNietNederlanderIndicatieStapel de te valideren 'Vastgesteld niet Nederlander' stapel
      */
     @Preconditie(SoortMeldingCode.PRE058)
     public static void valideerBehandeldAlsNederlanderVastgesteldNietNederlander(
-        final BrpStapel<BrpBehandeldAlsNederlanderIndicatieInhoud> behandeldAlsNederlanderIndicatieStapel,
-        final BrpStapel<BrpVastgesteldNietNederlanderIndicatieInhoud> vastgesteldNietNederlanderIndicatieStapel)
-    {
+            final BrpStapel<BrpBehandeldAlsNederlanderIndicatieInhoud> behandeldAlsNederlanderIndicatieStapel,
+            final BrpStapel<BrpVastgesteldNietNederlanderIndicatieInhoud> vastgesteldNietNederlanderIndicatieStapel) {
         if (behandeldAlsNederlanderIndicatieStapel == null || vastgesteldNietNederlanderIndicatieStapel == null) {
             return;
         }
@@ -127,9 +110,9 @@ public final class BrpPersoonslijstValidator {
                     // als de geldigheid elkaar overlapt, en er is niet tenminste 1 van de groepen vervallen, zijn de
                     // groepen dus gelijktijdig geldig
                     FoutmeldingUtil.gooiValidatieExceptie(
-                        SoortMeldingCode.PRE058,
-                        behandeldAlsNederlanderIndicatieStapel.getActueel().getInhoud(),
-                        vastgesteldNietNederlanderIndicatieStapel.getActueel().getInhoud());
+                            SoortMeldingCode.PRE058,
+                            behandeldAlsNederlanderIndicatieStapel.getActueel().getInhoud(),
+                            vastgesteldNietNederlanderIndicatieStapel.getActueel().getInhoud());
                 }
             }
 

@@ -9,13 +9,13 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 
 /**
  * De class helpt bij het maken van een Builder op basis van een generieke lijst met stapels.
- * 
  */
 class BrpPersoonslijstBuilderVisitor {
 
@@ -23,9 +23,7 @@ class BrpPersoonslijstBuilderVisitor {
 
     /**
      * Maakt een BrpPersoonslijstBuilderVisitor object.
-     * 
-     * @param builder
-     *            de builder
+     * @param builder de builder
      */
     BrpPersoonslijstBuilderVisitor(final BrpPersoonslijstBuilder builder) {
         this.builder = builder;
@@ -60,9 +58,9 @@ class BrpPersoonslijstBuilderVisitor {
             return builder.getClass().getMethod(methodeNaam, BrpStapel.class);
         } catch (final NoSuchMethodException e) {
             throw new IllegalArgumentException(String.format(
-                "Er kon geen methode gevonden worden in de BrpPersoonslijstBuilder met de signature: %s(%s)",
-                methodeNaam,
-                BrpStapel.class.getSimpleName()), e);
+                    "Er kon geen methode gevonden worden in de BrpPersoonslijstBuilder met de signature: %s(%s)",
+                    methodeNaam,
+                    BrpStapel.class.getSimpleName()), e);
         }
     }
 

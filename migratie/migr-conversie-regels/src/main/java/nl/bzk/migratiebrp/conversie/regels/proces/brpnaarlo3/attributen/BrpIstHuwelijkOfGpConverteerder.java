@@ -23,16 +23,21 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpAttribuutConverteerder.Lo3GemeenteLand;
-import org.springframework.stereotype.Component;
 
 /**
  * IST Huwelijk converteerder.
  */
-@Component
-public final class BrpIstHuwelijkOfGpConverteerder extends BrpIstAbstractConverteerder<BrpIstHuwelijkOfGpGroepInhoud> {
+public final class BrpIstHuwelijkOfGpConverteerder extends BrpIstAbstractConverteerder {
 
-    @Override
-    public Lo3Stapel<Lo3HuwelijkOfGpInhoud> converteer(final BrpStapel<BrpIstHuwelijkOfGpGroepInhoud> brpStapel) {
+    /**
+     * Constructor.
+     * @param attribuutConverteerder attribuut converteerder
+     */
+    public BrpIstHuwelijkOfGpConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+        super(attribuutConverteerder);
+    }
+
+    private Lo3Stapel<Lo3HuwelijkOfGpInhoud> converteerHuwelijkOfGp(final BrpStapel<BrpIstHuwelijkOfGpGroepInhoud> brpStapel) {
         if (brpStapel == null) {
             return null;
         }
@@ -41,23 +46,25 @@ public final class BrpIstHuwelijkOfGpConverteerder extends BrpIstAbstractConvert
             final BrpIstHuwelijkOfGpGroepInhoud inhoud = groep.getInhoud();
             final BrpIstRelatieGroepInhoud relatieInhoud = inhoud.getRelatie();
             final Lo3HuwelijkOfGpInhoud.Builder builder = new Lo3HuwelijkOfGpInhoud.Builder();
+
             // 1-op-1 conversie
-            builder.aNummer(getConverteerder().converteerAdministratieNummer(relatieInhoud.getAnummer()));
-            builder.burgerservicenummer(getConverteerder().converteerBurgerservicenummer(relatieInhoud.getBsn()));
-            builder.geslachtsnaam(getConverteerder().converteerString(relatieInhoud.getGeslachtsnaamstam()));
-            builder.voornamen(getConverteerder().converteerString(relatieInhoud.getVoornamen()));
+            builder.aNummer(getAttribuutConverteerder().converteerAdministratieNummer(relatieInhoud.getAnummer()));
+            builder.burgerservicenummer(getAttribuutConverteerder().converteerBurgerservicenummer(relatieInhoud.getBsn()));
+            builder.geslachtsnaam(getAttribuutConverteerder().converteerString(relatieInhoud.getGeslachtsnaamstam()));
+            builder.voornamen(getAttribuutConverteerder().converteerString(relatieInhoud.getVoornamen()));
 
             // Conversie mbhv converteerder
-            builder.voorvoegselGeslachtsnaam(getConverteerder().converteerVoorvoegsel(relatieInhoud.getVoorvoegsel(), relatieInhoud.getScheidingsteken()));
-            builder.geslachtsaanduiding(getConverteerder().converteerGeslachtsaanduiding(relatieInhoud.getGeslachtsaanduidingCode()));
+            builder.voorvoegselGeslachtsnaam(
+                    getAttribuutConverteerder().converteerVoorvoegsel(relatieInhoud.getVoorvoegsel(), relatieInhoud.getScheidingsteken()));
+            builder.geslachtsaanduiding(getAttribuutConverteerder().converteerGeslachtsaanduiding(relatieInhoud.getGeslachtsaanduidingCode()));
 
-            builder.redenOntbindingHuwelijkOfGpCode(getConverteerder().converteerRedenOntbindingHuwelijk(inhoud.getRedenEindeRelatieCode()));
-            builder.soortVerbintenis(getConverteerder().converteerSoortVerbintenis(inhoud.getSoortRelatieCode()));
+            builder.redenOntbindingHuwelijkOfGpCode(getAttribuutConverteerder().converteerRedenOntbindingHuwelijk(inhoud.getRedenEindeRelatieCode()));
+            builder.soortVerbintenis(getAttribuutConverteerder().converteerSoortVerbintenis(inhoud.getSoortRelatieCode()));
 
             // Conversie van datums
-            builder.datumOntbindingHuwelijkOfGp(getConverteerder().converteerDatum(inhoud.getDatumEinde()));
-            builder.datumSluitingHuwelijkOfAangaanGp(getConverteerder().converteerDatum(inhoud.getDatumAanvang()));
-            builder.geboortedatum(getConverteerder().converteerDatum(relatieInhoud.getDatumGeboorte()));
+            builder.datumOntbindingHuwelijkOfGp(getAttribuutConverteerder().converteerDatum(inhoud.getDatumEinde()));
+            builder.datumSluitingHuwelijkOfAangaanGp(getAttribuutConverteerder().converteerDatum(inhoud.getDatumAanvang()));
+            builder.geboortedatum(getAttribuutConverteerder().converteerDatum(relatieInhoud.getDatumGeboorte()));
 
             // Conversie specifiek
             vulAdellijkeTitelPredikaat(builder, relatieInhoud);
@@ -69,17 +76,17 @@ public final class BrpIstHuwelijkOfGpConverteerder extends BrpIstAbstractConvert
 
             final Lo3Categorie<Lo3HuwelijkOfGpInhoud> voorkomen =
                     new Lo3Categorie<>(
-                        builder.build(),
-                        maakDocumentatie(standaardGegevens),
-                        maakOnderzoek(standaardGegevens),
-                        maakHistorie(standaardGegevens),
-                        maakHerkomst(standaardGegevens));
+                            builder.build(),
+                            maakDocumentatie(standaardGegevens),
+                            maakOnderzoek(standaardGegevens),
+                            maakHistorie(standaardGegevens),
+                            maakHerkomst(standaardGegevens));
 
             final Lo3Categorie<Lo3HuwelijkOfGpInhoud> voorkomenMetOnderzoek = toevoegenOnderzoekAanElementen(voorkomen);
             voorkomens.add(voorkomenMetOnderzoek);
         }
 
-        Collections.sort(voorkomens, LO3_HERKOMST_COMPARATOR);
+        voorkomens.sort(LO3_HERKOMST_COMPARATOR);
 
         return new Lo3Stapel<>(voorkomens);
     }
@@ -93,10 +100,10 @@ public final class BrpIstHuwelijkOfGpConverteerder extends BrpIstAbstractConvert
     private void vulOntbindingPlaatsLand(final Lo3HuwelijkOfGpInhoud.Builder builder, final BrpIstHuwelijkOfGpGroepInhoud inhoud) {
         final Lo3GemeenteLand gemeenteLand =
                 converteerPlaatsLand(
-                    inhoud.getGemeenteCodeEinde(),
-                    inhoud.getBuitenlandsePlaatsEinde(),
-                    inhoud.getLandOfGebiedCodeEinde(),
-                    inhoud.getOmschrijvingLocatieEinde());
+                        inhoud.getGemeenteCodeEinde(),
+                        inhoud.getBuitenlandsePlaatsEinde(),
+                        inhoud.getLandOfGebiedCodeEinde(),
+                        inhoud.getOmschrijvingLocatieEinde());
         builder.gemeenteCodeOntbindingHuwelijkOfGp(gemeenteLand.getGemeenteCode());
         builder.landCodeOntbindingHuwelijkOfGp(gemeenteLand.getLandCode());
     }
@@ -104,35 +111,33 @@ public final class BrpIstHuwelijkOfGpConverteerder extends BrpIstAbstractConvert
     private void vulSluitingPlaatsLand(final Lo3HuwelijkOfGpInhoud.Builder builder, final BrpIstHuwelijkOfGpGroepInhoud inhoud) {
         final Lo3GemeenteLand gemeenteLand =
                 converteerPlaatsLand(
-                    inhoud.getGemeenteCodeAanvang(),
-                    inhoud.getBuitenlandsePlaatsAanvang(),
-                    inhoud.getLandOfGebiedCodeAanvang(),
-                    inhoud.getOmschrijvingLocatieAanvang());
+                        inhoud.getGemeenteCodeAanvang(),
+                        inhoud.getBuitenlandsePlaatsAanvang(),
+                        inhoud.getLandOfGebiedCodeAanvang(),
+                        inhoud.getOmschrijvingLocatieAanvang());
         builder.gemeenteCodeSluitingHuwelijkOfAangaanGp(gemeenteLand.getGemeenteCode());
         builder.landCodeSluitingHuwelijkOfAangaanGp(gemeenteLand.getLandCode());
     }
 
     private void vulAdellijkeTitelPredikaat(final Lo3HuwelijkOfGpInhoud.Builder builder, final BrpIstRelatieGroepInhoud relatieInhoud) {
-        builder.adellijkeTitelPredikaatCode(getConverteerder().converteerAdellijkeTitelPredikaatCode(
-            relatieInhoud.getAdellijkeTitelCode(),
-            relatieInhoud.getPredicaatCode()));
+        builder.adellijkeTitelPredikaatCode(getAttribuutConverteerder().converteerAdellijkeTitelPredikaatCode(
+                relatieInhoud.getAdellijkeTitelCode(),
+                relatieInhoud.getPredicaatCode()));
     }
 
     /**
      * Geeft de lijst van stapels terug met {@link Lo3HuwelijkOfGpInhoud}.
-     * 
-     * @param brpStapels
-     *            brp IST stapels voor huwelijk of geregistreerd partnerschap
+     * @param brpStapels brp IST stapels voor huwelijk of geregistreerd partnerschap
      * @return een gevuld lijst van stapels of null als er geen voorkomens zijn.
      */
-    public List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> converteer(final List<BrpStapel<BrpIstHuwelijkOfGpGroepInhoud>> brpStapels) {
+    public List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> converteerHuwelijkOfGpStapels(final List<BrpStapel<BrpIstHuwelijkOfGpGroepInhoud>> brpStapels) {
         if (brpStapels == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         final List<Lo3Stapel<Lo3HuwelijkOfGpInhoud>> stapels = new ArrayList<>();
         for (final BrpStapel<BrpIstHuwelijkOfGpGroepInhoud> brpStapel : brpStapels) {
-            stapels.add(converteer(brpStapel));
+            stapels.add(converteerHuwelijkOfGp(brpStapel));
         }
         return stapels;
     }
@@ -154,36 +159,36 @@ public final class BrpIstHuwelijkOfGpConverteerder extends BrpIstAbstractConvert
         builder.geboorteLandCode(toevoegenOnderzoek(inhoud.getGeboorteLandCode(), onderzoek, herkomst, Lo3ElementEnum.ELEMENT_0330));
         builder.geslachtsaanduiding(toevoegenOnderzoek(inhoud.getGeslachtsaanduiding(), onderzoek, herkomst, Lo3ElementEnum.ELEMENT_0410));
         builder.datumSluitingHuwelijkOfAangaanGp(toevoegenOnderzoek(
-            inhoud.getDatumSluitingHuwelijkOfAangaanGp(),
-            onderzoek,
-            herkomst,
-            Lo3ElementEnum.ELEMENT_0610));
+                inhoud.getDatumSluitingHuwelijkOfAangaanGp(),
+                onderzoek,
+                herkomst,
+                Lo3ElementEnum.ELEMENT_0610));
         builder.gemeenteCodeSluitingHuwelijkOfAangaanGp(toevoegenOnderzoek(
-            inhoud.getGemeenteCodeSluitingHuwelijkOfAangaanGp(),
-            onderzoek,
-            herkomst,
-            Lo3ElementEnum.ELEMENT_0620));
+                inhoud.getGemeenteCodeSluitingHuwelijkOfAangaanGp(),
+                onderzoek,
+                herkomst,
+                Lo3ElementEnum.ELEMENT_0620));
         builder.landCodeSluitingHuwelijkOfAangaanGp(toevoegenOnderzoek(
-            inhoud.getLandCodeSluitingHuwelijkOfAangaanGp(),
-            onderzoek,
-            herkomst,
-            Lo3ElementEnum.ELEMENT_0630));
+                inhoud.getLandCodeSluitingHuwelijkOfAangaanGp(),
+                onderzoek,
+                herkomst,
+                Lo3ElementEnum.ELEMENT_0630));
         builder.datumOntbindingHuwelijkOfGp(toevoegenOnderzoek(inhoud.getDatumOntbindingHuwelijkOfGp(), onderzoek, herkomst, Lo3ElementEnum.ELEMENT_0710));
         builder.gemeenteCodeOntbindingHuwelijkOfGp(toevoegenOnderzoek(
-            inhoud.getGemeenteCodeOntbindingHuwelijkOfGp(),
-            onderzoek,
-            herkomst,
-            Lo3ElementEnum.ELEMENT_0720));
+                inhoud.getGemeenteCodeOntbindingHuwelijkOfGp(),
+                onderzoek,
+                herkomst,
+                Lo3ElementEnum.ELEMENT_0720));
         builder.landCodeOntbindingHuwelijkOfGp(toevoegenOnderzoek(
-            inhoud.getLandCodeOntbindingHuwelijkOfGp(),
-            onderzoek,
-            herkomst,
-            Lo3ElementEnum.ELEMENT_0730));
+                inhoud.getLandCodeOntbindingHuwelijkOfGp(),
+                onderzoek,
+                herkomst,
+                Lo3ElementEnum.ELEMENT_0730));
         builder.redenOntbindingHuwelijkOfGpCode(toevoegenOnderzoek(
-            inhoud.getRedenOntbindingHuwelijkOfGpCode(),
-            onderzoek,
-            herkomst,
-            Lo3ElementEnum.ELEMENT_0740));
+                inhoud.getRedenOntbindingHuwelijkOfGpCode(),
+                onderzoek,
+                herkomst,
+                Lo3ElementEnum.ELEMENT_0740));
         builder.soortVerbintenis(toevoegenOnderzoek(inhoud.getSoortVerbintenis(), onderzoek, herkomst, Lo3ElementEnum.ELEMENT_1510));
 
         final Lo3Historie historie = toevoegenOnderzoekHistorie(voorkomen.getHistorie(), onderzoek, herkomst);

@@ -8,7 +8,6 @@ package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
@@ -16,19 +15,29 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpReisdocumentAutoriteitVanAfgifteCodeTest;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortNederlandsReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class BrpReisdocumentInhoudTest {
+
+    @Test
+    public void test(){
+        final BrpReisdocumentInhoud inhoud = createInhoud();
+        Assert.assertEquals("EK",inhoud.getSoort().getWaarde());
+    }
+
     public static BrpReisdocumentInhoud createInhoud() {
         return new BrpReisdocumentInhoud(
-            new BrpSoortNederlandsReisdocumentCode("EK"),
-            new BrpString("123456789"),
-            new BrpDatum(new Integer(20020506), null),
-            new BrpDatum(new Integer(20020506), null),
-            BrpReisdocumentAutoriteitVanAfgifteCodeTest.Burgemeester(),
-            null,
-            null,
-            null);
+                new BrpSoortNederlandsReisdocumentCode("EK"),
+                new BrpString("123456789"),
+                new BrpDatum(new Integer(20020506), null),
+                new BrpDatum(new Integer(20020506), null),
+                BrpReisdocumentAutoriteitVanAfgifteCodeTest.Burgemeester(),
+                null,
+                null,
+                null);
     }
+
 
     public static BrpStapel<BrpReisdocumentInhoud> createStapel() {
         List<BrpGroep<BrpReisdocumentInhoud>> groepen = new ArrayList<>();

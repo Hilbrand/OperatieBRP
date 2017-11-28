@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.bericht.model.sync.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import nl.bzk.migratiebrp.bericht.model.sync.AbstractSyncBerichtZonderGerelateerdeInformatie;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.FoutredenType;
@@ -14,6 +15,7 @@ import nl.bzk.migratiebrp.bericht.model.sync.generated.ObjectFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.VerwerkToevalligeGebeurtenisAntwoordType;
 import nl.bzk.migratiebrp.bericht.model.sync.xml.SyncXml;
+import nl.bzk.migratiebrp.conversie.model.logging.LogRegel;
 
 /**
  * Verwerk toevallige gebeurtenis antwoord.
@@ -33,9 +35,7 @@ public final class VerwerkToevalligeGebeurtenisAntwoordBericht extends AbstractS
 
     /**
      * JAXB constructor.
-     *
-     * @param verwerkToevalligeGebeurtenisAntwoordType
-     *            Het verwerk toevallige gebeurtenis antwoord type {@link VerwerkToevalligeGebeurtenisAntwoordType}
+     * @param verwerkToevalligeGebeurtenisAntwoordType Het verwerk toevallige gebeurtenis antwoord type {@link VerwerkToevalligeGebeurtenisAntwoordType}
      */
     public VerwerkToevalligeGebeurtenisAntwoordBericht(final VerwerkToevalligeGebeurtenisAntwoordType verwerkToevalligeGebeurtenisAntwoordType) {
         super("VerwerkToevalligeGebeurtenisAntwoord");
@@ -53,7 +53,6 @@ public final class VerwerkToevalligeGebeurtenisAntwoordBericht extends AbstractS
 
     /**
      * Geef de waarde van status.
-     *
      * @return De status {@link StatusType} op het bericht.
      */
     public StatusType getStatus() {
@@ -62,9 +61,7 @@ public final class VerwerkToevalligeGebeurtenisAntwoordBericht extends AbstractS
 
     /**
      * Zet de waarde van status.
-     *
-     * @param status
-     *            status
+     * @param status status
      */
     public void setStatus(final StatusType status) {
         if (status == null) {
@@ -75,7 +72,6 @@ public final class VerwerkToevalligeGebeurtenisAntwoordBericht extends AbstractS
 
     /**
      * Geef de waarde van foutreden.
-     *
      * @return De foutreden {@link FoutredenType} op het bericht.
      */
     public FoutredenType getFoutreden() {
@@ -84,50 +80,58 @@ public final class VerwerkToevalligeGebeurtenisAntwoordBericht extends AbstractS
 
     /**
      * Zet de waarde van foutreden.
-     *
-     * @param foutreden
-     *            De te zetten foutreden.
+     * @param foutreden De te zetten foutreden.
      */
     public void setFoutreden(final FoutredenType foutreden) {
         verwerkToevalligeGebeurtenisAntwoordType.setFoutreden(foutreden);
     }
 
     /**
-     * Geeft de administratie handeling ids.
-     *
-     * @return administratie handeling ids
+     * Geeft de administratie handeling id.
+     * @return administratie handeling id
      */
-    public List<Long> getAdministratieveHandelingIds() {
+    public Long getAdministratieveHandelingId() {
         return verwerkToevalligeGebeurtenisAntwoordType.getAdministratieveHandelingId();
     }
 
     /**
-     * Zet de administratieve handeling ids.
-     *
-     * @param administratieveHandelingIds
-     *            lijst van de administratieve handeling ids
+     * Zet de administratieve handeling id.
+     * @param administratieveHandelingId de te zetten administratieve handeling id
      */
-    public void setAdministratieveHandelingIds(final List<Long> administratieveHandelingIds) {
-        verwerkToevalligeGebeurtenisAntwoordType.getAdministratieveHandelingId().clear();
-        verwerkToevalligeGebeurtenisAntwoordType.getAdministratieveHandelingId().addAll(administratieveHandelingIds);
+    public void setAdministratieveHandelingId(final Long administratieveHandelingId) {
+        verwerkToevalligeGebeurtenisAntwoordType.setAdministratieveHandelingId(administratieveHandelingId);
     }
 
     /**
-     * Geef de waarde van foutcode.
-     *
-     * @return De foutcode {@link AfnemersindicatieFoutcodeType} op het bericht.
+     * Geef de waarde van bijhoudings Gemeente.
+     * @return De bijhoudingsgemeente
      */
-    public String getGemeentecode() {
+    public String getBijhoudingGemeenteCode() {
         return verwerkToevalligeGebeurtenisAntwoordType.getBijhoudingGemeenteCode();
     }
 
     /**
      * Zet de waarde van gemeente van bijhouding.
-     *
-     * @param gemeentecode
-     *            De code van de actuele gemeente van bijhouding.
+     * @param gemeentecode De code van de actuele gemeente van bijhouding.
      */
-    public void setGemeentecode(final String gemeentecode) {
+    public void setBijhoudingGemeenteCode(final String gemeentecode) {
         verwerkToevalligeGebeurtenisAntwoordType.setBijhoudingGemeenteCode(gemeentecode);
     }
+
+    /**
+     * Geeft de logregels op het bericht terug.
+     * @return De logregels op het bericht.
+     */
+    public List<LogRegel> getLogging() {
+        return asLogRegelList(verwerkToevalligeGebeurtenisAntwoordType.getLogging());
+    }
+
+    /**
+     * Zet de logregels op het bericht.
+     * @param logRegels De te zetten logregels.
+     */
+    public void setLogging(final Set<LogRegel> logRegels) {
+        verwerkToevalligeGebeurtenisAntwoordType.setLogging(asLogRegelType(logRegels));
+    }
+
 }

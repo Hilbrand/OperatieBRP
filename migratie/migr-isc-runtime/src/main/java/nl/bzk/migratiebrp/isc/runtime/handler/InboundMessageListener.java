@@ -10,8 +10,6 @@ import javax.jms.JMSException;
 import javax.jms.MessageListener;
 import nl.bzk.migratiebrp.isc.runtime.message.Message;
 import nl.bzk.migratiebrp.isc.runtime.service.Service;
-import nl.bzk.migratiebrp.util.common.logging.MDC;
-import nl.bzk.migratiebrp.util.common.logging.MDC.MDCCloser;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +23,7 @@ public final class InboundMessageListener implements MessageListener {
 
     /**
      * Zet de inbound service.
-     *
-     * @param inboundService
-     *            de te zetten inbound service
+     * @param inboundService de te zetten inbound service
      */
     @Required
     public void setInboundService(final Service inboundService) {
@@ -37,7 +33,7 @@ public final class InboundMessageListener implements MessageListener {
     @Override
     @Transactional(value = "iscTransactionManager", propagation = Propagation.REQUIRED)
     public void onMessage(final javax.jms.Message jmsMessage) {
-        try (MDCCloser verwerkingCloser = MDC.startVerwerking()) {
+        try {
             final Message message = JmsUtil.leesMessage(jmsMessage);
             inboundService.verwerk(message);
         } catch (final JMSException e) {

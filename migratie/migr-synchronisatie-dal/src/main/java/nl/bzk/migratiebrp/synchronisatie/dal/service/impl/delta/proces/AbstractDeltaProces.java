@@ -9,17 +9,16 @@ package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.proces;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AdministratieveHandeling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdministratieveHandeling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaRootEntiteitMatch;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaVergelijkerResultaat;
@@ -43,20 +42,17 @@ import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
 /**
  * Abstracte class voor de delta processen.
  */
-public abstract class AbstractDeltaProces implements DeltaProces {
+abstract class AbstractDeltaProces implements DeltaProces {
 
     /**
      * Bepaalt de verschillen tussen een collectie van twee bij elkaar horende root entiteiten (bv {@link Persoon} of
-     * {@link nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid}) en transformeert de gevonden
-     * verschillen tbv de levering mutaties.Deze root entiteiten zijn verzameld in een {@link DeltaRootEntiteitMatch}
-     * object, waarbij ook de gevonden verschillen worden opgeslagen.
-     *
-     * @param context
-     *            de context voor delta bepaling
-     * @param matches
-     *            set van root entiteiten die bij elkaar horen
+     * {@link nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid}) en transformeert de gevonden verschillen tbv de
+     * levering mutaties.Deze root entiteiten zijn verzameld in een {@link DeltaRootEntiteitMatch} object, waarbij ook
+     * de gevonden verschillen worden opgeslagen.
+     * @param context de context voor delta bepaling
+     * @param matches set van root entiteiten die bij elkaar horen
      */
-    protected final void bepaalEnTransformeerVerschillen(final DeltaBepalingContext context, final Set<DeltaRootEntiteitMatch> matches) {
+    final void bepaalEnTransformeerVerschillen(final DeltaBepalingContext context, final Set<DeltaRootEntiteitMatch> matches) {
         final BRPActie actieVervalTbvLeveringMuts = context.getActieVervalTbvLeveringMuts();
         for (final DeltaRootEntiteitMatch match : matches) {
             final VergelijkerResultaat vergelijkerResultaat;
@@ -80,12 +76,10 @@ public abstract class AbstractDeltaProces implements DeltaProces {
                     SynchronisatieLogging.addMelding("Transformatie voor " + match);
                     transformeerEnBepaalTypeBijhouding(match, context, actieVervalTbvLeveringMuts, vergelijkerResultaat);
                     context.addAllActieConsolidatieData(vergelijkerResultaat.getActieConsolidatieData());
-
-                    match.setVergelijkerResultaat(vergelijkerResultaat);
                 }
-            } else {
-                match.setVergelijkerResultaat(vergelijkerResultaat);
             }
+
+            match.setVergelijkerResultaat(vergelijkerResultaat);
         }
     }
 
@@ -96,7 +90,7 @@ public abstract class AbstractDeltaProces implements DeltaProces {
         // Extra verschil maken als het verschil een IST-stapel is zonder relatie. Dit is dan een ouder
         // IST-stapel die aan een bestaand relatie gekoppeld moet worden.
         if (match.isIstStapel()) {
-            voegBestaandeRelatieAanStapelVerschilToe(vergelijkerResultaat, match.getNieuweDeltaRootEntiteit(), context.getBestaandePersoon());
+            voegBestaandeRelatieAanStapelVerschilToe(vergelijkerResultaat, match.getNieuweRootEntiteit(), context.getBestaandePersoon());
         }
         return vergelijkerResultaat;
     }
@@ -107,9 +101,9 @@ public abstract class AbstractDeltaProces implements DeltaProces {
         if (!match.isIstStapel()) {
             final Set<Verschil> verschillen =
                     DeltaUtil.bepaalVerschillenVoorVerwijderdeALaagEntiteit(
-                        match.getBestaandeDeltaRootEntiteit(),
-                        null,
-                        HistorieContext.bepaalNieuweHistorieContext(null, null, null));
+                            match.getBestaandeRootEntiteit(),
+                            null,
+                            HistorieContext.bepaalNieuweHistorieContext(null, null, null));
             vergelijkerResultaat.voegVerschillenToe(verschillen);
         } else {
             vergelijkerResultaat.voegToeOfVervangVerschil(maakVerschil(match));
@@ -122,24 +116,23 @@ public abstract class AbstractDeltaProces implements DeltaProces {
         if (match.isIstStapel()) {
             vergelijker = new IstStapelVergelijker();
         } else {
-            vergelijker = new DeltaRootEntiteitVergelijker(DeltaRootEntiteitModus.bepaalModus(match.getBestaandeDeltaRootEntiteit()));
+            vergelijker = new DeltaRootEntiteitVergelijker(DeltaRootEntiteitModus.bepaalModus(match.getBestaandeRootEntiteit()));
         }
-        return vergelijker.vergelijk(context, match.getBestaandeDeltaRootEntiteit(), match.getNieuweDeltaRootEntiteit());
+        return vergelijker.vergelijk(context, match.getBestaandeRootEntiteit(), match.getNieuweRootEntiteit());
     }
 
     private void voegBestaandeRelatieAanStapelVerschilToe(
-        final VergelijkerResultaat vergelijkerResultaat,
-        final DeltaRootEntiteit nieuweDeltaRootEntiteit,
-        final Persoon bestaandePersoon)
-    {
-        final Stapel stapel = (Stapel) nieuweDeltaRootEntiteit;
+            final VergelijkerResultaat vergelijkerResultaat,
+            final RootEntiteit nieuweRootEntiteit,
+            final Persoon bestaandePersoon) {
+        final Stapel stapel = (Stapel) nieuweRootEntiteit;
         if (stapel.getRelaties().isEmpty()) {
             final PersoonDecorator persoonDecorator = PersoonDecorator.decorate(bestaandePersoon);
             final Relatie bestaandeRelatie = persoonDecorator.getOuderRelatie();
             if (bestaandeRelatie == null) {
                 throw new IllegalStateException("Er is geen bestaande relatie gevonden, terwijl deze bij het IST-stapel matchen wel is gevonden");
             }
-            final Sleutel sleutel = new IstSleutel(stapel, Stapel.RELATIES, false);
+            final Sleutel sleutel = new IstSleutel(stapel, Stapel.VELD_RELATIES, false);
             vergelijkerResultaat.voegToeOfVervangVerschil(new Verschil(sleutel, null, bestaandeRelatie, VerschilType.RIJ_TOEGEVOEGD, null, null));
         }
     }
@@ -148,20 +141,19 @@ public abstract class AbstractDeltaProces implements DeltaProces {
         final VerschilType verschilType = match.isDeltaRootEntiteitNieuw() ? VerschilType.RIJ_TOEGEVOEGD : VerschilType.RIJ_VERWIJDERD;
         final Sleutel sleutel;
         if (match.isIstStapel()) {
-            final Stapel stapel = (Stapel) (match.isDeltaRootEntiteitNieuw() ? match.getNieuweDeltaRootEntiteit() : match.getBestaandeDeltaRootEntiteit());
+            final Stapel stapel = (Stapel) (match.isDeltaRootEntiteitNieuw() ? match.getNieuweRootEntiteit() : match.getBestaandeRootEntiteit());
             sleutel = new IstSleutel(stapel, !match.isDeltaRootEntiteitNieuw());
         } else {
             sleutel = new EntiteitSleutel(match.getEigenaarEntiteit().getClass(), match.getEigenaarEntiteitVeldnaam());
         }
-        return new Verschil(sleutel, match.getBestaandeDeltaRootEntiteit(), match.getNieuweDeltaRootEntiteit(), verschilType, null, null);
+        return new Verschil(sleutel, match.getBestaandeRootEntiteit(), match.getNieuweRootEntiteit(), verschilType, null, null);
     }
 
     private void transformeerEnBepaalTypeBijhouding(
-        final DeltaRootEntiteitMatch deltaRootEntiteitMatch,
-        final DeltaBepalingContext context,
-        final BRPActie actieVervalTbvLeveringMuts,
-        final VergelijkerResultaat vergelijkerResultaat)
-    {
+            final DeltaRootEntiteitMatch deltaRootEntiteitMatch,
+            final DeltaBepalingContext context,
+            final BRPActie actieVervalTbvLeveringMuts,
+            final VergelijkerResultaat vergelijkerResultaat) {
         final Transformeerder transformeerder = Transformeerder.maakTransformeerder();
         final List<VerschilGroep> getransformeerdeVerschilGroepen =
                 transformeerder.transformeer(vergelijkerResultaat.getVerschilGroepen(), actieVervalTbvLeveringMuts, context);
@@ -177,21 +169,15 @@ public abstract class AbstractDeltaProces implements DeltaProces {
 
     /**
      * Verwerkt de verschillen op de meegegeven delta root entiteit.
-     *
-     * @param bestaandeDeltaRootEntiteit
-     *            de delta root entiteit waarop de wijziging toegepast moeten worden
-     * @param administratieveHandeling
-     *            de administratieve handeling waaraan de wijzigingen gekoppeld moeten worden
-     * @param verschillen
-     *            een {@link VergelijkerResultaat} met daarin o.a. de getransformeerde gevonden verschillen.
+     * @param bestaandeRootEntiteit de delta root entiteit waarop de wijziging toegepast moeten worden
+     * @param administratieveHandeling de administratieve handeling waaraan de wijzigingen gekoppeld moeten worden
+     * @param verschillen een {@link VergelijkerResultaat} met daarin o.a. de getransformeerde gevonden verschillen.
      */
     protected final void verwerkVerschillen(
-        final DeltaRootEntiteit bestaandeDeltaRootEntiteit,
-        final AdministratieveHandeling administratieveHandeling,
-        final VergelijkerResultaat verschillen)
-    {
-        final DeltaVerschilVerwerker verschilVerwerker =
-                new DeltaRootEntiteitVerschilVerwerker(DeltaRootEntiteitModus.bepaalModus(bestaandeDeltaRootEntiteit));
-        verschilVerwerker.verwerkWijzigingen(verschillen, bestaandeDeltaRootEntiteit, administratieveHandeling);
+            final RootEntiteit bestaandeRootEntiteit,
+            final AdministratieveHandeling administratieveHandeling,
+            final VergelijkerResultaat verschillen) {
+        final DeltaVerschilVerwerker verschilVerwerker = new DeltaRootEntiteitVerschilVerwerker(DeltaRootEntiteitModus.bepaalModus(bestaandeRootEntiteit));
+        verschilVerwerker.verwerkWijzigingen(verschillen, bestaandeRootEntiteit, administratieveHandeling);
     }
 }

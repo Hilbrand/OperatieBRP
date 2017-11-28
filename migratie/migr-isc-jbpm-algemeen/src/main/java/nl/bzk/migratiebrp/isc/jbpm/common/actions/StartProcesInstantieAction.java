@@ -24,11 +24,19 @@ import org.springframework.stereotype.Component;
 @Component("startProcesInstantieAction")
 public final class StartProcesInstantieAction implements SpringAction {
 
-    @Inject
-    private RapportageDao rapportageDao;
+    private final RapportageDao rapportageDao;
+    private final BerichtenDao berichtenDao;
 
+    /**
+     * Constructor.
+     * @param rapportageDao rapportage dao
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public StartProcesInstantieAction(final RapportageDao rapportageDao, final BerichtenDao berichtenDao) {
+        this.rapportageDao = rapportageDao;
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -51,11 +59,11 @@ public final class StartProcesInstantieAction implements SpringAction {
             }
 
             rapportageDao.voegStartProcesInstantieToe(
-                procesInstantie.getProcessDefinition().getName(),
-                berichtMetaData.getBerichtType(),
-                berichtMetaData.getKanaal(),
-                procesInstantie.getId(),
-                new Timestamp(procesInstantie.getStart().getTime()));
+                    procesInstantie.getProcessDefinition().getName(),
+                    berichtMetaData.getBerichtType(),
+                    berichtMetaData.getKanaal(),
+                    procesInstantie.getId(),
+                    new Timestamp(procesInstantie.getStart().getTime()));
         }
 
         return null;

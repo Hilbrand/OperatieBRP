@@ -11,16 +11,17 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.BrpMapperUtil;
+
 import org.junit.Test;
 
 /**
  * Deze class test dat alles classes in de lijst niet via reflectie kunnen worden geinstantieerd.
- * 
  */
 public class NietInstantieerbareClassesTest {
 
-    private static final Class<?>[] NIET_INSTANTIEERBARE_CLASSES = new Class[] {BrpMapperUtil.class, };
+    private static final Class<?>[] NIET_INSTANTIEERBARE_CLASSES = new Class[]{BrpMapperUtil.class,};
 
     @Test
     public void testClasses() throws InstantiationException, IllegalAccessException, NoSuchMethodException {

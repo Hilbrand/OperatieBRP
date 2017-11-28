@@ -16,13 +16,13 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.HistorieUtil;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorieZonderVerantwoording;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 
@@ -58,7 +58,9 @@ public class LoggingDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testBepaalVerschillenOntkoppelenNietCat07Of13Voorkomens() {
-        final BRPActie actie = HistorieUtil.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
+        final BRPActie
+                actie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
 
         bestaandLo3Bericht.addVoorkomen("01", 0, 0, actie);
         assertFalse(bestaandLo3Bericht.getVoorkomens().isEmpty());
@@ -73,7 +75,9 @@ public class LoggingDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testBepaalVerschillenOntkoppelenCat07Voorkomen() {
-        final BRPActie actie = HistorieUtil.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
+        final BRPActie
+                actie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
         bestaandLo3Bericht.addVoorkomen("07", 0, 0, actie);
         assertFalse(bestaandLo3Bericht.getVoorkomens().isEmpty());
         final Lo3Voorkomen lo3Voorkomen = bestaandLo3Bericht.getVoorkomens().iterator().next();
@@ -87,7 +91,9 @@ public class LoggingDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testBepaalVerschillenOntkoppelenCat13Voorkomen() {
-        final BRPActie actie = HistorieUtil.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
+        final BRPActie
+                actie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
         bestaandLo3Bericht.addVoorkomen("13", 0, 0, actie);
         assertFalse(bestaandLo3Bericht.getVoorkomens().isEmpty());
         final Lo3Voorkomen lo3Voorkomen = bestaandLo3Bericht.getVoorkomens().iterator().next();
@@ -101,11 +107,13 @@ public class LoggingDeltaProcesTest extends AbstractDeltaTest {
 
     @Test
     public void testVerwerkVerschillen() {
-        final BRPActie bestaandeActie = HistorieUtil.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
+        final BRPActie
+                bestaandeActie =
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(bestaandPersoon.getPersoonInschrijvingHistorieSet()).getActieInhoud();
         bestaandLo3Bericht.addVoorkomen("01", 0, 0, bestaandeActie);
 
         final PersoonInschrijvingHistorie inschrijvingHistorie =
-                HistorieUtil.getActueelHistorieVoorkomen(nieuwPersoon.getPersoonInschrijvingHistorieSet());
+                FormeleHistorieZonderVerantwoording.getActueelHistorieVoorkomen(nieuwPersoon.getPersoonInschrijvingHistorieSet());
         final BRPActie nieuweActie = inschrijvingHistorie.getActieInhoud();
         nieuwLo3Bericht.addVoorkomen("01", 0, 0, nieuweActie);
 

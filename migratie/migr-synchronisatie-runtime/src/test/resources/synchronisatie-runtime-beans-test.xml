@@ -38,16 +38,16 @@
     <bean name="syncMessageHandler" class="nl.bzk.migratiebrp.synchronisatie.runtime.SynchronisatieMessageHandler">
         <property name="syncBerichtServices">
             <list>
-                <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.SynchroniseerNaarBrpService">
-                </bean>
+                <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.SynchroniseerNaarBrpService"/>
                 <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.LeesUitBrpService"/>
                 <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.ConverteerNaarBrpService"/>
                 <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.ConverteerNaarLo3Service"/>
-                <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.GemeenteRegisterService"/>
+                <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.PartijRegisterService"/>
                 <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.BlokkeringVerzoekService"/>
                 <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.BlokkeringInfoVerzoekService"/>
                 <bean class="nl.bzk.migratiebrp.synchronisatie.runtime.service.DeblokkeringVerzoekService"/>
             </list>
         </property>
     </bean>
+
 </beans>

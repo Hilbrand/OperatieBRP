@@ -21,12 +21,12 @@ angular.module('Keybind', [])
 .directive('keyBind', ['keyCodes', function (keyCodes) {
         function map(obj) {
             var mapped = {};
-            for (var key in obj) {
+            angular.forEach(obj, function(key) {
                 var action = obj[key];
                 if (keyCodes.hasOwnProperty(key)) {
                     mapped[keyCodes[key]] = action;
                 }
-            }
+            });
             return mapped;
         }
 

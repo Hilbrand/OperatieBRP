@@ -34,9 +34,7 @@ public final class AnummerWijzigingNotificatie extends AbstractSyncBericht {
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een bericht te maken.
-     *
-     * @param notificatie
-     *            het notificatie type
+     * @param notificatie het notificatie type
      */
     public AnummerWijzigingNotificatie(final AnummerWijzigingNotificatieType notificatie) {
         super("AnummerWijzigingNotificatie", "uc311");
@@ -56,27 +54,23 @@ public final class AnummerWijzigingNotificatie extends AbstractSyncBericht {
     /* ************************************************************************************************************* */
 
     /**
-     * Geef brongemeente.
-     *
-     * @return brongemeente
+     * Geef bronPartijCode.
+     * @return bronPartijCode
      */
-    public String getBronGemeente() {
-        return notificatie.getBronGemeente();
+    public String getBronPartijCode() {
+        return notificatie.getBronPartijCode();
     }
 
     /**
      * Set brongemeenet.
-     *
-     * @param bronGemeente
-     *            brongemeente
+     * @param bronPartijCode bronPartijCode
      */
-    public void setBronGemeente(final String bronGemeente) {
-        notificatie.setBronGemeente(bronGemeente);
+    public void setBronPartijCode(final String bronPartijCode) {
+        notificatie.setBronPartijCode(bronPartijCode);
     }
 
     /**
      * Geef datum ingang geldigheid.
-     *
      * @return datum ingang geldigheid
      */
     public Integer getDatumIngangGeldigheid() {
@@ -85,9 +79,7 @@ public final class AnummerWijzigingNotificatie extends AbstractSyncBericht {
 
     /**
      * Zet datum ingang geldigheid.
-     *
-     * @param datum
-     *            datum ingang geldigheid
+     * @param datum datum ingang geldigheid
      */
     public void setDatumIngangGeldigheid(final int datum) {
         notificatie.setDatumIngangGeldigheid(BigInteger.valueOf(datum));
@@ -95,39 +87,33 @@ public final class AnummerWijzigingNotificatie extends AbstractSyncBericht {
 
     /**
      * Geef oud a-nummer.
-     *
      * @return oud a-nummer
      */
-    public Long getOudAnummer() {
-        return asLong(notificatie.getOudANummer());
+    public String getOudAnummer() {
+        return notificatie.getOudANummer();
     }
 
     /**
      * Zet oud a-nummer.
-     *
-     * @param anummer
-     *            oud a-nummer
+     * @param anummer oud a-nummer
      */
-    public void setOudAnummer(final long anummer) {
-        notificatie.setOudANummer(Long.toString(anummer));
+    public void setOudAnummer(final String anummer) {
+        notificatie.setOudANummer(anummer);
     }
 
     /**
      * Geef nieuw a-nummer.
-     *
      * @return nieuw a-nummer
      */
-    public Long getNieuwAnummer() {
-        return asLong(notificatie.getNieuwANummer());
+    public String getNieuwAnummer() {
+        return notificatie.getNieuwANummer();
     }
 
     /**
      * Zet nieuw a-nummer.
-     *
-     * @param anummer
-     *            nieuw a-nummer
+     * @param anummer nieuw a-nummer
      */
-    public void setNieuwAnummer(final long anummer) {
-        notificatie.setNieuwANummer(Long.toString(anummer));
+    public void setNieuwAnummer(final String anummer) {
+        notificatie.setNieuwANummer(anummer);
     }
 }

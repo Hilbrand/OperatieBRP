@@ -5,9 +5,6 @@
  */
 
 /**
- * 
- */
-/**
- * 
+ * Logging
  */
 package nl.bzk.migratiebrp.isc.runtime.jbpm.logging;

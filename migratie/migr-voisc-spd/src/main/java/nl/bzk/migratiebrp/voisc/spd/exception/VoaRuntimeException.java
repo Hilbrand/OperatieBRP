@@ -13,17 +13,14 @@ package nl.bzk.migratiebrp.voisc.spd.exception;
 public class VoaRuntimeException extends java.lang.RuntimeException {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3618136732243998002L;
 
     /**
      * Protected Constructor to force the developer to create a specific subclass of SpgRuntimeException.
-     * 
-     * @param code
-     *            String the key used for finding the corresponding exception message
-     * @param parameters
-     *            Object[] array of Objects that will be put in the corresponding message can be null
+     * @param code String the key used for finding the corresponding exception message
+     * @param parameters Object[] array of Objects that will be put in the corresponding message can be null
      */
     protected VoaRuntimeException(final String code, final Object[] parameters) {
         this(code, parameters, null);
@@ -31,13 +28,9 @@ public class VoaRuntimeException extends java.lang.RuntimeException {
 
     /**
      * Protected Constructor to force the developer to create a specific subclass of SpgRuntimeException.
-     * 
-     * @param code
-     *            String the key used for finding the corresponding exception message
-     * @param parameters
-     *            Object[] array of Objects that will be put in the corresponding message, can be null
-     * @param cause
-     *            Throwable the original cause can be null
+     * @param code String the key used for finding the corresponding exception message
+     * @param parameters Object[] array of Objects that will be put in the corresponding message, can be null
+     * @param cause Throwable the original cause can be null
      */
     public VoaRuntimeException(final String code, final Object[] parameters, final Throwable cause) {
         super(MessageUtil.composeMessage(code, parameters, cause), cause);
@@ -45,9 +38,7 @@ public class VoaRuntimeException extends java.lang.RuntimeException {
 
     /**
      * Zet de waarde van cause.
-     *
-     * @param cause
-     *            Throwable
+     * @param cause Throwable
      */
     public final void setCause(final Throwable cause) {
         initCause(cause);

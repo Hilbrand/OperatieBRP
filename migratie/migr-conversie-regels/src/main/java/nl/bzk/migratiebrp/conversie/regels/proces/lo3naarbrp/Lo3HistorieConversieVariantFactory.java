@@ -18,29 +18,35 @@ import org.springframework.stereotype.Component;
 @Component
 public class Lo3HistorieConversieVariantFactory {
 
+    private Map<Class<? extends BrpGroepInhoud>, AbstractLo3HistorieConversieVariant> gerelateerdeMap;
+    private Map<Class<? extends BrpGroepInhoud>, AbstractLo3HistorieConversieVariant> variantMap;
+
     @Inject
     @Resource(name = "historieVariantGerelateerdeMap")
-    private Map<Class<? extends BrpGroepInhoud>, Lo3HistorieConversieVariant> gerelateerdeMap;
+    public void setGerelateerdeMap(
+            Map<Class<? extends BrpGroepInhoud>, AbstractLo3HistorieConversieVariant> gerelateerdeMap) {
+        this.gerelateerdeMap = gerelateerdeMap;
+    }
 
     @Inject
     @Resource(name = "historieVariantMap")
-    private Map<Class<? extends BrpGroepInhoud>, Lo3HistorieConversieVariant> variantMap;
+    public void setVariantMap(
+            Map<Class<? extends BrpGroepInhoud>, AbstractLo3HistorieConversieVariant> variantMap) {
+        this.variantMap = variantMap;
+    }
 
     /**
      * Factory method om de juiste conversie variant voor een bepaald inhoud type te krijgen.
-     *
-     * @param inhoudClass
-     *            inhoud type
-     * @param isGerelateerde
-     *            is deze zoek actie voor een gerelateerde ipv de ik-persoon
+     * @param inhoudClass inhoud type
+     * @param isGerelateerde is deze zoek actie voor een gerelateerde ipv de ik-persoon
      * @return conversie variant
      */
-    public final Lo3HistorieConversieVariant getVariant(final Class<? extends BrpGroepInhoud> inhoudClass, final boolean isGerelateerde) {
+    public final AbstractLo3HistorieConversieVariant getVariant(final Class<? extends BrpGroepInhoud> inhoudClass, final boolean isGerelateerde) {
         if (isGerelateerde && gerelateerdeMap.containsKey(inhoudClass)) {
             return gerelateerdeMap.get(inhoudClass);
         }
 
-        final Lo3HistorieConversieVariant variant = variantMap.get(inhoudClass);
+        final AbstractLo3HistorieConversieVariant variant = variantMap.get(inhoudClass);
 
         if (variant == null) {
             throw new IllegalArgumentException("Geen historie conversie variant voor '" + inhoudClass.getName() + "'.");

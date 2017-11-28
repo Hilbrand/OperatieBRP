@@ -1,4 +1,4 @@
-<div class="col-md-5 col-sm-8 col-xs-12" ng-if="!((!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly))">
+<div ng-if="!((!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly))">
     <input id="{{kolom.id}}"
            type="number"
            name="{{kolom.id}}"
@@ -21,4 +21,4 @@
         <span ng-show="editForm[kolom.id].$error.min">Negatieve waarden niet toegestaan</span>
     </div>
 </div>
-<div class="col-md-5 col-sm-8 col-xs-12" ng-if="(!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly)">{{waarde[kolom.display]}}</div>
+<div id="{{kolom.id}}" ng-if="(!status.nieuw && kolom.readonly) || (status.nieuw && kolom.nieuwReadonly)">{{waarde[kolom.display]}}</div>

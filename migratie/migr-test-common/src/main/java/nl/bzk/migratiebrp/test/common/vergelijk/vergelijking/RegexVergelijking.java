@@ -15,9 +15,7 @@ public final class RegexVergelijking implements Vergelijking {
 
     /**
      * Constructor.
-     * 
-     * @param regex
-     *            te gebruiken reguliere expressie
+     * @param regex te gebruiken reguliere expressie
      */
     public RegexVergelijking(final String regex) {
         this.regex = regex;

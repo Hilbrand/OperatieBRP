@@ -19,9 +19,7 @@ public final class Filters {
 
     /**
      * Maakt een NotFilter.
-     *
-     * @param filter
-     *            filter
+     * @param filter filter
      * @return NotFilter
      */
     public static FilenameFilter not(final FilenameFilter filter) {
@@ -30,9 +28,7 @@ public final class Filters {
 
     /**
      * Maakt een BaseFilter.
-     *
-     * @param type
-     *            type of files to accept
+     * @param type type of files to accept
      * @return BaseFilter
      */
     public static FilenameFilter all(final FilterType type) {
@@ -41,11 +37,8 @@ public final class Filters {
 
     /**
      * Maakt een StartsWithFilter.
-     *
-     * @param accept
-     *            waarmee de bestandsnaam (hoofdletter ongevoelig) moet beginnen, null accepteert alles
-     * @param type
-     *            type of files to accept
+     * @param accept waarmee de bestandsnaam (hoofdletter ongevoelig) moet beginnen, null accepteert alles
+     * @param type type of files to accept
      * @return StartsWithFilter
      */
     public static FilenameFilter startsWith(final String accept, final FilterType type) {
@@ -54,11 +47,8 @@ public final class Filters {
 
     /**
      * Maakt een EndsWithFilter.
-     *
-     * @param accept
-     *            waarmee de bestandsnaam (hoofdletter ongevoelig) moet eindigen, null accepteert alles
-     * @param type
-     *            type of files to accept
+     * @param accept waarmee de bestandsnaam (hoofdletter ongevoelig) moet eindigen, null accepteert alles
+     * @param type type of files to accept
      * @return EndsWithFilter
      */
     public static FilenameFilter endsWith(final String accept, final FilterType type) {
@@ -74,7 +64,6 @@ public final class Filters {
 
         /**
          * Maakt een BaseFilter.
-         *
          * @return BaseFilter
          */
         public static FilenameFilter all() {
@@ -83,9 +72,7 @@ public final class Filters {
 
         /**
          * Maakt een StartsWithFilter.
-         *
-         * @param accept
-         *            waarmee de directorynaam (hoofdletter ongevoelig) moet beginnen, null accepteert alles
+         * @param accept waarmee de directorynaam (hoofdletter ongevoelig) moet beginnen, null accepteert alles
          * @return StartsWithFilter
          */
         public static FilenameFilter startsWith(final String accept) {
@@ -94,9 +81,7 @@ public final class Filters {
 
         /**
          * Maakt een EndsWithFilter.
-         *
-         * @param accept
-         *            waarmee de directorynaam (hoofdletter ongevoelig) moet eindigen, null accepteert alles
+         * @param accept waarmee de directorynaam (hoofdletter ongevoelig) moet eindigen, null accepteert alles
          * @return EndsWithFilter
          */
         public static FilenameFilter endsWith(final String accept) {
@@ -105,9 +90,7 @@ public final class Filters {
 
         /**
          * Maakt een NotEndsWithFilter.
-         *
-         * @param accept
-         *            waarmee de directorynaam (hoofdletter ongevoelig) niet moet eindigen, null accepteert alles
+         * @param accept waarmee de directorynaam (hoofdletter ongevoelig) niet moet eindigen, null accepteert alles
          * @return NotEndsWithFilter
          */
         public static FilenameFilter notEndsWith(final String... accept) {

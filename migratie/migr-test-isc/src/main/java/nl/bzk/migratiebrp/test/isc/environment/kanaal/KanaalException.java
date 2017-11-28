@@ -14,9 +14,7 @@ public final class KanaalException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
+     * @param message melding
      */
     public KanaalException(final String message) {
         super(message);
@@ -24,11 +22,8 @@ public final class KanaalException extends Exception {
 
     /**
      * Constructor.
-     * 
-     * @param message
-     *            melding
-     * @param cause
-     *            oorzaak
+     * @param message melding
+     * @param cause oorzaak
      */
     public KanaalException(final String message, final Throwable cause) {
         super(message, cause);

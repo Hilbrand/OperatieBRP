@@ -12,23 +12,16 @@ package nl.bzk.migratiebrp.isc.jbpm.common.dao;
 public interface ProcesDao {
     /**
      * Leg de relatie vast tussen twee proces instanties.
-     * 
-     * @param processInstanceIdEen
-     *            Eerste proces instantie id
-     * @param processInstanceIdTwee
-     *            Tweede proces instantie id
+     * @param processInstanceIdEen Eerste proces instantie id
+     * @param processInstanceIdTwee Tweede proces instantie id
      */
     void registreerProcesRelatie(long processInstanceIdEen, long processInstanceIdTwee);
 
     /**
      * Toevoegen van gerelateerde informatie aan een proces.
-     * 
-     * @param processInstanceId
-     *            proces instance id
-     * @param soortGegeven
-     *            soort gegevens
-     * @param gegeven
-     *            gegeven
+     * @param processInstanceId proces instance id
+     * @param soortGegeven soort gegevens
+     * @param gegeven gegeven
      */
     void toevoegenGerelateerdGegeven(final long processInstanceId, String soortGegeven, String gegeven);
 }

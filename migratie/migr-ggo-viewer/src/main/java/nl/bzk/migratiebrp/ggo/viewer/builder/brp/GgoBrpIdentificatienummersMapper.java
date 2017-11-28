@@ -6,35 +6,45 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.builder.brp;
 
-import java.util.Map;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpElementEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpGroepEnum;
 import nl.bzk.migratiebrp.ggo.viewer.model.GgoBrpVoorkomen;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import org.springframework.stereotype.Component;
+
+import java.util.Map;
+
+import javax.inject.Inject;
 
 /**
  * @see {nl.bzk.migratiebrp.ggo.viewer.mapper.GgoBrpMapper<T>}
  */
-@Component
 public class GgoBrpIdentificatienummersMapper extends AbstractGgoBrpMapper<PersoonIDHistorie> {
+
+    /**
+     * Constructor voor mapper implementatie.
+     * @param ggoBrpGegevensgroepenBuilder gegevens groepen builder
+     * @param ggoBrpActieBuilder actie builder
+     * @param ggoBrpOnderzoekBuilder onderzoek builder
+     * @param ggoBrpValueConvert value converter
+     */
+    @Inject
+    public GgoBrpIdentificatienummersMapper(final GgoBrpGegevensgroepenBuilder ggoBrpGegevensgroepenBuilder, final GgoBrpActieBuilder ggoBrpActieBuilder,
+                                            final GgoBrpOnderzoekBuilder ggoBrpOnderzoekBuilder, final GgoBrpValueConvert ggoBrpValueConvert) {
+        super(ggoBrpGegevensgroepenBuilder, ggoBrpActieBuilder, ggoBrpOnderzoekBuilder, ggoBrpValueConvert);
+    }
+
     @Override
     public final void verwerkInhoud(final GgoBrpVoorkomen voorkomen, final PersoonIDHistorie brpInhoud, final GgoBrpGroepEnum brpGroepEnum) {
-        verwerkInhoud(voorkomen.getInhoud(), brpInhoud, brpGroepEnum);
+        verwerkInhoud(voorkomen.getInhoud(), brpInhoud);
     }
 
     /**
      * Uitgebreidere aanroep tbv het verwerken van 'meer' en 'samenvatting'.
-     *
-     * @param ggoInhoud
-     *            De Map<String,String> waaraan de inhoud wordt toegevoegd.
-     * @param brpInhoud
-     *            De inhoud van de bron-BRP-groep.
-     * @param brpGroepEnum
-     *            Het label van de groep.
+     * @param ggoInhoud De Map<String,String> waaraan de inhoud wordt toegevoegd.
+     * @param brpInhoud De inhoud van de bron-BRP-groep.
      */
-    public final void verwerkInhoud(final Map<String, String> ggoInhoud, final PersoonIDHistorie brpInhoud, final GgoBrpGroepEnum brpGroepEnum) {
-        getGgoBrpValueConvert().verwerkElement(ggoInhoud, brpGroepEnum, GgoBrpElementEnum.ADMINISTRATIENUMMER, brpInhoud.getAdministratienummer());
-        getGgoBrpValueConvert().verwerkElement(ggoInhoud, brpGroepEnum, GgoBrpElementEnum.BURGERSERVICENUMMER, brpInhoud.getBurgerservicenummer());
+    public final void verwerkInhoud(final Map<String, String> ggoInhoud, final PersoonIDHistorie brpInhoud) {
+        getGgoBrpValueConvert().verwerkElement(ggoInhoud, GgoBrpElementEnum.ADMINISTRATIENUMMER, brpInhoud.getAdministratienummer());
+        getGgoBrpValueConvert().verwerkElement(ggoInhoud, GgoBrpElementEnum.BURGERSERVICENUMMER, brpInhoud.getBurgerservicenummer());
     }
 }

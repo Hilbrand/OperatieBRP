@@ -6,15 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import java.util.ArrayList;
+import java.util.List;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorieTest;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
-
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BrpOuderInhoudTest {
 
@@ -48,13 +46,13 @@ public class BrpOuderInhoudTest {
 
     }
 
-    public static BrpOuderInhoud createInhoud(Boolean isOuder, Boolean indicatieAdresGegevens) {
-        return new BrpOuderInhoud(new BrpBoolean(isOuder), new BrpBoolean(indicatieAdresGegevens));
+    public static BrpOuderInhoud createInhoud(Boolean indicatieAdresGegevens) {
+        return new BrpOuderInhoud(new BrpBoolean(indicatieAdresGegevens));
     }
 
-    public static BrpStapel<BrpOuderInhoud> createStapel(){
+    public static BrpStapel<BrpOuderInhoud> createStapel() {
         List<BrpGroep> groepen = new ArrayList<>();
-        BrpGroep<BrpOuderInhoud> groep = new BrpGroep<>(createInhoud(true,false), BrpHistorieTest.createdefaultInhoud(),null,null,null);
+        BrpGroep<BrpOuderInhoud> groep = new BrpGroep<>(createInhoud(false), BrpHistorieTest.createdefaultInhoud(), null, null, null);
         groepen.add(groep);
         return new BrpStapel(groepen);
     }

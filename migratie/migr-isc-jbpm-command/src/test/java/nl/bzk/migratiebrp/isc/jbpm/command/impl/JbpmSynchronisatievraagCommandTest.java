@@ -43,15 +43,17 @@ public class JbpmSynchronisatievraagCommandTest {
         // Bericht
         final BerichtenDao berichtenDao = Mockito.mock(BerichtenDao.class);
         Mockito.when(
-            berichtenDao.bewaar(
-                Matchers.eq("ISC"),
-                Matchers.eq(Direction.INKOMEND),
-                Matchers.anyString(),
-                (String) Matchers.isNull(),
-                Matchers.eq("inhoud"),
-                (String) Matchers.isNull(),
-                Matchers.eq("doel"),
-                (Long) Matchers.isNull())).thenReturn(1234L);
+                berichtenDao.bewaar(
+                        Matchers.eq("ISC"),
+                        Matchers.eq(Direction.INKOMEND),
+                        Matchers.anyString(),
+                        (String) Matchers.isNull(),
+                        Matchers.eq("inhoud"),
+                        (String) Matchers.isNull(),
+                        Matchers.eq("doel"),
+                        (Long) Matchers.isNull(),
+                        (Boolean) Matchers.isNull()))
+                .thenReturn(1234L);
 
         // Services
         final Services services = Mockito.mock(Services.class);
@@ -71,14 +73,15 @@ public class JbpmSynchronisatievraagCommandTest {
         // Verify
         Mockito.verify(jbpmContext).newProcessInstance("uc899");
         Mockito.verify(berichtenDao).bewaar(
-            Matchers.eq("ISC"),
-            Matchers.eq(Direction.INKOMEND),
-            Matchers.anyString(),
-            (String) Matchers.isNull(),
-            Matchers.eq("inhoud"),
-            (String) Matchers.isNull(),
-            Matchers.eq("doel"),
-            (Long) Matchers.isNull());
+                Matchers.eq("ISC"),
+                Matchers.eq(Direction.INKOMEND),
+                Matchers.anyString(),
+                (String) Matchers.isNull(),
+                Matchers.eq("inhoud"),
+                (String) Matchers.isNull(),
+                Matchers.eq("doel"),
+                (Long) Matchers.isNull(),
+                (Boolean) Matchers.isNull());
         Mockito.verify(berichtenDao).updateNaam(1234L, "naam");
         Mockito.verify(berichtenDao).updateProcessInstance(1234L, 5432L);
         Mockito.verify(contextInstance).setVariable("input", 1234L);

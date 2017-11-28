@@ -11,20 +11,20 @@ import nl.bzk.migratiebrp.bericht.model.sync.generated.ZoekPersoonResultaatType;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ZoekPersoonAntwoordBerichtTest extends AbstractSyncBerichtTest {
+public class ZoekPersoonAntwoordBerichtTest extends AbstractSyncBerichtTestBasis {
 
     @Test
     public void test() throws Exception {
         final ZoekPersoonAntwoordBericht subject = new ZoekPersoonAntwoordBericht();
         subject.setStatus(StatusType.OK);
         subject.setResultaat(ZoekPersoonResultaatType.GEVONDEN);
-        subject.setPersoonId(123);
+        subject.setPersoonId(123L);
         subject.setAnummer("1234567890");
         subject.setGemeente("1234");
 
         Assert.assertEquals(StatusType.OK, subject.getStatus());
         Assert.assertEquals(ZoekPersoonResultaatType.GEVONDEN, subject.getResultaat());
-        Assert.assertEquals(Integer.valueOf(123), subject.getPersoonId());
+        Assert.assertEquals(Long.valueOf(123), subject.getPersoonId());
         Assert.assertEquals("1234567890", subject.getAnummer());
         Assert.assertEquals("1234", subject.getGemeente());
 

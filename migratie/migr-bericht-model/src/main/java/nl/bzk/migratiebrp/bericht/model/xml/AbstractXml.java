@@ -30,11 +30,8 @@ public abstract class AbstractXml {
 
     /**
      * Constructor.
-     *
-     * @param xsdResource
-     *            xsd resource
-     * @param jaxbPackages
-     *            jaxb packages
+     * @param xsdResource xsd resource
+     * @param jaxbPackages jaxb packages
      */
     protected AbstractXml(final String xsdResource, final String jaxbPackages) {
         try {
@@ -42,25 +39,22 @@ public abstract class AbstractXml {
             final SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
             schemaFactory.setResourceResolver(maakResolver());
 
-            schema = schemaFactory.newSchema(new Source[] {new StreamSource(AbstractXml.class.getResourceAsStream(xsdResource)), });
+            schema = schemaFactory.newSchema(new Source[]{new StreamSource(AbstractXml.class.getResourceAsStream(xsdResource)),});
 
             // JAXB
             jaxbContext = JAXBContext.newInstance(jaxbPackages);
 
         } catch (final
-            JAXBException
-            | SAXException e)
-        {
+        JAXBException
+                | SAXException e) {
             throw new IllegalStateException("Parse fout tijdens het initialiseren van BrpXml.", e);
         }
     }
 
     /**
      * Maak een marshaller.
-     *
      * @return marshaller
-     * @throws JAXBException
-     *             bij fouten
+     * @throws JAXBException bij fouten
      */
     private Marshaller createMarchaller() throws JAXBException {
         return jaxbContext.createMarshaller();
@@ -68,10 +62,8 @@ public abstract class AbstractXml {
 
     /**
      * Maak een unmarshaller.
-     *
      * @return unmarshaller
-     * @throws JAXBException
-     *             bij fouten
+     * @throws JAXBException bij fouten
      */
     private Unmarshaller createUnmarchaller() throws JAXBException {
         final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -81,19 +73,15 @@ public abstract class AbstractXml {
 
     /**
      * Maae een resolver om recursief alle XSD's te resolven.
-     *
      * @return De gemaakte resolver.
      */
     protected abstract LSResourceResolver maakResolver();
 
     /**
      * Converteert een String naar een JAXB element.
-     *
-     * @param xml
-     *            de string representatie die geconverteerd dient te worden
+     * @param xml de string representatie die geconverteerd dient te worden
      * @return het JAXB element
-     * @throws JAXBException
-     *             bij fouten
+     * @throws JAXBException bij fouten
      */
     public final JAXBElement<?> stringToElement(final String xml) throws JAXBException {
         return (JAXBElement<?>) createUnmarchaller().unmarshal(new StreamSource(new StringReader(xml)));
@@ -101,9 +89,7 @@ public abstract class AbstractXml {
 
     /**
      * Converteert een JAXB element naar een String.
-     *
-     * @param element
-     *            Het JAXB element dat geconverteerd dient te worden.
+     * @param element Het JAXB element dat geconverteerd dient te worden.
      * @return De string representatie van het JAXB element.
      */
     public final String elementToString(final JAXBElement<?> element) {

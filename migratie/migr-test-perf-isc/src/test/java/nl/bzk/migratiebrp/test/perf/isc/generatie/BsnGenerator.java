@@ -13,7 +13,7 @@ import java.util.Set;
 public class BsnGenerator {
     private static final Random RANDOM = new Random();
 
-    public Integer genereer() {
+    public String genereer() {
         while (true) {
             final byte[] basis = genereerBasis();
             final Byte eindcijfer = geefEindCijfer(basis);
@@ -23,7 +23,7 @@ public class BsnGenerator {
         }
     }
 
-    private Integer maakBsn(final byte[] basis, final Byte eindcijfer) {
+    private String maakBsn(final byte[] basis, final Byte eindcijfer) {
         final StringBuilder result = new StringBuilder(9);
         result.append(basis[0]);
         result.append(basis[1]);
@@ -35,7 +35,7 @@ public class BsnGenerator {
         result.append(basis[7]);
         result.append(eindcijfer);
 
-        return Integer.valueOf(result.toString());
+        return result.toString();
     }
 
     private Byte geefEindCijfer(final byte[] basis) {
@@ -63,8 +63,6 @@ public class BsnGenerator {
 
     /**
      * Genereerd de eerste acht getallen (random).
-     * 
-     * @return
      */
     byte[] genereerBasis() {
         final byte[] result = new byte[8];

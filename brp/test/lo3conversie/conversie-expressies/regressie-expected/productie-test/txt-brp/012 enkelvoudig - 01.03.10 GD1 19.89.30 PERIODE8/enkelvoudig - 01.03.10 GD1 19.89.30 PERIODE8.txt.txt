@@ -1,1 +1,1 @@
-geboorte.datum > VANDAAG() - ^20/0/0
+Persoon.Geboorte.Datum E> VANDAAG() - ^20/0/0

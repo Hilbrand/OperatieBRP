@@ -15,9 +15,7 @@ public interface BerichtFactory {
      * Parse een 'String' bericht naar een 'Object' bericht.
      *
      * Indien het String bericht onbekend of ongeldig is word een OngeldigBericht of OnbekendBericht geretourneerd
-     *
-     * @param bericht
-     *            bericht
+     * @param bericht bericht
      * @return bericht
      */
     Bericht getBericht(final String bericht);

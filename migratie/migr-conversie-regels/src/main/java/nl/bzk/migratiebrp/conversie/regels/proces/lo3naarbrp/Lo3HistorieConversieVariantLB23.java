@@ -6,834 +6,846 @@
 
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import javax.inject.Inject;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpHistorie;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.AbstractBrpAttribuutMetOnderzoek;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortActieCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.Validatie;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.AbstractBrpIndicatieGroepInhoud;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpValidatie;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBehandeldAlsNederlanderIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNationaliteitInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOuderInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpStaatloosIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVastgesteldNietNederlanderIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.AbstractLo3Element;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
+import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenGroep;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen.Lo3AttribuutConverteerder;
 import org.springframework.stereotype.Component;
 
 /**
- * LO3 historie -> BRP historie conversie variant 23.
+ * CHP001-LB23,  Dit algoritme wordt toegepast op:
+ * • Bron is een LO3 categorie waar lege rijen kunnen voorkomen
+ * • Doel is een BRP groep die zowel formele als materiële historie heeft
  */
 @Component
 @Requirement(Requirements.CHP001_LB23)
-public class Lo3HistorieConversieVariantLB23 extends Lo3HistorieConversieVariant {
+public class Lo3HistorieConversieVariantLB23 extends AbstractLo3HistorieConversieVariant {
 
-    private static final Logger LOG = LoggerFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
+
+    /**
+     * Constructor voor de historie conversie variant LB23.
+     * @param converteerder de {@link Lo3AttribuutConverteerder}
+     */
     @Inject
-    private Lo3HistorieConversieVariantLB21 lo3HistorieConversieVariantLB21;
+    public Lo3HistorieConversieVariantLB23(final Lo3AttribuutConverteerder converteerder) {
+        super(converteerder);
+    }
 
     @Override
     protected final <T extends BrpGroepInhoud> BrpGroep<T> converteerLo3Groep(
-        final TussenGroep<T> lo3Groep,
-        final List<TussenGroep<T>> lo3Groepen,
-        final List<BrpGroep<T>> brpGroepen,
-        final Map<Long, BrpActie> actieCache)
-    {
-        final boolean isLeeg = isLeeg(lo3Groep);
-        final boolean isOnjuist =
-                lo3Groep.getHistorie().getIndicatieOnjuist() != null && lo3Groep.getHistorie().getIndicatieOnjuist().isInhoudelijkGevuld();
+            final TussenGroep<T> lo3Groep,
+            final List<TussenGroep<T>> lo3Groepen,
+            final List<BrpGroep<T>> brpGroepen,
+            final Map<Long, BrpActie> actieCache) {
 
-        final BrpGroep<T> result;
-        if (isLeeg) {
+        // Stap 1.
+        LOGGER.trace("Stap 1. maak actie voor herkomst " + lo3Groep.getLo3Herkomst());
+        final BrpActie actie = maakActie(lo3Groep, actieCache);
+        final boolean isLeeg = bepaalIsLeeg(lo3Groep);
+        final boolean isOnjuist = lo3Groep.getHistorie().isOnjuist();
+        final BrpGroep<T> brpGroep;
+        if (!isLeeg) {
             if (isOnjuist) {
-                // 4. Als de LO3-rij een lege onjuiste rij is:
-                result = converteerLegeOnjuisteRij(lo3Groep, brpGroepen, actieCache);
+                // Stap 2
+                brpGroep = verwerkStap2(lo3Groep, brpGroepen, actie);
             } else {
-                // 5. Als de LO3-rij een lege juiste rij is:
-                result = converteerLegeJuisteRij(lo3Groep, lo3Groepen, brpGroepen, actieCache);
+                // Stap 3
+                brpGroep = verwerkStap3(lo3Groep, lo3Groepen, brpGroepen, actie, actieCache);
             }
         } else {
             if (isOnjuist) {
-                // 2. Als de LO3-rij een niet-lege onjuiste rij is:
-                result = converteerNietLegeOnjuisteRij(lo3Groep, brpGroepen, actieCache);
+                // Stap 4
+                brpGroep = verwerkStap4(lo3Groep, lo3Groepen, brpGroepen, actie, actieCache);
             } else {
-                // 3. Als de LO3-rij een niet-lege juiste rij is:
-                result = converteerNietLegeJuisteRij(lo3Groep, lo3Groepen, brpGroepen, actieCache);
+                if (!(lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud) || !((BrpNationaliteitInhoud) lo3Groep.getInhoud()).isEindeBijhouding()) {
+                    // Stap 5
+                    brpGroep = verwerkStap5(lo3Groep, lo3Groepen, brpGroepen, actie, actieCache);
+                } else {
+                    // Stap 6
+                    brpGroep = verwerkStap6(lo3Groep, brpGroepen, actie);
+                }
             }
         }
 
-        return result;
+        return brpGroep;
     }
 
     /**
-     * Er is geen nabewerking voor historie conversie variant 23.
-     *
-     * @param brpGroepen
-     *            de BRP groepen
-     * @param <T>
-     *            groep inhoud type
+     * Nabewerking van LB23.
+     * @param inGroepen de BRP groepen
+     * @param <T> groep inhoud type
      * @return de BRP groepen parameter
      */
     @Override
-    protected final <T extends BrpGroepInhoud> List<BrpGroep<T>> doeNabewerking(final List<BrpGroep<T>> brpGroepen) {
-        return lo3HistorieConversieVariantLB21.doeNabewerking(brpGroepen);
-    }
+    protected final <T extends BrpGroepInhoud> List<BrpGroep<T>> doeNabewerking(final List<BrpGroep<T>> inGroepen) {
+        final List<BrpGroep<T>> brpGroepen = new ArrayList<>();
 
-    /**
-     * 2. Als de LO3-rij een niet-lege onjuiste rij is
-     */
-    private <T extends BrpGroepInhoud> BrpGroep<T> converteerNietLegeOnjuisteRij(
-        final TussenGroep<T> lo3Groep,
-        final List<BrpGroep<T>> brpGroepen,
-        final Map<Long, BrpActie> actieCache)
-    {
-        // Inhoud
-        final T inhoud = lo3Groep.getInhoud();
-
-        // Historie
-        final Lo3Historie lo3Historie = lo3Groep.getHistorie();
-        final BrpDatum aanvangGeldigheid = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
-        final BrpDatumTijd datumTijdRegistratie = Lo3HistorieConversieVariant.bepaalDatumTijdRegistratie(aanvangGeldigheid, lo3Groep, brpGroepen);
-        final BrpHistorie historie =
-                new BrpHistorie(aanvangGeldigheid, null, datumTijdRegistratie, datumTijdRegistratie, maakNadereAanduidingVerval(lo3Historie));
-
-        // Acties
-        final BrpActie actieInhoud = maakActie(lo3Groep.getDocumentatie(), lo3Groep.getHistorie(), lo3Groep.getLo3Herkomst(), actieCache);
-
-        return new BrpGroep<>(inhoud, historie, actieInhoud, actieInhoud, null);
-    }
-
-    /**
-     * 3. Als de LO3-rij een niet-lege juiste rij is
-     */
-    /*
-     * Cyclomatic complexity - Dit is express om de programmatuur veel te laten lijken op het specificatie document en
-     * daardoor goed onderhoudbaar te houden
-     */
-    private <T extends BrpGroepInhoud> BrpGroep<T> converteerNietLegeJuisteRij(
-        final TussenGroep<T> lo3Groep,
-        final List<TussenGroep<T>> lo3Groepen,
-        final List<BrpGroep<T>> brpGroepen,
-        final Map<Long, BrpActie> actieCache)
-    {
-        final Lo3Historie lo3Historie = lo3Groep.getHistorie();
-
-        final TussenGroep<T> volgendeJuisteRij = bepaalVolgendeJuisteGroep(lo3Groep, lo3Groepen);
-        final TussenGroep<T> actueleRij = bepaalActueleGroep(lo3Groepen);
-
-        final T inhoud;
-        // Acties
-        final BrpActie actieInhoud = maakActie(lo3Groep.getDocumentatie(), lo3Groep.getHistorie(), lo3Groep.getLo3Herkomst(), actieCache);
-        final BrpActie actieVerval;
-        final BrpActie actieGeldigheid;
-        final BrpDatumTijd datumTijdVerval;
-        BrpDatum eindeGeldigheid;
-
-        final BrpDatum aanvangGeldigheid = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
-        final BrpDatumTijd datumTijdRegistratie = Lo3HistorieConversieVariant.bepaalDatumTijdRegistratie(aanvangGeldigheid, lo3Groep, brpGroepen);
-
-        if (lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud
-            && volgendeJuisteRij != null
-            && ((BrpNationaliteitInhoud) volgendeJuisteRij.getInhoud()).isEindeBijhouding())
-        {
-            final BrpDatumTijd volgendeDatumTijdRegistratie =
-                    Lo3HistorieConversieVariant.bepaalDatumTijdRegistratie(
-                        BrpDatum.fromLo3Datum(volgendeJuisteRij.getHistorie().getIngangsdatumGeldigheid()),
-                        volgendeJuisteRij,
-                        brpGroepen);
-
-            inhoud = bepaalAangepasteInhoud(lo3Groep, volgendeJuisteRij);
-            actieVerval = maakActie(volgendeJuisteRij.getDocumentatie(), volgendeJuisteRij.getHistorie(), volgendeJuisteRij.getLo3Herkomst(), actieCache);
-            datumTijdVerval = new BrpDatumTijd(volgendeDatumTijdRegistratie.getJavaDate(), null);
-            actieGeldigheid = null;
-            eindeGeldigheid = null;
-        } else {
-            if (volgendeJuisteRij != null && isLeeg(volgendeJuisteRij)) {
-                final TussenGroep<T> naVolgendeJuisteRij = bepaalVolgendeJuisteGroep(volgendeJuisteRij, lo3Groepen);
-                final BrpSoortActieCode soortActieGeldigheid;
-                // Als er nog een juiste rij na de volgende rij is die dezelfde ingangsdatum geldigheid heeft,
-                // markeer dan deze actie aanpassing geldigheid als behorend bij de materiele historie in Lo3.
-                // Dit ten behoeve van de terugconversie.
-                if (naVolgendeJuisteRij != null
-                    && AbstractLo3Element.equalsWaarde(
-                        naVolgendeJuisteRij.getHistorie().getIngangsdatumGeldigheid(),
-                        volgendeJuisteRij.getHistorie().getIngangsdatumGeldigheid()))
-                {
-                    soortActieGeldigheid = BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE;
-                } else {
-                    soortActieGeldigheid = BrpSoortActieCode.CONVERSIE_GBA;
+        for (final BrpGroep<T> groep : inGroepen) {
+            if (groep.getActieGeldigheid() == null
+                    && BrpValidatie.isAttribuutGevuld(groep.getHistorie().getDatumEindeGeldigheid())) {
+                BrpGroep<T> opvolger = bepaalOpvolgendeNietVervallenRij(groep, inGroepen);
+                if (opvolger == null) {
+                    opvolger = bepaalLaatstGeregistreerdeOpvolgendeVervallenDieNietOnjuistIs(groep, inGroepen);
                 }
-                actieGeldigheid =
-                        maakActie(
-                            volgendeJuisteRij.getDocumentatie(),
-                            volgendeJuisteRij.getHistorie(),
-                            volgendeJuisteRij.getLo3Herkomst(),
-                            actieCache,
-                            soortActieGeldigheid);
-                inhoud = bepaalAangepasteInhoud(lo3Groep, volgendeJuisteRij);
-                eindeGeldigheid = BrpDatum.fromLo3Datum(volgendeJuisteRij.getHistorie().getIngangsdatumGeldigheid());
-            } else {
-                // Historie
-                eindeGeldigheid =
-                        volgendeJuisteRij == null ? null
-                                                  : BrpDatum.fromLo3DatumZonderOnderzoek(volgendeJuisteRij.getHistorie().getIngangsdatumGeldigheid());
-                actieGeldigheid = null;
-                inhoud = lo3Groep.getInhoud();
-            }
 
-            if (isVolgendeOfActueleRijEerderOfGelijkGeldig(lo3Groep, volgendeJuisteRij, actueleRij)) {
-                if (volgendeJuisteRij != null
-                    && bepaalActueleGroep(lo3Groepen) == volgendeJuisteRij
-                    && isLeeg(volgendeJuisteRij)
-                    && eindeGeldigheid.equals(BrpDatum.ONBEKEND))
-                {
-                    datumTijdVerval = null;
-                } else if (volgendeJuisteRij != null && !isLeeg(volgendeJuisteRij)) {
-                    // Bij een gevuldge opvolgende rij hoeft geen einde geldigheid ingevuld te worden.
-                    datumTijdVerval = new BrpDatumTijd(datumTijdRegistratie.getJavaDate(), null);
-                    eindeGeldigheid = null;
-                } else {
-                    datumTijdVerval = new BrpDatumTijd(datumTijdRegistratie.getJavaDate(), null);
-                }
+                brpGroepen.add(
+                        new BrpGroep<>(groep.getInhoud(), groep.getHistorie(), groep.getActieInhoud(), groep.getActieVerval(), opvolger.getActieInhoud()));
             } else {
-                datumTijdVerval = null;
-            }
-
-            if (datumTijdVerval != null) {
-                actieVerval = actieInhoud;
-            } else {
-                actieVerval = null;
+                brpGroepen.add(groep);
             }
         }
 
-        final BrpHistorie historie =
-                new BrpHistorie(aanvangGeldigheid, eindeGeldigheid, datumTijdRegistratie, datumTijdVerval, maakNadereAanduidingVerval(lo3Historie));
-        return new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieGeldigheid);
+        return brpGroepen;
     }
 
-    private <T extends BrpGroepInhoud> boolean isVolgendeOfActueleRijEerderOfGelijkGeldig(
-        final TussenGroep<T> lo3Groep,
-        final TussenGroep<T> volgendeJuisteRij,
-        final TussenGroep<T> actueleRij)
-    {
+    private <T extends BrpGroepInhoud> BrpGroep<T> bepaalLaatstGeregistreerdeOpvolgendeVervallenDieNietOnjuistIs(final BrpGroep<T> basis,
+                                                                                                                 final List<BrpGroep<T>> groepen) {
+        final BrpDatum basisEindeGeldigheid = basis.getHistorie().getDatumEindeGeldigheid();
+
+        final Optional<BrpGroep<T>> gevondenGroep = groepen.stream().filter(groep -> {
+            final BrpHistorie historie = groep.getHistorie();
+            return groep.getActieVerval() != null && historie.getNadereAanduidingVerval() == null
+                    && historie.getDatumAanvangGeldigheid().compareTo(basisEindeGeldigheid) == 0;
+        }).sorted(Comparator.comparing(groep2 -> groep2.getHistorie().getDatumTijdRegistratie())).findFirst();
+
+        if (!gevondenGroep.isPresent()) {
+            throw new IllegalStateException("Kan meest-recente opvolger niet bepalen.");
+        }
+        return gevondenGroep.get();
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap2(final TussenGroep<T> lo3Groep, final List<BrpGroep<T>> brpGroepen, final BrpActie actie) {
+        LOGGER.debug("Stap 2, herkomst: " + lo3Groep.getLo3Herkomst());
         final Lo3Historie lo3Historie = lo3Groep.getHistorie();
-        final BrpDatum aanvangGeldigheid = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
+        final BrpDatum datumAanvangGeldigheid = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
+        final BrpDatumTijd datumTijdRegistratie = bepaalDatumTijdRegistratie(datumAanvangGeldigheid, lo3Historie.getDatumVanOpneming(), brpGroepen);
 
-        final BrpDatum aanvangGeldigheidVolgendeJuistGroep =
-                volgendeJuisteRij == null ? null : BrpDatum.fromLo3Datum(volgendeJuisteRij.getHistorie().getIngangsdatumGeldigheid());
-        final BrpDatum aanvangGeldigheidActueleGroep =
-                actueleRij == null ? null : BrpDatum.fromLo3Datum(actueleRij.getHistorie().getIngangsdatumGeldigheid());
-
-        final boolean volgendeRijEerderGeldig =
-                Validatie.isAttribuutGevuld(aanvangGeldigheidVolgendeJuistGroep) && aanvangGeldigheidVolgendeJuistGroep.compareTo(aanvangGeldigheid) <= 0;
-        final boolean actueleRijEerderGeldig =
-                Validatie.isAttribuutGevuld(aanvangGeldigheidActueleGroep)
-                                               && !actueleRij.equals(lo3Groep)
-                                               && aanvangGeldigheidActueleGroep.compareTo(aanvangGeldigheid) <= 0;
-
-        return volgendeRijEerderGeldig || actueleRijEerderGeldig;
+        final BrpHistorie
+                historie =
+                new BrpHistorie(datumAanvangGeldigheid, null, datumTijdRegistratie, datumTijdRegistratie,
+                        maakNadereAanduidingVerval(lo3Historie.getIndicatieOnjuist()));
+        return new BrpGroep<>(lo3Groep.getInhoud(), historie, actie, actie, null);
     }
 
-    private <T extends BrpGroepInhoud> T bepaalAangepasteInhoud(final TussenGroep<T> lo3Groep, final TussenGroep<T> volgendeJuisteRij) {
-        final T inhoud;
-        final T lo3Inhoud = lo3Groep.getInhoud();
-        if (lo3Inhoud instanceof BrpNationaliteitInhoud) {
-            if (((BrpNationaliteitInhoud) volgendeJuisteRij.getInhoud()).isEindeBijhouding()) {
-                inhoud = bepaalEindeBijhoudingNationaliteit(lo3Inhoud, volgendeJuisteRij.getInhoud());
-            } else {
-                inhoud = bepaalVerliesNederlanderschap(lo3Inhoud, volgendeJuisteRij.getInhoud());
-            }
-        } else if (lo3Inhoud instanceof BrpStaatloosIndicatieInhoud
-                || lo3Inhoud instanceof BrpBehandeldAlsNederlanderIndicatieInhoud
-                || lo3Inhoud instanceof BrpVastgesteldNietNederlanderIndicatieInhoud)
-        {
-            inhoud = bepaalAbstractIndicatieBeeindigingNationaliteit(lo3Inhoud, volgendeJuisteRij.getInhoud());
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap3(final TussenGroep<T> lo3Groep, final List<TussenGroep<T>> lo3Groepen,
+                                                                final List<BrpGroep<T>> brpGroepen, final BrpActie actie,
+                                                                final Map<Long, BrpActie> actieCache) {
+        LOGGER.debug("Stap 3, herkomst: " + lo3Groep.getLo3Herkomst());
+        // Stap a. Bepaal de volgende juiste LO3 rij
+        final TussenGroep<T> volgendeJuisteLo3Rij = bepaalVolgendeJuisteGroep(lo3Groep, lo3Groepen);
+        LOGGER.trace("Stap 3a, volgende juiste rij gevonden: " + (volgendeJuisteLo3Rij != null ? volgendeJuisteLo3Rij.getLo3Herkomst() : null));
+
+        final BrpActie actieAanpassingGeldigheid;
+        // Stab b.
+        if (volgendeJuisteLo3Rij != null && bepaalIsLeeg(volgendeJuisteLo3Rij)) {
+            final TussenGroep<T>
+                    nogEenJuisteRij =
+                    zoekVolgendeJuisteRijMetGelijkeIngangsDatumGeldigheid(volgendeJuisteLo3Rij, lo3Groepen);
+            final BrpSoortActieCode
+                    soortActieCode =
+                    nogEenJuisteRij != null ? BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE : BrpSoortActieCode.CONVERSIE_GBA;
+
+            LOGGER.trace(String.format("Stap 3b, aanmaken actie aanpassing geldigheid (%s)", soortActieCode));
+            actieAanpassingGeldigheid = maakActie(volgendeJuisteLo3Rij, actieCache, soortActieCode);
         } else {
-            inhoud = lo3Groep.getInhoud();
+            actieAanpassingGeldigheid = null;
+        }
+
+        final BrpGroep<T> brpGroep;
+        if (lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud) {
+            brpGroep = verwerkStap3CNationaliteit(lo3Groep, volgendeJuisteLo3Rij, lo3Groepen, brpGroepen, actie, actieAanpassingGeldigheid, actieCache);
+        } else {
+            brpGroep = verwerkStap3C(lo3Groep, volgendeJuisteLo3Rij, lo3Groepen, brpGroepen, actie, actieAanpassingGeldigheid);
+        }
+        return brpGroep;
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap3CNationaliteit(final TussenGroep<T> lo3Groep, final TussenGroep<T> volgendeJuisteLo3Rij,
+                                                                              final List<TussenGroep<T>> lo3Groepen, final List<BrpGroep<T>> brpGroepen,
+                                                                              final BrpActie actie, final BrpActie actieAanpassingGeldigheid,
+                                                                              final Map<Long, BrpActie> actieCache) {
+
+        final Lo3Historie lo3Historie = lo3Groep.getHistorie();
+        final BrpNationaliteitInhoud huidigeInhoud = (BrpNationaliteitInhoud) lo3Groep.getInhoud();
+
+        boolean isEindeBijhouding = false;
+        final BrpNationaliteitInhoud.Builder builder = new BrpNationaliteitInhoud.Builder(huidigeInhoud);
+        if (volgendeJuisteLo3Rij != null) {
+            final BrpNationaliteitInhoud volgendeInhoud = (BrpNationaliteitInhoud) volgendeJuisteLo3Rij.getInhoud();
+            builder.redenVerliesNederlandschapCode(volgendeInhoud.getRedenVerliesNederlandschapCode());
+            builder.eindeBijhouding(volgendeInhoud.getEindeBijhouding());
+            builder.migratieRedenBeeindigingNationaliteit(volgendeInhoud.getMigratieRedenBeeindigingNationaliteit());
+            builder.migratieDatum(volgendeInhoud.getMigratieDatum());
+            isEindeBijhouding = volgendeInhoud.isEindeBijhouding();
+        }
+
+        final T inhoud = (T) builder.build();
+        final BrpDatum datumAanvangGeldighed = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
+        final BrpDatumTijd datumTijdRegistratie = bepaalDatumTijdRegistratie(datumAanvangGeldighed, lo3Historie.getDatumVanOpneming(), brpGroepen);
+        final BrpCharacter nadereAanduidingVerval = maakNadereAanduidingVerval(lo3Historie.getIndicatieOnjuist());
+        final BrpDatum datumEindeGeldigheid;
+        final BrpDatumTijd datumTijdVerval;
+        final BrpActie teGebruikenActieAanpassingGeldigheid;
+        final BrpActie actieVerval;
+
+        if (isEindeBijhouding) {
+            LOGGER.trace("Stap 3c, aanmaken BrpGroep Nationaliteit waarbij in de volgende rij bijhouding beeindigd is ingevuld");
+            datumEindeGeldigheid = null;
+            datumTijdVerval = BrpDatumTijd.fromLo3Datum(volgendeJuisteLo3Rij.getHistorie().getDatumVanOpneming());
+            teGebruikenActieAanpassingGeldigheid = null;
+            actieVerval = maakActie(volgendeJuisteLo3Rij, actieCache);
+        } else {
+            LOGGER.trace("Stap 3c, aanmaken BrpGroep Nationaliteit waarbij in de volgende rij bijhouding beeindigd niet is ingevuld");
+            datumEindeGeldigheid = bepaalDatumEindeGeldigheidVoorStap3(volgendeJuisteLo3Rij, lo3Groep, lo3Groepen);
+            datumTijdVerval = bepaalDatumTijdVervalVoorStap3(volgendeJuisteLo3Rij, lo3Groep, lo3Groepen, datumTijdRegistratie);
+            teGebruikenActieAanpassingGeldigheid = actieAanpassingGeldigheid;
+            actieVerval = datumTijdVerval != null ? actie : null;
+
+        }
+
+        final BrpHistorie
+                historie =
+                new BrpHistorie(datumAanvangGeldighed, datumEindeGeldigheid, datumTijdRegistratie, datumTijdVerval, nadereAanduidingVerval);
+        return new BrpGroep<>(inhoud, historie, actie, actieVerval, teGebruikenActieAanpassingGeldigheid);
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap3C(final TussenGroep<T> lo3Groep, final TussenGroep<T> volgendeJuisteLo3Rij,
+                                                                 final List<TussenGroep<T>> lo3Groepen, final List<BrpGroep<T>> brpGroepen,
+                                                                 final BrpActie actie, final BrpActie actieAanpassingGeldigheid) {
+        LOGGER.trace("Stap 3c, aanmaken BrpGroep voor overige groepen");
+        final T volgendeInhoud = volgendeJuisteLo3Rij != null ? volgendeJuisteLo3Rij.getInhoud() : null;
+        final T inhoud = bepaalInhoud(lo3Groep.getInhoud(), volgendeInhoud);
+        final Lo3Historie lo3Historie = lo3Groep.getHistorie();
+        final BrpDatum datumAanvangGeldigheid = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
+        final BrpDatum datumEindeGeldigheid = bepaalDatumEindeGeldigheidVoorStap3(volgendeJuisteLo3Rij, lo3Groep, lo3Groepen);
+        final BrpDatumTijd datumTijdRegistratie = bepaalDatumTijdRegistratie(datumAanvangGeldigheid, lo3Historie.getDatumVanOpneming(), brpGroepen);
+        final BrpDatumTijd datumTijdVerval = bepaalDatumTijdVervalVoorStap3(volgendeJuisteLo3Rij, lo3Groep, lo3Groepen, datumTijdRegistratie);
+        final BrpActie actieVerval = datumTijdVerval == null ? null : actie;
+
+        final BrpHistorie
+                historie =
+                new BrpHistorie(datumAanvangGeldigheid, datumEindeGeldigheid, datumTijdRegistratie, datumTijdVerval,
+                        maakNadereAanduidingVerval(lo3Historie.getIndicatieOnjuist()));
+
+        return new BrpGroep<>(inhoud, historie, actie, actieVerval, actieAanpassingGeldigheid);
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap5(final TussenGroep<T> lo3Groep, final List<TussenGroep<T>> lo3Groepen,
+                                                                final List<BrpGroep<T>> brpGroepen, final BrpActie actie,
+                                                                final Map<Long, BrpActie> actieCache) {
+        LOGGER.debug("Stap 5, herkomst: " + lo3Groep.getLo3Herkomst());
+
+        if (isRijAlVerwerkt(lo3Groep.getDocumentatie(), brpGroepen)) {
+            LOGGER.trace("Stap 5a, rij is al gebruikt in stap 3 om een rij af te sluiten");
+            return null;
+        }
+
+        BrpGroep<T> brpGroep = null;
+
+        final Lo3Historie historie = lo3Groep.getHistorie();
+        final Lo3Datum ingangsdatumGeldigheid = historie.getIngangsdatumGeldigheid();
+        final BrpGroep<T>
+                laatstToegevoegdeRij =
+                getLaatstToegevoegdeRijMetNadereAanduidingVervalGevuldEnZelfdeDatumAanvanGeldigheid(brpGroepen, ingangsdatumGeldigheid);
+        LOGGER.trace(
+                "Stap 5b, laatst toegevoegde rij met nadere aanduiding verval gevuld en dezelfde datum aanvang geldigheid gevonden? " + (laatstToegevoegdeRij
+                        != null));
+        if (laatstToegevoegdeRij != null) {
+            final BrpHistorie laatsteHistorie = laatstToegevoegdeRij.getHistorie();
+            if (Objects.equals(laatsteHistorie.getDatumAanvangGeldigheid(), laatsteHistorie.getDatumEindeGeldigheid())) {
+                LOGGER.trace("Stap 5c, datum aanvang en einde geldigheid zijn gelijk");
+                TussenGroep<T>
+                        lo3GroepActieAanpassingGeldigheid =
+                        vindTussenGroepBijHerkomst(lo3Groepen, laatstToegevoegdeRij.getActieGeldigheid().getLo3Herkomst());
+                if (lo3GroepActieAanpassingGeldigheid != null && lo3GroepActieAanpassingGeldigheid.getHistorie().isOnjuist() && !historie.isOnjuist()) {
+                    brpGroep = verwerkStap5E(lo3Groep, laatstToegevoegdeRij, historie.getIngangsdatumGeldigheid(), brpGroepen, actie);
+                }
+            } else if (laatstToegevoegdeRij.getActieGeldigheid() == null && laatstToegevoegdeRij.getActieInhoud() == laatstToegevoegdeRij.getActieVerval()) {
+                verwerkStap5D(lo3Groep, lo3Groepen, brpGroepen, actie, actieCache, laatstToegevoegdeRij, laatsteHistorie);
+
+            } else {
+                brpGroep = verwerkStap5E(lo3Groep, laatstToegevoegdeRij, historie.getIngangsdatumGeldigheid(), brpGroepen, actie);
+            }
+        }
+        return brpGroep;
+    }
+
+    private <T extends BrpGroepInhoud> void verwerkStap5D(final TussenGroep<T> lo3Groep, final List<TussenGroep<T>> lo3Groepen,
+                                                          final List<BrpGroep<T>> brpGroepen, final BrpActie actie, final Map<Long, BrpActie> actieCache,
+                                                          final BrpGroep<T> laatstToegevoegdeRij, final BrpHistorie laatsteHistorie) {
+        LOGGER.trace("Stap 5d, actie aanpassing geldigheid is niet gevuld");
+        final int vervallenGroepIndex = brpGroepen.indexOf(laatstToegevoegdeRij);
+        brpGroepen.remove(laatstToegevoegdeRij);
+
+        final T inhoud = bepaalInhoud(laatstToegevoegdeRij.getInhoud(), lo3Groep.getInhoud());
+        final BrpDatum datumEindeGeldigheid = BrpDatum.fromLo3Datum(lo3Groep.getHistorie().getIngangsdatumGeldigheid());
+        final BrpHistorie historie = new BrpHistorie(laatsteHistorie.getDatumAanvangGeldigheid(), datumEindeGeldigheid,
+                laatsteHistorie.getDatumTijdRegistratie(), laatsteHistorie.getDatumTijdVerval(), laatsteHistorie.getNadereAanduidingVerval());
+        final BrpActie actieAanpassingGeldigheid;
+        if (zoekVolgendeJuisteRijMetGelijkeIngangsDatumGeldigheid(lo3Groep, lo3Groepen) != null) {
+            actieAanpassingGeldigheid = maakActie(actie, actieCache, BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE);
+        } else {
+            actieAanpassingGeldigheid = actie;
+        }
+
+        final BrpGroep<T> aangepast =
+                new BrpGroep<>(inhoud, historie, laatstToegevoegdeRij.getActieInhoud(), laatstToegevoegdeRij.getActieVerval(),
+                        actieAanpassingGeldigheid);
+        brpGroepen.add(vervallenGroepIndex, aangepast);
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap5E(final TussenGroep<T> lo3Groep, final BrpGroep<T> brpGroep,
+                                                                 final Lo3Datum ingangsdatumGeldigheid,
+                                                                 final List<BrpGroep<T>> brpGroepen, final BrpActie actie) {
+        LOGGER.trace("Stap 5e, actie aanpassing geldigheid is gevuld of gevolg van stap 5c");
+        final T inhoud = bepaalInhoud(brpGroep.getInhoud(), lo3Groep.getInhoud());
+        final BrpHistorie vorigeHistorie = brpGroep.getHistorie();
+        final BrpDatum datumAanvangGeldigheid = vorigeHistorie.getDatumAanvangGeldigheid();
+        final BrpDatum datumEindeGeldigheid = BrpDatum.fromLo3Datum(ingangsdatumGeldigheid);
+        final BrpDatumTijd datumTijdRegistratie = updateDatumTijdRegistratie(datumAanvangGeldigheid, vorigeHistorie.getDatumTijdRegistratie(), brpGroepen);
+        final BrpDatumTijd datumTijdVerval = vorigeHistorie.getDatumTijdVerval() != null ? datumTijdRegistratie : null;
+        final BrpHistorie
+                historie =
+                new BrpHistorie(datumAanvangGeldigheid, datumEindeGeldigheid, datumTijdRegistratie, datumTijdVerval,
+                        vorigeHistorie.getNadereAanduidingVerval());
+        final BrpActie actieVerval = brpGroep.getActieVerval() == null ? null : brpGroep.getActieInhoud();
+        return new BrpGroep<>(inhoud, historie, brpGroep.getActieInhoud(), actieVerval, actie);
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap6(final TussenGroep<T> lo3Groep, final List<BrpGroep<T>> brpGroepen, final BrpActie actie) {
+        LOGGER.debug("Stap 6, herkomst: " + lo3Groep.getLo3Herkomst());
+
+        if (isRijAlVerwerktVoorEindeBijhouding(lo3Groep.getDocumentatie(), brpGroepen)) {
+            LOGGER.trace("Stap 6a, rij is al gebruikt in stap 3 om een rij af te sluiten");
+            return null;
+        }
+
+        BrpGroep<T> brpGroep = null;
+        final List<BrpGroep<T>> nietVervallenGroepen = brpGroepen.stream().filter(groep -> groep.getActieVerval() == null).collect(Collectors.toList());
+        LOGGER.trace("Stap 6b, Aantal niet vervallen groepen gevonden: " + nietVervallenGroepen.size());
+
+        final BrpNationaliteitInhoud huidigeInhoud = (BrpNationaliteitInhoud) lo3Groep.getInhoud();
+        if (!nietVervallenGroepen.isEmpty()) {
+            LOGGER.trace("Stap 6c, per vervallen rij aanpassingen doen");
+            nietVervallenGroepen.forEach(groep -> {
+                final int vervallenGroepIndex = brpGroepen.indexOf(groep);
+                brpGroepen.remove(groep);
+                final BrpNationaliteitInhoud.Builder builder = new BrpNationaliteitInhoud.Builder((BrpNationaliteitInhoud) groep.getInhoud());
+                builder.eindeBijhouding(huidigeInhoud.getEindeBijhouding());
+                builder.migratieDatum(huidigeInhoud.getMigratieDatum());
+
+                final T inhoud = (T) builder.build();
+                final BrpHistorie groepHistorie = groep.getHistorie();
+                final BrpHistorie
+                        historie =
+                        new BrpHistorie(groepHistorie.getDatumAanvangGeldigheid(), groepHistorie.getDatumEindeGeldigheid(),
+                                groepHistorie.getDatumTijdRegistratie(),
+                                BrpDatumTijd.fromLo3Datum(lo3Groep.getHistorie().getDatumVanOpneming()), groepHistorie.getNadereAanduidingVerval());
+                final BrpGroep<T> aangepast = new BrpGroep<>(inhoud, historie, groep.getActieInhoud(), actie, groep.getActieGeldigheid());
+                brpGroepen.add(vervallenGroepIndex, aangepast);
+            });
+        } else {
+            final Lo3Historie lo3Historie = lo3Groep.getHistorie();
+            final Lo3Datum ingangsdatumGeldigheid = lo3Historie.getIngangsdatumGeldigheid();
+            final BrpGroep<T>
+                    laatstToegevoegdeRij =
+                    getLaatstToegevoegdeRijMetNadereAanduidingVervalGevuldEnZelfdeDatumAanvanGeldigheid(brpGroepen, ingangsdatumGeldigheid);
+            LOGGER.trace(
+                    "Stap 6d, laatst toegevoegde rij met nadere aanduiding verval gevuld en dezelfde datum aanvang geldigheid gevonden? " + (
+                            laatstToegevoegdeRij
+                                    != null));
+            if (laatstToegevoegdeRij != null) {
+                if (!laatstToegevoegdeRij.getActieInhoud().equalsId(laatstToegevoegdeRij.getActieVerval())
+                        || laatstToegevoegdeRij.getActieGeldigheid() != null) {
+                    LOGGER.trace("Stap 6e, kopie maken laatst toegevoegde rij en aanpassingen verwerken");
+                    final BrpNationaliteitInhoud laatsteInhoud = (BrpNationaliteitInhoud) laatstToegevoegdeRij.getInhoud();
+                    final BrpNationaliteitInhoud.Builder builder = new BrpNationaliteitInhoud.Builder(laatsteInhoud);
+                    builder.redenVerliesNederlandschapCode(huidigeInhoud.getRedenVerliesNederlandschapCode());
+                    builder.eindeBijhouding(huidigeInhoud.getEindeBijhouding());
+                    builder.migratieRedenBeeindigingNationaliteit(huidigeInhoud.getMigratieRedenBeeindigingNationaliteit());
+                    builder.migratieDatum(huidigeInhoud.getMigratieDatum());
+
+                    final T inhoud = (T) builder.build();
+
+                    final BrpHistorie laatsteHistorie = laatstToegevoegdeRij.getHistorie();
+                    final BrpDatum datumAanvangGeldigheid = laatsteHistorie.getDatumAanvangGeldigheid();
+                    final BrpDatumTijd
+                            datumTijdRegistratie =
+                            updateDatumTijdRegistratie(datumAanvangGeldigheid, laatsteHistorie.getDatumTijdRegistratie(), brpGroepen);
+                    final BrpHistorie
+                            historie =
+                            new BrpHistorie(datumAanvangGeldigheid, null, datumTijdRegistratie,
+                                    BrpDatumTijd.fromLo3Datum(lo3Groep.getHistorie().getDatumVanOpneming()), laatsteHistorie.getNadereAanduidingVerval());
+                    brpGroep = new BrpGroep<>(inhoud, historie, laatstToegevoegdeRij.getActieInhoud(), actie, null);
+                } else if (laatstToegevoegdeRij.getActieInhoud().equalsId(laatstToegevoegdeRij.getActieVerval())
+                        && laatstToegevoegdeRij.getActieGeldigheid() == null) {
+                    LOGGER.trace("Stap 6f, aanpassen laatst toegevoegde rij, actie inhoud is gelijk aan actie verval");
+                    final int vervallenGroepIndex = brpGroepen.indexOf(laatstToegevoegdeRij);
+                    brpGroepen.remove(laatstToegevoegdeRij);
+
+                    final BrpHistorie laatsteHistorie = laatstToegevoegdeRij.getHistorie();
+                    final BrpHistorie
+                            historie =
+                            new BrpHistorie(laatsteHistorie.getDatumAanvangGeldigheid(), null, laatsteHistorie.getDatumTijdRegistratie(),
+                                    BrpDatumTijd.fromLo3Datum(lo3Groep.getHistorie().getDatumVanOpneming()), laatsteHistorie.getNadereAanduidingVerval());
+                    final BrpNationaliteitInhoud.Builder
+                            builder =
+                            new BrpNationaliteitInhoud.Builder((BrpNationaliteitInhoud) laatstToegevoegdeRij.getInhoud());
+                    builder.redenVerliesNederlandschapCode(huidigeInhoud.getRedenVerliesNederlandschapCode());
+                    builder.eindeBijhouding(huidigeInhoud.getEindeBijhouding());
+                    builder.migratieRedenBeeindigingNationaliteit(huidigeInhoud.getMigratieRedenBeeindigingNationaliteit());
+                    builder.migratieDatum(huidigeInhoud.getMigratieDatum());
+
+                    final T inhoud = (T) builder.build();
+
+                    final BrpGroep<T>
+                            aangepast =
+                            new BrpGroep<>(inhoud, historie, laatstToegevoegdeRij.getActieInhoud(), actie, null);
+                    brpGroepen.add(vervallenGroepIndex, aangepast);
+                }
+            }
+        }
+        return brpGroep;
+    }
+
+    private <T extends BrpGroepInhoud> boolean isRijAlVerwerkt(final Lo3Documentatie documentatie, final List<BrpGroep<T>> brpGroepen) {
+        // Is deze actie al gebruikt als actie aanpassing geldigheid bij een gemaakte brp rij?
+        return brpGroepen.stream()
+                .anyMatch(brpGroep -> brpGroep.getActieGeldigheid() != null && Objects
+                        .equals(documentatie.getId(), brpGroep.getActieGeldigheid().getId()));
+    }
+
+    private <T extends BrpGroepInhoud> boolean isRijAlVerwerktVoorEindeBijhouding(final Lo3Documentatie documentatie, final List<BrpGroep<T>> brpGroepen) {
+        // Is deze actie al gebruikt als actie verval bij een gemaakte brp rij waarbij ook einde bijhouding is ingevuld?
+        return brpGroepen.stream()
+                .anyMatch(brpGroep -> brpGroep.getInhoud() instanceof BrpNationaliteitInhoud &&
+                        ((BrpNationaliteitInhoud) brpGroep.getInhoud()).isEindeBijhouding()
+                        && brpGroep.getActieVerval() != null && Objects
+                        .equals(documentatie.getId(), brpGroep.getActieVerval().getId()));
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap4(final TussenGroep<T> lo3Groep, final List<TussenGroep<T>> lo3Groepen,
+                                                                final List<BrpGroep<T>> brpGroepen, final BrpActie actie,
+                                                                final Map<Long, BrpActie> actieCache) {
+        LOGGER.debug("Stap 4, herkomst: " + lo3Groep.getLo3Herkomst());
+
+        final BrpActie teGebruikenActie = bepaalTeGebruikenActie(lo3Groep, actie, actieCache);
+
+        final Lo3Datum ingangsdatumGeldigheid = lo3Groep.getHistorie().getIngangsdatumGeldigheid();
+        final BrpGroep<T>
+                laatstToegevoegdeRij =
+                getLaatstToegevoegdeRijMetZelfdeOfKleinereDatumAanvangGeldigheid(brpGroepen, ingangsdatumGeldigheid);
+        LOGGER.trace("Stap 4a, laatst toegevoegde rij met zelfde of kleinere datum aanvang geldigheid gevonden? " + (laatstToegevoegdeRij != null));
+
+        BrpGroep<T> brpGroep = null;
+        if (laatstToegevoegdeRij != null) {
+            final BrpActie laatstToegevoegdeRijActieInhoud = laatstToegevoegdeRij.getActieInhoud();
+            final BrpGroep<T> nietVervallenGroep = zoekGroepMetZelfdeActieInhoudGeenNadereAanduidingVerval(laatstToegevoegdeRijActieInhoud, brpGroepen);
+            LOGGER.trace("Stap 4b, groep met dezelfde actie inhoud, maar nadere aanduiding verval niet gevuld gevonden? " + (nietVervallenGroep != null));
+
+            if (!verwerkStap4C(lo3Groep, nietVervallenGroep)) {
+                brpGroep = verwerkStap4DenE(lo3Groep, lo3Groepen, brpGroepen, actieCache, teGebruikenActie, laatstToegevoegdeRij);
+            }
+        }
+        return brpGroep;
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap4DenE(final TussenGroep<T> lo3Groep, final List<TussenGroep<T>> lo3Groepen,
+                                                                    final List<BrpGroep<T>> brpGroepen,
+                                                                    final Map<Long, BrpActie> actieCache, final BrpActie teGebruikenActie,
+                                                                    final BrpGroep<T> laatstToegevoegdeRij) {
+        final boolean
+                voldoetAanBasisControle4D =
+                laatstToegevoegdeRij.getHistorie().getDatumTijdVerval() == null || laatstToegevoegdeRij.getActieGeldigheid() != null;
+        final boolean
+                voldoetAanControle4E =
+                laatstToegevoegdeRij.getHistorie().getDatumTijdVerval() != null && laatstToegevoegdeRij.getActieGeldigheid() == null;
+        BrpGroep<T> brpGroep = null;
+
+        if (lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud) {
+            LOGGER.trace("Stap 4d en 4e voor Nationaliteit groepen.");
+            if (voldoetAanBasisControle4D
+                    || ((BrpNationaliteitInhoud) laatstToegevoegdeRij.getInhoud()).isEindeBijhouding()) {
+                brpGroep = verwerkStap4DNationaliteit(lo3Groep, lo3Groepen, brpGroepen, teGebruikenActie, laatstToegevoegdeRij);
+            } else if (voldoetAanControle4E) {
+                verwerkStap4ENationaliteit(lo3Groep, brpGroepen, teGebruikenActie, actieCache, laatstToegevoegdeRij);
+            }
+        } else {
+            LOGGER.trace("Stap 4d en 4e voor overige groepen.");
+            if (voldoetAanBasisControle4D) {
+                brpGroep = verwerkStap4D(lo3Groep, brpGroepen, teGebruikenActie, laatstToegevoegdeRij);
+            } else if (voldoetAanControle4E) {
+                verwerkStap4E(lo3Groep, brpGroepen, teGebruikenActie, actieCache, laatstToegevoegdeRij);
+            }
+        }
+        return brpGroep;
+    }
+
+    private <T extends BrpGroepInhoud> BrpActie bepaalTeGebruikenActie(final TussenGroep<T> lo3Groep, final BrpActie actie,
+                                                                       final Map<Long, BrpActie> actieCache) {
+        final BrpActie teGebruikenActie;
+        if (lo3Groep.isOorsprongVoorkomenLeeg()) {
+            LOGGER.trace("lo3 groep is leeg, aanpassen van de soort actie code naar " + BrpSoortActieCode.CONVERSIE_GBA_LEEG_CATEGORIE_ONJUIST);
+            teGebruikenActie = maakActie(actie, actieCache, BrpSoortActieCode.CONVERSIE_GBA_LEEG_CATEGORIE_ONJUIST);
+        } else {
+            teGebruikenActie = actie;
+        }
+        return teGebruikenActie;
+    }
+
+    private <T extends BrpGroepInhoud> T bepaalInhoud(T huidigeInhoud, T andereInhoud) {
+        final T inhoud;
+        if (andereInhoud != null) {
+            if (huidigeInhoud instanceof BrpStaatloosIndicatieInhoud) {
+                final BrpStaatloosIndicatieInhoud indicatieInhoud = (BrpStaatloosIndicatieInhoud) huidigeInhoud;
+                inhoud =
+                        (T) new BrpStaatloosIndicatieInhoud(indicatieInhoud.getIndicatie(), indicatieInhoud.getMigratieRedenOpnameNationaliteit(),
+                                ((BrpStaatloosIndicatieInhoud) andereInhoud).getMigratieRedenBeeindigingNationaliteit());
+            } else if (huidigeInhoud instanceof BrpVastgesteldNietNederlanderIndicatieInhoud) {
+                final BrpVastgesteldNietNederlanderIndicatieInhoud indicatieInhoud = (BrpVastgesteldNietNederlanderIndicatieInhoud) huidigeInhoud;
+                inhoud =
+                        (T) new BrpVastgesteldNietNederlanderIndicatieInhoud(indicatieInhoud.getIndicatie(),
+                                indicatieInhoud.getMigratieRedenOpnameNationaliteit(),
+                                ((BrpVastgesteldNietNederlanderIndicatieInhoud) andereInhoud).getMigratieRedenBeeindigingNationaliteit());
+            } else if (huidigeInhoud instanceof BrpBehandeldAlsNederlanderIndicatieInhoud) {
+                final BrpBehandeldAlsNederlanderIndicatieInhoud indicatieInhoud = (BrpBehandeldAlsNederlanderIndicatieInhoud) huidigeInhoud;
+                inhoud =
+                        (T) new BrpBehandeldAlsNederlanderIndicatieInhoud(indicatieInhoud.getIndicatie(), indicatieInhoud.getMigratieRedenOpnameNationaliteit(),
+                                ((BrpBehandeldAlsNederlanderIndicatieInhoud) andereInhoud).getMigratieRedenBeeindigingNationaliteit());
+            } else if (huidigeInhoud instanceof BrpNationaliteitInhoud) {
+                final BrpNationaliteitInhoud.Builder builder = new BrpNationaliteitInhoud.Builder((BrpNationaliteitInhoud) huidigeInhoud);
+                final BrpNationaliteitInhoud andereNationaliteitInhoud = (BrpNationaliteitInhoud) andereInhoud;
+                builder.redenVerliesNederlandschapCode(andereNationaliteitInhoud.getRedenVerliesNederlandschapCode());
+                builder.eindeBijhouding(andereNationaliteitInhoud.getEindeBijhouding());
+                builder.migratieRedenBeeindigingNationaliteit(andereNationaliteitInhoud.getMigratieRedenBeeindigingNationaliteit());
+                builder.migratieDatum(andereNationaliteitInhoud.getMigratieDatum());
+                inhoud = (T) builder.build();
+            } else {
+                inhoud = huidigeInhoud;
+            }
+        } else {
+            inhoud = huidigeInhoud;
         }
         return inhoud;
     }
 
-    /**
-     * 4. Als de LO3-rij een lege onjuiste rij is:
-     */
-    /*
-     * Executable statement count - Dit is express om de programmatuur veel te laten lijken op het specificatie document
-     * en daardoor goed onderhoudbaar te houden
-     */
-    private <T extends BrpGroepInhoud> BrpGroep<T> converteerLegeOnjuisteRij(
-        final TussenGroep<T> lo3Groep,
-        final List<BrpGroep<T>> brpGroepen,
-        final Map<Long, BrpActie> actieCache)
-    {
-        LOG.debug("converteerLegeOnjuisteRij(lo3groep={}) // Situatie 4. Als de LO3-rij een lege onjuiste rij is", lo3Groep);
-        final Lo3Historie lo3Historie = lo3Groep.getHistorie();
-
-        // a. Zoek de BRP-rij die als laatste toegevoegd is, die een kleinere of gelijke datum aanvang geldigheid heeft.
-        final BrpGroep<T> laatste = zoekLaatsteRij(brpGroepen, lo3Groep.getHistorie().getIngangsdatumGeldigheid());
-        LOG.debug("laatste={}", laatste);
-
-        if (laatste == null) {
-            return null;
-        }
-
-        final BrpHistorie laatsteHistorie = laatste.getHistorie();
-
-        // b. Zoek of er een BRP-rij is, waarbij actie inhoud gelijk is aan de in stap a gevonden BRP-rij, en die niet
-        // vervallen is
-        final BrpGroep<T> nietVervallenRij = bepaalNietOnjuisteRij(laatste.getActieInhoud(), brpGroepen);
-        LOG.debug("nietVervallenRij={}", nietVervallenRij);
-
-        // c. Indien rij gevonden en registratie van actie aanp. is kleiner aan datum van opneming: niks doen.
-        if (nietVervallenRij != null) {
-            final BrpDatumTijd registratieAanpassingGeldigheid =
-                    nietVervallenRij.getActieGeldigheid() == null ? null : nietVervallenRij.getActieGeldigheid().getDatumTijdRegistratie();
-
-            if (registratieAanpassingGeldigheid != null
-                && registratieAanpassingGeldigheid.compareTo(BrpDatumTijd.fromLo3Datum(lo3Historie.getDatumVanOpneming())) < 0)
-            {
-                LOG.debug("Voorwaarde c geldt -> niks doen");
-                return null;
-            }
-        }
-
-        // Rij gevonden in stap a id einde bijhouding?
-        final boolean isEindeBijhouding =
-                laatste.getInhoud() instanceof BrpNationaliteitInhoud && ((BrpNationaliteitInhoud) laatste.getInhoud()).isEindeBijhouding();
-
-        final BrpDatumTijd laatsteDatumTijdVerval = laatste.getHistorie().getDatumTijdVerval();
-        if (laatsteDatumTijdVerval == null || laatste.getActieGeldigheid() != null || isEindeBijhouding) {
-            LOG.debug("Voorwaarde d geldt -> maak kopie van rij");
-            // d. Als de gevonden rij (uit stap a) niet vervallen is of Actie aanpassing geldigheid gevuld is:
-            // Maak een kopie van de BRP rij...
-
-            final boolean isNationaliteitInhoud = lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud;
-            // Inhoud
-            final T inhoud;
-            final BrpActie actieInhoud = laatste.getActieInhoud();
-            final BrpActie actieGeldigheid;
-            final BrpActie actieVerval;
-
-            // Historie
-            final BrpDatum aanvangGeldigheid = laatsteHistorie.getDatumAanvangGeldigheid();
-            final BrpDatumTijd datumTijdRegistratie =
-                    Lo3HistorieConversieVariant.updateDatumTijdRegistratie(aanvangGeldigheid, laatsteHistorie.getDatumTijdRegistratie(), brpGroepen);
-            final BrpDatum eindeGeldigheid;
-            final BrpDatumTijd datumTijdVerval;
-
-            if (isNationaliteitInhoud && ((BrpNationaliteitInhoud) lo3Groep.getInhoud()).isEindeBijhouding()) {
-                inhoud = bepaalEindeBijhoudingNationaliteit(laatste.getInhoud(), lo3Groep.getInhoud());
-
-                final BrpDatumTijd lo3GroepTijdstipRegistratie =
-                        Lo3HistorieConversieVariant.bepaalDatumTijdRegistratie(
-                            BrpDatum.fromLo3Datum(lo3Groep.getHistorie().getIngangsdatumGeldigheid()),
-                            lo3Groep,
-                            brpGroepen);
-                datumTijdVerval = new BrpDatumTijd(lo3GroepTijdstipRegistratie.getJavaDate(), null);
-                actieVerval = maakActieGeldigheid(lo3Groep, actieCache, lo3Historie);
-                eindeGeldigheid = null;
-                actieGeldigheid = null;
-            } else {
-                if (isNationaliteitInhoud) {
-                    inhoud = bepaalVerliesNederlanderschap(laatste.getInhoud(), lo3Groep.getInhoud());
-                } else if (lo3Groep.getInhoud() instanceof AbstractBrpIndicatieGroepInhoud) {
-                    inhoud = bepaalAbstractIndicatieBeeindigingNationaliteit(laatste.getInhoud(), lo3Groep.getInhoud());
-                } else {
-                    inhoud = laatste.getInhoud();
-                }
-
-                // Historie
-                eindeGeldigheid = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
-                datumTijdVerval = datumTijdRegistratie;
-
-                // Acties
-                actieGeldigheid = maakActieGeldigheid(lo3Groep, actieCache, lo3Historie);
-                actieVerval = laatste.getActieInhoud();
-            }
-
-            final BrpHistorie historie =
-                    new BrpHistorie(aanvangGeldigheid, eindeGeldigheid, datumTijdRegistratie, datumTijdVerval, maakNadereAanduidingVerval(lo3Historie));
-            return new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieGeldigheid);
-        } else {
-            LOG.debug("Voorwaarde e geldt -> overschrijf rij");
-            // e. Als de BRP-rij vervallen is en Actie aanpassing geldigheid is niet gevuld
-            // Overschrijf in de gevo nden BRP-rij...
-
-            // Inhoud
-            T inhoud;
-            if (lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud) {
-                inhoud = bepaalVerliesNederlanderschap(laatste.getInhoud(), lo3Groep.getInhoud());
-            } else if (lo3Groep.getInhoud() instanceof AbstractBrpIndicatieGroepInhoud) {
-                inhoud = bepaalAbstractIndicatieBeeindigingNationaliteit(laatste.getInhoud(), lo3Groep.getInhoud());
-            } else {
-                inhoud = laatste.getInhoud();
-            }
-
-            final BrpDatum aanvangGeldigheid = laatsteHistorie.getDatumAanvangGeldigheid();
-            final BrpDatumTijd datumTijdRegistratie = laatsteHistorie.getDatumTijdRegistratie();
-
-            // Acties
-            final BrpActie actieInhoud;
-            if (laatsteHistorie.getDatumTijdVerval() != null && !Validatie.isAttribuutGevuld(laatsteHistorie.getNadereAanduidingVerval())) {
-                actieInhoud = maakActie(laatste.getActieInhoud(), actieCache, BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE);
-            } else {
-                actieInhoud = laatste.getActieInhoud();
-            }
-            final BrpDatum eindeGeldigheid;
-            final BrpActie actieVerval;
-            final BrpDatumTijd datumVanOpneming;
-            final BrpActie actieGeldigheid;
-            if (lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud && ((BrpNationaliteitInhoud) lo3Groep.getInhoud()).isEindeBijhouding()) {
-                // Historie
-                final BrpNationaliteitInhoud.Builder builder =
-                        new BrpNationaliteitInhoud.Builder(
-                            (BrpNationaliteitInhoud) inhoud,
-                            new BrpBoolean(Boolean.TRUE),
-                            BrpDatum.fromLo3Datum(lo3Groep.getHistorie().getIngangsdatumGeldigheid()));
-                inhoud = (T) builder.build();
-
-                eindeGeldigheid = null;
-                datumVanOpneming = BrpDatumTijd.fromLo3Datum(lo3Historie.getDatumVanOpneming());
-                actieGeldigheid = null;
-                actieVerval = maakActieGeldigheid(lo3Groep, actieCache, lo3Historie);
-            } else {
-                // Historie
-                eindeGeldigheid = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
-                datumVanOpneming = laatsteHistorie.getDatumTijdRegistratie();
-                actieGeldigheid = maakActieGeldigheid(lo3Groep, actieCache, lo3Historie);
-                actieVerval = actieInhoud;
-            }
-            final BrpHistorie historie =
-                    new BrpHistorie(aanvangGeldigheid, eindeGeldigheid, datumTijdRegistratie, datumVanOpneming, maakNadereAanduidingVerval(lo3Historie));
-
-            final BrpGroep<T> result = new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieGeldigheid);
-
-            // vervang laatste rij met result
-            final int laatsteIndex = brpGroepen.indexOf(laatste);
-            brpGroepen.set(laatsteIndex, result);
-            return null;
-        }
-    }
-
-    private <T extends BrpGroepInhoud> BrpActie maakActieGeldigheid(
-        final TussenGroep<T> lo3Groep,
-        final Map<Long, BrpActie> actieCache,
-        final Lo3Historie lo3Historie)
-    {
-        final BrpSoortActieCode soortActieCode;
-        if (lo3Groep.isOorsprongVoorkomenLeeg()) {
-            soortActieCode = BrpSoortActieCode.CONVERSIE_GBA_LEEG_CATEGORIE_ONJUIST;
-        } else {
-            soortActieCode = BrpSoortActieCode.CONVERSIE_GBA;
-        }
-        return maakActie(lo3Groep.getDocumentatie(), lo3Historie, lo3Groep.getLo3Herkomst(), actieCache, soortActieCode);
-    }
-
-    /**
-     * 5. Als de LO3-rij een lege juiste rij is:
-     */
-    /*
-     * Executable statement count - Dit is express om de programmatuur veel te laten lijken op het specificatie document
-     * en daardoor goed onderhoudbaar te houden
-     */
-    private <T extends BrpGroepInhoud> BrpGroep<T> converteerLegeJuisteRij(
-        final TussenGroep<T> lo3Groep,
-        final List<TussenGroep<T>> lo3Groepen,
-        final List<BrpGroep<T>> brpGroepen,
-        final Map<Long, BrpActie> actieCache)
-    {
-
-        // a. Als deze rij al gebruikt is als einddatum bij een juiste, gevulde rij, dan niks doen.
-        if (isAlsEinddatumGebruiktBijEenJuisteGevuldeRij(lo3Groep.getDocumentatie(), brpGroepen)) {
-            return null;
-        }
-
-        final Lo3Historie lo3Historie = lo3Groep.getHistorie();
-        final T lo3Inhoud = lo3Groep.getInhoud();
-        final boolean isEindeBijhoudingNationaliteit =
-                lo3Inhoud instanceof BrpNationaliteitInhoud && ((BrpNationaliteitInhoud) lo3Inhoud).isEindeBijhouding();
-
-        // b. Zoek de laatste toegevoegde BRP-rij die vervallen is en een gelijke datum aanvang geldigheid heeft.
-        final BrpGroep<T> laatste = zoekVervallenRij(brpGroepen, lo3Groep.getHistorie().getIngangsdatumGeldigheid());
-        if (laatste == null) {
-            // Uitzondering bij ouder betrokkenheid
-            if (lo3Groep.getInhoud() instanceof BrpOuderInhoud) {
-                // Als er een rij is met een oudere datumtijd registratie en een datum aanvang 0. Dan moet de actie
-                // voor deze groep daarbij worden opgenomen als actie aanpassing geldigheid (en einddatum geldig)
-                final BrpGroep<T> ouderUitzondering = zoekOuderUitzondering(brpGroepen, lo3Groep.getHistorie().getDatumVanOpneming());
-                if (ouderUitzondering != null) {
-                    final BrpHistorie hist = ouderUitzondering.getHistorie();
-                    final BrpHistorie historie =
-                            new BrpHistorie(
-                                hist.getDatumAanvangGeldigheid(),
-                                BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid()),
-                                hist.getDatumTijdRegistratie(),
-                                hist.getDatumTijdVerval(),
-                                hist.getNadereAanduidingVerval());
-
-                    brpGroepen.set(
-                        brpGroepen.indexOf(ouderUitzondering),
-                        new BrpGroep<>(
-                            ouderUitzondering.getInhoud(),
-                            historie,
-                            ouderUitzondering.getActieInhoud(),
-                            ouderUitzondering.getActieVerval(),
-                            maakActie(lo3Groep.getDocumentatie(), lo3Historie, lo3Groep.getLo3Herkomst(), actieCache)));
-                }
-            }
-
-            return null;
-        }
-
-        final BrpHistorie laatsteHistorie = laatste.getHistorie();
-
-        // c. Als in de gevonden rij uit stap b Datum einde geldigheid gelijk is aan datum aanvang geldigheid: doe niks
-        if (AbstractBrpAttribuutMetOnderzoek.equalsWaarde(
-            laatste.getHistorie().getDatumAanvangGeldigheid(),
-            laatste.getHistorie().getDatumEindeGeldigheid()))
-        {
-            final TussenGroep<T> vervallenLo3Groep = vindLo3GroepBijHerkomst(lo3Groepen, laatste.getActieGeldigheid().getLo3Herkomst());
-
-            if (!lo3Groep.getHistorie().isOnjuist() && vervallenLo3Groep.getHistorie().isOnjuist()) {
-                return converteerLegeJuisteRijStap5e(
-                    lo3Groep,
-                    brpGroepen,
-                    actieCache,
-                    lo3Historie,
-                    isEindeBijhoudingNationaliteit,
-                    laatste,
-                    laatsteHistorie);
-            }
-            return null;
-        }
-
-        if (laatste.getActieGeldigheid() == null && laatste.getActieInhoud() == laatste.getActieVerval()) {
-            // d. Als in de gevonden BRP-rij uit stap b Actie aanpassing geldigheid nog leeg is:
-            // Overschrijf in de gevonden BRP-rij ...
-            final T inhoud;
-            final BrpDatum aanvangGeldigheid = laatsteHistorie.getDatumAanvangGeldigheid();
-            final BrpDatum eindeGeldigheid;
-            final BrpDatumTijd datumTijdRegistratie = laatsteHistorie.getDatumTijdRegistratie();
-            final BrpDatumTijd datumTijdVerval;
-            final BrpCharacter nadereAanduidingVerval = laatsteHistorie.getNadereAanduidingVerval();
-            final BrpActie actieInhoud = laatste.getActieInhoud();
-            final BrpActie actieGeldigheid;
-            final BrpActie actieVerval;
-
-            if (isEindeBijhoudingNationaliteit) {
-                inhoud = bepaalEindeBijhoudingNationaliteit(laatste.getInhoud(), lo3Groep.getInhoud());
-                eindeGeldigheid = null;
-                actieGeldigheid = null;
-                datumTijdVerval = BrpDatumTijd.fromLo3Datum(lo3Groep.getHistorie().getDatumVanOpneming());
-                actieVerval = maakActie(lo3Groep.getDocumentatie(), lo3Historie, lo3Groep.getLo3Herkomst(), actieCache);
-            } else {
-                // Inhoud
-                if (lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud) {
-                    inhoud = bepaalVerliesNederlanderschap(laatste.getInhoud(), lo3Groep.getInhoud());
-                } else if (lo3Groep.getInhoud() instanceof AbstractBrpIndicatieGroepInhoud) {
-                    inhoud = bepaalAbstractIndicatieBeeindigingNationaliteit(laatste.getInhoud(), lo3Groep.getInhoud());
-                } else {
-                    inhoud = laatste.getInhoud();
-                }
-
-                // Historie
-                eindeGeldigheid = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
-                datumTijdVerval = laatsteHistorie.getDatumTijdVerval();
-
-                // Acties
-                final TussenGroep<T> naVolgendeJuisteRij = bepaalVolgendeJuisteGroep(lo3Groep, lo3Groepen);
-                final BrpSoortActieCode soortActieGeldigheid;
-                // Als er nog een juiste rij na de volgende rij is die dezelfde ingangsdatum geldigheid heeft,
-                // markeer dan deze actie aanpassing geldigheid als behorend bij de materiele historie in Lo3.
-                // Dit ten behoeve van de terugconversie.
-                if (naVolgendeJuisteRij != null
-                    && AbstractLo3Element.equalsWaarde(
-                        naVolgendeJuisteRij.getHistorie().getIngangsdatumGeldigheid(),
-                        lo3Groep.getHistorie().getIngangsdatumGeldigheid()))
-                {
-                    soortActieGeldigheid = BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE;
-                } else {
-                    soortActieGeldigheid = BrpSoortActieCode.CONVERSIE_GBA;
-                }
-
-                actieGeldigheid = maakActie(lo3Groep.getDocumentatie(), lo3Historie, lo3Groep.getLo3Herkomst(), actieCache, soortActieGeldigheid);
-                actieVerval = laatste.getActieVerval();
-            }
-
-            final BrpHistorie historie =
-                    new BrpHistorie(aanvangGeldigheid, eindeGeldigheid, datumTijdRegistratie, datumTijdVerval, nadereAanduidingVerval);
-            final BrpGroep<T> result = new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieGeldigheid);
-
-            // vervang laatste rij met result
-            final int laatsteIndex = brpGroepen.indexOf(laatste);
-            brpGroepen.set(laatsteIndex, result);
-            return null;
-        } else {
-            // e. Als in de gevonden BRP-rij uit stap b Actie aanpassing geldigheid gevuld is:
-            // Maak een kopie van de BRP-rij...
-            return converteerLegeJuisteRijStap5e(lo3Groep, brpGroepen, actieCache, lo3Historie, isEindeBijhoudingNationaliteit, laatste, laatsteHistorie);
-        }
-    }
-
-    private <T extends BrpGroepInhoud> BrpGroep<T> converteerLegeJuisteRijStap5e(
-        final TussenGroep<T> lo3Groep,
-        final List<BrpGroep<T>> brpGroepen,
-        final Map<Long, BrpActie> actieCache,
-        final Lo3Historie lo3Historie,
-        final boolean isEindeBijhoudingNationaliteit,
-        final BrpGroep<T> laatste,
-        final BrpHistorie laatsteHistorie)
-    {
-        if (isEindeBijhoudingNationaliteit) {
-            return kopieerEindeBijhoudingBrpRij(lo3Groep, brpGroepen, actieCache, lo3Historie, laatste, laatsteHistorie);
-        } else {
-            return kopieerBrpRij(lo3Groep, brpGroepen, actieCache, lo3Historie, laatste, laatsteHistorie);
-        }
-    }
-
-    private <T extends BrpGroepInhoud> BrpGroep<T> kopieerEindeBijhoudingBrpRij(
-        final TussenGroep<T> lo3Groep,
-        final List<BrpGroep<T>> brpGroepen,
-        final Map<Long, BrpActie> actieCache,
-        final Lo3Historie lo3Historie,
-        final BrpGroep<T> laatste,
-        final BrpHistorie laatsteHistorie)
-    {
-        final T inhoud = bepaalEindeBijhoudingNationaliteit(laatste.getInhoud(), lo3Groep.getInhoud());
-
-        // Historie
-        final BrpDatum aanvangGeldigheid = laatsteHistorie.getDatumAanvangGeldigheid();
-        final BrpDatum eindeGeldigheid = null;
-        final BrpDatumTijd datumTijdRegistratie =
-                Lo3HistorieConversieVariant.updateDatumTijdRegistratie(aanvangGeldigheid, laatste.getHistorie().getDatumTijdRegistratie(), brpGroepen);
-        final BrpDatumTijd datumTijdVerval = BrpDatumTijd.fromLo3Datum(lo3Groep.getHistorie().getDatumVanOpneming());
-
-        final BrpCharacter nadereAanduidingVerval = laatsteHistorie.getNadereAanduidingVerval();
-        final BrpHistorie historie = new BrpHistorie(aanvangGeldigheid, eindeGeldigheid, datumTijdRegistratie, datumTijdVerval, nadereAanduidingVerval);
-
-        // Acties
-        final BrpActie actieInhoud = laatste.getActieInhoud();
-        final BrpActie actieGeldigheid = null;
-        final BrpActie actieVerval = maakActie(lo3Groep.getDocumentatie(), lo3Historie, lo3Groep.getLo3Herkomst(), actieCache);
-
-        return new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieGeldigheid);
-    }
-
-    private <T extends BrpGroepInhoud> BrpGroep<T> kopieerBrpRij(
-        final TussenGroep<T> lo3Groep,
-        final List<BrpGroep<T>> brpGroepen,
-        final Map<Long, BrpActie> actieCache,
-        final Lo3Historie lo3Historie,
-        final BrpGroep<T> laatste,
-        final BrpHistorie laatsteHistorie)
-    {
-        // Inhoud
-        final T inhoud;
-        if (lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud) {
-            if (((BrpNationaliteitInhoud) lo3Groep.getInhoud()).isEindeBijhouding()) {
-                inhoud = bepaalEindeBijhoudingNationaliteit(laatste.getInhoud(), lo3Groep.getInhoud());
-            } else {
-                inhoud = bepaalVerliesNederlanderschap(laatste.getInhoud(), lo3Groep.getInhoud());
-            }
-        } else if (lo3Groep.getInhoud() instanceof AbstractBrpIndicatieGroepInhoud) {
-            inhoud = bepaalAbstractIndicatieBeeindigingNationaliteit(laatste.getInhoud(), lo3Groep.getInhoud());
-        } else {
-            inhoud = laatste.getInhoud();
-        }
-
-        // Historie
-        final BrpDatum aanvangGeldigheid = laatsteHistorie.getDatumAanvangGeldigheid();
-        final BrpDatum eindeGeldigheid = BrpDatum.fromLo3Datum(lo3Historie.getIngangsdatumGeldigheid());
-        final BrpDatumTijd datumTijdRegistratie =
-                Lo3HistorieConversieVariant.updateDatumTijdRegistratie(aanvangGeldigheid, laatste.getHistorie().getDatumTijdRegistratie(), brpGroepen);
-        final BrpDatumTijd datumTijdVerval;
-        if (laatsteHistorie.getDatumTijdVerval() != null && laatsteHistorie.getDatumTijdVerval().isInhoudelijkGevuld()) {
-            datumTijdVerval = datumTijdRegistratie;
-        } else {
-            datumTijdVerval = null;
-        }
-        final BrpCharacter nadereAanduidingVerval = laatsteHistorie.getNadereAanduidingVerval();
-        final BrpHistorie historie = new BrpHistorie(aanvangGeldigheid, eindeGeldigheid, datumTijdRegistratie, datumTijdVerval, nadereAanduidingVerval);
-
-        // Acties
-        final BrpActie actieInhoud = laatste.getActieInhoud();
-        final BrpActie actieGeldigheid = maakActie(lo3Groep.getDocumentatie(), lo3Historie, lo3Groep.getLo3Herkomst(), actieCache);
-        BrpActie actieVerval = null;
-        if (laatste.getActieVerval() != null) {
-            actieVerval = actieInhoud;
-        }
-
-        return new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieGeldigheid);
-    }
-
-    // Als er een rij is met een oudere datumtijd registratie en een datum aanvang 0. Dan moet de actie
-    // voor deze groep daarbij worden opgenomen als actie aanpassing geldigheid
-    private <T extends BrpGroepInhoud> BrpGroep<T> zoekOuderUitzondering(final List<BrpGroep<T>> brpGroepen, final Lo3Datum datumOpneming) {
-        final BrpDatumTijd tijdstip = BrpDatumTijd.fromLo3Datum(datumOpneming);
-
-        for (final BrpGroep<T> groep : brpGroepen) {
-            final BrpDatumTijd datumTijdRegistratie = groep.getHistorie().getDatumTijdRegistratie();
-            if (datumTijdRegistratie.compareTo(tijdstip) < 0) {
-                final BrpDatum datumAanvang = groep.getHistorie().getDatumAanvangGeldigheid();
-                if (datumAanvang.equals(BrpDatum.ONBEKEND)) {
-                    return groep;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Zoek de laatste toegevoegde BRP-rij die vervallen is en een gelijke datum aanvang geldigheid heeft.
-     */
-    private <T extends BrpGroepInhoud> BrpGroep<T> zoekVervallenRij(final List<BrpGroep<T>> brpGroepen, final Lo3Datum ingangsdatumGeldigheid) {
-        final BrpDatum aanvang = BrpDatum.fromLo3Datum(ingangsdatumGeldigheid);
-
-        for (int i = brpGroepen.size() - 1; i >= 0; i--) {
-            final BrpGroep<T> groep = brpGroepen.get(i);
-
-            if (Validatie.isAttribuutGevuld(groep.getHistorie().getNadereAanduidingVerval())
-                && AbstractBrpAttribuutMetOnderzoek.equalsWaarde(aanvang, groep.getHistorie().getDatumAanvangGeldigheid()))
-            {
-                return groep;
-            }
-        }
-
-        return null;
-
-    }
-
-    private <T extends BrpGroepInhoud> boolean isAlsEinddatumGebruiktBijEenJuisteGevuldeRij(
-        final Lo3Documentatie documentatie,
-        final List<BrpGroep<T>> brpGroepen)
-    {
-        // Is deze actie al gebruikt als actie aanpassing geldigheid bij een gemaakte brp rij?
-        final Long actieId = documentatie.getId();
-
-        for (final BrpGroep<?> brpGroep : brpGroepen) {
-            if ((brpGroep.getActieGeldigheid() != null && actieId.equals(brpGroep.getActieGeldigheid().getId()))
-                || (brpGroep.getActieVerval() != null && actieId.equals(brpGroep.getActieVerval().getId())))
-            {
+    private <T extends BrpGroepInhoud> boolean verwerkStap4C(final TussenGroep<T> lo3Groep, final BrpGroep<T> nietVervallenGroep) {
+        if (nietVervallenGroep != null) {
+            final BrpDatumTijd
+                    actieAanpassingGeldigheidTsReg =
+                    nietVervallenGroep.getActieGeldigheid() == null ? null : nietVervallenGroep.getActieGeldigheid().getDatumTijdRegistratie();
+            if (actieAanpassingGeldigheidTsReg != null
+                    && actieAanpassingGeldigheidTsReg.compareTo(BrpDatumTijd.fromLo3Datum(lo3Groep.getHistorie().getDatumVanOpneming())) < 0) {
+                LOGGER.trace("Stap 4c, niets doen");
                 return true;
             }
         }
-
         return false;
     }
 
-    /**
-     * zoek de BRP-rij die als laatste toegevoegd is, die een kleinere of gelijke) datum aanvang geldigheid heeft.
-     */
-    private <T extends BrpGroepInhoud> BrpGroep<T> zoekLaatsteRij(final List<BrpGroep<T>> brpGroepen, final Lo3Datum ingangsdatumGeldigheid) {
-        LOG.debug("zoekLaatsteRij(brGroepen={}, ingangsdatumGeldigheid={})", brpGroepen, ingangsdatumGeldigheid);
-        final BrpDatum datumAanvang = BrpDatum.fromLo3Datum(ingangsdatumGeldigheid);
-
-        for (int index = brpGroepen.size() - 1; index >= 0; index--) {
-            final BrpGroep<T> brpGroep = brpGroepen.get(index);
-
-            if (brpGroep.getHistorie().getDatumAanvangGeldigheid().compareTo(datumAanvang) <= 0) {
-                return brpGroep;
+    private <T extends BrpGroepInhoud> boolean isUitzonderingOpStap4DNationaliteit(final List<TussenGroep<T>> lo3Groepen, final TussenGroep<T> lo3Groep,
+                                                                                   final BrpGroep<T> laatstToegevoegdeRij) {
+        if (laatstToegevoegdeRij.getActieGeldigheid() != null) {
+            final TussenGroep<T> voorkomenBijActie = zoekLo3VoorkomenBijActie(laatstToegevoegdeRij.getActieGeldigheid(), lo3Groepen);
+            if (voorkomenBijActie != null && lo3Groep.getHistorie().getDatumVanOpneming().compareTo(voorkomenBijActie.getHistorie().getDatumVanOpneming()) > 0
+                    && !voorkomenBijActie.getHistorie().isOnjuist()) {
+                LOGGER.trace("Stap 4d Rij is ouder dan gebruikte rij in actie aanpassing geldigheid, deze kan worden overgeslagen");
+                return true;
+            }
+        } else if (laatstToegevoegdeRij.getHistorie().getDatumTijdVerval() != null) {
+            final TussenGroep<T> voorkomenBijActie = zoekLo3VoorkomenBijActie(laatstToegevoegdeRij.getActieVerval(), lo3Groepen);
+            if (voorkomenBijActie != null
+                    && lo3Groep.getHistorie().getDatumVanOpneming().compareTo(voorkomenBijActie.getHistorie().getDatumVanOpneming()) > 0) {
+                LOGGER.trace("Stap 4d Rij is ouder dan gebruikte rij in actie verval, deze kan worden overgeslagen");
+                return true;
             }
         }
-
-        return null;
+        return false;
     }
 
-    /**
-     * Bepaal of er een rij aanwezig is, die niet vervallen is, waar de actie inhoud is gekoppeld.
-     */
-    private <T extends BrpGroepInhoud> BrpGroep<T> bepaalNietOnjuisteRij(final BrpActie actie, final List<BrpGroep<T>> brpGroepen) {
-        final Long actieId = actie.getId();
-        for (final BrpGroep<T> groep : brpGroepen) {
-            if (!Validatie.isAttribuutGevuld(groep.getHistorie().getNadereAanduidingVerval()) && actieId.equals(groep.getActieInhoud().getId())) {
-                return groep;
-            }
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap4DNationaliteit(final TussenGroep<T> lo3Groep, final List<TussenGroep<T>> lo3Groepen,
+                                                                              final List<BrpGroep<T>> brpGroepen,
+                                                                              final BrpActie actie, final BrpGroep<T> laatstToegevoegdeRij) {
+        // 4D Als AAG gevuld is, dan zoeken in LO3 naar het voorkomen welke bij actie aanpassing geldigheid hoort en controleren of datum opneming van
+        // huidige rij
+        // kleiner of gelijk is dan de datum opneming van het gevonden Lo3 voorkomen, dan uitvoeren anders overslaan.
+        if (isUitzonderingOpStap4DNationaliteit(lo3Groepen, lo3Groep, laatstToegevoegdeRij)) {
+            return null;
         }
 
-        return null;
-    }
+        LOGGER.trace("Stap 4d Nationaliteit, tsVerval is leeg of actie aanpassing geldigheid is gevuld of "
+                + "is bijhouding beeindigd voor laatst toegevoegde rij");
+        final BrpNationaliteitInhoud huidigeInhoud = (BrpNationaliteitInhoud) lo3Groep.getInhoud();
+        final BrpHistorie laatsteHistorie = laatstToegevoegdeRij.getHistorie();
+        final BrpDatum datumAanvangGeldigheid = laatsteHistorie.getDatumAanvangGeldigheid();
+        final BrpDatumTijd datumTijdRegistratie = updateDatumTijdRegistratie(datumAanvangGeldigheid, laatsteHistorie.getDatumTijdRegistratie(), brpGroepen);
+        final BrpActie actieInhoud = laatstToegevoegdeRij.getActieInhoud();
 
-    private <T extends BrpGroepInhoud> T bepaalAbstractIndicatieBeeindigingNationaliteit(final T groep, final T andereGroep) {
-        final BrpBoolean indicatie = ((AbstractBrpIndicatieGroepInhoud) groep).getIndicatie();
-        final BrpString redenVerkrijgingNederlandschapCode = ((AbstractBrpIndicatieGroepInhoud) groep).getMigratieRedenOpnameNationaliteit();
-        final BrpString redenVerliesNederlandschapCode = ((AbstractBrpIndicatieGroepInhoud) andereGroep).getMigratieRedenBeeindigingNationaliteit();
+        final BrpNationaliteitInhoud.Builder builder = new BrpNationaliteitInhoud.Builder((BrpNationaliteitInhoud) laatstToegevoegdeRij.getInhoud());
+        builder.redenVerliesNederlandschapCode(huidigeInhoud.getRedenVerliesNederlandschapCode());
+        builder.eindeBijhouding(huidigeInhoud.getEindeBijhouding());
+        builder.migratieRedenBeeindigingNationaliteit(huidigeInhoud.getMigratieRedenBeeindigingNationaliteit());
+        builder.migratieDatum(huidigeInhoud.getMigratieDatum());
+        final T inhoud = (T) builder.build();
 
-        final T resultaat;
-        if (groep instanceof BrpStaatloosIndicatieInhoud) {
-            resultaat = (T) new BrpStaatloosIndicatieInhoud(indicatie, redenVerkrijgingNederlandschapCode, redenVerliesNederlandschapCode);
-        } else if (groep instanceof BrpBehandeldAlsNederlanderIndicatieInhoud) {
-            resultaat = (T) new BrpBehandeldAlsNederlanderIndicatieInhoud(indicatie, redenVerkrijgingNederlandschapCode, redenVerliesNederlandschapCode);
-        } else if (groep instanceof BrpVastgesteldNietNederlanderIndicatieInhoud) {
-            resultaat =
-                    (T) new BrpVastgesteldNietNederlanderIndicatieInhoud(indicatie, redenVerkrijgingNederlandschapCode, redenVerliesNederlandschapCode);
+        final BrpDatum datumEindeGeldigheid;
+        final BrpDatumTijd datumTijdVerval;
+        final BrpActie actieVerval;
+        final BrpActie actieAanpassingGeldigheid;
+
+        if (huidigeInhoud.isEindeBijhouding()) {
+            LOGGER.trace("Stap 4d Nationaliteit, bijhouding beeindigd ingevuld en 'Ja'");
+            datumEindeGeldigheid = null;
+            datumTijdVerval = BrpDatumTijd.fromLo3Datum(lo3Groep.getHistorie().getDatumVanOpneming());
+            actieAanpassingGeldigheid = null;
+            actieVerval = actie;
         } else {
-            resultaat = groep;
+            LOGGER.trace("Stap 4d Nationaliteit, bijhouding beeindigd niet gevuld");
+            datumEindeGeldigheid = BrpDatum.fromLo3Datum(lo3Groep.getHistorie().getIngangsdatumGeldigheid());
+            datumTijdVerval = datumTijdRegistratie;
+            actieAanpassingGeldigheid = actie;
+            actieVerval = actieInhoud;
         }
-        return resultaat;
+
+        final BrpHistorie historie = new BrpHistorie(datumAanvangGeldigheid, datumEindeGeldigheid,
+                datumTijdRegistratie, datumTijdVerval, maakNadereAanduidingVerval(lo3Groep.getHistorie().getIndicatieOnjuist()));
+        return new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieAanpassingGeldigheid);
     }
 
-    private <T extends BrpGroepInhoud> T bepaalEindeBijhoudingNationaliteit(final T groep, final T eindeBijhoudingGroep) {
-        final BrpNationaliteitInhoud nationaliteit = (BrpNationaliteitInhoud) groep;
-        final BrpNationaliteitInhoud eindeBijhouding = (BrpNationaliteitInhoud) eindeBijhoudingGroep;
-
-        return (T) new BrpNationaliteitInhoud(
-            nationaliteit.getNationaliteitCode(),
-            nationaliteit.getRedenVerkrijgingNederlandschapCode(),
-            null,
-            eindeBijhouding.getEindeBijhouding(),
-            eindeBijhouding.getMigratieDatum(),
-            nationaliteit.getMigratieRedenOpnameNationaliteit(),
-            eindeBijhouding.getMigratieRedenBeeindigingNationaliteit());
+    private <T extends BrpGroepInhoud> TussenGroep<T> zoekLo3VoorkomenBijActie(final BrpActie actieGeldigheid, final List<TussenGroep<T>> lo3Groepen) {
+        final Lo3Herkomst actieHerkomst = actieGeldigheid.getLo3Herkomst();
+        final Optional<TussenGroep<T>> gevondenGroep = lo3Groepen.stream().filter(lo3Groep -> lo3Groep.getLo3Herkomst().equals(actieHerkomst)).findFirst();
+        return gevondenGroep.orElse(null);
     }
 
-    private <T extends BrpGroepInhoud> T bepaalVerliesNederlanderschap(final T groep, final T verliesGroep) {
-        final BrpNationaliteitInhoud nationaliteit = (BrpNationaliteitInhoud) groep;
-        final BrpNationaliteitInhoud verlies = (BrpNationaliteitInhoud) verliesGroep;
-
-        return (T) new BrpNationaliteitInhoud(
-            nationaliteit.getNationaliteitCode(),
-            nationaliteit.getRedenVerkrijgingNederlandschapCode(),
-            verlies.getRedenVerliesNederlandschapCode(),
-            null,
-            null,
-            nationaliteit.getMigratieRedenOpnameNationaliteit(),
-            verlies.getMigratieRedenBeeindigingNationaliteit());
+    private <T extends BrpGroepInhoud> BrpGroep<T> verwerkStap4D(final TussenGroep<T> lo3Groep, final List<BrpGroep<T>> brpGroepen, final BrpActie actie,
+                                                                 final BrpGroep<T> laatstToegevoegdeRij) {
+        LOGGER.trace("Stap 4d, tsVerval is leeg of actie aanpassing geldigheid is gevuld voor laatst toegevoegde rij");
+        final T inhoud = bepaalInhoud(laatstToegevoegdeRij.getInhoud(), lo3Groep.getInhoud());
+        final BrpHistorie laatsteHistorie = laatstToegevoegdeRij.getHistorie();
+        final BrpDatum datumEindeGeldigheid = BrpDatum.fromLo3Datum(lo3Groep.getHistorie().getIngangsdatumGeldigheid());
+        final BrpDatum laatsteDatumAanvangGeldigheid = laatsteHistorie.getDatumAanvangGeldigheid();
+        final BrpDatumTijd
+                datumTijdRegistratie =
+                updateDatumTijdRegistratie(laatsteDatumAanvangGeldigheid, laatsteHistorie.getDatumTijdRegistratie(), brpGroepen);
+        final BrpHistorie
+                historie =
+                new BrpHistorie(laatsteDatumAanvangGeldigheid, datumEindeGeldigheid, datumTijdRegistratie, datumTijdRegistratie,
+                        maakNadereAanduidingVerval(lo3Groep.getHistorie().getIndicatieOnjuist()));
+        return new BrpGroep<>(inhoud, historie, laatstToegevoegdeRij.getActieInhoud(), laatstToegevoegdeRij.getActieInhoud(), actie);
     }
 
-    private boolean isLeeg(final TussenGroep<?> lo3Groep) {
-        final boolean result;
+    private <T extends BrpGroepInhoud> void verwerkStap4ENationaliteit(final TussenGroep<T> lo3Groep, final List<BrpGroep<T>> brpGroepen, final BrpActie actie,
+                                                                       final Map<Long, BrpActie> actieCache, final BrpGroep<T> laatstToegevoegdeRij) {
+        LOGGER.trace("Stap 4e, tsVerval is gevuld en actie aanpassing geldigheid is leeg");
+        final int vervallenGroepIndex = brpGroepen.indexOf(laatstToegevoegdeRij);
+        brpGroepen.remove(laatstToegevoegdeRij);
 
-        if (lo3Groep.isInhoudelijkLeeg()) {
-            result = true;
+        final BrpNationaliteitInhoud huidigeInhoud = (BrpNationaliteitInhoud) lo3Groep.getInhoud();
+        final BrpNationaliteitInhoud.Builder builder = new BrpNationaliteitInhoud.Builder((BrpNationaliteitInhoud) laatstToegevoegdeRij.getInhoud());
+        final BrpHistorie laatsteHistorie = laatstToegevoegdeRij.getHistorie();
+        final BrpDatumTijd datumTijdRegistratie = laatsteHistorie.getDatumTijdRegistratie();
+
+        builder.redenVerliesNederlandschapCode(huidigeInhoud.getRedenVerliesNederlandschapCode());
+        builder.eindeBijhouding(huidigeInhoud.getEindeBijhouding());
+        builder.migratieRedenBeeindigingNationaliteit(huidigeInhoud.getMigratieRedenBeeindigingNationaliteit());
+        builder.migratieDatum(huidigeInhoud.getMigratieDatum());
+
+        final T inhoud = (T) builder.build();
+
+        final BrpDatum datumEindeGeldigheid;
+        final BrpDatumTijd datumTijdVerval;
+        final BrpActie actieInhoud;
+        final BrpActie actieAanpassingGeldigheid;
+        final BrpActie actieVerval;
+
+        if (laatsteHistorie.getDatumTijdVerval() != null && laatsteHistorie.getNadereAanduidingVerval() == null) {
+            actieInhoud = maakActie(laatstToegevoegdeRij.getActieInhoud(), actieCache, BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE);
         } else {
-            if (lo3Groep.getInhoud() instanceof BrpNationaliteitInhoud) {
-                final BrpNationaliteitInhoud nationaliteit = (BrpNationaliteitInhoud) lo3Groep.getInhoud();
+            actieInhoud = laatstToegevoegdeRij.getActieInhoud();
+        }
 
-                result = Validatie.isAttribuutGevuld(nationaliteit.getRedenVerliesNederlandschapCode());
+        if (huidigeInhoud.isEindeBijhouding()) {
+            datumEindeGeldigheid = null;
+            datumTijdVerval = BrpDatumTijd.fromLo3Datum(lo3Groep.getHistorie().getDatumVanOpneming());
+            actieAanpassingGeldigheid = null;
+            actieVerval = actie;
+        } else {
+            datumEindeGeldigheid = BrpDatum.fromLo3Datum(lo3Groep.getHistorie().getIngangsdatumGeldigheid());
+            datumTijdVerval = datumTijdRegistratie;
+            actieAanpassingGeldigheid = actie;
+            actieVerval = actieInhoud;
+        }
+
+        final BrpHistorie
+                historie =
+                new BrpHistorie(laatsteHistorie.getDatumAanvangGeldigheid(), datumEindeGeldigheid, laatsteHistorie.getDatumTijdRegistratie(), datumTijdVerval,
+                        maakNadereAanduidingVerval(lo3Groep.getHistorie().getIndicatieOnjuist()));
+        final BrpGroep<T> aangepast = new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieAanpassingGeldigheid);
+        brpGroepen.add(vervallenGroepIndex, aangepast);
+    }
+
+    private <T extends BrpGroepInhoud> void verwerkStap4E(final TussenGroep<T> lo3Groep, final List<BrpGroep<T>> brpGroepen, final BrpActie actie,
+                                                          final Map<Long, BrpActie> actieCache, final BrpGroep<T> laatstToegevoegdeRij) {
+        LOGGER.trace("Stap 4e, tsVerval is gevuld en actie aanpassing geldigheid is leeg");
+        final T inhoud = bepaalInhoud(laatstToegevoegdeRij.getInhoud(), lo3Groep.getInhoud());
+
+        final int vervallenGroepIndex = brpGroepen.indexOf(laatstToegevoegdeRij);
+        brpGroepen.remove(laatstToegevoegdeRij);
+
+        final BrpDatum datumEindeGeldigheid = BrpDatum.fromLo3Datum(lo3Groep.getHistorie().getIngangsdatumGeldigheid());
+        final BrpHistorie laatsteHistorie = laatstToegevoegdeRij.getHistorie();
+        final BrpDatumTijd datumTijdRegistratie = laatsteHistorie.getDatumTijdRegistratie();
+        final BrpHistorie historie = new BrpHistorie(laatsteHistorie.getDatumAanvangGeldigheid(), datumEindeGeldigheid,
+                datumTijdRegistratie, datumTijdRegistratie, maakNadereAanduidingVerval(lo3Groep.getHistorie().getIndicatieOnjuist()));
+        final BrpActie actieInhoud;
+        if (laatsteHistorie.getDatumTijdVerval() != null && laatsteHistorie.getNadereAanduidingVerval() == null) {
+            actieInhoud = maakActie(laatstToegevoegdeRij.getActieInhoud(), actieCache, BrpSoortActieCode.CONVERSIE_GBA_MATERIELE_HISTORIE);
+        } else {
+            actieInhoud = laatstToegevoegdeRij.getActieInhoud();
+        }
+
+        final BrpGroep<T> aangepast = new BrpGroep<>(inhoud, historie, actieInhoud, actieInhoud, actie);
+        brpGroepen.add(vervallenGroepIndex, aangepast);
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> zoekGroepMetZelfdeActieInhoudGeenNadereAanduidingVerval(final BrpActie actieInhoud,
+                                                                                                           final List<BrpGroep<T>> brpGroepen) {
+
+        final Optional<BrpGroep<T>>
+                gevondenGroep =
+                brpGroepen.stream().filter(brpGroep -> brpGroep.getActieInhoud().heeftActieZelfdeId(actieInhoud) && !BrpValidatie
+                        .isAttribuutGevuld(brpGroep.getHistorie().getNadereAanduidingVerval())).findFirst();
+        return gevondenGroep.orElse(null);
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> getLaatstToegevoegdeRijMetZelfdeOfKleinereDatumAanvangGeldigheid(final List<BrpGroep<T>> brpGroepen,
+                                                                                                                    final Lo3Datum ingangsdatumGeldigheid) {
+        final BrpDatum datumAanvangGeldigheid = BrpDatum.fromLo3Datum(ingangsdatumGeldigheid);
+        final Optional<BrpGroep<T>>
+                laatstToegevoegd =
+                getReverseStream(brpGroepen)
+                        .filter(brpGroep -> brpGroep.getHistorie().getDatumAanvangGeldigheid().compareTo(datumAanvangGeldigheid) <= 0).findFirst();
+
+        return laatstToegevoegd.orElse(null);
+    }
+
+    private <T extends BrpGroepInhoud> BrpGroep<T> getLaatstToegevoegdeRijMetNadereAanduidingVervalGevuldEnZelfdeDatumAanvanGeldigheid(
+            final List<BrpGroep<T>> brpGroepen, final Lo3Datum ingangsdatumGeldigheid) {
+        final BrpDatum datumAanvangGeldigheid = BrpDatum.fromLo3Datum(ingangsdatumGeldigheid);
+        final Optional<BrpGroep<T>> laatstToegevoegd = getReverseStream(brpGroepen).filter(brpgroep -> {
+            final BrpHistorie historie = brpgroep.getHistorie();
+            return historie.getNadereAanduidingVerval() != null && historie.getDatumAanvangGeldigheid().compareTo(datumAanvangGeldigheid) == 0;
+        }).findFirst();
+
+        return laatstToegevoegd.orElse(null);
+    }
+
+    private <T extends BrpGroepInhoud> Stream<BrpGroep<T>> getReverseStream(final List<BrpGroep<T>> brpGroepen) {
+        final int aantalEntries = brpGroepen.size() - 1;
+        return IntStream.rangeClosed(0, aantalEntries).mapToObj(i -> brpGroepen.get(aantalEntries - i));
+    }
+
+    private <T extends BrpGroepInhoud> BrpDatumTijd bepaalDatumTijdVervalVoorStap3(final TussenGroep<T> volgendeJuisteLo3Rij, final TussenGroep<T> lo3Groep,
+                                                                                   final List<TussenGroep<T>> lo3Groepen,
+                                                                                   final BrpDatumTijd datumTijdRegistratie) {
+        final BrpDatumTijd datumTijdVerval;
+        final Lo3Datum huidigeIngangsdatumGeldigheid = lo3Groep.getHistorie().getIngangsdatumGeldigheid();
+
+        final TussenGroep actueleRij = bepaalActueleGroep(lo3Groepen);
+
+        final boolean
+                volgendeLo3RijHeeftKleinereOfGelijkDatum =
+                volgendeJuisteLo3Rij != null && volgendeJuisteLo3Rij.getHistorie().getIngangsdatumGeldigheid().compareTo(huidigeIngangsdatumGeldigheid) <= 0;
+        final boolean
+                actueleRijHeeftKleinereOfGelijkDatum = actueleRij != lo3Groep &&
+                actueleRij.getHistorie().getIngangsdatumGeldigheid().compareTo(huidigeIngangsdatumGeldigheid) <= 0;
+
+        // Als
+        // een eventuele gevonden volgende LO3-rij
+        // of de actuele LO3-categorie
+        // een 85.10 Ingangsdatum geldigheid heeft kleiner dan of gelijk aan de 85.10 Ingangsdatum geldigheid van de huidige LO3-rij
+        if (volgendeLo3RijHeeftKleinereOfGelijkDatum || actueleRijHeeftKleinereOfGelijkDatum) {
+            //en
+            // of er is geen volgende LO3-rij gevonden
+            // of de gevonden volgende LO3-rij is niet de actuele LO3-categorie
+            // of de gevonden volgende LO3-rij is niet leeg
+            // of de volgende LO3-rij heeft een 85.10 Ingangsdatum geldigheid die niet volledig onbekend is
+            if (volgendeJuisteLo3Rij == null || volgendeJuisteLo3Rij != actueleRij || !bepaalIsLeeg(volgendeJuisteLo3Rij) || !volgendeJuisteLo3Rij.getHistorie()
+                    .getIngangsdatumGeldigheid().isOnbekend()) {
+                datumTijdVerval = datumTijdRegistratie;
             } else {
-                result = false;
+                datumTijdVerval = null;
             }
+        } else {
+            datumTijdVerval = null;
         }
 
-        return result;
+        return datumTijdVerval;
+    }
+
+    private <T extends BrpGroepInhoud> BrpDatum bepaalDatumEindeGeldigheidVoorStap3(final TussenGroep<T> volgendeJuisteLo3Rij, final TussenGroep<T> lo3Groep,
+                                                                                    final List<TussenGroep<T>> lo3Groepen) {
+        final BrpDatum datumEindeGeldigheid;
+        if (volgendeJuisteLo3Rij == null) {
+            datumEindeGeldigheid = null;
+        } else {
+            final TussenGroep actueleRij = bepaalActueleGroep(lo3Groepen);
+            final Lo3Datum huidigeIngangsdatumGeldigheid = lo3Groep.getHistorie().getIngangsdatumGeldigheid();
+            final Lo3Datum volgendeIngangsdatumGeldigheid = volgendeJuisteLo3Rij.getHistorie().getIngangsdatumGeldigheid();
+
+            final boolean volgendeLo3RijHeeftKleinereOfGelijkDatum = volgendeIngangsdatumGeldigheid.compareTo(huidigeIngangsdatumGeldigheid) <= 0;
+            final boolean
+
+                    actueleRijHeeftKleinereOfGelijkDatum =
+                    actueleRij.getHistorie().getIngangsdatumGeldigheid().compareTo(huidigeIngangsdatumGeldigheid) <= 0;
+
+            if (!bepaalIsLeeg(volgendeJuisteLo3Rij) && (volgendeLo3RijHeeftKleinereOfGelijkDatum || actueleRijHeeftKleinereOfGelijkDatum)) {
+                datumEindeGeldigheid = null;
+            } else {
+                datumEindeGeldigheid =
+                        bepaalIsLeeg(volgendeJuisteLo3Rij) ? BrpDatum.fromLo3Datum(volgendeIngangsdatumGeldigheid)
+                                : BrpDatum.fromLo3DatumZonderOnderzoek(volgendeIngangsdatumGeldigheid);
+            }
+        }
+        return datumEindeGeldigheid;
+    }
+
+    private <T extends BrpGroepInhoud> boolean bepaalIsLeeg(final TussenGroep<T> lo3Groep) {
+        final T inhoud = lo3Groep.getInhoud();
+        return inhoud.isLeeg() || inhoud instanceof BrpNationaliteitInhoud && BrpValidatie
+                .isAttribuutGevuld(((BrpNationaliteitInhoud) inhoud).getRedenVerliesNederlandschapCode());
+
     }
 }

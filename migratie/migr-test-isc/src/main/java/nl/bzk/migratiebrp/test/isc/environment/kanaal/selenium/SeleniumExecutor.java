@@ -90,47 +90,34 @@ public final class SeleniumExecutor {
 
     /**
      * Execute methode voor selenium.
-     *
-     * @param input
-     *            Het input bestand.
-     * @param outputFile
-     *            Het output bestand.
-     * @param driver
-     *            De te gebruiken selenium driver.
-     * @param baseUrl
-     *            De basis URL.
-     * @param screenshotAll
-     *            Indicator of van elke stap een screenshot gemaakt moet worden.
-     * @param waitForElement
-     *            Indicator of er gewacht moet worden totdat een element aanwezig is.
-     * @param focusAndBlur
-     *            Indicator of focus en blur toegepast dienen te worden.
-     * @param waitForAngular
-     *            Indicator of Angular wordt gebruikt.
-     * @param implicitWaitTimeout
-     *            Standaard wachttijd.
-     * @param pageLoadTimeout
-     *            Timeout voor het laden van de pagina.
-     * @param scriptTimeout
-     *            Timeout voor scripts.
+     * @param input Het input bestand.
+     * @param outputFile Het output bestand.
+     * @param driver De te gebruiken selenium driver.
+     * @param baseUrl De basis URL.
+     * @param screenshotAll Indicator of van elke stap een screenshot gemaakt moet worden.
+     * @param waitForElement Indicator of er gewacht moet worden totdat een element aanwezig is.
+     * @param focusAndBlur Indicator of focus en blur toegepast dienen te worden.
+     * @param waitForAngular Indicator of Angular wordt gebruikt.
+     * @param implicitWaitTimeout Standaard wachttijd.
+     * @param pageLoadTimeout Timeout voor het laden van de pagina.
+     * @param scriptTimeout Timeout voor scripts.
      * @return True indien succesvol uitgevoerd, false in andere situaties.
      */
     public static boolean execute(
-        final File input,
-        final File outputFile,
-        final String driver,
-        final String baseUrl,
-        final boolean screenshotAll,
-        final boolean waitForElement,
-        final boolean focusAndBlur,
-        final boolean waitForAngular,
-        final Integer implicitWaitTimeout,
-        final Integer pageLoadTimeout,
-        final Integer scriptTimeout)
-    {
+            final File input,
+            final File outputFile,
+            final String driver,
+            final String baseUrl,
+            final boolean screenshotAll,
+            final boolean waitForElement,
+            final boolean focusAndBlur,
+            final boolean waitForAngular,
+            final Integer implicitWaitTimeout,
+            final Integer pageLoadTimeout,
+            final Integer scriptTimeout) {
         LOGGER.info(
-            "Executing selenium (input={}, output={}, driver={}, baseurl={}, screenshotAll={}, waitForElement={}, focusAndBlur={}, waitForAngular={}",
-            new Object[] {input, outputFile, driver, baseUrl, screenshotAll, waitForElement, focusAndBlur, waitForAngular });
+                "Executing selenium (input={}, output={}, driver={}, baseurl={}, screenshotAll={}, waitForElement={}, focusAndBlur={}, waitForAngular={}",
+                new Object[]{input, outputFile, driver, baseUrl, screenshotAll, waitForElement, focusAndBlur, waitForAngular});
         final WebDriverManager manager = WebDriverManager.getInstance();
         manager.setWebDriverFactory(driver);
 
@@ -219,24 +206,17 @@ public final class SeleniumExecutor {
     /**
      * Testcase adapten door extra commands toe te voegen zodat de AOP zoals die gebruikt wordt in de Selenese Runner (
      * {@link Binder}). nog steeds werkt.
-     *
-     * @param selenese
-     *            testcase
-     * @param waitForElement
-     *            indicatie of bij type/click elementen gewacht moet worden tot het element er is
-     * @param focusAndBlur
-     *            indicatie of bij type/click commands eerst een focus en daarna een blur uitgevoerd moet worden
-     * @param waitForAngular
-     *            indicatie of na een commando gewacht moet worden op AngularJS
-     * @return
+     * @param selenese testcase
+     * @param waitForElement indicatie of bij type/click elementen gewacht moet worden tot het element er is
+     * @param focusAndBlur indicatie of bij type/click commands eerst een focus en daarna een blur uitgevoerd moet worden
+     * @param waitForAngular indicatie of na een commando gewacht moet worden op AngularJS
      */
     private static TestCase adaptTestCase(
-        final Context context,
-        final TestCase selenese,
-        final boolean waitForElement,
-        final boolean focusAndBlur,
-        final boolean waitForAngular)
-    {
+            final Context context,
+            final TestCase selenese,
+            final boolean waitForElement,
+            final boolean focusAndBlur,
+            final boolean waitForAngular) {
         final TestCase result = Binder.newTestCase(selenese.getFilename(), selenese.getName(), selenese.getBaseURL());
 
         final CommandListIterator commandListIterator = selenese.getCommandList().listIterator();
@@ -267,7 +247,7 @@ public final class SeleniumExecutor {
                 }
             }
             if (waitForAngular) {
-                final ICommand waitForAngularCommand = determineWaitForAngularCommand(context, command);
+                final ICommand waitForAngularCommand = determineWaitForAngularCommand(command);
                 if (waitForAngularCommand != null) {
                     result.addCommand(waitForAngularCommand);
                 }
@@ -301,7 +281,7 @@ public final class SeleniumExecutor {
                 final Constructor<BuiltInCommand> constructor =
                         BuiltInCommand.class.getDeclaredConstructor(Integer.TYPE, String.class, String[].class, ISubCommand.class, Boolean.TYPE);
                 constructor.setAccessible(true);
-                return constructor.newInstance(command.getIndex(), COMMAND_BLUR, new String[] {locator }, subCommand, false);
+                return constructor.newInstance(command.getIndex(), COMMAND_BLUR, new String[]{locator}, subCommand, false);
             } catch (final ReflectiveOperationException e) {
                 throw new IllegalArgumentException("Kon blur command niet maken.");
             }
@@ -310,12 +290,12 @@ public final class SeleniumExecutor {
         }
     }
 
-    private static ICommand determineWaitForAngularCommand(final Context context, final ICommand command) {
+    private static ICommand determineWaitForAngularCommand(final ICommand command) {
         if (command instanceof AbstractCommand && ANGULAR_COMMANDS.contains(getCommandName(command).toLowerCase())) {
             return new ExecuteAsyncScriptCommand(
-                command.getIndex(),
-                "waitForAngular",
-                "angular.element(document.body).injector().get('$browser').notifyWhenNoOutstandingRequests(arguments[arguments.length - 1]);");
+                    command.getIndex(),
+                    "waitForAngular",
+                    "angular.element(document.body).injector().get('$browser').notifyWhenNoOutstandingRequests(arguments[arguments.length - 1]);");
         } else {
             return null;
         }

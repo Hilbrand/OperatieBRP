@@ -8,14 +8,20 @@ package nl.bzk.migratiebrp.isc.jbpm.uc309;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.bericht.model.AkteOnbekendException;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
+import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Tb02Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkToevalligeGebeurtenisVerzoekBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.register.PartijRegister;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
+import nl.bzk.migratiebrp.register.client.PartijService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,14 +31,20 @@ import org.springframework.stereotype.Component;
 public class MaakVerwerkToevalligeGebeurtenisVerzoekBerichtAction implements SpringAction {
 
     private static final Logger LOG = LoggerFactory.getLogger();
-    private static final String ONBEKEND_BERICHT_TIJDS_AANMAAK_VERWERK_TOEVALLIGE_GEBEURTENIS_VERZOEK_BERICHT =
-            "Onbekend bericht tijds aanmaak VerwerkToevalligeGebeurtenisVerzoekBericht";
 
-    @Inject
-    private BerichtenDao berichtenDao;
+    private final BerichtenDao berichtenDao;
+    private final PartijService partijService;
 
+    /**
+     * Constructor.
+     * @param partijRegisterService partijregisterservice
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private VerwerkToevalligeGebeurtenisVerzoekBerichtFactory verwerkToevalligeGebeurtenisVerzoekBerichtFactory;
+    public MaakVerwerkToevalligeGebeurtenisVerzoekBerichtAction(final PartijService partijRegisterService, final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+        partijService = partijRegisterService;
+    }
 
     @Override
     public final Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -41,17 +53,16 @@ public class MaakVerwerkToevalligeGebeurtenisVerzoekBerichtAction implements Spr
         final Map<String, Object> result = new HashMap<>();
         final Long berichtId = (Long) parameters.get("input");
         final Tb02Bericht input = (Tb02Bericht) berichtenDao.leesBericht(berichtId);
+        PartijRegister partijRegister = partijService.geefRegister();
+        final VerwerkToevalligeGebeurtenisVerzoekBericht verwerkToevalligeGebeurtenisVerzoek = new VerwerkToevalligeGebeurtenisVerzoekBericht();
+        verwerkToevalligeGebeurtenisVerzoek.setAktenummer(input.getHeaderWaarde(Lo3HeaderVeld.AKTENUMMER));
+        verwerkToevalligeGebeurtenisVerzoek.setVerzendendeGemeente(partijRegister.zoekPartijOpPartijCode(input.getBronPartijCode()).getGemeenteCode());
+        verwerkToevalligeGebeurtenisVerzoek.setOntvangendeGemeente(partijRegister.zoekPartijOpPartijCode(input.getDoelPartijCode()).getGemeenteCode());
+        verwerkToevalligeGebeurtenisVerzoek.setTb02InhoudAlsTeletex(Lo3Inhoud.formatInhoud(input.getCategorieen()));
 
-        try {
-            final BerichtVerwerker<VerwerkToevalligeGebeurtenisVerzoekBericht, Tb02Bericht> verwerker =
-                    verwerkToevalligeGebeurtenisVerzoekBerichtFactory.maakVerwerker(input);
-            final VerwerkToevalligeGebeurtenisVerzoekBericht bericht = verwerker.verwerkInput(input);
-            final Long verwerkToevalligeGebeurtenisVerzoekBerichtId = berichtenDao.bewaarBericht(bericht);
-            result.put("verwerkToevalligeGebeurtenisVerzoekBericht", verwerkToevalligeGebeurtenisVerzoekBerichtId);
-        } catch (final AkteOnbekendException boe) {
-            LOG.error(ONBEKEND_BERICHT_TIJDS_AANMAAK_VERWERK_TOEVALLIGE_GEBEURTENIS_VERZOEK_BERICHT);
-            throw new IllegalStateException(ONBEKEND_BERICHT_TIJDS_AANMAAK_VERWERK_TOEVALLIGE_GEBEURTENIS_VERZOEK_BERICHT, boe);
-        }
+        final Long verwerkToevalligeGebeurtenisVerzoekBerichtId = berichtenDao.bewaarBericht(verwerkToevalligeGebeurtenisVerzoek);
+        result.put("verwerkToevalligeGebeurtenisVerzoekBericht", verwerkToevalligeGebeurtenisVerzoekBerichtId);
+
         return result;
     }
 }

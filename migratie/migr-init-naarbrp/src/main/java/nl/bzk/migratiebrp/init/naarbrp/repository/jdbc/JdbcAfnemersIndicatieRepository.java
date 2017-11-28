@@ -9,18 +9,17 @@ package nl.bzk.migratiebrp.init.naarbrp.repository.jdbc;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AfnemersindicatieRecordType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AfnemersindicatiesType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.AfnemersindicatiesBericht;
 import nl.bzk.migratiebrp.init.naarbrp.domein.ConversieResultaat;
 import nl.bzk.migratiebrp.init.naarbrp.repository.AfnemersIndicatieRepository;
-import nl.bzk.migratiebrp.init.naarbrp.verwerker.AfnemersindicatieBerichtVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.migratiebrp.init.naarbrp.verwerker.BerichtVerwerker;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -34,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  * De JDBC implementatie van de AutorisatieRepository.
  */
 @Repository
-public final class JdbcAfnemersIndicatieRepository extends AbstractJdbcRepository implements AfnemersIndicatieRepository {
+public final class JdbcAfnemersIndicatieRepository extends BasisJdbcRepository implements AfnemersIndicatieRepository {
 
     private static final String PL_ID = "pl_id";
     private static final String VOLG_NR = "volg_nr";
@@ -42,31 +41,35 @@ public final class JdbcAfnemersIndicatieRepository extends AbstractJdbcRepositor
     private static final String GELDIGHEID_START_DATUM = "geldigheid_start_datum";
     private static final String A_NUMMER = "a_nr";
     private static final String AFNEMER_CODE = "afnemer_code";
+    private static final String BERICHT_RESULTAAT = "bericht_resultaat";
     private static final String CONVERSIE_RESULTAAT = "conversie_resultaat";
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    private static final String AFNEMER_CODE_FORMAT = "0000";
-
+    /**
+     * {@inheritDoc}
+     *
+     * Let op: transactie timeout is verhoogd naar Integer.MAX_VALUE omdat dit statement zeer lang
+     * kan duren.
+     */
     @Override
-    @Transactional(value = INIT_RUNTIME_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
+    @Transactional(value = INIT_RUNTIME_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED, timeout = Integer.MAX_VALUE)
     public void laadInitVullingAfnIndTable() {
-        final String sqlInitVulling = getStringResourceData("/sql/laadAfnindRegel.sql");
+        final String sqlInitVulling = getStringResourceData("/sql/laadAfnemerindicatie.sql");
 
         getJdbcTemplate().getJdbcOperations().execute(sqlInitVulling);
     }
 
     @Override
     @Transactional(value = INIT_RUNTIME_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED)
-    public void updateAfnemersIndicatiesBerichtStatus(final List<Long> aNummers, final ConversieResultaat conversieResultaat) {
+    public void updateAfnemersIndicatiesBerichtStatus(final List<String> aNummers, final ConversieResultaat conversieResultaat) {
         final String updateInitVullingSqlAfnInd = getStringResourceData("/sql/update_init_vulling_afnind.sql");
 
-        @SuppressWarnings("unchecked")
-        final Map<String, ?>[] batchParameters = new Map[aNummers.size()];
+        @SuppressWarnings("unchecked") final Map<String, ?>[] batchParameters = new Map[aNummers.size()];
         int batchIndex = 0;
-        for (final Long aNummer : aNummers) {
+        for (final String aNummer : aNummers) {
             final Map<String, Object> parameters = new HashMap<>();
             parameters.put(A_NUMMER, aNummer);
-            parameters.put(CONVERSIE_RESULTAAT, conversieResultaat.toString());
+            parameters.put(BERICHT_RESULTAAT, conversieResultaat.toString());
             batchParameters[batchIndex] = parameters;
             batchIndex += 1;
         }
@@ -76,11 +79,8 @@ public final class JdbcAfnemersIndicatieRepository extends AbstractJdbcRepositor
 
     @Override
     @Transactional(value = INIT_RUNTIME_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED, readOnly = true)
-    public boolean verwerkAfnemerindicaties(
-        final ConversieResultaat zoekConversieResultaat,
-        final AfnemersindicatieBerichtVerwerker verwerker,
-        final int batchGrootte)
-    {
+    public boolean verwerkAfnemerindicaties(final ConversieResultaat zoekConversieResultaat, final BerichtVerwerker<AfnemersindicatiesBericht> verwerker,
+                                            final int batchGrootte) {
         if (haalAfnemerindicatiesBatchOp(zoekConversieResultaat, verwerker, batchGrootte)) {
             LOG.debug("Berichten verwerken.");
             verwerker.verwerkBerichten();
@@ -88,20 +88,17 @@ public final class JdbcAfnemersIndicatieRepository extends AbstractJdbcRepositor
         return verwerker.aantalBerichten() >= batchGrootte;
     }
 
-    @SuppressWarnings("checkstyle:illegalcatch")
-    private boolean haalAfnemerindicatiesBatchOp(
-        final ConversieResultaat zoekConversieResultaat,
-        final AfnemersindicatieBerichtVerwerker verwerker,
-        final int batchGrootte)
-    {
-        final String selectInitVullingSqlAfnInd =
-                "select * from initvul.initvullingresult_afnind where conversie_resultaat = :conversie_resultaat LIMIT " + batchGrootte;
+    private boolean haalAfnemerindicatiesBatchOp(final ConversieResultaat zoekConversieResultaat, final BerichtVerwerker<AfnemersindicatiesBericht> verwerker,
+                                                 final int batchGrootte) {
+
+        final String selectInitVullingSqlAfnInd = getStringResourceData("/sql/Verwerk_init_vulling_afnind.sql");
 
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put(CONVERSIE_RESULTAAT, zoekConversieResultaat.toString());
+        parameters.put("batch_grootte", batchGrootte);
         final SqlParameterSource namedParameters = new MapSqlParameterSource(parameters);
 
-        final AfnemersindicatieBerichtVerwerkerRowHandler rowHandler = new AfnemersindicatieBerichtVerwerkerRowHandler(getJdbcTemplate(), verwerker);
+        final AfnemersindicatieStapelRowHandler rowHandler = new AfnemersindicatieStapelRowHandler(getJdbcTemplate(), verwerker);
 
         getJdbcTemplate().query(selectInitVullingSqlAfnInd, namedParameters, rowHandler);
 
@@ -111,28 +108,21 @@ public final class JdbcAfnemersIndicatieRepository extends AbstractJdbcRepositor
     /**
      * Row handler om berichten te verwerken.
      */
-    private static final class AfnemersindicatieBerichtVerwerkerRowHandler implements RowCallbackHandler {
+    private static final class AfnemersindicatieStapelRowHandler implements RowCallbackHandler {
         private final NamedParameterJdbcTemplate jdbcTemplate;
-        private final AfnemersindicatieBerichtVerwerker verwerker;
+        private final BerichtVerwerker<AfnemersindicatiesBericht> verwerker;
 
         /**
          * Constructor.
-         *
-         * @param verwerker
-         *            Lo3BerichtVerwerker
+         * @param verwerker Lo3BerichtVerwerker
          */
-        public AfnemersindicatieBerichtVerwerkerRowHandler(
-            final NamedParameterJdbcTemplate jdbcTemplate,
-            final AfnemersindicatieBerichtVerwerker verwerker)
-        {
+        AfnemersindicatieStapelRowHandler(final NamedParameterJdbcTemplate jdbcTemplate, final BerichtVerwerker<AfnemersindicatiesBericht> verwerker) {
             this.jdbcTemplate = jdbcTemplate;
             this.verwerker = verwerker;
         }
 
         @Override
-        @SuppressWarnings("checkstyle:illegalcatch")
         public void processRow(final ResultSet rs) throws SQLException {
-
             final AfnemersindicatiesBericht bericht = mapAfnemersindicatiesBericht(rs);
             verwerker.voegBerichtToe(bericht);
         }
@@ -145,11 +135,13 @@ public final class JdbcAfnemersIndicatieRepository extends AbstractJdbcRepositor
             parameters.put(PL_ID, rs.getInt(PL_ID));
             final SqlParameterSource namedParameters = new MapSqlParameterSource(parameters);
 
-            final List<AfnemersindicatieRecordType> indicaties =
-                    jdbcTemplate.query(
-                        "select * from initvul.initvullingresult_afnind_regel where pl_id = :pl_id",
-                        namedParameters,
-                        new AfnemersindicatieMapper());
+            final List<AfnemersindicatieRecordType> indicaties = jdbcTemplate.query("select * from initvul.initvullingresult_afnind_regel where pl_id = :pl_id",
+                    namedParameters, new AfnemersindicatieRegelMapper());
+
+            if (indicaties.contains(null)) {
+                LOG.error("Er zijn onverwerkte regels voor Anummer {}, controleer de voorgaande logregels voor de betreffende afnemers!",
+                        afnemersindicaties.getANummer());
+            }
 
             afnemersindicaties.getAfnemersindicatie().addAll(indicaties);
 
@@ -163,18 +155,14 @@ public final class JdbcAfnemersIndicatieRepository extends AbstractJdbcRepositor
     /**
      * Mapper voor afnemersindicaties.
      */
-    private static final class AfnemersindicatieMapper implements RowMapper<AfnemersindicatieRecordType> {
+    private static final class AfnemersindicatieRegelMapper implements RowMapper<AfnemersindicatieRecordType> {
         @Override
         public AfnemersindicatieRecordType mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final AfnemersindicatieRecordType record = new AfnemersindicatieRecordType();
-            final DecimalFormat df = new DecimalFormat(AFNEMER_CODE_FORMAT);
-            final String afnemerCode = df.format(rs.getInt(AFNEMER_CODE));
-            if (!AFNEMER_CODE_FORMAT.equals(afnemerCode)) {
-                record.setAfnemerCode(afnemerCode);
-            }
+            record.setAfnemerCode(rs.getString(AFNEMER_CODE));
             record.setGeldigheidStartDatum(BigInteger.valueOf(rs.getInt(GELDIGHEID_START_DATUM)));
-            record.setStapelNummer(rs.getString(STAPEL_NR));
-            record.setVolgNummer(rs.getString(VOLG_NR));
+            record.setStapelNummer(rs.getInt(STAPEL_NR));
+            record.setVolgNummer(rs.getInt(VOLG_NR));
             return record;
         }
     }

@@ -9,29 +9,22 @@ package nl.bzk.migratiebrp.tools.mailbox.impl;
 import com.mchange.v2.c3p0.DriverManagerDataSource;
 import java.io.File;
 import java.io.IOException;
-import javax.sql.DataSource;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * HSQLDB Mailbox factory.
  */
-public final class HsqldbMailboxFactory implements MailboxFactory, DisposableBean {
+public final class HsqldbMailboxFactory extends AbstractDatabaseMailboxFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger();
     private static final String DEFAULT_DATA_LOCATION = "data";
 
-    private final DriverManagerDataSource dataSource;
-    private final JdbcTemplate jdbcTemplate;
-
     /**
      * Constructor.
-     *
-     * @throws MailboxException
-     *             wordt gegooid als de benodigde directory niet bestaato of aangemaakt kan worden.
+     * @throws MailboxException wordt gegooid als de benodigde directory niet bestaato of aangemaakt kan worden.
      */
     public HsqldbMailboxFactory() throws MailboxException {
         this(DEFAULT_DATA_LOCATION);
@@ -39,19 +32,15 @@ public final class HsqldbMailboxFactory implements MailboxFactory, DisposableBea
 
     /**
      * Constructor.
-     *
-     * @param dataLocation
-     *            data files locatie
-     * @throws MailboxException
-     *             wordt gegooid als de benodigde directory niet bestaato of aangemaakt kan worden.
+     * @param dataLocation data files locatie
+     * @throws MailboxException wordt gegooid als de benodigde directory niet bestaato of aangemaakt kan worden.
      */
     public HsqldbMailboxFactory(final String dataLocation) throws MailboxException {
         LOG.info("Starting HSQLDB mailbox factory...");
         final File dataDirectory = new File(dataLocation);
-        String dbFile;
+        final String dbFile;
         try {
-            dataDirectory.mkdirs();
-            if (!dataDirectory.exists() || !dataDirectory.isDirectory()) {
+            if (!dataDirectory.mkdirs() && !dataDirectory.exists()) {
                 throw new MailboxException("Pad voor data directory kon niet worden aangemaakt.");
             }
 
@@ -59,70 +48,55 @@ public final class HsqldbMailboxFactory implements MailboxFactory, DisposableBea
         } catch (final IOException e) {
             throw new MailboxException("Ongeldig pad voor data directory", e);
         }
-        dataSource = new DriverManagerDataSource();
+        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClass("org.hsqldb.jdbc.JDBCDriver");
         dataSource.setJdbcUrl("jdbc:hsqldb:file:" + dbFile);
         dataSource.setUser("SA");
         dataSource.setPassword("");
-        jdbcTemplate = new JdbcTemplate(dataSource);
+        setJdbcTemplate(new JdbcTemplate(dataSource));
 
-        // createdb
-        jdbcTemplate.execute("set database sql syntax pgs true");
         try {
-            jdbcTemplate.execute("create sequence ms_sequence_nr");
+            final String postgresqlCompatibility = "set database sql syntax pgs true;";
+            getJdbcTemplate().execute(postgresqlCompatibility);
+        } catch (final DataAccessException e) {
+            // IGNORE
+            LOG.debug("Probleem tijdens zetten postgresql compatibility", e);
+        }
+
+        try {
+            getJdbcTemplate().execute("drop schema if exists mailbox cascade");
+            getJdbcTemplate().execute("create schema mailbox");
+            getJdbcTemplate().execute("create sequence mailbox.ms_sequence_nr");
         } catch (final DataAccessException e) {
             // IGNORE
             LOG.debug("Probleem tijdens create sequence", e);
         }
+
         try {
-            jdbcTemplate.execute("create table mailbox(mailboxnr VARCHAR(7) PRIMARY KEY, status INTEGER, password VARCHAR(8))");
+            getJdbcTemplate().execute("create table mailbox.mailbox(mailboxnr VARCHAR(7) PRIMARY KEY, status INTEGER, password VARCHAR(8))");
         } catch (final DataAccessException e) {
             // IGNORE
             LOG.debug("Probleem tijdens create mailbox table", e);
         }
         try {
-            jdbcTemplate.execute("create table entry("
-                                 + "originator_or_recipient VARCHAR(7), "
-                                 + "ms_sequence_id BIGINT PRIMARY KEY, "
-                                 + "mesg CLOB(20000), "
-                                 + "status INTEGER, "
-                                 + "message_id VARCHAR(12), "
-                                 + "cross_reference VARCHAR(12), "
-                                 + "mailboxnr VARCHAR(7))");
+            getJdbcTemplate().execute(
+                    "create table mailbox.entry("
+                            + "originator_or_recipient VARCHAR(7), "
+                            + "ms_sequence_id BIGINT PRIMARY KEY, "
+                            + "mesg CLOB(20000), "
+                            + "status INTEGER, "
+                            + "message_id VARCHAR(12), "
+                            + "cross_reference VARCHAR(12), "
+                            + "notification_request INTEGER, "
+                            + "mailboxnr VARCHAR(7))");
         } catch (final DataAccessException e) {
             // IGNORE
             LOG.debug("Probleem tijdens create entry table", e);
         }
     }
 
-    /**
-     * Geef de hsqldb datasource.
-     *
-     * @return datasource
-     */
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    @Override
-    public Mailbox getMailbox(final String mailboxnr) {
-        return new HsqldbMailbox(this, mailboxnr);
-    }
-
-    @Override
-    public int getNextMsSequenceNr() {
-        return jdbcTemplate.queryForObject("select nextval('ms_sequence_nr')", Integer.class);
-    }
-
-    @Override
-    public void deleteAll() throws MailboxException {
-        jdbcTemplate.execute("delete from mailbox");
-        jdbcTemplate.execute("delete from entry");
-    }
-
     @Override
     public void destroy() {
-        jdbcTemplate.execute("shutdown compact");
+        getJdbcTemplate().execute("shutdown compact");
     }
-
 }

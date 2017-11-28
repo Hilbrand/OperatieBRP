@@ -12,22 +12,22 @@
 		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
 	">
-	
+
 	<context:annotation-config />
 
     <!-- Queues -->
 
-    <bean name="vospgOntvangstQueue" class="org.springframework.jndi.JndiObjectFactoryBean">
+    <bean name="voiscOntvangstQueue" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiTemplate" ref="jndiTemplate"/>
-        <property name="jndiName" value="queue/vospg.ontvangst" />
+        <property name="jndiName" value="queue/voisc.ontvangst" />
     </bean>
 
 	<!-- Test environment -->
-	
+
 	<bean name="testEnvironment" class="nl.bzk.migratiebrp.test.perf.isc.environment.TestEnvironment" />
-    
+
     <!-- ISC DB -->
-    
+
     <bean id="iscDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${isc.jdbc.driverClassName:org.postgresql.Driver}" />
         <property name="url" value="${isc.jdbc.url:jdbc:postgresql://localhost/soa}" />
@@ -59,12 +59,12 @@
         </property>
         <property name="jndiName" value="ConnectionFactory" />
     </bean>
-    
+
 	<!-- JMS -->
 
     <bean name="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="connectionFactory" />
         <property name="receiveTimeout" value="30000" />
-    </bean> 
+    </bean>
 
 </beans>

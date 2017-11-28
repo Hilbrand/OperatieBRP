@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.ggo.viewer.model;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 
 /**
  * Enumeratie van alle BRP elementen. Gebruikt om labels van de BRP elementen vast te leggen welke in de viewer getoond
@@ -57,18 +57,18 @@ public enum GgoBrpElementEnum {
      */
     PREDICAAT("Predicaat", Element.PERSOON_GESLACHTSNAAMCOMPONENT_PREDICAATCODE,
             Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM_PREDICAATCODE,
-            Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_PREDICAATCODE,
-            Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_PREDICAATCODE, Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_PREDICAATCODE,
-            Element.PERSOON_SAMENGESTELDENAAM_PREDICAATCODE, Element.PERSOON_NAAMGEBRUIK_PREDICAATCODE),
+            Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_PREDICAATCODE, Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_PREDICAATCODE,
+            Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_PREDICAATCODE, Element.PERSOON_SAMENGESTELDENAAM_PREDICAATCODE,
+            Element.PERSOON_NAAMGEBRUIK_PREDICAATCODE),
 
     /**
      * Scheidingsteken.
      */
     SCHEIDINGSTEKEN("Scheidingsteken", Element.PERSOON_GESLACHTSNAAMCOMPONENT_SCHEIDINGSTEKEN,
             Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN,
-            Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN,
-            Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN, Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN,
-            Element.PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN, Element.PERSOON_NAAMGEBRUIK_SCHEIDINGSTEKEN),
+            Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN, Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN,
+            Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN, Element.PERSOON_SAMENGESTELDENAAM_SCHEIDINGSTEKEN,
+            Element.PERSOON_NAAMGEBRUIK_SCHEIDINGSTEKEN),
     /**
      * Volgnummer.
      */
@@ -78,8 +78,7 @@ public enum GgoBrpElementEnum {
      */
     VOORNAMEN("Voornamen", Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM_VOORNAMEN,
             Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_VOORNAMEN, Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_VOORNAMEN,
-            Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_VOORNAMEN, Element.PERSOON_SAMENGESTELDENAAM_VOORNAMEN,
-            Element.PERSOON_NAAMGEBRUIK_VOORNAMEN),
+            Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_VOORNAMEN, Element.PERSOON_SAMENGESTELDENAAM_VOORNAMEN, Element.PERSOON_NAAMGEBRUIK_VOORNAMEN),
     /**
      * Voorvoegsel.
      */
@@ -92,11 +91,11 @@ public enum GgoBrpElementEnum {
     /**
      * Heeft indicatie.
      */
-    HEEFT_INDICATIE("Heeft indicatie", Element.PERSOON_INDICATIE_BEHANDELDALSNEDERLANDER,
-            Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE, Element.PERSOON_INDICATIE_DERDEHEEFTGEZAG,
-            Element.PERSOON_INDICATIE_ONDERCURATELE, Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT,
-            Element.PERSOON_INDICATIE_STAATLOOS, Element.PERSOON_INDICATIE_VASTGESTELDNIETNEDERLANDER,
-            Element.PERSOON_INDICATIE_VOLLEDIGEVERSTREKKINGSBEPERKING),
+    HEEFT_INDICATIE("Heeft indicatie", Element.PERSOON_INDICATIE_BEHANDELDALSNEDERLANDER_WAARDE,
+            Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE_WAARDE, Element.PERSOON_INDICATIE_DERDEHEEFTGEZAG_WAARDE,
+            Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE, Element.PERSOON_INDICATIE_SIGNALERINGMETBETREKKINGTOTVERSTREKKENREISDOCUMENT_WAARDE,
+            Element.PERSOON_INDICATIE_STAATLOOS_WAARDE, Element.PERSOON_INDICATIE_VASTGESTELDNIETNEDERLANDER_WAARDE,
+            Element.PERSOON_INDICATIE_VOLLEDIGEVERSTREKKINGSBEPERKING_WAARDE),
 
     /* Naamgebruik */
     /**
@@ -209,12 +208,6 @@ public enum GgoBrpElementEnum {
     BUITENLANDS_ADRES_REGEL_6("Buitenlands adres regel 6", Element.PERSOON_ADRES_BUITENLANDSADRESREGEL6),
 
     /**
-     * In onderzoek.
-     */
-    INDICATIE_ONVERWERKT_BIJHOUDINGSVOORSTEL_NIET_INGEZETENE_AANWEZIG("Indicatie onverwerkt bijhoudingsvoorstel niet-ingezetene aanwezig",
-            Element.PERSOON_AFGELEIDADMINISTRATIEF_INDICATIEONVERWERKTBIJHOUDINGSVOORSTELNIETINGEZETENEAANWEZIG),
-
-    /**
      * Bijhoudingsaard.
      */
     BIJHOUDINGSAARD("Bijhoudingsaard", Element.PERSOON_BIJHOUDING_BIJHOUDINGSAARDCODE),
@@ -229,7 +222,7 @@ public enum GgoBrpElementEnum {
     /**
      * Onverwerkt document aanwezig.
      */
-    ONVERWERKT_DOC_AANWEZIG("Onverwerkt document aanwezig", Element.PERSOON_BIJHOUDING_INDICATIEONVERWERKTDOCUMENTAANWEZIG),
+    ONVERWERKT_DOC_AANWEZIG("Onverwerkt document aanwezig", Element.PERSOON_INDICATIE_ONVERWERKTDOCUMENTAANWEZIG),
 
     /* Deelname EU verkiezingen */
     /**
@@ -266,9 +259,8 @@ public enum GgoBrpElementEnum {
      * Geboorte plaats.
      */
     WOONPLAATSNAAM_GEBOORTE("Woonplaatsnaam geboorte", Element.PERSOON_GEBOORTE_WOONPLAATSNAAM,
-            Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GEBOORTE_WOONPLAATSNAAM,
-            Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GEBOORTE_WOONPLAATSNAAM, Element.GERELATEERDEOUDER_PERSOON_GEBOORTE_WOONPLAATSNAAM,
-            Element.GERELATEERDEKIND_PERSOON_GEBOORTE_WOONPLAATSNAAM),
+            Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GEBOORTE_WOONPLAATSNAAM, Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GEBOORTE_WOONPLAATSNAAM,
+            Element.GERELATEERDEOUDER_PERSOON_GEBOORTE_WOONPLAATSNAAM, Element.GERELATEERDEKIND_PERSOON_GEBOORTE_WOONPLAATSNAAM),
     /**
      * Buitenlandse geboorteplaats.
      */
@@ -287,9 +279,8 @@ public enum GgoBrpElementEnum {
      * Geboorte land/gebied.
      */
     LAND_OF_GEBIED_GEBOORTE("Land/gebied geboorte", Element.PERSOON_GEBOORTE_LANDGEBIEDCODE,
-            Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GEBOORTE_LANDGEBIEDCODE,
-            Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GEBOORTE_LANDGEBIEDCODE, Element.GERELATEERDEOUDER_PERSOON_GEBOORTE_LANDGEBIEDCODE,
-            Element.GERELATEERDEKIND_PERSOON_GEBOORTE_LANDGEBIEDCODE),
+            Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GEBOORTE_LANDGEBIEDCODE, Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GEBOORTE_LANDGEBIEDCODE,
+            Element.GERELATEERDEOUDER_PERSOON_GEBOORTE_LANDGEBIEDCODE, Element.GERELATEERDEKIND_PERSOON_GEBOORTE_LANDGEBIEDCODE),
     /**
      * Omschrijving geboorte locatie.
      */
@@ -303,8 +294,8 @@ public enum GgoBrpElementEnum {
      * Geslachtsaanduiding.
      */
     GESLACHTSAANDUIDING("Geslachtsaanduiding", Element.PERSOON_GESLACHTSAANDUIDING_CODE,
-            Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE,
-            Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE, Element.GERELATEERDEOUDER_PERSOON_GESLACHTSAANDUIDING_CODE),
+            Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE, Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_GESLACHTSAANDUIDING_CODE,
+            Element.GERELATEERDEOUDER_PERSOON_GESLACHTSAANDUIDING_CODE),
 
     /* Geslachtsnaamcomponent */
     /**
@@ -523,8 +514,7 @@ public enum GgoBrpElementEnum {
     INDICATIE_NAMENREEKS("Namenreeks", Element.PERSOON_SAMENGESTELDENAAM_INDICATIENAMENREEKS,
             Element.GERELATEERDEGEREGISTREERDEPARTNER_PERSOON_SAMENGESTELDENAAM_INDICATIENAMENREEKS,
             Element.GERELATEERDEHUWELIJKSPARTNER_PERSOON_SAMENGESTELDENAAM_INDICATIENAMENREEKS,
-            Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_INDICATIENAMENREEKS,
-            Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_INDICATIENAMENREEKS),
+            Element.GERELATEERDEOUDER_PERSOON_SAMENGESTELDENAAM_INDICATIENAMENREEKS, Element.GERELATEERDEKIND_PERSOON_SAMENGESTELDENAAM_INDICATIENAMENREEKS),
 
     /* Uitsluiting kiesrecht */
     /**
@@ -550,11 +540,14 @@ public enum GgoBrpElementEnum {
      * Datum voorziene einde verblijfsrecht.
      */
     DATUM_VOORZIEN_EINDE_VERBLIJFSRECHT("Datum voorzien einde verblijfsrecht", Element.PERSOON_VERBLIJFSRECHT_DATUMVOORZIENEINDE),
+    /**
+     * Datum aanvang verblijfsrecht.
+     */
+    DATUM_AANVANG_VERBLIJFSRECHT("Datum aanvang verblijfsrecht", Element.PERSOON_VERBLIJFSRECHT_DATUMAANVANG),
 
     /* Verificatie */
     /**
-     * Soort verificatie. Nb heet eigenlijk 'Soort' maar dit veroorzaakt een name/ type clash met soort
-     * reisdocument.
+     * Soort verificatie. Nb heet eigenlijk 'Soort' maar dit veroorzaakt een name/ type clash met soort reisdocument.
      */
     SOORT_VERIFICATIE(Constants.SOORT_STRING, Element.PERSOON_VERIFICATIE_SOORT),
 
@@ -611,8 +604,7 @@ public enum GgoBrpElementEnum {
     /**
      * Buitenlandse plaats einde.
      */
-    BUITENLANDSE_PLAATS_EINDE("Buitenlandse plaats einde", Element.GEREGISTREERDPARTNERSCHAP_BUITENLANDSEPLAATSEINDE,
-            Element.HUWELIJK_BUITENLANDSEPLAATSEINDE),
+    BUITENLANDSE_PLAATS_EINDE("Buitenlandse plaats einde", Element.GEREGISTREERDPARTNERSCHAP_BUITENLANDSEPLAATSEINDE, Element.HUWELIJK_BUITENLANDSEPLAATSEINDE),
     /**
      * Buitenlandse regio einde.
      */
@@ -632,10 +624,6 @@ public enum GgoBrpElementEnum {
      * Document.
      */
     SOORT_DOCUMENT("Soort document", Element.DOCUMENT_SOORTNAAM),
-    /**
-     * Identificatie.
-     */
-    IDENTIFICATIE("Identificatie", Element.DOCUMENT_IDENTIFICATIE),
     /**
      * Aktenummer.
      */
@@ -756,11 +744,6 @@ public enum GgoBrpElementEnum {
     REDEN_EINDE_RELATIE("Reden einde relatie", Element.GEREGISTREERDPARTNERSCHAP_REDENEINDECODE, Element.HUWELIJK_REDENEINDECODE),
 
     /**
-     * Indicatie ouder.
-     */
-    INDICATIE_OUDER("Indicatie ouder", Element.OUDER_OUDERSCHAP_INDICATIEOUDER),
-
-    /**
      * Indicatie Ouder Uit Wie Kind Is Geboren.
      */
     INDICATIE_OUDERUITWIEKINDISGEBOREN("Indicatie ouder uit wie kind is geboren", Element.GERELATEERDEOUDER_OUDERSCHAP_INDICATIEOUDERUITWIEKINDISGEBOREN),
@@ -781,7 +764,19 @@ public enum GgoBrpElementEnum {
     /**
      * Tijdstip levering.
      */
-    TIJDSTIP_LEVERING("Tijdstip levering", Element.ADMINISTRATIEVEHANDELING_LEVERING_TIJDSTIP);
+    TIJDSTIP_LEVERING("Tijdstip levering", Element.ADMINISTRATIEVEHANDELING_LEVERING_TIJDSTIP),
+    /**
+     * Datum/tijd laatste wijziging.
+     */
+    DATUM_TIJD_LAATSTE_WIJZIGING("Datum/tijd laatste wijziging", Element.PERSOON_AFGELEIDADMINISTRATIEF_TIJDSTIPLAATSTEWIJZIGING),
+    /**
+     * Datum/tijd laatste wijziging GBA.
+     */
+    DATUM_TIJD_LAATSTE_WIJZIGING_GBA("Datum/tijd laatste wijziging GBA", Element.PERSOON_AFGELEIDADMINISTRATIEF_TIJDSTIPLAATSTEWIJZIGINGGBASYSTEMATIEK),
+    /**
+     * Autoriteit van afgifte buitenlands persoonsnummer.
+     */
+    AUTORITEIT_VAN_AFGIFTE_BUITENLANDS_PERSOONSNUMMER("Autoriteit van afgifte", Element.PERSOON_BUITENLANDSPERSOONSNUMMER_AUTORITEITVANAFGIFTECODE);
 
     private final String label;
     private final Element[] elementen;
@@ -798,9 +793,7 @@ public enum GgoBrpElementEnum {
 
     /**
      * Vind het juiste GgoBrpElementEnum voor het gegeven Element, zodat het label ervan kan worden getoond.
-     *
-     * @param element
-     *            Het Element
+     * @param element Het Element
      * @return Het GgoBrpElementEnum
      */
     public static GgoBrpElementEnum findByElement(final Element element) {
@@ -817,7 +810,6 @@ public enum GgoBrpElementEnum {
 
     /**
      * Geef de waarde van label.
-     *
      * @return de label
      */
     public String getLabel() {
@@ -827,7 +819,10 @@ public enum GgoBrpElementEnum {
     /**
      * Private inner class voor constanten gebruikt binnen de enum.
      */
-    private static class Constants {
+    private static final class Constants {
         private static final String SOORT_STRING = "Soort";
+
+        private Constants() {
+        }
     }
 }

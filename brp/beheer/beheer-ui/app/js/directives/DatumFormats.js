@@ -5,6 +5,13 @@ angular.module('DatumFormats', [])
         require: 'ngModel',
         link: function (scope, element, attrs, ngModel) {
             var moment = $window.moment;
+            moment.locale('nl', {
+                longDateFormat: {
+                    LT: "HH:mm",
+                    ll: "YYYY-MM-DD",
+                    lll: "YYYY-MM-DD LT"
+                }
+            });
 
             ngModel.$formatters.push(toView);
             ngModel.$parsers.push(toModel);
@@ -15,28 +22,28 @@ angular.module('DatumFormats', [])
             });
 
             function toView(value) {
-                var m = moment(value, "YYYYMMDDHHmm", true);
+                var m = moment(value, "YYYY-MM-DD HH:mm:ss", true);
                 var valid = m.isValid();
                 if (valid) {
-                	return m.valueOf();
+                    return m.valueOf();
                 }  else {
-                	return null;
+                    return null;
                 }
             }
 
             function toModel(value) {
-            	if(value) {
+                if(value) {
                     var m = moment(value);
                     var valid = m.isValid();
                     ngModel.$setValidity('datumtijd', valid);
                     if (valid) {
-                    	return m.format("YYYYMMDDHHmm");
+                        return m.format("YYYY-MM-DD HH:mm:ss");
                     } else {
-                    	return null;
+                        return null;
                     }
-            	} else {
-            		return null;
-            	}
+                } else {
+                    return null;
+                }
             }
         } //link
     };
@@ -60,25 +67,25 @@ angular.module('DatumFormats', [])
                 var m = moment(value, "YYYYMMDD", true);
                 var valid = m.isValid();
                 if (valid) {
-                	return m.valueOf();
+                    return m.valueOf();
                 }  else {
-                	return null;
+                    return null;
                 }
             }
 
             function toModel(value) {
-            	if(value) {
+                if(value) {
                     var m = moment(value);
                     var valid = m.isValid();
                     ngModel.$setValidity('datumtijd', valid);
                     if (valid) {
-                    	return m.format("YYYYMMDD");
+                        return m.format("YYYYMMDD");
                     } else {
-                    	return null;
+                        return null;
                     }
-            	} else {
-            		return null;
-            	}
+                } else {
+                    return null;
+                }
             }
         } //link
     };

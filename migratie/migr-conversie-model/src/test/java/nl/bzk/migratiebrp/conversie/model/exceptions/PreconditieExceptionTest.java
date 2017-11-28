@@ -12,9 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-
 import org.junit.Test;
 
 public class PreconditieExceptionTest {
@@ -69,7 +67,7 @@ public class PreconditieExceptionTest {
     }
 
     private Exception getException() {
-        return new OngeldigeAfnemersindicatieException();
+        return new OngeldigePersoonslijstException("test");
     }
 
 }

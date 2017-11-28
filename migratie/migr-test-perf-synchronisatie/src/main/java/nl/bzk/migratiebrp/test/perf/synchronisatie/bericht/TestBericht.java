@@ -23,11 +23,8 @@ public final class TestBericht {
 
     /**
      * Constructor.
-     * 
-     * @param berichtInhoud
-     *            inhoud van het bericht
-     * @param filename
-     *            bestandsnaam
+     * @param berichtInhoud inhoud van het bericht
+     * @param filename bestandsnaam
      */
     public TestBericht(final String berichtInhoud, final String filename) {
         final Matcher matcher = FILE_NAME_PATTERN.matcher(filename);
@@ -55,7 +52,6 @@ public final class TestBericht {
 
     /**
      * Geef de waarde van volgnummer.
-     *
      * @return volgnummer
      */
     public Integer getVolgnummer() {
@@ -64,7 +60,6 @@ public final class TestBericht {
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return inhoud
      */
     public String getInhoud() {
@@ -73,7 +68,6 @@ public final class TestBericht {
 
     /**
      * Geef de waarde van verzendende partij.
-     *
      * @return verzendende partij
      */
     public String getVerzendendePartij() {
@@ -82,7 +76,6 @@ public final class TestBericht {
 
     /**
      * Geef de waarde van ontvangende partij.
-     *
      * @return ontvangende partij
      */
     public String getOntvangendePartij() {

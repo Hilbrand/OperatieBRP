@@ -17,9 +17,7 @@ public abstract class AbstractSyncBerichtZonderGerelateerdeInformatie extends Ab
 
     /**
      * Constructor.
-     *
-     * @param berichtType
-     *            berichtType
+     * @param berichtType berichtType
      */
     public AbstractSyncBerichtZonderGerelateerdeInformatie(final String berichtType) {
         super(berichtType);

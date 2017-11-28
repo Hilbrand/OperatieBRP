@@ -6,10 +6,10 @@
 
 package nl.bzk.migratiebrp.test.brpnaarlo3;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Attribute;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
 
 /**
  * Conversie test resultaat.
@@ -24,19 +24,18 @@ public final class BrpNaarLo3ConversieTestResultaat extends TestResultaat {
 
     /**
      * Constructor.
-     * 
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
+     * @param thema thema
+     * @param naam naam
      */
-    protected BrpNaarLo3ConversieTestResultaat(@Attribute(name = "thema", required = false) final String thema, @Attribute(name = "naam",
-            required = false) final String naam)
-    {
+    protected BrpNaarLo3ConversieTestResultaat(
+            @Attribute(name = "thema", required = false) final String thema,
+            @Attribute(name = "naam", required = false) final String naam) {
         super(thema, naam);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see nl.bzk.migratiebrp.test.common.resultaat.TestResultaat#isSucces()
      */
     @Override
@@ -46,7 +45,6 @@ public final class BrpNaarLo3ConversieTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van lezen.
-     *
      * @return lezen
      */
     public TestStap getLezen() {
@@ -55,9 +53,7 @@ public final class BrpNaarLo3ConversieTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van lezen.
-     *
-     * @param lezen
-     *            lezen
+     * @param lezen lezen
      */
     public void setLezen(final TestStap lezen) {
         this.lezen = lezen;
@@ -65,7 +61,6 @@ public final class BrpNaarLo3ConversieTestResultaat extends TestResultaat {
 
     /**
      * Geef de waarde van conversie.
-     *
      * @return conversie
      */
     public TestStap getConversie() {
@@ -74,9 +69,7 @@ public final class BrpNaarLo3ConversieTestResultaat extends TestResultaat {
 
     /**
      * Zet de waarde van conversie.
-     *
-     * @param conversie
-     *            conversie
+     * @param conversie conversie
      */
     public void setConversie(final TestStap conversie) {
         this.conversie = conversie;

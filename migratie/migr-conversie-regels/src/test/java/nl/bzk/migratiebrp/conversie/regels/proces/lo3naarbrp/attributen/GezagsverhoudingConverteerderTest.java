@@ -7,16 +7,16 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp.attributen;
 
 import java.util.Arrays;
-import javax.inject.Inject;
+import java.util.Collections;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatum;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpDatumTijd;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLong;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblijfCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpAdresInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpDerdeHeeftGezagIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
@@ -37,87 +37,106 @@ import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijst;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenPersoonslijstBuilder;
 import nl.bzk.migratiebrp.conversie.model.tussen.TussenStapel;
 import nl.bzk.migratiebrp.conversie.regels.AbstractComponentTest;
+import nl.bzk.migratiebrp.conversie.regels.tabel.ConversietabelFactoryImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Tests voor {@link GezagsverhoudingConverteerder}.
- * 
  */
 public class GezagsverhoudingConverteerderTest extends AbstractComponentTest {
 
-    @Inject
-    private GezagsverhoudingConverteerder gezagsverhoudingConverteerder;
+    private GezagsverhoudingConverteerder
+            gezagsverhoudingConverteerder =
+            new GezagsverhoudingConverteerder(new Lo3AttribuutConverteerder(new ConversietabelFactoryImpl()));
 
     private TussenPersoonslijstBuilder buildMigratiePersoonslijstBuilder() {
         final TussenStapel<BrpIdentificatienummersInhoud> identificatienummerStapel =
-                new TussenStapel<>(Arrays.asList(new TussenGroep<>(new BrpIdentificatienummersInhoud(
-                    new BrpLong(1234567890L, null),
-                    new BrpInteger(123456789, null)), Lo3Historie.NULL_HISTORIE, null, null)));
+                new TussenStapel<>(
+                        Collections.singletonList(
+                                new TussenGroep<>(
+                                        new BrpIdentificatienummersInhoud(new BrpString("1234567890", null),
+                                                new BrpString("123456789", null)),
+                                        new Lo3Historie(null, null, null),
+                                        null,
+                                        null)));
         final TussenStapel<BrpGeslachtsaanduidingInhoud> geslachtsaanduidingStapel =
-                new TussenStapel<>(Arrays.asList(new TussenGroep<>(
-                    new BrpGeslachtsaanduidingInhoud(BrpGeslachtsaanduidingCode.MAN),
-                    Lo3Historie.NULL_HISTORIE,
-                    null,
-                    null)));
+                new TussenStapel<>(
+                        Collections.singletonList(
+                                new TussenGroep<>(
+                                        new BrpGeslachtsaanduidingInhoud(BrpGeslachtsaanduidingCode.MAN),
+                                        new Lo3Historie(null, null, null),
+                                        null,
+                                        null)));
 
         final TussenPersoonslijstBuilder tussenPersoonslijstBuilder = new TussenPersoonslijstBuilder();
         tussenPersoonslijstBuilder.identificatienummerStapel(identificatienummerStapel);
         tussenPersoonslijstBuilder.geslachtsaanduidingStapel(geslachtsaanduidingStapel);
-        tussenPersoonslijstBuilder.geboorteStapel(new TussenStapel<>(
-            Arrays.asList(new TussenGroep<>(new BrpGeboorteInhoud(
-                new BrpDatum(19770101, null),
-                null,
-                null,
-                null,
-                null,
-                new BrpLandOfGebiedCode(Short.parseShort("0000")),
-                null), Lo3Historie.NULL_HISTORIE, null, null))));
-        // tussenPersoonslijstBuilder
-        // .geslachtsnaamcomponentStapel(new TussenStapel<BrpGeslachtsnaamcomponentInhoud>(Arrays
-        // .asList(new TussenGroep<BrpGeslachtsnaamcomponentInhoud>(
-        // new BrpGeslachtsnaamcomponentInhoud(null, null, "Jansen", null, null, 1),
-        // Lo3Historie.NULL_HISTORIE, null))));
-        tussenPersoonslijstBuilder.naamgebruikStapel(new TussenStapel<>(Arrays.asList(new TussenGroep<>(new BrpNaamgebruikInhoud(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null), Lo3Historie.NULL_HISTORIE, null, null))));
-        tussenPersoonslijstBuilder.inschrijvingStapel(new TussenStapel<>(Arrays.asList(new TussenGroep<>(new BrpInschrijvingInhoud(
-            new BrpDatum(19560312, null),
-            new BrpLong(0L, null),
-            BrpDatumTijd.fromDatum(19560312, null)), Lo3Historie.NULL_HISTORIE, null, null))));
-        tussenPersoonslijstBuilder.adresStapel(new TussenStapel<>(Arrays.asList(new TussenGroep<>(new BrpAdresInhoud(
-            null,
-            new BrpRedenWijzigingVerblijfCode('O'),
-            new BrpAangeverCode('A'),
-            new BrpDatum(20010101, null),
-            null,
-            null,
-            new BrpGemeenteCode(Short.parseShort("0518")),
+        tussenPersoonslijstBuilder.geboorteStapel(
+                new TussenStapel<>(
+                        Collections.singletonList(
+                                new TussenGroep<>(
+                                        new BrpGeboorteInhoud(
+                                                new BrpDatum(19770101, null),
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                new BrpLandOfGebiedCode("0000"),
+                                                null),
+                                        new Lo3Historie(null, null, null),
+                                        null,
+                                        null))));
+        tussenPersoonslijstBuilder.naamgebruikStapel(
+                new TussenStapel<>(
+                        Collections.singletonList(
+                                new TussenGroep<>(
+                                        new BrpNaamgebruikInhoud(null, null, null, null, null, null, null, null),
+                                        new Lo3Historie(null, null, null),
+                                        null,
+                                        null))));
+        tussenPersoonslijstBuilder.inschrijvingStapel(
+                new TussenStapel<>(
+                        Collections.singletonList(
+                                new TussenGroep<>(
+                                        new BrpInschrijvingInhoud(new BrpDatum(19560312, null), new BrpLong(0L, null), BrpDatumTijd.fromDatum(19560312, null)),
+                                        new Lo3Historie(null, null, null),
+                                        null,
+                                        null))));
+        tussenPersoonslijstBuilder.adresStapel(
+                new TussenStapel<>(
+                        Collections.singletonList(
+                                new TussenGroep<>(
+                                        new BrpAdresInhoud(
+                                                null,
+                                                new BrpRedenWijzigingVerblijfCode('O'),
+                                                new BrpAangeverCode('A'),
+                                                new BrpDatum(20010101, null),
+                                                null,
+                                                null,
+                                                new BrpGemeenteCode("0518"),
 
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            new BrpLandOfGebiedCode(Short.parseShort("6030")),
-            null), Lo3Historie.NULL_HISTORIE, null, null))));
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                new BrpLandOfGebiedCode("6030"),
+                                                null),
+                                        new Lo3Historie(null, null, null),
+                                        null,
+                                        null))));
 
         return tussenPersoonslijstBuilder;
     }
@@ -125,39 +144,40 @@ public class GezagsverhoudingConverteerderTest extends AbstractComponentTest {
     private Lo3Stapel<Lo3GezagsverhoudingInhoud> buildDerdeHeeftGezag() {
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status1 =
                 new Lo3Categorie<>(
-                    new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDERS_1_EN_2.asElement(), null),
-                    null,
-                    new Lo3Historie(null, new Lo3Datum(20010101), new Lo3Datum(20010101)),
-                    null);
+                        new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDERS_1_EN_2.asElement(), null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20010101), new Lo3Datum(20010101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status2 =
                 new Lo3Categorie<>(
-                    new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDER_1_EN_DERDE.asElement(), null),
-                    null,
-                    new Lo3Historie(null, new Lo3Datum(20020101), new Lo3Datum(20020101)),
-                    null);
+                        new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDER_1_EN_DERDE.asElement(), null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20020101), new Lo3Datum(20020101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status3 =
                 new Lo3Categorie<>(
-                    new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.DERDE.asElement(), null),
-                    null,
-                    new Lo3Historie(null, new Lo3Datum(20030101), new Lo3Datum(20030101)),
-                    null);
+                        new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.DERDE.asElement(), null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20030101), new Lo3Datum(20030101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status4 =
                 new Lo3Categorie<>(
-                    new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDER_2.asElement(), null),
-                    null,
-                    new Lo3Historie(null, new Lo3Datum(20040101), new Lo3Datum(20040101)),
-                    null);
+                        new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDER_2.asElement(), null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20040101), new Lo3Datum(20040101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status5 =
                 new Lo3Categorie<>(
-                    new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDER_2_EN_DERDE.asElement(), null),
-                    null,
-                    new Lo3Historie(null, new Lo3Datum(20050101), new Lo3Datum(20050101)),
-                    null);
+                        new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDER_2_EN_DERDE.asElement(), null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20050101), new Lo3Datum(20050101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status6 =
-                new Lo3Categorie<>(new Lo3GezagsverhoudingInhoud(null, null), null, new Lo3Historie(
-                    null,
-                    new Lo3Datum(20060101),
-                    new Lo3Datum(20060101)), null);
+                new Lo3Categorie<>(
+                        new Lo3GezagsverhoudingInhoud(null, null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20060101), new Lo3Datum(20060101)),
+                        null);
 
         return new Lo3Stapel<>(Arrays.asList(status1, status2, status3, status4, status5, status6));
     }
@@ -170,10 +190,8 @@ public class GezagsverhoudingConverteerderTest extends AbstractComponentTest {
         // Run
         gezagsverhoudingConverteerder.converteer(gezagsverhoudingStapel, builder);
         final TussenPersoonslijst tussenPersoonslijst = builder.build();
-        final TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud> derdeHeeftGezagIndicatieStapel =
-                tussenPersoonslijst.getDerdeHeeftGezagIndicatieStapel();
-        final TussenStapel<BrpOnderCurateleIndicatieInhoud> onderCurateleIndicatieStapel =
-                tussenPersoonslijst.getOnderCurateleIndicatieStapel();
+        final TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud> derdeHeeftGezagIndicatieStapel = tussenPersoonslijst.getDerdeHeeftGezagIndicatieStapel();
+        final TussenStapel<BrpOnderCurateleIndicatieInhoud> onderCurateleIndicatieStapel = tussenPersoonslijst.getOnderCurateleIndicatieStapel();
 
         // Test - migratie stapel (redundante regels *niet* verwijderd)
         Assert.assertNotNull(onderCurateleIndicatieStapel);
@@ -223,38 +241,40 @@ public class GezagsverhoudingConverteerderTest extends AbstractComponentTest {
     private Lo3Stapel<Lo3GezagsverhoudingInhoud> buildOnderCuratele() {
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status1 =
                 new Lo3Categorie<>(
-                    new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDER_1_EN_DERDE.asElement(), null),
-                    null,
-                    new Lo3Historie(null, new Lo3Datum(20010101), new Lo3Datum(20010101)),
-                    null);
+                        new Lo3GezagsverhoudingInhoud(Lo3IndicatieGezagMinderjarigeEnum.OUDER_1_EN_DERDE.asElement(), null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20010101), new Lo3Datum(20010101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status2 =
                 new Lo3Categorie<>(
-                    new Lo3GezagsverhoudingInhoud(null, Lo3IndicatieCurateleregisterEnum.CURATOR_AANGESTELD.asElement()),
-                    null,
-                    new Lo3Historie(null, new Lo3Datum(20020101), new Lo3Datum(20020101)),
-                    null);
+                        new Lo3GezagsverhoudingInhoud(null, Lo3IndicatieCurateleregisterEnum.CURATOR_AANGESTELD.asElement()),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20020101), new Lo3Datum(20020101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status3 =
-                new Lo3Categorie<>(new Lo3GezagsverhoudingInhoud(null, null), null, new Lo3Historie(
-                    null,
-                    new Lo3Datum(20030101),
-                    new Lo3Datum(20030101)), null);
+                new Lo3Categorie<>(
+                        new Lo3GezagsverhoudingInhoud(null, null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20030101), new Lo3Datum(20030101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status4 =
                 new Lo3Categorie<>(
-                    new Lo3GezagsverhoudingInhoud(null, Lo3IndicatieCurateleregisterEnum.CURATOR_AANGESTELD.asElement()),
-                    null,
-                    new Lo3Historie(null, new Lo3Datum(20040101), new Lo3Datum(20040101)),
-                    null);
+                        new Lo3GezagsverhoudingInhoud(null, Lo3IndicatieCurateleregisterEnum.CURATOR_AANGESTELD.asElement()),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20040101), new Lo3Datum(20040101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status5 =
                 new Lo3Categorie<>(
-                    new Lo3GezagsverhoudingInhoud(null, Lo3IndicatieCurateleregisterEnum.CURATOR_AANGESTELD.asElement()),
-                    null,
-                    new Lo3Historie(null, new Lo3Datum(20050101), new Lo3Datum(20050101)),
-                    null);
+                        new Lo3GezagsverhoudingInhoud(null, Lo3IndicatieCurateleregisterEnum.CURATOR_AANGESTELD.asElement()),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20050101), new Lo3Datum(20050101)),
+                        null);
         final Lo3Categorie<Lo3GezagsverhoudingInhoud> status6 =
-                new Lo3Categorie<>(new Lo3GezagsverhoudingInhoud(null, null), null, new Lo3Historie(
-                    null,
-                    new Lo3Datum(20060101),
-                    new Lo3Datum(20060101)), null);
+                new Lo3Categorie<>(
+                        new Lo3GezagsverhoudingInhoud(null, null),
+                        null,
+                        new Lo3Historie(null, new Lo3Datum(20060101), new Lo3Datum(20060101)),
+                        null);
 
         return new Lo3Stapel<>(Arrays.asList(status1, status2, status3, status4, status5, status6));
     }
@@ -267,10 +287,8 @@ public class GezagsverhoudingConverteerderTest extends AbstractComponentTest {
         // Run
         gezagsverhoudingConverteerder.converteer(gezagsverhoudingStapel, builder);
         final TussenPersoonslijst tussenPersoonslijst = builder.build();
-        final TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud> derdeHeeftGezagIndicatieStapel =
-                tussenPersoonslijst.getDerdeHeeftGezagIndicatieStapel();
-        final TussenStapel<BrpOnderCurateleIndicatieInhoud> onderCurateleIndicatieStapel =
-                tussenPersoonslijst.getOnderCurateleIndicatieStapel();
+        final TussenStapel<BrpDerdeHeeftGezagIndicatieInhoud> derdeHeeftGezagIndicatieStapel = tussenPersoonslijst.getDerdeHeeftGezagIndicatieStapel();
+        final TussenStapel<BrpOnderCurateleIndicatieInhoud> onderCurateleIndicatieStapel = tussenPersoonslijst.getOnderCurateleIndicatieStapel();
 
         Assert.assertNotNull(derdeHeeftGezagIndicatieStapel);
         Assert.assertEquals(6, derdeHeeftGezagIndicatieStapel.size());

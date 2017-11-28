@@ -6,10 +6,8 @@
 
 package nl.bzk.migratiebrp.isc.console.mig4jsf;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +15,6 @@ import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import nl.bzk.migratiebrp.isc.console.mig4jsf.JbpmSqlHelper.Sql;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.dto.Bericht;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.dto.BerichtComparator;
 import nl.bzk.migratiebrp.isc.console.mig4jsf.dto.BerichtMapper;
@@ -44,22 +41,16 @@ public final class ListBerichtenForProcessInstanceActionListener extends Abstrac
 
     /**
      * Constructor.
-     *
-     * @param processInstanceExpression
-     *            process instance expression
-     * @param targetExpression
-     *            target expression
-     * @param pagerExpression
-     *            pager expression
-     * @param filterExpression
-     *            filter expression
+     * @param processInstanceExpression process instance expression
+     * @param targetExpression target expression
+     * @param pagerExpression pager expression
+     * @param filterExpression filter expression
      */
     public ListBerichtenForProcessInstanceActionListener(
-        final ValueExpression processInstanceExpression,
-        final ValueExpression targetExpression,
-        final ValueExpression pagerExpression,
-        final ValueExpression filterExpression)
-    {
+            final ValueExpression processInstanceExpression,
+            final ValueExpression targetExpression,
+            final ValueExpression pagerExpression,
+            final ValueExpression filterExpression) {
         super("listBerichtenForProcessInstance");
         this.processInstanceExpression = processInstanceExpression;
         this.targetExpression = targetExpression;
@@ -104,25 +95,22 @@ public final class ListBerichtenForProcessInstanceActionListener extends Abstrac
     }
 
     private List<Bericht> getBerichten(final JbpmContext jbpmContext, final long processInstanceId, final Filter filter) {
-        return JbpmSqlHelper.execute(jbpmContext, new Sql<List<Bericht>>() {
-            @Override
-            public List<Bericht> execute(final Connection connection) throws SQLException {
-                final String sql = FIND_BY_PROCESS_SQL + " " + filter.getWhereClause(StartType.AND);
-                List<Bericht> berichten;
-                try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                    statement.setLong(JdbcConstants.COLUMN_1, processInstanceId);
-                    filter.setWhereClause(statement, JdbcConstants.COLUMN_2);
-                    statement.execute();
-                    try (final ResultSet rs = statement.getResultSet()) {
+        return JbpmSqlHelper.execute(jbpmContext, connection -> {
+            final String sql = FIND_BY_PROCESS_SQL + " " + filter.getWhereClause(StartType.AND);
+            List<Bericht> berichten;
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setLong(JdbcConstants.COLUMN_1, processInstanceId);
+                filter.setWhereClause(statement, JdbcConstants.COLUMN_2);
+                statement.execute();
+                try (final ResultSet rs = statement.getResultSet()) {
 
-                        berichten = new ArrayList<>();
-                        while (rs.next()) {
-                            berichten.add(BERICHT_MAPPER.map(rs));
-                        }
+                    berichten = new ArrayList<>();
+                    while (rs.next()) {
+                        berichten.add(BERICHT_MAPPER.map(rs));
                     }
                 }
-                return berichten;
             }
+            return berichten;
         });
     }
 }

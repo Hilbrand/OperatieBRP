@@ -22,7 +22,7 @@
                 </prop>
                 <prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
                 <prop key="hibernate.transaction.jta.platform">
-                    nl.bzk.migratiebrp.synchronisatie.dal.repository.jta.AtomikosJtaPlatform
+                    nl.bzk.algemeenbrp.jta.AtomikosJtaPlatform
                 </prop>
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
                 <prop key="hibernate.cache.use_query_cache">false</prop>
@@ -67,7 +67,7 @@
 
     <bean id="syncDalDataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init" destroy-method="close">
         <property name="uniqueResourceName">
-            <bean class="nl.bzk.migratiebrp.util.common.UniqueName">
+            <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName">
                 <property name="baseName" value="syncDalDatabase"/>
             </bean>
         </property>
@@ -79,7 +79,8 @@
                 <prop key="PortNumber">${database.port:5432}</prop>
                 <prop key="DatabaseName">${database.name:BRP}</prop>
                 <prop key="User">${database.username:postgres}</prop>
-                <prop key="Password">${database.password:postgres}</prop>
+                <prop
+                        key="Password">${database.password:postgres}</prop>
             </props>
         </property>
         <property name="maxPoolSize" value="${database.maxpool:200}"/>

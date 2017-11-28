@@ -1,6 +1,0 @@
-overlijdenInBuitenland:
-  acties:
-    registratieOverlijden:
-      datumAanvangGeldigheid: ${vandaag(-10,0,0)}
-      persoon:
-        objectSleutel: ''

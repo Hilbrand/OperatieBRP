@@ -9,13 +9,13 @@ package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 import java.io.IOException;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.MessageIdGenerator;
-import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTest;
+import nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3BerichtTestBasis;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lf01Bericht.Foutreden;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Lf01BerichtTest extends AbstractLo3BerichtTest {
+public class Lf01BerichtTest extends AbstractLo3BerichtTestBasis {
 
     private static final String A_NUMMER = "9876543210";
     private static final String BRON_GEMEENTE = "0600";
@@ -41,8 +41,8 @@ public class Lf01BerichtTest extends AbstractLo3BerichtTest {
         final Lf01Bericht lf01Bericht = new Lf01Bericht();
         lf01Bericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "G");
         lf01Bericht.setANummer(A_NUMMER);
-        lf01Bericht.setBronGemeente(BRON_GEMEENTE);
-        lf01Bericht.setDoelGemeente(DOEL_GEMEENTE);
+        lf01Bericht.setBronPartijCode(BRON_GEMEENTE);
+        lf01Bericht.setDoelPartijCode(DOEL_GEMEENTE);
         lf01Bericht.setMessageId(MessageIdGenerator.generateId());
 
         testFormatAndParseBericht(lf01Bericht);
@@ -54,8 +54,8 @@ public class Lf01BerichtTest extends AbstractLo3BerichtTest {
         final Lf01Bericht controleBericht = new Lf01Bericht();
         controleBericht.setHeader(Lo3HeaderVeld.FOUTREDEN, "G");
         controleBericht.setANummer(A_NUMMER);
-        controleBericht.setBronGemeente(BRON_GEMEENTE);
-        controleBericht.setDoelGemeente(DOEL_GEMEENTE);
+        controleBericht.setBronPartijCode(BRON_GEMEENTE);
+        controleBericht.setDoelPartijCode(DOEL_GEMEENTE);
         controleBericht.setMessageId(lf01Bericht.getMessageId());
 
         Assert.assertTrue(lf01Bericht.equals(lf01Bericht));

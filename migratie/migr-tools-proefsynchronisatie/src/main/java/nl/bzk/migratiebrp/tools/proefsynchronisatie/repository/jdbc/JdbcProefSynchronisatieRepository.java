@@ -13,20 +13,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-
+import java.util.concurrent.TimeUnit;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.factory.Lo3BerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.Ap01Bericht;
+import nl.bzk.migratiebrp.bericht.model.lo3.impl.Av01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.La01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lg01Bericht;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.domein.ProefSynchronisatieBericht;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.repository.ProefSynchronisatieRepository;
 import nl.bzk.migratiebrp.tools.proefsynchronisatie.verwerker.BerichtVerwerker;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -44,7 +45,7 @@ public final class JdbcProefSynchronisatieRepository extends AbstractJdbcReposit
     /**
      * GMT tijdzone wordt gebruikt voor Timestamps.
      */
-    public static final TimeZone GBAV_TIJDZONE = TimeZone.getTimeZone("GMT+1:00");
+    static final TimeZone GBAV_TIJDZONE = TimeZone.getTimeZone("GMT+1:00");
 
     private static final Lo3BerichtFactory LO3_BERICHT_FACTORY = new Lo3BerichtFactory();
 
@@ -58,6 +59,7 @@ public final class JdbcProefSynchronisatieRepository extends AbstractJdbcReposit
     private static final String KOLOM_ID = "id";
     private static final String KOLOM_MS_SEQUENCE_NUMBER = "ms_sequence_number";
     private static final String KOLOM_VERWERKT = "verwerkt";
+    private static final String KOLOM_MAILBOX = "mailbox_nr";
     private static final String QUOTE_LITERAL = "'";
     private static final String PARAMETER_LITERAL = "\\?";
     private static final String CONDITIE_DATUM_TOT = " AND ber.tijdstip_verzending_ontvangst < ";
@@ -80,14 +82,13 @@ public final class JdbcProefSynchronisatieRepository extends AbstractJdbcReposit
     @Override
     @Transactional(value = PROEF_SYNCHRONISATIE_TRANSACTION_MANAGER, propagation = Propagation.REQUIRED, readOnly = true)
     public void verwerkProefSynchronisatieBericht(
-        final BerichtVerwerker<ProefSynchronisatieBericht> verwerker,
-        final int batchGrootte,
-        final long wachtPeriode)
-    {
-        final String selectInitVullingSqlAut = getStringResourceData("/sql/verwerkProefSynchronisatieBericht.sql");
-
+            final BerichtVerwerker<ProefSynchronisatieBericht> verwerker,
+            final int batchGrootte,
+            final long wachtPeriode) {
         final Map<String, Object> parameters = new HashMap<>();
         final SqlParameterSource namedParameters = new MapSqlParameterSource(parameters);
+
+        final String selectInitVullingSqlAut = getStringResourceData("/sql/verwerkProefSynchronisatieBericht.sql");
 
         final ProefSynchronisatieBerichtVerwerkerRowHandler rowHandler =
                 new ProefSynchronisatieBerichtVerwerkerRowHandler(verwerker, batchGrootte, wachtPeriode);
@@ -125,17 +126,13 @@ public final class JdbcProefSynchronisatieRepository extends AbstractJdbcReposit
 
         /**
          * Constructor.
-         *
-         * @param verwerker
-         *            Lo3BerichtVerwerker
-         * @param batchGrootte
-         *            grootte van de batch
+         * @param verwerker Lo3BerichtVerwerker
+         * @param batchGrootte grootte van de batch
          */
         public ProefSynchronisatieBerichtVerwerkerRowHandler(
-            final BerichtVerwerker<ProefSynchronisatieBericht> verwerker,
-            final int batchGrootte,
-            final long wachtPeriode)
-        {
+                final BerichtVerwerker<ProefSynchronisatieBericht> verwerker,
+                final int batchGrootte,
+                final long wachtPeriode) {
             this.verwerker = verwerker;
             this.batchGrootte = batchGrootte;
             this.wachtPeriode = wachtPeriode;
@@ -148,9 +145,10 @@ public final class JdbcProefSynchronisatieRepository extends AbstractJdbcReposit
             teller += 1;
 
             if (teller >= batchGrootte) {
+                LOG.info("Verwerken {} berichten.", teller);
                 verwerker.verwerkBerichten();
                 try {
-                    Thread.sleep(wachtPeriode);
+                    TimeUnit.MILLISECONDS.sleep(wachtPeriode);
                 } catch (final InterruptedException exceptie) {
                     LOG.error(ExceptionUtils.getStackTrace(exceptie));
                 }
@@ -161,12 +159,13 @@ public final class JdbcProefSynchronisatieRepository extends AbstractJdbcReposit
         private ProefSynchronisatieBericht mapProefSynchronisatieBericht(final ResultSet rs) throws SQLException {
 
             final ProefSynchronisatieBericht proefSynchronisatieBericht = new ProefSynchronisatieBericht();
-            proefSynchronisatieBericht.setAfzender(rs.getInt(KOLOM_AFZENDER));
+            proefSynchronisatieBericht.setAfzender(rs.getString(KOLOM_AFZENDER));
             proefSynchronisatieBericht.setBerichtDatum(rs.getTimestamp(KOLOM_BERICHT_DATUM));
             proefSynchronisatieBericht.setBerichtId(rs.getLong(KOLOM_BERICHT_ID));
             proefSynchronisatieBericht.setId(rs.getLong(KOLOM_ID));
             proefSynchronisatieBericht.setMsSequenceNumber(rs.getLong(KOLOM_MS_SEQUENCE_NUMBER));
             proefSynchronisatieBericht.setVerwerkt(rs.getBoolean(KOLOM_VERWERKT));
+            proefSynchronisatieBericht.setMailbox(rs.getString(KOLOM_MAILBOX));
 
             // Omdat we La01-berichten willen converteren naar Lg01-berichten voeren we een extra stap uit bij het
             // mappen.
@@ -174,10 +173,11 @@ public final class JdbcProefSynchronisatieRepository extends AbstractJdbcReposit
             try {
                 // We gaan er vanuit dat het binnenkomende bericht in Teletex encoding is.
                 final Lo3Bericht lo3Bericht = LO3_BERICHT_FACTORY.getBericht(bericht);
-                lo3Bericht.setBronGemeente(String.format("%04d", proefSynchronisatieBericht.getAfzender()));
+                lo3Bericht.setBronPartijCode(String.format("%04d", proefSynchronisatieBericht.getAfzender()));
                 lo3Bericht.setMessageId(String.valueOf(proefSynchronisatieBericht.getBerichtId()));
 
-                if (lo3Bericht instanceof Lg01Bericht) {
+                if (lo3Bericht instanceof Lg01Bericht || lo3Bericht instanceof Ap01Bericht || lo3Bericht instanceof Av01Bericht) {
+                    // Lg01, Ap01 en Av01 worden doorgestuurd.
                     proefSynchronisatieBericht.setBericht(bericht);
                 } else if (lo3Bericht instanceof La01Bericht) {
                     final Lg01Bericht lg01Bericht = converteerLa01BerichtNaarLg01Bericht((La01Bericht) lo3Bericht, proefSynchronisatieBericht);
@@ -193,27 +193,28 @@ public final class JdbcProefSynchronisatieRepository extends AbstractJdbcReposit
                 // geanalyseerd worden.
                 LOG.error(ExceptionUtils.getStackTrace(exceptie));
                 LOG.error(
-                    "Bericht met ID {} kon niet worden geconverteerd naar een Lo3Bericht. Bericht wordt alsnog doorgestuurd.",
-                    proefSynchronisatieBericht.getId());
+                        "Bericht met ID {} kon niet worden geconverteerd naar een Lo3Bericht. Bericht wordt alsnog doorgestuurd.",
+                        proefSynchronisatieBericht.getId());
                 proefSynchronisatieBericht.setBericht(bericht);
             }
 
             return proefSynchronisatieBericht;
         }
 
-        private Lg01Bericht converteerLa01BerichtNaarLg01Bericht(final La01Bericht la01Bericht, final ProefSynchronisatieBericht proefSynchronisatieBericht)
-        {
+        private Lg01Bericht converteerLa01BerichtNaarLg01Bericht(
+                final La01Bericht la01Bericht,
+                final ProefSynchronisatieBericht proefSynchronisatieBericht) {
 
             final Lg01Bericht lg01Bericht = new Lg01Bericht();
             final Lo3Persoonslijst pl = la01Bericht.getLo3Persoonslijst();
             lg01Bericht.setLo3Persoonslijst(pl);
-            lg01Bericht.setBronGemeente(la01Bericht.getBronGemeente());
+            lg01Bericht.setBronPartijCode(la01Bericht.getBronPartijCode());
 
-            final Long actueelANummer =
-                    pl.getPersoonStapel() == null ? null : Lo3Long.unwrap(pl.getPersoonStapel().getLaatsteElement().getInhoud().getANummer());
+            final String actueelANummer =
+                    pl.getPersoonStapel() == null ? null : Lo3String.unwrap(pl.getPersoonStapel().getLaatsteElement().getInhoud().getANummer());
 
-            final Long vorigANummer =
-                    pl.getPersoonStapel() == null ? null : Lo3Long.unwrap(pl.getPersoonStapel().getLaatsteElement().getInhoud().getVorigANummer());
+            final String vorigANummer =
+                    pl.getPersoonStapel() == null ? null : Lo3String.unwrap(pl.getPersoonStapel().getLaatsteElement().getInhoud().getVorigANummer());
 
             final SimpleDateFormat format = new SimpleDateFormat(DATE_TIME_FORMAT);
             format.setTimeZone(GBAV_TIJDZONE);

@@ -14,27 +14,20 @@ import nl.bzk.migratiebrp.voisc.database.entities.Bericht;
 public interface BerichtCallback {
     /**
      * Start berichten verwerking.
-     * 
-     * @throws BerichtCallbackException
-     *             bij fouten
+     * @throws BerichtCallbackException bij fouten
      */
     void start() throws BerichtCallbackException;
 
     /**
      * Verwerk een bericht.
-     * 
-     * @param bericht
-     *            bericht
-     * @throws BerichtCallbackException
-     *             bij fouten
+     * @param bericht bericht
+     * @throws BerichtCallbackException bij fouten
      */
     void onBericht(Bericht bericht) throws BerichtCallbackException;
 
     /**
      * Einde berichten verwerking.
-     * 
-     * @throws BerichtCallbackException
-     *             bij fouten
+     * @throws BerichtCallbackException bij fouten
      */
     void end() throws BerichtCallbackException;
 }

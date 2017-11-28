@@ -6,7 +6,6 @@
 
 /**
  * Delta bepaling functionaliteit.
- * 
  * @since 1.0
  */
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta;

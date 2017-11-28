@@ -6,20 +6,17 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * PK volledig geconverteerd.
- * 
  */
 public final class Lo3IndicatiePKVolledigGeconverteerdCode extends AbstractLo3Element {
     private static final long serialVersionUID = 1L;
 
     /**
      * Constructor.
-     * 
-     * @param waarde
-     *            code
+     * @param waarde code
      */
     public Lo3IndicatiePKVolledigGeconverteerdCode(final String waarde) {
         this(waarde, null);
@@ -27,15 +24,11 @@ public final class Lo3IndicatiePKVolledigGeconverteerdCode extends AbstractLo3El
 
     /**
      * Constructor met onderzoek.
-     * 
-     * @param waarde
-     *            code
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde code
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
     public Lo3IndicatiePKVolledigGeconverteerdCode(@Element(name = "waarde", required = false) final String waarde, @Element(
-            name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 }

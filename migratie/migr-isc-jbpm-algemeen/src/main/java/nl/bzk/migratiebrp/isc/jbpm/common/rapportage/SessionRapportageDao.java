@@ -25,12 +25,11 @@ public final class SessionRapportageDao implements RapportageDao {
 
     @Override
     public void voegStartProcesInstantieToe(
-        final String procesNaam,
-        final String berichtType,
-        final String kanaal,
-        final Long procesInstantieId,
-        final Date startdatum)
-    {
+            final String procesNaam,
+            final String berichtType,
+            final String kanaal,
+            final Long procesInstantieId,
+            final Date startdatum) {
         final Session session = sessionFactory.getCurrentSession();
 
         final ExtractieProces extractieProces = new ExtractieProces();

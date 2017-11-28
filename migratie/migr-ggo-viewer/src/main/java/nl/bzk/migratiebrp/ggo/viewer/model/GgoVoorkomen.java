@@ -18,7 +18,7 @@ public class GgoVoorkomen implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Long aNummer;
+    private String aNummer;
     /**
      * CategorieNr voor weergave. We maken een onderscheid tussen het categorieNr dat gebruikt wordt in de weergave, en
      * de categorie die gebruikt wordt voor de herkomst, omdat laatstgenoemde in de terugconversie anders kan zijn
@@ -45,21 +45,19 @@ public class GgoVoorkomen implements Serializable {
     /**
      * @return the aNummer
      */
-    public final Long getaNummer() {
+    public final String getaNummer() {
         return aNummer;
     }
 
     /**
-     * @param aNummer
-     *            the aNummer to set
+     * @param aNummer the aNummer to set
      */
-    public final void setaNummer(final Long aNummer) {
+    public final void setaNummer(final String aNummer) {
         this.aNummer = aNummer;
     }
 
     /**
      * Gets the categorieNr voor weergave.
-     *
      * @return the categorieLabelNr
      */
     public final int getCategorieLabelNr() {
@@ -68,9 +66,7 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Sets the categorieNr voor weergave.
-     *
-     * @param categorieLabelNr
-     *            the categorieLabelNr to set
+     * @param categorieLabelNr the categorieLabelNr to set
      */
     public final void setCategorieLabelNr(final int categorieLabelNr) {
         this.categorieLabelNr = categorieLabelNr;
@@ -78,7 +74,6 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Geef de waarde van categorie nr.
-     *
      * @return the categorieNr
      */
     public final int getCategorieNr() {
@@ -87,9 +82,7 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Zet de waarde van categorie nr.
-     *
-     * @param categorieNr
-     *            the categorieNr to set
+     * @param categorieNr the categorieNr to set
      */
     public final void setCategorieNr(final int categorieNr) {
         this.categorieNr = categorieNr;
@@ -97,7 +90,6 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Geef de waarde van stapel nr.
-     *
      * @return the stapelNr
      */
     public final int getStapelNr() {
@@ -106,9 +98,7 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Zet de waarde van stapel nr.
-     *
-     * @param stapelNr
-     *            the stapelNr to set
+     * @param stapelNr the stapelNr to set
      */
     public final void setStapelNr(final int stapelNr) {
         this.stapelNr = stapelNr;
@@ -116,7 +106,6 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Geef de waarde van voorkomen nr.
-     *
      * @return the voorkomenNr
      */
     public final int getVoorkomenNr() {
@@ -125,9 +114,7 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Zet de waarde van voorkomen nr.
-     *
-     * @param voorkomenNr
-     *            the voorkomenNr to set
+     * @param voorkomenNr the voorkomenNr to set
      */
     public final void setVoorkomenNr(final int voorkomenNr) {
         this.voorkomenNr = voorkomenNr;
@@ -135,7 +122,6 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Geef de waarde van label.
-     *
      * @return the label
      */
     public final String getLabel() {
@@ -144,9 +130,7 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Zet de waarde van label.
-     *
-     * @param label
-     *            the label to set
+     * @param label the label to set
      */
     public final void setLabel(final String label) {
         this.label = label;
@@ -154,9 +138,7 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Zet de waarde van datum aanvang geldigheid.
-     *
-     * @param datumAanvangGeldigheid
-     *            datum aanvang geldigheid.
+     * @param datumAanvangGeldigheid datum aanvang geldigheid.
      */
     public final void setDatumAanvangGeldigheid(final String datumAanvangGeldigheid) {
         this.datumAanvangGeldigheid = datumAanvangGeldigheid;
@@ -164,7 +146,6 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Geef de waarde van datum aanvang geldigheid.
-     *
      * @return datum aanvang geldigheid.
      */
     public final String getDatumAanvangGeldigheid() {
@@ -173,7 +154,6 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Geef de vervallen.
-     *
      * @return De vervallen indicatie tbv de weergave.
      */
     public final boolean isVervallen() {
@@ -182,9 +162,7 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Zet de waarde van vervallen.
-     *
-     * @param vervallen
-     *            Is dit voorkomen vervallen? (Indicatie onjuist in Lo3, vervaldatum in BRP)
+     * @param vervallen Is dit voorkomen vervallen? (Indicatie onjuist in Lo3, vervaldatum in BRP)
      */
     public final void setVervallen(final boolean vervallen) {
         this.vervallen = vervallen;
@@ -192,7 +170,6 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Geef de waarde van inhoud.
-     *
      * @return De inhoud van deze categorie / dit voorkomen, in de vorm van een key / value map.
      */
     public final Map<String, String> getInhoud() {
@@ -201,9 +178,7 @@ public class GgoVoorkomen implements Serializable {
 
     /**
      * Sets the inhoud.
-     *
-     * @param inhoud
-     *            De complete inhoud van dit voorkomen ineens.
+     * @param inhoud De complete inhoud van dit voorkomen ineens.
      */
     public final void setInhoud(final Map<String, String> inhoud) {
         this.inhoud = inhoud;

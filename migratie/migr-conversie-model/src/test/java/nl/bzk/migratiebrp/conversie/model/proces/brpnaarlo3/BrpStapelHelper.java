@@ -52,7 +52,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpIdentificatienummersInhou
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpInschrijvingInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNationaliteitInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpNummerverwijzingInhoud;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnderCurateleIndicatieInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonAfgeleidAdministratiefInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpPersoonskaartInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
@@ -92,74 +91,70 @@ public final class BrpStapelHelper {
     }
 
     public static BrpDocumentInhoud document(
-        final String soortDocumentCode,
-        final String identificatie,
-        final String aktenummer,
-        final String omschrijving,
-        final String partijCode)
-    {
+            final String soortDocumentCode,
+            final String aktenummer,
+            final String omschrijving,
+            final String partijCode) {
         final BrpSoortDocumentCode soortDocument = soortDocumentCode == null ? null : new BrpSoortDocumentCode(soortDocumentCode);
-        final BrpPartijCode partij = partijCode == null ? null : new BrpPartijCode(Integer.valueOf(partijCode));
+        final BrpPartijCode partij = partijCode == null ? null : new BrpPartijCode(partijCode);
 
         return new BrpDocumentInhoud(
-            soortDocument,
-            BrpString.wrap(identificatie, null),
-            BrpString.wrap(aktenummer, null),
-            BrpString.wrap(omschrijving, null),
-            partij);
+                soortDocument,
+                BrpString.wrap(aktenummer, null),
+                BrpString.wrap(omschrijving, null),
+                partij);
     }
 
     public static BrpDocumentInhoud doc(final String omschrijving, final String partijCode) {
-        return BrpStapelHelper.document("Document", null, null, omschrijving, partijCode);
+        return BrpStapelHelper.document("Document", null, omschrijving, partijCode);
     }
 
-    public static BrpDocumentInhoud akt(final String aktenummer, final String partijCode) {
-        return BrpStapelHelper.document("Akte", null, aktenummer, null, partijCode);
+    private static BrpDocumentInhoud akt(final String aktenummer, final String partijCode) {
+        return BrpStapelHelper.document("Akte", aktenummer, null, partijCode);
     }
 
     public static BrpActie act(
-        final Long id,
-        final String soortActieCode,
-        final String partijCode,
-        final Long datumTijdRegistratie,
-        final Lo3Herkomst lo3Herkomst,
-        final BrpDocumentInhoud... documenten)
-    {
+            final Long id,
+            final String soortActieCode,
+            final String partijCode,
+            final Long datumTijdRegistratie,
+            final Lo3Herkomst lo3Herkomst,
+            final BrpDocumentInhoud... documenten) {
 
         final BrpSoortActieCode soortActie = new BrpSoortActieCode(soortActieCode);
-        final BrpPartijCode partij = partijCode == null ? null : new BrpPartijCode(Integer.valueOf(partijCode));
+        final BrpPartijCode partij = partijCode == null ? null : new BrpPartijCode(partijCode);
         final BrpDatumTijd registratie = datumTijdRegistratie == null ? null : BrpDatumTijd.fromDatumTijd(datumTijdRegistratie, null);
 
         final List<BrpActieBron> documentStapels = new ArrayList<>();
         for (final BrpDocumentInhoud documentInhoud : documenten) {
             documentStapels.add(
-                new BrpActieBron(
-                    new BrpStapel<>(
-                        Collections.singletonList(new BrpGroep<>(documentInhoud, new BrpHistorie(null, null, registratie, null, null), null, null, null))),
-                    null));
+                    new BrpActieBron(
+                            new BrpStapel<>(
+                                    Collections.singletonList(
+                                            new BrpGroep<>(documentInhoud, new BrpHistorie(null, null, registratie, null, null), null, null, null))),
+                            null));
         }
 
         return new BrpActie(id, soortActie, partij, registratie, null, documentStapels, 0, lo3Herkomst);
     }
 
     public static BrpActie act(
-        final Long id,
-        final String soortActieCode,
-        final String partijCode,
-        final Long datumTijdRegistratie,
-        final String aktenummer)
-    {
+            final Long id,
+            final String soortActieCode,
+            final String partijCode,
+            final Long datumTijdRegistratie,
+            final String aktenummer) {
         return BrpStapelHelper.act(id, soortActieCode, partijCode, datumTijdRegistratie, null, BrpStapelHelper.akt(aktenummer, partijCode));
     }
 
     public static BrpActie act(final Integer id, final Integer datumTijdRegistratie, final Lo3Herkomst lo3Herkomst) {
         return BrpStapelHelper.act(
-            id.longValue(),
-            "Conversie GBA",
-            "051801",
-            datumTijdRegistratie * 1000000L,
-            lo3Herkomst,
-            BrpStapelHelper.akt("9-X" + String.format("%04d", id), "051801"));
+                id.longValue(),
+                "Conversie GBA",
+                "051801",
+                datumTijdRegistratie * 1000000L,
+                lo3Herkomst,
+                BrpStapelHelper.akt("9-X" + String.format("%04d", id), "051801"));
     }
 
     public static BrpActie act(final Integer id, final Integer datumTijdRegistratie) {
@@ -170,26 +165,25 @@ public final class BrpStapelHelper {
         return BrpStapelHelper.act(id.longValue(), "Conversie GBA", "051801", datumTijdRegistratie * 1000000L, null, document);
     }
 
+    @SafeVarargs
     public static <T extends BrpGroepInhoud> BrpStapel<T> stapel(final BrpGroep<T>... groepen) {
         return new BrpStapel<>(Arrays.asList(groepen));
     }
 
     public static <T extends BrpGroepInhoud> BrpGroep<T> groep(
-        final T inhoud,
-        final BrpHistorie historie,
-        final BrpActie actieInhoud,
-        final BrpActie actieVerval,
-        final BrpActie actieGeldigheid)
-    {
+            final T inhoud,
+            final BrpHistorie historie,
+            final BrpActie actieInhoud,
+            final BrpActie actieVerval,
+            final BrpActie actieGeldigheid) {
         return new BrpGroep<>(inhoud, historie, actieInhoud, actieVerval, actieGeldigheid);
     }
 
     public static <T extends BrpGroepInhoud> BrpGroep<T> groep(
-        final T inhoud,
-        final BrpHistorie historie,
-        final BrpActie actieInhoud,
-        final BrpActie actieVerval)
-    {
+            final T inhoud,
+            final BrpHistorie historie,
+            final BrpActie actieInhoud,
+            final BrpActie actieVerval) {
         return BrpStapelHelper.groep(inhoud, historie, actieInhoud, actieVerval, null);
     }
 
@@ -202,11 +196,11 @@ public final class BrpStapelHelper {
     }
 
     public static BrpGemeenteCode gemeente(final String gemeente) {
-        return gemeente == null ? null : new BrpGemeenteCode(Short.parseShort(gemeente));
+        return gemeente == null ? null : new BrpGemeenteCode(gemeente);
     }
 
     public static BrpLandOfGebiedCode land(final String land) {
-        return land == null ? null : new BrpLandOfGebiedCode(Short.parseShort(land));
+        return land == null ? null : new BrpLandOfGebiedCode(land);
     }
 
     public static BrpDerdeHeeftGezagIndicatieInhoud derde(final Boolean derdeHeeftGezag) {
@@ -215,26 +209,25 @@ public final class BrpStapelHelper {
 
     public static BrpInschrijvingInhoud inschrijving(final Integer datumInschrijving, final int versienummer, final long datumtijdstempel) {
         return new BrpInschrijvingInhoud(
-            new BrpDatum(datumInschrijving, null),
-            BrpLong.wrap((long) versienummer, null),
-            BrpDatumTijd.fromDatumTijd(datumtijdstempel, null));
+                new BrpDatum(datumInschrijving, null),
+                BrpLong.wrap((long) versienummer, null),
+                BrpDatumTijd.fromDatumTijd(datumtijdstempel, null));
     }
 
     public static BrpNummerverwijzingInhoud nummerverwijzing(
-        final Long vorigeAdministratienummer,
-        final Long volgendeAdministratienummer,
-        final Integer vorigeBurgerservicenummer,
-        final Integer volgendeBurgerservicenummer)
-    {
+            final String vorigeAdministratienummer,
+            final String volgendeAdministratienummer,
+            final String vorigeBurgerservicenummer,
+            final String volgendeBurgerservicenummer) {
         return new BrpNummerverwijzingInhoud(
-            BrpLong.wrap(vorigeAdministratienummer, null),
-            BrpLong.wrap(volgendeAdministratienummer, null),
-            BrpInteger.wrap(vorigeBurgerservicenummer, null),
-            BrpInteger.wrap(volgendeBurgerservicenummer, null));
+                BrpString.wrap(vorigeAdministratienummer, null),
+                BrpString.wrap(volgendeAdministratienummer, null),
+                BrpString.wrap(vorigeBurgerservicenummer, null),
+                BrpString.wrap(volgendeBurgerservicenummer, null));
     }
 
     public static BrpPersoonskaartInhoud persoonskaart(final String gemeentePartijCode, final Boolean pkVolledig) {
-        final BrpPartijCode gemeentePKCode = gemeentePartijCode == null ? null : new BrpPartijCode(Integer.parseInt(gemeentePartijCode));
+        final BrpPartijCode gemeentePKCode = gemeentePartijCode == null ? null : new BrpPartijCode(gemeentePartijCode);
         final BrpBoolean indicatiePKVolledigGeconverteerd = Boolean.TRUE.equals(pkVolledig) ? new BrpBoolean(true) : null;
 
         return new BrpPersoonskaartInhoud(gemeentePKCode, indicatiePKVolledigGeconverteerd);
@@ -245,18 +238,17 @@ public final class BrpStapelHelper {
     }
 
     public static BrpPersoonAfgeleidAdministratiefInhoud afgeleid() {
-        return new BrpPersoonAfgeleidAdministratiefInhoud(new BrpBoolean(false));
+        return new BrpPersoonAfgeleidAdministratiefInhoud();
     }
 
-    public static BrpVerificatieInhoud verificatie(final int datum, final String omschrijving, final int partijCode) {
+    public static BrpVerificatieInhoud verificatie(final int datum, final String omschrijving, final String partijCode) {
         return new BrpVerificatieInhoud(new BrpPartijCode(partijCode), new BrpString(omschrijving), new BrpDatum(datum, null));
     }
 
     public static BrpDeelnameEuVerkiezingenInhoud deelnameEuVerkiezingen(
-        final Boolean deelnameEuVerkiezingen,
-        final Integer aanleidingAanpassingDeelnameEuVerkiezingen,
-        final Integer voorzienEindeUitsluitingEuVerkiezingen)
-    {
+            final Boolean deelnameEuVerkiezingen,
+            final Integer aanleidingAanpassingDeelnameEuVerkiezingen,
+            final Integer voorzienEindeUitsluitingEuVerkiezingen) {
         final BrpBoolean indicatieDeelnameEuVerkiezingen = Boolean.TRUE.equals(deelnameEuVerkiezingen) ? new BrpBoolean(Boolean.TRUE) : null;
         final BrpDatum datumAanleidingAanpassingDeelnameEuVerkiezingen =
                 aanleidingAanpassingDeelnameEuVerkiezingen == null ? null : new BrpDatum(aanleidingAanpassingDeelnameEuVerkiezingen, null);
@@ -264,15 +256,14 @@ public final class BrpStapelHelper {
                 voorzienEindeUitsluitingEuVerkiezingen == null ? null : new BrpDatum(voorzienEindeUitsluitingEuVerkiezingen, null);
 
         return new BrpDeelnameEuVerkiezingenInhoud(
-            indicatieDeelnameEuVerkiezingen,
-            datumAanleidingAanpassingDeelnameEuVerkiezingen,
-            datumVoorzienEindeUitsluitingEuVerkiezingen);
+                indicatieDeelnameEuVerkiezingen,
+                datumAanleidingAanpassingDeelnameEuVerkiezingen,
+                datumVoorzienEindeUitsluitingEuVerkiezingen);
     }
 
     public static BrpUitsluitingKiesrechtInhoud uitsluiting(
-        final Boolean indicatieUitsluitingKiesrecht,
-        final Integer datumVoorzienEindeUitsluitingKiesrecht)
-    {
+            final Boolean indicatieUitsluitingKiesrecht,
+            final Integer datumVoorzienEindeUitsluitingKiesrecht) {
         final BrpBoolean uitsluitingKiesrecht = Boolean.TRUE.equals(indicatieUitsluitingKiesrecht) ? new BrpBoolean(Boolean.TRUE) : null;
         final BrpDatum voorzienEindeUitsluitingKiesrecht =
                 datumVoorzienEindeUitsluitingKiesrecht == null ? null : new BrpDatum(datumVoorzienEindeUitsluitingKiesrecht, null);
@@ -282,13 +273,13 @@ public final class BrpStapelHelper {
 
     public static BrpNationaliteitInhoud nationaliteit(final String natCode, final String verkrijgCode, final String verliesCode) {
         return new BrpNationaliteitInhoud(
-            natCode == null ? null : new BrpNationaliteitCode(Short.valueOf(natCode)),
-            verkrijgCode == null ? null : new BrpRedenVerkrijgingNederlandschapCode(Short.parseShort(verkrijgCode)),
-            verliesCode == null ? null : new BrpRedenVerliesNederlandschapCode(Short.parseShort(verliesCode)),
-            null,
-            null,
-            null,
-            null);
+                natCode == null ? null : new BrpNationaliteitCode(natCode),
+                verkrijgCode == null ? null : new BrpRedenVerkrijgingNederlandschapCode(verkrijgCode),
+                verliesCode == null ? null : new BrpRedenVerliesNederlandschapCode(verliesCode),
+                null,
+                null,
+                null,
+                null);
     }
 
     public static BrpBehandeldAlsNederlanderIndicatieInhoud behandeldAlsNederlander(final Boolean indicatie) {
@@ -301,13 +292,13 @@ public final class BrpStapelHelper {
 
     public static BrpGeboorteInhoud geboorte(final int datum, final String gemeente) {
         return new BrpGeboorteInhoud(
-            new BrpDatum(datum, null),
-            gemeente == null ? null : new BrpGemeenteCode(Short.parseShort(gemeente)),
-            null,
-            null,
-            null,
-            new BrpLandOfGebiedCode(Short.parseShort("6030")),
-            null);
+                new BrpDatum(datum, null),
+                gemeente == null ? null : new BrpGemeenteCode(gemeente),
+                null,
+                null,
+                null,
+                new BrpLandOfGebiedCode("6030"),
+                null);
     }
 
     public static BrpVoornaamInhoud voornaam(final String voornaam, final int volgnummer) {
@@ -316,31 +307,30 @@ public final class BrpStapelHelper {
 
     public static BrpSamengesteldeNaamInhoud samengesteldnaam(final String voornamen, final String geslachtsnaam) {
         return new BrpSamengesteldeNaamInhoud(
-            null,
-            new BrpString(voornamen),
-            null,
-            null,
-            null,
-            new BrpString(geslachtsnaam),
-            new BrpBoolean(false),
-            new BrpBoolean(true));
+                null,
+                new BrpString(voornamen),
+                null,
+                null,
+                null,
+                new BrpString(geslachtsnaam),
+                new BrpBoolean(false),
+                new BrpBoolean(true));
     }
 
     public static BrpSamengesteldeNaamInhoud samengesteldnaam(
-        final String voornamen,
-        final String geslachtsnaam,
-        final String predikaat,
-        final String adellijkeTitel)
-    {
+            final String voornamen,
+            final String geslachtsnaam,
+            final String predikaat,
+            final String adellijkeTitel) {
         return new BrpSamengesteldeNaamInhoud(
-            predikaat == null ? null : new BrpPredicaatCode(predikaat),
-            new BrpString(voornamen),
-            null,
-            null,
-            adellijkeTitel == null ? null : new BrpAdellijkeTitelCode(adellijkeTitel),
-            new BrpString(geslachtsnaam),
-            new BrpBoolean(false),
-            new BrpBoolean(true));
+                predikaat == null ? null : new BrpPredicaatCode(predikaat),
+                new BrpString(voornamen),
+                null,
+                null,
+                adellijkeTitel == null ? null : new BrpAdellijkeTitelCode(adellijkeTitel),
+                new BrpString(geslachtsnaam),
+                new BrpBoolean(false),
+                new BrpBoolean(true));
     }
 
     public static BrpGeslachtsaanduidingInhoud geslacht(final String geslacht) {
@@ -348,162 +338,156 @@ public final class BrpStapelHelper {
     }
 
     public static BrpAdresInhoud adres(
-        final String soortAdresCode,
-        final Character redenWijzigingVerblijfCode,
-        final Character aangeverCode,
-        final Integer datumAanvangAdreshouding,
-        final String gemeenteCode,
-        final String naamOpenbareRuimte,
-        final String afgekorteNaamOpenbareRuimte,
-        final Integer huisnummer,
-        final String postcode,
-        final String woonplaatsnaam)
-    {
+            final String soortAdresCode,
+            final Character redenWijzigingVerblijfCode,
+            final Character aangeverCode,
+            final Integer datumAanvangAdreshouding,
+            final String gemeenteCode,
+            final String naamOpenbareRuimte,
+            final String afgekorteNaamOpenbareRuimte,
+            final Integer huisnummer,
+            final String postcode,
+            final String woonplaatsnaam) {
         return BrpStapelHelper.adres(
-            soortAdresCode,
-            redenWijzigingVerblijfCode,
-            aangeverCode,
-            datumAanvangAdreshouding,
-            null,
-            null,
-            gemeenteCode,
-            naamOpenbareRuimte,
-            afgekorteNaamOpenbareRuimte,
-            null,
-            huisnummer,
-            null,
-            null,
-            postcode,
-            woonplaatsnaam,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            Short.toString(BrpLandOfGebiedCode.NEDERLAND.getWaarde()),
-            null);
+                soortAdresCode,
+                redenWijzigingVerblijfCode,
+                aangeverCode,
+                datumAanvangAdreshouding,
+                null,
+                null,
+                gemeenteCode,
+                naamOpenbareRuimte,
+                afgekorteNaamOpenbareRuimte,
+                null,
+                huisnummer,
+                null,
+                null,
+                postcode,
+                woonplaatsnaam,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                BrpLandOfGebiedCode.NEDERLAND.getWaarde(),
+                null);
     }
 
     public static BrpAdresInhoud adres(
-        final String soortAdresCode,
-        final Character redenWijzigingVerblijfCode,
-        final Character aangeverCode,
-        final Integer datumAanvangAdreshouding,
-        final String identificatiecodeAdresseerbaarObject,
-        final String identificatiecodeNummeraanduiding,
-        final String gemeenteCode,
-        final String naamOpenbareRuimte,
-        final String afgekorteNaamOpenbareRuimte,
-        final String gemeentedeel,
-        final Integer huisnummer,
-        final Character huisletter,
-        final String huisnummertoevoeging,
-        final String postcode,
-        final String woonplaatsnaam,
-        final String locatieTovAdres,
-        final String locatieOmschrijving)
-    {
+            final String soortAdresCode,
+            final Character redenWijzigingVerblijfCode,
+            final Character aangeverCode,
+            final Integer datumAanvangAdreshouding,
+            final String identificatiecodeAdresseerbaarObject,
+            final String identificatiecodeNummeraanduiding,
+            final String gemeenteCode,
+            final String naamOpenbareRuimte,
+            final String afgekorteNaamOpenbareRuimte,
+            final String gemeentedeel,
+            final Integer huisnummer,
+            final Character huisletter,
+            final String huisnummertoevoeging,
+            final String postcode,
+            final String woonplaatsnaam,
+            final String locatieTovAdres,
+            final String locatieOmschrijving) {
         return BrpStapelHelper.adres(
-            soortAdresCode,
-            redenWijzigingVerblijfCode,
-            aangeverCode,
-            datumAanvangAdreshouding,
-            identificatiecodeAdresseerbaarObject,
-            identificatiecodeNummeraanduiding,
-            gemeenteCode,
-            naamOpenbareRuimte,
-            afgekorteNaamOpenbareRuimte,
-            gemeentedeel,
-            huisnummer,
-            huisletter,
-            huisnummertoevoeging,
-            postcode,
-            woonplaatsnaam,
-            locatieTovAdres,
-            locatieOmschrijving,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            Short.toString(BrpLandOfGebiedCode.NEDERLAND.getWaarde()),
-            null);
+                soortAdresCode,
+                redenWijzigingVerblijfCode,
+                aangeverCode,
+                datumAanvangAdreshouding,
+                identificatiecodeAdresseerbaarObject,
+                identificatiecodeNummeraanduiding,
+                gemeenteCode,
+                naamOpenbareRuimte,
+                afgekorteNaamOpenbareRuimte,
+                gemeentedeel,
+                huisnummer,
+                huisletter,
+                huisnummertoevoeging,
+                postcode,
+                woonplaatsnaam,
+                locatieTovAdres,
+                locatieOmschrijving,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                BrpLandOfGebiedCode.NEDERLAND.getWaarde(),
+                null);
     }
 
     public static BrpAdresInhoud adres(
-        final String soortAdresCode,
-        final Character redenWijzigingVerblijfCode,
-        final Character aangeverCode,
-        final Integer datumAanvangAdreshouding,
-        final String identificatiecodeAdresseerbaarObject,
-        final String identificatiecodeNummeraanduiding,
-        final String gemeenteCode,
-        final String naamOpenbareRuimte,
-        final String afgekorteNaamOpenbareRuimte,
-        final String gemeentedeel,
-        final Integer huisnummer,
-        final Character huisletter,
-        final String huisnummertoevoeging,
-        final String postcode,
-        final String woonplaatsnaam,
-        final String locatieTovAdres,
-        final String locatieOmschrijving,
-        final String buitenlandsAdresRegel1,
-        final String buitenlandsAdresRegel2,
-        final String buitenlandsAdresRegel3,
-        final String buitenlandsAdresRegel4,
-        final String buitenlandsAdresRegel5,
-        final String buitenlandsAdresRegel6,
-        final String landOfGebiedCode,
-        final Boolean indicatiePersoonAangetroffenOpAdres)
-    {
+            final String soortAdresCode,
+            final Character redenWijzigingVerblijfCode,
+            final Character aangeverCode,
+            final Integer datumAanvangAdreshouding,
+            final String identificatiecodeAdresseerbaarObject,
+            final String identificatiecodeNummeraanduiding,
+            final String gemeenteCode,
+            final String naamOpenbareRuimte,
+            final String afgekorteNaamOpenbareRuimte,
+            final String gemeentedeel,
+            final Integer huisnummer,
+            final Character huisletter,
+            final String huisnummertoevoeging,
+            final String postcode,
+            final String woonplaatsnaam,
+            final String locatieTovAdres,
+            final String locatieOmschrijving,
+            final String buitenlandsAdresRegel1,
+            final String buitenlandsAdresRegel2,
+            final String buitenlandsAdresRegel3,
+            final String buitenlandsAdresRegel4,
+            final String buitenlandsAdresRegel5,
+            final String buitenlandsAdresRegel6,
+            final String landOfGebiedCode,
+            final Boolean indicatiePersoonAangetroffenOpAdres) {
         return new BrpAdresInhoud(
-            soortAdresCode == null ? null : new BrpSoortAdresCode(soortAdresCode),
-            redenWijzigingVerblijfCode == null ? null : new BrpRedenWijzigingVerblijfCode(redenWijzigingVerblijfCode),
-            aangeverCode == null ? null : new BrpAangeverCode(aangeverCode),
-            BrpStapelHelper.datum(datumAanvangAdreshouding),
-            BrpString.wrap(identificatiecodeAdresseerbaarObject, null),
-            BrpString.wrap(identificatiecodeNummeraanduiding, null),
-            BrpStapelHelper.gemeente(gemeenteCode),
-            BrpString.wrap(naamOpenbareRuimte, null),
-            BrpString.wrap(afgekorteNaamOpenbareRuimte, null),
-            BrpString.wrap(gemeentedeel, null),
-            BrpInteger.wrap(huisnummer, null),
-            BrpCharacter.wrap(huisletter, null),
-            BrpString.wrap(huisnummertoevoeging, null),
-            BrpString.wrap(postcode, null),
-            BrpString.wrap(woonplaatsnaam, null),
-            locatieTovAdres == null ? null : new BrpAanduidingBijHuisnummerCode(locatieTovAdres),
-            BrpString.wrap(locatieOmschrijving, null),
-            BrpString.wrap(buitenlandsAdresRegel1, null),
-            BrpString.wrap(buitenlandsAdresRegel2, null),
-            BrpString.wrap(buitenlandsAdresRegel3, null),
-            BrpString.wrap(buitenlandsAdresRegel4, null),
-            BrpString.wrap(buitenlandsAdresRegel5, null),
-            BrpString.wrap(buitenlandsAdresRegel6, null),
-            landOfGebiedCode == null ? null : new BrpLandOfGebiedCode(Short.parseShort(landOfGebiedCode)),
-            BrpBoolean.wrap(indicatiePersoonAangetroffenOpAdres, null));
+                soortAdresCode == null ? null : new BrpSoortAdresCode(soortAdresCode),
+                redenWijzigingVerblijfCode == null ? null : new BrpRedenWijzigingVerblijfCode(redenWijzigingVerblijfCode),
+                aangeverCode == null ? null : new BrpAangeverCode(aangeverCode),
+                BrpStapelHelper.datum(datumAanvangAdreshouding),
+                BrpString.wrap(identificatiecodeAdresseerbaarObject, null),
+                BrpString.wrap(identificatiecodeNummeraanduiding, null),
+                BrpStapelHelper.gemeente(gemeenteCode),
+                BrpString.wrap(naamOpenbareRuimte, null),
+                BrpString.wrap(afgekorteNaamOpenbareRuimte, null),
+                BrpString.wrap(gemeentedeel, null),
+                BrpInteger.wrap(huisnummer, null),
+                BrpCharacter.wrap(huisletter, null),
+                BrpString.wrap(huisnummertoevoeging, null),
+                BrpString.wrap(postcode, null),
+                BrpString.wrap(woonplaatsnaam, null),
+                locatieTovAdres == null ? null : new BrpAanduidingBijHuisnummerCode(locatieTovAdres),
+                BrpString.wrap(locatieOmschrijving, null),
+                BrpString.wrap(buitenlandsAdresRegel1, null),
+                BrpString.wrap(buitenlandsAdresRegel2, null),
+                BrpString.wrap(buitenlandsAdresRegel3, null),
+                BrpString.wrap(buitenlandsAdresRegel4, null),
+                BrpString.wrap(buitenlandsAdresRegel5, null),
+                BrpString.wrap(buitenlandsAdresRegel6, null),
+                landOfGebiedCode == null ? null : new BrpLandOfGebiedCode(landOfGebiedCode),
+                BrpBoolean.wrap(indicatiePersoonAangetroffenOpAdres, null));
     }
 
     public static BrpBijhoudingInhoud bijhouding(
-        final int bijhoudingspartijCode,
-        final BrpBijhoudingsaardCode bijhoudingsaardCode,
-        final BrpNadereBijhoudingsaardCode nadereBijhoudingsaardCode,
-        final BrpBoolean indicatieOnverwerktDocumentAanwezig)
-    {
+            final String bijhoudingspartijCode,
+            final BrpBijhoudingsaardCode bijhoudingsaardCode,
+            final BrpNadereBijhoudingsaardCode nadereBijhoudingsaardCode) {
         return new BrpBijhoudingInhoud(
-            new BrpPartijCode(bijhoudingspartijCode),
-            bijhoudingsaardCode,
-            nadereBijhoudingsaardCode,
-            indicatieOnverwerktDocumentAanwezig);
+                new BrpPartijCode(bijhoudingspartijCode),
+                bijhoudingsaardCode,
+                nadereBijhoudingsaardCode);
     }
 
-    public static BrpIdentificatienummersInhoud identificatie(final Long administratienummer, final Integer burgerservicenummer) {
-        return new BrpIdentificatienummersInhoud(BrpLong.wrap(administratienummer, null), BrpInteger.wrap(burgerservicenummer, null));
+    public static BrpIdentificatienummersInhoud identificatie(final String administratienummer, final String burgerservicenummer) {
+        return new BrpIdentificatienummersInhoud(BrpString.wrap(administratienummer, null), BrpString.wrap(burgerservicenummer, null));
     }
 
 }

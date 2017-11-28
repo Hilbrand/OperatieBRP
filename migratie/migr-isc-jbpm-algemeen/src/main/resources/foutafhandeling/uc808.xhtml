@@ -113,7 +113,7 @@
                 <tbody>
                     <c:forEach var="categorie" varStatus="categorieStatus" items="#{var['persoonslijstOverzicht'].categorieen}" begin="0" step="1">
                         <tr class="categorie #{categorie.historie ? 'historie' : 'actueel'} cat-#{categorieStatus.index}">
-                            <th colspan="#{var['persoonslijstOverzicht'].aantalCategorieen+1}">
+                            <th colspan="#{var['persoonslijstOverzicht'].aantalPersoonslijsten+1}">
                                 <a class="foldToggle #{categorie.historie ? 'folded' : 'unfolded'}" onclick="javascript:toggleFold('cat-#{categorieStatus.index}')"><span>fold/unfold &nbsp;</span></a>
                                 <h:outputText value="#{categorie.titel}"/>
                             </th>

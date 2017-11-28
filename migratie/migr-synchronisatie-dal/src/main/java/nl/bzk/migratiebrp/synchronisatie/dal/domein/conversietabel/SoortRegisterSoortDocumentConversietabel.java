@@ -6,13 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.domein.conversietabel;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortDocumentCode;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.Conversietabel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
 
 /**
  * Convesietabel voor soortdocument.
- * 
  */
 public final class SoortRegisterSoortDocumentConversietabel implements Conversietabel<Character, BrpSoortDocumentCode> {
 
@@ -24,9 +23,7 @@ public final class SoortRegisterSoortDocumentConversietabel implements Conversie
 
     /**
      * Maakt een SoortRegisterSoortDocumentConversietabel object.
-     *
-     * @param soortDocument
-     *            het soort document dat gebruikt moet worden voor conversie
+     * @param soortDocument het soort document dat gebruikt moet worden voor conversie
      */
     public SoortRegisterSoortDocumentConversietabel(final SoortDocument soortDocument) {
         this.soortDocumentCode = new BrpSoortDocumentCode(soortDocument.getNaam());

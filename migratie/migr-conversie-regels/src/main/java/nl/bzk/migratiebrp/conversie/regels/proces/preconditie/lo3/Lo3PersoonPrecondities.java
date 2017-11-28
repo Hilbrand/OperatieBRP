@@ -7,35 +7,41 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.preconditie.lo3;
 
 import nl.bzk.migratiebrp.conversie.model.BijzondereSituatie;
+import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingNaamgebruikCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Validatie;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
+import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Validatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.groep.Lo3GroepUtil;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3GroepEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
 import nl.bzk.migratiebrp.conversie.model.logging.LogSeverity;
 import nl.bzk.migratiebrp.conversie.model.melding.SoortMeldingCode;
-import org.springframework.stereotype.Component;
+import nl.bzk.migratiebrp.conversie.regels.proces.foutmelding.Foutmelding;
 
 /**
  * Preconditie controles voor categorie 01: persoon.
- * 
+ *
  * Maakt gebruik van de {@link nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging#log Logging.log} methode.
  */
-@Component
 public final class Lo3PersoonPrecondities extends AbstractLo3Precondities {
 
     /**
+     * Constructor.
+     * @param conversieTabelFactory {@link ConversietabelFactory}
+     */
+    public Lo3PersoonPrecondities(final ConversietabelFactory conversieTabelFactory) {
+        super(conversieTabelFactory);
+    }
+
+    /**
      * Controleer precondities op stapel niveau.
-     * 
-     * @param stapel
-     *            stapel
+     * @param stapel stapel
      */
     public void controleerStapel(final Lo3Stapel<Lo3PersoonInhoud> stapel) {
         if (stapel == null || stapel.isEmpty()) {
@@ -59,9 +65,7 @@ public final class Lo3PersoonPrecondities extends AbstractLo3Precondities {
 
     /**
      * Controleer precondities op categorie niveau.
-     * 
-     * @param categorie
-     *            categorie
+     * @param categorie categorie
      */
     private void controleerCategorie(final Lo3Categorie<Lo3PersoonInhoud> categorie) {
         final Lo3PersoonInhoud inhoud = categorie.getInhoud();
@@ -74,11 +78,11 @@ public final class Lo3PersoonPrecondities extends AbstractLo3Precondities {
             Foutmelding.logMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE005, null);
         } else {
             controleerGroep01Identificatienummers(
-                inhoud.getANummer(),
-                inhoud.getBurgerservicenummer(),
-                historie.getIngangsdatumGeldigheid(),
-                herkomst,
-                true);
+                    inhoud.getANummer(),
+                    inhoud.getBurgerservicenummer(),
+                    historie.getIngangsdatumGeldigheid(),
+                    herkomst,
+                    true);
         }
 
         // Groep 02: Naam
@@ -86,16 +90,16 @@ public final class Lo3PersoonPrecondities extends AbstractLo3Precondities {
             Foutmelding.logMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE034, null);
         } else {
             controleerGroep02Naam(
-                inhoud.getVoornamen(),
-                inhoud.getAdellijkeTitelPredikaatCode(),
-                inhoud.getVoorvoegselGeslachtsnaam(),
-                inhoud.getGeslachtsnaam(),
-                herkomst,
-                true);
+                    inhoud.getVoornamen(),
+                    inhoud.getAdellijkeTitelPredikaatCode(),
+                    inhoud.getVoorvoegselGeslachtsnaam(),
+                    inhoud.getGeslachtsnaam(),
+                    herkomst,
+                    true);
             controleerBijzondereSituatieLB035(
-                inhoud.getAdellijkeTitelPredikaatCode(),
-                inhoud.getGeslachtsaanduiding(),
-                Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.BIJZ_CONV_LB035, null));
+                    inhoud.getAdellijkeTitelPredikaatCode(),
+                    inhoud.getGeslachtsaanduiding(),
+                    Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.BIJZ_CONV_LB035, null));
         }
 
         // Groep 03: Geboorte
@@ -105,7 +109,7 @@ public final class Lo3PersoonPrecondities extends AbstractLo3Precondities {
 
         // Groep 04: Geslachtsaanduiding
         if (Lo3GroepUtil.isGroepAanwezig(Lo3GroepEnum.GROEP04, inhoud)) {
-            controleerGroep4Geslachtsaanduiding(inhoud.getGeslachtsaanduiding(), herkomst);
+            controleerGroep04Geslachtsaanduiding(inhoud.getGeslachtsaanduiding(), herkomst);
         }
 
         // Groep 20: A-nummerverwijzigingen
@@ -133,10 +137,10 @@ public final class Lo3PersoonPrecondities extends AbstractLo3Precondities {
     /* ************************************************************************************************************ */
     /* ************************************************************************************************************ */
     /* ************************************************************************************************************ */
-    @BijzondereSituatie({SoortMeldingCode.BIJZ_CONV_LB005, SoortMeldingCode.BIJZ_CONV_LB006 })
+    @BijzondereSituatie({SoortMeldingCode.BIJZ_CONV_LB005, SoortMeldingCode.BIJZ_CONV_LB006})
     private void controleerVorigAnummer(final Lo3PersoonInhoud inhoud, final Lo3Herkomst herkomst) {
-        final Long vorigAnummer = Lo3Long.unwrap(inhoud.getVorigANummer());
-        final Long aNummer = Lo3Long.unwrap(inhoud.getANummer());
+        final String vorigAnummer = Lo3String.unwrap(inhoud.getVorigANummer());
+        final String aNummer = Lo3String.unwrap(inhoud.getANummer());
         if (vorigAnummer != null) {
             if (vorigAnummer.equals(aNummer)) {
                 Foutmelding.logMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.BIJZ_CONV_LB006, null);
@@ -146,10 +150,10 @@ public final class Lo3PersoonPrecondities extends AbstractLo3Precondities {
         }
     }
 
-    @BijzondereSituatie({SoortMeldingCode.BIJZ_CONV_LB007, SoortMeldingCode.BIJZ_CONV_LB008 })
+    @BijzondereSituatie({SoortMeldingCode.BIJZ_CONV_LB007, SoortMeldingCode.BIJZ_CONV_LB008})
     private void controleerVolgendAnummer(final Lo3PersoonInhoud inhoud, final Lo3Herkomst herkomst) {
-        final Long volgendAnummer = Lo3Long.unwrap(inhoud.getVolgendANummer());
-        final Long aNummer = Lo3Long.unwrap(inhoud.getANummer());
+        final String volgendAnummer = Lo3String.unwrap(inhoud.getVolgendANummer());
+        final String aNummer = Lo3String.unwrap(inhoud.getANummer());
         if (volgendAnummer != null) {
             if (volgendAnummer.equals(aNummer)) {
                 Foutmelding.logMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.BIJZ_CONV_LB007, null);
@@ -159,21 +163,19 @@ public final class Lo3PersoonPrecondities extends AbstractLo3Precondities {
         }
     }
 
-    private void controleerGroep20ANummerverwijzingen(final Lo3Long vorigANummer, final Lo3Long volgendANummer, final Lo3Herkomst herkomst) {
-        controleerAnummer(
-            vorigANummer,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.STRUC_IDENTIFICATIE, Lo3ElementEnum.ELEMENT_2010));
-        controleerAnummer(
-            volgendANummer,
-            Foutmelding.maakMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.STRUC_IDENTIFICATIE, Lo3ElementEnum.ELEMENT_2020));
+    private void controleerGroep20ANummerverwijzingen(final Lo3String vorigANummer, final Lo3String volgendANummer, final Lo3Herkomst herkomst) {
+        controleerAnummer(vorigANummer,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.STRUC_IDENTIFICATIE, Lo3ElementEnum.ELEMENT_2010));
+        controleerAnummer(volgendANummer,
+                Foutmelding.maakMeldingFout(herkomst, LogSeverity.WARNING, SoortMeldingCode.STRUC_IDENTIFICATIE, Lo3ElementEnum.ELEMENT_2020));
     }
 
     private void controleerGroep61Naamgebruik(final Lo3AanduidingNaamgebruikCode aanduidingNaamgebruikCode, final Lo3Herkomst herkomst) {
         controleerAanwezig(aanduidingNaamgebruikCode, Foutmelding.maakMeldingFout(herkomst, LogSeverity.INFO, SoortMeldingCode.BIJZ_CONV_LB040, null));
-        if (Validatie.isElementGevuld(aanduidingNaamgebruikCode)) {
+        if (Lo3Validatie.isElementGevuld(aanduidingNaamgebruikCode)) {
             Lo3PreconditieEnumCodeChecks.controleerCode(
-                aanduidingNaamgebruikCode,
-                Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_6110));
+                    aanduidingNaamgebruikCode,
+                    Foutmelding.maakMeldingFout(herkomst, LogSeverity.ERROR, SoortMeldingCode.PRE054, Lo3ElementEnum.ELEMENT_6110));
         }
     }
 }

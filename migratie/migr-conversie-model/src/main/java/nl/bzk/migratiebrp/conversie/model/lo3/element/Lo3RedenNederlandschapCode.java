@@ -6,16 +6,13 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * De class representeert een LO3 Reden verkrijging/verlies Nederlandschap code. Deze code verwijst naar tabel 37 (zie
  * LO3.7).
  *
  * Deze class is immutable en threadsafe.
- *
- *
- *
  */
 public final class Lo3RedenNederlandschapCode extends AbstractLo3Element {
     /**
@@ -30,9 +27,7 @@ public final class Lo3RedenNederlandschapCode extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3RedenNederlandschapCode object.
-     *
-     * @param waarde
-     *            de code
+     * @param waarde de code
      */
     public Lo3RedenNederlandschapCode(final String waarde) {
         this(waarde, null);
@@ -40,16 +35,12 @@ public final class Lo3RedenNederlandschapCode extends AbstractLo3Element {
 
     /**
      * Maakt een Lo3RedenNederlandschapCode object met onderzoek.
-     *
-     * @param waarde
-     *            de code
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde de code
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
     public Lo3RedenNederlandschapCode(
-        @Element(name = "waarde", required = false) final String waarde,
-        @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek)
-    {
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
     }
 }

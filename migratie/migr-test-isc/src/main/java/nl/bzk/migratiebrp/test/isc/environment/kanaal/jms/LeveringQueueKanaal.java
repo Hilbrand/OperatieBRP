@@ -18,7 +18,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
 public final class LeveringQueueKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "levering";
 
     /**
@@ -26,10 +28,10 @@ public final class LeveringQueueKanaal extends LazyLoadingKanaal {
      */
     public LeveringQueueKanaal() {
         super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-jms-isc.xml",
-            "classpath:infra-queues-isc-levering.xml",
-            "classpath:infra-jmx-routering.xml"));
+                "classpath:configuratie.xml",
+                "classpath:infra-jms-isc.xml",
+                "classpath:infra-queues-isc-levering.xml",
+                "classpath:infra-jmx-routering.xml"));
     }
 
     /**

@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [bijhouding.bijhoudingspartij])
+GEWIJZIGD(oud, nieuw, [Persoon.Bijhouding.PartijCode])

@@ -9,9 +9,8 @@
  * <p>
  * De specifieke attributen die gebruikt worden in LO3 historie en inhoud zijn
  * hier gedefinieerd.
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.model.lo3
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 

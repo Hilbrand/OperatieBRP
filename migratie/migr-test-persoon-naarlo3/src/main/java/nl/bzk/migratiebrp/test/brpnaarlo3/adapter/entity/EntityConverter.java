@@ -33,9 +33,7 @@ public abstract class EntityConverter implements DataObjectConverter {
 
     /**
      * Constructor.
-     * 
-     * @param type
-     *            type die deze converter kan converteren
+     * @param type type die deze converter kan converteren
      */
     protected EntityConverter(final String type) {
         this.type = type;
@@ -78,21 +76,15 @@ public abstract class EntityConverter implements DataObjectConverter {
 
     /**
      * Converteert inhoudelijk het gegeven.
-     * 
-     * @param context
-     *            Converter context
-     * @param header
-     *            welke veld gaan we een waarde aan toekennen
-     * @param value
-     *            de waarde
+     * @param context Converter context
+     * @param header welke veld gaan we een waarde aan toekennen
+     * @param value de waarde
      */
     protected abstract void convertInhoudelijk(final ConverterContext context, final String header, final String value);
 
     /**
      * Maakt de entity die geconverteerd wordt.
-     * 
-     * @param context
-     *            converter context waar de entity mogelijk in opgeslagen wordt (bv Acties en Personen)
+     * @param context converter context waar de entity mogelijk in opgeslagen wordt (bv Acties en Personen)
      */
     protected abstract void maakEntity(final ConverterContext context);
 
@@ -103,9 +95,7 @@ public abstract class EntityConverter implements DataObjectConverter {
 
     /**
      * Maakt een {@link Timestamp} aan op basis van een datum/tijd.
-     * 
-     * @param value
-     *            datum/tijd dat in het DataObject is opgeslagen
+     * @param value datum/tijd dat in het DataObject is opgeslagen
      * @return een {@link Timestamp}
      */
     protected final Timestamp maakTimestamp(final String value) {
@@ -115,9 +105,7 @@ public abstract class EntityConverter implements DataObjectConverter {
 
     /**
      * Bepaal of een string een waarde heeft (dus niet null en niet leeg is).
-     * 
-     * @param value
-     *            string
+     * @param value string
      * @return true als de string een waar heeft
      */
     protected final boolean isEmpty(final String value) {
@@ -127,11 +115,8 @@ public abstract class EntityConverter implements DataObjectConverter {
     /**
      * Geeft de waarde terug uit een lijst. Als de index groter is dan de lengte van de lijst, dan wordt er null
      * geretourneerd.
-     * 
-     * @param values
-     *            list
-     * @param index
-     *            index
+     * @param values list
+     * @param index index
      * @return waarde of index (of null)
      */
     protected final String getValue(final List<String> values, final int index) {
@@ -141,7 +126,6 @@ public abstract class EntityConverter implements DataObjectConverter {
 
     /**
      * Geeft de naam van de converter.
-     * 
      * @return de naam van de converter
      */
     public final String getName() {

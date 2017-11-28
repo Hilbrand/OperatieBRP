@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- Atomikos JTA-enabled ConnectionFactory, configured with the vendor's XA factory. -->
-    <bean name="queueConnectionFactory" class="com.atomikos.jms.AtomikosConnectionFactoryBean" init-method="init" destroy-method="close">
+    <bean name="queueConnectionFactory" class="com.atomikos.jms.AtomikosConnectionFactoryBean" init-method="init"
+          destroy-method="close">
         <property name="uniqueResourceName">
             <!--
              | Tijdens jUnit testen kan de ApplicationContext meerdere keren worden geinstantieerd.
              | Elke keer dient een unique naam gebruikt te worden, anders gaat Atomikos fout.
               -->
-            <bean class="nl.bzk.migratiebrp.util.common.UniqueName" >
-            	<property name="baseName" value="initQueues" />
+            <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName">
+                <property name="baseName" value="initQueues"/>
             </bean>
         </property>
-        <property name="xaConnectionFactory" ref="initXaConnectionFactory" />
-        <property name="minPoolSize" value="${init.queue.minpool:3}" />
-        <property name="maxPoolSize" value="${init.queue.maxpool:20}" />
+        <property name="xaConnectionFactory" ref="initXaConnectionFactory"/>
+        <property name="minPoolSize" value="${init.queue.minpool:1}"/>
+        <property name="maxPoolSize" value="${init.queue.maxpool:20}"/>
     </bean>
-        
+
     <!-- Hornet queue -->
     <bean name="initXaConnectionFactory" class="org.hornetq.jms.client.HornetQXAConnectionFactory">
         <constructor-arg value="false"/>
         <constructor-arg>
-            <bean name="transportConfiguration" class="org.hornetq.api.core.TransportConfiguration">
+            <bean class="org.hornetq.api.core.TransportConfiguration">
                 <constructor-arg value="org.hornetq.core.remoting.impl.netty.NettyConnectorFactory"/>
                 <constructor-arg>
                     <map key-type="java.lang.String" value-type="java.lang.Object">

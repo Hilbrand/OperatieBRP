@@ -6,6 +6,7 @@
 
 /**
  * Levert de noodzakelijk classes om een LO3 persoonslijst te formatten.
-s */
+ * s
+ */
 package nl.bzk.migratiebrp.bericht.model.lo3.format;
 

@@ -6,18 +6,18 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.vergelijker;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingOuder;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Betrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.DeltaRootEntiteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Betrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RootEntiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AanduidingOuder;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaRootEntiteitMatch;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.IstStapelMatch;
@@ -35,14 +35,10 @@ import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
  */
 public final class IstStapelEnRelatieMatcher {
 
-    private static final String KRUIMELPAD_ID = "IST Stapel Matcher: ";
-
     /**
      * Matched de IST-stapels en vervolgens de Betrokkenheden, Relaties en Gerelateerde personen die gekoppeld zijn aan
      * deze IST-stapels.
-     *
-     * @param context
-     *            de context van deltabepaling
+     * @param context de context van deltabepaling
      * @return een set {@link DeltaRootEntiteitMatch} objecten.
      */
     public Set<DeltaRootEntiteitMatch> matchIstGegevens(final DeltaBepalingContext context) {
@@ -60,10 +56,9 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private Set<DeltaRootEntiteitMatch> matchKindStapels(
-        final DeltaBepalingContext context,
-        final PersoonDecorator bestaandePersoon,
-        final PersoonDecorator nieuwePersoon)
-    {
+            final DeltaBepalingContext context,
+            final PersoonDecorator bestaandePersoon,
+            final PersoonDecorator nieuwePersoon) {
         final Set<StapelDecorator> bestaandeStapels = bestaandePersoon.getKindStapels();
         final Set<StapelDecorator> kluizenaarStapels = nieuwePersoon.getKindStapels();
 
@@ -72,10 +67,9 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private Set<DeltaRootEntiteitMatch> matchHuwelijkOfGpStapels(
-        final DeltaBepalingContext context,
-        final PersoonDecorator bestaandePersoon,
-        final PersoonDecorator kluizenaar)
-    {
+            final DeltaBepalingContext context,
+            final PersoonDecorator bestaandePersoon,
+            final PersoonDecorator kluizenaar) {
         final Set<StapelDecorator> bestaandeStapels = bestaandePersoon.getHuwelijkOfGpStapels();
         final Set<StapelDecorator> kluizenaarStapels = kluizenaar.getHuwelijkOfGpStapels();
 
@@ -84,10 +78,9 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private Set<DeltaRootEntiteitMatch> matchOuderStapels(
-        final DeltaBepalingContext context,
-        final PersoonDecorator bestaandePersoonDecorator,
-        final PersoonDecorator nieuwePersoonDecorator)
-    {
+            final DeltaBepalingContext context,
+            final PersoonDecorator bestaandePersoonDecorator,
+            final PersoonDecorator nieuwePersoonDecorator) {
         final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches = new LinkedHashSet<>();
 
         final IstStapelMatch ouder1IstMatch = matchOuderStapel(context, bestaandePersoonDecorator, nieuwePersoonDecorator, true);
@@ -101,7 +94,7 @@ public final class IstStapelEnRelatieMatcher {
          * bestaan, maar 1 stapel wordt verwijderd -> Betrokkenheid en relatie moeten blijven bestaan. Alleen stapel
          * markeren als te verwijderen 5. Er bestaat 1 stapel en de ander wordt toegevoegd -> Betrokkenheid en relatie
          * bestaat al. Nieuwe stapel 'omhangen' naar de bestaande relatie.
-         * 
+         *
          * 1-3 kunnen ook voor 1 stapel alleen gelezen worden.
          */
         if (ouder1IstMatch != null || ouder2IstMatch != null) {
@@ -118,25 +111,7 @@ public final class IstStapelEnRelatieMatcher {
                 if (betrokkenheidBestaatAl) {
                     // In ieder geval 1 stapel bestond al, dus de betrokkenheid hoeft nooit als nieuw toe te voegen te
                     // worden gemarkeerd.
-                    final BetrokkenheidDecorator ikBetrokkenheid = bepaalIkBetrokkenheidOuders(ouder1IstMatch, ouder2IstMatch, bestaandePersoonDecorator);
-                    if (ouder1IstMatch != null) {
-                        markeerOuderKernInhoud(
-                            deltaRootEntiteitMatches,
-                            ouder1IstMatch,
-                            ikBetrokkenheid,
-                            bestaandePersoonDecorator,
-                            nieuwePersoonDecorator,
-                            AanduidingOuder.OUDER_1);
-                    }
-                    if (ouder2IstMatch != null) {
-                        markeerOuderKernInhoud(
-                            deltaRootEntiteitMatches,
-                            ouder2IstMatch,
-                            ikBetrokkenheid,
-                            bestaandePersoonDecorator,
-                            nieuwePersoonDecorator,
-                            AanduidingOuder.OUDER_2);
-                    }
+                    markeerBetrokkenheid(bestaandePersoonDecorator, nieuwePersoonDecorator, deltaRootEntiteitMatches, ouder1IstMatch, ouder2IstMatch);
                 } else {
                     // Compleet nieuwe stapel(s). Betrokkenheid markeren als nieuw toe te voegen.
                     markeerOuderIstMatch(deltaRootEntiteitMatches, ouder1IstMatch, bestaandePersoonDecorator, nieuwePersoonDecorator, true);
@@ -148,51 +123,70 @@ public final class IstStapelEnRelatieMatcher {
         return deltaRootEntiteitMatches;
     }
 
+    private void markeerBetrokkenheid(PersoonDecorator bestaandePersoonDecorator, PersoonDecorator nieuwePersoonDecorator,
+                                      Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches, IstStapelMatch ouder1IstMatch, IstStapelMatch ouder2IstMatch) {
+        final BetrokkenheidDecorator ikBetrokkenheid = bepaalIkBetrokkenheidOuders(ouder1IstMatch, ouder2IstMatch, bestaandePersoonDecorator);
+        if (ouder1IstMatch != null) {
+            markeerOuderKernInhoud(
+                    deltaRootEntiteitMatches,
+                    ouder1IstMatch,
+                    ikBetrokkenheid,
+                    bestaandePersoonDecorator,
+                    nieuwePersoonDecorator,
+                    AanduidingOuder.OUDER_1);
+        }
+        if (ouder2IstMatch != null) {
+            markeerOuderKernInhoud(
+                    deltaRootEntiteitMatches,
+                    ouder2IstMatch,
+                    ikBetrokkenheid,
+                    bestaandePersoonDecorator,
+                    nieuwePersoonDecorator,
+                    AanduidingOuder.OUDER_2);
+        }
+    }
+
     private boolean moetBetrokkenheidVerwijderdWorden(final IstStapelMatch ouder1IstMatch, final IstStapelMatch ouder2IstMatch) {
 
         return (ouder1IstMatch == null || StapelMatchType.STAPEL_VERWIJDERD.equals(ouder1IstMatch.getMatchType()))
-               && (ouder2IstMatch == null || StapelMatchType.STAPEL_VERWIJDERD.equals(ouder2IstMatch.getMatchType()));
+                && (ouder2IstMatch == null || StapelMatchType.STAPEL_VERWIJDERD.equals(ouder2IstMatch.getMatchType()));
     }
 
     private boolean bestaatBetrokkenheidAl(final IstStapelMatch ouder1IstMatch, final IstStapelMatch ouder2IstMatch) {
-        return ouder1IstMatch != null
-               && !StapelMatchType.STAPEL_NIEUW.equals(ouder1IstMatch.getMatchType())
-               || ouder2IstMatch != null
-               && !StapelMatchType.STAPEL_NIEUW.equals(ouder2IstMatch.getMatchType());
+        return ouder1IstMatch != null && !StapelMatchType.STAPEL_NIEUW.equals(ouder1IstMatch.getMatchType())
+                || ouder2IstMatch != null && !StapelMatchType.STAPEL_NIEUW.equals(ouder2IstMatch.getMatchType());
     }
 
     private void markeerOuderIstMatch(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final IstStapelMatch istStapelMatch,
-        final PersoonDecorator bestaandePersoonDecorator,
-        final PersoonDecorator nieuwePersoonDecorator,
-        final boolean toevoegen)
-    {
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final IstStapelMatch istStapelMatch,
+            final PersoonDecorator bestaandePersoonDecorator,
+            final PersoonDecorator nieuwePersoonDecorator,
+            final boolean toevoegen) {
         if (istStapelMatch != null) {
             final Persoon bestaandePersoon = bestaandePersoonDecorator.getPersoon();
             final StapelDecorator stapelDecorator = istStapelMatch.getStapel();
 
             if (toevoegen) {
-                final DeltaRootEntiteit nieuweStapel = stapelDecorator.getStapel();
+                final RootEntiteit nieuweStapel = stapelDecorator.getStapel();
                 final BetrokkenheidDecorator nieuweBetrokkenheid = getIkBetrokkenheidDecorator(nieuwePersoonDecorator, stapelDecorator.getRelatie());
 
-                deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(null, nieuweStapel, bestaandePersoon, Persoon.STAPELS));
+                deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(null, nieuweStapel, bestaandePersoon, Persoon.STAPELS_SET));
                 voegBetrokkenhedenMatchToe(deltaRootEntiteitMatches, null, nieuweBetrokkenheid, bestaandePersoon, Persoon.BETROKKENHEID_SET);
             } else {
-                final DeltaRootEntiteit bestaandeStapel = stapelDecorator.getStapel();
-                deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(bestaandeStapel, null, bestaandePersoon, Persoon.STAPELS));
+                final RootEntiteit bestaandeStapel = stapelDecorator.getStapel();
+                deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(bestaandeStapel, null, bestaandePersoon, Persoon.STAPELS_SET));
             }
         }
     }
 
     private void markeerOuderKernInhoud(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final IstStapelMatch istStapelMatch,
-        final BetrokkenheidDecorator ikBetrokkenheid,
-        final PersoonDecorator bestaandePersoonDecorator,
-        final PersoonDecorator nieuwePersoon,
-        final AanduidingOuder aanduidingOuder)
-    {
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final IstStapelMatch istStapelMatch,
+            final BetrokkenheidDecorator ikBetrokkenheid,
+            final PersoonDecorator bestaandePersoonDecorator,
+            final PersoonDecorator nieuwePersoon,
+            final AanduidingOuder aanduidingOuder) {
         // Stapel Match kan NIEUW, VERWIJDERD of MATCHED zijn. Indien NIEUW of VERWIJDERD, de betrokkenheden van ouder
         // als te verwijderen/toevoegen markeren.
         final Persoon bestaandePersoon = bestaandePersoonDecorator.getPersoon();
@@ -204,11 +198,11 @@ public final class IstStapelEnRelatieMatcher {
             for (final BetrokkenheidDecorator bestaandeBetrokkenheid : bestaandeBetrokkenheden) {
                 voegStapelMatchToe(deltaRootEntiteitMatches, istStapelMatch.getStapel(), null, bestaandePersoon);
                 voegBetrokkenhedenMatchToe(
-                    deltaRootEntiteitMatches,
-                    bestaandeBetrokkenheid,
-                    null,
-                    bestaandeRelatie.getRelatie(),
-                    Relatie.BETROKKENHEID_SET);
+                        deltaRootEntiteitMatches,
+                        bestaandeBetrokkenheid,
+                        null,
+                        bestaandeRelatie.getRelatie(),
+                        Relatie.BETROKKENHEID_SET);
             }
         } else {
             // NIEUW of MATCHED
@@ -222,15 +216,16 @@ public final class IstStapelEnRelatieMatcher {
                 nieuweStapel.ontkoppelRelaties();
 
                 voegStapelMatchToe(deltaRootEntiteitMatches, null, nieuweStapel, bestaandePersoon);
-                final Set<BetrokkenheidDecorator> nieuweBetrokkenheden =
-                        nieuweRelatie.getAndereOuderBetrokkenheden(nieuweIkBetrokkenheid, aanduidingOuder);
+                final Set<BetrokkenheidDecorator>
+                        nieuweBetrokkenheden =
+                        nieuweRelatie == null ? Collections.emptySet() : nieuweRelatie.getAndereOuderBetrokkenheden(nieuweIkBetrokkenheid, aanduidingOuder);
                 for (final BetrokkenheidDecorator nieuweBetrokkenheid : nieuweBetrokkenheden) {
                     voegBetrokkenhedenMatchToe(
-                        deltaRootEntiteitMatches,
-                        null,
-                        nieuweBetrokkenheid,
-                        bestaandeRelatie.getRelatie(),
-                        Relatie.BETROKKENHEID_SET);
+                            deltaRootEntiteitMatches,
+                            null,
+                            nieuweBetrokkenheid,
+                            bestaandeRelatie.getRelatie(),
+                            Relatie.BETROKKENHEID_SET);
                 }
             } else {
                 // Stapel match toevoegen
@@ -244,20 +239,21 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private void matchBetrokkenhedenEnGerelateerdenOuder(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final BetrokkenheidDecorator bestaandeIkBetrokkenheid,
-        final BetrokkenheidDecorator nieuweIkBetrokkenheid,
-        final AanduidingOuder aanduidingOuder)
-    {
-        final RelatieDecorator bestaandeRelatie = bestaandeIkBetrokkenheid.getRelatie();
-        final RelatieDecorator nieuweRelatie = nieuweIkBetrokkenheid.getRelatie();
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final BetrokkenheidDecorator bestaandeIkBetrokkenheid,
+            final BetrokkenheidDecorator nieuweIkBetrokkenheid,
+            final AanduidingOuder aanduidingOuder) {
+        final RelatieDecorator bestaandeRelatie = bestaandeIkBetrokkenheid == null ? null : bestaandeIkBetrokkenheid.getRelatie();
+        final RelatieDecorator nieuweRelatie = nieuweIkBetrokkenheid == null ? null : nieuweIkBetrokkenheid.getRelatie();
 
         // Relaties worden niet gematched omdat hier geen veranderingen in kunnen optreden. Historie reageert hier
         // hetzelfde als de betrokkenheid historie.
 
-        final Set<BetrokkenheidDecorator> bestaandeBetrokkenheden =
+        final Set<BetrokkenheidDecorator> bestaandeBetrokkenheden = bestaandeRelatie == null ? Collections.emptySet() :
                 bestaandeRelatie.getAndereOuderBetrokkenheden(bestaandeIkBetrokkenheid, aanduidingOuder);
-        final Set<BetrokkenheidDecorator> nieuweBetrokkenheden = nieuweRelatie.getAndereOuderBetrokkenheden(nieuweIkBetrokkenheid, aanduidingOuder);
+        final Set<BetrokkenheidDecorator>
+                nieuweBetrokkenheden =
+                nieuweRelatie == null ? Collections.emptySet() : nieuweRelatie.getAndereOuderBetrokkenheden(nieuweIkBetrokkenheid, aanduidingOuder);
 
         final Set<BetrokkenheidDecorator> matchendeBestaandeBetrokkenheden = new HashSet<>();
 
@@ -266,14 +262,14 @@ public final class IstStapelEnRelatieMatcher {
             if (matchendeBetrokkenheid != null) {
                 matchendeBestaandeBetrokkenheden.add(matchendeBetrokkenheid);
             }
-            voegGerelateerdeMatchToe(deltaRootEntiteitMatches, bestaandeBetrokkenheid, matchendeBetrokkenheid, Betrokkenheid.PERSOON);
+            voegGerelateerdeMatchToe(deltaRootEntiteitMatches, bestaandeBetrokkenheid, matchendeBetrokkenheid, Betrokkenheid.VELD_PERSOON);
 
             voegBetrokkenhedenMatchToe(
-                deltaRootEntiteitMatches,
-                bestaandeBetrokkenheid,
-                matchendeBetrokkenheid,
-                bestaandeRelatie.getRelatie(),
-                Relatie.BETROKKENHEID_SET);
+                    deltaRootEntiteitMatches,
+                    bestaandeBetrokkenheid,
+                    matchendeBetrokkenheid,
+                    bestaandeRelatie == null ? null : bestaandeRelatie.getRelatie(),
+                    Relatie.BETROKKENHEID_SET);
         }
 
         // Andere betrokkenheden vinden, deze zijn nieuw
@@ -281,19 +277,18 @@ public final class IstStapelEnRelatieMatcher {
                 getOverigeOuderBetrokkenheden(matchendeBestaandeBetrokkenheden, nieuweBetrokkenheden);
         for (final BetrokkenheidDecorator nieuweOverigeBetrokkenheid : nieuweOverigeBetrokkenheden) {
             voegBetrokkenhedenMatchToe(
-                deltaRootEntiteitMatches,
-                null,
-                nieuweOverigeBetrokkenheid,
-                bestaandeRelatie.getRelatie(),
-                Relatie.BETROKKENHEID_SET);
+                    deltaRootEntiteitMatches,
+                    null,
+                    nieuweOverigeBetrokkenheid,
+                    bestaandeRelatie == null ? null : bestaandeRelatie.getRelatie(),
+                    Relatie.BETROKKENHEID_SET);
         }
     }
 
     private BetrokkenheidDecorator bepaalIkBetrokkenheidOuders(
-        final IstStapelMatch ouder1IstMatch,
-        final IstStapelMatch ouder2IstMatch,
-        final PersoonDecorator persoonDecorator)
-    {
+            final IstStapelMatch ouder1IstMatch,
+            final IstStapelMatch ouder2IstMatch,
+            final PersoonDecorator persoonDecorator) {
         final RelatieDecorator relatieDecorator;
         if (ouder1IstMatch != null && ouder1IstMatch.getMatchType().equals(StapelMatchType.MATCHED)) {
             relatieDecorator = ouder1IstMatch.getStapel().getRelatie();
@@ -306,10 +301,9 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private Set<DeltaRootEntiteitMatch> matchGezagsverhoudingStapels(
-        final DeltaBepalingContext context,
-        final PersoonDecorator bestaandePersoon,
-        final PersoonDecorator nieuwePersoon)
-    {
+            final DeltaBepalingContext context,
+            final PersoonDecorator bestaandePersoon,
+            final PersoonDecorator nieuwePersoon) {
         // Er zijn 3 mogelijke situaties:
         // 1. Nieuwe stapel => controleren of relatie gekoppeld is en of deze al bestaat/nieuw wordt toegevoegd.
         // 2. Bestaande stapel => match maken
@@ -351,7 +345,9 @@ public final class IstStapelEnRelatieMatcher {
                     voegStapelMatchToe(deltaRootEntiteitMatches, null, stapelDecorator, bestaandePersoon.getPersoon());
                     // Verwijder de stapel relatie. Wordt in het proces weer aan gekoppeld met de bestaande ouder
                     // relatie.
-                    stapelDecorator.ontkoppelRelaties();
+                    if (stapelDecorator != null) {
+                        stapelDecorator.ontkoppelRelaties();
+                    }
                     break;
                 case STAPEL_VERWIJDERD:
                     isActueel = false;
@@ -368,11 +364,10 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private IstStapelMatch matchOuderStapel(
-        final DeltaBepalingContext context,
-        final PersoonDecorator bestaandePersoon,
-        final PersoonDecorator nieuwePersoon,
-        final boolean isOuder1)
-    {
+            final DeltaBepalingContext context,
+            final PersoonDecorator bestaandePersoon,
+            final PersoonDecorator nieuwePersoon,
+            final boolean isOuder1) {
         final StapelDecorator bestaandeOuderStapel;
         final StapelDecorator nieuweOuderStapel;
         if (isOuder1) {
@@ -444,11 +439,7 @@ public final class IstStapelEnRelatieMatcher {
         return converteerNaarIstStapelMatches(stapelMatches);
     }
 
-    private void matchStapel(
-        final StapelMatches<StapelDecorator> stapelMatches,
-        final StapelDecorator zoekStapel,
-        final Set<StapelDecorator> stapels)
-    {
+    private void matchStapel(final StapelMatches<StapelDecorator> stapelMatches, final StapelDecorator zoekStapel, final Set<StapelDecorator> stapels) {
         boolean matchFound = false;
         final StapelVoorkomenDecorator zoekActueelVoorkomen = zoekStapel.getActueelVoorkomen();
         for (final StapelDecorator nieuweStapel : stapels) {
@@ -464,16 +455,15 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private void maakKruimelpadLoggingEnUpdateContext(
-        final Lo3RelatieType relatieType,
-        final Set<IstStapelMatch> stapelMatches,
-        final boolean isActueel,
-        final DeltaBepalingContext context)
-    {
+            final Lo3RelatieType relatieType,
+            final Set<IstStapelMatch> stapelMatches,
+            final boolean isActueel,
+            final DeltaBepalingContext context) {
         if (stapelMatches.isEmpty()) {
             return;
         }
 
-        SynchronisatieLogging.addMelding(String.format(KRUIMELPAD_ID + "Resultaten IST stapel (%1$s) matching:", relatieType));
+        SynchronisatieLogging.addMelding(String.format("Resultaten IST stapel (%1$s) matching:", relatieType));
 
         for (final IstStapelMatch stapelMatch : stapelMatches) {
             final List<StapelDecorator> matchingStapels = stapelMatch.getMatchingStapels();
@@ -488,46 +478,41 @@ public final class IstStapelEnRelatieMatcher {
                 }
             }
 
-            if (matchingStapels.size() == 0) {
+            if (matchingStapels.isEmpty()) {
                 // Stapel verwijderd of toegevoegd:
-                SynchronisatieLogging.addMelding(String.format(
-                    KRUIMELPAD_ID + "Stapel=%1$s heeft geen match (%2$s)",
-                    stapelMatch.getStapel(),
-                    stapelMatch.getMatchType()));
+                SynchronisatieLogging.addMelding(
+                        String.format("IST Stapel Matcher: Stapel=%1$s heeft geen match (%2$s)", stapelMatch.getStapel(), stapelMatch.getMatchType()));
             } else if (matchingStapels.size() == 1) {
                 if (StapelMatchType.MATCHED.equals(stapelMatch.getMatchType())) {
                     // Exacte match
-                    SynchronisatieLogging.addMelding(String.format(
-                        KRUIMELPAD_ID + "Stapel=%1$s heeft exact 1 match met %2$s",
-                        stapelMatch.getStapel(),
-                        matchingStapelsOmschrijving));
+                    SynchronisatieLogging.addMelding(
+                            String.format("IST Stapel Matcher: Stapel=%1$s heeft exact 1 match met %2$s",
+                                    stapelMatch.getStapel(), matchingStapelsOmschrijving));
                 } else {
                     // Stapel matched met 1 andere stapel, maar deze stapel matched met meer dan 1 andere stapel
-                    SynchronisatieLogging.addMelding(String.format(
-                        KRUIMELPAD_ID + "Stapel=%1$s heeft 1 match, maar deze match is niet uniek voor %2$s",
-                        stapelMatch.getStapel(),
-                        matchingStapelsOmschrijving));
+                    SynchronisatieLogging.addMelding(
+                            String.format("IST Stapel Matcher: Stapel=%1$s heeft 1 match, maar deze match is niet uniek voor %2$s",
+                                    stapelMatch.getStapel(),
+                                    matchingStapelsOmschrijving));
                 }
             } else {
-                SynchronisatieLogging.addMelding(String.format(
-                    KRUIMELPAD_ID + "Stapel=%1$s is meer dan 1x gematched %2$s",
-                    stapelMatch.getStapel(),
-                    matchingStapelsOmschrijving));
+                SynchronisatieLogging.addMelding(
+                        String.format("IST Stapel Matcher: Stapel=%1$s is meer dan 1x gematched %2$s", stapelMatch.getStapel(), matchingStapelsOmschrijving));
             }
         }
-        SynchronisatieLogging.addMelding(String.format("IST Stapel (%s) matching: Voorlopige conclusie: Is bijhouding actueel: %b", relatieType, isActueel));
+        SynchronisatieLogging.addMelding(
+                String.format("IST Stapel (%s) matching: Voorlopige conclusie: Is bijhouding actueel: %b", relatieType, isActueel));
         if (!isActueel) {
             context.setBijhoudingOverig();
         }
     }
 
     private Set<DeltaRootEntiteitMatch> converteerNaarEntiteitMatchesEnZoekKernMatches(
-        final DeltaBepalingContext context,
-        final Set<IstStapelMatch> stapelMatches,
-        final PersoonDecorator bestaandePersoonDecorator,
-        final PersoonDecorator nieuwePersoonDecorator,
-        final Lo3RelatieType relatieType)
-    {
+            final DeltaBepalingContext context,
+            final Set<IstStapelMatch> stapelMatches,
+            final PersoonDecorator bestaandePersoonDecorator,
+            final PersoonDecorator nieuwePersoonDecorator,
+            final Lo3RelatieType relatieType) {
         final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches = new LinkedHashSet<>();
 
         boolean isActueel = true;
@@ -535,41 +520,25 @@ public final class IstStapelEnRelatieMatcher {
             final StapelDecorator stapelDecorator = stapelMatch.getStapel();
             final Persoon bestaandePersoon = bestaandePersoonDecorator.getPersoon();
 
-            switch (stapelMatch.getMatchType()) {
-                case MATCHED:
-                    final StapelDecorator nieuweStapelDecorator = stapelMatch.getMatchingStapel();
-                    voegStapelMatchToe(deltaRootEntiteitMatches, stapelDecorator, nieuweStapelDecorator, bestaandePersoon);
-                    matchKernInhoudelijk(
-                        deltaRootEntiteitMatches,
-                        stapelDecorator,
-                        nieuweStapelDecorator,
-                        bestaandePersoonDecorator,
-                        nieuwePersoonDecorator,
-                        relatieType);
-                    break;
-                case STAPEL_VERWIJDERD:
-                    isActueel = false;
-                    voegStapelMatchToe(deltaRootEntiteitMatches, stapelDecorator, null, bestaandePersoon);
-                    markeerBetrokkenheid(deltaRootEntiteitMatches, stapelDecorator, bestaandePersoonDecorator, bestaandePersoon, false);
-                    break;
-                case STAPEL_NIEUW:
-                    voegStapelMatchToe(deltaRootEntiteitMatches, null, stapelDecorator, bestaandePersoon);
-                    markeerBetrokkenheid(deltaRootEntiteitMatches, stapelDecorator, nieuwePersoonDecorator, bestaandePersoon, true);
-                    if (stapelDecorator.getVoorkomens().size() > 1) {
+            if (stapelDecorator != null) {
+                switch (stapelMatch.getMatchType()) {
+                    case MATCHED:
+                        verwerkCaseMatched(bestaandePersoonDecorator, nieuwePersoonDecorator, relatieType, deltaRootEntiteitMatches, stapelMatch,
+                                stapelDecorator,
+                                bestaandePersoon);
+                        break;
+                    case STAPEL_VERWIJDERD:
                         isActueel = false;
-                    }
-                    break;
-                case NON_UNIQUE_MATCH:
-                default:
-                    isActueel = false;
-                    // Bestaande stapel als te verwijderen markeren
-                    voegStapelMatchToe(deltaRootEntiteitMatches, stapelDecorator, null, bestaandePersoon);
-
-                    // Alle matchende stapels al toe te voegen markeren
-                    for (final StapelDecorator matchingStapelDecorator : stapelMatch.getMatchingStapels()) {
-                        voegStapelMatchToe(deltaRootEntiteitMatches, null, matchingStapelDecorator, bestaandePersoon);
-                        markeerBetrokkenheid(deltaRootEntiteitMatches, matchingStapelDecorator, nieuwePersoonDecorator, bestaandePersoon, true);
-                    }
+                        voegStapelMatchToe(deltaRootEntiteitMatches, stapelDecorator, null, bestaandePersoon);
+                        markeerBetrokkenheid(deltaRootEntiteitMatches, stapelDecorator, bestaandePersoonDecorator, bestaandePersoon, false);
+                        break;
+                    case STAPEL_NIEUW:
+                        isActueel = verwerkCaseStapelNieuw(nieuwePersoonDecorator, deltaRootEntiteitMatches, isActueel, stapelDecorator, bestaandePersoon);
+                        break;
+                    case NON_UNIQUE_MATCH:
+                    default:
+                        isActueel = verwerkDefaultCase(nieuwePersoonDecorator, deltaRootEntiteitMatches, stapelMatch, stapelDecorator, bestaandePersoon);
+                }
             }
         }
         maakKruimelpadLoggingEnUpdateContext(relatieType, stapelMatches, isActueel, context);
@@ -577,38 +546,75 @@ public final class IstStapelEnRelatieMatcher {
         return deltaRootEntiteitMatches;
     }
 
-    private void markeerBetrokkenheid(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final StapelDecorator stapelDecorator,
-        final PersoonDecorator ikPersoonDecorator,
-        final Persoon bestaandePersoon,
-        final boolean toevoegen)
-    {
-        for (final RelatieDecorator relatieDecorator : stapelDecorator.getRelaties()) {
-            final BetrokkenheidDecorator ikBetrokkenheidDecorator = getIkBetrokkenheidDecorator(ikPersoonDecorator, relatieDecorator);
-            final Betrokkenheid ikBetrokkenheid = ikBetrokkenheidDecorator.getBetrokkenheid();
+    private void verwerkCaseMatched(PersoonDecorator bestaandePersoonDecorator, PersoonDecorator nieuwePersoonDecorator,
+                                    Lo3RelatieType relatieType, Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+                                    IstStapelMatch stapelMatch, StapelDecorator stapelDecorator, Persoon bestaandePersoon) {
+        final StapelDecorator nieuweStapelDecorator = stapelMatch.getMatchingStapel();
+        voegStapelMatchToe(deltaRootEntiteitMatches, stapelDecorator, nieuweStapelDecorator, bestaandePersoon);
+        matchKernInhoudelijk(
+                deltaRootEntiteitMatches,
+                stapelDecorator,
+                nieuweStapelDecorator,
+                bestaandePersoonDecorator,
+                nieuwePersoonDecorator,
+                relatieType);
+    }
 
-            final DeltaRootEntiteit bestaandeEntiteit;
-            final DeltaRootEntiteit nieuweEntiteit;
-            if (toevoegen) {
-                bestaandeEntiteit = null;
-                nieuweEntiteit = ikBetrokkenheid;
-            } else {
-                bestaandeEntiteit = ikBetrokkenheid;
-                nieuweEntiteit = null;
+    private boolean verwerkCaseStapelNieuw(PersoonDecorator nieuwePersoonDecorator, Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches, boolean isActueel,
+                                           StapelDecorator stapelDecorator, Persoon bestaandePersoon) {
+        voegStapelMatchToe(deltaRootEntiteitMatches, null, stapelDecorator, bestaandePersoon);
+        markeerBetrokkenheid(deltaRootEntiteitMatches, stapelDecorator, nieuwePersoonDecorator, bestaandePersoon, true);
+        return stapelDecorator == null ? false : stapelDecorator.getVoorkomens().size() <= 1 && isActueel;
+    }
+
+    private boolean verwerkDefaultCase(PersoonDecorator nieuwePersoonDecorator, Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+                                       IstStapelMatch stapelMatch, StapelDecorator stapelDecorator, Persoon bestaandePersoon) {
+        boolean isActueel;
+        isActueel = false;
+        // Bestaande stapel als te verwijderen markeren
+        voegStapelMatchToe(deltaRootEntiteitMatches, stapelDecorator, null, bestaandePersoon);
+
+        // Alle matchende stapels al toe te voegen markeren
+        for (final StapelDecorator matchingStapelDecorator : stapelMatch.getMatchingStapels()) {
+            voegStapelMatchToe(deltaRootEntiteitMatches, null, matchingStapelDecorator, bestaandePersoon);
+            markeerBetrokkenheid(deltaRootEntiteitMatches, matchingStapelDecorator, nieuwePersoonDecorator, bestaandePersoon, true);
+        }
+        return isActueel;
+    }
+
+    private void markeerBetrokkenheid(
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final StapelDecorator stapelDecorator,
+            final PersoonDecorator ikPersoonDecorator,
+            final Persoon bestaandePersoon,
+            final boolean toevoegen) {
+        if (stapelDecorator != null) {
+            for (final RelatieDecorator relatieDecorator : stapelDecorator.getRelaties()) {
+                final BetrokkenheidDecorator ikBetrokkenheidDecorator = getIkBetrokkenheidDecorator(ikPersoonDecorator, relatieDecorator);
+
+                final Betrokkenheid ikBetrokkenheid = ikBetrokkenheidDecorator == null ? null : ikBetrokkenheidDecorator.getBetrokkenheid();
+
+                final RootEntiteit bestaandeEntiteit;
+                final RootEntiteit nieuweEntiteit;
+                if (toevoegen) {
+                    bestaandeEntiteit = null;
+                    nieuweEntiteit = ikBetrokkenheid;
+                } else {
+                    bestaandeEntiteit = ikBetrokkenheid;
+                    nieuweEntiteit = null;
+                }
+                deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(bestaandeEntiteit, nieuweEntiteit, bestaandePersoon, Persoon.BETROKKENHEID_SET));
             }
-            deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(bestaandeEntiteit, nieuweEntiteit, bestaandePersoon, Persoon.BETROKKENHEID_SET));
         }
     }
 
     private void matchKernInhoudelijk(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final StapelDecorator bestaandeStapelDecorator,
-        final StapelDecorator nieuweStapelDecorator,
-        final PersoonDecorator bestaandePersoon,
-        final PersoonDecorator nieuwePersoon,
-        final Lo3RelatieType relatieType)
-    {
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final StapelDecorator bestaandeStapelDecorator,
+            final StapelDecorator nieuweStapelDecorator,
+            final PersoonDecorator bestaandePersoon,
+            final PersoonDecorator nieuwePersoon,
+            final Lo3RelatieType relatieType) {
         switch (relatieType) {
             case HUWELIJK_OF_GP:
                 matchHuwelijkOfGpKernInhoud(deltaRootEntiteitMatches, bestaandePersoon, nieuwePersoon, bestaandeStapelDecorator, nieuweStapelDecorator);
@@ -622,12 +628,11 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private void matchRelatieKernInhoud(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final PersoonDecorator bestaandePersoon,
-        final PersoonDecorator nieuwePersoon,
-        final RelatieDecorator bestaandeRelatie,
-        final RelatieDecorator nieuweRelatie)
-    {
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final PersoonDecorator bestaandePersoon,
+            final PersoonDecorator nieuwePersoon,
+            final RelatieDecorator bestaandeRelatie,
+            final RelatieDecorator nieuweRelatie) {
         if (bestaandeRelatie != null) {
             if (nieuweRelatie != null) {
                 // Bepaal ik-betrokkenheid
@@ -635,11 +640,11 @@ public final class IstStapelEnRelatieMatcher {
                 final BetrokkenheidDecorator nieuweIkBetrokkenheid = getIkBetrokkenheidDecorator(nieuwePersoon, nieuweRelatie);
 
                 voegBetrokkenhedenMatchToe(
-                    deltaRootEntiteitMatches,
-                    bestaandeIkBetrokkenheid,
-                    nieuweIkBetrokkenheid,
-                    bestaandePersoon.getPersoon(),
-                    Persoon.BETROKKENHEID_SET);
+                        deltaRootEntiteitMatches,
+                        bestaandeIkBetrokkenheid,
+                        nieuweIkBetrokkenheid,
+                        bestaandePersoon.getPersoon(),
+                        Persoon.BETROKKENHEID_SET);
 
                 // LO3 Kind en huwelijk/GP krijgen de volgende opmaak qua relatie:
                 // Persoon - Betrokkenheid - Relatie - Betrokkenheid - Persoon
@@ -648,27 +653,27 @@ public final class IstStapelEnRelatieMatcher {
                 final BetrokkenheidDecorator nieuweGerelateerdeBetrokkenheid = nieuweRelatie.getAndereBetrokkenheid(nieuweIkBetrokkenheid);
 
                 voegBetrokkenhedenMatchToe(
-                    deltaRootEntiteitMatches,
-                    bestaandeGerelateerdeBetrokkenheid,
-                    nieuweGerelateerdeBetrokkenheid,
-                    bestaandeRelatie.getRelatie(),
-                    Relatie.BETROKKENHEID_SET);
+                        deltaRootEntiteitMatches,
+                        bestaandeGerelateerdeBetrokkenheid,
+                        nieuweGerelateerdeBetrokkenheid,
+                        bestaandeRelatie.getRelatie(),
+                        Relatie.BETROKKENHEID_SET);
                 voegGerelateerdeMatchToe(
-                    deltaRootEntiteitMatches,
-                    bestaandeGerelateerdeBetrokkenheid,
-                    nieuweGerelateerdeBetrokkenheid,
-                    Betrokkenheid.PERSOON);
+                        deltaRootEntiteitMatches,
+                        bestaandeGerelateerdeBetrokkenheid,
+                        nieuweGerelateerdeBetrokkenheid,
+                        Betrokkenheid.VELD_PERSOON);
                 voegRelatieMatchToe(deltaRootEntiteitMatches, bestaandeRelatie, nieuweRelatie);
             } else {
                 // Als er wel een bestaandeRelatie is, maar geen nieuweRelatie -> Betrokkenheid markeren als te
                 // verwijderen.
                 final BetrokkenheidDecorator bestaandeIkBetrokkenheid = getIkBetrokkenheidDecorator(bestaandePersoon, bestaandeRelatie);
                 voegBetrokkenhedenMatchToe(
-                    deltaRootEntiteitMatches,
-                    bestaandeIkBetrokkenheid,
-                    null,
-                    bestaandePersoon.getPersoon(),
-                    Persoon.BETROKKENHEID_SET);
+                        deltaRootEntiteitMatches,
+                        bestaandeIkBetrokkenheid,
+                        null,
+                        bestaandePersoon.getPersoon(),
+                        Persoon.BETROKKENHEID_SET);
             }
         } else {
             if (nieuweRelatie != null) {
@@ -677,7 +682,12 @@ public final class IstStapelEnRelatieMatcher {
                 final BetrokkenheidDecorator nieuweIkBetrokkenheid = getIkBetrokkenheidDecorator(nieuwePersoon, nieuweRelatie);
                 nieuwePersoon.verwijderBetrokkenheid(nieuweIkBetrokkenheid);
 
-                voegBetrokkenhedenMatchToe(deltaRootEntiteitMatches, null, nieuweIkBetrokkenheid, bestaandePersoon.getPersoon(), Persoon.BETROKKENHEID_SET);
+                voegBetrokkenhedenMatchToe(
+                        deltaRootEntiteitMatches,
+                        null,
+                        nieuweIkBetrokkenheid,
+                        bestaandePersoon.getPersoon(),
+                        Persoon.BETROKKENHEID_SET);
             }
         }
     }
@@ -690,12 +700,11 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private void matchKindKernInhoud(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final StapelDecorator bestaandeStapel,
-        final StapelDecorator nieuweStapel,
-        final PersoonDecorator bestaandePersoon,
-        final PersoonDecorator nieuwePersoon)
-    {
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final StapelDecorator bestaandeStapel,
+            final StapelDecorator nieuweStapel,
+            final PersoonDecorator bestaandePersoon,
+            final PersoonDecorator nieuwePersoon) {
         final List<RelatieDecorator> bestaandeRelaties = bestaandeStapel.getRelaties();
         final RelatieDecorator bestaandeRelatie = bestaandeRelaties.isEmpty() ? null : bestaandeRelaties.get(0);
 
@@ -706,12 +715,11 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private void matchHuwelijkOfGpKernInhoud(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final PersoonDecorator bestaandePersoon,
-        final PersoonDecorator nieuwePersoon,
-        final StapelDecorator bestaandeStapel,
-        final StapelDecorator nieuweStapel)
-    {
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final PersoonDecorator bestaandePersoon,
+            final PersoonDecorator nieuwePersoon,
+            final StapelDecorator bestaandeStapel,
+            final StapelDecorator nieuweStapel) {
         final List<RelatieDecorator> bestaandeRelaties = bestaandeStapel.getRelaties();
         final List<RelatieDecorator> nieuweRelaties = nieuweStapel.getRelaties();
 
@@ -739,17 +747,18 @@ public final class IstStapelEnRelatieMatcher {
     }
 
     private void voegGerelateerdeMatchToe(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final BetrokkenheidDecorator bestaandeGerelateerdeBetrokkenheidDecorator,
-        final BetrokkenheidDecorator nieuweGerelateerdeBetrokkenheidDecorator,
-        final String eigenaarVeldnaam)
-    {
-        final PersoonDecorator bestaandeGerelateerdeDecorator = bestaandeGerelateerdeBetrokkenheidDecorator.getPersoonDecorator();
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final BetrokkenheidDecorator bestaandeGerelateerdeBetrokkenheidDecorator,
+            final BetrokkenheidDecorator nieuweGerelateerdeBetrokkenheidDecorator,
+            final String eigenaarVeldnaam) {
+        final PersoonDecorator
+                bestaandeGerelateerdeDecorator =
+                bestaandeGerelateerdeBetrokkenheidDecorator == null ? null : bestaandeGerelateerdeBetrokkenheidDecorator.getPersoonDecorator();
         final PersoonDecorator nieuweGerelateerdeDecorator =
                 nieuweGerelateerdeBetrokkenheidDecorator == null ? null : nieuweGerelateerdeBetrokkenheidDecorator.getPersoonDecorator();
 
-        final DeltaRootEntiteit bestaandeGerelateerde = bestaandeGerelateerdeDecorator == null ? null : bestaandeGerelateerdeDecorator.getPersoon();
-        final DeltaRootEntiteit nieuweGerelateerde = nieuweGerelateerdeDecorator == null ? null : nieuweGerelateerdeDecorator.getPersoon();
+        final RootEntiteit bestaandeGerelateerde = bestaandeGerelateerdeDecorator == null ? null : bestaandeGerelateerdeDecorator.getPersoon();
+        final RootEntiteit nieuweGerelateerde = nieuweGerelateerdeDecorator == null ? null : nieuweGerelateerdeDecorator.getPersoon();
 
         if (bestaandeGerelateerde == null && nieuweGerelateerde != null) {
             // Kan alleen in geval van puntouder naar volledige ouder
@@ -758,37 +767,42 @@ public final class IstStapelEnRelatieMatcher {
                 gerelateerdePersoon.removeBetrokkenheid(betrokkenheid);
             }
         }
+        voegPuntOuderToe(deltaRootEntiteitMatches, bestaandeGerelateerdeBetrokkenheidDecorator, eigenaarVeldnaam, bestaandeGerelateerde, nieuweGerelateerde);
 
+
+    }
+
+    private void voegPuntOuderToe(Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches, BetrokkenheidDecorator bestaandeGerelateerdeBetrokkenheidDecorator,
+                                  String eigenaarVeldnaam, RootEntiteit bestaandeGerelateerde, RootEntiteit nieuweGerelateerde) {
         // Bij een punt ouder heb je geen gerelateerde
-        if (bestaandeGerelateerde != null || nieuweGerelateerde != null) {
-            deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(
-                bestaandeGerelateerde,
-                nieuweGerelateerde,
-                bestaandeGerelateerdeBetrokkenheidDecorator.getBetrokkenheid(),
-                eigenaarVeldnaam));
+        if (bestaandeGerelateerdeBetrokkenheidDecorator != null && (bestaandeGerelateerde != null || nieuweGerelateerde != null)) {
+            deltaRootEntiteitMatches.add(
+                    new DeltaRootEntiteitMatch(
+                            bestaandeGerelateerde,
+                            nieuweGerelateerde,
+                            bestaandeGerelateerdeBetrokkenheidDecorator.getBetrokkenheid(),
+                            eigenaarVeldnaam));
         }
     }
 
     private void voegStapelMatchToe(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final StapelDecorator bestaandeStapelDecorator,
-        final StapelDecorator nieuweStapelDecorator,
-        final DeltaRootEntiteit eigenaarRootEntiteit)
-    {
-        final DeltaRootEntiteit bestaandeStapel = bestaandeStapelDecorator == null ? null : bestaandeStapelDecorator.getStapel();
-        final DeltaRootEntiteit nieuweStapel = nieuweStapelDecorator == null ? null : nieuweStapelDecorator.getStapel();
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final StapelDecorator bestaandeStapelDecorator,
+            final StapelDecorator nieuweStapelDecorator,
+            final RootEntiteit eigenaarRootEntiteit) {
+        final RootEntiteit bestaandeStapel = bestaandeStapelDecorator == null ? null : bestaandeStapelDecorator.getStapel();
+        final RootEntiteit nieuweStapel = nieuweStapelDecorator == null ? null : nieuweStapelDecorator.getStapel();
 
-        deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(bestaandeStapel, nieuweStapel, eigenaarRootEntiteit, Persoon.STAPELS));
+        deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(bestaandeStapel, nieuweStapel, eigenaarRootEntiteit, Persoon.STAPELS_SET));
     }
 
     private void voegBetrokkenhedenMatchToe(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final BetrokkenheidDecorator bestaandeBetrokkenheidDecorator,
-        final BetrokkenheidDecorator nieuweBetrokkenheidDecorator,
-        final DeltaRootEntiteit eigenaarRootEntiteit,
-        final String eigenaarVeldnaam)
-    {
-        final DeltaRootEntiteit nieuweBetrokkenheid;
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final BetrokkenheidDecorator bestaandeBetrokkenheidDecorator,
+            final BetrokkenheidDecorator nieuweBetrokkenheidDecorator,
+            final RootEntiteit eigenaarRootEntiteit,
+            final String eigenaarVeldnaam) {
+        final RootEntiteit nieuweBetrokkenheid;
 
         // Generatie van de sleutels voor delta + onderzoek
         if (nieuweBetrokkenheidDecorator != null) {
@@ -797,19 +811,17 @@ public final class IstStapelEnRelatieMatcher {
             nieuweBetrokkenheid = null;
         }
 
-        final DeltaRootEntiteit bestaandeBetrokkenheid =
-                bestaandeBetrokkenheidDecorator == null ? null : bestaandeBetrokkenheidDecorator.getBetrokkenheid();
+        final RootEntiteit bestaandeBetrokkenheid = bestaandeBetrokkenheidDecorator == null ? null : bestaandeBetrokkenheidDecorator.getBetrokkenheid();
 
         deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(bestaandeBetrokkenheid, nieuweBetrokkenheid, eigenaarRootEntiteit, eigenaarVeldnaam));
     }
 
     private void voegRelatieMatchToe(
-        final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
-        final RelatieDecorator bestaandeRelatieDecorator,
-        final RelatieDecorator nieuweRelatieDecorator)
-    {
-        final DeltaRootEntiteit bestaandeRelatie = bestaandeRelatieDecorator.getRelatie();
-        final DeltaRootEntiteit nieuweRelatie = nieuweRelatieDecorator.getRelatie();
+            final Set<DeltaRootEntiteitMatch> deltaRootEntiteitMatches,
+            final RelatieDecorator bestaandeRelatieDecorator,
+            final RelatieDecorator nieuweRelatieDecorator) {
+        final RootEntiteit bestaandeRelatie = bestaandeRelatieDecorator.getRelatie();
+        final RootEntiteit nieuweRelatie = nieuweRelatieDecorator.getRelatie();
 
         deltaRootEntiteitMatches.add(new DeltaRootEntiteitMatch(bestaandeRelatie, nieuweRelatie, null, null));
     }
@@ -825,9 +837,8 @@ public final class IstStapelEnRelatieMatcher {
         final Set<IstStapelMatch> istStapelMatches = new TreeSet<>(IstStapelMatch.getSorteerder());
 
         for (final StapelDecorator stapel : stapelMatches.getBestaandeStapels()) {
-            istStapelMatches.add(new IstStapelMatch(stapel, stapelMatches.getMatchesVoorBestaandeStapel(stapel), stapelMatches.bepaalMatchType(
-                stapel,
-                true)));
+            istStapelMatches.add(
+                    new IstStapelMatch(stapel, stapelMatches.getMatchesVoorBestaandeStapel(stapel), stapelMatches.bepaalMatchType(stapel, true)));
         }
 
         // Alleen toevoegen als het match type NIEUW is. Anders is deze al meegenomen bij de bestaande stapels
@@ -844,18 +855,13 @@ public final class IstStapelEnRelatieMatcher {
     /**
      * Geeft de andere betrokkenheden, dan de meegegeven betrokkenheden, terug die gekoppeld zijn aan de relatie voor
      * het meegegeven aanduidingOuder.
-     *
-     * @param matchendeOuderBetrokkenheden
-     *            bestaande ouder betrokkenheden uit deze relatie zodat de andere betrokkenheden goed geidentificeerd
-     *            kunnen worden
-     * @param ouderBetrokkenheden
-     *            de ouder betrokkenheden van een bepaald LO3-voorkomen, zonder de ik-betrokkenheid.
+     * @param matchendeOuderBetrokkenheden bestaande ouder betrokkenheden uit deze relatie zodat de andere betrokkenheden goed geidentificeerd kunnen worden
+     * @param ouderBetrokkenheden de ouder betrokkenheden van een bepaald LO3-voorkomen, zonder de ik-betrokkenheid.
      * @return de andere betrokkenheden die behoren tot de aanduidingOuder van deze relatie of een lege lijst.
      */
     private Set<BetrokkenheidDecorator> getOverigeOuderBetrokkenheden(
             final Set<BetrokkenheidDecorator> matchendeOuderBetrokkenheden,
-            final Set<BetrokkenheidDecorator> ouderBetrokkenheden)
-    {
+            final Set<BetrokkenheidDecorator> ouderBetrokkenheden) {
         // Als er geen matchendeOuderBetrokkenheden zijn gevonden, dan is alles overig => toevoegen aan het resultaat
         // Als er wel matchendeOuderBetrokkenheden zijn gevonden, dan deze uit de lijst van ouderBetrokkenheden halen.
 

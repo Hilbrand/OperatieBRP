@@ -6,10 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.runtime;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.jmx.UseDynamicDomain;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -19,24 +21,30 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * JMX Service.
  */
 @UseDynamicDomain
-@ManagedResource(objectName = JMX.OBJECT_NAME, description = "JMX Service voor Synchronisatie")
-public final class JMXImpl implements JMX {
+@ManagedResource(objectName = JMXConstanten.OBJECT_NAME, description = "JMX Service voor Synchronisatie")
+public final class JMXImpl implements JMX, ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String SYNC_CONTAINER = "iscBerichtListenerContainer";
     private static final String ARCHIVERING_CONTAINER = "archiveringBerichtListenerContainer";
-    private static final String GEMEENTE_CONTAINER = "gemeenteRegisterContainer";
-    private static final String AUTORISATIE_CONTAINER = "autorisatieRegisterContainer";
+    private static final String PARTIJ_CONTAINER = "partijRegisterContainer";
     private static final String AFNEMERSINDICATIE_CONTAINER = "jmsContainerAfnemersindicaties";
     private static final String TOEVALLIGE_GEBEURTENISSEN_CONTAINER = "jmsContainerToevalligeGebeurtenissen";
     private static final String LEVERINGEN_CONTAINER = "jmsContainerLeveringen";
+
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     @ManagedOperation(description = "Synchronisatie afsluiten.")
     public void afsluiten() {
         LOGGER.info("Afsluiten Synchronisatie via JMX");
-        Main.stop();
+        applicationContext.getBean(Main.BEAN_NAME, Main.class).stop();
     }
 
     /**
@@ -44,12 +52,21 @@ public final class JMXImpl implements JMX {
      */
     @ManagedAttribute(description = "Applicatie actief")
     public boolean isGestart() {
-        return Main.getContext().isActive();
+        return true;
     }
 
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
 
     /**
      * @return is sync verzoek verwerking gestart
@@ -77,7 +94,6 @@ public final class JMXImpl implements JMX {
 
     /**
      * Geef aantal sync verwerkers.
-     *
      * @return aantal sync verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor synchronisatie verzoek berichten")
@@ -87,22 +103,28 @@ public final class JMXImpl implements JMX {
 
     /**
      * Zet aantal sync verwerkers.
-     *
-     * @param aantal
-     *            aantal sync verwerkers
+     * @param aantal aantal sync verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor synchronisatie verzoek berichten")
     public void setAantalSyncVerwerkers(final int aantal) {
         setMaxConcurrentConsumers(SYNC_CONTAINER, aantal);
     }
 
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
 
     /**
      * Is verwerking gestart.
-     *
      * @return is verwerking gestart
      */
     @ManagedAttribute(description = "Verwerken van archivering verzoek berichten.")
@@ -128,7 +150,6 @@ public final class JMXImpl implements JMX {
 
     /**
      * Geef aantal sync verwerkers.
-     *
      * @return aantal sync verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor archivering verzoek berichten")
@@ -138,82 +159,67 @@ public final class JMXImpl implements JMX {
 
     /**
      * Zet aantal verwerkers.
-     *
-     * @param aantal
-     *            aantal verwerkers
+     * @param aantal aantal verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor archivering verzoek berichten")
     public void setAantalArchiveringVerwerkers(final int aantal) {
         setMaxConcurrentConsumers(ARCHIVERING_CONTAINER, aantal);
     }
 
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
 
     /**
      * Is verwerking gestart.
-     *
      * @return is verwerking gestart
      */
-    @ManagedAttribute(description = "Verwerken van gemeente register verzoek berichten.")
-    public boolean isGemeenteRegisterGestart() {
-        return isContainerGestart(GEMEENTE_CONTAINER);
+    @ManagedAttribute(description = "Verwerken van partij register verzoek berichten.")
+    public boolean isPartijRegisterGestart() {
+        return isContainerGestart(PARTIJ_CONTAINER);
     }
 
     /**
      * Start verwerking.
      */
-    @ManagedOperation(description = "Start verwerken van gemeente register verzoek berichten.")
-    public void startGemeenteRegister() {
-        startContainer(GEMEENTE_CONTAINER);
+    @ManagedOperation(description = "Start verwerken van partij register verzoek berichten.")
+    public void startPartijRegister() {
+        startContainer(PARTIJ_CONTAINER);
     }
 
     /**
      * Stop verwerking.
      */
-    @ManagedOperation(description = "Stop verwerken van gemeente register verzoek berichten.")
-    public void stopGemeenteRegister() {
-        stopContainer(GEMEENTE_CONTAINER);
+    @ManagedOperation(description = "Stop verwerken van partij register verzoek berichten.")
+    public void stopPartijRegister() {
+        stopContainer(PARTIJ_CONTAINER);
     }
 
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
+
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
 
     /**
      * Is verwerking gestart.
-     *
-     * @return is verwerking gestart
-     */
-    @ManagedAttribute(description = "Verwerken van autorisatie register verzoek berichten.")
-    public boolean isAutorisatieRegisterGestart() {
-        return isContainerGestart(AUTORISATIE_CONTAINER);
-    }
-
-    /**
-     * Start verwerking.
-     */
-    @ManagedOperation(description = "Start verwerken van autorisatie register verzoek berichten.")
-    public void startAutorisatieRegister() {
-        startContainer(AUTORISATIE_CONTAINER);
-    }
-
-    /**
-     * Stop verwerking.
-     */
-    @ManagedOperation(description = "Stop verwerken van autorisatie register verzoek berichten.")
-    public void stopAutorisatieRegister() {
-        stopContainer(AUTORISATIE_CONTAINER);
-    }
-
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
-
-    /**
-     * Is verwerking gestart.
-     *
      * @return is verwerking gestart
      */
     @ManagedAttribute(description = "Verwerken van afnemersindicaties antwoord berichten.")
@@ -239,7 +245,6 @@ public final class JMXImpl implements JMX {
 
     /**
      * Geef aantal sync verwerkers.
-     *
      * @return aantal sync verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor afnemersindicaties antwoord berichten")
@@ -249,22 +254,28 @@ public final class JMXImpl implements JMX {
 
     /**
      * Zet aantal verwerkers.
-     *
-     * @param aantal
-     *            aantal verwerkers
+     * @param aantal aantal verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor afnemersindicaties antwoord berichten")
     public void setAantalAfnemersindicatiesVerwerkers(final int aantal) {
         setMaxConcurrentConsumers(AFNEMERSINDICATIE_CONTAINER, aantal);
     }
 
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
 
     /**
      * Is verwerking gestart.
-     *
      * @return is verwerking gestart
      */
     @ManagedAttribute(description = "Verwerken van toevallige gebeurtenissen antwoord berichten.")
@@ -290,7 +301,6 @@ public final class JMXImpl implements JMX {
 
     /**
      * Geef aantal sync verwerkers.
-     *
      * @return aantal sync verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor toevallige gebeurtenissen antwoord berichten")
@@ -300,22 +310,28 @@ public final class JMXImpl implements JMX {
 
     /**
      * Zet aantal verwerkers.
-     *
-     * @param aantal
-     *            aantal verwerkers
+     * @param aantal aantal verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor toevallige gebeurtenissen antwoord berichten")
     public void setAantalToevalligeGebeurtenissenerwerkers(final int aantal) {
         setMaxConcurrentConsumers(TOEVALLIGE_GEBEURTENISSEN_CONTAINER, aantal);
     }
 
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
 
     /**
      * Is verwerking gestart.
-     *
      * @return is verwerking gestart
      */
     @ManagedAttribute(description = "Verwerken van levering berichten.")
@@ -341,7 +357,6 @@ public final class JMXImpl implements JMX {
 
     /**
      * Geef aantal sync verwerkers.
-     *
      * @return aantal sync verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor levering berichten")
@@ -351,26 +366,33 @@ public final class JMXImpl implements JMX {
 
     /**
      * Zet aantal verwerkers.
-     *
-     * @param aantal
-     *            aantal verwerkers
+     * @param aantal aantal verwerkers
      */
     @ManagedAttribute(description = "Maximum aantal verwerkers voor levering berichten")
     public void setAantalLeveringenVerwerkers(final int aantal) {
         setMaxConcurrentConsumers(LEVERINGEN_CONTAINER, aantal);
     }
 
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
-    /* ******************************************************************************************************** */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
+    /*
+     * *********************************************************************************************
+     * ***********
+     */
 
     private boolean isContainerGestart(final String beanName) {
-        return Main.getContext().getBean(beanName, DefaultMessageListenerContainer.class).isRunning();
+        return applicationContext.getBean(beanName, DefaultMessageListenerContainer.class).isRunning();
     }
 
     private void startContainer(final String beanName) {
         try {
-            final DefaultMessageListenerContainer container = Main.getContext().getBean(beanName, DefaultMessageListenerContainer.class);
+            final DefaultMessageListenerContainer container = applicationContext.getBean(beanName, DefaultMessageListenerContainer.class);
             container.start();
         } catch (final NoSuchBeanDefinitionException e) {
             throw new IllegalStateException("Kan container niet starten; container niet aanwezig.", e);
@@ -379,7 +401,7 @@ public final class JMXImpl implements JMX {
 
     private void stopContainer(final String beanName) {
         try {
-            final DefaultMessageListenerContainer container = Main.getContext().getBean(beanName, DefaultMessageListenerContainer.class);
+            final DefaultMessageListenerContainer container = applicationContext.getBean(beanName, DefaultMessageListenerContainer.class);
             container.stop();
         } catch (final NoSuchBeanDefinitionException e) {
             throw new IllegalStateException("Kan container niet stoppen; container niet aanwezig.", e);
@@ -388,20 +410,22 @@ public final class JMXImpl implements JMX {
 
     private Integer getMaxConcurrentConsumers(final String beanName) {
         try {
-            final DefaultMessageListenerContainer container = Main.getContext().getBean(beanName, DefaultMessageListenerContainer.class);
+            final DefaultMessageListenerContainer container = applicationContext.getBean(beanName, DefaultMessageListenerContainer.class);
             return container.getMaxConcurrentConsumers();
         } catch (final NoSuchBeanDefinitionException e) {
+            LOGGER.debug("Bean niet gevonden", e);
             return null;
         }
     }
 
     private void setMaxConcurrentConsumers(final String beanName, final int aantal) {
         try {
-            final DefaultMessageListenerContainer container = Main.getContext().getBean(beanName, DefaultMessageListenerContainer.class);
+            final DefaultMessageListenerContainer container = applicationContext.getBean(beanName, DefaultMessageListenerContainer.class);
             container.setMaxConcurrentConsumers(aantal);
         } catch (final NoSuchBeanDefinitionException e) {
             throw new IllegalStateException("Kan container niet configureren; container niet aanwezig.", e);
         }
 
     }
+
 }

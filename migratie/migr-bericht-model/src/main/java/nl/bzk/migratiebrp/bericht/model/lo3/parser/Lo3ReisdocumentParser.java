@@ -7,10 +7,8 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
-
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Documentatie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Historie;
@@ -30,7 +28,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
 
 /**
  * Deze parser verwerkt de LO3 reisdocument velden in de excel input.
- *
  */
 
 public final class Lo3ReisdocumentParser extends AbstractLo3CategorieParser<Lo3ReisdocumentInhoud> {
@@ -38,15 +35,15 @@ public final class Lo3ReisdocumentParser extends AbstractLo3CategorieParser<Lo3R
     /**
      * Deze methode kan worden gebruikt om te detecteren dat deze stapel moet worden genegeerd conform LO3.9 omdat
      * aanduiding bezit buitenlands reisdocument is gevuld.
-     *
-     * @param categorieen
-     *            de lijst met categoriewaarden die samen een LO3 stapel moeten gaan vormen
+     * @param categorieen de lijst met categoriewaarden die samen een LO3 stapel moeten gaan vormen
      * @return true als de lijst met categoriewaarden {@link Lo3ElementEnum#ELEMENT_3710} bevant, anders false
      */
     public boolean bevatAanduidingBezitNederlandsReisdocument(final List<Lo3CategorieWaarde> categorieen) {
         boolean result = false;
         for (final Lo3CategorieWaarde categorie : categorieen) {
-            final Map<Lo3ElementEnum, String> elementen = new HashMap<>(categorie.getElementen());
+            final EnumMap<Lo3ElementEnum, String> elementen = new EnumMap<>(Lo3ElementEnum.class);
+            elementen.putAll(categorie.getElementen());
+
             if (Parser.bevatLo3AanduidingBezitBuitenlandsReisdocument(elementen, Lo3ElementEnum.ELEMENT_3710)) {
                 result = true;
                 break;
@@ -60,8 +57,8 @@ public final class Lo3ReisdocumentParser extends AbstractLo3CategorieParser<Lo3R
         final List<Lo3Categorie<Lo3ReisdocumentInhoud>> reisdocumentStapel = new ArrayList<>();
 
         for (final Lo3CategorieWaarde categorie : categorieen) {
-
-            final Map<Lo3ElementEnum, String> elementen = new HashMap<>(categorie.getElementen());
+            final EnumMap<Lo3ElementEnum, String> elementen = new EnumMap<>(Lo3ElementEnum.class);
+            elementen.putAll(categorie.getElementen());
             final Lo3Herkomst lo3Herkomst = categorie.getLo3Herkomst();
             final Lo3Onderzoek lo3Onderzoek = parseLo3Onderzoek(elementen, lo3Herkomst);
             final Lo3CategorieEnum herkomstCategorie = lo3Herkomst.getCategorie();
@@ -77,10 +74,10 @@ public final class Lo3ReisdocumentParser extends AbstractLo3CategorieParser<Lo3R
             final Lo3AanduidingInhoudingVermissingNederlandsReisdocument aanduidingInhouding;
             aanduidingInhouding =
                     Parser.parseLo3AanduidingInhoudingVermissingNederlandsReisdocument(
-                        elementen,
-                        Lo3ElementEnum.ELEMENT_3570,
-                        herkomstCategorie,
-                        lo3Onderzoek);
+                            elementen,
+                            Lo3ElementEnum.ELEMENT_3570,
+                            herkomstCategorie,
+                            lo3Onderzoek);
             /*
              * Element 3580 wordt niet meer gebruikt maar mag niet tot fouten leiden omdat oude PL-en nog deze gegevens
              * kunnen bevatten ihgv IV.
@@ -97,14 +94,14 @@ public final class Lo3ReisdocumentParser extends AbstractLo3CategorieParser<Lo3R
 
             final Lo3Categorie<Lo3ReisdocumentInhoud> reisdocument =
                     new Lo3Categorie<>(new Lo3ReisdocumentInhoud(
-                        soort,
-                        nummer,
-                        uitgifte,
-                        autoriteit,
-                        einde,
-                        datumInhouding,
-                        aanduidingInhouding,
-                        signalering), lo3Documentatie, lo3Onderzoek, lo3Historie, categorie.getLo3Herkomst());
+                            soort,
+                            nummer,
+                            uitgifte,
+                            autoriteit,
+                            einde,
+                            datumInhouding,
+                            aanduidingInhouding,
+                            signalering), lo3Documentatie, lo3Onderzoek, lo3Historie, categorie.getLo3Herkomst());
 
             reisdocumentStapel.add(reisdocument);
         }

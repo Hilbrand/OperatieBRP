@@ -7,11 +7,17 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Serializable;
-import java.util.Arrays;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
+import nl.bzk.algemeenbrp.util.xml.exception.XmlException;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.lo3.AbstractParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
@@ -21,6 +27,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3CategorieWaardeFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3Format;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3VerwijzingFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3VerwijzingParser;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3VerwijzingInhoud;
@@ -28,8 +35,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
-import nl.bzk.migratiebrp.conversie.model.serialize.PersoonslijstDecoder;
-import nl.bzk.migratiebrp.conversie.model.serialize.PersoonslijstEncoder;
+import nl.bzk.migratiebrp.conversie.model.serialize.MigratieXml;
 
 /**
  * Iv01.
@@ -43,34 +49,36 @@ public final class Iv01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     // Categorie 21: Verwijzing
     private transient Lo3VerwijzingInhoud verwijzing;
-    private Lo3Datum ingangsdatumGeldigheid = Lo3Datum.NULL_DATUM;
+    private Lo3Datum ingangsdatumGeldigheid = new Lo3Datum(0);
 
     /**
      * Constructor.
      */
     public Iv01Bericht() {
-        super(HEADER, "Iv01", null);
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Iv01", null);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3Bericht#getGerelateerdeAnummers()
      */
     @Override
     protected List<String> getGerelateerdeAnummers() {
         if (verwijzing == null || verwijzing.getANummer() == null || verwijzing.getANummer().getWaarde() == null) {
-            return null;
+            return Collections.emptyList();
         }
 
-        return Arrays.asList(verwijzing.getANummer().getWaarde());
+        return Collections.singletonList(verwijzing.getANummer().getWaarde());
     }
 
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
-    protected void parseInhoud(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
+    protected void parseCategorieen(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
         final Lo3Stapel<Lo3VerwijzingInhoud> stapel;
         try {
             stapel = VERWIJZING_PARSER.parse(categorieen);
@@ -102,11 +110,13 @@ public final class Iv01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
         return result.getList();
     }
 
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
     /**
      * Geef de waarde van verwijzing.
-     *
      * @return verwijzing
      */
     public Lo3VerwijzingInhoud getVerwijzing() {
@@ -115,9 +125,7 @@ public final class Iv01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Zet de waarde van verwijzing.
-     *
-     * @param verwijzing
-     *            verwijzing
+     * @param verwijzing verwijzing
      */
     public void setVerwijzing(final Lo3VerwijzingInhoud verwijzing) {
         this.verwijzing = verwijzing;
@@ -125,7 +133,6 @@ public final class Iv01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Geef de waarde van ingangsdatum geldigheid.
-     *
      * @return ingangsdatum geldigheid
      */
     public Lo3Datum getIngangsdatumGeldigheid() {
@@ -134,27 +141,32 @@ public final class Iv01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Zet de waarde van ingangsdatum geldigheid.
-     *
-     * @param ingangsdatumGeldigheid
-     *            ingangsdatum geldigheid
+     * @param ingangsdatumGeldigheid ingangsdatum geldigheid
      */
     public void setIngangsdatumGeldigheid(final Lo3Datum ingangsdatumGeldigheid) {
         this.ingangsdatumGeldigheid = ingangsdatumGeldigheid;
     }
 
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
-    private void readObject(final ObjectInputStream is) throws ClassNotFoundException, IOException {
+    private void readObject(final ObjectInputStream is) throws ClassNotFoundException, IOException, XmlException {
         // always perform the default de-serialization first
         is.defaultReadObject();
 
-        verwijzing = PersoonslijstDecoder.decode(Lo3VerwijzingInhoud.class, is);
+        try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            verwijzing = MigratieXml.decode(Lo3VerwijzingInhoud.class, reader);
+        }
     }
 
-    private void writeObject(final ObjectOutputStream os) throws IOException {
+    private void writeObject(final ObjectOutputStream os) throws IOException, XmlException {
         // perform the default serialization for all non-transient, non-static fields
         os.defaultWriteObject();
 
-        PersoonslijstEncoder.encode(verwijzing, os);
+        try (Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
+            MigratieXml.encode(verwijzing, writer);
+        }
     }
 }

@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Voorkomen;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Voorkomen;
 
 /**
  * Bewerk een Persoon om de oude logging los te koppelen van de bestaande acties, en te vervangen door de nieuwe
@@ -25,11 +25,8 @@ public final class LoggingVerwerker {
     /**
      * Koppel de nieuwe logging aan de bijgewerkte Persoon. Kan ook Acties vervangen waar nodig, zodat 1 Lo3Voorkomen
      * met 1 Actie overeenkomt.
-     * 
-     * @param actieHerkomstMap
-     *            de map van oude acties naar nieuwe logging.
-     * @param persoonActies
-     *            alle acties van de persoon
+     * @param actieHerkomstMap de map van oude acties naar nieuwe logging.
+     * @param persoonActies alle acties van de persoon
      */
     public void verwerk(final Map<BRPActie, Lo3Voorkomen> actieHerkomstMap, final Map<BRPActie, Set<FormeleHistorie>> persoonActies) {
         final Set<Lo3Voorkomen> nieuweActieVoorkomens = bepaalNieuweActieVoorkomens(persoonActies);

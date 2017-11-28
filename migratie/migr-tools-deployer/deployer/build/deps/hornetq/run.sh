@@ -13,13 +13,11 @@ export CLASSPATH=$RESOLVED_CONFIG_DIR:$HORNETQ_HOME/schemas/
 export JVM_ARGS="$CLUSTER_PROPS -XX:+UseParallelGC -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -Xms512M -Xmx1024M -Dhornetq.config.dir=$RESOLVED_CONFIG_DIR -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Dlogging.configuration=file://$RESOLVED_CONFIG_DIR/logging.properties -Djava.library.path=./lib/linux-i686:./lib/linux-x86_64"
 #export JVM_ARGS="-Xmx512M -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Dlogging.configuration=$CONFIG_DIR/logging.properties -Dhornetq.config.dir=$CONFIG_DIR -Djava.library.path=. -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
 
-export JVM_ARGS="-Djnp.host=`hostname` -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=2090 -Djnp.port=2099 -Djnp.rmiPort=2098 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false $JVM_ARGS"
-
 for i in `ls $HORNETQ_HOME/lib/*.jar`; do
     CLASSPATH=$i:$CLASSPATH
 done
 
 echo "***********************************************************************************"
-echo "java $JVM_ARGS -classpath $CLASSPATH org.hornetq.integration.bootstrap.HornetQBootstrapServer $FILENAME"
+echo "java $JVM_ARGS -classpath $CLASSPATH nl.bzk.migratiebrp.tools.hornetq.Starter $FILENAME"
 echo "***********************************************************************************"
-java $JVM_ARGS -classpath $CLASSPATH -Djava.rmi.server.hostname=`hostname` -Dcom.sun.management.jmxremote org.hornetq.integration.bootstrap.HornetQBootstrapServer $FILENAME
+java $JVM_ARGS -classpath $CLASSPATH nl.bzk.migratiebrp.tools.hornetq.Starter $FILENAME

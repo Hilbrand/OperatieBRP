@@ -21,20 +21,18 @@ import org.jbpm.jsf.core.handler.AbstractHandler;
  */
 @TldTag(name = "listProcessInstancesForProcessInstance", description = "Read a list of child process instances from a process instance.",
         attributes = {@TldAttribute(name = "target",
-                              description = "An EL expression into which the process instance list should be stored.", required = true,
-                              deferredType = List.class),
-                      @TldAttribute(name = "processInstance",
-                              description = "The process instance whose child process instances are to be read.", required = true,
-                              deferredType = ProcessInstance.class) })
+                description = "An EL expression into which the process instance list should be stored.", required = true,
+                deferredType = List.class),
+                @TldAttribute(name = "processInstance",
+                        description = "The process instance whose child process instances are to be read.", required = true,
+                        deferredType = ProcessInstance.class)})
 public final class ListProcessInstancesForProcessInstanceHandler extends AbstractHandler {
     private final TagAttribute targetTagAttribute;
     private final TagAttribute processInstanceTagAttribute;
 
     /**
      * Constructor.
-     * 
-     * @param config
-     *            config
+     * @param config config
      */
     public ListProcessInstancesForProcessInstanceHandler(final TagConfig config) {
         super(config);
@@ -45,8 +43,8 @@ public final class ListProcessInstancesForProcessInstanceHandler extends Abstrac
     @Override
     protected JbpmActionListener getListener(final FaceletContext ctx) {
         return new ListProcessInstancesForProcessInstanceActionListener(getValueExpression(
-            processInstanceTagAttribute,
-            ctx,
-            ProcessInstance.class), getValueExpression(targetTagAttribute, ctx, List.class));
+                processInstanceTagAttribute,
+                ctx,
+                ProcessInstance.class), getValueExpression(targetTagAttribute, ctx, List.class));
     }
 }

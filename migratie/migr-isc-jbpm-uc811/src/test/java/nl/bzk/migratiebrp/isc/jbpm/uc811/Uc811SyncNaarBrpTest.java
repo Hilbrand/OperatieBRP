@@ -6,27 +6,20 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc811;
 
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lq01Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
-import nl.bzk.migratiebrp.bericht.model.sync.impl.BlokkeringInfoVerzoekBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.generated.StatusType;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.SynchroniseerNaarBrpVerzoekBericht;
-import nl.bzk.migratiebrp.isc.jbpm.common.locking.LockService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 
 /**
  * Test de technische flows rondom het synchroniseren naar BRP.
  */
 public class Uc811SyncNaarBrpTest extends AbstractUc811Test {
-
-    @Inject
-    private LockService lockService;
 
     @BeforeClass
     public static void outputTestIscBerichten() {
@@ -36,23 +29,15 @@ public class Uc811SyncNaarBrpTest extends AbstractUc811Test {
 
     @Before
     public void startProces() throws Exception {
-        Mockito.reset(lockService);
-        Mockito.when(lockService.verkrijgLockVoorAnummers(Matchers.anySetOf(Long.class), Matchers.anyLong())).thenReturn(5678L);
-
         // Start
         startProcess(maakUc811Bericht("0599", 1231231234L));
 
-        // Lq01 bericht verwacht op kanaal VOSPG.
+        // Lq01 bericht verwacht op kanaal VOISC.
         controleerBerichten(0, 1, 0);
         final Lq01Bericht lq01Bericht = getBericht(Lq01Bericht.class);
 
-        // Maak een La01 bericht en signal het kanaal VOSPG.
-        signalVospg(maakLa01Bericht(lq01Bericht, true));
-
-        // Blokkering info opvragen
-        controleerBerichten(0, 0, 1);
-        final BlokkeringInfoVerzoekBericht blokkeringInfoVerzoek = getBericht(BlokkeringInfoVerzoekBericht.class);
-        signalSync(maakBlokkeringInfoAntwoordBericht(blokkeringInfoVerzoek, null, null, null));
+        // Maak een La01 bericht en signal het kanaal VOISC.
+        signalVoisc(maakLa01Bericht(lq01Bericht, true));
     }
 
     @After
@@ -60,6 +45,29 @@ public class Uc811SyncNaarBrpTest extends AbstractUc811Test {
         controleerBerichten(0, 0, 0);
 
         Assert.assertTrue(processEnded());
+    }
+
+    @Test
+    public void wachtOpLeveringBericht() {
+        controleerBerichten(0, 0, 1);
+        SynchroniseerNaarBrpVerzoekBericht syncVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
+
+        // Nog niet geleverd bericht
+        final SyncBericht nogNietGeleverdBericht = maakSynchroniseerNaarBrpAntwoordBericht(syncVerzoek, StatusType.VORIGE_HANDELINGEN_NIET_GELEVERD, null);
+        signalSync(nogNietGeleverdBericht);
+
+        controleerNode("VI-3. Wachten");
+        this.signalProcess("timeout");
+
+        controleerBerichten(0, 0, 1);
+        syncVerzoek = getBericht(SynchroniseerNaarBrpVerzoekBericht.class);
+
+        // Afbreken
+        signalProcess("afbreken");
+
+        // Beheerderskeuze: end
+        checkVariabele("foutafhandelingFout", "uc811.syncnaarbrp.afgebroken");
+        signalHumanTask("endWithoutPf03");
     }
 
     @Test

@@ -9,6 +9,7 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.jms;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
+
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkJson;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
@@ -17,7 +18,9 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
  */
 public class GbaAfnemerindicatiesDlqKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "gbaAfnemerindicatiesDlq";
 
     /**
@@ -57,6 +60,7 @@ public class GbaAfnemerindicatiesDlqKanaal extends LazyLoadingKanaal {
 
         @Override
         protected boolean vergelijkInhoud(final String verwachteInhoud, final String ontvangenInhoud) {
+            // DLQ moet exact overeenkomen
             return VergelijkJson.vergelijkJson(verwachteInhoud, ontvangenInhoud);
         }
     }

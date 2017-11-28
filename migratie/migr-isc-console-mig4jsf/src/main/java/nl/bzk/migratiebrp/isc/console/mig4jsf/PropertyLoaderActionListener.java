@@ -23,6 +23,7 @@ import org.jbpm.jsf.JbpmJsfContext;
 public final class PropertyLoaderActionListener extends AbstractActionListener {
 
     private static final Properties PROPERTIES;
+
     static {
         PROPERTIES = new Properties();
 
@@ -37,16 +38,14 @@ public final class PropertyLoaderActionListener extends AbstractActionListener {
             throw new IllegalArgumentException("Kan config.properties niet laden.", exception);
         }
     }
+
     private final ValueExpression targetExpression;
     private final ValueExpression propertyExpression;
 
     /**
      * Constructor.
-     *
-     * @param propertyExpression
-     *            pager expression
-     * @param targetExpression
-     *            target expression
+     * @param propertyExpression pager expression
+     * @param targetExpression target expression
      */
     public PropertyLoaderActionListener(final ValueExpression propertyExpression, final ValueExpression targetExpression) {
         super("propertyLoader");
@@ -55,7 +54,7 @@ public final class PropertyLoaderActionListener extends AbstractActionListener {
     }
 
     @Override
-    public void verwerkAction(final JbpmJsfContext jbpmJsfContext, final ActionEvent event) throws IOException {
+    public void verwerkAction(final JbpmJsfContext jbpmJsfContext, final ActionEvent event) {
 
         final FacesContext facesContext = FacesContext.getCurrentInstance();
         final ELContext elContext = facesContext.getELContext();

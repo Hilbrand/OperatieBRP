@@ -7,8 +7,8 @@
 package nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen;
 
 import java.util.List;
-import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.conversie.model.Requirement;
 import nl.bzk.migratiebrp.conversie.model.Requirements;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpGroep;
@@ -23,34 +23,32 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3ReisdocumentInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingInhoudingVermissingNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3Herkomst;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * Converteerder voor BrpReisdocument/Signalering/Buitenlands reisdocument naar Lo3Reisdocument.
  */
 @Requirement(Requirements.CCA12)
-@Component
 public final class BrpReisdocumentConverteerder extends AbstractBrpImmaterieleCategorienConverteerder<Lo3ReisdocumentInhoud> {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
-    @Inject
-    private ReisdocumentConverteerder reisdocumentConverteerder;
-    @Inject
-    private SignaleringConverteerder signaleringConverteerder;
-    @Inject
-    private BrpDocumentatieConverteerder brpDocumentatieConverteerder;
+    private BrpAttribuutConverteerder attribuutConverteerder;
+    /**
+     * Constructor.
+     * @param attribuutConverteerder attribuut converteerder
+     */
+    public BrpReisdocumentConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+        this.attribuutConverteerder = attribuutConverteerder;
+    }
 
     @Override
     protected <T extends BrpGroepInhoud> BrpGroepConverteerder<T, Lo3ReisdocumentInhoud> bepaalConverteerder(final T inhoud) {
         final BrpGroepConverteerder<T, Lo3ReisdocumentInhoud> result;
 
         if (inhoud instanceof BrpReisdocumentInhoud) {
-            result = (BrpGroepConverteerder<T, Lo3ReisdocumentInhoud>) reisdocumentConverteerder;
+            result = (BrpGroepConverteerder<T, Lo3ReisdocumentInhoud>) new ReisdocumentConverteerder(attribuutConverteerder);
         } else if (inhoud instanceof BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud) {
-            result = (BrpGroepConverteerder<T, Lo3ReisdocumentInhoud>) signaleringConverteerder;
+            result = (BrpGroepConverteerder<T, Lo3ReisdocumentInhoud>) new SignaleringConverteerder(attribuutConverteerder);
         } else {
             throw new IllegalArgumentException("BrpReisdocumentConverteerder bevat geen Groep converteerder voor: " + inhoud);
         }
@@ -72,7 +70,7 @@ public final class BrpReisdocumentConverteerder extends AbstractBrpImmaterieleCa
             return null;
         }
 
-        return brpDocumentatieConverteerder.maakDocumentatie(groepen.get(0).getActieInhoud());
+        return new BrpDocumentatieConverteerder(attribuutConverteerder).maakDocumentatie(groepen.get(0).getActieInhoud());
     }
 
     @Override
@@ -110,16 +108,18 @@ public final class BrpReisdocumentConverteerder extends AbstractBrpImmaterieleCa
         return new Lo3Historie(null, ingang, opneming);
     }
 
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-    /* ************************************************************************************************************* */
-
     /**
      * Converteerder die weet hoe Lo3ReisdocumentInhoud rijen aangemaakt moeten worden.
+     * @param <T> {@link BrpGroepInhoud}
      */
-    public abstract static class AbstractConverteerder<T extends BrpGroepInhoud> extends BrpGroepConverteerder<T, Lo3ReisdocumentInhoud> {
+    public abstract static class AbstractConverteerder<T extends BrpGroepInhoud> extends AbstractBrpGroepConverteerder<T, Lo3ReisdocumentInhoud> {
+        /**
+         * Constructor.
+         * @param attribuutConverteerder attribuut converteerder
+         */
+        public AbstractConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+            super(attribuutConverteerder);
+        }
 
         @Override
         public final Lo3ReisdocumentInhoud maakNieuweInhoud() {
@@ -130,16 +130,19 @@ public final class BrpReisdocumentConverteerder extends AbstractBrpImmaterieleCa
     /**
      * Converteerder die weet hoe BrpReisdocumentInhoud omgezet moet worden naar Lo3ReisdocumentInhoud.
      */
-    @Component
     public static final class ReisdocumentConverteerder extends AbstractConverteerder<BrpReisdocumentInhoud> {
         private static final Logger LOG = LoggerFactory.getLogger();
-
-        @Inject
-        private BrpAttribuutConverteerder converteerder;
+        /**
+         * Constructor.
+         * @param attribuutConverteerder attribuut converteerder
+         */
+        public ReisdocumentConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+            super(attribuutConverteerder);
+        }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder#getLogger()
          */
         @Override
@@ -149,23 +152,24 @@ public final class BrpReisdocumentConverteerder extends AbstractBrpImmaterieleCa
 
         @Override
         public Lo3ReisdocumentInhoud vulInhoud(
-            final Lo3ReisdocumentInhoud lo3Inhoud,
-            final BrpReisdocumentInhoud brpInhoud,
-            final BrpReisdocumentInhoud brpVorigeInhoud)
-        {
+                final Lo3ReisdocumentInhoud lo3Inhoud,
+                final BrpReisdocumentInhoud brpInhoud,
+                final BrpReisdocumentInhoud brpVorigeInhoud) {
             final Lo3ReisdocumentInhoud.Builder builder = new Lo3ReisdocumentInhoud.Builder(lo3Inhoud);
 
             builder.resetNederlandsReisdocumentVelden();
             if (brpInhoud != null) {
-                builder.soortNederlandsReisdocument(converteerder.converteerSoortNederlandsResidocument(brpInhoud.getSoort()));
-                builder.nummerNederlandsReisdocument(converteerder.converteerString(brpInhoud.getNummer()));
-                builder.datumUitgifteNederlandsReisdocument(converteerder.converteerDatum(brpInhoud.getDatumUitgifte()));
-                builder.autoriteitVanAfgifteNederlandsReisdocument(converteerder.converteerAutoriteitVanAfgifte(brpInhoud.getAutoriteitVanAfgifte()));
-                builder.datumEindeGeldigheidNederlandsReisdocument(converteerder.converteerDatum(brpInhoud.getDatumEindeDocument()));
-                builder.datumInhoudingVermissingNederlandsReisdocument(converteerder.converteerDatum(brpInhoud.getDatumInhoudingOfVermissing()));
+                builder.soortNederlandsReisdocument(getAttribuutConverteerder().converteerSoortNederlandsResidocument(brpInhoud.getSoort()));
+                builder.nummerNederlandsReisdocument(getAttribuutConverteerder().converteerString(brpInhoud.getNummer()));
+                builder.datumUitgifteNederlandsReisdocument(getAttribuutConverteerder().converteerDatum(brpInhoud.getDatumUitgifte()));
+                builder.autoriteitVanAfgifteNederlandsReisdocument(
+                        getAttribuutConverteerder().converteerAutoriteitVanAfgifte(brpInhoud.getAutoriteitVanAfgifte()));
+                builder.datumEindeGeldigheidNederlandsReisdocument(getAttribuutConverteerder().converteerDatum(brpInhoud.getDatumEindeDocument()));
+                builder.datumInhoudingVermissingNederlandsReisdocument(getAttribuutConverteerder().converteerDatum(brpInhoud.getDatumInhoudingOfVermissing()));
                 final Lo3AanduidingInhoudingVermissingNederlandsReisdocument aanduidingInhoudingNederlandsReisdocument;
                 final BrpAanduidingInhoudingOfVermissingReisdocumentCode brpAanduidingInhouding = brpInhoud.getAanduidingInhoudingOfVermissing();
-                aanduidingInhoudingNederlandsReisdocument = converteerder.converteerAanduidingInhoudingNederlandsReisdocument(brpAanduidingInhouding);
+                aanduidingInhoudingNederlandsReisdocument =
+                        getAttribuutConverteerder().converteerAanduidingInhoudingNederlandsReisdocument(brpAanduidingInhouding);
                 builder.aanduidingInhoudingNederlandsReisdocument(aanduidingInhoudingNederlandsReisdocument);
             }
             return builder.build();
@@ -176,16 +180,19 @@ public final class BrpReisdocumentConverteerder extends AbstractBrpImmaterieleCa
      * Converteerder die weet hoe BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud omgezet moet worden naar
      * Lo3ReisdocumentInhoud.
      */
-    @Component
     public static final class SignaleringConverteerder extends AbstractConverteerder<BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud> {
         private static final Logger LOG = LoggerFactory.getLogger();
-
-        @Inject
-        private BrpAttribuutConverteerder converteerder;
+        /**
+         * Constructor.
+         * @param attribuutConverteerder attribuut converteerder
+         */
+        public SignaleringConverteerder(final BrpAttribuutConverteerder attribuutConverteerder) {
+            super(attribuutConverteerder);
+        }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see nl.bzk.migratiebrp.conversie.regels.proces.brpnaarlo3.attributen.BrpGroepConverteerder#getLogger()
          */
         @Override
@@ -195,14 +202,13 @@ public final class BrpReisdocumentConverteerder extends AbstractBrpImmaterieleCa
 
         @Override
         public Lo3ReisdocumentInhoud vulInhoud(
-            final Lo3ReisdocumentInhoud lo3Inhoud,
-            final BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud brpInhoud,
-            final BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud brpVorigeInhoud)
-        {
+                final Lo3ReisdocumentInhoud lo3Inhoud,
+                final BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud brpInhoud,
+                final BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud brpVorigeInhoud) {
             final Lo3ReisdocumentInhoud.Builder builder = new Lo3ReisdocumentInhoud.Builder(lo3Inhoud);
             builder.resetSignalering();
             if (brpInhoud != null) {
-                builder.signalering(converteerder.converteerSignalering(brpInhoud.getIndicatie()));
+                builder.signalering(getAttribuutConverteerder().converteerSignalering(brpInhoud.getIndicatie()));
 
             }
             return builder.build();

@@ -1,14 +1,14 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.mapper;
 
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.ElementEnum;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.HisPersoonGeslachtsaanduidingModel;
+import nl.bzk.brp.domain.element.AttribuutElement;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeslachtsaanduidingInhoud;
 import org.springframework.stereotype.Component;
 
@@ -16,46 +16,39 @@ import org.springframework.stereotype.Component;
  * Mapt de geslachtsaanduiding.
  */
 @Component
-public abstract class AbstractGeslachtsaanduidingMapper
-        extends AbstractMaterieelMapper<PersoonHisVolledig, HisPersoonGeslachtsaanduidingModel, BrpGeslachtsaanduidingInhoud>
-{
-    private final ElementEnum geslachtsaanduidingCode;
+public abstract class AbstractGeslachtsaanduidingMapper extends AbstractMapper<BrpGeslachtsaanduidingInhoud> {
+    private final AttribuutElement geslachtsaanduidingCode;
 
     /**
      * Constructor.
-     * 
-     * @param datumAanvangGeldigheid
-     *            element voor datum aanvang geldigheid
-     * @param datumEindeGeldigheid
-     *            element voor datum einde geldigheid
-     * @param tijdstipRegistratie
-     *            element voor tijdstip registratie
-     * @param tijdstipVerval
-     *            element voor tijdstip verval
-     * @param geslachtsaanduidingCode
-     *            element voor geslachtsaanduiding
+     * @param identiteitGroep element voor identiteit groep
+     * @param groep element voor te mappen groep
+     * @param datumAanvangGeldigheid element voor datum aanvang geldigheid
+     * @param datumEindeGeldigheid element voor datum einde geldigheid
+     * @param tijdstipRegistratie element voor tijdstip registratie
+     * @param tijdstipVerval element voor tijdstip verval
+     * @param geslachtsaanduidingCode element voor geslachtsaanduiding
      */
     protected AbstractGeslachtsaanduidingMapper(
-        final ElementEnum datumAanvangGeldigheid,
-        final ElementEnum datumEindeGeldigheid,
-        final ElementEnum tijdstipRegistratie,
-        final ElementEnum tijdstipVerval,
-        final ElementEnum geslachtsaanduidingCode)
-    {
-        super(datumAanvangGeldigheid, datumEindeGeldigheid, tijdstipRegistratie, tijdstipVerval);
+            final GroepElement identiteitGroep,
+            final GroepElement groep,
+            final AttribuutElement datumAanvangGeldigheid,
+            final AttribuutElement datumEindeGeldigheid,
+            final AttribuutElement tijdstipRegistratie,
+            final AttribuutElement tijdstipVerval,
+            final AttribuutElement geslachtsaanduidingCode) {
+        super(identiteitGroep, groep, datumAanvangGeldigheid, datumEindeGeldigheid, tijdstipRegistratie, tijdstipVerval);
         this.geslachtsaanduidingCode = geslachtsaanduidingCode;
     }
 
     @Override
-    protected final Iterable<HisPersoonGeslachtsaanduidingModel> getHistorieIterable(final PersoonHisVolledig persoonHisVolledig) {
-        return persoonHisVolledig.getPersoonGeslachtsaanduidingHistorie();
-    }
-
-    @Override
-    public final BrpGeslachtsaanduidingInhoud mapInhoud(final HisPersoonGeslachtsaanduidingModel historie, final OnderzoekMapper onderzoekMapper) {
+    public final BrpGeslachtsaanduidingInhoud mapInhoud(
+            final MetaRecord identiteitsRecord,
+            final MetaRecord record,
+            final OnderzoekMapper onderzoekMapper) {
         return new BrpGeslachtsaanduidingInhoud(
-            BrpMapperUtil.mapBrpGeslachtsaanduidingCode(
-                historie.getGeslachtsaanduiding(),
-                onderzoekMapper.bepaalOnderzoek(historie.getID(), geslachtsaanduidingCode, true)));
+                BrpMetaAttribuutMapper.mapBrpGeslachtsaanduidingCode(
+                        record.getAttribuut(geslachtsaanduidingCode),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), geslachtsaanduidingCode, true)));
     }
 }

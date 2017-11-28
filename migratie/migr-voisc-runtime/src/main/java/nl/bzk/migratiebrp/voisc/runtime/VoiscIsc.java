@@ -7,19 +7,18 @@
 package nl.bzk.migratiebrp.voisc.runtime;
 
 import java.util.List;
+import java.util.function.Consumer;
 import nl.bzk.migratiebrp.voisc.database.entities.Bericht;
 
 /**
  * VOISC ISC operaties.
  */
-public interface VoiscIsc {
+public interface VoiscIsc extends Consumer<List<Bericht>> {
 
     /**
      * Verstuur berichten naar ISC.
-     * 
-     * @param messagesToSend
-     *            berichten
+     * @param messagesToSend berichten
      */
-    void verstuurBerichtenNaarIsc(List<Bericht> messagesToSend);
-
+    @Override
+    void accept(List<Bericht> messagesToSend);
 }

@@ -8,6 +8,7 @@ package nl.bzk.migratiebrp.test.isc.environment.kanaal.ssh;
 
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.Bericht;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.KanaalException;
+
 import org.junit.Ignore;
 import org.junit.Test;
 

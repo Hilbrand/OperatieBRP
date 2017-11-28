@@ -8,8 +8,8 @@ package nl.bzk.migratiebrp.test.common.jndi;
 
 import java.util.Enumeration;
 import java.util.Properties;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.jndi.JndiTemplate;
@@ -28,9 +28,7 @@ public final class JndiConfiguration implements BeanFactoryPostProcessor {
 
     /**
      * Zet de waarde van environment.
-     *
-     * @param environmentProperties
-     *            environment
+     * @param environmentProperties environment
      */
     public void setEnvironment(final Properties environmentProperties) {
         properties = environmentProperties;
@@ -38,9 +36,7 @@ public final class JndiConfiguration implements BeanFactoryPostProcessor {
 
     /**
      * Zet de waarde van name.
-     *
-     * @param name
-     *            name
+     * @param name name
      */
     public void setName(final String name) {
         this.name = name;

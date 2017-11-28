@@ -19,11 +19,8 @@ public final class EqualsFilter implements FilenameFilter {
 
     /**
      * Constructor.
-     * 
-     * @param accept
-     *            waarde die de bestandsnaam moet hebben (hoofdletter ongevoelig), null accepteert alles
-     * @param type
-     *            type of files to accept
+     * @param accept waarde die de bestandsnaam moet hebben (hoofdletter ongevoelig), null accepteert alles
+     * @param type type of files to accept
      */
     public EqualsFilter(final String accept, final FilterType type) {
         this.accept = accept;

@@ -7,12 +7,12 @@
 package nl.bzk.migratiebrp.test.afnemersindicatie;
 
 import java.sql.SQLException;
-import nl.bzk.migratiebrp.synchronisatie.dal.util.brpkern.DBUnitBrpUtil;
+import nl.bzk.algemeenbrp.test.dal.DBUnitBrpUtil;
 import nl.bzk.migratiebrp.test.dal.TestCasusFactory;
 import nl.bzk.migratiebrp.test.dal.runner.TestConfiguratie;
 import nl.bzk.migratiebrp.test.dal.runner.TestRunner;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
 import org.junit.runner.RunWith;
@@ -62,13 +62,12 @@ public abstract class ConversieTestConfiguratie extends TestConfiguratie {
                     connection.close();
                 }
             } catch (final
-                DatabaseUnitException
-                | SQLException e)
-            {
+            DatabaseUnitException
+                    | SQLException e) {
                 throw new RuntimeException("Kan database niet intialiseren.", e);
             }
         }
         LOG.info("Returning new test casus factory...");
-        return new ConversieTestCasusFactory(context.getAutowireCapableBeanFactory());
+        return new ConversieTestCasusFactory(context.getAutowireCapableBeanFactory(), getTestSkipper());
     }
 }

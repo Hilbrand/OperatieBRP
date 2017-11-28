@@ -19,11 +19,8 @@ public final class StartsWithFilter implements FilenameFilter {
 
     /**
      * Constructor.
-     * 
-     * @param accept
-     *            waarmee de bestandsnaam (hoofdletter ongevoelig) moet beginnen, null accepteert alles
-     * @param type
-     *            type of files to accept
+     * @param accept waarmee de bestandsnaam (hoofdletter ongevoelig) moet beginnen, null accepteert alles
+     * @param type type of files to accept
      */
     public StartsWithFilter(final String accept, final FilterType type) {
         this.accept = accept == null ? null : accept.toUpperCase();

@@ -1,53 +1,54 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.levering.lo3.mapper;
 
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.VolgnummerAttribuut;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.VoornaamAttribuut;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.ElementEnum;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonVoornaamHisVolledig;
-import nl.bzk.brp.model.operationeel.kern.HisPersoonVoornaamModel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.brp.domain.element.AttribuutElement;
+import nl.bzk.brp.domain.element.ElementHelper;
+import nl.bzk.brp.domain.element.GroepElement;
+import nl.bzk.brp.domain.leveringmodel.MetaRecord;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
 import org.springframework.stereotype.Component;
 
 /**
  * Mapt een voornaam.
  */
 @Component
-public final class VoornaamMapper extends AbstractMaterieelMapper<PersoonVoornaamHisVolledig, HisPersoonVoornaamModel, BrpVoornaamInhoud> {
+public final class VoornaamMapper extends AbstractMapper<BrpVoornaamInhoud> {
+
+    /**
+     * Groep element.
+     */
+    public static final GroepElement GROEP_ELEMENT = ElementHelper.getGroepElement(Element.PERSOON_VOORNAAM_STANDAARD.getId());
+
+    private static final AttribuutElement VOLGNUMMER_ELEMENT = ElementHelper.getAttribuutElement(Element.PERSOON_VOORNAAM_VOLGNUMMER.getId());
+    private static final AttribuutElement NAAM_ELEMENT = ElementHelper.getAttribuutElement(Element.PERSOON_VOORNAAM_NAAM.getId());
 
     /**
      * Constructor.
      */
     public VoornaamMapper() {
-        super(ElementEnum.PERSOON_VOORNAAM_DATUMAANVANGGELDIGHEID,
-              ElementEnum.PERSOON_VOORNAAM_DATUMEINDEGELDIGHEID,
-              ElementEnum.PERSOON_VOORNAAM_TIJDSTIPREGISTRATIE,
-              ElementEnum.PERSOON_VOORNAAM_TIJDSTIPVERVAL);
+        super(ElementHelper.getGroepElement(Element.PERSOON_VOORNAAM_IDENTITEIT.getId()),
+                GROEP_ELEMENT,
+                ElementHelper.getAttribuutElement(Element.PERSOON_VOORNAAM_DATUMAANVANGGELDIGHEID.getId()),
+                ElementHelper.getAttribuutElement(Element.PERSOON_VOORNAAM_DATUMEINDEGELDIGHEID.getId()),
+                ElementHelper.getAttribuutElement(Element.PERSOON_VOORNAAM_TIJDSTIPREGISTRATIE.getId()),
+                ElementHelper.getAttribuutElement(Element.PERSOON_VOORNAAM_TIJDSTIPVERVAL.getId()));
     }
 
     @Override
-    protected Iterable<HisPersoonVoornaamModel> getHistorieIterable(final PersoonVoornaamHisVolledig persoonVoornaamHisVolledig) {
-        return persoonVoornaamHisVolledig.getPersoonVoornaamHistorie();
-    }
-
-    @Override
-    public BrpVoornaamInhoud mapInhoud(final HisPersoonVoornaamModel historie, final OnderzoekMapper onderzoekMapper) {
-        final VoornaamAttribuut voornaamAttribuut = historie.getNaam();
-        final Lo3Onderzoek lo3OnderzoekVoornaam = onderzoekMapper.bepaalOnderzoek(historie.getID(), ElementEnum.PERSOON_VOORNAAM_NAAM, true);
-
-        final VolgnummerAttribuut volgnummerAttribuut = historie.getPersoonVoornaam().getVolgnummer();
-        final Lo3Onderzoek lo3OnderzoekPersoonVoornaam =
-                onderzoekMapper.bepaalOnderzoek(historie.getPersoonVoornaam().getID(), ElementEnum.PERSOON_VOORNAAM_VOLGNUMMER, true);
-
+    public BrpVoornaamInhoud mapInhoud(final MetaRecord identiteitRecord, final MetaRecord record, final OnderzoekMapper onderzoekMapper) {
         return new BrpVoornaamInhoud(
-            BrpMapperUtil.mapBrpString(voornaamAttribuut, lo3OnderzoekVoornaam),
-            BrpMapperUtil.mapBrpInteger(volgnummerAttribuut, lo3OnderzoekPersoonVoornaam));
+                BrpMetaAttribuutMapper.mapBrpString(
+                        record.getAttribuut(NAAM_ELEMENT),
+                        onderzoekMapper.bepaalOnderzoek(record.getVoorkomensleutel(), NAAM_ELEMENT, true)),
+                BrpMetaAttribuutMapper.mapBrpInteger(
+                        identiteitRecord.getAttribuut(VOLGNUMMER_ELEMENT),
+                        onderzoekMapper.bepaalOnderzoek(identiteitRecord.getVoorkomensleutel(), VOLGNUMMER_ELEMENT, true)));
     }
 
 }

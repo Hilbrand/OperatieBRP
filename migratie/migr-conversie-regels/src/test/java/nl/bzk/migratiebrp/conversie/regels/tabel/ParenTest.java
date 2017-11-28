@@ -22,33 +22,33 @@ public class ParenTest {
     @Test
     public void testVoorvoegselScheidingstekenPaar() throws NoSuchMethodException, IllegalAccessException {
         EqualsAndHashcodeTester.testEqualsHashcodeAndToString(
-            new VoorvoegselScheidingstekenPaar(new BrpString("X"), new BrpCharacter('Y')),
-            new VoorvoegselScheidingstekenPaar(new BrpString("X"), new BrpCharacter('Y')),
-            new VoorvoegselScheidingstekenPaar(new BrpString("A"), new BrpCharacter('B')));
+                new VoorvoegselScheidingstekenPaar(new BrpString("X"), new BrpCharacter('Y')),
+                new VoorvoegselScheidingstekenPaar(new BrpString("X"), new BrpCharacter('Y')),
+                new VoorvoegselScheidingstekenPaar(new BrpString("A"), new BrpCharacter('B')));
     }
 
     @Test
     public void testAdellijkeTitelPredikaatPaar() throws NoSuchMethodException, IllegalAccessException {
         EqualsAndHashcodeTester.testEqualsHashcodeAndToString(new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('X'),
-            new BrpCharacter('Y'),
-            BrpGeslachtsaanduidingCode.MAN), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('X'),
-            new BrpCharacter('Y'),
-            BrpGeslachtsaanduidingCode.MAN), new AdellijkeTitelPredikaatPaar(
-            new BrpCharacter('A'),
-            new BrpCharacter('B'),
-            BrpGeslachtsaanduidingCode.VROUW));
+                new BrpCharacter('X'),
+                new BrpCharacter('Y'),
+                BrpGeslachtsaanduidingCode.MAN), new AdellijkeTitelPredikaatPaar(
+                new BrpCharacter('X'),
+                new BrpCharacter('Y'),
+                BrpGeslachtsaanduidingCode.MAN), new AdellijkeTitelPredikaatPaar(
+                new BrpCharacter('A'),
+                new BrpCharacter('B'),
+                BrpGeslachtsaanduidingCode.VROUW));
     }
 
     @Test
     public void testAangeverAdreshoudingRedenWijzigingAdresPaar() throws NoSuchMethodException, IllegalAccessException {
         EqualsAndHashcodeTester.testEqualsHashcodeAndToString(new AangeverRedenWijzigingVerblijfPaar(
-            new BrpAangeverCode('X'),
-            new BrpRedenWijzigingVerblijfCode('Y')), new AangeverRedenWijzigingVerblijfPaar(
-            new BrpAangeverCode('X'),
-            new BrpRedenWijzigingVerblijfCode('Y')), new AangeverRedenWijzigingVerblijfPaar(
+                new BrpAangeverCode('X'),
+                new BrpRedenWijzigingVerblijfCode('Y')), new AangeverRedenWijzigingVerblijfPaar(
+                new BrpAangeverCode('X'),
+                new BrpRedenWijzigingVerblijfCode('Y')), new AangeverRedenWijzigingVerblijfPaar(
 
-        new BrpAangeverCode('A'), new BrpRedenWijzigingVerblijfCode('B')));
+                new BrpAangeverCode('A'), new BrpRedenWijzigingVerblijfCode('B')));
     }
 }

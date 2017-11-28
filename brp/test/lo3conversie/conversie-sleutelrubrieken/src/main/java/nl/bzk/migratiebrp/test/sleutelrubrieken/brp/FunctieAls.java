@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.test.sleutelrubrieken.brp;
 
-import nl.bzk.brp.expressietaal.expressies.functies.FunctieALS;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.brp.domain.expressie.functie.FunctieFactory;
 
 /**
- * Wrapper om {@link FunctieALS} tbv logging.
+ * Wrapper om {@link nl.bzk.brp.domain.expressie.functie.FunctieAls} tbv logging.
  */
 public class FunctieAls extends FunctieDelegate {
 
@@ -21,7 +21,7 @@ public class FunctieAls extends FunctieDelegate {
      * Constructor.
      */
     public FunctieAls() {
-        super(new FunctieALS(), LOG);
+        super(FunctieFactory.geefFunctie("ALS"), LOG);
     }
 
 }

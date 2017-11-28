@@ -6,31 +6,26 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGroepInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 
 /**
  * Deze abstracte class geeft invulling aan de te volgen strategie voor het mappen van BrpGroepen uit het migratie model
  * op de entiteiten uit het operationele BRP gegevensmodel.
- * 
- * @param <T>
- *            het type inhoud van de BrpGroep
- * @param <E>
- *            Het type van de top level entiteit (bijv. Persoon of PersoonNationaliteit)
+ * @param <T> het type inhoud van de BrpGroep
+ * @param <E> Het type van de top level entiteit (bijv. Persoon of PersoonNationaliteit)
  */
-public abstract class AbstractMapperStrategie<T extends BrpGroepInhoud, E extends Object> implements MapperStrategie<T, E> {
+public abstract class AbstractMapperStrategie<T extends BrpGroepInhoud, E> implements MapperStrategie<T, E> {
 
     private final StamtabelMapping stamtabelMapping;
     private final OnderzoekMapper onderzoekMapper;
 
     /**
      * Maakt een AbstractMapperStrategie object.
-     * 
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param onderzoekMapper
-     *            de mapper voor onderzoeken
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param onderzoekMapper de mapper voor onderzoeken
      */
     public AbstractMapperStrategie(final DynamischeStamtabelRepository dynamischeStamtabelRepository, final OnderzoekMapper onderzoekMapper) {
         super();
@@ -40,7 +35,6 @@ public abstract class AbstractMapperStrategie<T extends BrpGroepInhoud, E extend
 
     /**
      * Geef de waarde van stamtabel mapping.
-     *
      * @return de stamtabel mapping die gebruikt kan worden om stamtabellen te bevragen
      */
     public final StamtabelMapping getStamtabelMapping() {
@@ -49,7 +43,6 @@ public abstract class AbstractMapperStrategie<T extends BrpGroepInhoud, E extend
 
     /**
      * Geef de waarde van onderzoek mapper.
-     *
      * @return de onderzoek mapper
      */
     public final OnderzoekMapper getOnderzoekMapper() {
@@ -60,35 +53,22 @@ public abstract class AbstractMapperStrategie<T extends BrpGroepInhoud, E extend
      * {@inheritDoc}
      */
     @Override
-    public final void mapVanMigratie(final BrpStapel<T> brpStapel, final E entiteit) {
+    public final void mapVanMigratie(final BrpStapel<T> brpStapel, final E entiteit, final Element objecttype) {
         if (entiteit == null) {
             throw new NullPointerException();
         }
         if (brpStapel == null) {
             return;
         }
-        mapActueleGegevens(brpStapel, entiteit);
-        mapHistorischeGegevens(brpStapel, entiteit);
+        mapHistorischeGegevens(brpStapel, entiteit, objecttype);
     }
 
     /**
      * Mapped de historische gegevens uit de stapel op de entiteit.
-     * 
-     * @param brpStapel
-     *            de BRP stapel
-     * @param entiteit
-     *            de entiteit waarop de actuele gegevens gemapped moeten worden
+     * @param brpStapel de BRP stapel
+     * @param entiteit de entiteit waarop de actuele gegevens gemapped moeten worden
+     * @param objecttype het objecttype van de gerelateerde persoon. Null als het om de 'eigen' persoon gaat.
      */
-    protected abstract void mapHistorischeGegevens(BrpStapel<T> brpStapel, E entiteit);
-
-    /**
-     * Mapped de actuele gegevens uit de stapel op de entiteit.
-     * 
-     * @param brpStapel
-     *            de BRP stapel
-     * @param entiteit
-     *            de entiteit waarop de actuele gegevens gemapped moeten worden
-     */
-    protected abstract void mapActueleGegevens(final BrpStapel<T> brpStapel, final E entiteit);
+    protected abstract void mapHistorischeGegevens(BrpStapel<T> brpStapel, E entiteit, Element objecttype);
 
 }

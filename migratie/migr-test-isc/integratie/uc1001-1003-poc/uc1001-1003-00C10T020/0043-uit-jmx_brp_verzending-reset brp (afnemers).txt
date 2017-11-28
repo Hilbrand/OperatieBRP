@@ -1,2 +1,0 @@
-verzending-nl.bzk.brp.levering.verzending:name=Verzender
-updateAfnemers

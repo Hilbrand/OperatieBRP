@@ -23,11 +23,8 @@ public final class ExpressionHelper {
 
     /**
      * Geef een boolean waarde.
-     *
-     * @param expression
-     *            expressie die een boolean retourneert
-     * @param elContext
-     *            el context
+     * @param expression expressie die een boolean retourneert
+     * @param elContext el context
      * @return boolean waarde
      */
     public static Boolean getBoolean(final ValueExpression expression, final ELContext elContext) {
@@ -51,11 +48,8 @@ public final class ExpressionHelper {
 
     /**
      * Geef een string waarde.
-     *
-     * @param expression
-     *            expressie die een boolean retourneert
-     * @param elContext
-     *            el context
+     * @param expression expressie die een boolean retourneert
+     * @param elContext el context
      * @return string waarde
      */
     public static String getString(final ValueExpression expression, final ELContext elContext) {
@@ -79,11 +73,8 @@ public final class ExpressionHelper {
 
     /**
      * Geef een date waarde.
-     *
-     * @param expression
-     *            expressie die een boolean retourneert
-     * @param elContext
-     *            el context
+     * @param expression expressie die een boolean retourneert
+     * @param elContext el context
      * @return date waarde
      */
     public static Date getDate(final ValueExpression expression, final ELContext elContext) {

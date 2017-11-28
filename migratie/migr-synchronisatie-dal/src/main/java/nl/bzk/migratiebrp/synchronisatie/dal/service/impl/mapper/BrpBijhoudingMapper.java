@@ -6,13 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBijhoudingsaardCode;
-import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijhoudingInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import org.springframework.stereotype.Component;
 
@@ -27,24 +26,19 @@ public final class BrpBijhoudingMapper extends AbstractBrpMapper<PersoonBijhoudi
         final BrpPartijCode bijhoudingPartij;
         bijhoudingPartij =
                 BrpMapperUtil.mapBrpPartijCode(
-                    historie.getPartij(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_BIJHOUDING_PARTIJCODE, true));
+                        historie.getPartij(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_BIJHOUDING_PARTIJCODE, true));
         final BrpBijhoudingsaardCode bijhoudingsaard;
         bijhoudingsaard =
                 BrpMapperUtil.mapBrpBijhoudingsaard(
-                    historie.getBijhoudingsaard(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_BIJHOUDING_BIJHOUDINGSAARDCODE, true));
+                        historie.getBijhoudingsaard(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_BIJHOUDING_BIJHOUDINGSAARDCODE, true));
         final BrpNadereBijhoudingsaardCode nadereBijhoudingsaardCode;
         nadereBijhoudingsaardCode =
                 BrpMapperUtil.mapBrpNadereBijhoudingsaard(
-                    historie.getNadereBijhoudingsaard(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_BIJHOUDING_NADEREBIJHOUDINGSAARDCODE, true));
-        final BrpBoolean indicatieOnverwerkteDocumentatie;
-        indicatieOnverwerkteDocumentatie =
-                BrpBoolean.wrap(
-                    historie.getIndicatieOnverwerktDocumentAanwezig(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_BIJHOUDING_INDICATIEONVERWERKTDOCUMENTAANWEZIG, true));
+                        historie.getNadereBijhoudingsaard(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_BIJHOUDING_NADEREBIJHOUDINGSAARDCODE, true));
 
-        return new BrpBijhoudingInhoud(bijhoudingPartij, bijhoudingsaard, nadereBijhoudingsaardCode, indicatieOnverwerkteDocumentatie);
+        return new BrpBijhoudingInhoud(bijhoudingPartij, bijhoudingsaard, nadereBijhoudingsaardCode);
     }
 }

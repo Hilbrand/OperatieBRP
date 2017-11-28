@@ -7,24 +7,27 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.util.ArrayList;
+
 import javax.inject.Inject;
-import junit.framework.Assert;
+
+import org.junit.Test;
+
+import org.junit.Assert;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Onderzoek;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonMigratieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortMigratie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpRedenWijzigingVerblijfCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpSoortMigratieCode;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpMigratieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonMigratieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortMigratie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapperImpl;
-import org.junit.Test;
 
 public class BrpMigratieMapperTest extends BrpAbstractTest {
 
@@ -37,14 +40,14 @@ public class BrpMigratieMapperTest extends BrpAbstractTest {
     public void testMapInhoud() {
         final PersoonMigratieHistorie historie =
                 new PersoonMigratieHistorie(new Persoon(SoortPersoon.INGESCHREVENE), SoortMigratie.IMMIGRATIE);
-        historie.setLandOfGebied(new LandOfGebied(Short.valueOf("4022"), "naam"));
+        historie.setLandOfGebied(new LandOfGebied("4022", "naam"));
         historie.setAangeverMigratie(new Aangever('V', "Verzorger", "Verzorger omschrijving"));
         historie.setRedenWijzigingMigratie(new RedenWijzigingVerblijf('A', "Ambtshalve"));
 
         final BrpMigratieInhoud result = mapper.mapInhoud(historie, brpOnderzoekMapper);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(new BrpLandOfGebiedCode(Short.parseShort("4022")), result.getLandOfGebiedCode());
+        Assert.assertEquals(new BrpLandOfGebiedCode("4022"), result.getLandOfGebiedCode());
         Assert.assertEquals(BrpSoortMigratieCode.IMMIGRATIE, result.getSoortMigratieCode());
         Assert.assertEquals(new BrpAangeverCode('V'), result.getAangeverMigratieCode());
         Assert.assertEquals(new BrpRedenWijzigingVerblijfCode('A'), result.getRedenWijzigingMigratieCode());

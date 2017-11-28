@@ -6,17 +6,15 @@
 
 package nl.bzk.migratiebrp.bericht.model.lo3.format;
 
-import junit.framework.Assert;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3KindInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AdellijkeTitelPredikaatCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3GemeenteCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3LandCode;
-import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Long;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class Lo3KindFormatterTest {
@@ -29,12 +27,12 @@ public class Lo3KindFormatterTest {
         lo3KindFormatter.format(kindInhoud, lo3Formatter);
         final String formatted = Lo3Inhoud.formatInhoud(lo3Formatter.getList());
         Assert.assertEquals("00121091160110010234932634401200090234567890210005Billy0220001H0230003van0240009"
-                            + "Barendsen0310008201210240320004051803300046030", formatted);
+                + "Barendsen0310008201210240320004051803300046030", formatted);
     }
 
     private static Lo3KindInhoud maakLo3KindInhoud() {
-        final Long aNummer = Long.valueOf("2349326344");
-        final Integer burgerservicenummer = Integer.valueOf("23456789");
+        final String aNummer = "2349326344";
+        final String burgerservicenummer = "23456789";
         final String voornamen = "Billy";
         final Lo3AdellijkeTitelPredikaatCode adellijkeTitelPredikaatCode = new Lo3AdellijkeTitelPredikaatCode("H");
         final String voorvoegselGeslachtsnaam = "van";
@@ -44,14 +42,14 @@ public class Lo3KindFormatterTest {
         final Lo3LandCode geboorteLandCode = new Lo3LandCode("6030");
 
         return new Lo3KindInhoud(
-            Lo3Long.wrap(aNummer),
-            Lo3Integer.wrap(burgerservicenummer),
-            Lo3String.wrap(voornamen),
-            adellijkeTitelPredikaatCode,
-            Lo3String.wrap(voorvoegselGeslachtsnaam),
-            Lo3String.wrap(geslachtsnaam),
-            geboortedatum,
-            geboorteGemeenteCode,
-            geboorteLandCode);
+                Lo3String.wrap(aNummer),
+                Lo3String.wrap(burgerservicenummer),
+                Lo3String.wrap(voornamen),
+                adellijkeTitelPredikaatCode,
+                Lo3String.wrap(voorvoegselGeslachtsnaam),
+                Lo3String.wrap(geslachtsnaam),
+                geboortedatum,
+                geboorteGemeenteCode,
+                geboorteLandCode);
     }
 }

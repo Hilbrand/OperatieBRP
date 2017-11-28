@@ -6,25 +6,45 @@
 
 package nl.bzk.migratiebrp.voisc.database.entities;
 
-/** Status. */
+/**
+ * Status.
+ */
 public enum StatusEnum {
 
-    /** Ontvangen van ISC. */
+    /**
+     * Ontvangen van ISC.
+     */
     RECEIVED_FROM_ISC,
-    /** Opgepakt om te versturen naar Mailbox. */
+    /**
+     * Opgepakt om te versturen naar Mailbox.
+     */
     SENDING_TO_MAILBOX,
-    /** Verstuurd naar mailbox. */
+    /**
+     * Verstuurd naar mailbox.
+     */
     SENT_TO_MAILBOX,
-    /** Ontvangen van mailbox. */
+    /**
+     * Ontvangen van mailbox.
+     */
     RECEIVED_FROM_MAILBOX,
-    /** Opgepakt om te versturen naar ISC. */
+    /**
+     * Opgepakt om te versturen naar ISC.
+     */
     SENDING_TO_ISC,
-    /** Verstuurd naar ISC. */
+    /**
+     * Verstuurd naar ISC.
+     */
     SENT_TO_ISC,
-    /** Genegeerd. */
+    /**
+     * Genegeerd.
+     */
     IGNORED,
-    /** Afgehandeld. */
+    /**
+     * Afgehandeld.
+     */
     PROCESSED_IMMEDIATELY,
-    /** Foutief. */
+    /**
+     * Foutief.
+     */
     ERROR;
 }

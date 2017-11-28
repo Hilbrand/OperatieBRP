@@ -6,33 +6,26 @@
 
 package nl.bzk.migratiebrp.conversie.model.brp.groep;
 
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 
-import org.simpleframework.xml.Element;
-
 /**
  * Deze class representeert de inhoud van de groep BRP Bijzondere verbijfsrechtelijke positie.
- * 
+ *
  * Deze class is immutable en threadsafe.
- * 
  */
 public final class BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud extends AbstractBrpIndicatieGroepInhoud {
     /**
      * Maakt een BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud object.
-     *
-     * @param indicatie
-     *            BrpBoolean met daarin de indicatie waarde en onderzoek
-     * @param migratieRedenOpnameNationaliteit
-     *            de reden opname nationaliteit tbv migratie/conversie
-     * @param migratieRedenBeeindigingNationaliteit
-     *            de reden beeindiging nationaliteit tbv migratie/conversie
+     * @param indicatie BrpBoolean met daarin de indicatie waarde en onderzoek
+     * @param migratieRedenOpnameNationaliteit de reden opname nationaliteit tbv migratie/conversie
+     * @param migratieRedenBeeindigingNationaliteit de reden beeindiging nationaliteit tbv migratie/conversie
      */
     public BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud(
-        @Element(name = "indicatie", required = true) final BrpBoolean indicatie,
-        @Element(name = "migrRdnOpnameNation", required = false) final BrpString migratieRedenOpnameNationaliteit,
-        @Element(name = "migrRdnBeeindigingNation", required = false) final BrpString migratieRedenBeeindigingNationaliteit)
-    {
+            @Element(name = "indicatie", required = true) final BrpBoolean indicatie,
+            @Element(name = "migrRdnOpnameNation", required = false) final BrpString migratieRedenOpnameNationaliteit,
+            @Element(name = "migrRdnBeeindigingNation", required = false) final BrpString migratieRedenBeeindigingNationaliteit) {
         super(indicatie, migratieRedenOpnameNationaliteit, migratieRedenBeeindigingNationaliteit);
     }
 }

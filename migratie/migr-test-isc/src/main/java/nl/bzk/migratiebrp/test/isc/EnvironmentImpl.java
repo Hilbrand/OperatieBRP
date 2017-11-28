@@ -15,9 +15,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
-
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.isc.bericht.TestBericht;
 import nl.bzk.migratiebrp.test.isc.environment.check.Check;
 import nl.bzk.migratiebrp.test.isc.environment.check.CheckConfig;
@@ -26,6 +33,8 @@ import nl.bzk.migratiebrp.test.isc.environment.check.CheckConfigReaderImpl;
 import nl.bzk.migratiebrp.test.isc.environment.check.CheckContext;
 import nl.bzk.migratiebrp.test.isc.environment.check.CheckFactory;
 import nl.bzk.migratiebrp.test.isc.environment.correlatie.Correlator;
+import nl.bzk.migratiebrp.test.isc.environment.injection.Calculator;
+import nl.bzk.migratiebrp.test.isc.environment.injection.CalculatorFactory;
 import nl.bzk.migratiebrp.test.isc.environment.injection.Config;
 import nl.bzk.migratiebrp.test.isc.environment.injection.ConfigReader;
 import nl.bzk.migratiebrp.test.isc.environment.injection.ConfigReaderImpl;
@@ -41,8 +50,6 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.TestCasusContext;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.jbpm.JbpmHelperKanaal;
 import nl.bzk.migratiebrp.test.isc.exception.TestException;
 import nl.bzk.migratiebrp.test.isc.exception.TestNokException;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 /**
  * Testenvironment impl.
@@ -56,7 +63,6 @@ public final class EnvironmentImpl implements TestEnvironment {
     private static final String KANAAL_FUNCTIE_NA = "na";
 
     private static final Logger LOG = LoggerFactory.getLogger();
-    // private static final Properties NO_PROPERTIES = new Properties();
 
     private final Map<String, Kanaal> kanalen;
 
@@ -66,14 +72,13 @@ public final class EnvironmentImpl implements TestEnvironment {
     private final ConfigReader configReader = new ConfigReaderImpl();
     private final CheckConfigReader checkConfigReader = new CheckConfigReaderImpl();
     private final ExtractorFactory extractorFactory = new ExtractorFactory();
+    private final CalculatorFactory calculatorFactory = new CalculatorFactory();
     private final InjectorFactory injectorFactory = new InjectorFactory();
     private final CheckFactory checkFactory = new CheckFactory();
 
     /**
      * Constructor.
-     *
-     * @param kanalen
-     *            alle kanelen
+     * @param kanalen alle kanelen
      */
     @Inject
     public EnvironmentImpl(final Kanaal[] kanalen) {
@@ -86,12 +91,8 @@ public final class EnvironmentImpl implements TestEnvironment {
             }
             logKanalen.append(naam);
             if (this.kanalen.put(naam, kanaal) != null) {
-                throw new IllegalStateException("Meerdere kanalen met de naam '"
-                                                + naam
-                                                + "': "
-                                                + kanaal.getClass().getName()
-                                                + " en "
-                                                + this.kanalen.get(naam).getClass().getName());
+                throw new IllegalStateException(
+                        "Meerdere kanalen met de naam '" + naam + "': " + kanaal.getClass().getName() + " en " + this.kanalen.get(naam).getClass().getName());
             }
         }
 
@@ -104,7 +105,6 @@ public final class EnvironmentImpl implements TestEnvironment {
 
     /**
      * Geef de waarde van jbpm helper kanaal.
-     *
      * @return jbpm helper kanaal
      */
     public JbpmHelperKanaal getJbpmHelperKanaal() {
@@ -113,7 +113,6 @@ public final class EnvironmentImpl implements TestEnvironment {
 
     /**
      * Geef de waarde van correlator.
-     *
      * @return correlator
      */
     public Correlator getCorrelator() {
@@ -123,20 +122,55 @@ public final class EnvironmentImpl implements TestEnvironment {
     @Override
     public void beforeTestCase(final ProcessenTestCasus testCase) {
         correlator.reset();
-
         final TestCasusContext testCaseContext = maakTestCasusContext(testCase);
 
-        for (final Kanaal kanaal : kanalen.values()) {
-            if (checkAllows(testCase.getTestcaseConfiguratie(), kanaal, KANAAL_FUNCTIE_VOOR)) {
-                kanaal.voorTestcase(testCaseContext);
-            }
-        }
+        final ExecutorService executorService = Executors.newFixedThreadPool(8);
+        try {
+            // Create a list of callables (so we can catch the exceptions)
+            final List<Callable<Exception>> callables =
+                    kanalen.values()
+                            .stream()
+                            .filter(kanaal -> checkAllows(testCase.getTestcaseConfiguratie(), kanaal, KANAAL_FUNCTIE_VOOR))
+                            .map(kanaal -> (Callable<Exception>) () -> {
+                                try {
+                                    LOG.info("Before testcase: {}", kanaal.getKanaal());
+                                    kanaal.voorTestcase(testCaseContext);
+                                    return null;
+                                } catch (Exception e) {
+                                    LOG.warn("Failed", e);
+                                    return e;
+                                }
+                            })
+                            .collect(Collectors.toList());
 
-        // Twee keer uitvoeren omdat sommige kanalen voor of na een ander kanaal moeten.
-        for (final Kanaal kanaal : kanalen.values()) {
-            if (checkAllows(testCase.getTestcaseConfiguratie(), kanaal, KANAAL_FUNCTIE_VOOR)) {
-                kanaal.voorTestcase(testCaseContext);
+            // Invoke all futures (waits until all callables are done)
+            final List<Future<Exception>> futures;
+            try {
+                futures = executorService.invokeAll(callables);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
             }
+
+            // Check all results
+            final List<Throwable> exceptions =
+                    futures.stream().map(future -> {
+                        try {
+                            return future.get();
+                        } catch (ExecutionException e) {
+                            return e.getCause();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            return null;
+                        }
+                    }).filter(exception -> exception != null).collect(Collectors.toList());
+
+            // Exception when anything went wrong
+            if (!exceptions.isEmpty()) {
+                throw new IllegalStateException("Testcase initialization failed (" + exceptions.size() + " failures)");
+            }
+        } finally {
+            executorService.shutdownNow();
         }
     }
 
@@ -152,26 +186,79 @@ public final class EnvironmentImpl implements TestEnvironment {
 
     @Override
     public boolean afterTestCase(final ProcessenTestCasus testCase) {
-        int aantalBerichten = 0;
-
         final TestCasusContext testCaseContext = maakTestCasusContext(testCase);
 
-        for (final Kanaal kanaal : kanalen.values()) {
-            if (checkAllows(testCase.getTestcaseConfiguratie(), kanaal, KANAAL_FUNCTIE_NA)) {
+        final ExecutorService executorService = Executors.newFixedThreadPool(8);
+        final LongAdder aantalBerichten = new LongAdder();
+        try {
+            // Create a list of callables (so we can catch the exceptions)
+            final List<Callable<Exception>> callables =
+                    kanalen.values()
+                            .stream()
+                            .filter(kanaal -> checkAllows(testCase.getTestcaseConfiguratie(), kanaal, KANAAL_FUNCTIE_NA))
+                            .map(kanaal -> (Callable<Exception>) () -> {
+                                try {
+                                    LOG.info("After testcase {}", kanaal);
+                                    final List<Bericht> kanaalBerichten = kanaal.naTestcase(testCaseContext);
+                                    int aantalKanaalBerichten = 0;
+                                    if (kanaalBerichten != null) {
+                                        for (final Bericht bericht : kanaalBerichten) {
+                                            aantalKanaalBerichten++;
+                                            LOG.info("Onverwacht bericht ontvangen op kanaal {}:\n{}", kanaal.getKanaal(), bericht.getInhoud());
+                                            LOG.info("Message ID: {}, correlatie ID: {}", bericht.getBerichtReferentie(), bericht.getCorrelatieReferentie());
+                                            LOG.info("Verzendende partij: {}, ontvangende partij: {}", bericht.getVerzendendePartij(),
+                                                    bericht.getOntvangendePartij());
 
-                final List<Bericht> kanaalBerichten = kanaal.naTestcase(testCaseContext);
-                if (kanaalBerichten != null) {
-                    for (final Bericht bericht : kanaalBerichten) {
-                        aantalBerichten++;
-                        LOG.info("Onverwacht bericht ontvangen op kanaal {}:\n{}", kanaal.getKanaal(), bericht.getInhoud());
-                        output(new File(testCase.getOutputDirectory(), "9999-inuit-" + kanaal.getKanaal() + "-" + aantalBerichten), bericht.getInhoud());
+                                            String bestandsnaam = "9999-inuit-" + kanaal.getKanaal() + "-" + aantalKanaalBerichten;
+                                            output(new File(testCase.getOutputDirectory(), bestandsnaam), bericht.getInhoud());
 
-                    }
-                }
+                                            if (bericht.getVerzendendePartij() != null || bericht.getOntvangendePartij() != null) {
+                                                output(new File(testCase.getOutputDirectory(), bestandsnaam + ".properties"),
+                                                        "verzendendePartij=" + bericht.getVerzendendePartij() +
+                                                                "\nontvangendePartij=" + bericht.getOntvangendePartij());
+                                            }
+                                        }
+                                    }
+                                    aantalBerichten.add(aantalKanaalBerichten);
+                                    return null;
+                                } catch (Exception e) {
+                                    LOG.warn("Failure", e);
+                                    return e;
+                                }
+                            })
+                            .collect(Collectors.toList());
+
+            // Invoke all futures (waits until all callables are done)
+            final List<Future<Exception>> futures;
+            try {
+                futures = executorService.invokeAll(callables);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
             }
+
+            // Check all results
+            final List<Throwable> exceptions =
+                    futures.stream().map(future -> {
+                        try {
+                            return future.get();
+                        } catch (ExecutionException e) {
+                            return e.getCause();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            return null;
+                        }
+                    }).filter(exception -> exception != null).collect(Collectors.toList());
+
+            // Exception when anything went wrong
+            if (!exceptions.isEmpty()) {
+                throw new IllegalStateException("Testcase initialization failed (" + exceptions.size() + " failures)");
+            }
+        } finally {
+            executorService.shutdownNow();
         }
 
-        return aantalBerichten == 0;
+        return aantalBerichten.longValue() == 0;
     }
 
     @Override
@@ -188,12 +275,15 @@ public final class EnvironmentImpl implements TestEnvironment {
             if (!checkAllows(processenTestCasus.getTestcaseConfiguratie(), kanaal, "uit")) {
                 throw new TestException(String.format(ERROR_UITGAAND_BERICHT_NIET_TOEGESTAAN, testBericht.getKanaal()));
             }
+            verwerkCalculateFile(processenTestCasus, testBericht);
             verwerkInjectFile(processenTestCasus, testBericht, bericht);
             output(testBericht.getOutputFile(), bericht.getInhoud());
             try {
                 kanaal.verwerkUitgaand(testCaseContext, bericht);
             } catch (final KanaalException e) {
-                throw new TestException("Probleem bij verwerken uitgaand bericht.", e);
+                if (!bericht.isMagFalen()) {
+                    throw new TestException("Probleem bij verwerken uitgaand bericht.", e);
+                }
             }
             verwerkExtractFile(processenTestCasus, testBericht, bericht);
 
@@ -202,6 +292,7 @@ public final class EnvironmentImpl implements TestEnvironment {
                 throw new TestException(String.format(ERROR_INKOMEND_BERICHT_NIET_TOEGESTAAN, testBericht.getKanaal()));
             }
 
+            verwerkCalculateFile(processenTestCasus, testBericht);
             verwerkInjectFile(processenTestCasus, testBericht, bericht);
             output(testBericht.getExpectedFile(), bericht.getInhoud());
             try {
@@ -212,13 +303,19 @@ public final class EnvironmentImpl implements TestEnvironment {
 
                     // Controleer inhoud
                     if (!kanaal.controleerInkomend(testCaseContext, bericht, ontvangenBericht)) {
-                        throw new TestNokException("Bericht voldoet niet aan verwachting");
+                        if (bericht.isMagFalen()) {
+                            LOG.info("Stap gefaald, maar geconfigureerd met magFalen=true");
+                        }else {
+                            throw new TestNokException("Bericht voldoet niet aan verwachting");
+                        }
                     }
                 }
                 verwerkCheckFile(testBericht, ontvangenBericht);
 
             } catch (final KanaalException e) {
-                throw new TestException("Probleem bij verwerken inkomend bericht.", e);
+                if (!bericht.isMagFalen()) {
+                    throw new TestException("Probleem bij verwerken inkomend bericht.", e);
+                }
             }
         }
     }
@@ -226,9 +323,9 @@ public final class EnvironmentImpl implements TestEnvironment {
     private TestCasusContext maakTestCasusContext(final ProcessenTestCasus processenTestCasus) {
         final TestCasusContext result =
                 new TestCasusContext(
-                    processenTestCasus.getTestcaseConfiguratie(),
-                    processenTestCasus.getInputDirectory(),
-                    processenTestCasus.getOutputDirectory());
+                        processenTestCasus.getTestcaseConfiguratie(),
+                        processenTestCasus.getInputDirectory(),
+                        processenTestCasus.getOutputDirectory());
         // TODO
         return result;
     }
@@ -244,11 +341,20 @@ public final class EnvironmentImpl implements TestEnvironment {
             bericht.setCorrelatieReferentie(testBericht.getCorrelatienummer().toString());
         }
         bericht.setInhoud(testBericht.getInhoud());
-        bericht.setOntvangendePartij(testBericht.getOntvangendePartij() == null ? kanaal.getStandaardOntvangendePartij()
-                                                                               : testBericht.getOntvangendePartij());
-        bericht.setVerzendendePartij(testBericht.getVerzendendePartij() == null ? kanaal.getStandaardVerzendendePartij()
-                                                                               : testBericht.getVerzendendePartij());
+        bericht.setOntvangendePartij(
+                testBericht.getOntvangendePartij() == null ? kanaal.getStandaardOntvangendePartij() : testBericht.getOntvangendePartij());
+        bericht.setVerzendendePartij(
+                testBericht.getVerzendendePartij() == null ? kanaal.getStandaardVerzendendePartij() : testBericht.getVerzendendePartij());
+        bericht.setMoederActiviteitType(testBericht.getTestBerichtPropertyAsInteger("moederActiviteitType"));
+        bericht.setActiviteitType(testBericht.getTestBerichtPropertyAsInteger("activiteitType"));
+        bericht.setActiviteitSubtype(testBericht.getTestBerichtPropertyAsInteger("activiteitSubtype"));
+        bericht.setActiviteitDatum(testBericht.getActiviteitDatum());
+        bericht.setActiviteitToestand(testBericht.getActiviteitToestand());
+        bericht.setOinOndertekenaar(testBericht.getOinOndertekenaar());
+        bericht.setOinTransporteur(testBericht.getOinTransporteur());
+        bericht.setMagFalen(testBericht.isMagFalen());
         bericht.setMsSequenceNumber(testBericht.getTestBerichtProperty("msSequenceNumber"));
+        bericht.setRequestNonReceiptNotification(Boolean.valueOf(testBericht.getTestBerichtProperty("requestNonReceiptNotification")));
         return bericht;
     }
 
@@ -280,9 +386,29 @@ public final class EnvironmentImpl implements TestEnvironment {
         }
     }
 
+    private void verwerkCalculateFile(final ProcessenTestCasus processenTestCasus, final TestBericht testBericht) throws TestException {
+        final List<Config> configs;
+        try {
+            configs = configReader.readConfig(new File(testBericht.getInputFile().getParentFile(), testBericht.getInputFile().getName() + ".calculate"));
+        } catch (final IOException e) {
+            throw new TestException("Kan .extract bestand niet lezen voor test bericht. ", e);
+        }
+
+        for (final Config config : configs) {
+            final Calculator calculator = calculatorFactory.getCalculator(config.getType());
+            if (calculator == null) {
+                throw new TestException(String.format("Calculator van type '%s' is onbekend.", config.getType()));
+            }
+
+            final Context calculatorContext = new Context(correlator, getJbpmHelperKanaal());
+            final String value = calculator.calculate(calculatorContext, processenTestCasus.getContext().getValues(), config.getKey());
+            LOG.info("Calculated value {} for variable {}", value, config.getName());
+            processenTestCasus.getContext().set(config.getName(), value);
+        }
+    }
+
     private void verwerkExtractFile(final ProcessenTestCasus processenTestCasus, final TestBericht testBericht, final Bericht ontvangenBericht)
-            throws TestException
-    {
+            throws TestException {
         final List<Config> configs;
         try {
             configs = configReader.readConfig(new File(testBericht.getInputFile().getParentFile(), testBericht.getInputFile().getName() + ".extract"));
@@ -304,8 +430,7 @@ public final class EnvironmentImpl implements TestEnvironment {
     }
 
     private void verwerkInjectFile(final ProcessenTestCasus processenTestCasus, final TestBericht testBericht, final Bericht teVersturenBericht)
-            throws TestException
-    {
+            throws TestException {
         final List<Config> configs;
         try {
             configs = configReader.readConfig(new File(testBericht.getInputFile().getParentFile(), testBericht.getInputFile().getName() + ".inject"));
@@ -319,12 +444,12 @@ public final class EnvironmentImpl implements TestEnvironment {
                 throw new TestException("Injector van type '" + config.getType() + "' is onbekend.");
             }
 
-            final Context extractionContext = new Context(correlator, getJbpmHelperKanaal());
+            final Context injectionContext = new Context(correlator, getJbpmHelperKanaal());
             final String value = processenTestCasus.getContext().get(config.getName());
             if (value == null) {
                 throw new TestException("Waarde voor variabele '" + config.getName() + "' is <null>, injection niet mogelijk.");
             }
-            injector.inject(extractionContext, teVersturenBericht, config.getKey(), value);
+            injector.inject(injectionContext, teVersturenBericht, config.getKey(), value);
         }
     }
 

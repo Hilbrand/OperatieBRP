@@ -6,20 +6,20 @@
 
 package nl.bzk.brp.levering.lo3.mapper;
 
-import nl.bzk.brp.gba.dataaccess.VerConvRepository;
-import nl.bzk.brp.model.algemeen.stamgegeven.kern.SoortPersoon;
-import nl.bzk.brp.model.hisvolledig.impl.kern.PersoonHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.predikaatview.kern.PersoonHisVolledigView;
-import nl.bzk.brp.util.hisvolledig.kern.PersoonHisVolledigImplBuilder;
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
-import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
+import static nl.bzk.brp.levering.lo3.support.MetaObjectUtil.actie;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class PersoonGeboorteMapperTest {
+import nl.bzk.brp.gba.dataaccess.VerConvRepository;
+import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpGeboorteInhoud;
+import nl.bzk.brp.levering.lo3.support.MetaObjectUtil;
+
+public class PersoonGeboorteMapperTest extends AbstractMapperTestBasis {
 
     private final PersoonGeboorteMapper mapper = new PersoonGeboorteMapper();
 
@@ -31,17 +31,16 @@ public class PersoonGeboorteMapperTest {
 
     @Test
     public void testSucces() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigImpl persImpl = maak(builder).build();
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(persImpl, null);
         final BrpStapel<BrpGeboorteInhoud> brpGeboorte =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+                doMapping(
+                    mapper,
+                    MetaObjectUtil.maakIngeschrevene(b -> MetaObjectUtil.voegPersoonGeboorteGroepToe(b, actie, 20130101, "0518", "6030")));
 
         Assert.assertNotNull(brpGeboorte);
         Assert.assertTrue(brpGeboorte.size() == 1);
         Assert.assertEquals(Integer.valueOf(20130101), brpGeboorte.get(0).getInhoud().getGeboortedatum().getWaarde());
-        Assert.assertEquals(Short.valueOf((short) 518), brpGeboorte.get(0).getInhoud().getGemeenteCode().getWaarde());
-        Assert.assertEquals(Short.valueOf((short) 6030), brpGeboorte.get(0).getInhoud().getLandOfGebiedCode().getWaarde());
+        Assert.assertEquals("0518", brpGeboorte.get(0).getInhoud().getGemeenteCode().getWaarde());
+        Assert.assertEquals("6030", brpGeboorte.get(0).getInhoud().getLandOfGebiedCode().getWaarde());
 
         Assert.assertNotNull(brpGeboorte.get(0).getActieInhoud());
         Assert.assertNull(brpGeboorte.get(0).getActieGeldigheid());
@@ -50,35 +49,17 @@ public class PersoonGeboorteMapperTest {
 
     @Test
     public void testLeeg() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
-        final BrpStapel<BrpGeboorteInhoud> brpGeboorte =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
-
+        final BrpStapel<BrpGeboorteInhoud> brpGeboorte = doMapping(mapper, MetaObjectUtil.maakIngeschrevene());
         Assert.assertNull(brpGeboorte);
     }
 
     @Test
     public void testGeenWaarde() {
-        final PersoonHisVolledigImplBuilder builder = new PersoonHisVolledigImplBuilder(SoortPersoon.INGESCHREVENE);
-        builder.nieuwGeboorteRecord(MapperTestUtil.maakActieModel(20131212000000L)).eindeRecord();
-
-        final PersoonHisVolledigView persoonHisVolledig = new PersoonHisVolledigView(builder.build(), null);
         final BrpStapel<BrpGeboorteInhoud> brpGeboorte =
-                mapper.map(persoonHisVolledig, new OnderzoekMapper(persoonHisVolledig), new TestActieHisVolledigLocator());
+                doMapping(mapper, MetaObjectUtil.maakIngeschrevene(b -> MetaObjectUtil.voegPersoonGeboorteGroepToe(b, actie, null, null, null)));
 
         Assert.assertNotNull(brpGeboorte);
         Assert.assertTrue(brpGeboorte.size() == 1);
         Assert.assertNull(brpGeboorte.get(0).getInhoud().getGeboortedatum());
-    }
-
-    public static PersoonHisVolledigImplBuilder maak(final PersoonHisVolledigImplBuilder builder) {
-        // @formatter:off
-        return builder.nieuwGeboorteRecord(MapperTestUtil.maakActieModel(20131212000000L))
-                .datumGeboorte(20130101)
-                .gemeenteGeboorte(Short.valueOf("518"))
-                .landGebiedGeboorte(Short.valueOf("6030"))
-                .eindeRecord();
-        // @formatter:on
     }
 }

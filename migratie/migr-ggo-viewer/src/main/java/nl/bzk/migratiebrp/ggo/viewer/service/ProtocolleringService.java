@@ -15,9 +15,7 @@ public interface ProtocolleringService {
 
     /**
      * Persisteer de protocollering.
-     * 
-     * @param protocollering
-     *            De protocollering die gepersisteerd moet worden.
+     * @param protocollering De protocollering die gepersisteerd moet worden.
      * @return De gepersisteerde protocollering.
      */
     Protocollering persisteerProtocollering(Protocollering protocollering);

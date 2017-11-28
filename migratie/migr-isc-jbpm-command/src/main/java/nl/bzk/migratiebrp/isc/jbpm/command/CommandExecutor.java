@@ -15,14 +15,10 @@ public interface CommandExecutor {
 
     /**
      * Voert het command uit.
-     *
-     * @param command
-     *            Het uit te voeren remote command.
-     * @param <T>
-     *            resultaat type
+     * @param command Het uit te voeren remote command.
+     * @param <T> resultaat type
      * @return Resultaat van het uitgevoerde remote command.
-     * @throws CommandException
-     *             In het geval er bij het uitvoeren een exceptie optreedt.
+     * @throws CommandException In het geval er bij het uitvoeren een exceptie optreedt.
      */
     <T> T executeCommand(final Command<T> command) throws CommandException;
 }

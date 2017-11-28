@@ -9,9 +9,8 @@
  * <p>
  * Het Migratie model dient ter ondersteuning van de conversieregels. Het migratiemodel is een
  * combinatie van BRP inhoud en LO3 historie.
- *
- * @since 1.0
  * @see nl.bzk.migratiebrp.conversie.model
+ * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.model.tussen;
 

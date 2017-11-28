@@ -20,18 +20,25 @@ import org.springframework.stereotype.Component;
 @Component
 public final class SessionFoutenDao implements FoutenDao {
 
+    private final SessionFactory sessionFactory;
+
+    /**
+     * Constructor.
+     * @param sessionFactory session factory
+     */
     @Inject
-    private SessionFactory sessionFactory;
+    public SessionFoutenDao(final SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public long registreerFout(
-        final String foutcode,
-        final String foutmelding,
-        final String proces,
-        final long processId,
-        final String bronGemeente,
-        final String doelGemeente)
-    {
+            final String foutcode,
+            final String foutmelding,
+            final String proces,
+            final long processId,
+            final String bronPartijCode,
+            final String doelPartijCode) {
         final Session session = sessionFactory.getCurrentSession();
 
         final Fout fout = new Fout();
@@ -40,8 +47,8 @@ public final class SessionFoutenDao implements FoutenDao {
         fout.setMelding(foutmelding);
         fout.setProces(proces);
         fout.setProcessInstance((ProcessInstance) session.load(ProcessInstance.class, processId));
-        fout.setProcesInitGemeente(bronGemeente);
-        fout.setProcesDoelGemeente(doelGemeente);
+        fout.setProcesInitGemeente(bronPartijCode);
+        fout.setProcesDoelPartijCode(doelPartijCode);
 
         session.save(fout);
 

@@ -6,7 +6,7 @@
 
 package nl.bzk.migratiebrp.conversie.model.lo3.element;
 
-import org.simpleframework.xml.Element;
+import nl.bzk.algemeenbrp.util.xml.annotation.Element;
 
 /**
  * 15.10 Soort verbintenis gebruikt in element 15.10.
@@ -16,9 +16,7 @@ public final class Lo3SoortVerbintenis extends AbstractLo3Element {
 
     /**
      * Constructor.
-     * 
-     * @param waarde
-     *            code
+     * @param waarde code
      */
     public Lo3SoortVerbintenis(final String waarde) {
         this(waarde, null);
@@ -26,15 +24,20 @@ public final class Lo3SoortVerbintenis extends AbstractLo3Element {
 
     /**
      * Constructor met onderzoek.
-     * 
-     * @param waarde
-     *            code
-     * @param onderzoek
-     *            het onderzoek waar deze code onder valt. Mag NULL zijn.
+     * @param waarde code
+     * @param onderzoek het onderzoek waar deze code onder valt. Mag NULL zijn.
      */
-    public Lo3SoortVerbintenis(@Element(name = "waarde", required = false) final String waarde, @Element(name = "onderzoek",
-            required = false) final Lo3Onderzoek onderzoek)
-    {
+    public Lo3SoortVerbintenis(
+            @Element(name = "waarde", required = false) final String waarde,
+            @Element(name = "onderzoek", required = false) final Lo3Onderzoek onderzoek) {
         super(waarde, onderzoek);
+    }
+
+    /**
+     * Bepaalt of de {@link Lo3SoortVerbintenis} eem geldige waarde bevat.
+     * @return true als waarde leeg, "H" of een "P" is.
+     */
+    public boolean bevatGeldigeWaarde() {
+        return getWaarde().isEmpty() || "H".equals(getWaarde()) || "P".equals(getWaarde());
     }
 }

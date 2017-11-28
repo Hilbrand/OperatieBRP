@@ -6,12 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnderCurateleIndicatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,7 +22,7 @@ public final class BrpOnderCurateleIndicatieMapper extends AbstractBrpMapper<Per
     @Override
     protected BrpOnderCurateleIndicatieInhoud mapInhoud(final PersoonIndicatieHistorie historie, final BrpOnderzoekMapper brpOnderzoekMapper) {
         final BrpBoolean indicatie =
-                BrpBoolean.wrap(historie.getWaarde(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INDICATIE_ONDERCURATELE, true));
+                BrpBoolean.wrap(historie.getWaarde(), brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INDICATIE_ONDERCURATELE_WAARDE, true));
 
         return new BrpOnderCurateleIndicatieInhoud(indicatie, null, null);
     }

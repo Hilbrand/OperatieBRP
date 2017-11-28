@@ -7,11 +7,39 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
 import java.sql.Timestamp;
-
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AanduidingInhoudingOfVermissingReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Aangever;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.AutoriteitAfgifteBuitenlandsPersoonsnummer;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Nationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerkrijgingNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenVerliesNLNationaliteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenWijzigingVerblijf;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortNederlandsReisdocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortPartij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Verblijfsrecht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Bijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.EffectAfnemerindicaties;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Geslachtsaanduiding;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Naamgebruik;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.NadereBijhoudingsaard;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Protocolleringsniveau;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortAdres;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortBetrokkenheid;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Stelsel;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingBijHuisnummerCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAangeverCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAdellijkeTitelCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBijhoudingsaardCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpCharacter;
@@ -44,33 +72,6 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpEffectAfn
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpProtocolleringsniveauCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpStelselCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.EffectAfnemerindicaties;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.autaut.entity.Protocolleringsniveau;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AanduidingInhoudingOfVermissingReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Aangever;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Bijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FunctieAdres;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Geslachtsaanduiding;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Naamgebruik;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.NadereBijhoudingsaard;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Nationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerkrijgingNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenVerliesNLNationaliteit;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenWijzigingVerblijf;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortBetrokkenheid;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortNederlandsReisdocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPartij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stelsel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Verblijfsrecht;
 
 /**
  * Mapper utilities.
@@ -83,11 +84,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpAanduidingBijHuisnummerCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpAanduidingBijHuisnummerCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpAanduidingBijHuisnummerCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpAanduidingBijHuisnummerCode mapBrpAanduidingBijHuisnummerCode(final String waarde, final Lo3Onderzoek onderzoek) {
@@ -100,11 +98,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpAangeverCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpAangeverCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpAangeverCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpAangeverCode mapBrpAangeverCode(final Aangever waarde, final Lo3Onderzoek onderzoek) {
@@ -118,11 +113,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpAdellijkeTitelCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpAdellijkeTitelCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpAdellijkeTitelCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpAdellijkeTitelCode mapBrpAdellijkeTitelCode(final AdellijkeTitel waarde, final Lo3Onderzoek onderzoek) {
@@ -136,12 +128,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpReisdocumentAutoriteitVanAfgifteCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpReisdocumentAutoriteitVanAfgifteCode attribuut te koppelen. Mag
-     *            null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpReisdocumentAutoriteitVanAfgifteCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpReisdocumentAutoriteitVanAfgifteCode mapBrpAutoriteitVanAfgifte(final String waarde, final Lo3Onderzoek onderzoek) {
@@ -154,11 +142,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpBijhoudingsaardCode met een optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpBijhoudingsaardCode mapBrpBijhoudingsaard(final Bijhoudingsaard waarde, final Lo3Onderzoek onderzoek) {
@@ -172,11 +157,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpBoolean met een optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpBoolean attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpBoolean attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpBoolean mapBrpBoolean(final Boolean waarde, final Lo3Onderzoek onderzoek) {
@@ -185,11 +167,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpLong met een optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpLong attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpLong attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpLong mapBrpLong(final Long waarde, final Lo3Onderzoek onderzoek) {
@@ -198,11 +177,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpCharacter met een optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpCharacter attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpCharacter attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpCharacter mapBrpCharacter(final Character waarde, final Lo3Onderzoek onderzoek) {
@@ -211,11 +187,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpString met een optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpString attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpString attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpString mapBrpString(final String waarde, final Lo3Onderzoek onderzoek) {
@@ -224,9 +197,7 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpDatumTijd.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static BrpDatumTijd mapBrpDatumTijd(final Timestamp waarde) {
@@ -235,11 +206,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpDatumTijd met optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpLong attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpLong attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpDatumTijd mapBrpDatumTijd(final Timestamp waarde, final Lo3Onderzoek onderzoek) {
@@ -248,14 +216,11 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpSoortAdresCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpLong attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpLong attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
-    public static BrpSoortAdresCode mapBrpSoortAdresCode(final FunctieAdres waarde, final Lo3Onderzoek onderzoek) {
+    public static BrpSoortAdresCode mapBrpSoortAdresCode(final SoortAdres waarde, final Lo3Onderzoek onderzoek) {
         if (waarde == null && onderzoek == null) {
             return null;
         } else {
@@ -266,29 +231,23 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpGemeenteCode met een optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpGemeenteCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpGemeenteCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpGemeenteCode mapBrpGemeenteCode(final Gemeente waarde, final Lo3Onderzoek onderzoek) {
         if (waarde == null && onderzoek == null) {
             return null;
         } else {
-            final Short code = waarde != null ? waarde.getCode() : null;
+            final String code = waarde != null ? waarde.getCode() : null;
             return new BrpGemeenteCode(code, onderzoek);
         }
     }
 
     /**
      * Map naar een BrpGeslachtsaanduidingCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpGeslachtsaanduidingCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpGeslachtsaanduidingCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpGeslachtsaanduidingCode mapBrpGeslachtsaanduidingCode(final Geslachtsaanduiding waarde, final Lo3Onderzoek onderzoek) {
@@ -302,45 +261,37 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpLandOfGebiedCode met een optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpLandOfGebiedCode mapBrpLandOfGebiedCode(final LandOfGebied waarde, final Lo3Onderzoek onderzoek) {
         if (waarde == null && onderzoek == null) {
             return null;
         } else {
-            final Short code = waarde != null ? waarde.getCode() : null;
+            final String code = waarde != null ? waarde.getCode() : null;
             return new BrpLandOfGebiedCode(code, onderzoek);
         }
     }
 
     /**
      * Map naar een BrpNationaliteitCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpNationaliteitCode mapBrpNationaliteitCode(final Nationaliteit waarde, final Lo3Onderzoek onderzoek) {
         if (waarde == null && onderzoek == null) {
             return null;
         } else {
-            final Short code = waarde != null ? waarde.getCode() : null;
+            final String code = waarde != null ? waarde.getCode() : null;
             return new BrpNationaliteitCode(code, onderzoek);
         }
     }
 
     /**
      * Map naar een BrpPartijCode.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static BrpPartijCode mapBrpPartijCode(final Partij waarde) {
@@ -349,29 +300,23 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpPartijCode met een optioneel onderzoek..
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpPartijCode mapBrpPartijCode(final Partij waarde, final Lo3Onderzoek onderzoek) {
         if (waarde == null && onderzoek == null) {
             return null;
         } else {
-            final Integer code = waarde != null ? waarde.getCode() : null;
+            final String code = waarde != null ? waarde.getCode() : null;
             return new BrpPartijCode(code, onderzoek);
         }
     }
 
     /**
      * Map naar een BrpPredikaatCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpPredikaatCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpPredikaatCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpPredicaatCode mapBrpPredicaatCode(final Predicaat waarde, final Lo3Onderzoek onderzoek) {
@@ -385,9 +330,7 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpProtocolleringsniveauCode.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static BrpProtocolleringsniveauCode mapBrpProtocolleringsniveauCode(final Protocolleringsniveau waarde) {
@@ -396,33 +339,26 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpEffectAfnemerindicatiesCode.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static BrpEffectAfnemerindicatiesCode mapBrpEffectAfnemersindicatiesCode(final EffectAfnemerindicaties waarde) {
-        return waarde == null ? null : new BrpEffectAfnemerindicatiesCode(waarde.getId());
+        return waarde == null ? null : new BrpEffectAfnemerindicatiesCode((short) waarde.getId());
     }
 
     /**
      * Map naar een BrpStelselCode.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static BrpStelselCode mapBrpStelselCode(final Stelsel waarde) {
-        return waarde == null ? null : new BrpStelselCode(waarde.getId());
+        return waarde == null ? null : new BrpStelselCode((short) waarde.getId());
     }
 
     /**
      * Map naar een BrpRedenEindeRelatieCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpRedenEindeRelatieCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpRedenEindeRelatieCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpRedenEindeRelatieCode mapBrpRedenEindeRelatieCode(final RedenBeeindigingRelatie waarde, final Lo3Onderzoek onderzoek) {
@@ -436,11 +372,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpNadereBijhoudingsaardCode met een optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpNadereBijhoudingsaardCode mapBrpNadereBijhoudingsaard(final NadereBijhoudingsaard waarde, final Lo3Onderzoek onderzoek) {
@@ -454,53 +387,42 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpRedenVerkrijgingNederlandschapCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpRedenVerkrijgingNederlandschapCode mapBrpRedenVerkrijgingNederlandschapCode(
-        final RedenVerkrijgingNLNationaliteit waarde,
-        final Lo3Onderzoek onderzoek)
-    {
+            final RedenVerkrijgingNLNationaliteit waarde,
+            final Lo3Onderzoek onderzoek) {
         if (waarde == null && onderzoek == null) {
             return null;
         } else {
-            final Short code = waarde != null ? waarde.getCode() : null;
+            final String code = waarde != null ? waarde.getCode() : null;
             return new BrpRedenVerkrijgingNederlandschapCode(code, onderzoek);
         }
     }
 
     /**
      * Map naar een BrpRedenVerliesNederlandschapCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpRedenVerliesNederlandschapCode mapBrpRedenVerliesNederlanderschapCode(
-        final RedenVerliesNLNationaliteit waarde,
-        final Lo3Onderzoek onderzoek)
-    {
+            final RedenVerliesNLNationaliteit waarde,
+            final Lo3Onderzoek onderzoek) {
         if (waarde == null && onderzoek == null) {
             return null;
         } else {
-            final Short code = waarde != null ? waarde.getCode() : null;
+            final String code = waarde != null ? waarde.getCode() : null;
             return new BrpRedenVerliesNederlandschapCode(code, onderzoek);
         }
     }
 
     /**
      * Map naar een BrpRedenWijzigingVerblijfCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpRedenWijzigingVerblijfCode mapBrpRedenWijzigingVerblijfCode(final RedenWijzigingVerblijf waarde, final Lo3Onderzoek onderzoek) {
@@ -514,18 +436,13 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpAanduidingInhoudingOfVermissingReisdocumentCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpAanduidingInhoudingOfVermissingReisdocumentCode attribuut te
-     *            koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpAanduidingInhoudingOfVermissingReisdocumentCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpAanduidingInhoudingOfVermissingReisdocumentCode mapBrpAanduidingInhoudingOfVermissingReisdocument(
-        final AanduidingInhoudingOfVermissingReisdocument waarde,
-        final Lo3Onderzoek onderzoek)
-    {
+            final AanduidingInhoudingOfVermissingReisdocument waarde,
+            final Lo3Onderzoek onderzoek) {
         if (waarde == null && onderzoek == null) {
             return null;
         } else {
@@ -536,12 +453,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpSoortNederlandsReisdocumentCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpAanduidingInhoudingOfVermissingReisdocumentCode attribuut te
-     *            koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpAanduidingInhoudingOfVermissingReisdocumentCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpSoortNederlandsReisdocumentCode mapBrpReisdocumentSoort(final SoortNederlandsReisdocument waarde, final Lo3Onderzoek onderzoek) {
@@ -555,11 +468,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpSoortActieCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpSoortDocumentCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpSoortDocumentCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpSoortActieCode mapBrpSoortActieCode(final SoortActie waarde, final Lo3Onderzoek onderzoek) {
@@ -573,9 +483,7 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpSoortBetrokkenheidCode.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static BrpSoortBetrokkenheidCode mapBrpSoortBetrokkenheidCode(final SoortBetrokkenheid waarde) {
@@ -584,11 +492,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpSoortDocumentCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpSoortDocumentCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpSoortDocumentCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpSoortDocumentCode mapBrpSoortDocumentCode(final SoortDocument waarde, final Lo3Onderzoek onderzoek) {
@@ -602,9 +507,7 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpSoortPartijCode.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static BrpSoortPartijCode mapBrpSoortPartijCode(final SoortPartij waarde) {
@@ -613,9 +516,7 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpSoortRelatieCode.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static BrpSoortRelatieCode mapBrpSoortRelatieCode(final SoortRelatie waarde) {
@@ -624,29 +525,23 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpVerblijfsrechtCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpVerblijfsrechtCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpVerblijfsrechtCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpVerblijfsrechtCode mapBrpVerblijfsrechtCode(final Verblijfsrecht waarde, final Lo3Onderzoek onderzoek) {
         if (waarde == null && onderzoek == null) {
             return null;
         } else {
-            final Short code = waarde != null ? waarde.getCode() : null;
+            final String code = waarde != null ? waarde.getCode() : null;
             return new BrpVerblijfsrechtCode(code, onderzoek);
         }
     }
 
     /**
      * Map naar een BrpNaamgebruikCode.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpNaamgebruikCode attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpNaamgebruikCode attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpNaamgebruikCode mapBrpNaamgebruikCode(final Naamgebruik waarde, final Lo3Onderzoek onderzoek) {
@@ -660,9 +555,7 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een Character.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static Character mapCharacter(final String waarde) {
@@ -671,9 +564,7 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpDatum.
-     *
-     * @param waarde
-     *            BRP database waarde
+     * @param waarde BRP database waarde
      * @return BRP conversiemodel waarde
      */
     public static BrpDatum mapDatum(final Integer waarde) {
@@ -682,11 +573,8 @@ public final class BrpMapperUtil {
 
     /**
      * Map naar een BrpDatum met een optioneel onderzoek.
-     *
-     * @param waarde
-     *            BRP database waarde
-     * @param onderzoek
-     *            LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
+     * @param waarde BRP database waarde
+     * @param onderzoek LO3 Onderzoek object om aan het BrpDatum attribuut te koppelen. Mag null zijn.
      * @return BRP conversiemodel waarde
      */
     public static BrpDatum mapDatum(final Integer waarde, final Lo3Onderzoek onderzoek) {
@@ -696,4 +584,24 @@ public final class BrpMapperUtil {
             return new BrpDatum(waarde, onderzoek);
         }
     }
+
+    /**
+     * Mapt een {@link AutoriteitAfgifteBuitenlandsPersoonsnummer} naar een
+     * {@link BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer} met een optioneel {@link Lo3Onderzoek}.
+     * @param autoriteitAfgifteBuitenlandsPersoonsnummer BRP database waarde
+     * @param onderzoek LO3 Onderzoek. Null als het object niet in onderzoek staat
+     * @return een {@link BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer}
+     */
+    public static BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer mapBrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer(
+            final AutoriteitAfgifteBuitenlandsPersoonsnummer autoriteitAfgifteBuitenlandsPersoonsnummer,
+            final Lo3Onderzoek onderzoek) {
+        final String autoriteitVanAfgifte =
+                autoriteitAfgifteBuitenlandsPersoonsnummer == null ? null : autoriteitAfgifteBuitenlandsPersoonsnummer.getNationaliteit().getCode();
+        if (autoriteitAfgifteBuitenlandsPersoonsnummer == null && onderzoek == null) {
+            return null;
+        } else {
+            return new BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer(autoriteitVanAfgifte, onderzoek);
+        }
+    }
+
 }

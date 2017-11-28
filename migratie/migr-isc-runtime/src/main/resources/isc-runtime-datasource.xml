@@ -16,7 +16,7 @@
         <property name="jdbcUrl" value="${isc.database.nonxa.url:jdbc:postgresql://localhost/isc}"/>
         <property name="user" value="${isc.database.username:postgres}"/>
         <property name="password" value="${isc.database.password:postgres}"/>
-        <property name="minPoolSize" value="${isc.database.nonxa.minpool:3}"/>
+        <property name="minPoolSize" value="${isc.database.nonxa.minpool:1}"/>
         <property name="maxPoolSize" value="${isc.database.nonxa.maxpool:20}"/>
     </bean>
 
@@ -26,7 +26,7 @@
              | Tijdens jUnit testen kan de ApplicationContext meerdere keren worden geinstantieerd.
              | Elke keer dient een unique naam gebruikt te worden, anders gaat Atomikos fout.
               -->
-            <bean class="nl.bzk.migratiebrp.util.common.UniqueName" >
+            <bean class="nl.bzk.algemeenbrp.jta.util.UniqueName" >
             	<property name="baseName" value="iscDatabase" />
             </bean>
         </property>
@@ -41,7 +41,7 @@
             </props>
         </property>
         <property name="maxPoolSize" value="${isc.database.maxpool:20}" />
-        <property name="minPoolSize" value="${isc.database.minpool:3}"/>
+        <property name="minPoolSize" value="${isc.database.minpool:1}"/>
     </bean>
 
 </beans>

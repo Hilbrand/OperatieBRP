@@ -6,12 +6,12 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.decorators;
 
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Gemeente;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.LandOfGebied;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RedenBeeindigingRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortDocument;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RedenBeeindigingRelatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.SoortDocument;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 
 /**
  * Abstractie laag voor de decorators van Delta waar in methodes zijn geplaatst die nodig zijn binnen de verschillende
@@ -21,94 +21,55 @@ public abstract class AbstractDecorator {
 
     /**
      * Geeft de code van de {@link Gemeente} terug.
-     * 
-     * @param waarde
-     *            de gemeente waarvan de code terug gegeven wordt
+     * @param waarde de gemeente waarvan de code terug gegeven wordt
      * @return de code van de gemeente
      */
-    protected final Short getGemeenteWaarde(final Gemeente waarde) {
-        Short resultaat = null;
-        if (waarde != null) {
-            resultaat = waarde.getCode();
-        }
-
-        return resultaat;
+    protected final String getGemeenteWaarde(final Gemeente waarde) {
+        return waarde != null ? waarde.getCode() : null;
     }
 
     /**
      * Geeft de code van het {@link LandOfGebied} terug.
-     *
-     * @param waarde
-     *            het land/gebied waarvan de code terug gegeven wordt
+     * @param waarde het land/gebied waarvan de code terug gegeven wordt
      * @return de code van het land/gebied
      */
-    protected final Short getLandOfGebiedWaarde(final LandOfGebied waarde) {
-        Short resultaat = null;
-        if (waarde != null) {
-            resultaat = waarde.getCode();
-        }
-
-        return resultaat;
+    protected final String getLandOfGebiedWaarde(final LandOfGebied waarde) {
+        return waarde != null ? waarde.getCode() : null;
     }
 
     /**
      * Geeft de code van de {@link RedenBeeindigingRelatie} terug.
-     *
-     * @param waarde
-     *            de reden beeindiging relatie waarvan de code terug gegeven wordt
+     * @param waarde de reden beeindiging relatie waarvan de code terug gegeven wordt
      * @return de code van de reden beeindiging relatie
      */
     protected final Character getRedenEindeWaarde(final RedenBeeindigingRelatie waarde) {
-        Character resultaat = null;
-        if (waarde != null) {
-            resultaat = waarde.getCode();
-        }
-
-        return resultaat;
+        return waarde != null ? waarde.getCode() : null;
     }
 
     /**
      * Geeft de code van de {@link Partij} terug.
-     *
-     * @param partij
-     *            de partij waarvan de code terug gegeven wordt
+     * @param partij de partij waarvan de code terug gegeven wordt
      * @return de code van de partij
      */
-    protected final Integer getPartijWaarde(final Partij partij) {
-        Integer resultaat = null;
-        if (partij != null) {
-            resultaat = partij.getCode();
-        }
-        return resultaat;
+    protected final String getPartijWaarde(final Partij partij) {
+        return partij != null ? partij.getCode() : null;
     }
 
     /**
      * Geeft de code van de {@link SoortDocument} terug.
-     *
-     * @param soortDocument
-     *            het soort document waarvan de code terug gegeven wordt
+     * @param soortDocument het soort document waarvan de code terug gegeven wordt
      * @return de code van het soort document
      */
     protected final String getSoortDocumentWaarde(final SoortDocument soortDocument) {
-        String resultaat = null;
-        if (soortDocument != null) {
-            resultaat = soortDocument.getNaam();
-        }
-        return resultaat;
+        return soortDocument != null ? soortDocument.getNaam() : null;
     }
 
     /**
      * Geeft de code van de {@link SoortRelatie} terug.
-     *
-     * @param soortRelatie
-     *            het soort document waarvan de code terug gegeven wordt
+     * @param soortRelatie het soort document waarvan de code terug gegeven wordt
      * @return de code van het soort document
      */
     protected final String getSoortRelatieWaarde(final SoortRelatie soortRelatie) {
-        String resultaat = null;
-        if (soortRelatie != null) {
-            resultaat = soortRelatie.getCode();
-        }
-        return resultaat;
+        return soortRelatie != null ? soortRelatie.getCode() : null;
     }
 }

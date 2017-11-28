@@ -9,34 +9,42 @@ package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3IndicatieGeheimCode;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.RubriekWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
 import org.springframework.stereotype.Component;
 
 /**
  * Vertaald GBA voorwaarde regels van type indicatie geheim; hiervoor wordt een conversie tabel gebruikt.
  */
 @Component
-public final class IndicatieGeheimVoorwaardeRegel extends AbstractIndicatieVoorwaardeRegel {
+public final class IndicatieGeheimVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
 
-    /**
-     * Rubriek voor deze indicatie.
-     */
-    public static final String RUBRIEK = "07.70.10";
+    private static final String REGEX_PATROON = "^07\\.70\\.10.*";
+    private static final int VOLGORDE = 500;
 
-    @Inject
-    private ConversietabelFactory conversieTabelFactory;
+    private final IndicatieVoorwaardeRegelUtil indicatieVoorwaardeRegelUtil;
 
     /**
      * Maakt nieuwe voorwaarderegel aan.
+     * @param conversieTabelFactory conversie tabel factory
+     * @param gbaRubriekNaarBrpTypeVertaler rubriekvertaler
      */
-    public IndicatieGeheimVoorwaardeRegel() {
-        super(RUBRIEK);
+    @Inject
+    public IndicatieGeheimVoorwaardeRegel(
+            final ConversietabelFactory conversieTabelFactory,
+            final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler) {
+        super(VOLGORDE, REGEX_PATROON);
+        indicatieVoorwaardeRegelUtil = new IndicatieVoorwaardeRegelUtil(gbaRubriekNaarBrpTypeVertaler, waarde ->
+                conversieTabelFactory.createIndicatieGeheimConversietabel()
+                        .converteerNaarBrp(new Lo3IndicatieGeheimCode(waarde.replaceAll("\"", ""), null))
+                        .getWaarde()
+        );
     }
 
     @Override
-    protected Boolean vertaalIndicatieVanWaarde(final String ruweWaarde) {
-        final String zonderAanhalingstekens = ruweWaarde.replaceAll("\"", "");
-        return conversieTabelFactory.createIndicatieGeheimConversietabel()
-                                    .converteerNaarBrp(new Lo3IndicatieGeheimCode(zonderAanhalingstekens, null))
-                                    .getWaarde();
+    public Expressie getBrpExpressie(final RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
+        return indicatieVoorwaardeRegelUtil.getBrpExpressie(voorwaardeRegel);
     }
 }

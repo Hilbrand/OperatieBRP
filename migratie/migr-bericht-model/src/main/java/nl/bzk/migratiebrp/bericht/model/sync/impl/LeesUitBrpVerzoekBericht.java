@@ -6,7 +6,6 @@
 
 package nl.bzk.migratiebrp.bericht.model.sync.impl;
 
-import nl.bzk.migratiebrp.bericht.model.AbstractBericht;
 import nl.bzk.migratiebrp.bericht.model.sync.AbstractSyncBerichtZonderGerelateerdeInformatie;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.AntwoordFormaatType;
 import nl.bzk.migratiebrp.bericht.model.sync.generated.LeesUitBrpVerzoekType;
@@ -32,9 +31,7 @@ public final class LeesUitBrpVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * JAXB constructor.
-     *
-     * @param leesUitBrpVerzoekType
-     *            Het lees uit BRP verzoek type {@link LeesUitBrpVerzoekType}
+     * @param leesUitBrpVerzoekType Het lees uit BRP verzoek type {@link LeesUitBrpVerzoekType}
      */
     public LeesUitBrpVerzoekBericht(final LeesUitBrpVerzoekType leesUitBrpVerzoekType) {
         super("LeesUitBrpVerzoek");
@@ -46,24 +43,19 @@ public final class LeesUitBrpVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Convenience constructor.
-     *
-     * @param aNummer
-     *            anummer
+     * @param aNummer anummer
      */
-    public LeesUitBrpVerzoekBericht(final long aNummer) {
+    public LeesUitBrpVerzoekBericht(final String aNummer) {
         this();
         setANummer(aNummer);
     }
 
     /**
      * Convenience constructor.
-     *
-     * @param aNummer
-     *            anummer
-     * @param antwoordFormaat
-     *            antwoordformaat
+     * @param aNummer anummer
+     * @param antwoordFormaat antwoordformaat
      */
-    public LeesUitBrpVerzoekBericht(final long aNummer, final AntwoordFormaatType antwoordFormaat) {
+    public LeesUitBrpVerzoekBericht(final String aNummer, final AntwoordFormaatType antwoordFormaat) {
         this();
         setANummer(aNummer);
         setAntwoordFormaat(antwoordFormaat);
@@ -80,26 +72,22 @@ public final class LeesUitBrpVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Geeft het A-nummer op het bericht terug.
-     *
      * @return Het A-nummer op het bericht.
      */
-    public Long getANummer() {
-        return AbstractBericht.asLong(leesUitBrpVerzoekType.getANummer());
+    public String getANummer() {
+        return leesUitBrpVerzoekType.getANummer();
     }
 
     /**
      * Zet de waarde van a nummer.
-     *
-     * @param aNummer
-     *            a-nummer
+     * @param aNummer a-nummer
      */
-    public void setANummer(final Long aNummer) {
-        leesUitBrpVerzoekType.setANummer(aNummer == null ? null : aNummer.toString());
+    public void setANummer(final String aNummer) {
+        leesUitBrpVerzoekType.setANummer(aNummer);
     }
 
     /**
      * Geeft het gewenste antwoordFormaat terug.
-     *
      * @return Het AntwoordFormaatType.
      */
     public AntwoordFormaatType getAntwoordFormaat() {
@@ -108,9 +96,7 @@ public final class LeesUitBrpVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Zet de waarde van antwoord formaat.
-     *
-     * @param antwoordFormaat
-     *            antwoord formaat
+     * @param antwoordFormaat antwoord formaat
      */
     public void setAntwoordFormaat(final AntwoordFormaatType antwoordFormaat) {
         leesUitBrpVerzoekType.setAntwoordFormaat(antwoordFormaat);
@@ -118,7 +104,6 @@ public final class LeesUitBrpVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Geef de waarde van technische sleutel.
-     *
      * @return technische sleutel
      */
     public String getTechnischeSleutel() {
@@ -127,9 +112,7 @@ public final class LeesUitBrpVerzoekBericht extends AbstractSyncBerichtZonderGer
 
     /**
      * Zet de waarde van technische sleutel.
-     *
-     * @param technischeSleutel
-     *            technische sleutel
+     * @param technischeSleutel technische sleutel
      */
     public void setTechnischeSleutel(final String technischeSleutel) {
         leesUitBrpVerzoekType.setTechnischeSleutel(technischeSleutel);

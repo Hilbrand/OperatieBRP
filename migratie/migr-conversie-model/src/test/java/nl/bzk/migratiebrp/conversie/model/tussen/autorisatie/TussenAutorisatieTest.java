@@ -7,28 +7,25 @@
 package nl.bzk.migratiebrp.conversie.model.tussen.autorisatie;
 
 import java.util.Collections;
-
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpPartijCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.autorisatie.BrpStelselCode;
 import nl.bzk.migratiebrp.conversie.model.testutils.EqualsAndHashcodeTester;
-
 import org.junit.Test;
 
 public class TussenAutorisatieTest {
 
     @Test
     public void test() throws NoSuchMethodException, IllegalAccessException {
-        final TussenAutorisatie subject = maak(1);
-        final TussenAutorisatie equals = maak(1);
-        final TussenAutorisatie different = maak(2);
+        final TussenAutorisatie subject = maak("000001");
+        final TussenAutorisatie equals = maak("000001");
+        final TussenAutorisatie different = maak("000002");
 
         EqualsAndHashcodeTester.testEqualsHashcodeAndToString(subject, equals, different);
     }
 
-    public static TussenAutorisatie maak(final int partij) {
-        return new TussenAutorisatie(TussenPartijTest.maak(partij), Collections.singletonList(new TussenLeveringsautorisatie(
-            BrpStelselCode.GBA,
-            false,
-            null,
-            null)));
+    public static TussenAutorisatie maak(final String partij) {
+        return new TussenAutorisatie(new BrpPartijCode(partij), new BrpBoolean(false),
+                Collections.singletonList(new TussenLeveringsautorisatie(BrpStelselCode.GBA, false, null, null)));
     }
 }

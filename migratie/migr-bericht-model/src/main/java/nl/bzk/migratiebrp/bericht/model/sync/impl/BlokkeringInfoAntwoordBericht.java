@@ -34,9 +34,7 @@ public final class BlokkeringInfoAntwoordBericht extends AbstractSyncBerichtZond
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een storebericht te maken.
-     *
-     * @param blokkeringInfoAntwoordType
-     *            het blokkeringInfoAntwoord type
+     * @param blokkeringInfoAntwoordType het blokkeringInfoAntwoord type
      */
     public BlokkeringInfoAntwoordBericht(final BlokkeringInfoAntwoordType blokkeringInfoAntwoordType) {
         super("BlokkeringInfoAntwoord");
@@ -54,7 +52,6 @@ public final class BlokkeringInfoAntwoordBericht extends AbstractSyncBerichtZond
 
     /**
      * Geeft de persoonsaanduiding {@link PersoonsaanduidingType} op het bericht terug.
-     *
      * @return De persoonsaanduiding {@link PersoonsaanduidingType} op het bericht.
      */
     public PersoonsaanduidingType getPersoonsaanduiding() {
@@ -63,9 +60,7 @@ public final class BlokkeringInfoAntwoordBericht extends AbstractSyncBerichtZond
 
     /**
      * Zet de persoonsaanduiding {@link PersoonsaanduidingType} op het bericht.
-     *
-     * @param persoonsaanduiding
-     *            De te zetten persoonsaanduiding {@link PersoonsaanduidingType} op het bericht.
+     * @param persoonsaanduiding De te zetten persoonsaanduiding {@link PersoonsaanduidingType} op het bericht.
      */
     public void setPersoonsaanduiding(final PersoonsaanduidingType persoonsaanduiding) {
         blokkeringInfoAntwoordType.setPersoonsaanduiding(persoonsaanduiding);
@@ -73,7 +68,6 @@ public final class BlokkeringInfoAntwoordBericht extends AbstractSyncBerichtZond
 
     /**
      * Geeft het proces ID van het bericht terug.
-     *
      * @return Het proces ID van het bericht.
      */
     public String getProcessId() {
@@ -82,9 +76,7 @@ public final class BlokkeringInfoAntwoordBericht extends AbstractSyncBerichtZond
 
     /**
      * Zet het proces ID op het bericht.
-     *
-     * @param processId
-     *            Het te zetten proces ID.
+     * @param processId Het te zetten proces ID.
      */
     public void setProcessId(final String processId) {
         blokkeringInfoAntwoordType.setProcessId(processId);
@@ -92,7 +84,6 @@ public final class BlokkeringInfoAntwoordBericht extends AbstractSyncBerichtZond
 
     /**
      * Geeft het gemeente naar van het bericht terug.
-     *
      * @return Het gemeente naar van het bericht.
      */
     public String getGemeenteNaar() {
@@ -101,9 +92,7 @@ public final class BlokkeringInfoAntwoordBericht extends AbstractSyncBerichtZond
 
     /**
      * Zet het gemeente naar op het bericht.
-     *
-     * @param gemeenteNaar
-     *            Het te zetten gemeente naar
+     * @param gemeenteNaar Het te zetten gemeente naar
      */
     public void setGemeenteNaar(final String gemeenteNaar) {
         blokkeringInfoAntwoordType.setGemeenteNaar(gemeenteNaar);
@@ -111,7 +100,6 @@ public final class BlokkeringInfoAntwoordBericht extends AbstractSyncBerichtZond
 
     /**
      * Geeft de status {@link StatusType} van het bericht terug.
-     *
      * @return De status {@link StatusType} van het bericht.
      */
     public StatusType getStatus() {
@@ -120,9 +108,7 @@ public final class BlokkeringInfoAntwoordBericht extends AbstractSyncBerichtZond
 
     /**
      * Zet de status {@link StatusType} op het bericht.
-     *
-     * @param status
-     *            De te zetten status {@link StatusType}.
+     * @param status De te zetten status {@link StatusType}.
      */
     public void setStatus(final StatusType status) {
         blokkeringInfoAntwoordType.setStatus(status);

@@ -19,7 +19,6 @@ public final class MessageId {
 
     /**
      * Genereer een message id voor een sync antwooord bericht.
-     *
      * @return message id
      */
     public static String generateSyncMessageId() {

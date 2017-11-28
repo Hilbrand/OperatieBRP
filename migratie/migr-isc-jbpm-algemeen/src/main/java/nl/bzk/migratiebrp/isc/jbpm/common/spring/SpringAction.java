@@ -14,9 +14,7 @@ import java.util.Map;
 public interface SpringAction {
     /**
      * Execute.
-     * 
-     * @param parameters
-     *            input parameters
+     * @param parameters input parameters
      * @return output parameters
      */
     Map<String, Object> execute(Map<String, Object> parameters);

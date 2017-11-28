@@ -7,7 +7,7 @@
 
     <context:property-placeholder/>
 
-    <import resource="voisc-spd.xml" />
-    <import resource="voisc-database.xml" />
+    <import resource="voisc-mailbox-client.xml"/>
+    <import resource="voisc-database.xml"/>
 
 </beans>

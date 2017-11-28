@@ -21,8 +21,16 @@ import org.springframework.stereotype.Component;
 @Component("foutafhandelingMaakDeblokkeringAction")
 public final class MaakDeblokkeringAction implements SpringAction {
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakDeblokkeringAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public Map<String, Object> execute(final Map<String, Object> parameters) {

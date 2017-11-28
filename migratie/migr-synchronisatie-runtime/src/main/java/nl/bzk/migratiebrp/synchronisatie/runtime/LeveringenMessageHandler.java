@@ -12,14 +12,10 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.jms.Session;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.util.common.logging.FunctioneleMelding;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.MDC;
-import nl.bzk.migratiebrp.util.common.logging.MDC.MDCCloser;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 /**
  * Message handler voor BRP leveringen.
@@ -28,34 +24,25 @@ public final class LeveringenMessageHandler implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger();
 
+    private Destination queueLevering;
     private JmsTemplate jmsTemplate;
 
-    @Inject
-    @Named("queueLevering")
-    private Destination queueLevering;
-
     /**
-     * Zet de waarde van connection factory.
-     *
-     * @param connectionFactory
-     *            connection factory
+     * Constructor.
+     * @param queueLevering levering queue
+     * @param connectionFactory queue connection factory
      */
     @Inject
-    @Named("queueConnectionFactory")
-    public void setConnectionFactory(final ConnectionFactory connectionFactory) {
+    public LeveringenMessageHandler(@Named("queueLevering") final Destination queueLevering,
+                                    @Named("queueConnectionFactory") final ConnectionFactory connectionFactory) {
+        this.queueLevering = queueLevering;
         jmsTemplate = new JmsTemplate(connectionFactory);
     }
 
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
     public void onMessage(final Message message) {
-        try (final MDCCloser verwerkingCloser = MDC.startVerwerking()) {
-            jmsTemplate.send(queueLevering, new MessageCreator() {
-                @Override
-                public Message createMessage(final Session session) {
-                    return message;
-                }
-            });
+        try {
+            jmsTemplate.send(queueLevering, session -> message);
 
             LOG.info(FunctioneleMelding.SYNC_LEVERING_VERWERKT);
         } catch (final Exception e) {

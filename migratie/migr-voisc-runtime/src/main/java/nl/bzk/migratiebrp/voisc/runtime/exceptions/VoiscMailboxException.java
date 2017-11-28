@@ -14,9 +14,7 @@ public class VoiscMailboxException extends VoiscException {
 
     /**
      * Constructor.
-     * 
-     * @param foutmelding
-     *            foutmelding
+     * @param foutmelding foutmelding
      */
     public VoiscMailboxException(final String foutmelding) {
         super(foutmelding);
@@ -24,11 +22,8 @@ public class VoiscMailboxException extends VoiscException {
 
     /**
      * Constructor.
-     * 
-     * @param foutmelding
-     *            foutmelding
-     * @param oorzaak
-     *            oorzaak
+     * @param foutmelding foutmelding
+     * @param oorzaak oorzaak
      */
     public VoiscMailboxException(final String foutmelding, final Throwable oorzaak) {
         super(foutmelding, oorzaak);

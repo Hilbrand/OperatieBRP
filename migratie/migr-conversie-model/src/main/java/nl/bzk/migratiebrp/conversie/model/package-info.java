@@ -7,7 +7,6 @@
 /**
  * Bevat classes die betrekking hebben op het gehele migratie project.
  * Dit zijn over het algemeen domein overstijgende classes.
- *
  * @since 1.0
  */
 package nl.bzk.migratiebrp.conversie.model;

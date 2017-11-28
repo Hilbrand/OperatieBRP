@@ -7,6 +7,7 @@
 package nl.bzk.migratiebrp.test.expressie;
 
 import antlr.RecognitionException;
+import edu.emory.mathcs.backport.java.util.Collections;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,30 +21,29 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import nl.bzk.brp.blobifier.service.AfnemerIndicatieBlobifierService;
-import nl.bzk.brp.blobifier.service.BlobifierService;
-import nl.bzk.brp.expressietaal.Expressie;
-import nl.bzk.brp.expressietaal.Keyword;
-import nl.bzk.brp.expressietaal.expressies.VariabeleExpressie;
-import nl.bzk.brp.expressietaal.expressies.functies.FunctieExpressie;
-import nl.bzk.brp.expressietaal.expressies.functies.Functieberekening;
-import nl.bzk.brp.expressietaal.expressies.operatoren.AbstractBinaireOperatorExpressie;
-import nl.bzk.brp.expressietaal.expressies.operatoren.AbstractUnaireOperatorExpressie;
-import nl.bzk.brp.expressietaal.parser.BRPExpressies;
-import nl.bzk.brp.expressietaal.parser.ParserResultaat;
-import nl.bzk.brp.model.hisvolledig.impl.autaut.PersoonAfnemerindicatieHisVolledigImpl;
-import nl.bzk.brp.model.hisvolledig.kern.PersoonHisVolledig;
-import nl.bzk.brp.model.hisvolledig.momentview.kern.PersoonView;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Lo3Bericht;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Lo3BerichtenBron;
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
+import nl.bzk.algemeenbrp.util.common.logging.LoggingContext;
+import nl.bzk.brp.domain.expressie.Expressie;
+import nl.bzk.brp.domain.expressie.ExpressieException;
+import nl.bzk.brp.domain.expressie.VariabeleExpressie;
+import nl.bzk.brp.domain.expressie.BRPExpressies;
+import nl.bzk.brp.domain.expressie.functie.Functie;
+import nl.bzk.brp.domain.expressie.functie.FunctieFactory;
+import nl.bzk.brp.domain.expressie.parser.ExpressieParser;
+import nl.bzk.brp.domain.leveringmodel.persoon.Persoonslijst;
+import nl.bzk.brp.service.algemeen.blob.PersoonslijstService;
 import nl.bzk.migratiebrp.bericht.model.BerichtSyntaxException;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Inhoud;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
@@ -72,9 +72,10 @@ import nl.bzk.migratiebrp.conversie.regels.proces.ConverteerLo3NaarBrpService;
 import nl.bzk.migratiebrp.conversie.regels.proces.logging.Logging;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.regels.proces.preconditie.PreconditiesService;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3Bericht;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Lo3BerichtenBron;
-import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpDalService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpAfnemerIndicatiesService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpAutorisatieService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.BrpPersoonslijstService;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.PartijNietGevondenException;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.PersoonslijstPersisteerResultaat;
 import nl.bzk.migratiebrp.test.common.reader.Reader;
 import nl.bzk.migratiebrp.test.common.reader.ReaderFactory;
@@ -82,7 +83,7 @@ import nl.bzk.migratiebrp.test.common.resultaat.Foutmelding;
 import nl.bzk.migratiebrp.test.common.resultaat.TestResultaat;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStap;
 import nl.bzk.migratiebrp.test.common.resultaat.TestStatus;
-import nl.bzk.migratiebrp.test.common.util.BaseFilter;
+import nl.bzk.migratiebrp.test.common.util.EndsWithFilter;
 import nl.bzk.migratiebrp.test.common.util.FilterType;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
 import nl.bzk.migratiebrp.test.dal.TestCasusOutputStap;
@@ -90,9 +91,6 @@ import nl.bzk.migratiebrp.test.expressie.ConversieTestResultaat.PersoonControleR
 import nl.bzk.migratiebrp.test.expressie.brp.FunctieSelectieDatum;
 import nl.bzk.migratiebrp.test.expressie.brp.FunctieVandaag;
 import nl.bzk.migratiebrp.util.common.JdbcConstants;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
-import nl.bzk.migratiebrp.util.common.logging.LoggingContext;
 import nl.gba.gbav.impl.util.UtilsImpl;
 import nl.gba.gbav.lo3.LO3PL;
 import nl.gba.gbav.util.configuration.DeploymentContext;
@@ -106,6 +104,7 @@ import nl.ictu.spg.domain.lo3.voorwaarderegel.VoorwaardeRegel;
 import nl.ictu.spg.domain.lo3.voorwaarderegel.VoorwaardeRegelInterpretException;
 import nl.ictu.spg.domain.lo3.voorwaarderegel.antlr.VoorwaardeRegelInterpreter;
 import nl.ictu.spg.domain.pl.util.PLAssembler;
+import org.apache.commons.io.IOUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -134,13 +133,15 @@ public final class ConversieTestCasus extends TestCasus {
     private Lo3SyntaxControle syntaxControle;
     private PreconditiesService preconditieService;
     private ConverteerLo3NaarBrpService converteerLo3NaarBrpService;
-    private BrpDalService brpDalService;
+    private BrpPersoonslijstService brpPersoonslijstService;
+    private BrpAfnemerIndicatiesService brpAfnemerIndicatiesService;
+    private BrpAutorisatieService brpAutorisatieService;
     private DataSource migratieDataSource;
     private EntityManager migratieEntityManager;
 
     private PlatformTransactionManager transactionManagerMaster;
-    private BlobifierService blobifierService;
-    private AfnemerIndicatieBlobifierService afnemerIndicatieBlobifierService;
+
+    private PersoonslijstService persoonslijstService;
 
     private final File basisInputFile;
     private final File inputFile;
@@ -153,31 +154,22 @@ public final class ConversieTestCasus extends TestCasus {
 
     /**
      * Constructor.
-     *
-     * @param thema
-     *            thema
-     * @param naam
-     *            naam
-     * @param outputFolder
-     *            output folder
-     * @param expectedFolder
-     *            expected folder
-     * @param basisInputFile
-     *            basis input (file)
-     * @param inputFile
-     *            input (file)
-     * @param inputVoorwaarderegel
-     *            de te testen voorwaarde regel
+     * @param thema thema
+     * @param naam naam
+     * @param outputFolder output folder
+     * @param expectedFolder expected folder
+     * @param basisInputFile basis input (file)
+     * @param inputFile input (file)
+     * @param inputVoorwaarderegel de te testen voorwaarde regel
      */
     protected ConversieTestCasus(
-        final String thema,
-        final String naam,
-        final File outputFolder,
-        final File expectedFolder,
-        final File basisInputFile,
-        final File inputFile,
-        final String inputVoorwaarderegel)
-    {
+            final String thema,
+            final String naam,
+            final File outputFolder,
+            final File expectedFolder,
+            final File basisInputFile,
+            final File inputFile,
+            final String inputVoorwaarderegel) {
         super(thema, naam, outputFolder, expectedFolder);
         this.basisInputFile = basisInputFile;
         this.inputFile = inputFile;
@@ -186,7 +178,6 @@ public final class ConversieTestCasus extends TestCasus {
 
     /**
      * Geef de waarde van bean for migratie autowire.
-     *
      * @return bean for migratie autowire
      */
     public Object getBeanForMigratieAutowire() {
@@ -195,7 +186,6 @@ public final class ConversieTestCasus extends TestCasus {
 
     /**
      * Geef de waarde van bean for brp levering autowire.
-     *
      * @return bean for brp levering autowire
      */
     public Object getBeanForBrpLeveringAutowire() {
@@ -237,12 +227,11 @@ public final class ConversieTestCasus extends TestCasus {
     }
 
     private void initialiseerVasteWaarden() {
-        @SuppressWarnings("unchecked")
-        final Dictionary<Keyword, Functieberekening> functieMapping =
-                (Dictionary<Keyword, Functieberekening>) getStaticField(FunctieExpressie.class, "KEYWORD_MAPPING");
+        @SuppressWarnings("unchecked") final FunctieFactory factory = (FunctieFactory) getStaticField(FunctieFactory.class, "INSTANCE");
+        final Map<String, Functie> functieMapping = (Map<String, Functie>) ReflectionTestUtils.getField(factory, "keywordMapping");
 
-        functieMapping.put(Keyword.VANDAAG, new FunctieVandaag());
-        // functieMapping.put("SELECTIE_DATUM", new FunctieSelectieDatum());
+        functieMapping.put("VANDAAG", new FunctieVandaag());
+        functieMapping.put("SELECTIE_DATUM", new FunctieSelectieDatum());
 
         resetVasteWaarden();
 
@@ -275,7 +264,7 @@ public final class ConversieTestCasus extends TestCasus {
         vasteWaardeVandaag = null;
         vasteWaardeSelectieDatum = null;
         FunctieVandaag.resetVandaag();
-        FunctieSelectieDatum.resetSelectieDatum();
+        FunctieSelectieDatum.resetSelectiedatum();
     }
 
     private Object getStaticField(final Class<?> clazz, final String fieldName) {
@@ -296,11 +285,8 @@ public final class ConversieTestCasus extends TestCasus {
 
     /**
      * Test conversie lo3 naar brp.
-     *
-     * @param lo3Voorwaarderegel
-     *            lo3
-     * @param result
-     *            result
+     * @param lo3Voorwaarderegel lo3
+     * @param result result
      * @return expressie
      */
     private String testLo3NaarBrp(final String lo3Voorwaarderegel, final ConversieTestResultaat result) {
@@ -335,7 +321,7 @@ public final class ConversieTestCasus extends TestCasus {
                     result.setLo3NaarBrp(new TestStap(TestStatus.OK, "Er is een verwachte exceptie opgetreden (conversie naar brp)", htmlFout, null));
                 } else {
                     result.setLo3NaarBrp(
-                        new TestStap(TestStatus.NOK, "Er is een anders dan verwachte exceptie opgetreden (conversie naar brp)", htmlFout, null));
+                            new TestStap(TestStatus.NOK, "Er is een anders dan verwachte exceptie opgetreden (conversie naar brp)", htmlFout, null));
                 }
             } else {
                 result.setLo3NaarBrp(new TestStap(TestStatus.EXCEPTIE, "Er is een exceptie opgetreden (conversie naar brp)", htmlFout, null));
@@ -357,7 +343,7 @@ public final class ConversieTestCasus extends TestCasus {
             return;
         }
 
-        for (final File persoonFile : personenDirectory.listFiles(new BaseFilter(FilterType.FILE))) {
+        for (final File persoonFile : personenDirectory.listFiles(new EndsWithFilter("xls", FilterType.FILE))) {
             try {
                 testUitvoerenRegels(persoonFile, lo3Voorwaarderegel, brpExpressie, result);
             } catch (final IOException e) {
@@ -367,11 +353,10 @@ public final class ConversieTestCasus extends TestCasus {
     }
 
     private void testUitvoerenRegels(
-        final File persoonFile,
-        final String lo3Voorwaarderegel,
-        final String brpExpressie,
-        final ConversieTestResultaat result) throws IOException
-    {
+            final File persoonFile,
+            final String lo3Voorwaarderegel,
+            final String brpExpressie,
+            final ConversieTestResultaat result) throws IOException {
         final PersoonControleResultaat resultaat = new PersoonControleResultaat(persoonFile.getName());
         result.getPersonen().add(resultaat);
 
@@ -401,7 +386,7 @@ public final class ConversieTestCasus extends TestCasus {
         } else {
             try {
                 final StringBuilder expressieLogging = new StringBuilder();
-                resultaatBrp = uitvoerenBrpRegel(persoonFile.getName(), pltext, brpExpressie, expressieLogging);
+                resultaatBrp = uitvoerenBrpRegel(persoonFile.getName(), pltext, brpExpressie, expressieLogging, leesExtraExpressies(persoonFile));
                 final String htmlLogging =
                         debugOutputString(expressieLogging.toString(), TestCasusOutputStap.STAP_ROND, persoonFile.getName() + "-expressies");
                 resultaat.setBrp(new TestStap(TestStatus.OK, resultaatBrp.toString(), htmlLogging, null));
@@ -421,7 +406,20 @@ public final class ConversieTestCasus extends TestCasus {
         }
 
         resultaat.setStatus(status);
+    }
 
+    private List<String> leesExtraExpressies(final File persoonsFile) {
+        final File extraExpressiesFile = new File(persoonsFile.getParent(), persoonsFile.getName() + ".expressies");
+        if (extraExpressiesFile.isFile() && extraExpressiesFile.exists()) {
+            try (final InputStream in = new FileInputStream(extraExpressiesFile)) {
+                return IOUtils.readLines(in);
+            } catch (IOException e) {
+                LOG.warn("Kon extra expressie bestand niet lezen", e);
+                return Collections.emptyList();
+            }
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private Boolean uitvoerenGbaRegel(final String pltext, final String lo3Voorwaarderegel) {
@@ -456,7 +454,6 @@ public final class ConversieTestCasus extends TestCasus {
             final Collection vandaagDatum = new java.util.HashSet();
             vandaagDatum.add(Integer.valueOf(vasteWaardeVandaag));
             ReflectionTestUtils.setField(interpreter, "vandaagDatum", vandaagDatum);
-            // System.out.println("VandaagDatum: " + vandaagDatum);
         }
 
         if (uitvoerenAlsSelectie) {
@@ -480,9 +477,9 @@ public final class ConversieTestCasus extends TestCasus {
         return result;
     }
 
-    private Boolean uitvoerenBrpRegel(final String persoonFilename, final String pltext, final String brpExpressie, final StringBuilder expressieLogging)
-        throws BerichtSyntaxException, OngeldigePersoonslijstException
-    {
+    private Boolean uitvoerenBrpRegel(final String persoonFilename, final String pltext, final String brpExpressie, final StringBuilder expressieLogging,
+                                      List<String> extraExpressies)
+            throws BerichtSyntaxException, OngeldigePersoonslijstException {
         // BRP opschonen
         initierenDatabase();
 
@@ -529,8 +526,7 @@ public final class ConversieTestCasus extends TestCasus {
 
         final Lo3Bericht lo3Bericht =
                 new Lo3Bericht("persoon", Lo3BerichtenBron.SYNCHRONISATIE, new Timestamp(System.currentTimeMillis()), "ExcelData", true);
-        final PersoonslijstPersisteerResultaat result =
-                brpDalService.persisteerPersoonslijst(brpPl, brpPl.getActueelAdministratienummer(), false, lo3Bericht);
+        final PersoonslijstPersisteerResultaat result = brpPersoonslijstService.persisteerPersoonslijst(brpPl, lo3Bericht);
 
         verwerkAfnemersindicaties(lo3Afnemersindicaties);
 
@@ -541,36 +537,44 @@ public final class ConversieTestCasus extends TestCasus {
         final TransactionStatus testcaseTransaction = transactionManagerMaster.getTransaction(testcaseTransactionDefinition);
         try {
             // Lezen uit database
-            final PersoonHisVolledig persoonHisVolledig = blobifierService.leesBlob(result.getPersoon().getId());
-            final Set<PersoonAfnemerindicatieHisVolledigImpl> brpAfnemerindicaties =
-                    afnemerIndicatieBlobifierService.leesBlob(result.getPersoon().getId());
-            for (final PersoonAfnemerindicatieHisVolledigImpl brpAfnemerindicatie : brpAfnemerindicaties) {
-                LOG.info("Persoon heeft afnemersindicatie voor partij met code {}", brpAfnemerindicatie.getAfnemer().getWaarde().getCode().getWaarde());
-            }
+            final Persoonslijst persoonslijst = persoonslijstService.getById(result.getPersoon().getId());
 
             // Vaste waarden in expressie vastzetten
             if (vasteWaardeVandaag != null) {
                 FunctieVandaag.setVandaag(vasteWaardeVandaag);
             }
+            // Vaste waarden in expressie vastzetten
             if (vasteWaardeSelectieDatum != null) {
-                FunctieSelectieDatum.setSelectieDatum(vasteWaardeSelectieDatum);
+                FunctieSelectieDatum.setSelectieDatum(Integer.valueOf(vasteWaardeSelectieDatum));
             }
+            // Expressie wordt uitegevoerd op een PersoonView
+            final Persoonslijst persoonNu = persoonslijst.getNuNuBeeld();
+            expressieLogging.append("\n").append(persoonNu.toStringVolledig()).append("\n");
 
-            // Parse expressie
+            // Parse en uitvoeren hoofd expressie
             LOG.info("Expressie = " + brpExpressie);
-            final ParserResultaat parserResultaat = BRPExpressies.parse(brpExpressie);
-            final Expressie expressie = parserResultaat.getExpressie();
-            if (expressie == null) {
-                LOG.info("Expressie foutmelding = " + parserResultaat.getFoutmelding());
-                throw new IllegalArgumentException("BRP expressie kan niet geparsed worden: " + parserResultaat.getFoutmelding());
+            final Expressie expressie;
+            try {
+                expressie = ExpressieParser.parse(brpExpressie);
+            } catch (ExpressieException e) {
+                LOG.info("Expressie foutmelding = " + e.getMessage());
+                throw new IllegalArgumentException("BRP expressie kan niet geparsed worden: ", e);
             }
             LOG.info("Expressie parser resultaat = " + expressie);
-
-            // Expressie wordt uitegevoerd op een PersoonView
-            final PersoonView persoonView = new PersoonView(persoonHisVolledig);
-            final Expressie evaluatieResultaat = uitvoerenBRPexpressie(expressie, persoonView, expressieLogging);
-
+            final Expressie evaluatieResultaat = uitvoerenBRPexpressie(expressie, persoonNu, expressieLogging);
             LOG.info("Expressie evaluatie resultaat = " + evaluatieResultaat);
+
+            LOG.info("Extra expressies = " + extraExpressies);
+            for (String extraExpressieString : extraExpressies) {
+                try {
+                    final Expressie extraExpressie = ExpressieParser.parse(extraExpressieString);
+                    final Expressie extraResultaat = uitvoerenBRPexpressie(extraExpressie, persoonNu, new StringBuilder());
+                    LOG.info("Extra expressie resultaat {} ===> {}", extraExpressieString, extraResultaat.alsString());
+                } catch (ExpressieException e) {
+                    LOG.info("Extra expressie foutmelding = " + e.getMessage());
+                }
+            }
+
             return evaluatieResultaat.alsBoolean();
 
         } catch (final Exception e) {
@@ -602,8 +606,8 @@ public final class ConversieTestCasus extends TestCasus {
                 }
 
                 final String afnemerindicatieWaarde = categorie.getElement(Lo3ElementEnum.ELEMENT_4010);
-                final Integer afnemerindicatie =
-                        afnemerindicatieWaarde == null | "".equals(afnemerindicatieWaarde) ? null : Integer.valueOf(afnemerindicatieWaarde);
+                final String afnemerindicatie =
+                        afnemerindicatieWaarde == null | "".equals(afnemerindicatieWaarde) ? null : afnemerindicatieWaarde;
                 LOG.info("Input heeft afnemersindicatie {}", afnemerindicatie);
                 final Lo3AfnemersindicatieInhoud inhoud = new Lo3AfnemersindicatieInhoud(afnemerindicatie);
                 final Lo3Herkomst herkomst = categorie.getLo3Herkomst();
@@ -632,21 +636,21 @@ public final class ConversieTestCasus extends TestCasus {
                 aanmakenPartijEnAbonnementInDatabaseVoorAfnemersindicatie(brpAfnemersindicatie.getPartijCode().getWaarde());
             }
 
-            brpDalService.persisteerAfnemersindicaties(brpAfnemersindicaties);
-        } catch (final Lo3SyntaxException e) {
+            brpAfnemerIndicatiesService.persisteerAfnemersindicaties(brpAfnemersindicaties);
+        } catch (final Lo3SyntaxException | PartijNietGevondenException e) {
             LOG.error("Probleem met converteren en opslaan afnemersindicatie (maken autorisatie)", e);
         } finally {
             Logging.destroyContext();
         }
     }
 
-    private void aanmakenPartijEnAbonnementInDatabaseVoorAfnemersindicatie(final Integer partijCode) throws Lo3SyntaxException {
+    private void aanmakenPartijEnAbonnementInDatabaseVoorAfnemersindicatie(final String partijCode) throws Lo3SyntaxException, PartijNietGevondenException {
         final Lo3AutorisatieInhoud inhoud = new Lo3AutorisatieInhoud();
         inhoud.setAfnemersindicatie(partijCode);
         inhoud.setAfnemernaam("Partij " + partijCode);
         inhoud.setMediumSpontaan("N");
         inhoud.setRubrieknummerSpontaan("01.01.10");
-        inhoud.setIndicatieGeheimhouding(Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.asElement());
+        inhoud.setIndicatieGeheimhouding(Lo3IndicatieGeheimCodeEnum.GEEN_BEPERKING.getCode());
         // inhoud.setVersieNr(1);
         inhoud.setDatumIngang(new Lo3Datum(19700101));
         inhoud.setVerstrekkingsbeperking(0);
@@ -658,33 +662,40 @@ public final class ConversieTestCasus extends TestCasus {
         final Lo3Autorisatie lo3Autorisatie = new Lo3Autorisatie(new Lo3Stapel<Lo3AutorisatieInhoud>(Arrays.asList(categorie)));
 
         final BrpAutorisatie brpAutorisatie = converteerLo3NaarBrpService.converteerLo3Autorisatie(lo3Autorisatie);
-        brpDalService.persisteerAutorisatie(brpAutorisatie);
+        brpAutorisatieService.persisteerAutorisatie(brpAutorisatie);
     }
 
-    private Expressie uitvoerenBRPexpressie(final Expressie expressie, final PersoonView persoon, final StringBuilder expressieLogging) {
+    private Expressie uitvoerenBRPexpressie(final Expressie expressie, final Persoonslijst persoonslijst, final StringBuilder expressieLogging) {
         if (expressie instanceof VariabeleExpressie) {
             LOG.info("Skipping execution of VariabeleExpressie: {}", expressie);
             return null;
         }
 
-        final Expressie resultaat = BRPExpressies.evalueer(expressie, persoon);
+        final Expressie resultaat;
+        try {
+            resultaat = vasteWaardeSelectieDatum != null
+                    ? BRPExpressies.evalueerMetSelectieDatum(expressie, persoonslijst, Integer.parseInt(vasteWaardeSelectieDatum))
+                    : BRPExpressies.evalueer(expressie, persoonslijst);
+        } catch (ExpressieException e) {
+            throw new IllegalArgumentException(e);
+        }
         expressieLogging.append(expressie).append(" ---> ").append(resultaat).append("\n");
 
-        if (expressie instanceof AbstractUnaireOperatorExpressie) {
-            final AbstractUnaireOperatorExpressie unaireOperatorExpressie = (AbstractUnaireOperatorExpressie) expressie;
-            uitvoerenBRPexpressie(unaireOperatorExpressie.getOperand(), persoon, expressieLogging);
-        } else if (expressie instanceof AbstractBinaireOperatorExpressie) {
-            final AbstractBinaireOperatorExpressie binaireOperatorExpressie = (AbstractBinaireOperatorExpressie) expressie;
-            uitvoerenBRPexpressie(binaireOperatorExpressie.getOperandLinks(), persoon, expressieLogging);
-            uitvoerenBRPexpressie(binaireOperatorExpressie.getOperandRechts(), persoon, expressieLogging);
-        } else if (expressie instanceof FunctieExpressie) {
-            final FunctieExpressie functieExpressie = (FunctieExpressie) expressie;
-            final List<Expressie> argumenten = (List<Expressie>) ReflectionTestUtils.getField(functieExpressie, "argumenten");
-
-            for (final Expressie argument : argumenten) {
-                uitvoerenBRPexpressie(argument, persoon, expressieLogging);
-            }
-        }
+//        if (expressie instanceof AbstractUnaireOperator) {
+//            final AbstractUnaireOperator unaireOperatorExpressie = (AbstractUnaireOperator) expressie;
+//            uitvoerenBRPexpressie(unaireOperatorExpressie.getOperand(), persoonslijst, expressieLogging);
+//        } else if (expressie instanceof AbstractBinaireOperator) {
+//            final AbstractBinaireOperator binaireOperatorExpressie = (AbstractBinaireOperator) expressie;
+//            uitvoerenBRPexpressie(binaireOperatorExpressie.getOperandLinks(), persoonslijst, expressieLogging);
+//            uitvoerenBRPexpressie(binaireOperatorExpressie.getOperandRechts(), persoonslijst, expressieLogging);
+//        } else if (expressie instanceof FunctieExpressie) {
+//            final FunctieExpressie functieExpressie = (FunctieExpressie) expressie;
+//            final List<Expressie> argumenten = (List<Expressie>) ReflectionTestUtils.getField(functieExpressie, "argumenten");
+//
+//            for (final Expressie argument : argumenten) {
+//                uitvoerenBRPexpressie(argument, persoonslijst, expressieLogging);
+//            }
+//        }
 
         return resultaat;
     }
@@ -711,7 +722,7 @@ public final class ConversieTestCasus extends TestCasus {
 
     private int countFrom(final Connection connection, final String table) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement("select count(*) from " + table)) {
-            try (final ResultSet resultSet = preparedStatement.executeQuery()) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 resultSet.next();
                 return resultSet.getInt(JdbcConstants.COLUMN_1);
             }
@@ -770,9 +781,7 @@ public final class ConversieTestCasus extends TestCasus {
 
         /**
          * Zet de waarde van lo3 syntax controle.
-         *
-         * @param injectSyntaxControle
-         *            lo3 syntax controle
+         * @param injectSyntaxControle lo3 syntax controle
          */
         @Inject
         public void setLo3SyntaxControle(final Lo3SyntaxControle injectSyntaxControle) {
@@ -781,9 +790,7 @@ public final class ConversieTestCasus extends TestCasus {
 
         /**
          * Zet de waarde van precondities service.
-         *
-         * @param injectPreconditieService
-         *            precondities service
+         * @param injectPreconditieService precondities service
          */
         @Inject
         public void setPreconditiesService(final PreconditiesService injectPreconditieService) {
@@ -792,9 +799,7 @@ public final class ConversieTestCasus extends TestCasus {
 
         /**
          * Zet de waarde van converteer lo3 naar brp service.
-         *
-         * @param injectConverteerLo3NaarBrpService
-         *            converteer lo3 naar brp service
+         * @param injectConverteerLo3NaarBrpService converteer lo3 naar brp service
          */
         @Inject
         public void setConverteerLo3NaarBrpService(final ConverteerLo3NaarBrpService injectConverteerLo3NaarBrpService) {
@@ -803,9 +808,7 @@ public final class ConversieTestCasus extends TestCasus {
 
         /**
          * Zet je converteer naar expressie service
-         *
-         * @param injectConverteerNaarExpressieService
-         *            De te zetten service.
+         * @param injectConverteerNaarExpressieService De te zetten service.
          */
         @Inject
         public void setConverteerNaarExpressieService(final ConverteerNaarExpressieService injectConverteerNaarExpressieService) {
@@ -813,21 +816,35 @@ public final class ConversieTestCasus extends TestCasus {
         }
 
         /**
-         * Zet de waarde van brp dal service.
-         *
-         * @param injectBrpDalService
-         *            brp dal service
+         * Zet de waarde van brp persoonslijst service.
+         * @param injectBrpPersoonslijstService brp persoonslijst service
          */
         @Inject
-        public void setBrpDalService(final BrpDalService injectBrpDalService) {
-            brpDalService = injectBrpDalService;
+        public void setBrpPersoonslijstService(final BrpPersoonslijstService injectBrpPersoonslijstService) {
+            brpPersoonslijstService = injectBrpPersoonslijstService;
+        }
+
+        /**
+         * Zet de waarde van brp autorisatie service.
+         * @param injectBrpAutorisatieService brp autorisatie service
+         */
+        @Inject
+        public void setBrpAutorisatieService(final BrpAutorisatieService injectBrpAutorisatieService) {
+            brpAutorisatieService = injectBrpAutorisatieService;
+        }
+
+        /**
+         * Zet de waarde van brp afnemerindicaties service.
+         * @param injectBrpAfnemerIndicatiesService brp afnemerindicaties service
+         */
+        @Inject
+        public void setBrpAfnemerIndicatiesService(final BrpAfnemerIndicatiesService injectBrpAfnemerIndicatiesService) {
+            brpAfnemerIndicatiesService = injectBrpAfnemerIndicatiesService;
         }
 
         /**
          * Zet de waarde van data source.
-         *
-         * @param injectMigratieDataSource
-         *            data source
+         * @param injectMigratieDataSource data source
          */
         @Inject
         @Named("syncDalDataSource")
@@ -837,9 +854,7 @@ public final class ConversieTestCasus extends TestCasus {
 
         /**
          * Zet de waarde van entity manager.
-         *
-         * @param injectMigratieEntityManager
-         *            entity manager
+         * @param injectMigratieEntityManager entity manager
          */
         @PersistenceContext
         public void setEntityManager(final EntityManager injectMigratieEntityManager) {
@@ -851,37 +866,21 @@ public final class ConversieTestCasus extends TestCasus {
      * Interne bean class om Spring injectie te kunnen gebruiken voor settings.
      */
     private class BeanForBrpLeveringAutowire {
-
         /**
-         * Zet de waarde van blobifier service.
-         *
-         * @param injectBlobifierService
-         *            blobifier service
+         * Zet de waarde van persoonsgegevens service.
+         * @param injectPersoonslijstService persoonsgegevens service
          */
         @Inject
-        public void setBlobifierService(final BlobifierService injectBlobifierService) {
-            blobifierService = injectBlobifierService;
-        }
-
-        /**
-         * Zet de waarde van afnemersindicatie blobifier service.
-         *
-         * @param injectAfnemerIndicatieBlobifierService
-         *            afnemersindicatie blobifier service
-         */
-        @Inject
-        public void setBlobifierService(final AfnemerIndicatieBlobifierService injectAfnemerIndicatieBlobifierService) {
-            afnemerIndicatieBlobifierService = injectAfnemerIndicatieBlobifierService;
+        public void setPersoonsgegevensService(final PersoonslijstService injectPersoonslijstService) {
+            persoonslijstService = injectPersoonslijstService;
         }
 
         /**
          * Zet de waarde van transaction manager master.
-         *
-         * @param injectTransactionManagerMaster
-         *            transaction manager master
+         * @param injectTransactionManagerMaster transaction manager master
          */
         @Inject
-        @Named("lezenSchrijvenTransactionManager")
+        @Named("masterTransactionManager")
         public void setTransactionManagerMaster(final PlatformTransactionManager injectTransactionManagerMaster) {
             transactionManagerMaster = injectTransactionManagerMaster;
         }

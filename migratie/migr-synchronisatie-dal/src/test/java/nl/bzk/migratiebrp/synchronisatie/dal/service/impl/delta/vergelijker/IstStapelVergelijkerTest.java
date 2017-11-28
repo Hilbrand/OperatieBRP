@@ -14,12 +14,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Relatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Stapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortRelatie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.IstSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Relatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortRelatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Stapel;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.AbstractDeltaTest;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VergelijkerResultaat;
@@ -27,9 +30,6 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilType;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.decorators.StapelDecorator;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
-
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Unittest voor RelatieVergelijker.
@@ -64,7 +64,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelVoorkomenToe(nieuweStapel, true, 0);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
         assertNotNull(resultaat);
         assertTrue(resultaat.isLeeg());
     }
@@ -78,7 +78,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelVoorkomenToe(bestaandeStapel, true, 0);
         voegIstStapelRelatieToe(bestaandeStapel, SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, bestaandeStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, bestaandeStapel);
         assertNotNull(resultaat);
         assertTrue(resultaat.isLeeg());
     }
@@ -96,7 +96,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelVoorkomenToe(nieuweStapel, true, 0);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
         assertNotNull(resultaat);
         assertFalse(resultaat.isLeeg());
         final Set<Verschil> verschillen = resultaat.getVerschillen();
@@ -105,7 +105,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         final Verschil verschil = verschillen.iterator().next();
         final Sleutel sleutel = verschil.getSleutel();
         assertTrue(sleutel instanceof IstSleutel);
-        assertEquals(Stapel.VOLGNUMMER, sleutel.getVeld());
+        assertEquals(Stapel.VELD_VOLGNUMMER, sleutel.getVeld());
         assertEquals(VerschilType.ELEMENT_AANGEPAST, verschil.getVerschilType());
         assertEquals(StapelDecorator.decorate(bestaandeStapel), verschil.getOudeWaarde());
         assertEquals(StapelDecorator.decorate(nieuweStapel), verschil.getNieuweWaarde());
@@ -126,7 +126,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelVoorkomenToe(nieuweStapel, true, 1);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
         assertNotNull(resultaat);
         assertFalse(resultaat.isLeeg());
         assertEquals(2, resultaat.getVerschillen().size());
@@ -164,7 +164,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelVoorkomenToe(nieuweStapel, true, 1);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
         assertNotNull(resultaat);
         assertFalse(resultaat.isLeeg());
         final Set<Verschil> verschillen = resultaat.getVerschillen();
@@ -195,7 +195,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelVoorkomenToe(nieuweStapel, true, 1, true);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
         assertNotNull(resultaat);
         assertFalse(resultaat.isLeeg());
         assertEquals(2, resultaat.getVerschillen().size());
@@ -233,7 +233,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelVoorkomenToe(nieuweStapel, true, 2, true);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.FAMILIERECHTELIJKE_BETREKKING);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
         assertNotNull(resultaat);
         assertFalse(resultaat.isLeeg());
         assertEquals(2, resultaat.getVerschillen().size());
@@ -270,7 +270,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.GEREGISTREERD_PARTNERSCHAP);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.HUWELIJK);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
 
         final Set<Verschil> verschillen = resultaat.getVerschillen();
         assertEquals(1, verschillen.size());
@@ -278,7 +278,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         final Verschil verschil = verschillen.iterator().next();
         final Sleutel sleutel = verschil.getSleutel();
         assertTrue(sleutel instanceof IstSleutel);
-        assertEquals(Stapel.RELATIES, sleutel.getVeld());
+        assertEquals(Stapel.VELD_RELATIES, sleutel.getVeld());
         assertEquals(VerschilType.RIJ_TOEGEVOEGD, verschil.getVerschilType());
         assertNull(verschil.getOudeWaarde());
         assertNotNull(verschil.getNieuweWaarde());
@@ -299,14 +299,14 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelVoorkomenToe(nieuweStapel, true, 0);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.HUWELIJK);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
 
         assertEquals(2, resultaat.getVerschillen().size());
 
         final Verschil verschilVerwijderd = resultaat.getVerschil(VerschilType.RIJ_VERWIJDERD);
         final Sleutel sleutelVerwijderd = verschilVerwijderd.getSleutel();
         assertTrue(sleutelVerwijderd instanceof IstSleutel);
-        assertEquals(Stapel.RELATIES, sleutelVerwijderd.getVeld());
+        assertEquals(Stapel.VELD_RELATIES, sleutelVerwijderd.getVeld());
         assertEquals(VerschilType.RIJ_VERWIJDERD, verschilVerwijderd.getVerschilType());
         assertNotNull(verschilVerwijderd.getOudeWaarde());
         assertNull(verschilVerwijderd.getNieuweWaarde());
@@ -314,7 +314,7 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         final Verschil verschilNieuw = resultaat.getVerschil(VerschilType.RIJ_TOEGEVOEGD);
         final Sleutel sleutelNieuw = verschilNieuw.getSleutel();
         assertTrue(sleutelNieuw instanceof IstSleutel);
-        assertEquals(Stapel.RELATIES, sleutelNieuw.getVeld());
+        assertEquals(Stapel.VELD_RELATIES, sleutelNieuw.getVeld());
         assertEquals(VerschilType.RIJ_TOEGEVOEGD, verschilNieuw.getVerschilType());
         assertNull(verschilNieuw.getOudeWaarde());
         assertNotNull(verschilNieuw.getNieuweWaarde());
@@ -336,14 +336,14 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.HUWELIJK);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.GEREGISTREERD_PARTNERSCHAP);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
 
         assertEquals(1, resultaat.getVerschillen().size());
 
         final Verschil verschilNieuw = resultaat.getVerschil(VerschilType.RIJ_TOEGEVOEGD);
         final Sleutel sleutelNieuw = verschilNieuw.getSleutel();
         assertTrue(sleutelNieuw instanceof IstSleutel);
-        assertEquals(Stapel.RELATIES, sleutelNieuw.getVeld());
+        assertEquals(Stapel.VELD_RELATIES, sleutelNieuw.getVeld());
         assertEquals(VerschilType.RIJ_TOEGEVOEGD, verschilNieuw.getVerschilType());
         assertNull(verschilNieuw.getOudeWaarde());
         assertNotNull(verschilNieuw.getNieuweWaarde());
@@ -365,14 +365,14 @@ public class IstStapelVergelijkerTest extends AbstractDeltaTest {
         voegIstStapelVoorkomenToe(nieuweStapel, true, 0);
         voegIstStapelRelatieToe(nieuweStapel, SoortRelatie.GEREGISTREERD_PARTNERSCHAP);
 
-        VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
+        final VergelijkerResultaat resultaat = vergelijker.vergelijk(context, bestaandeStapel, nieuweStapel);
 
         assertEquals(1, resultaat.getVerschillen().size());
 
         final Verschil verschilNieuw = resultaat.getVerschil(VerschilType.RIJ_VERWIJDERD);
         final Sleutel sleutelNieuw = verschilNieuw.getSleutel();
         assertTrue(sleutelNieuw instanceof IstSleutel);
-        assertEquals(Stapel.RELATIES, sleutelNieuw.getVeld());
+        assertEquals(Stapel.VELD_RELATIES, sleutelNieuw.getVeld());
         assertEquals(VerschilType.RIJ_VERWIJDERD, verschilNieuw.getVerschilType());
         assertNotNull(verschilNieuw.getOudeWaarde());
         assertNull(verschilNieuw.getNieuweWaarde());

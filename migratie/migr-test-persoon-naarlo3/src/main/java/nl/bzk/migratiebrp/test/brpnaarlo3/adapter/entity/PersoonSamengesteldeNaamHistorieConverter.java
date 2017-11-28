@@ -8,13 +8,15 @@ package nl.bzk.migratiebrp.test.brpnaarlo3.adapter.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.AdellijkeTitel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Persoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Predicaat;
+
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Persoon;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.AdellijkeTitel;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Predicaat;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.ConverterContext;
 import nl.bzk.migratiebrp.test.brpnaarlo3.adapter.OnbekendeHeaderException;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -71,13 +73,13 @@ public final class PersoonSamengesteldeNaamHistorieConverter extends AbstractEnt
                 indicatieNamenreeks = Boolean.valueOf(value);
                 break;
             case HEADER_PREDICAAT:
-                predicaat = Predicaat.parseId(Short.valueOf(value));
+                predicaat = Predicaat.parseId(Integer.valueOf(value));
                 break;
             case HEADER_VOORNAMEN:
                 voornamen = value;
                 break;
             case HEADER_ADELLIJKE_TITEL:
-                adellijkeTitel = AdellijkeTitel.parseId(Short.valueOf(value));
+                adellijkeTitel = AdellijkeTitel.parseId(Integer.valueOf(value));
                 break;
             case HEADER_VOORVOEGSEL:
                 voorvoegsel = value;

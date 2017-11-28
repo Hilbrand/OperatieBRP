@@ -6,8 +6,11 @@
 
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.LeverwijzeSelectie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortSelectie;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingBijHuisnummerCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
@@ -57,7 +60,6 @@ import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3String;
 
 /**
  * Deze factory interface definieert de creatie van alle verschillende conversietabellen.
- *
  */
 public interface ConversietabelFactory {
 
@@ -134,7 +136,8 @@ public interface ConversietabelFactory {
     /**
      * @return de reden ontbreken reisdocument conversietabel.
      */
-    Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode> createAanduidingInhoudingVermissingReisdocumentConversietabel();
+    Conversietabel<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode>
+    createAanduidingInhoudingVermissingReisdocumentConversietabel();
 
     /**
      * @return de reden opschorting bijhouding conversietabel.
@@ -221,4 +224,23 @@ public interface ConversietabelFactory {
      */
     Conversietabel<Character, String> createRegelConversietabel();
 
+    /**
+     * @return de conversietabel voor autorisatie afgifte buitenlands persoonsnummer.
+     */
+    Conversietabel<Lo3NationaliteitCode, BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer> createAutoriteitVanAfgifteBuitenlandsPersoonsnummertabel();
+
+    /**
+     * @return de conversietabel voor soort selectie.
+     */
+    Conversietabel<Integer, SoortSelectie> createSoortSelectieConversietabel();
+
+    /**
+     * @return de conversietabel voor bericht aanduiding.
+     */
+    Conversietabel<Integer, Boolean> createBerichtaanduidingConversietabel();
+
+    /**
+     * @return de conversietabel voor medium selectie.
+     */
+    Conversietabel<String, LeverwijzeSelectie> createMediumSelectieConversietabel();
 }

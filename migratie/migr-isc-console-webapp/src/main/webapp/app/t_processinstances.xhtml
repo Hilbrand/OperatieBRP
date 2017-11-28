@@ -41,6 +41,11 @@
         <ga:attribute name="style" value="#{viewMode == 'child' ? 'display:none' : ''}"/>
         <td colspan="10">
             <p class="parameter">
+                <label class="label">Process-id</label>
+                <input name="processInstanceId_i" type="text" maxlength="10" size="10" value="#{filter_processInstanceId}"
+                       onkeypress="keypress(event,'apply')"/>
+            </p>
+            <p class="parameter">
                 <label class="label">Betrokken a-nummer</label>
                 <input name="anummer_i" type="text" maxlength="10" size="10" value="#{filter_anummer}"
                        onkeypress="keypress(event,'apply')"/>
@@ -53,6 +58,11 @@
             <p class="parameter">
                 <label class="label">Betrokken administratieve handeling</label>
                 <input  name="ah_i" type="text" maxlength="19" size="19" value="#{filter_ah}"
+                       onkeypress="keypress(event,'apply')"/>
+            </p>
+            <p class="parameter">
+                <label class="label">Type proces</label>
+                <input  name="processDefinition_i" type="text" maxlength="19" size="19" value="#{filter_processDefinition}"
                        onkeypress="keypress(event,'apply')"/>
             </p>
             <p class="parameter">
@@ -122,10 +132,12 @@
                 <input type="hidden" name="anummer"/>
                 <input type="hidden" name="partij"/>
                 <input type="hidden" name="ah"/>
+                <input type="hidden" name="processInstanceId"/>
+                <input type="hidden" name="processDefinition"/>
                 <input type="hidden" name="root"/>
             </gs:form>
             <a id="apply" accesskey="a"
-               onclick="if(document.getElementById('root_i').checked) document.getElementsByName('root')[0].value='true';document.getElementsByName('ah')[0].value=document.getElementsByName('ah_i')[0].value;document.getElementsByName('anummer')[0].value=document.getElementsByName('anummer_i')[0].value;document.getElementsByName('partij')[0].value=document.getElementsByName('partij_i')[0].value;document.getElementsByName('pi_key')[0].value=document.getElementsByName('key_i')[0].value;if(document.getElementById('running_i').checked) document.getElementsByName('fr')[0].value='true';if(document.getElementById('suspended_i').checked) document.getElementsByName('fs')[0].value='true';if(document.getElementById('ended_i').checked) document.getElementsByName('fe')[0].value='true';document.getElementById('sf').submit();return false;">#{msgs['filter.apply']}</a>
+               onclick="if(document.getElementById('root_i').checked) document.getElementsByName('root')[0].value='true';document.getElementsByName('processDefinition')[0].value=document.getElementsByName('processDefinition_i')[0].value;document.getElementsByName('processInstanceId')[0].value=document.getElementsByName('processInstanceId_i')[0].value;document.getElementsByName('ah')[0].value=document.getElementsByName('ah_i')[0].value;document.getElementsByName('anummer')[0].value=document.getElementsByName('anummer_i')[0].value;document.getElementsByName('partij')[0].value=document.getElementsByName('partij_i')[0].value;document.getElementsByName('pi_key')[0].value=document.getElementsByName('key_i')[0].value;if(document.getElementById('running_i').checked) document.getElementsByName('fr')[0].value='true';if(document.getElementById('suspended_i').checked) document.getElementsByName('fs')[0].value='true';if(document.getElementById('ended_i').checked) document.getElementsByName('fe')[0].value='true';document.getElementById('sf').submit();return false;">#{msgs['filter.apply']}</a>
             <h:outputLink style="margin-left:10px">
                 <h:outputText value="#{msgs['filter.clear']}"/>
                 <ui:insert name="params"/>
@@ -166,12 +178,12 @@
                 </td>
                 <td>
                     <h:outputText value="#{pi.start}">
-                        <f:convertDateTime type="both" timeZone="#{j4j:getServerTimeZone()}"/>
+                        <f:convertDateTime type="both" timeZone="Europe/Amsterdam"/>
                     </h:outputText>
                 </td>
                 <td>
                     <h:outputText value="#{pi.end}">
-                        <f:convertDateTime type="both" timeZone="#{j4j:getServerTimeZone()}"/>
+                        <f:convertDateTime type="both" timeZone="Europe/Amsterdam"/>
                     </h:outputText>
                 </td>
                 <td style="width:75px;">

@@ -11,12 +11,14 @@ import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.test.common.util.BaseFilter;
 import nl.bzk.migratiebrp.test.common.util.FilterType;
 import nl.bzk.migratiebrp.test.dal.TestCasus;
 import nl.bzk.migratiebrp.test.dal.TestCasusFactory;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
+
 import org.junit.runners.model.InitializationError;
 
 /**
@@ -42,23 +44,18 @@ public final class TestBuilder {
 
     /**
      * Constructor.
-     *
-     * @param inputFolder
-     *            input folder
-     * @param themaFilter
-     *            thema filter
-     * @param casusFilter
-     *            casus filter
-     * @param testCasusFactory
-     *            casus factory
+     * @param testClass test class
+     * @param inputFolder input folder
+     * @param themaFilter thema filter
+     * @param casusFilter casus filter
+     * @param testCasusFactory casus factory
      */
     TestBuilder(
-        final Class<?> testClass,
-        final File inputFolder,
-        final FilenameFilter themaFilter,
-        final FilenameFilter casusFilter,
-        final TestCasusFactory testCasusFactory)
-    {
+            final Class<?> testClass,
+            final File inputFolder,
+            final FilenameFilter themaFilter,
+            final FilenameFilter casusFilter,
+            final TestCasusFactory testCasusFactory) {
         this.testClass = testClass;
         this.inputFolder = inputFolder;
         outputFolder = new File(inputFolder.getParent(), inputFolder.getName() + OUTPUT_FOLDER_SUFFIX);
@@ -70,10 +67,8 @@ public final class TestBuilder {
 
     /**
      * Build the test.
-     *
      * @return the test
-     * @throws InitializationError
-     *             when a problem arrises in the construction of the test
+     * @throws InitializationError when a problem arrises in the construction of the test
      */
     public Test build() throws InitializationError {
         final Test suiteTest = new Test(testClass == null ? "Test" : testClass.getName());
@@ -114,6 +109,7 @@ public final class TestBuilder {
                         suiteTest.addChild(casusTest);
                     }
                 } catch (final Exception e /* Catch exception to make builder robust */) {
+                    LOG.info("Test build exception", e);
                     // Gefakede test toevoegen zodat het opbouwen van de suite niet faalt, maar alleen deze input
                     final TestCasus casus = new TestBuildFailure(thema, inputFile.getName(), themaOutputFolder, themaExpectedFolder, e);
                     final Test casusTest = new Test(casus.getNaam(), casus);
@@ -129,7 +125,6 @@ public final class TestBuilder {
 
     /**
      * Geef de waarde van output folder.
-     *
      * @return output folder
      */
     public File getOutputFolder() {

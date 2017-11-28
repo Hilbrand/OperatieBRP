@@ -27,11 +27,8 @@ public final class Periode implements Comparable<Periode> {
 
     /**
      * Maak een periode adhv Timestamp objecten.
-     *
-     * @param datumTijdRegistratie
-     *            De registratie datum/tijd. Als deze null is, wordt Long.MIN_VALUE ingevuld.
-     * @param datumTijdVerval
-     *            De verval datum/tijd. Als deze null is, wordt Long.MAX_VALUE ingevuld.
+     * @param datumTijdRegistratie De registratie datum/tijd. Als deze null is, wordt Long.MIN_VALUE ingevuld.
+     * @param datumTijdVerval De verval datum/tijd. Als deze null is, wordt Long.MAX_VALUE ingevuld.
      */
     public Periode(final Timestamp datumTijdRegistratie, final Timestamp datumTijdVerval) {
         this(datumTijdRegistratie == null ? null : datumTijdRegistratie.getTime(), datumTijdVerval == null ? null : datumTijdVerval.getTime());
@@ -39,11 +36,8 @@ public final class Periode implements Comparable<Periode> {
 
     /**
      * Maak een periode.
-     *
-     * @param begin
-     *            begindatum
-     * @param einde
-     *            einddatum
+     * @param begin begindatum
+     * @param einde einddatum
      */
     public Periode(final Long begin, final Long einde) {
         final Paar datumPaar = new Paar(begin == null ? Long.MIN_VALUE : begin, einde == null ? Long.MAX_VALUE : einde);
@@ -53,7 +47,6 @@ public final class Periode implements Comparable<Periode> {
 
     /**
      * Geef de waarde van begin.
-     *
      * @return begin
      */
     public long getBegin() {
@@ -62,7 +55,6 @@ public final class Periode implements Comparable<Periode> {
 
     /**
      * Geef de waarde van einde.
-     *
      * @return einde
      */
     public long getEinde() {
@@ -72,9 +64,7 @@ public final class Periode implements Comparable<Periode> {
     /**
      * Bepaal of deze periode overlap heeft met een andere periode. Periodes zijn inclusief begindatum maar exclusief
      * einddatum.
-     *
-     * @param periode
-     *            periode
+     * @param periode periode
      * @return true, als deze periode overlap heeft met de gegeven periode; anders false
      */
     public boolean heeftOverlap(final Periode periode) {
@@ -104,9 +94,7 @@ public final class Periode implements Comparable<Periode> {
 
     /**
      * Verwijderd de overlap in periodes met de meegegeven periode in deze periode.
-     *
-     * @param anderePeriode
-     *            de andere periode waarmee overlap wordt bepaald
+     * @param anderePeriode de andere periode waarmee overlap wordt bepaald
      * @return de lijst met periodes die het resultaat is van het 'aftrekken' van de meegegeven periode van deze periode
      */
     public Set<Periode> remove(final Periode anderePeriode) {
@@ -128,11 +116,8 @@ public final class Periode implements Comparable<Periode> {
 
     /**
      * Verwijderd van een set met periodes alle overlap met de meegegeven periode.
-     *
-     * @param periodeSet
-     *            de lijst waarvan de overlappende periode wordt 'afgetrokken'
-     * @param anderePeriode
-     *            deze periode wordt van de periodeSet 'afgetrokken'
+     * @param periodeSet de lijst waarvan de overlappende periode wordt 'afgetrokken'
+     * @param anderePeriode deze periode wordt van de periodeSet 'afgetrokken'
      * @return de periodes binnen de periodeSet waarin geen overlap is met de andere periode
      */
     public static Set<Periode> removeFromSet(final Set<Periode> periodeSet, final Periode anderePeriode) {
@@ -146,11 +131,8 @@ public final class Periode implements Comparable<Periode> {
 
     /**
      * Verwijderd van een set met periodes alle overlap met de meegegeven periode set.
-     *
-     * @param periodeSet
-     *            de lijst waarvan de overlappende periodes worden 'afgetrokken'
-     * @param anderePeriodeSet
-     *            deze set van periodes wordt van de periodeSet 'afgetrokken'
+     * @param periodeSet de lijst waarvan de overlappende periodes worden 'afgetrokken'
+     * @param anderePeriodeSet deze set van periodes wordt van de periodeSet 'afgetrokken'
      * @return de periodes binnen de periodeSet waarin geen overlap is met de andere periodes
      */
     public static Set<Periode> removeFromSet(final Set<Periode> periodeSet, final Set<Periode> anderePeriodeSet) {
@@ -211,9 +193,9 @@ public final class Periode implements Comparable<Periode> {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
-                                                                          .append("begin", begin)
-                                                                          .append("einde", einde)
-                                                                          .toString();
+                .append("begin", begin)
+                .append("einde", einde)
+                .toString();
     }
 
     /**
@@ -226,11 +208,8 @@ public final class Periode implements Comparable<Periode> {
 
         /**
          * Convenient constructor voor helper klasse.
-         *
-         * @param waarde1
-         *            De eerste waarde van het paar.
-         * @param waarde2
-         *            De tweede waarde van het paar.
+         * @param waarde1 De eerste waarde van het paar.
+         * @param waarde2 De tweede waarde van het paar.
          */
         public Paar(final long waarde1, final long waarde2) {
             this.waarde1 = waarde1;
@@ -239,7 +218,6 @@ public final class Periode implements Comparable<Periode> {
 
         /**
          * Geef de waarde van min.
-         *
          * @return min
          */
         private long getMin() {
@@ -248,7 +226,6 @@ public final class Periode implements Comparable<Periode> {
 
         /**
          * Geef de waarde van max.
-         *
          * @return max
          */
         private long getMax() {

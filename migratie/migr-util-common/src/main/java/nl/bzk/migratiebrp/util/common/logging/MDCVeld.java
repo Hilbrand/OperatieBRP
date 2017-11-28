@@ -9,33 +9,38 @@ package nl.bzk.migratiebrp.util.common.logging;
 /**
  * Toegestane MDC velden.
  */
-public enum MDCVeld {
+public enum MDCVeld implements nl.bzk.algemeenbrp.util.common.logging.MDCVeld {
 
     // ************* SYNCHRONISATIE ***************
 
-    /** Bericht referentie. */
+    /**
+     * Bericht referentie.
+     */
     SYNC_BERICHT_REFERENTIE("berichtReferentie"),
 
-    /** Correlatie referentie. */
+    /**
+     * Correlatie referentie.
+     */
     SYNC_CORRELATIE_REFERENTIE("correlatieReferentie"),
 
     // ************* VOISC ***************
 
-    /** Voisc bericht ID. */
+    /**
+     * Voisc bericht ID.
+     */
     VOISC_BERICHT_ID("berichtId");
 
     private final String veld;
 
     /**
      * Constructor.
-     *
-     * @param veld
-     *            Het veld.
+     * @param veld Het veld.
      */
     MDCVeld(final String veld) {
         this.veld = veld;
     }
 
+    @Override
     public String getVeld() {
         return veld;
     }

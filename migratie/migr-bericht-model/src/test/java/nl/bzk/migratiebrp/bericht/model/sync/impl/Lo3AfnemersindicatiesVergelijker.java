@@ -28,8 +28,7 @@ public final class Lo3AfnemersindicatiesVergelijker {
             }
         } else {
             if (!equals(lokaalVerschillenLog, "administratienummer", expected.getANummer(), actual.getANummer())
-                | !Lo3StapelHelper.vergelijkStapels(lokaalVerschillenLog, expected.getAfnemersindicatieStapels(), actual.getAfnemersindicatieStapels()))
-            {
+                    | !Lo3StapelHelper.vergelijkStapels(lokaalVerschillenLog, expected.getAfnemersindicatieStapels(), actual.getAfnemersindicatieStapels())) {
                 equal = false;
             }
         }

@@ -9,7 +9,7 @@ package nl.bzk.migratiebrp.bericht.model.xml;
 /**
  * Ondersteunende class om teletex strings te coderen en decoderen om ze in XML te kunnen gebruiken. Dit ivm het feit
  * dat in XML de meeste control characters (0x00 t/m 0x1F) niet zijn toegestaan, ook niet als entity encoding of cdata.
- * 
+ *
  * De control characters worden gecodeerd als unicode characters 0x1000 t/m 0x101F.
  */
 public final class XmlTeletexEncoding {
@@ -24,9 +24,7 @@ public final class XmlTeletexEncoding {
 
     /**
      * Codeer een teletex string voor XML.
-     * 
-     * @param teletex
-     *            de teletex string
+     * @param teletex de teletex string
      * @return de gecodeerde teletex string
      */
     public static String codeer(final String teletex) {
@@ -51,9 +49,7 @@ public final class XmlTeletexEncoding {
 
     /**
      * Decodeer een teletex string uit XML.
-     * 
-     * @param encodedTeletex
-     *            de gecodeerde teletex string
+     * @param encodedTeletex de gecodeerde teletex string
      * @return de teletex string
      */
     public static String decodeer(final String encodedTeletex) {

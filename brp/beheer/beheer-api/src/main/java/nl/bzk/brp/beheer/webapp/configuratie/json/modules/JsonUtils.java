@@ -1,7 +1,7 @@
 /**
  * This file is copyright 2017 State of the Netherlands (Ministry of Interior Affairs and Kingdom Relations).
  * It is made available under the terms of the GNU Affero General Public License, version 3 as published by the Free Software Foundation.
- * The project of which this file is part, may be found at https://github.com/MinBZK/operatieBRP.
+ * The project of which this file is part, may be found at www.github.com/MinBZK/operatieBRP.
  */
 
 package nl.bzk.brp.beheer.webapp.configuratie.json.modules;
@@ -9,29 +9,27 @@ package nl.bzk.brp.beheer.webapp.configuratie.json.modules;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
-import nl.bzk.brp.model.algemeen.attribuuttype.kern.Nee;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Json utilities.
  */
-public final class JsonUtils {
-
-    private JsonUtils() {
-        // Niet instantieerbaar
-    }
+public interface JsonUtils {
 
     /**
      * Geef node waarde als Short.
-     *
      * @param parentNode parent node
      * @param nodeName naam van de node
      * @return waarde van de node als Short
      */
-    public static Short getAsShort(final JsonNode parentNode, final String nodeName) {
+    static Short getAsShort(final JsonNode parentNode, final String nodeName) {
         final Short result;
-        final JsonNode theNode = parentNode.get(nodeName);
-        if (theNode != null && !theNode.isNull() && !"".equals(theNode.asText())) {
-            result = Integer.valueOf(theNode.asInt()).shortValue();
+        final Integer resultAsInteger = getAsInteger(parentNode, nodeName);
+        if (resultAsInteger != null) {
+            result = resultAsInteger.shortValue();
         } else {
             result = null;
         }
@@ -40,12 +38,11 @@ public final class JsonUtils {
 
     /**
      * Geef node waarde als Integer.
-     *
      * @param parentNode parent node
      * @param nodeName naam van de node
      * @return waarde van de node als Integer
      */
-    public static Integer getAsInteger(final JsonNode parentNode, final String nodeName) {
+    static Integer getAsInteger(final JsonNode parentNode, final String nodeName) {
         final Integer result;
         final JsonNode theNode = parentNode.get(nodeName);
         if (theNode != null && !theNode.isNull() && !"".equals(theNode.asText())) {
@@ -58,12 +55,11 @@ public final class JsonUtils {
 
     /**
      * Geef node waarde als String.
-     *
      * @param parentNode parent node
      * @param nodeName naam van de node
      * @return waarde van de node als String
      */
-    public static String getAsString(final JsonNode parentNode, final String nodeName) {
+    static String getAsString(final JsonNode parentNode, final String nodeName) {
         final String result;
         final JsonNode theNode = parentNode.get(nodeName);
         if (theNode != null && !theNode.isNull() && !"".equals(theNode.asText())) {
@@ -75,8 +71,47 @@ public final class JsonUtils {
     }
 
     /**
+     * Geef de subnodes van een node.
+     * @param parentNode parent node
+     * @param nodeName naam van de node
+     * @return lijst met de gevonden subnodes van de node
+     */
+    static List<JsonNode> getJsonNodesAsList(final JsonNode parentNode, final String nodeName) {
+        final List<JsonNode> result = new ArrayList<>();
+        final JsonNode theNode = parentNode.get(nodeName);
+        if (theNode == null) {
+            return result;
+        }
+        final JsonNode theNodeContent = theNode.get("content");
+        if (theNodeContent != null && !theNodeContent.isNull()) {
+            final Iterator<JsonNode> theNodeElements = theNodeContent.elements();
+            while (theNodeElements.hasNext()) {
+                final JsonNode theNodeElement = theNodeElements.next();
+                result.add(theNodeElement);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Geef node waarde als Character.
+     * @param parentNode parent node
+     * @param nodeName naam van de node
+     * @return waarde van de node als Character
+     */
+    static Character getAsCharacter(final JsonNode parentNode, final String nodeName) {
+        final Character result;
+        final JsonNode theNode = parentNode.get(nodeName);
+        if (theNode != null && !theNode.isNull() && !"".equals(theNode.asText())) {
+            result = theNode.asText().charAt(0);
+        } else {
+            result = null;
+        }
+        return result;
+    }
+
+    /**
      * Geef node waarde als Boolean.
-     *
      * @param parentNode parent node
      * @param nodeName naam van de node
      * @param checkValue waarde waarmee gecontroleerd wordt (mag niet null zijn)
@@ -84,13 +119,12 @@ public final class JsonUtils {
      * @param elseBoolean resultaat als de waarde van de node niet gelijk is aan 'checkValue' (mag null zijn)
      * @return checkBoolean of elseBoolean (kan dus null zijn), naar gelang de waarde van de node en checkValue
      */
-    public static Boolean getAsBoolean(
-        final JsonNode parentNode,
-        final String nodeName,
-        final String checkValue,
-        final Boolean checkBoolean,
-        final Boolean elseBoolean)
-    {
+    static Boolean getAsBoolean(
+            final JsonNode parentNode,
+            final String nodeName,
+            final String checkValue,
+            final Boolean checkBoolean,
+            final Boolean elseBoolean) {
         final Boolean result;
         final JsonNode theNode = parentNode.get(nodeName);
         if (theNode != null && !theNode.isNull() && checkValue.equals(theNode.asText())) {
@@ -102,33 +136,13 @@ public final class JsonUtils {
     }
 
     /**
-     * Geef node waarde als Nee.
-     *
-     * @param parentNode parent node
-     * @param nodeName naam van de node
-     * @param checkValue waarde waarmee gecontroleerd wordt (mag niet null zijn)
-     * @return {@link Nee#N} als de waarde van de node gelijk is aan checkValue, anders null
-     */
-    public static Nee getAsNee(final JsonNode parentNode, final String nodeName, final String checkValue) {
-        final Nee result;
-        final JsonNode theNode = parentNode.get(nodeName);
-        if (theNode != null && !theNode.isNull() && !checkValue.equals(theNode.asText())) {
-            result = null;
-        } else {
-            result = Nee.N;
-        }
-        return result;
-    }
-
-    /**
      * Schrijf als integer.
-     *
      * @param jgen json generator
      * @param nodeName node naam
      * @param waarde node waarde
      * @throws IOException bij schrijf fouten
      */
-    public static void writeAsInteger(final JsonGenerator jgen, final String nodeName, final Number waarde) throws IOException {
+    static void writeAsInteger(final JsonGenerator jgen, final String nodeName, final Number waarde) throws IOException {
         if (waarde == null) {
             return;
         }
@@ -141,13 +155,12 @@ public final class JsonUtils {
 
     /**
      * Schrijf als text.
-     *
      * @param jgen json generator
      * @param nodeName node naam
      * @param waarde node waarde
      * @throws IOException bij schrijf fouten
      */
-    public static void writeAsString(final JsonGenerator jgen, final String nodeName, final String waarde) throws IOException {
+    static void writeAsString(final JsonGenerator jgen, final String nodeName, final String waarde) throws IOException {
         if (waarde == null) {
             return;
         }
@@ -156,7 +169,6 @@ public final class JsonUtils {
 
     /**
      * Schrijf boolean als text.
-     *
      * @param jgen json generator
      * @param nodeName node naam
      * @param waarde node waarde
@@ -164,13 +176,8 @@ public final class JsonUtils {
      * @param elseWaarde text als node waarde niet TRUE is
      * @throws IOException bij schrijf fouten
      */
-    public static void writeAsString(
-        final JsonGenerator jgen,
-        final String nodeName,
-        final Boolean waarde,
-        final String trueWaarde,
-        final String elseWaarde) throws IOException
-    {
+    static void writeAsString(final JsonGenerator jgen, final String nodeName, final Boolean waarde, final String trueWaarde, final String elseWaarde)
+            throws IOException {
         if (waarde != null && waarde) {
             jgen.writeStringField(nodeName, trueWaarde);
         } else {
@@ -179,22 +186,21 @@ public final class JsonUtils {
     }
 
     /**
-     * Schrijf Nee als text.
-     *
+     * Schrijf object als Array.
      * @param jgen json generator
      * @param nodeName node naam
      * @param waarde node waarde
-     * @param neeWaarde text als node waarde Nee is
-     * @param geenWaarde text als node waarde niet Nee is
      * @throws IOException bij schrijf fouten
      */
-    public static void writeAsString(final JsonGenerator jgen, final String nodeName, final Nee waarde, final String neeWaarde, final String geenWaarde)
-        throws IOException
-    {
-        if (waarde == Nee.N) {
-            jgen.writeStringField(nodeName, neeWaarde);
-        } else {
-            jgen.writeStringField(nodeName, geenWaarde);
+    static void writeAsArray(final JsonGenerator jgen, final String nodeName, final Collection<?> waarde) throws IOException {
+        if (waarde != null && !waarde.isEmpty()) {
+            jgen.writeFieldName(nodeName);
+            jgen.writeStartArray(waarde.size());
+            for (final Object huidigObject : waarde) {
+                jgen.writeObject(huidigObject);
+            }
+            jgen.writeEndArray();
         }
     }
+
 }

@@ -6,27 +6,20 @@
 
 package nl.bzk.migratiebrp.isc.jbpm.uc811;
 
-import javax.inject.Inject;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lf01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Lq01Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Pf01Bericht;
-import nl.bzk.migratiebrp.isc.jbpm.common.locking.LockService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 
 /**
  * Test de technische flows rondom het lq01 bericht.
  */
 public class Uc811Lq01Test extends AbstractUc811Test {
-
-    @Inject
-    private LockService lockService;
 
     @BeforeClass
     public static void outputTestIscBerichten() {
@@ -36,9 +29,6 @@ public class Uc811Lq01Test extends AbstractUc811Test {
 
     @Before
     public void startProces() throws Exception {
-        Mockito.reset(lockService);
-        Mockito.when(lockService.verkrijgLockVoorAnummers(Matchers.anySetOf(Long.class), Matchers.anyLong())).thenReturn(5678L);
-
         // Start
         startProcess(maakUc811Bericht("0599", 1231231234L));
     }
@@ -52,12 +42,12 @@ public class Uc811Lq01Test extends AbstractUc811Test {
 
     @Test
     public void maximumHerhalingen() {
-        // Lq01 bericht verwacht op kanaal VOSPG.
+        // Lq01 bericht verwacht op kanaal VOISC.
         controleerBerichten(0, 1, 0);
         getBericht(Lq01Bericht.class);
 
         // Herhalingen
-        forceerTimeout(Lq01Bericht.class, "VOSPG");
+        forceerTimeout(Lq01Bericht.class, "VOISC");
 
         // Beheerderkeuze: restart
         signalHumanTask("restartAtVragen");
@@ -74,13 +64,13 @@ public class Uc811Lq01Test extends AbstractUc811Test {
 
     @Test
     public void foutiefBericht() {
-        // Lq01 bericht verwacht op kanaal VOSPG.
+        // Lq01 bericht verwacht op kanaal VOISC.
         controleerBerichten(0, 1, 0);
         final Lq01Bericht lq01Bericht = getBericht(Lq01Bericht.class);
 
         // Ongeldig bericht
         final Lo3Bericht ongeldigBericht = maakOnverwachtBericht(lq01Bericht);
-        signalVospg(ongeldigBericht);
+        signalVoisc(ongeldigBericht);
 
         // Beheerderkeuze: end
         checkVariabele("foutafhandelingFout", "uc811.synchronisatievraag.foutiefbericht");
@@ -93,16 +83,16 @@ public class Uc811Lq01Test extends AbstractUc811Test {
 
     @Test
     public void ongeldigBericht() {
-        // Lq01 bericht verwacht op kanaal VOSPG.
+        // Lq01 bericht verwacht op kanaal VOISC.
         controleerBerichten(0, 1, 0);
         final Lq01Bericht lq01Bericht = getBericht(Lq01Bericht.class);
 
         // Ongeldig bericht
         final Lo3Bericht ongeldigBericht = maakOngeldigeSyntaxBericht(lq01Bericht);
         ongeldigBericht.setCorrelationId(lq01Bericht.getMessageId());
-        ongeldigBericht.setBronGemeente(lq01Bericht.getDoelGemeente());
-        ongeldigBericht.setDoelGemeente(lq01Bericht.getBronGemeente());
-        signalVospg(ongeldigBericht);
+        ongeldigBericht.setBronPartijCode(lq01Bericht.getDoelPartijCode());
+        ongeldigBericht.setDoelPartijCode(lq01Bericht.getBronPartijCode());
+        signalVoisc(ongeldigBericht);
 
         // Beheerderkeuze: end
         checkVariabele("foutafhandelingFout", "uc811.synchronisatievraag.ongeldigbericht");
@@ -115,13 +105,13 @@ public class Uc811Lq01Test extends AbstractUc811Test {
 
     @Test
     public void fout() {
-        // Lq01 bericht verwacht op kanaal VOSPG.
+        // Lq01 bericht verwacht op kanaal VOISC.
         controleerBerichten(0, 1, 0);
         final Lq01Bericht lq01Bericht = getBericht(Lq01Bericht.class);
 
         // Antwoord met Lf01
         final Lf01Bericht foutBericht = maakLf01Bericht(lq01Bericht, Lf01Bericht.Foutreden.G, null);
-        signalVospg(foutBericht);
+        signalVoisc(foutBericht);
 
         // Beheerderkeuze: end
         signalHumanTask("end");
@@ -129,13 +119,13 @@ public class Uc811Lq01Test extends AbstractUc811Test {
 
     @Test
     public void protocolfout() {
-        // Lq01 bericht verwacht op kanaal VOSPG.
+        // Lq01 bericht verwacht op kanaal VOISC.
         controleerBerichten(0, 1, 0);
         final Lq01Bericht lq01Bericht = getBericht(Lq01Bericht.class);
 
         // Antwoord met Pf01
         final Pf01Bericht foutBericht = maakPf01Bericht(lq01Bericht);
-        signalVospg(foutBericht);
+        signalVoisc(foutBericht);
 
         // Beheerderkeuze: end
         signalHumanTask("end");

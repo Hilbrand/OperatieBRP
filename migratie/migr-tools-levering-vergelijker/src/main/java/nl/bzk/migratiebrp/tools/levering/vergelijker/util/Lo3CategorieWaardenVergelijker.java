@@ -29,23 +29,17 @@ public final class Lo3CategorieWaardenVergelijker {
     /**
      * Vergelijkt 2 lijsten met {@link nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde} met elkaar.
      * Eventuele verschillen worden in de verschillenlog parameter toegevoegd.
-     *
-     * @param verschillenLog
-     *            log met gevonden verschillen.
-     * @param expected
-     *            lijst met verwachte categorie waarden
-     * @param actual
-     *            lijst met huidige categorie waarden
-     * @param vergelijkingResultaten
-     *            lijst met vergelijkingresultaten die wijzigingen bevatten.
+     * @param verschillenLog log met gevonden verschillen.
+     * @param expected lijst met verwachte categorie waarden
+     * @param actual lijst met huidige categorie waarden
+     * @param vergelijkingResultaten lijst met vergelijkingresultaten die wijzigingen bevatten.
      * @return true als de lijsten gelijk zijn qua inhoud.
      */
     public static List<LeveringsVergelijkingResultaatInhoud> vergelijk(
-        final StringBuilder verschillenLog,
-        final List<Lo3CategorieWaarde> expected,
-        final List<Lo3CategorieWaarde> actual,
-        final List<LeveringsVergelijkingResultaatInhoud> vergelijkingResultaten)
-    {
+            final StringBuilder verschillenLog,
+            final List<Lo3CategorieWaarde> expected,
+            final List<Lo3CategorieWaarde> actual,
+            final List<LeveringsVergelijkingResultaatInhoud> vergelijkingResultaten) {
         boolean equal = true;
         final StringBuilder lokaalVerschillenLog = new StringBuilder();
         lokaalVerschillenLog.append("Vergelijk categorie lijst:\n ");
@@ -58,9 +52,9 @@ public final class Lo3CategorieWaardenVergelijker {
         } else {
             if (expected.size() != actual.size()) {
                 lokaalVerschillenLog.append(String.format(
-                    "Lijsten bevatten niet even veel categorieen (expected=%s, actual=%s)%n",
-                    expected.size(),
-                    actual.size()));
+                        "Lijsten bevatten niet even veel categorieen (expected=%s, actual=%s)%n",
+                        expected.size(),
+                        actual.size()));
                 equal = false;
             }
             for (int index = 0; index < expected.size(); index++) {
@@ -84,12 +78,11 @@ public final class Lo3CategorieWaardenVergelijker {
     }
 
     private static boolean vergelijkLo3CategorieWaarde(
-        final StringBuilder verschillenLog,
-        final int index,
-        final Lo3CategorieWaarde expected,
-        final Lo3CategorieWaarde actual,
-        final List<LeveringsVergelijkingResultaatInhoud> vergelijkingResultaten)
-    {
+            final StringBuilder verschillenLog,
+            final int index,
+            final Lo3CategorieWaarde expected,
+            final Lo3CategorieWaarde actual,
+            final List<LeveringsVergelijkingResultaatInhoud> vergelijkingResultaten) {
         boolean equal = true;
         final StringBuilder lokaalVerschillenLog = new StringBuilder();
         lokaalVerschillenLog.append("Vergelijk categorie waarde (").append(index).append(WAARDE_LOG_AFSLUITING);
@@ -114,9 +107,9 @@ public final class Lo3CategorieWaardenVergelijker {
                     leveringsVergelijkingResultaatInhoud.setStapel(expected.getStapel());
                     leveringsVergelijkingResultaatInhoud.setVoorkomen(expected.getVoorkomen());
                     leveringsVergelijkingResultaatInhoud.setCategorie(expected.getCategorie().getCategorieAsInt());
-                    leveringsVergelijkingResultaatInhoud.setElement(expected.getCategorie().getCategorie()
-                                                                    + ELEMENT_SCHEIDINGSTEKEN
-                                                                    + tijdelijkLeveringVergelijkerResultaat);
+                    leveringsVergelijkingResultaatInhoud.setRubriek(expected.getCategorie().getCategorie()
+                            + ELEMENT_SCHEIDINGSTEKEN
+                            + tijdelijkLeveringVergelijkerResultaat);
                     vergelijkingResultaten.add(leveringsVergelijkingResultaatInhoud);
                 }
                 equal = false;
@@ -133,23 +126,17 @@ public final class Lo3CategorieWaardenVergelijker {
     /**
      * Vergelijkt de 2 mappen, bestaande uit een element nummer en zijn waarde, op inhoud. Eventuele verschillen worden
      * aan de parameter verschillenLog toegevoegd.
-     *
-     * @param verschillenLog
-     *            log met gevonden verschillen.
-     * @param expected
-     *            map van Lo3 elementen die verwacht worden
-     * @param actual
-     *            map van Lo3 elementen die verkregen zijn
-     * @param vergelijkingResultaten
-     *            lijst met vergelijkingresultaten die wijzigingen bevatten.
+     * @param verschillenLog log met gevonden verschillen.
+     * @param expected map van Lo3 elementen die verwacht worden
+     * @param actual map van Lo3 elementen die verkregen zijn
+     * @param vergelijkingResultaten lijst met vergelijkingresultaten die wijzigingen bevatten.
      * @return true als de mappen inhoudelijk overeenkomen
      */
     public static boolean vergelijkElementen(
-        final StringBuilder verschillenLog,
-        final Map<Lo3ElementEnum, String> expected,
-        final Map<Lo3ElementEnum, String> actual,
-        final List<String> vergelijkingResultaten)
-    {
+            final StringBuilder verschillenLog,
+            final Map<Lo3ElementEnum, String> expected,
+            final Map<Lo3ElementEnum, String> actual,
+            final List<String> vergelijkingResultaten) {
 
         boolean equal = true;
         final StringBuilder lokaalVerschillenLog = new StringBuilder();
@@ -163,9 +150,9 @@ public final class Lo3CategorieWaardenVergelijker {
         } else {
             if (expected.size() != actual.size()) {
                 lokaalVerschillenLog.append(String.format(
-                    "Lijsten bevatten niet even veel elementen (expected=%s, actual=%s)%n",
-                    expected.size(),
-                    actual.size()));
+                        "Lijsten bevatten niet even veel elementen (expected=%s, actual=%s)%n",
+                        expected.size(),
+                        actual.size()));
                 vergelijkingResultaten.add("");
                 equal = false;
             }
@@ -191,11 +178,10 @@ public final class Lo3CategorieWaardenVergelijker {
     }
 
     private static String vergelijkElementWaarde(
-        final StringBuilder verschillenLog,
-        final Lo3ElementEnum element,
-        final String expected,
-        final String actual)
-    {
+            final StringBuilder verschillenLog,
+            final Lo3ElementEnum element,
+            final String expected,
+            final String actual) {
         String resultaat = null;
         final StringBuilder lokaalVerschillenLog = new StringBuilder();
         lokaalVerschillenLog.append("Vergelijk element waarde (").append(element).append(WAARDE_LOG_AFSLUITING);

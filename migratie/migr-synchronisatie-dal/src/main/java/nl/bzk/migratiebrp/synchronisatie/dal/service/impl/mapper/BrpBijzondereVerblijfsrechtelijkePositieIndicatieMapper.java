@@ -6,12 +6,11 @@
 
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper;
 
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.Element;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpBoolean;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Element;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BrpOnderzoekMapper;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,21 +18,19 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public final class BrpBijzondereVerblijfsrechtelijkePositieIndicatieMapper extends
-        AbstractBrpMapper<PersoonIndicatieHistorie, BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud>
-{
+        AbstractBrpMapper<PersoonIndicatieHistorie, BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud> {
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud mapInhoud(
-        final PersoonIndicatieHistorie historie,
-        final BrpOnderzoekMapper brpOnderzoekMapper)
-    {
+            final PersoonIndicatieHistorie historie,
+            final BrpOnderzoekMapper brpOnderzoekMapper) {
         final BrpBoolean indicatie =
                 BrpBoolean.wrap(
-                    historie.getWaarde(),
-                    brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE, true));
+                        historie.getWaarde(),
+                        brpOnderzoekMapper.bepaalOnderzoek(historie, Element.PERSOON_INDICATIE_BIJZONDEREVERBLIJFSRECHTELIJKEPOSITIE_WAARDE, true));
 
         return new BrpBijzondereVerblijfsrechtelijkePositieIndicatieInhoud(indicatie, null, null);
     }

@@ -164,6 +164,52 @@
         </td>
     </xsl:template>
 
+    <!-- OnverwerktDocumentAanwezigIndicatie -->
+    <xsl:template
+            match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnverwerktDocumentAanwezigIndicatieInhoud']"
+            mode="header">
+        <th>indicatie</th>
+        <th>Migratie reden opname nationaliteit</th>
+        <th>Migratie reden beendiging nationaliteit</th>
+    </xsl:template>
+
+    <xsl:template
+            match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.brp.groep.BrpOnverwerktDocumentAanwezigIndicatieInhoud']"
+            mode="inhoud">
+        <td>
+            <xsl:value-of select="indicatie/waarde/text()"/>
+            <xsl:apply-templates select="indicatie/onderzoek"/>
+        </td>
+        <td>
+            <xsl:value-of select="migrRdnOpnameNation/waarde/text()"/>
+            <xsl:apply-templates select="migrRdnOpnameNation/onderzoek"/>
+        </td>
+        <td>
+            <xsl:value-of select="migrRdnBeeindigingNation/waarde/text()"/>
+            <xsl:apply-templates select="migrRdnBeeindigingNation/onderzoek"/>
+        </td>
+    </xsl:template>
+
+    <!-- BrpBuitenlandsPersoonsnummerInhoud -->
+    <xsl:template match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBuitenlandsPersoonsnummerInhoud']"
+                  mode="header">
+        <th>Nummer</th>
+        <th>Autoriteit van afgifte</th>
+    </xsl:template>
+
+    <xsl:template match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.brp.groep.BrpBuitenlandsPersoonsnummerInhoud']"
+                  mode="inhoud">
+        <td>
+            <xsl:value-of select="nummer/waarde/text()"/>
+            <xsl:apply-templates select="nummer/onderzoek"/>
+        </td>
+        <td>
+            <xsl:value-of select="autoriteitVanAfgifte/waarde/text()"/>
+            <xsl:apply-templates select="autoriteitVanAfgifte/onderzoek"/>
+        </td>
+    </xsl:template>
+
+
     <!-- SignaleringMetBetrekkingToVerstrekkenReisdocumentInhoud -->
     <xsl:template
             match="inhoud[@class='nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSignaleringMetBetrekkingTotVerstrekkenReisdocumentInhoud']"
@@ -1048,7 +1094,7 @@
         </td>
         <td>
             <xsl:value-of select="geslachtsnaamstam/waarde/text()"/>
-            <xsl:apply-templates select="geslachtsnaamstam/onderzoek"/>
+            <xsl:apply-templates select="geslachtsnaamstam/onderzoeken/onderzoek"/>
         </td>
     </xsl:template>
 
@@ -1627,7 +1673,7 @@
     	<xsl:call-template name="brpFormeleHistorieHeader" />
     	<xsl:call-template name="brpNadereAanduidingVervalHeader" />
   	</xsl:template>
-  	 
+
     <xsl:template name="brpMaterieleHistorieHeader">
         <th>Aanvang geldigheid</th>
         <th>Einde geldigheid</th>
@@ -1645,7 +1691,7 @@
     	<xsl:call-template name="brpFormeleHistorie" />
     	<xsl:call-template name="brpNadereAanduidingVerval" />
     </xsl:template>
-    
+
     <xsl:template name="brpMaterieleHistorie">
         <td>
             <xsl:value-of select="historie/datumAanvangGeldigheid/waarde/text()"/><xsl:value-of select="historie/datumAanvangGeldigheid/text()"/>

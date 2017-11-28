@@ -6,11 +6,9 @@
 
 package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,7 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Test van de AdellijkeTitelVoorwaardeRegel.
- *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/conversie-test.xml")
@@ -26,62 +23,101 @@ public class AdellijkeTitelVoorwaardeRegelTest {
 
     private static final String GEEN_UITKOMST = "GEEN UITKOMST";
 
+    private VoorwaardeRegelTestUtil testUtil;
+
+    @Before
+    public void initialize() {
+        testUtil = new VoorwaardeRegelTestUtil(instance);
+    }
+
     @Inject
     private AdellijkeTitelVoorwaardeRegel instance;
 
     @Test
     public void testAdellijkeTitelKomtVoorOfNiet() throws Exception {
-        testVoorwaarde("KNV 01.02.20", "(IS_NULL(samengestelde_naam.adellijke_titel) EN IS_NULL(samengestelde_naam.predicaat))");
-        testVoorwaarde("KV 01.02.20", "(NIET IS_NULL(samengestelde_naam.adellijke_titel) OF NIET IS_NULL(samengestelde_naam.predicaat))");
+        testUtil.testVoorwaarde("KNV 01.02.20", "(KNV(Persoon.SamengesteldeNaam.AdellijkeTitelCode) EN KNV(Persoon.SamengesteldeNaam.PredicaatCode))");
+        testUtil.testVoorwaarde("KV 01.02.20", "(KV(Persoon.SamengesteldeNaam.AdellijkeTitelCode) OF KV(Persoon.SamengesteldeNaam.PredicaatCode))");
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testGoedeNietVertaaldeRubriek020220() throws Exception {
-        testVoorwaarde("KV 02.02.20", GEEN_UITKOMST);
+        testUtil.testVoorwaarde("KV 02.02.20", GEEN_UITKOMST);
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testGoedeNietVertaaldeRubriek030220() throws Exception {
-        testVoorwaarde("KV 03.02.20", GEEN_UITKOMST);
+        testUtil.testVoorwaarde("KV 03.02.20", GEEN_UITKOMST);
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testGoedeNietVertaaldeRubriek050220() throws Exception {
-        testVoorwaarde("KV 05.02.20", GEEN_UITKOMST);
+        testUtil.testVoorwaarde("KV 05.02.20", GEEN_UITKOMST);
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testGoedeNietVertaaldeRubriek090220() throws Exception {
-        testVoorwaarde("KV 09.02.20", GEEN_UITKOMST);
+        testUtil.testVoorwaarde("KV 09.02.20", GEEN_UITKOMST);
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testGoedeNietVertaaldeRubriek510220() throws Exception {
-        testVoorwaarde("KV 51.02.20", GEEN_UITKOMST);
+        testUtil.testVoorwaarde("KV 51.02.20", GEEN_UITKOMST);
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testGoedeNietVertaaldeRubriek520220() throws Exception {
-        testVoorwaarde("KNV 52.02.20", GEEN_UITKOMST);
+        testUtil.testVoorwaarde("KNV 52.02.20", GEEN_UITKOMST);
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testGoedeNietVertaaldeRubriek530220() throws Exception {
-        testVoorwaarde("KNV 53.02.20", GEEN_UITKOMST);
+        testUtil.testVoorwaarde("KNV 53.02.20", GEEN_UITKOMST);
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testGoedeNietVertaaldeRubriek550220() throws Exception {
-        testVoorwaarde("KNV 55.02.20", GEEN_UITKOMST);
+        testUtil.testVoorwaarde("KNV 55.02.20", GEEN_UITKOMST);
     }
 
     @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
     public void testGoedeNietVertaaldeRubriek590220() throws Exception {
-        testVoorwaarde("KV 59.02.20", GEEN_UITKOMST);
+        testUtil.testVoorwaarde("KV 59.02.20", GEEN_UITKOMST);
     }
 
-    private void testVoorwaarde(final String gbaVoorwaarde, final String brpExpressie) throws GbaVoorwaardeOnvertaalbaarExceptie, IOException {
-        final String result = instance.getBrpExpressie(gbaVoorwaarde);
-        assertEquals(brpExpressie, result);
+    @Test
+    public void vergelijkingMetHistorischeCategorieOGAA() throws Exception {
+        testUtil.testVoorwaarde("01.02.20 OGAA 51.02.20",
+                "(NIET(HISM(Persoon.SamengesteldeNaam.AdellijkeTitelCode) E= Persoon.SamengesteldeNaam.AdellijkeTitelCode) EN "
+                        + "NIET(HISM(Persoon.SamengesteldeNaam.PredicaatCode) E= Persoon.SamengesteldeNaam.PredicaatCode))");
+    }
+
+    @Test
+    public void vergelijkingMetHistorischeCategorieOGA1() throws Exception {
+        testUtil.testVoorwaarde("01.02.20 OGA1 51.02.20",
+                "(NIET(HISM(Persoon.SamengesteldeNaam.AdellijkeTitelCode) A= Persoon.SamengesteldeNaam.AdellijkeTitelCode) EN NIET(HISM(Persoon.SamengesteldeNaam.PredicaatCode) A= Persoon.SamengesteldeNaam.PredicaatCode))");
+    }
+
+
+    @Test
+    public void vergelijkingMetHistorischeCategorieGA1() throws Exception {
+        testUtil.testVoorwaarde("01.02.20 GA1 51.02.20",
+                "(HISM(Persoon.SamengesteldeNaam.AdellijkeTitelCode) E= Persoon.SamengesteldeNaam.AdellijkeTitelCode EN HISM(Persoon.SamengesteldeNaam.PredicaatCode) E= Persoon.SamengesteldeNaam.PredicaatCode)");
+    }
+
+    @Test(expected = GbaVoorwaardeOnvertaalbaarExceptie.class)
+    public void vergelijkingMetHistorischeCategorieOGA2() throws Exception {
+        testUtil.testVoorwaarde("01.02.20 OGA2 51.02.20","");
+    }
+
+    @Test
+    public void vergelijkingMetHistorischeCategorieOverigAdelijkeTitel() throws Exception {
+        testUtil.testVoorwaarde("01.02.20 OGAA BS",
+                "(Persoon.SamengesteldeNaam.AdellijkeTitelCode E= B EN Persoon.Geslachtsaanduiding.Code E= V)");
+    }
+
+    @Test
+    public void vergelijkingMetHistorischeCategorieOverigPredicaat() throws Exception {
+        testUtil.testVoorwaarde("01.02.20 OGAA JH",
+                "(Persoon.SamengesteldeNaam.PredicaatCode E= J EN Persoon.Geslachtsaanduiding.Code E= M)");
     }
 }

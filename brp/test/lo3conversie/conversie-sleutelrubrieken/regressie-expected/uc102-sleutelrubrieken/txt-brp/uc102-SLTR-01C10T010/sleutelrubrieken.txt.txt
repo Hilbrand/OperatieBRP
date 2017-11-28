@@ -1,1 +1,1 @@
-GEWIJZIGD(oud, nieuw, [identificatienummers.administratienummer])
+GEWIJZIGD(oud, nieuw, [Persoon.Identificatienummers.Administratienummer])

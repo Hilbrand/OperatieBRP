@@ -10,42 +10,41 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.ALaagHistorieVerzameling;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BRPActie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.BetrokkenheidOuderlijkGezagHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Entiteit;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.FormeleHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonAfgeleidAdministratiefHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonBijhoudingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonDeelnameEuVerkiezingenHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeboorteHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsaanduidingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonGeslachtsnaamcomponentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIDHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonIndicatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonInschrijvingHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonPersoonskaartHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonReisdocumentHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonSamengesteldeNaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonUitsluitingKiesrechtHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerblijfsrechtHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVerificatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PersoonVoornaamHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.RelatieHistorie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortIndicatie;
+import nl.bzk.algemeenbrp.dal.domein.brp.enums.SoortPersoon;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.Sleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.ALaagHistorieVerzameling;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BRPActie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.BetrokkenheidOuderlijkGezagHistorie;
 import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.EntiteitSleutel;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.FormeleHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonAfgeleidAdministratiefHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonBijhoudingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonDeelnameEuVerkiezingenHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeboorteHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsaanduidingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonGeslachtsnaamcomponentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIDHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonIndicatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonInschrijvingHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonOnderzoekHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonPersoonskaartHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonReisdocumentHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonSamengesteldeNaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonUitsluitingKiesrechtHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerblijfsrechtHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVerificatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PersoonVoornaamHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.RelatieHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortIndicatie;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.SoortPersoon;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.util.PersistenceUtil;
+import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.DeltaBepalingContext;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.Verschil;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.delta.VerschilGroep;
 import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
@@ -56,9 +55,12 @@ import nl.bzk.migratiebrp.synchronisatie.logging.SynchronisatieLogging;
  */
 public final class StapelDeltaWijzigingenMap {
 
-    private static final List<Class<? extends FormeleHistorie>> GROEPEN_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE = new ArrayList<>();
-    private static final List<SoortIndicatie> INDICATIES_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE = new ArrayList<>();
+    private static final Set<Class<? extends FormeleHistorie>> GROEPEN_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE = new HashSet<>();
+    private static final Set<SoortIndicatie> INDICATIES_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE =
+            EnumSet.of(SoortIndicatie.VOLLEDIGE_VERSTREKKINGSBEPERKING, SoortIndicatie.SIGNALERING_MET_BETREKKING_TOT_VERSTREKKEN_REISDOCUMENT,
+                    SoortIndicatie.BIJZONDERE_VERBLIJFSRECHTELIJKE_POSITIE);
     private static final int INT_3 = 3;
+    private static final int INT_2 = 2;
 
     static {
         GROEPEN_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.add(PersoonInschrijvingHistorie.class);
@@ -69,10 +71,6 @@ public final class StapelDeltaWijzigingenMap {
         GROEPEN_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.add(PersoonVerificatieHistorie.class);
         GROEPEN_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.add(PersoonReisdocumentHistorie.class);
         GROEPEN_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.add(PersoonVerblijfsrechtHistorie.class);
-        GROEPEN_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.add(PersoonOnderzoekHistorie.class);
-        INDICATIES_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.add(SoortIndicatie.VOLLEDIGE_VERSTREKKINGSBEPERKING);
-        INDICATIES_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.add(SoortIndicatie.SIGNALERING_MET_BETREKKING_TOT_VERSTREKKEN_REISDOCUMENT);
-        INDICATIES_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.add(SoortIndicatie.BIJZONDERE_VERBLIJFSRECHTELIJKE_POSITIE);
     }
 
     private final InterneMap interneMap;
@@ -80,20 +78,18 @@ public final class StapelDeltaWijzigingenMap {
     /**
      * Maakt een nieuwe StapelDeltaWijzigingenMap object.
      */
-    public StapelDeltaWijzigingenMap() {
+    StapelDeltaWijzigingenMap() {
         interneMap = new InterneMap();
     }
 
     /**
      * Verzameld alle formele historie voor het A Laag object.
-     *
-     * @param aLaagEntiteit
-     *            het a laag object
+     * @param aLaagEntiteit het a laag object
      * @return de lijst met formele historie
      */
     static Collection<FormeleHistorie> verzamelAlleFormeleHistorie(final ALaagHistorieVerzameling aLaagEntiteit) {
         final Collection<FormeleHistorie> result = new ArrayList<>();
-        for (Collection<? extends FormeleHistorie> formeleHistorieMap : aLaagEntiteit.verzamelHistorie().values()) {
+        for (Collection<FormeleHistorie> formeleHistorieMap : aLaagEntiteit.verzamelHistorie().values()) {
             result.addAll(formeleHistorieMap);
         }
         return result;
@@ -101,29 +97,21 @@ public final class StapelDeltaWijzigingenMap {
 
     /**
      * Voegt de delta wijziging toe aan de de lijst horende bij de stapel van deze verschil groep.
-     *
-     * @param verschilGroep
-     *            de verschillen per voorkomen
-     * @param deltaWijziging
-     *            de gedetecteerde delta wijziging voor de betreffende verschilgroep
-     * @throws IllegalArgumentException
-     *             als de verschilgroep geen betrekking heeft op een historisch voorkomen
+     * @param verschilGroep de verschillen per voorkomen
+     * @param deltaWijziging de gedetecteerde delta wijziging voor de betreffende verschilgroep
+     * @throws IllegalArgumentException als de verschilgroep geen betrekking heeft op een historisch voorkomen
      */
-    public void addHistorieDeltaWijziging(final VerschilGroep verschilGroep, final DeltaWijziging deltaWijziging) {
+    void addHistorieDeltaWijziging(final VerschilGroep verschilGroep, final DeltaWijziging deltaWijziging) {
         addHistorieDeltaWijziging(verschilGroep, Collections.singletonList(deltaWijziging));
     }
 
     /**
      * Voegt de delta wijziging toe aan de de lijst horende bij de stapel van deze verschil groep.
-     *
-     * @param verschilGroep
-     *            de verschillen per voorkomen
-     * @param deltaWijzigingen
-     *            de gedetecteerde delta wijzigingen voor de betreffende verschilgroep
-     * @throws IllegalArgumentException
-     *             als de verschilgroep geen betrekking heeft op een historisch voorkomen
+     * @param verschilGroep de verschillen per voorkomen
+     * @param deltaWijzigingen de gedetecteerde delta wijzigingen voor de betreffende verschilgroep
+     * @throws IllegalArgumentException als de verschilgroep geen betrekking heeft op een historisch voorkomen
      */
-    public void addHistorieDeltaWijziging(final VerschilGroep verschilGroep, final List<DeltaWijziging> deltaWijzigingen) {
+    void addHistorieDeltaWijziging(final VerschilGroep verschilGroep, final List<DeltaWijziging> deltaWijzigingen) {
         if (verschilGroep.getVerschillen().isEmpty()) {
             return;
         }
@@ -150,7 +138,7 @@ public final class StapelDeltaWijzigingenMap {
     }
 
     private Map.Entry<EntiteitSleutel, List<DeltaWijziging>> getEersteOverigeBijhouding() {
-        Entry<EntiteitSleutel, List<DeltaWijziging>> result = null;
+        Map.Entry<EntiteitSleutel, List<DeltaWijziging>> result = null;
         for (final EntiteitSleutel stapelSleutel : interneMap.verschilGroepMap.keySet()) {
             final List<DeltaWijziging> deltaWijzigingen = interneMap.getDeltaWijzigingen(stapelSleutel);
             if (!deltaWijzigingen.isEmpty() && !isActueleBijhouding(stapelSleutel, deltaWijzigingen)) {
@@ -165,29 +153,18 @@ public final class StapelDeltaWijzigingenMap {
 
     private boolean isActueleBijhouding(final EntiteitSleutel stapelSleutel, final List<DeltaWijziging> deltaWijzigingen) {
         boolean result = false;
-        if (isActualiseringNieuweGegevens(deltaWijzigingen)) {
-            result = true;
-        } else if (isActualiseringBestaandeGegevens(deltaWijzigingen)) {
-            result = true;
-        } else if (isActualiseringBeeindigdeGegevens(deltaWijzigingen)) {
-            result = true;
-        } else if (isCorrectieInActueleGegevens(deltaWijzigingen)) {
-            result = true;
-        } else if (isCorrectieOnterechtOpgenomenGegevens(deltaWijzigingen)) {
-            result = true;
-        } else if (isWijzigingGroepenZonderGBAHistorie(stapelSleutel)) {
-            result = true;
-        } else if (isWijzigingBijhoudingGegevens(deltaWijzigingen)) {
-            result = true;
-        } else if (isWijzigingVolledigGenegeerd(deltaWijzigingen)) {
-            result = true;
-        } else if (isBetrokkenheidRelatieOfGerelateerde(stapelSleutel)) {
-            result = true;
-        } else if (isWijzigingVanVoornaamOfGeslachtsnaamcomponent(stapelSleutel)) {
-            result = true;
-        } else if (isWijzigingBijhoudingAfkomstigUitCat08(stapelSleutel)) {
-            result = true;
-        } else if (isBijhoudingNationaliteitWordtBeeindigd(deltaWijzigingen)) {
+        if (isActualiseringNieuweGegevens(deltaWijzigingen)
+                || isActualiseringBestaandeGegevens(deltaWijzigingen)
+                || isActualiseringBeeindigdeGegevens(deltaWijzigingen)
+                || isCorrectieInActueleGegevens(deltaWijzigingen)
+                || isCorrectieOnterechtOpgenomenGegevens(deltaWijzigingen)
+                || isWijzigingGroepenZonderGBAHistorie(stapelSleutel)
+                || isWijzigingBijhoudingGegevens(deltaWijzigingen)
+                || isWijzigingVolledigGenegeerd(deltaWijzigingen)
+                || isBetrokkenheidRelatieOfGerelateerde(stapelSleutel)
+                || isWijzigingVanVoornaamOfGeslachtsnaamcomponent(stapelSleutel)
+                || isWijzigingBijhoudingAfkomstigUitCat08(stapelSleutel)
+                || isBijhoudingNationaliteitWordtBeeindigd(deltaWijzigingen)) {
             result = true;
         }
         return result;
@@ -203,17 +180,14 @@ public final class StapelDeltaWijzigingenMap {
 
     private boolean isActualiseringBestaandeGegevens(final List<DeltaWijziging> deltaWijzigingen) {
         boolean result = false;
-        if (deltaWijzigingen.size() == 2) {
-            if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_011))) {
-                result = true;
-            } else if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_021))) {
-                result = true;
-            } else if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_024))) {
+        if (deltaWijzigingen.size() == INT_2) {
+            if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_011))
+                    || deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_021))
+                    || deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_024))) {
                 result = true;
             }
         } else if (deltaWijzigingen.size() == INT_3
-                   && deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_024, DeltaWijziging.DW_023)))
-        {
+                && deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_024, DeltaWijziging.DW_023))) {
             result = true;
         }
         return result;
@@ -225,15 +199,13 @@ public final class StapelDeltaWijzigingenMap {
 
     private boolean isCorrectieInActueleGegevens(final List<DeltaWijziging> deltaWijzigingen) {
         boolean result = false;
-        if (deltaWijzigingen.size() == 2) {
-            if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_012))) {
-                result = true;
-            } else if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_022))) {
+        if (deltaWijzigingen.size() == INT_2) {
+            if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_012))
+                    || deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_022))) {
                 result = true;
             }
         } else if (deltaWijzigingen.size() == INT_3
-                   && deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_022, DeltaWijziging.DW_023)))
-        {
+                && deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_022, DeltaWijziging.DW_023))) {
             result = true;
         }
         return result;
@@ -241,7 +213,7 @@ public final class StapelDeltaWijzigingenMap {
 
     private boolean isCorrectieOnterechtOpgenomenGegevens(final List<DeltaWijziging> deltaWijzigingen) {
         return deltaWijzigingen.size() == 1
-               && (DeltaWijziging.DW_012.equals(deltaWijzigingen.get(0)) || DeltaWijziging.DW_025.equals(deltaWijzigingen.get(0)));
+                && (DeltaWijziging.DW_012.equals(deltaWijzigingen.get(0)) || DeltaWijziging.DW_025.equals(deltaWijzigingen.get(0)));
     }
 
     private boolean isWijzigingGroepenZonderGBAHistorie(final EntiteitSleutel stapelSleutel) {
@@ -252,9 +224,9 @@ public final class StapelDeltaWijzigingenMap {
             final Class<? extends FormeleHistorie> entiteitClass = gewijzigdeEntiteit.getClass();
             isGroepZonderHistorie =
                     GROEPEN_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.contains(entiteitClass)
-                                    || (gewijzigdeEntiteit instanceof PersoonIndicatieHistorie)
-                                       && INDICATIES_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.contains(
-                                           ((PersoonIndicatieHistorie) gewijzigdeEntiteit).getPersoonIndicatie().getSoortIndicatie());
+                            || (gewijzigdeEntiteit instanceof PersoonIndicatieHistorie)
+                            && INDICATIES_AFKOMSTIG_UIT_CATEGORIE_ZONDER_HISTORIE.contains(
+                            ((PersoonIndicatieHistorie) gewijzigdeEntiteit).getPersoonIndicatie().getSoortIndicatie());
             groepOfIndicatieGevondenMetHistorie |= !isGroepZonderHistorie;
         }
         return !gewijzigdeEntiteitLijst.isEmpty() && !groepOfIndicatieGevondenMetHistorie;
@@ -262,26 +234,23 @@ public final class StapelDeltaWijzigingenMap {
 
     private boolean isWijzigingBijhoudingGegevens(final List<DeltaWijziging> deltaWijzigingen) {
         boolean result = false;
-        if (deltaWijzigingen.size() == 2) {
-            if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_031))) {
-                result = true;
-            } else if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_032))) {
-                result = true;
-            } else if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_034))) {
+        if (deltaWijzigingen.size() == INT_2) {
+            if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_031))
+                    || deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_032))
+                    || deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_034))) {
                 result = true;
             }
-        } else if (deltaWijzigingen.size() == INT_3) {
-            if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_031, DeltaWijziging.DW_023))) {
-                result = true;
-            } else if (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_034, DeltaWijziging.DW_023))) {
-                result = true;
-            }
+        } else if (deltaWijzigingen.size() == INT_3
+                && (deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_031, DeltaWijziging.DW_023))
+                || deltaWijzigingen.containsAll(maakDeltaWijzigingLijst(DeltaWijziging.DW_002_ACT, DeltaWijziging.DW_034, DeltaWijziging.DW_023)))) {
+            result = true;
         }
         return result;
     }
 
     private boolean isWijzigingVolledigGenegeerd(final List<DeltaWijziging> deltaWijzigingen) {
-        final Set<DeltaWijziging> uniekeDeltaWijzigingen = new HashSet<>(deltaWijzigingen);
+        final Set<DeltaWijziging> uniekeDeltaWijzigingen = EnumSet.noneOf(DeltaWijziging.class);
+        uniekeDeltaWijzigingen.addAll(deltaWijzigingen);
         return uniekeDeltaWijzigingen.size() == 1 && DeltaWijziging.DW_901.equals(uniekeDeltaWijzigingen.iterator().next());
     }
 
@@ -291,8 +260,8 @@ public final class StapelDeltaWijzigingenMap {
         for (FormeleHistorie gewijzigdeEntiteit : gewijzigdeEntiteitLijst) {
             final boolean isBetrokkenheidHistorie =
                     (gewijzigdeEntiteit instanceof BetrokkenheidHistorie)
-                                                    || (gewijzigdeEntiteit instanceof BetrokkenheidOuderHistorie)
-                                                    || (gewijzigdeEntiteit instanceof BetrokkenheidOuderlijkGezagHistorie);
+                            || (gewijzigdeEntiteit instanceof BetrokkenheidOuderHistorie)
+                            || (gewijzigdeEntiteit instanceof BetrokkenheidOuderlijkGezagHistorie);
             anderSoortEntiteitGevonden |=
                     !(isBetrokkenheidHistorie || (gewijzigdeEntiteit instanceof RelatieHistorie) || (isGerelateerdePersoonGroep(gewijzigdeEntiteit)));
         }
@@ -302,15 +271,15 @@ public final class StapelDeltaWijzigingenMap {
     private boolean isGerelateerdePersoonGroep(final FormeleHistorie gewijzigdeEntiteit) {
         final boolean result;
         if (gewijzigdeEntiteit instanceof PersoonIDHistorie) {
-            result = SoortPersoon.ONBEKEND.equals(((PersoonIDHistorie) gewijzigdeEntiteit).getPersoon().getSoortPersoon());
+            result = SoortPersoon.PSEUDO_PERSOON.equals(((PersoonIDHistorie) gewijzigdeEntiteit).getPersoon().getSoortPersoon());
         } else if (gewijzigdeEntiteit instanceof PersoonSamengesteldeNaamHistorie) {
-            result = SoortPersoon.ONBEKEND.equals(((PersoonSamengesteldeNaamHistorie) gewijzigdeEntiteit).getPersoon().getSoortPersoon());
+            result = SoortPersoon.PSEUDO_PERSOON.equals(((PersoonSamengesteldeNaamHistorie) gewijzigdeEntiteit).getPersoon().getSoortPersoon());
         } else if (gewijzigdeEntiteit instanceof PersoonGeboorteHistorie) {
-            result = SoortPersoon.ONBEKEND.equals(((PersoonGeboorteHistorie) gewijzigdeEntiteit).getPersoon().getSoortPersoon());
+            result = SoortPersoon.PSEUDO_PERSOON.equals(((PersoonGeboorteHistorie) gewijzigdeEntiteit).getPersoon().getSoortPersoon());
         } else {
             result =
                     gewijzigdeEntiteit instanceof PersoonGeslachtsaanduidingHistorie
-                     && SoortPersoon.ONBEKEND.equals(((PersoonGeslachtsaanduidingHistorie) gewijzigdeEntiteit).getPersoon().getSoortPersoon());
+                            && SoortPersoon.PSEUDO_PERSOON.equals(((PersoonGeslachtsaanduidingHistorie) gewijzigdeEntiteit).getPersoon().getSoortPersoon());
         }
         return result;
     }
@@ -318,14 +287,12 @@ public final class StapelDeltaWijzigingenMap {
     private boolean isWijzigingVanVoornaamOfGeslachtsnaamcomponent(final EntiteitSleutel stapelSleutel) {
         final List<FormeleHistorie> gewijzigdeEntiteitLijst = interneMap.getGewijzigdeEntiteiten(stapelSleutel);
         final Set<Class<? extends FormeleHistorie>> typeWijzigingen = getUniekeTypesVoorObjecten(gewijzigdeEntiteitLijst);
-        final boolean isVoornaamOfGeslachtsnaamWijziging =
-                typeWijzigingen.size() == 1
-                                                           && (typeWijzigingen.contains(PersoonVoornaamHistorie.class)
-                                                               || typeWijzigingen.contains(PersoonGeslachtsnaamcomponentHistorie.class));
-        final boolean isVoornaamEnGeslachtsnaamWijziging =
-                typeWijzigingen.size() == 2
-                                                           && typeWijzigingen.contains(PersoonVoornaamHistorie.class)
-                                                           && typeWijzigingen.contains(PersoonGeslachtsnaamcomponentHistorie.class);
+        final boolean isVoornaamOfGeslachtsnaamWijziging = typeWijzigingen.size() == 1
+                && (typeWijzigingen.contains(PersoonVoornaamHistorie.class)
+                || typeWijzigingen.contains(PersoonGeslachtsnaamcomponentHistorie.class));
+        final boolean isVoornaamEnGeslachtsnaamWijziging = typeWijzigingen.size() == INT_2
+                && typeWijzigingen.contains(PersoonVoornaamHistorie.class)
+                && typeWijzigingen.contains(PersoonGeslachtsnaamcomponentHistorie.class);
         return isVoornaamOfGeslachtsnaamWijziging || isVoornaamEnGeslachtsnaamWijziging;
     }
 
@@ -381,79 +348,78 @@ public final class StapelDeltaWijzigingenMap {
     /**
      * @return de stapel sleutels in deze map, of een lege set als deze niet bestaan
      */
-    public Set<EntiteitSleutel> getStapelSleutels() {
+    Set<EntiteitSleutel> getStapelSleutels() {
         return Collections.unmodifiableSet(interneMap.verschilGroepMap.keySet());
     }
 
     /**
-     * @param stapelSleutel
-     *            de entiteitsleutel die de stapel identificeert
+     * @param stapelSleutel de entiteitsleutel die de stapel identificeert
      * @return de lijst met wijzigingen die gelden voor de stapel die geidentificeerd kan worden met de gegeven sleutel
      */
-    public List<DeltaWijziging> getDeltaWijzigingen(final EntiteitSleutel stapelSleutel) {
+    List<DeltaWijziging> getDeltaWijzigingen(final EntiteitSleutel stapelSleutel) {
         if (interneMap.verschilGroepMap.containsKey(stapelSleutel)) {
             return Collections.unmodifiableList(interneMap.getDeltaWijzigingen(stapelSleutel));
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 
     /**
      * Logt de DeltaWijzigingen per stapel in de SynchronisatieLog.
-     *
-     * @param deltaRootEntiteitMatchNaam
-     *            de naam van de DeltaRootEntiteitMatch waarvoor deze wijzigingen gelogd worden
+     * @param deltaRootEntiteitMatchNaam de naam van de DeltaRootEntiteitMatch waarvoor deze wijzigingen gelogd worden
      */
     public void log(final String deltaRootEntiteitMatchNaam) {
         for (final EntiteitSleutel stapelSleutel : interneMap.verschilGroepMap.keySet()) {
             final List<DeltaWijziging> deltaWijzigingen = interneMap.getDeltaWijzigingen(stapelSleutel);
             if (!deltaWijzigingen.isEmpty()) {
                 SynchronisatieLogging.addMelding(
-                    String.format("%s: DW-logging: %s=%s", deltaRootEntiteitMatchNaam, sleutelToString(stapelSleutel), deltaWijzigingen));
+                        String.format("%s: DW-logging: %s=%s", deltaRootEntiteitMatchNaam, sleutelToString(stapelSleutel), deltaWijzigingen));
             }
         }
-        final Entry<EntiteitSleutel, List<DeltaWijziging>> eersteOverigeBijhouding = getEersteOverigeBijhouding();
+        final Map.Entry<EntiteitSleutel, List<DeltaWijziging>> eersteOverigeBijhouding = getEersteOverigeBijhouding();
         String bijhoudingOverigString = "";
         if (eersteOverigeBijhouding != null) {
             bijhoudingOverigString =
                     String.format(
-                        ", eerste bijhouding overig: %s=%s",
-                        sleutelToString(eersteOverigeBijhouding.getKey()),
-                        eersteOverigeBijhouding.getValue());
+                            ", eerste bijhouding overig: %s=%s",
+                            sleutelToString(eersteOverigeBijhouding.getKey()),
+                            eersteOverigeBijhouding.getValue());
         }
         SynchronisatieLogging.addMelding(
-            String.format(
-                "%s: Voorlopige conclusie: Is bijhouding actueel: %b%s",
-                deltaRootEntiteitMatchNaam,
-                eersteOverigeBijhouding == null,
-                bijhoudingOverigString));
+                String.format(
+                        "%s: Voorlopige conclusie: Is bijhouding actueel: %b%s",
+                        deltaRootEntiteitMatchNaam,
+                        eersteOverigeBijhouding == null,
+                        bijhoudingOverigString));
     }
 
     /**
      * Verwijdert de verschilgroepen in een Bijhouding stapel als deze bestaat uit een {@link DeltaWijziging#DW_901} en
      * {@link DeltaWijziging#DW_023} en verwijdert de {@link DeltaWijziging#DW_901} DeltaWijzigingen.
-     *
-     * @return de lijst met verschilgroepen waarbij sprake is van een {@link DeltaWijziging#DW_901} en
-     *         {@link DeltaWijziging#DW_023} wijziging in de groep Bijhouding, als niets gevonden wordt wordt een lege
-     *         lijst geretourneerd.
+     * @param deltaBepalingContext de {@link DeltaBepalingContext}
+     * @return de lijst met verschilgroepen waarbij sprake is van een {@link DeltaWijziging#DW_901} en {@link DeltaWijziging#DW_023} wijziging in de groep
+     * Bijhouding, als niets gevonden wordt wordt een lege lijst geretourneerd.
      */
-    public List<VerschilGroep> verwijderTeNegerenVerschilGroepenEnDw901Wijzigingen() {
+    List<VerschilGroep> verwijderTeNegerenVerschilGroepenEnDw901Wijzigingen(final DeltaBepalingContext deltaBepalingContext) {
         final List<VerschilGroep> result = new ArrayList<>();
         final List<EntiteitSleutel> teVerwijderenDeltaWijzigingen = new ArrayList<>();
-        for (final Entry<EntiteitSleutel, List<VerschilGroepDeltaWijziging>> deltaWijzigingenVoorStapelEntry : interneMap.verschilGroepMap.entrySet()) {
+        for (final Map.Entry<EntiteitSleutel, List<VerschilGroepDeltaWijziging>> deltaWijzigingenVoorStapelEntry : interneMap.verschilGroepMap.entrySet()) {
             final EntiteitSleutel stapelSleutel = deltaWijzigingenVoorStapelEntry.getKey();
             final List<VerschilGroepDeltaWijziging> deltaWijzigingenVoorStapel = deltaWijzigingenVoorStapelEntry.getValue();
             final FormeleHistorie aangepastBrpVoorkomen = interneMap.getGewijzigdeEntiteiten(stapelSleutel).get(0);
             if (isWijzigingOpBijhoudingWaarbijAlleWijzigingenMoetenWordenGenegeerd(deltaWijzigingenVoorStapel, aangepastBrpVoorkomen)) {
                 for (VerschilGroepDeltaWijziging verschilGroepDeltaWijziging : deltaWijzigingenVoorStapel) {
+                    deltaBepalingContext.demarkeerBestaandeRijAlsMRij(verschilGroepDeltaWijziging.getVerschilGroep().getFormeleHistorie());
                     result.add(verschilGroepDeltaWijziging.getVerschilGroep());
                 }
                 teVerwijderenDeltaWijzigingen.add(stapelSleutel);
             } else if (isWijzigingOpBijhoudingWaarbijDw023MoetWordenGenegeerd(deltaWijzigingenVoorStapel, aangepastBrpVoorkomen)) {
                 final VerschilGroepDeltaWijziging dw023VerschilGroep = zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_023);
-                deltaWijzigingenVoorStapel.remove(dw023VerschilGroep);
-                interneMap.removeDeltaWijziging(stapelSleutel, DeltaWijziging.DW_023);
-                result.add(dw023VerschilGroep.getVerschilGroep());
+                if (dw023VerschilGroep != null) {
+                    deltaWijzigingenVoorStapel.remove(dw023VerschilGroep);
+                    interneMap.removeDeltaWijziging(stapelSleutel, DeltaWijziging.DW_023);
+                    result.add(dw023VerschilGroep.getVerschilGroep());
+                }
             }
         }
         for (final EntiteitSleutel teVerwijderenStapelSleutel : teVerwijderenDeltaWijzigingen) {
@@ -464,30 +430,27 @@ public final class StapelDeltaWijzigingenMap {
     }
 
     private boolean isWijzigingOpBijhoudingWaarbijAlleWijzigingenMoetenWordenGenegeerd(
-        final List<VerschilGroepDeltaWijziging> deltaWijzigingenVoorStapel,
-        final FormeleHistorie aangepastBrpVoorkomen)
-    {
-        return deltaWijzigingenVoorStapel.size() == 2
-               && aangepastBrpVoorkomen instanceof PersoonBijhoudingHistorie
-               && zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_901) != null
-               && zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_023) != null;
+            final List<VerschilGroepDeltaWijziging> deltaWijzigingenVoorStapel,
+            final FormeleHistorie aangepastBrpVoorkomen) {
+        return deltaWijzigingenVoorStapel.size() == INT_2
+                && aangepastBrpVoorkomen instanceof PersoonBijhoudingHistorie
+                && zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_901) != null
+                && zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_023) != null;
     }
 
     private boolean isWijzigingOpBijhoudingWaarbijDw023MoetWordenGenegeerd(
-        final List<VerschilGroepDeltaWijziging> deltaWijzigingenVoorStapel,
-        final FormeleHistorie aangepastBrpVoorkomen)
-    {
+            final List<VerschilGroepDeltaWijziging> deltaWijzigingenVoorStapel,
+            final FormeleHistorie aangepastBrpVoorkomen) {
         final boolean zijnJuisteVerschillen =
                 zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_021) != null
-                                              && zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_023) != null
-                                              && zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_002_ACT) != null;
+                        && zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_023) != null
+                        && zoekVerschilGroep(deltaWijzigingenVoorStapel, DeltaWijziging.DW_002_ACT) != null;
         return deltaWijzigingenVoorStapel.size() == INT_3 && aangepastBrpVoorkomen instanceof PersoonBijhoudingHistorie && zijnJuisteVerschillen;
     }
 
     private VerschilGroepDeltaWijziging zoekVerschilGroep(
-        final List<VerschilGroepDeltaWijziging> deltaWijzigingenVoorStapel,
-        final DeltaWijziging deltaWijziging)
-    {
+            final List<VerschilGroepDeltaWijziging> deltaWijzigingenVoorStapel,
+            final DeltaWijziging deltaWijziging) {
         for (final VerschilGroepDeltaWijziging verschilGroepDeltaWijziging : deltaWijzigingenVoorStapel) {
             if (deltaWijziging.equals(verschilGroepDeltaWijziging.getDeltaWijziging())) {
                 return verschilGroepDeltaWijziging;
@@ -499,7 +462,7 @@ public final class StapelDeltaWijzigingenMap {
     private String sleutelToString(final EntiteitSleutel sleutel) {
         final StringBuilder logString = new StringBuilder();
         logString.append(String.format("Stapel[%s.%s", sleutel.getEntiteit().getSimpleName(), sleutel.getVeld()));
-        for (final Entry<String, Object> sleutelEntry : sleutel.getDelen().entrySet()) {
+        for (final Map.Entry<String, Object> sleutelEntry : sleutel.getDelen().entrySet()) {
             logString.append(String.format(", %s=%s", sleutelEntry.getKey(), sleutelEntry.getValue()));
         }
         logString.append("]");
@@ -540,7 +503,7 @@ public final class StapelDeltaWijzigingenMap {
 
         private void voegSleutelToe(final EntiteitSleutel stapelSleutel) {
             if (!verschilGroepMap.containsKey(stapelSleutel)) {
-                verschilGroepMap.put(stapelSleutel, new ArrayList<VerschilGroepDeltaWijziging>());
+                verschilGroepMap.put(stapelSleutel, new ArrayList<>());
             }
         }
 
@@ -565,9 +528,9 @@ public final class StapelDeltaWijzigingenMap {
         private List<FormeleHistorie> getFormeleHistorieVoorVerschil(final Verschil verschil) {
             final List<FormeleHistorie> result = new ArrayList<>();
             if (verschil.getBestaandeHistorieRij() != null) {
-                result.add(PersistenceUtil.getPojoFromObject(verschil.getBestaandeHistorieRij()));
+                result.add(Entiteit.convertToPojo(verschil.getBestaandeHistorieRij()));
             } else if (verschil.getNieuweHistorieRij() != null) {
-                result.add(PersistenceUtil.getPojoFromObject(verschil.getNieuweHistorieRij()));
+                result.add(Entiteit.convertToPojo(verschil.getNieuweHistorieRij()));
             } else if (verschil.getNieuweWaarde() instanceof ALaagHistorieVerzameling) {
                 result.addAll(verzamelAlleFormeleHistorie((ALaagHistorieVerzameling) verschil.getNieuweWaarde()));
             } else if (verschil.getOudeWaarde() instanceof ALaagHistorieVerzameling) {
@@ -579,10 +542,9 @@ public final class StapelDeltaWijzigingenMap {
         }
 
         private void voegVerschilGroepToe(
-            final EntiteitSleutel stapelSleutel,
-            final VerschilGroep verschilGroep,
-            final List<DeltaWijziging> deltaWijzigingen)
-        {
+                final EntiteitSleutel stapelSleutel,
+                final VerschilGroep verschilGroep,
+                final List<DeltaWijziging> deltaWijzigingen) {
             for (final DeltaWijziging deltaWijziging : deltaWijzigingen) {
                 verschilGroepMap.get(stapelSleutel).add(new VerschilGroepDeltaWijziging(verschilGroep, deltaWijziging));
             }
@@ -594,22 +556,13 @@ public final class StapelDeltaWijzigingenMap {
 
         private void verwijderTeNegerenDeltaWijzigingen() {
             for (List<VerschilGroepDeltaWijziging> verschilGroepDeltaWijzigingList : verschilGroepMap.values()) {
-                final Iterator<VerschilGroepDeltaWijziging> verschilGroepDeltaWijzigingIterator = verschilGroepDeltaWijzigingList.iterator();
-                while (verschilGroepDeltaWijzigingIterator.hasNext()) {
-                    if (!verschilGroepDeltaWijzigingIterator.next().getDeltaWijziging().isNodigVoorSyncResyncBeslissing()) {
-                        verschilGroepDeltaWijzigingIterator.remove();
-                    }
-                }
+                verschilGroepDeltaWijzigingList
+                        .removeIf(verschilGroepDeltaWijziging -> !verschilGroepDeltaWijziging.getDeltaWijziging().isNodigVoorSyncResyncBeslissing());
             }
         }
 
         private void removeDeltaWijziging(final EntiteitSleutel stapelSleutel, final DeltaWijziging deltaWijziging) {
-            final Iterator<VerschilGroepDeltaWijziging> verschilGroepDeltaWijzigingIterator = verschilGroepMap.get(stapelSleutel).iterator();
-            while (verschilGroepDeltaWijzigingIterator.hasNext()) {
-                if (deltaWijziging.equals(verschilGroepDeltaWijzigingIterator.next().getDeltaWijziging())) {
-                    verschilGroepDeltaWijzigingIterator.remove();
-                }
-            }
+            verschilGroepMap.get(stapelSleutel).removeIf(verschilGroepDeltaWijziging -> deltaWijziging.equals(verschilGroepDeltaWijziging.getDeltaWijziging()));
         }
     }
 }

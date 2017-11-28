@@ -6,49 +6,45 @@
 
 package nl.bzk.migratiebrp.conversie.model.domein.conversietabel.dynamisch;
 
-import java.util.Collections;
-import java.util.Map.Entry;
+import static org.junit.Assert.assertEquals;
 
+import java.util.Collections;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3AanduidingInhoudingVermissingNederlandsReisdocument;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Datum;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Integer;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3Onderzoek;
-
-import org.junit.Assert;
 import org.junit.Test;
 
 public class AbstractAanduidingInhoudingVermissingReisdocumentConversietabelTest {
     private final AbstractAanduidingInhoudingVermissingReisdocumentConversietabel subject =
-            new AbstractAanduidingInhoudingVermissingReisdocumentConversietabel(
-                Collections.<Entry<Lo3AanduidingInhoudingVermissingNederlandsReisdocument, BrpAanduidingInhoudingOfVermissingReisdocumentCode>>emptyList())
-            {
+            new AbstractAanduidingInhoudingVermissingReisdocumentConversietabel(Collections.emptyList()) {
             };
 
     private static final Lo3AanduidingInhoudingVermissingNederlandsReisdocument LO3 = new Lo3AanduidingInhoudingVermissingNederlandsReisdocument("S");
     private static final BrpAanduidingInhoudingOfVermissingReisdocumentCode BRP = new BrpAanduidingInhoudingOfVermissingReisdocumentCode('S');
-    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), Lo3Datum.NULL_DATUM, null);
+    private static final Lo3Onderzoek ONDERZOEK = new Lo3Onderzoek(new Lo3Integer(0), new Lo3Datum(0), null);
 
     @Test
     public void voegOnderzoekToeLo3() {
-        Assert.assertEquals(null, subject.voegOnderzoekToeLo3(null, null));
-        Assert.assertEquals(null, subject.voegOnderzoekToeLo3(null, ONDERZOEK).getWaarde());
-        Assert.assertEquals(ONDERZOEK, subject.voegOnderzoekToeLo3(null, ONDERZOEK).getOnderzoek());
-        Assert.assertEquals(LO3.getWaarde(), subject.voegOnderzoekToeLo3(LO3, null).getWaarde());
-        Assert.assertEquals(null, subject.voegOnderzoekToeLo3(LO3, null).getOnderzoek());
-        Assert.assertEquals(LO3.getWaarde(), subject.voegOnderzoekToeLo3(LO3, ONDERZOEK).getWaarde());
-        Assert.assertEquals(ONDERZOEK, subject.voegOnderzoekToeLo3(LO3, ONDERZOEK).getOnderzoek());
+        assertEquals(null, subject.voegOnderzoekToeLo3(null, null));
+        assertEquals(null, subject.voegOnderzoekToeLo3(null, ONDERZOEK).getWaarde());
+        assertEquals(ONDERZOEK, subject.voegOnderzoekToeLo3(null, ONDERZOEK).getOnderzoek());
+        assertEquals(LO3.getWaarde(), subject.voegOnderzoekToeLo3(LO3, null).getWaarde());
+        assertEquals(null, subject.voegOnderzoekToeLo3(LO3, null).getOnderzoek());
+        assertEquals(LO3.getWaarde(), subject.voegOnderzoekToeLo3(LO3, ONDERZOEK).getWaarde());
+        assertEquals(ONDERZOEK, subject.voegOnderzoekToeLo3(LO3, ONDERZOEK).getOnderzoek());
     }
 
     @Test
     public void voegOnderzoekToeBrp() {
-        Assert.assertEquals(null, subject.voegOnderzoekToeBrp(null, null));
-        Assert.assertEquals(null, subject.voegOnderzoekToeBrp(null, ONDERZOEK).getWaarde());
-        Assert.assertEquals(ONDERZOEK, subject.voegOnderzoekToeBrp(null, ONDERZOEK).getOnderzoek());
-        Assert.assertEquals(BRP.getWaarde(), subject.voegOnderzoekToeBrp(BRP, null).getWaarde());
-        Assert.assertEquals(null, subject.voegOnderzoekToeBrp(BRP, null).getOnderzoek());
-        Assert.assertEquals(BRP.getWaarde(), subject.voegOnderzoekToeBrp(BRP, ONDERZOEK).getWaarde());
-        Assert.assertEquals(ONDERZOEK, subject.voegOnderzoekToeBrp(BRP, ONDERZOEK).getOnderzoek());
+        assertEquals(null, subject.voegOnderzoekToeBrp(null, null));
+        assertEquals(null, subject.voegOnderzoekToeBrp(null, ONDERZOEK).getWaarde());
+        assertEquals(ONDERZOEK, subject.voegOnderzoekToeBrp(null, ONDERZOEK).getOnderzoek());
+        assertEquals(BRP.getWaarde(), subject.voegOnderzoekToeBrp(BRP, null).getWaarde());
+        assertEquals(null, subject.voegOnderzoekToeBrp(BRP, null).getOnderzoek());
+        assertEquals(BRP.getWaarde(), subject.voegOnderzoekToeBrp(BRP, ONDERZOEK).getWaarde());
+        assertEquals(ONDERZOEK, subject.voegOnderzoekToeBrp(BRP, ONDERZOEK).getOnderzoek());
     }
 
 }

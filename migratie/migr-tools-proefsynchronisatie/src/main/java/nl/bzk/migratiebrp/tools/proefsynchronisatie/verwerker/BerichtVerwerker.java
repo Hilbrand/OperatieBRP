@@ -8,17 +8,13 @@ package nl.bzk.migratiebrp.tools.proefsynchronisatie.verwerker;
 
 /**
  * Bericht verwerker waarbij aangegeven kan worden wanneer 'de huidige set aan berichten' verwerkt moet worden.
- *
- * @param <T>
- *            type bericht
+ * @param <T> type bericht
  */
 public interface BerichtVerwerker<T> {
 
     /**
      * Voeg een bericht toe aan de lijst te verwerken berichten.
-     *
-     * @param bericht
-     *            bericht
+     * @param bericht bericht
      */
     void voegBerichtToe(T bericht);
 
@@ -29,7 +25,6 @@ public interface BerichtVerwerker<T> {
 
     /**
      * Geef het totaal aantal verwerkte berichten.
-     * 
      * @return aantal
      */
     int getVerwerkTeller();

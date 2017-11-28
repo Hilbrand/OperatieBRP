@@ -13,8 +13,14 @@
         <brp:peilmomentFormeelResultaat>${parameters.peilmomentFormeelResultaat}</brp:peilmomentFormeelResultaat>
         <brp:historievorm>${parameters.historievorm}</brp:historievorm>
     </brp:parameters>
-    <brp:zoekcriteriaPersoon brp:communicatieID="${zoekcriteriaPersoon.communicatieID}">
-        <brp:burgerservicenummer>${zoekcriteriaPersoon.burgerservicenummer}</brp:burgerservicenummer>
-        <brp:administratienummer>${zoekcriteriaPersoon.administratienummer}</brp:administratienummer>
-    </brp:zoekcriteriaPersoon>
+    <brp:identificatiecriteria brp:communicatieID="03V">
+        <brp:burgerservicenummer>${identificatiecriteria.burgerservicenummer}</brp:burgerservicenummer>
+        <brp:administratienummer>${identificatiecriteria.administratienummer}</brp:administratienummer>
+    </brp:identificatiecriteria>
+    <!--Optional:-->
+    <brp:scopeElementen brp:communicatieID="comid.scopeElementen">
+        [#list scopeElementen as scopeElement]
+        <brp:elementNaam>${scopeElement.elementnaam}</brp:elementNaam>
+        [/#list]
+    </brp:scopeElementen>
 </brp:lvg_bvgGeefDetailsPersoon>

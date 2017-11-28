@@ -18,7 +18,7 @@ import org.springframework.test.context.support.AbstractTestExecutionListener;
 
 /**
  * Primair toegangspunt voor DBUnit-functies vanuit een test. Is nodig bij gebruik van DBUnit in een Spring-context.
- * 
+ *
  * De {@link TestExecutionListener} dient in een (super class van) de unit test class geregistreerd te worden als
  * TestExecutionListener, zodat we weten in welke context de methodes {@link #insertBefore()} en {@link #verify()} wordt
  * aangeroepen.
@@ -28,7 +28,7 @@ public final class DBUnit {
     /**
      * Annotatie waarmee wordt aangegeven welke data in de database ge-insert moet worden voordat de unittest uitgevoerd
      * wordt.
-     * 
+     *
      * Alleen classpath-locaties zijn toegestaan; de classpath-URL wordt relatief aan de Test Class geresolved. Als
      * dataset wordt het DBUnit Flat-XML formaat ondersteund.
      */
@@ -41,10 +41,10 @@ public final class DBUnit {
     /**
      * Annotatie waarmee wordt aangegeven welke data <b>in ieder geval</b> aanwezig dient te zijn in de database, na het
      * uitvoeren van de unittest.
-     * 
+     *
      * Let op: er wordt dus niet gecontroleerd of er naast de aangegeven 'expected' data geen andere gegevens zijn
      * gevonden. Dit kan wel worden afgedwongen middels het toepassen van de annotation {@link NotExpectedAfter}.
-     * 
+     *
      * Alleen classpath-locaties zijn toegestaan; de classpath-URL wordt relatief aan de Test Class geresolved. Als
      * dataset wordt het DBUnit Flat-XML formaat ondersteund.
      */
@@ -57,8 +57,8 @@ public final class DBUnit {
     /**
      * Annotatie waarmee wordt aangegeven welke data <b>in ieder geval niet</b> aanwezig mag zijn in de database, na het
      * uitvoeren van de unittest.
-     * 
-     * 
+     *
+     *
      * Alleen classpath-locaties zijn toegestaan; de classpath-URL wordt relatief aan de Test Class geresolved. Als
      * dataset wordt het DBUnit Flat-XML formaat ondersteund.
      */
@@ -83,11 +83,8 @@ public final class DBUnit {
 
     /**
      * Verifieert de aannames die middels annotations op de unit test zijn geplaatst.
-     * 
      * @see DBUnit.ExpectedAfter
      * @see DBUnit.NotExpectedAfter
-     * @throws SQLException
-     * @throws DatabaseUnitException
      */
     public static void verify() throws DatabaseUnitException, SQLException {
         StaticContext.assertState();
@@ -106,10 +103,7 @@ public final class DBUnit {
 
     /**
      * Voert de methode-specifieke insert van testdata uit. Deze testdata kan worden opgegeven middels een annotatie.
-     * 
      * @see DBUnit.InsertBefore
-     * @throws SQLException
-     * @throws DatabaseUnitException
      */
     public static void insertBefore() throws DatabaseUnitException, SQLException {
         StaticContext.assertState();

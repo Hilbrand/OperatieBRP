@@ -9,7 +9,6 @@ package nl.bzk.migratiebrp.conversie.regels.proces.lo3naarbrp;
 import java.util.Collections;
 import java.util.HashMap;
 import javax.inject.Inject;
-import nl.bzk.migratiebrp.conversie.model.brp.BrpActie;
 import org.junit.Test;
 
 public class Lo3HistorieConversieVariantLB24Test extends AbstractLo3HistorieConversieVariantTest {
@@ -138,7 +137,7 @@ public class Lo3HistorieConversieVariantLB24Test extends AbstractLo3HistorieConv
     }
 
     private void converteer() {
-        setResultaat(conversie.converteer(getInvoer(), new HashMap<Long, BrpActie>()));
+        setResultaat(conversie.converteer(getInvoer(), new HashMap<>()));
         Collections.reverse(getResultaat());
     }
 }

@@ -32,9 +32,7 @@ public final class ExecuteSql {
 
     /**
      * Main methode voor het uitvoeren van SQL.
-     *
-     * @param args
-     *            De meegegeven argumenten.
+     * @param args De meegegeven argumenten.
      */
     public static void main(final String[] args) {
 

@@ -8,15 +8,12 @@ package nl.bzk.migratiebrp.isc.jbpm.uc309;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.inject.Inject;
-
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Tb02Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.impl.Tf21Bericht;
 import nl.bzk.migratiebrp.bericht.model.sync.impl.VerwerkToevalligeGebeurtenisAntwoordBericht;
 import nl.bzk.migratiebrp.isc.jbpm.common.berichten.BerichtenDao;
 import nl.bzk.migratiebrp.isc.jbpm.common.spring.SpringAction;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,8 +22,16 @@ import org.springframework.stereotype.Component;
 @Component("uc309MaakTf21AntwoordBerichtAction")
 public class MaakTf21AntwoordBerichtAction implements SpringAction {
 
+    private final BerichtenDao berichtenDao;
+
+    /**
+     * Constructor.
+     * @param berichtenDao berichten dao
+     */
     @Inject
-    private BerichtenDao berichtenDao;
+    public MaakTf21AntwoordBerichtAction(final BerichtenDao berichtenDao) {
+        this.berichtenDao = berichtenDao;
+    }
 
     @Override
     public final Map<String, Object> execute(final Map<String, Object> parameters) {
@@ -40,9 +45,9 @@ public class MaakTf21AntwoordBerichtAction implements SpringAction {
 
         final Tf21Bericht tf21Bericht =
                 new Tf21Bericht(
-                    tb02Bericht,
-                    Tf21Bericht.Foutreden.valueOf(verwerkToevalligeGebeurtenisAntwoordBericht.getFoutreden().name()),
-                    verwerkToevalligeGebeurtenisAntwoordBericht.getGemeentecode());
+                        tb02Bericht,
+                        Tf21Bericht.Foutreden.valueOf(verwerkToevalligeGebeurtenisAntwoordBericht.getFoutreden().name()),
+                        verwerkToevalligeGebeurtenisAntwoordBericht.getBijhoudingGemeenteCode());
         result.put("tf21Bericht", berichtenDao.bewaarBericht(tf21Bericht));
         return result;
     }

@@ -14,6 +14,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.isc.telling.entiteit.BerichtTelling;
 import nl.bzk.migratiebrp.isc.telling.repository.BerichtTellingRepository;
 
@@ -26,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public final class BerichtTellingRepositoryImpl implements BerichtTellingRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @PersistenceContext(name = "tellingEntityManagerFactory", unitName = "TellingEntities")
     private EntityManager em;
@@ -56,6 +60,7 @@ public final class BerichtTellingRepositoryImpl implements BerichtTellingReposit
         try {
             return (BerichtTelling) selectQuery.getSingleResult();
         } catch (final NoResultException exception) {
+            LOGGER.debug("Geen resultaat gevonden", exception);
             return null;
         }
     }

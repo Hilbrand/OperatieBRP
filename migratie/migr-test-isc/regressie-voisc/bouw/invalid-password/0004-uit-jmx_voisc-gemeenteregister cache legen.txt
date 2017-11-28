@@ -1,2 +1,0 @@
-nl.bzk.migratiebrp.voisc:name=GEMEENTE
-clearRegister

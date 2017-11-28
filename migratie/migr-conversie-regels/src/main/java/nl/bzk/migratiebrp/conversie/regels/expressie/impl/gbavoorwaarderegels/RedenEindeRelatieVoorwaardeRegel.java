@@ -9,6 +9,10 @@ package nl.bzk.migratiebrp.conversie.regels.expressie.impl.gbavoorwaarderegels;
 import javax.inject.Inject;
 import nl.bzk.migratiebrp.conversie.model.domein.conversietabel.factory.ConversietabelFactory;
 import nl.bzk.migratiebrp.conversie.model.lo3.element.Lo3RedenOntbindingHuwelijkOfGpCode;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaRubriekNaarBrpTypeVertaler;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.GbaVoorwaardeOnvertaalbaarExceptie;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.RubriekWaarde;
+import nl.bzk.migratiebrp.conversie.regels.expressie.impl.criteria.Expressie;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,7 +20,7 @@ import org.springframework.stereotype.Component;
  * conversie tabel gebruikt.
  */
 @Component
-public class RedenEindeRelatieVoorwaardeRegel extends AbstractStandaardVoorwaardeRegel {
+public final class RedenEindeRelatieVoorwaardeRegel extends AbstractGbaVoorwaardeRegel {
 
     /**
      * Regex expressie voor selectie van voorwaarderegels die door deze class worden behandeld.
@@ -24,23 +28,27 @@ public class RedenEindeRelatieVoorwaardeRegel extends AbstractStandaardVoorwaard
     public static final String REGEX_PATROON = "^(05|55)\\.07\\.40.*";
     private static final int VOLGORDE = 500;
 
-    @Inject
-    private ConversietabelFactory conversieTabelFactory;
+    private final StandaardVoorwaardeRegelUtil standaardVoorwaardeRegelUtil;
 
     /**
      * Maakt nieuwe voorwaarderegel aan.
+     * @param conversieTabelFactory conversie tabel factory
+     * @param gbaRubriekNaarBrpTypeVertaler rubriekvertaler
      */
-    public RedenEindeRelatieVoorwaardeRegel() {
+    @Inject
+    public RedenEindeRelatieVoorwaardeRegel(
+            final ConversietabelFactory conversieTabelFactory,
+            final GbaRubriekNaarBrpTypeVertaler gbaRubriekNaarBrpTypeVertaler) {
         super(VOLGORDE, REGEX_PATROON);
+        standaardVoorwaardeRegelUtil = new StandaardVoorwaardeRegelUtil(gbaRubriekNaarBrpTypeVertaler, waarde ->
+                conversieTabelFactory.createRedenEindeRelatieConversietabel()
+                        .converteerNaarBrp(new Lo3RedenOntbindingHuwelijkOfGpCode(waarde.replaceAll("\"", "")))
+                        .getWaarde()
+        );
     }
 
     @Override
-    public final String vertaalWaardeVanRubriek(final String ruweWaarde) {
-        final String zonderAanhalingstekens = ruweWaarde.replaceAll("\"", "");
-        final Character vertaaldeWaarde =
-                conversieTabelFactory.createRedenEindeRelatieConversietabel()
-                                     .converteerNaarBrp(new Lo3RedenOntbindingHuwelijkOfGpCode(zonderAanhalingstekens))
-                                     .getWaarde();
-        return String.format("\"%s\"", vertaaldeWaarde);
+    public Expressie getBrpExpressie(final RubriekWaarde voorwaardeRegel) throws GbaVoorwaardeOnvertaalbaarExceptie {
+        return standaardVoorwaardeRegelUtil.getBrpExpressie(voorwaardeRegel);
     }
 }

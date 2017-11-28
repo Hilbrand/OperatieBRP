@@ -18,10 +18,10 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import nl.bzk.algemeenbrp.util.common.logging.Logger;
+import nl.bzk.algemeenbrp.util.common.logging.LoggerFactory;
 import nl.bzk.migratiebrp.bericht.model.JMSConstants;
 import nl.bzk.migratiebrp.test.perf.levering.bericht.TestBericht;
-import nl.bzk.migratiebrp.util.common.logging.Logger;
-import nl.bzk.migratiebrp.util.common.logging.LoggerFactory;
 
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -61,9 +61,7 @@ public final class TestEnvironment {
 
     /**
      * Verzend een bericht.
-     *
-     * @param testBericht
-     *            testBericht
+     * @param testBericht testBericht
      */
     public void verzendBericht(final TestBericht testBericht) {
         jmsTemplate.send(leveringOntvangst, new MessageCreator() {
@@ -95,10 +93,10 @@ public final class TestEnvironment {
         // rmiAdaptor.invoke(new ObjectName(LEVERING_ONTVANGST_QUEUE_OBJECT_NAME),
         // REMOVE_ALL_MESSAGES_OPERATION, null, null);
         // }
-        // if (Long.valueOf((Integer) rmiAdaptor.getAttribute(new ObjectName(VOSPG_VERZENDEN_QUEUE_OBJECT_NAME),
+        // if (Long.valueOf((Integer) rmiAdaptor.getAttribute(new ObjectName(VOISC_VERZENDEN_QUEUE_OBJECT_NAME),
         // MESSAGE_COUNT_ATTRIBUTE)) > 0) {
-        // LOG.error("Message on queue before test case (queue = vospg.verzenden)!!!!");
-        // rmiAdaptor.invoke(new ObjectName(VOSPG_VERZENDEN_QUEUE_OBJECT_NAME), REMOVE_ALL_MESSAGES_OPERATION,
+        // LOG.error("Message on queue before test case (queue = voisc.verzenden)!!!!");
+        // rmiAdaptor.invoke(new ObjectName(VOISC_VERZENDEN_QUEUE_OBJECT_NAME), REMOVE_ALL_MESSAGES_OPERATION,
         // null, null);
         // }
         // }
@@ -120,13 +118,9 @@ public final class TestEnvironment {
 
     /**
      * Voer stappen na de testcase uit.
-     *
-     * @param wanted
-     *            Aantal verwachte berichten.
-     * @param started
-     *            Starttijd.
-     * @throws InterruptedException
-     *             kan worden gegooid bij aanroepen van Thread.sleep().
+     * @param wanted Aantal verwachte berichten.
+     * @param started Starttijd.
+     * @throws InterruptedException kan worden gegooid bij aanroepen van TimeUnit.MILLISECONDS.sleep().
      */
     public void afterTestCase(final long wanted, final Date started) throws InterruptedException {
         // Wanted number of messages
@@ -158,37 +152,38 @@ public final class TestEnvironment {
             final long verwachteResterendeTijd = (wanted - verzondenLeveringsberichtenCounter) / gemiddeldeSnelheidTest;
             final Timestamp verwachteEindtijd = new Timestamp(System.currentTimeMillis() + verwachteResterendeTijd * MILLIS + LOOP_WACHTTIJD_IN_MILLIS);
 
-            LOG.info("\n\n"
-                     + new Date()
-                     + "; Verzonden leveringsberichten tot nu toe: "
-                     + verzondenLeveringsberichtenCounter
-                     + "\nGemiddelde snelheid interval: "
-                     + gemiddeldeSnelheidInterval
-                     + " leveringsberichten/s. "
-                     + "\nGemiddelde snelheid test: "
-                     + gemiddeldeSnelheidTest
-                     + " leveringsberichten/s."
-                     + "\nVerwachte duur: "
-                     + verwachteDuur
-                     + " seconde"
-                     + "("
-                     + verwachteDuurUren
-                     + " uren  "
-                     + verwachteDuurMinuten
-                     + " minuten  "
-                     + verwachteDuurSeconde
-                     + " seconde )"
-                     + "\nVerwachte duur productie set (1.200.000 leveringsberichten): "
-                     + verwachteDuurProductie
-                     + " seconde ("
-                     + verwachteDuurUrenProductie
-                     + " uren "
-                     + verwachteDuurMinutenProductie
-                     + " minuten "
-                     + verwachteDuurSecondeProductie
-                     + " seconde)"
-                     + "\nVerwachte eindtijd: "
-                     + verwachteEindtijd);
+            LOG.info(
+                    "\n\n"
+                            + new Date()
+                            + "; Verzonden leveringsberichten tot nu toe: "
+                            + verzondenLeveringsberichtenCounter
+                            + "\nGemiddelde snelheid interval: "
+                            + gemiddeldeSnelheidInterval
+                            + " leveringsberichten/s. "
+                            + "\nGemiddelde snelheid test: "
+                            + gemiddeldeSnelheidTest
+                            + " leveringsberichten/s."
+                            + "\nVerwachte duur: "
+                            + verwachteDuur
+                            + " seconde"
+                            + "("
+                            + verwachteDuurUren
+                            + " uren  "
+                            + verwachteDuurMinuten
+                            + " minuten  "
+                            + verwachteDuurSeconde
+                            + " seconde )"
+                            + "\nVerwachte duur productie set (1.200.000 leveringsberichten): "
+                            + verwachteDuurProductie
+                            + " seconde ("
+                            + verwachteDuurUrenProductie
+                            + " uren "
+                            + verwachteDuurMinutenProductie
+                            + " minuten "
+                            + verwachteDuurSecondeProductie
+                            + " seconde)"
+                            + "\nVerwachte eindtijd: "
+                            + verwachteEindtijd);
 
             if (current == verzondenLeveringsberichtenCounter) {
                 loopsCurrentSame++;
@@ -203,7 +198,7 @@ public final class TestEnvironment {
             }
 
             // Check each 10 seconds
-            Thread.sleep(LOOP_WACHTTIJD_IN_MILLIS);
+            TimeUnit.MILLISECONDS.sleep(LOOP_WACHTTIJD_IN_MILLIS);
         }
 
         LOG.info(new Date() + "; Geëindigd met: " + current);
@@ -212,7 +207,6 @@ public final class TestEnvironment {
 
     /**
      * Geef de waarde van verzonden leveringsberichten counter.
-     *
      * @return Het aantal verzonden leveringsberichten.
      */
     public Long getVerzondenLeveringsberichtenCounter() {
@@ -225,7 +219,7 @@ public final class TestEnvironment {
         // final InitialContext ctx = new InitialContext(jndiTemplate.getContext().getEnvironment());
         // final RMIAdaptor rmiAdaptor = (RMIAdaptor) ctx.lookup(RMI_ADAPTOR_JNDI_NAME);
         // totaalAantalVerzondenLeveringsberichten +=
-        // Long.valueOf((Integer) rmiAdaptor.getAttribute(new ObjectName(VOSPG_VERZENDEN_QUEUE_OBJECT_NAME),
+        // Long.valueOf((Integer) rmiAdaptor.getAttribute(new ObjectName(VOISC_VERZENDEN_QUEUE_OBJECT_NAME),
         // MESSAGE_COUNT_ATTRIBUTE));
         // }
         // return totaalAantalVerzondenLeveringsberichten;
@@ -246,9 +240,7 @@ public final class TestEnvironment {
 
     /**
      * Controleer of het aantal beeindigde leveringsberichten gelijk is aan het verwachte aantal.
-     *
-     * @param verwachtAantal
-     *            Het verwachte aantal.
+     * @param verwachtAantal Het verwachte aantal.
      * @return of het aantal beeindigde leveringsberichten gelijk is aan het verwachte aantal.
      */
     public boolean verifieerBeeindigdeLeveringsberichten(final long verwachtAantal) {
@@ -258,8 +250,9 @@ public final class TestEnvironment {
             LOG.info("Verwacht aantal verzonden leveringsberichten: " + verwachtAantal);
             LOG.info("Initieel aantal verzonden leveringsberichten: " + INITIEEL_VERZONDEN_LEVERINGSBERICHTEN_COUNTER);
             LOG.info("Huidig aantal verzonden leveringsberichten: " + getVerzondenLeveringsberichtenCounter());
-            LOG.info("Aantal verzonden leveringsberichten in deze test: "
-                     + (getVerzondenLeveringsberichtenCounter() - INITIEEL_VERZONDEN_LEVERINGSBERICHTEN_COUNTER));
+            LOG.info(
+                    "Aantal verzonden leveringsberichten in deze test: "
+                            + (getVerzondenLeveringsberichtenCounter() - INITIEEL_VERZONDEN_LEVERINGSBERICHTEN_COUNTER));
         }
 
         // Clear queues via JMX
@@ -275,10 +268,10 @@ public final class TestEnvironment {
         // rmiAdaptor.invoke(new ObjectName(LEVERING_ONTVANGST_QUEUE_OBJECT_NAME), REMOVE_ALL_MESSAGES_OPERATION, null,
         // null);
         // }
-        // if (Long.valueOf((Integer) rmiAdaptor.getAttribute(new ObjectName(VOSPG_VERZENDEN_QUEUE_OBJECT_NAME),
+        // if (Long.valueOf((Integer) rmiAdaptor.getAttribute(new ObjectName(VOISC_VERZENDEN_QUEUE_OBJECT_NAME),
         // MESSAGE_COUNT_ATTRIBUTE)) > 0) {
-        // LOG.info("Opschonen queue na test case (queue = vospg.verzenden)...");
-        // rmiAdaptor.invoke(new ObjectName(VOSPG_VERZENDEN_QUEUE_OBJECT_NAME), REMOVE_ALL_MESSAGES_OPERATION, null,
+        // LOG.info("Opschonen queue na test case (queue = voisc.verzenden)...");
+        // rmiAdaptor.invoke(new ObjectName(VOISC_VERZENDEN_QUEUE_OBJECT_NAME), REMOVE_ALL_MESSAGES_OPERATION, null,
         // null);
         // }
         // }

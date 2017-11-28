@@ -1,1 +1,1 @@
-deelname_eu_verkiezingen.deelname_eu_verkiezingen = WAAR
+Persoon.DeelnameEUVerkiezingen.IndicatieDeelname E= WAAR

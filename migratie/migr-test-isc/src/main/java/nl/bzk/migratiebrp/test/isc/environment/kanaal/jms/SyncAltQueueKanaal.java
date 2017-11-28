@@ -10,6 +10,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.Destination;
 
+import nl.bzk.migratiebrp.bericht.model.sync.SyncBericht;
+import nl.bzk.migratiebrp.bericht.model.sync.factory.SyncBerichtFactory;
+import nl.bzk.migratiebrp.bericht.model.sync.impl.OngeldigBericht;
 import nl.bzk.migratiebrp.test.common.vergelijk.VergelijkXml;
 import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
 
@@ -18,18 +21,21 @@ import nl.bzk.migratiebrp.test.isc.environment.kanaal.LazyLoadingKanaal;
  */
 public final class SyncAltQueueKanaal extends LazyLoadingKanaal {
 
-    /** Kanaal naam. */
+    /**
+     * Kanaal naam.
+     */
     public static final String KANAAL = "sync_alt";
 
     /**
      * Constructor.
      */
     public SyncAltQueueKanaal() {
-        super(new Worker(), new Configuration(
-            "classpath:configuratie.xml",
-            "classpath:infra-jms-isc.xml",
-            "classpath:infra-queues-isc-sync.xml",
-            "classpath:infra-jmx-routering.xml"));
+        super(new Worker(),
+                new Configuration(
+                        "classpath:configuratie.xml",
+                        "classpath:infra-jms-isc.xml",
+                        "classpath:infra-queues-isc-sync.xml",
+                        "classpath:infra-jmx-routering.xml"));
     }
 
     /**
@@ -77,6 +83,17 @@ public final class SyncAltQueueKanaal extends LazyLoadingKanaal {
         @Override
         protected boolean vergelijkInhoud(final String verwachteInhoud, final String ontvangenInhoud) {
             return VergelijkXml.vergelijkXml(verwachteInhoud, ontvangenInhoud);
+        }
+
+        @Override
+        protected boolean basisValidatie(final String inhoud) {
+            if (inhoud == null || "".equals(inhoud)) {
+                return true;
+            }
+
+            final SyncBericht bericht = SyncBerichtFactory.SINGLETON.getBericht(inhoud);
+
+            return !(bericht instanceof OngeldigBericht);
         }
     }
 

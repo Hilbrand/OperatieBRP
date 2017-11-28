@@ -17,21 +17,16 @@ import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpInteger;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpString;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpSamengesteldeNaamInhoud;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.BrpVoornaamInhoud;
-import org.springframework.stereotype.Component;
 
 /**
  * Bepaal de voornamen obv de samengestelde naam.
- * 
  */
-@Component
-@Requirement({Requirements.CEL0210, Requirements.CEL0210_LB01 })
+@Requirement({Requirements.CEL0210, Requirements.CEL0210_LB01})
 public class BepaalVoornamen {
 
     /**
      * Bepaal de voornamen obv de samengestelde naam.
-     * 
-     * @param samengesteldeNaamStapel
-     *            samengestelde naam stapel
+     * @param samengesteldeNaamStapel samengestelde naam stapel
      * @return lijst van voornaam stapels
      */
     public final List<BrpStapel<BrpVoornaamInhoud>> bepaal(final BrpStapel<BrpSamengesteldeNaamInhoud> samengesteldeNaamStapel) {
@@ -47,13 +42,14 @@ public class BepaalVoornamen {
                     final List<BrpGroep<BrpVoornaamInhoud>> voornaamLijst = getLijst(voornaamLijsten, voornaamIndex);
                     final BrpString voornaam =
                             new BrpString(tokenizer.nextToken(), samengesteldeNaam.getInhoud().getVoornamen().getOnderzoek());
-                    final BrpVoornaamInhoud inhoud = new BrpVoornaamInhoud(voornaam, new BrpInteger(++voornaamIndex));
+                    ++voornaamIndex;
+                    final BrpVoornaamInhoud inhoud = new BrpVoornaamInhoud(voornaam, new BrpInteger(voornaamIndex));
                     voornaamLijst.add(new BrpGroep<>(
-                        inhoud,
-                        samengesteldeNaam.getHistorie(),
-                        samengesteldeNaam.getActieInhoud(),
-                        samengesteldeNaam.getActieVerval(),
-                        samengesteldeNaam.getActieGeldigheid()));
+                            inhoud,
+                            samengesteldeNaam.getHistorie(),
+                            samengesteldeNaam.getActieInhoud(),
+                            samengesteldeNaam.getActieVerval(),
+                            samengesteldeNaam.getActieGeldigheid()));
 
                 }
             }
@@ -66,10 +62,8 @@ public class BepaalVoornamen {
         return result;
     }
 
-    private static List<BrpGroep<BrpVoornaamInhoud>> getLijst(final List<List<BrpGroep<BrpVoornaamInhoud>>> voornaamLijsten, final int index)
-    {
-        // Door de volgorde waarop we deze methode aanroepen geldt dit altijd
-        assert index <= voornaamLijsten.size();
+    private static List<BrpGroep<BrpVoornaamInhoud>> getLijst(final List<List<BrpGroep<BrpVoornaamInhoud>>> voornaamLijsten, final int index) {
+        // Door de volgorde waarop we deze methode aanroepen geldt altijd: index <= voornaamLijsten.size()
 
         if (index == voornaamLijsten.size()) {
             voornaamLijsten.add(new ArrayList<BrpGroep<BrpVoornaamInhoud>>());

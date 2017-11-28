@@ -48,9 +48,9 @@ public class Lo3HerkomstBuilderTest {
                 lo3HerkomstBuilder.kopieerTerugconversiePlMetHerkomst(origineel, teruggeconverteerd);
         assertNotNull("Er moet een resultaat zijn.", teruggeconverteerdMetHerkomst);
         assertEquals(
-            "Herkomst zou gelijk moeten zijn.",
-            origineel.getPersoonStapel().get(0).getLo3Herkomst().toString(),
-            teruggeconverteerdMetHerkomst.getPersoonStapel().get(0).getLo3Herkomst().toString());
+                "Herkomst zou gelijk moeten zijn.",
+                origineel.getPersoonStapel().get(0).getLo3Herkomst().toString(),
+                teruggeconverteerdMetHerkomst.getPersoonStapel().get(0).getLo3Herkomst().toString());
     }
 
     @Test
@@ -63,29 +63,29 @@ public class Lo3HerkomstBuilderTest {
         final Lo3PersoonslijstBuilder builder2 = new Lo3PersoonslijstBuilder();
         final List<Lo3Categorie<Lo3PersoonInhoud>> persoonCategorieen = new ArrayList<>();
         persoonCategorieen.add(VerplichteStapel.buildPersoon(
-            1000000000L,
-            "Zlaas",
-            "Jansen",
-            VerplichteStapel.GEBOORTE_DATUM,
-            "0363",
-            null,
-            19950101,
-            19950110,
-            6,
-            "0518",
-            "3A"));
+                "1000000000",
+                "Zlaas",
+                "Jansen",
+                VerplichteStapel.GEBOORTE_DATUM,
+                "0363",
+                null,
+                19950101,
+                19950110,
+                6,
+                "0518",
+                "3A"));
         persoonCategorieen.add(VerplichteStapel.buildPersoon(
-            1000000000L,
-            "Klaas",
-            "Jansen",
-            VerplichteStapel.GEBOORTE_DATUM,
-            "0363",
-            null,
-            19960101,
-            19960110,
-            6,
-            "0518",
-            "3A"));
+                "1000000000",
+                "Klaas",
+                "Jansen",
+                VerplichteStapel.GEBOORTE_DATUM,
+                "0363",
+                null,
+                19960101,
+                19960110,
+                6,
+                "0518",
+                "3A"));
         builder2.persoonStapel(StapelUtils.createStapel(persoonCategorieen));
 
         builder2.inschrijvingStapel(VerplichteStapel.createInschrijvingStapel());
@@ -96,8 +96,8 @@ public class Lo3HerkomstBuilderTest {
                 lo3HerkomstBuilder.kopieerTerugconversiePlMetHerkomst(origineel, teruggeconverteerd);
         assertNotNull("Er moet een resultaat zijn.", teruggeconverteerdMetHerkomst);
         assertEquals(
-            "Herkomst zou gelijk moeten zijn.",
-            origineel.getPersoonStapel().get(0).getLo3Herkomst().toString(),
-            teruggeconverteerdMetHerkomst.getPersoonStapel().get(0).getLo3Herkomst().toString());
+                "Herkomst zou gelijk moeten zijn.",
+                origineel.getPersoonStapel().get(0).getLo3Herkomst().toString(),
+                teruggeconverteerdMetHerkomst.getPersoonStapel().get(0).getLo3Herkomst().toString());
     }
 }

@@ -7,12 +7,17 @@
 package nl.bzk.migratiebrp.bericht.model.lo3.impl;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Serializable;
-import java.util.Arrays;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
-
+import nl.bzk.algemeenbrp.util.xml.exception.XmlException;
 import nl.bzk.migratiebrp.bericht.model.BerichtInhoudException;
 import nl.bzk.migratiebrp.bericht.model.lo3.AbstractParsedLo3Bericht;
 import nl.bzk.migratiebrp.bericht.model.lo3.Lo3Bericht;
@@ -21,6 +26,7 @@ import nl.bzk.migratiebrp.bericht.model.lo3.Lo3HeaderVeld;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3CategorieWaardeFormatter;
 import nl.bzk.migratiebrp.bericht.model.lo3.format.Lo3Format;
 import nl.bzk.migratiebrp.bericht.model.lo3.parser.Lo3PersoonslijstParser;
+import nl.bzk.migratiebrp.bericht.model.lo3.syntax.Lo3SyntaxControle;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Categorie;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Persoonslijst;
 import nl.bzk.migratiebrp.conversie.model.lo3.Lo3Stapel;
@@ -29,8 +35,7 @@ import nl.bzk.migratiebrp.conversie.model.lo3.categorie.Lo3PersoonInhoud;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3CategorieEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.herkomst.Lo3ElementEnum;
 import nl.bzk.migratiebrp.conversie.model.lo3.syntax.Lo3CategorieWaarde;
-import nl.bzk.migratiebrp.conversie.model.serialize.PersoonslijstDecoder;
-import nl.bzk.migratiebrp.conversie.model.serialize.PersoonslijstEncoder;
+import nl.bzk.migratiebrp.conversie.model.serialize.MigratieXml;
 
 /**
  * Tb01.
@@ -38,12 +43,8 @@ import nl.bzk.migratiebrp.conversie.model.serialize.PersoonslijstEncoder;
 public final class Tb01Bericht extends AbstractParsedLo3Bericht implements Lo3Bericht, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final Lo3Header HEADER = new Lo3Header(
-        Lo3HeaderVeld.RANDOM_KEY,
-        Lo3HeaderVeld.BERICHTNUMMER,
-        Lo3HeaderVeld.HERHALING,
-        Lo3HeaderVeld.GEZOCHTE_PERSOON,
-        Lo3HeaderVeld.AKTENUMMER);
+    private static final Lo3Header HEADER = new Lo3Header(Lo3HeaderVeld.RANDOM_KEY, Lo3HeaderVeld.BERICHTNUMMER, Lo3HeaderVeld.HERHALING,
+            Lo3HeaderVeld.GEZOCHTE_PERSOON, Lo3HeaderVeld.AKTENUMMER);
 
     private static final Lo3PersoonslijstParser PL_PARSER = new Lo3PersoonslijstParser();
     private transient Lo3Persoonslijst lo3Persoonslijst;
@@ -52,7 +53,7 @@ public final class Tb01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
      * Constructor.
      */
     public Tb01Bericht() {
-        super(HEADER, "Tb01", "uc307");
+        super(HEADER, Lo3SyntaxControle.STANDAARD, "Tb01", "uc307");
 
         setHeader(Lo3HeaderVeld.RANDOM_KEY, null);
         setHeader(Lo3HeaderVeld.BERICHTNUMMER, getBerichtType());
@@ -63,30 +64,31 @@ public final class Tb01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see nl.bzk.migratiebrp.bericht.model.lo3.AbstractLo3Bericht#getGerelateerdeAnummers()
      */
     @Override
     protected List<String> getGerelateerdeAnummers() {
         if (lo3Persoonslijst == null || lo3Persoonslijst.getActueelAdministratienummer() == null) {
-            return null;
+            return Collections.emptyList();
         }
 
-        return Arrays.asList(lo3Persoonslijst.getActueelAdministratienummer().toString());
+        return Collections.singletonList(lo3Persoonslijst.getActueelAdministratienummer());
     }
 
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
     @Override
-    @SuppressWarnings("checkstyle:illegalcatch")
-    protected void parseInhoud(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
+    protected void parseCategorieen(final List<Lo3CategorieWaarde> categorieen) throws BerichtInhoudException {
         try {
             lo3Persoonslijst = PL_PARSER.parse(categorieen);
         } catch (final Exception e /* Catch all, anders final klapt de ESB final er lelijk uit */) {
             throw new BerichtInhoudException("Fout bij parsen lo3 persoonslijst", e);
         }
     }
-
 
     @Override
     protected List<Lo3CategorieWaarde> formatInhoud() {
@@ -104,7 +106,7 @@ public final class Tb01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
         final Lo3Stapel<Lo3PersoonInhoud> persoonStapel = lo3Persoonslijst.getPersoonStapel();
         final Lo3Categorie<Lo3PersoonInhoud> persoonActueleCategorie = persoonStapel.getLaatsteElement();
         final Lo3PersoonInhoud persoonInhoud = persoonActueleCategorie.getInhoud();
-        //Persoon cat1
+        // Persoon cat1
         formatCategorie1(formatter, persoonStapel, persoonActueleCategorie, persoonInhoud);
 
         // Ouder 1 cat 2
@@ -116,11 +118,8 @@ public final class Tb01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
         return formatter.getList();
     }
 
-    private void formatCategorie1(final Lo3CategorieWaardeFormatter formatter,
-                                  final Lo3Stapel<Lo3PersoonInhoud> persoonStapel,
-                                  final Lo3Categorie<Lo3PersoonInhoud> persoonActueleCategorie,
-                                  final Lo3PersoonInhoud persoonInhoud)
-    {
+    private void formatCategorie1(final Lo3CategorieWaardeFormatter formatter, final Lo3Stapel<Lo3PersoonInhoud> persoonStapel,
+                                  final Lo3Categorie<Lo3PersoonInhoud> persoonActueleCategorie, final Lo3PersoonInhoud persoonInhoud) {
         formatter.categorie(Lo3CategorieEnum.CATEGORIE_01);
         formatter.element(Lo3ElementEnum.ELEMENT_0210, Lo3Format.format(persoonInhoud.getVoornamen()));
         formatter.element(Lo3ElementEnum.ELEMENT_0220, Lo3Format.format(persoonInhoud.getAdellijkeTitelPredikaatCode()));
@@ -130,7 +129,7 @@ public final class Tb01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
         formatter.element(Lo3ElementEnum.ELEMENT_0320, Lo3Format.format(persoonInhoud.getGeboorteGemeenteCode()));
         formatter.element(Lo3ElementEnum.ELEMENT_0330, Lo3Format.format(persoonInhoud.getGeboorteLandCode()));
         formatter.element(Lo3ElementEnum.ELEMENT_0410, Lo3Format.format(persoonInhoud.getGeslachtsaanduiding()));
-        formatter.element(Lo3ElementEnum.ELEMENT_8120, Lo3Format.format(getHeader(Lo3HeaderVeld.AKTENUMMER)));
+        formatter.element(Lo3ElementEnum.ELEMENT_8120, Lo3Format.format(getHeaderWaarde(Lo3HeaderVeld.AKTENUMMER)));
 
         //
         // Indien aanwezig
@@ -144,7 +143,7 @@ public final class Tb01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
                 formatter.element(Lo3ElementEnum.ELEMENT_0220, Lo3Format.format(persoonHistorieInhoud.getAdellijkeTitelPredikaatCode()));
                 formatter.element(Lo3ElementEnum.ELEMENT_0230, Lo3Format.format(persoonHistorieInhoud.getVoorvoegselGeslachtsnaam()));
                 formatter.element(Lo3ElementEnum.ELEMENT_0240, Lo3Format.format(persoonHistorieInhoud.getGeslachtsnaam()));
-                formatter.element(Lo3ElementEnum.ELEMENT_8120, Lo3Format.format(getHeader(Lo3HeaderVeld.AKTENUMMER)));
+                formatter.element(Lo3ElementEnum.ELEMENT_8120, Lo3Format.format(getHeaderWaarde(Lo3HeaderVeld.AKTENUMMER)));
             }
         }
     }
@@ -179,11 +178,13 @@ public final class Tb01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
         formatter.element(Lo3ElementEnum.ELEMENT_6210, Lo3Format.format(ouder2Inhoud.getFamilierechtelijkeBetrekking()));
     }
 
-    /* ************************************************************************************************************* */
+    /*
+     * *********************************************************************************************
+     * ****************
+     */
 
     /**
      * Geef de waarde van lo3 persoonslijst.
-     *
      * @return lo3 persoonslijst
      */
     public Lo3Persoonslijst getLo3Persoonslijst() {
@@ -192,28 +193,33 @@ public final class Tb01Bericht extends AbstractParsedLo3Bericht implements Lo3Be
 
     /**
      * Zet de waarde van lo3 persoonslijst.
-     *
-     * @param lo3Persoonslijst
-     *            lo3 persoonslijst
+     * @param lo3Persoonslijst lo3 persoonslijst
      */
     public void setLo3Persoonslijst(final Lo3Persoonslijst lo3Persoonslijst) {
         this.lo3Persoonslijst = lo3Persoonslijst;
     }
 
-    /* ********************************************************************************************************** */
+    /*
+     * *********************************************************************************************
+     * *************
+     */
 
-    private void readObject(final ObjectInputStream is) throws ClassNotFoundException, IOException {
+    private void readObject(final ObjectInputStream is) throws ClassNotFoundException, IOException, XmlException {
         // always perform the default de-serialization first
         is.defaultReadObject();
 
-        lo3Persoonslijst = PersoonslijstDecoder.decodeLo3Persoonslijst(is);
+        try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            lo3Persoonslijst = MigratieXml.decode(Lo3Persoonslijst.class, reader);
+        }
     }
 
-    private void writeObject(final ObjectOutputStream os) throws IOException {
+    private void writeObject(final ObjectOutputStream os) throws IOException, XmlException {
         // perform the default serialization for all non-transient, non-static fields
         os.defaultWriteObject();
 
-        PersoonslijstEncoder.encodePersoonslijst(lo3Persoonslijst, os);
+        try (Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
+            MigratieXml.encode(lo3Persoonslijst, writer);
+        }
     }
 
 }

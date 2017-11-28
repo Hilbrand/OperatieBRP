@@ -7,13 +7,11 @@
 package nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.autorisatie;
 
 import java.sql.Timestamp;
-
-import nl.bzk.migratiebrp.conversie.model.brp.BrpStapel;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.Partij;
+import nl.bzk.algemeenbrp.dal.domein.brp.entity.PartijHistorie;
+import nl.bzk.algemeenbrp.dal.repositories.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.autorisatie.BrpPartij;
 import nl.bzk.migratiebrp.conversie.model.brp.groep.autorisatie.BrpPartijInhoud;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.Partij;
-import nl.bzk.migratiebrp.synchronisatie.dal.domein.brp.kern.entity.PartijHistorie;
-import nl.bzk.migratiebrp.synchronisatie.dal.repository.DynamischeStamtabelRepository;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.AbstractHistorieMapperStrategie;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.BRPActieFactory;
 import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.MapperUtil;
@@ -21,17 +19,13 @@ import nl.bzk.migratiebrp.synchronisatie.dal.service.impl.mapper.strategie.Mappe
 /**
  * Deze mapper mapped BrpPartijInhoud uit het migratie model op de corresponderen BRP entiteiten uit het operationele
  * datamodel van de BRP.
- *
  */
 public final class PartijMapper extends AbstractHistorieMapperStrategie<BrpPartijInhoud, PartijHistorie, Partij> {
 
     /**
      * Maakt een PartijMapper object.
-     *
-     * @param dynamischeStamtabelRepository
-     *            de repository die bevraging van de stamtabellen mogelijk maakt
-     * @param brpActieFactory
-     *            de factory die gebruikt wordt voor het mappen van BRP acties
+     * @param dynamischeStamtabelRepository de repository die bevraging van de stamtabellen mogelijk maakt
+     * @param brpActieFactory de factory die gebruikt wordt voor het mappen van BRP acties
      */
     public PartijMapper(final DynamischeStamtabelRepository dynamischeStamtabelRepository, final BRPActieFactory brpActieFactory) {
         super(dynamischeStamtabelRepository, brpActieFactory, null);
@@ -39,15 +33,12 @@ public final class PartijMapper extends AbstractHistorieMapperStrategie<BrpParti
 
     /**
      * Map BRP partij naar nieuwe partij entiteit.
-     *
-     * @param brpPartij
-     *            BRP partij
+     * @param brpPartij BRP partij
      * @return partij entiteit
      */
     public Partij mapVanMigratie(final BrpPartij brpPartij) {
-
         final Partij partij = new Partij(brpPartij.getNaam(), brpPartij.getPartijCode().getWaarde());
-        this.mapVanMigratie(brpPartij.getPartijStapel(), partij);
+        this.mapVanMigratie(brpPartij.getPartijStapel(), partij, null);
         partij.setIndicatieVerstrekkingsbeperkingMogelijk(brpPartij.getPartijStapel().getActueel().getInhoud().getIndicatieVerstrekkingsbeperking());
         return partij;
     }
@@ -61,33 +52,18 @@ public final class PartijMapper extends AbstractHistorieMapperStrategie<BrpParti
     }
 
     @Override
-    protected void kopieerActueleGroepNaarEntiteit(final PartijHistorie historie, final Partij entiteit) {
-        entiteit.setDatumIngang(historie.getDatumIngang());
-        entiteit.setDatumEinde(historie.getDatumEinde());
-        entiteit.setIndicatieVerstrekkingsbeperkingMogelijk(historie.isIndicatieVerstrekkingsbeperkingMogelijk());
-        entiteit.setNaam(historie.getNaam());
-        entiteit.setOin(historie.getOin());
-        entiteit.setSoortPartij(historie.getSoortPartij());
-    }
-
-    @Override
     protected PartijHistorie mapHistorischeGroep(final BrpPartijInhoud groepInhoud, final Partij partij) {
         final PartijHistorie historie =
                 new PartijHistorie(
-                    partij,
-                    new Timestamp(System.currentTimeMillis()),
-                    MapperUtil.mapBrpDatumToInteger(groepInhoud.getDatumIngang()),
-                    groepInhoud.getIndicatieVerstrekkingsbeperking(),
-                    partij.getNaam());
+                        partij,
+                        new Timestamp(System.currentTimeMillis()),
+                        MapperUtil.mapBrpDatumToInteger(groepInhoud.getDatumIngang()),
+                        groepInhoud.getIndicatieVerstrekkingsbeperking(),
+                        partij.getNaam());
 
         historie.setDatumEinde(MapperUtil.mapBrpDatumToInteger(groepInhoud.getDatumEinde()));
         historie.setIndicatieVerstrekkingsbeperkingMogelijk(groepInhoud.getIndicatieVerstrekkingsbeperking());
 
         return historie;
-    }
-
-    @Override
-    protected void mapActueleGegevens(final BrpStapel<BrpPartijInhoud> brpStapel, final Partij partij) {
-        // Geen gegevens uit stapel enkel op a-laag
     }
 }

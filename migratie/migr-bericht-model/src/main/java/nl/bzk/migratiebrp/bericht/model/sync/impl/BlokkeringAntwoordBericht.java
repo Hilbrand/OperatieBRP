@@ -34,9 +34,7 @@ public final class BlokkeringAntwoordBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Deze constructor wordt gebruikt door de factory om op basis van een Jaxb element een storebericht te maken.
-     *
-     * @param blokkeringAntwoordType
-     *            het blokkeringAntwoord type
+     * @param blokkeringAntwoordType het blokkeringAntwoord type
      */
     public BlokkeringAntwoordBericht(final BlokkeringAntwoordType blokkeringAntwoordType) {
         super("BlokkeringAntwoord");
@@ -54,7 +52,6 @@ public final class BlokkeringAntwoordBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Geeft de status {@link StatusType} van het bericht terug.
-     *
      * @return De status {@link StatusType} van het bericht.
      */
     public StatusType getStatus() {
@@ -63,9 +60,7 @@ public final class BlokkeringAntwoordBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Zet de status {@link StatusType} op het bericht.
-     *
-     * @param status
-     *            De te zetten status {@link StatusType}.
+     * @param status De te zetten status {@link StatusType}.
      */
     public void setStatus(final StatusType status) {
         blokkeringAntwoordType.setStatus(status);
@@ -73,7 +68,6 @@ public final class BlokkeringAntwoordBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Geeft de persoonsaanduiding op het bericht terug.
-     *
      * @return De persoonsaanduiding op het bericht.
      */
     public PersoonsaanduidingType getPersoonsaanduiding() {
@@ -82,9 +76,7 @@ public final class BlokkeringAntwoordBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Zet de persoonsaanduiding op het bericht.
-     *
-     * @param persoonsaanduiding
-     *            De te zetten persoonsaanduiding.
+     * @param persoonsaanduiding De te zetten persoonsaanduiding.
      */
     public void setToelichting(final PersoonsaanduidingType persoonsaanduiding) {
         blokkeringAntwoordType.setPersoonsaanduiding(persoonsaanduiding);
@@ -92,7 +84,6 @@ public final class BlokkeringAntwoordBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Geeft het process id op het bericht terug.
-     *
      * @return Het process id op het bericht.
      */
     public String getProcessId() {
@@ -101,9 +92,7 @@ public final class BlokkeringAntwoordBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Zet het process id op het bericht.
-     *
-     * @param processId
-     *            Het te zetten processId.
+     * @param processId Het te zetten processId.
      */
     public void setProcessId(final String processId) {
         blokkeringAntwoordType.setProcessId(processId);
@@ -111,7 +100,6 @@ public final class BlokkeringAntwoordBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Geeft de gemeente naar op het bericht terug.
-     *
      * @return De gemeente naar op het bericht.
      */
     public String getGemeenteNaar() {
@@ -120,9 +108,7 @@ public final class BlokkeringAntwoordBericht extends AbstractSyncBerichtZonderGe
 
     /**
      * Zet de gemeente naar op het bericht.
-     *
-     * @param gemeenteNaar
-     *            De te zetten gemeente naar.
+     * @param gemeenteNaar De te zetten gemeente naar.
      */
     public void setGemeenteNAar(final String gemeenteNaar) {
         blokkeringAntwoordType.setGemeenteNaar(gemeenteNaar);

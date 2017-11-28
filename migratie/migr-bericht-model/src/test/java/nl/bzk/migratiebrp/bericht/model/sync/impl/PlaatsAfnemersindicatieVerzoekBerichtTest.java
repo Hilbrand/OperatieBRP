@@ -9,19 +9,20 @@ package nl.bzk.migratiebrp.bericht.model.sync.impl;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class PlaatsAfnemersindicatieVerzoekBerichtTest extends AbstractSyncBerichtTest {
+public class PlaatsAfnemersindicatieVerzoekBerichtTest extends AbstractSyncBerichtTestBasis {
+
+    private static final String BSN = "123456789";
+    private static final String PARTIJ_CODE = "059901";
 
     @Test
     public void test() throws Exception {
         final PlaatsAfnemersindicatieVerzoekBericht bericht = new PlaatsAfnemersindicatieVerzoekBericht();
-        bericht.setPersoonId(123);
-        bericht.setToegangLeveringsautorisatieId(565455);
-        bericht.setDienstId(532);
+        bericht.setBsn(BSN);
+        bericht.setPartijCode(PARTIJ_CODE);
         bericht.setReferentie("REF-57756");
 
-        Assert.assertEquals(Integer.valueOf(123), bericht.getPersoonId());
-        Assert.assertEquals(Integer.valueOf(565455), bericht.getToegangLeveringsautorisatieId());
-        Assert.assertEquals(Integer.valueOf(532), bericht.getDienstId());
+        Assert.assertEquals(BSN, bericht.getBsn());
+        bericht.setPartijCode(PARTIJ_CODE);
         Assert.assertEquals("REF-57756", bericht.getReferentie());
 
         controleerFormatParse(bericht);

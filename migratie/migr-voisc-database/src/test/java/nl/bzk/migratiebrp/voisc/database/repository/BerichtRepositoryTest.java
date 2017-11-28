@@ -6,11 +6,13 @@
 
 package nl.bzk.migratiebrp.voisc.database.repository;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -99,37 +101,37 @@ public class BerichtRepositoryTest extends AbstractRepositoryTest {
         statussen.add(StatusEnum.IGNORED);
 
         try {
-            Thread.sleep(100);
+            TimeUnit.MILLISECONDS.sleep(100);
         } catch (final InterruptedException e) {
         }
-        int aantalVerwijderd = voaRepository.verwijderVerzondenBerichtenOuderDan(Calendar.getInstance().getTime(), statussen);
+        int aantalVerwijderd = voaRepository.verwijderVerzondenBerichtenOuderDan(new Timestamp(System.currentTimeMillis()), statussen);
         Assert.assertEquals(0, aantalVerwijderd);
         berichtenToSendMBS = voaRepository.getBerichtToSendMBS(ORIGINATOR);
         Assert.assertEquals(1, berichtenToSendMBS.size());
 
         // pas status van bericht1 aan naar 'SENT_TO_ISC' zodat deze door de opschoon actie wordt opgepakt.
         bericht1.setStatus(StatusEnum.SENT_TO_ISC);
-        bericht1.setTijdstipVerzonden(Calendar.getInstance().getTime());
+        bericht1.setTijdstipVerzonden(new Timestamp(System.currentTimeMillis()));
         bericht1 = voaRepository.save(bericht1);
         em.flush();
 
         try {
-            Thread.sleep(100);
+            TimeUnit.MILLISECONDS.sleep(100);
         } catch (final InterruptedException e) {
         }
         aantalVerwijderd = voaRepository.verwijderVerzondenBerichtenOuderDan(Calendar.getInstance().getTime(), statussen);
         Assert.assertEquals(1, aantalVerwijderd);
 
         bericht2.setStatus(StatusEnum.SENT_TO_MAILBOX);
-        bericht2.setTijdstipVerzonden(new Date());
+        bericht2.setTijdstipVerzonden(new Timestamp(System.currentTimeMillis()));
         bericht2 = voaRepository.save(bericht2);
         bericht3.setStatus(StatusEnum.IGNORED);
-        bericht3.setTijdstipVerzonden(new Date());
+        bericht3.setTijdstipVerzonden(new Timestamp(System.currentTimeMillis()));
         bericht3 = voaRepository.save(bericht3);
         em.flush();
 
         try {
-            Thread.sleep(100);
+            TimeUnit.MILLISECONDS.sleep(100);
         } catch (final InterruptedException e) {
         }
         aantalVerwijderd = voaRepository.verwijderVerzondenBerichtenOuderDan(Calendar.getInstance().getTime(), statussen);
@@ -152,7 +154,7 @@ public class BerichtRepositoryTest extends AbstractRepositoryTest {
         bericht2 = voaRepository.save(bericht2);
 
         Bericht bericht3 = maakDummyBericht(StatusEnum.SENDING_TO_ISC);
-        bericht3.setTijdstipInVerwerking(new Date());
+        bericht3.setTijdstipInVerwerking(new Timestamp(System.currentTimeMillis()));
         bericht3 = voaRepository.save(bericht3);
 
         Bericht bericht4 = maakDummyBericht(StatusEnum.SENT_TO_ISC);
@@ -162,7 +164,7 @@ public class BerichtRepositoryTest extends AbstractRepositoryTest {
         int aantalTeVerzenden = voaRepository.getBerichtenToSendQueue(100).size();
         Assert.assertEquals(1, aantalTeVerzenden);
 
-        Thread.sleep(500);
+        TimeUnit.MILLISECONDS.sleep(500);
 
         final int aantalHersteld = voaRepository.herstelStatus(new Date(), StatusEnum.SENDING_TO_ISC, StatusEnum.RECEIVED_FROM_MAILBOX);
         Assert.assertEquals(1, aantalHersteld);
@@ -179,7 +181,7 @@ public class BerichtRepositoryTest extends AbstractRepositoryTest {
         bericht1.setBerichtInhoud("Bla");
         bericht1.setMessageId("EREF-123123");
         bericht1.setCorrelationId("Bref-133223");
-        bericht1.setTijdstipOntvangst(new Date());
+        bericht1.setTijdstipOntvangst(new Timestamp(System.currentTimeMillis()));
         return bericht1;
     }
 }
