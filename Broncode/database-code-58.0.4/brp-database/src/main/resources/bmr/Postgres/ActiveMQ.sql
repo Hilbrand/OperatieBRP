@@ -29,12 +29,12 @@ IF l_var <> 'UTF8' THEN
 END IF;
 
 SHOW LC_CTYPE INTO l_var;
-IF NOT l_var LIKE '%UTF-8' THEN
+IF NOT l_var LIKE '%utf8' THEN
    RAISE EXCEPTION 'Database LC_CTYPE moet UTF-8 zijn.';
 END IF;
 
 SHOW LC_COLLATE INTO l_var;
-IF NOT l_var LIKE '%UTF-8' THEN
+IF NOT l_var LIKE '%utf8' THEN
    RAISE EXCEPTION 'Database LC_COLLATE moet UTF-8 zijn.';
 END IF;
 
