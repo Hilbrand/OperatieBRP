@@ -7,7 +7,9 @@
 package nl.bzk.brp.levering.lo3.tabel;
 
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
+
 import nl.bzk.algemeenbrp.dal.domein.brp.entity.AutoriteitAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.algemeenbrp.dal.domein.brp.entity.Gemeente;
 import nl.bzk.algemeenbrp.dal.domein.brp.entity.LandOfGebied;
@@ -31,6 +33,7 @@ import nl.bzk.brp.gba.dataaccess.stam.VerblijfsrechtRepository;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAanduidingInhoudingOfVermissingReisdocumentCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpAutoriteitVanAfgifteBuitenlandsPersoonsnummer;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGemeenteCode;
+import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpGeslachtsaanduidingCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpLandOfGebiedCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNadereBijhoudingsaardCode;
 import nl.bzk.migratiebrp.conversie.model.brp.attribuut.BrpNationaliteitCode;
@@ -142,6 +145,12 @@ public final class Lo3ConversieTabelFactory extends AbstractConversietabelFactor
     @Override
     public Conversietabel<Lo3AdellijkeTitelPredikaatCode, AdellijkeTitelPredikaatPaar> createAdellijkeTitelPredikaatConversietabel() {
         return new AdellijkeTitelPredikaatConversietabel(adellijkeTitelPredikaatRepository.findAll());
+    }
+
+    @Override
+    public Conversietabel<Lo3String, BrpGeslachtsaanduidingCode> createGeslachtsaanduidingConversietabel() {
+    	// Toegevoegd buiten brp project om, om code compileerbaar te maken.
+        throw new UnsupportedOperationException("Lo3 Geslachtsaanduiding conversietabel niet geimplementeerd");
     }
 
     @Override
