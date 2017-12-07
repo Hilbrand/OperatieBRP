@@ -15,6 +15,14 @@
     <packaging>pom</packaging>
     <name>BRP Leveren</name>
 
+    <repositories>
+        <repository>
+            <id>repository.jboss.org-public</id>
+            <name>JBoss.org Maven repository</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+
     <modules>
         <module>brp-leveren-domain</module>
         <module>brp-leveren-service</module>
