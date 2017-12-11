@@ -213,8 +213,10 @@
                     <waitForChild>true</waitForChild>
                     <useTestScope>true</useTestScope>
                     <webApp>
+<!--
                         <defaultsDescriptor>${project.basedir}/src/test/jetty/webdefault.xml
                         </defaultsDescriptor>
+-->
                         <contextPath>/brp-beheer</contextPath>
                     </webApp>
                     <httpConnector>
