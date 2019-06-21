@@ -6,7 +6,7 @@
         <artifactId>alg</artifactId>
         <groupId>nl.bzk.algemeenbrp</groupId>
         <version>145.3</version>
-        <relativePath>../../../algemeen/alg</relativePath>
+        <relativePath>../../../../algemeen/alg</relativePath>
     </parent>
 
     <groupId>nl.bzk.brp.test</groupId>
